@@ -89,17 +89,17 @@ object HomeGlobalParams {
   object BlueVerifiedAuthorInNetworkMultiplierParam
       extends FSBoundedParam[Double](
         name = "home_mixer_blue_verified_author_in_network_multiplier",
-        default = 4.0,
+        default = 0.0,
         min = 0.0,
-        max = 100.0
+        max = 0.0
       )
 
   object BlueVerifiedAuthorOutOfNetworkMultiplierParam
       extends FSBoundedParam[Double](
         name = "home_mixer_blue_verified_author_out_of_network_multiplier",
-        default = 2.0,
+        default = 0.0,
         min = 0.0,
-        max = 100.0
+        max = 0.0
       )
 
   object EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
