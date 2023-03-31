@@ -56,7 +56,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   protected abstract Future<Collection<R>> innerProcessBatch(Collection<BatchedElement<T, R>>
                                                                  batch);
 
-  // classes that need to update their batch e.g after a decider change
+  // classes that need to update their batch e.g. after a decider change
   // can override this
   protected void updateBatchSize() {
   }
