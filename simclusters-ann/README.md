@@ -102,7 +102,7 @@ In the case of multiple instances,
 
 ```sh
 $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann prod simclusters-ann <instance-number-start>-<instance-number-end>
-```sh
+```
 
 ## Checking Deployed Version and Rolling Back
 
