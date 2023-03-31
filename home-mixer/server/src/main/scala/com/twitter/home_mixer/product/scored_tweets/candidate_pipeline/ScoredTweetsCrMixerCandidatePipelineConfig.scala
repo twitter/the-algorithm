@@ -56,7 +56,7 @@ class ScoredTweetsCrMixerCandidatePipelineConfig @Inject() (
   override val candidateSource: BaseCandidateSource[t.CrMixerTweetRequest, t.TweetRecommendation] =
     crMixerTweetRecommendationsCandidateSource
 
-  private val MaxTweetsToFetch = 500
+  private val MaxTweetsToFetch = 420
 
   override val queryTransformer: CandidatePipelineQueryTransformer[
     ScoredTweetsQuery,
