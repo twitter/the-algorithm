@@ -55,7 +55,7 @@ Pipeline may run multiple Candidate Pipelines to fetch candidates to include in 
 
 Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
 (e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
+and rank the results of homogenous Candidate Pipelines so that the top-ranked ones can be returned.
 These pipelines also marshall candidates into a domain object and then into a transport object
 to return to the caller.
 
@@ -63,7 +63,7 @@ Candidate Pipelines fetch candidates from underlying Candidate Sources and perfo
 operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
 and hydrating features.
 
-The sections below describe the high level pipeline structure (non-exhaustive) for the main Home
+The sections below describe the high-level pipeline structure (non-exhaustive) for the main Home
 Timeline tabs powered by Home Mixer.
 
 ### For You
