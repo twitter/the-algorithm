@@ -72,7 +72,7 @@ trait ScoringPipelineConfig[-Query <: PipelineQuery, Candidate <: UniversalNoun[
 
   /**
    * Ranker Function for candidates. Scorers are executed in parallel.
-   * Note: Order does not matter, this could be a Set if Set was covariant over it's type.
+   * Note: Order does not matter, this could be a Set if Set was covariant over its type.
    */
   def scorers: Seq[Scorer[Query, Candidate]]
 

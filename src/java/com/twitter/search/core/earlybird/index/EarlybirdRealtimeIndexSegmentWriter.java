@@ -514,7 +514,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
           // chokes on a given document), then it's
           // non-aborting and (above) this one document
           // will be marked as deleted, but still
-          // consume a docID
+          // consume a docID.
 
           int posIncr = posIncrAttribute.getPositionIncrement();
           currentPosition += posIncr;

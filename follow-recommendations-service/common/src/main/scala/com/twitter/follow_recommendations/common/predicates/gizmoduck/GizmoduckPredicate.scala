@@ -39,8 +39,8 @@ import javax.inject.Singleton
 
 /**
  * In this filter, we want to check 4 categories of conditions:
- *   - if candidate is discoverable given that it's from an address-book/phone-book based source
- *   - if candidate is unsuitable based on it's safety sub-fields in gizmoduck
+ *   - if candidate is discoverable given that its from an address-book/phone-book based source
+ *   - if candidate is unsuitable based on its safety sub-fields in gizmoduck
  *   - if candidate is withheld because of country-specific take-down policies
  *   - if candidate is marked as bad/worst based on blink labels
  * We fail close on the query as this is a product-critical filter

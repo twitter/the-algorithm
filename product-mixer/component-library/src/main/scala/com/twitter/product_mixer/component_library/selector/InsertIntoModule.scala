@@ -17,7 +17,7 @@ private[selector] object InsertIntoModule {
     otherCandidates: Queue[CandidateWithDetails])
 
   /**
-   * Given a Seq of `candidates`, returns the first module with it's index that matches the
+   * Given a Seq of `candidates`, returns the first module with its index that matches the
    * `targetModuleCandidatePipeline` with all the [[ItemCandidateWithDetails]] that match the
    * `candidatePipeline` added to the `itemsToInsert` and the remaining candidates, including the
    * module, in the `otherCandidates`

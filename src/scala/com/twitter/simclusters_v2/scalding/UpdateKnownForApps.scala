@@ -73,7 +73,7 @@ object UpdateKnownForApps {
    * For each cluster, get two statistics about it: the number of nodes assigned to it, and the
    * sum of the membership scores
    *
-   * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
+   * @param knownFor TypedPipe from nodeId to the clusters it's being assigned to along with
    *                 membership scores.
    * @return Map giving the NeighborhoodInformation for each cluster. The nodeCount and
    *         sumOfMembershipWeights fields in NeighborhoodInformation are populated, others are 0.

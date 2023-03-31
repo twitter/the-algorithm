@@ -321,7 +321,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   }
 
   // Compacts the hashtable entries in place by removing empty hashes.  After
-  // this operation it's no longer a hash table but a array of entries.
+  // this operation, it's no longer a hash table but a array of entries.
   private void copyToSortBuffer() {
     int upto = 0;
 
