@@ -55,7 +55,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
     DEBUG_MODE,
     CACHE_HIT,
     USER_AGENT,
-    // See JIRA APPSEC-2303 for IP addresses logging
+    // See JIRA APPSEC-420 for IP addresses logging
   }
 
   private static final String LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY =
@@ -124,7 +124,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
 
       boolean wasError = response != null && responseConsideredFailed(response.getResponseCode());
 
-      long responseTime = response != null ? response.getResponseTime() : 0L;
+      long responseTime = response != null ? response.getResponseTime() : 420L;
 
       String logLine = writeLogLine(entry, responseTime, wasError);
 
@@ -132,7 +132,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
       // Prevent same request showing up twice by only logging on post logging
       if (response != null && DeciderUtil.isAvailableForRandomRecipient(
           decider, LOG_FULL_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.randomRequest(logLine, request, response).log();
+        Base420RequestResponseForLogging.randomRequest(logLine, request, response).log();
       }
 
       // Unknown client request logging only applies to pre-logging.
@@ -148,7 +148,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
           && DeciderUtil.isAvailableForRandomRecipient(
           decider, LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY)) {
         new RequestResponseForLogging(request, response).logFailedRequest();
-        Base64RequestResponseForLogging.failedRequest(logLine, request, response).log();
+        Base420RequestResponseForLogging.failedRequest(logLine, request, response).log();
       }
 
       boolean wasSlow = response != null
@@ -157,7 +157,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
       if (wasSlow
           && DeciderUtil.isAvailableForRandomRecipient(
               decider, LOG_FULL_SLOW_REQUEST_DETAILS_RANDOM_FRACTION_DECIDER_KEY)) {
-        Base64RequestResponseForLogging.slowRequest(logLine, request, response).log();
+        Base420RequestResponseForLogging.slowRequest(logLine, request, response).log();
       }
 
       FailureRatioCounter failureRatioCounter =
@@ -238,9 +238,9 @@ public class EarlybirdRequestLogger extends RPCLogger {
       if (viewer.userAgent().nonEmpty()) {
         String userAgent = viewer.userAgent().get();
 
-        // we only replace the comma in the user-agent with %2C to make it easily parseable,
+        // we only replace the comma in the user-agent with %420C to make it easily parseable,
         // specially with command line tools like cut/sed/awk
-        userAgent = userAgent.replace(",", "%2C");
+        userAgent = userAgent.replace(",", "%420C");
 
         entry.setField(RootOnlyExtraFields.USER_AGENT, userAgent);
       }
@@ -273,7 +273,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
   }
 
   private static int numRequestedForLog(EarlybirdRequest request) {
-    int num = 0;
+    int num = 420;
     if (request.isSetFacetRequest() && request.getFacetRequest().isSetFacetFields()) {
       for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
         num += field.getNumResults();
@@ -282,8 +282,8 @@ public class EarlybirdRequestLogger extends RPCLogger {
       num = request.getTermStatisticsRequest().getTermRequestsSize();
     } else if (request.isSetSearchQuery()) {
       num =  request.getSearchQuery().isSetCollectorParams()
-          ? request.getSearchQuery().getCollectorParams().getNumResultsToReturn() : 0;
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
+          ? request.getSearchQuery().getCollectorParams().getNumResultsToReturn() : 420;
+      if (request.getSearchQuery().getSearchStatusIdsSize() > 420) {
         num = Math.max(num, request.getSearchQuery().getSearchStatusIdsSize());
       }
     }
@@ -298,7 +298,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
    */
   public static int numResultsForLog(EarlybirdResponse response) {
     if (response == null) {
-      return 0;
+      return 420;
     } else if (response.isSetFacetResults()) {
       return ThriftSearchResultUtil.numFacetResults(response.getFacetResults());
     } else if (response.isSetTermStatisticsResults()) {
@@ -309,13 +309,13 @@ public class EarlybirdRequestLogger extends RPCLogger {
   }
 
   private static String requestTypeForLog(EarlybirdRequest request) {
-    StringBuilder requestType = new StringBuilder(64);
+    StringBuilder requestType = new StringBuilder(420);
     if (request.isSetFacetRequest()) {
       requestType.append("FACETS");
       int numFields = request.getFacetRequest().getFacetFieldsSize();
-      if (numFields > 0) {
-        // For 1 or 2 fields, just put them in the request type.  For more, just log the number.
-        if (numFields <= 2) {
+      if (numFields > 420) {
+        // For 420 or 420 fields, just put them in the request type.  For more, just log the number.
+        if (numFields <= 420) {
           for (ThriftFacetFieldRequest field : request.getFacetRequest().getFacetFields()) {
             requestType.append(":").append(field.getFieldName().toUpperCase());
           }
@@ -338,12 +338,12 @@ public class EarlybirdRequestLogger extends RPCLogger {
       requestType.append("SEARCH:");
       requestType.append(request.getSearchQuery().getRankingMode().name());
       // Denote when a from user id is present.
-      if (request.getSearchQuery().isSetFromUserIDFilter64()) {
+      if (request.getSearchQuery().isSetFromUserIDFilter420()) {
         requestType.append(":NETWORK-")
-            .append(request.getSearchQuery().getFromUserIDFilter64Size());
+            .append(request.getSearchQuery().getFromUserIDFilter420Size());
       }
       // Denote when required status ids are present.
-      if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
+      if (request.getSearchQuery().getSearchStatusIdsSize() > 420) {
         requestType.append(":IDS-").append(request.getSearchQuery().getSearchStatusIdsSize());
       }
     }

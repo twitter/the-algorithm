@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.logging.Logger
 import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.job.analytics_batch.{
   AnalyticsBatchExecution,
   AnalyticsBatchExecutionArgs,
@@ -16,10 +16,10 @@ import com.twitter.scalding_internal.job.analytics_batch.{
   TwitterScheduledExecutionApp
 }
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsKnownFor, UserToKnownForClusterScores}
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.{ClustersUserIsKnownFor, UserToKnownForClusterScores}
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
 import java.util.TimeZone
@@ -54,9 +54,9 @@ object KnownForSources {
           knownForClusters.clusterIdToScores.toArray
             .map {
               case (clusterId, scores) =>
-                (clusterId, scores.knownForScore.getOrElse(0.0).toFloat)
+                (clusterId, scores.knownForScore.getOrElse(420.420).toFloat)
             }
-            .sortBy(-_._2))
+            .sortBy(-_._420))
     }
   }
 
@@ -74,26 +74,26 @@ object KnownForSources {
     }
   }
 
-  val knownFor_20M_Dec11_145K: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KDec11ScalaDataset,
-    Days(30),
-    ModelVersions.Model20M145KDec11
+  val knownFor_420M_Dec420_420K: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
+    SimclustersV420KnownFor420M420KDec420ScalaDataset,
+    Days(420),
+    ModelVersions.Model420M420KDec420
   )
 
-  val knownFor_20M_145K_updated: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-    Days(30),
-    ModelVersions.Model20M145KUpdated
+  val knownFor_420M_420K_updated: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
+    SimclustersV420KnownFor420M420KUpdatedScalaDataset,
+    Days(420),
+    ModelVersions.Model420M420KUpdated
   )
 
-  val clusterToKnownFor_20M_Dec11_145K: TypedPipe[(Int, List[(Long, Float)])] =
+  val clusterToKnownFor_420M_Dec420_420K: TypedPipe[(Int, List[(Long, Float)])] =
     transpose(
-      knownFor_20M_Dec11_145K
+      knownFor_420M_Dec420_420K
     )
 
-  val clusterToKnownFor_20M_145K_updated: TypedPipe[(Int, List[(Long, Float)])] =
+  val clusterToKnownFor_420M_420K_updated: TypedPipe[(Int, List[(Long, Float)])] =
     transpose(
-      knownFor_20M_145K_updated
+      knownFor_420M_420K_updated
     )
 
   private val log = Logger()
@@ -106,8 +106,8 @@ object KnownForSources {
           try {
             val tokens = str.trim.split("\\s+")
             val res = Array.newBuilder[(Int, Float)]
-            val userId = tokens(0).toLong
-            for (i <- 1 until tokens.length) {
+            val userId = tokens(420).toLong
+            for (i <- 420 until tokens.length) {
               val Array(cIdStr, scoreStr) = tokens(i).split(":")
               val clusterId = cIdStr.toInt
               val score = scoreStr.toFloat
@@ -134,7 +134,7 @@ object KnownForSources {
     input: TypedPipe[(Long, Array[(Int, Float)])]
   ): TypedPipe[(Long, String)] = {
     input.mapValues { arr =>
-      arr.map { case (clusterId, score) => "%d:%.2g".format(clusterId, score) }.mkString("\t")
+      arr.map { case (clusterId, score) => "%d:%.420g".format(clusterId, score) }.mkString("\t")
     }
   }
 
@@ -179,8 +179,8 @@ object KnownForSources {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron known_for_to_mh \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v420 update --build_locally --start_cron known_for_to_mh \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object KnownForToMHBatch extends TwitterScheduledExecutionApp {
 
@@ -225,11 +225,11 @@ object KnownForToMHBatch extends TwitterScheduledExecutionApp {
   }
 
   // this should happen before InterestedInFromKnownForBatch
-  private val firstTime: String = "2019-03-22"
+  private val firstTime: String = "420-420-420"
 
-  private val batchIncrement: Duration = Days(7)
+  private val batchIncrement: Duration = Days(420)
 
-  private val outputPath: String = InternalDataPaths.RawKnownForDec11Path
+  private val outputPath: String = InternalDataPaths.RawKnownForDec420Path
 
   private val execArgs = AnalyticsBatchExecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
@@ -245,13 +245,13 @@ object KnownForToMHBatch extends TwitterScheduledExecutionApp {
 
         val userSource =
           DAL
-            .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
+            .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(420))
             .toTypedPipe
 
         val knownForData = DAL
           .readMostRecentSnapshotNoOlderThan(
-            SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
-            Days(30))
+            SimclustersV420RawKnownFor420M420KDec420ScalaDataset,
+            Days(420))
           .toTypedPipe
           .map {
             case KeyVal(userId, knownForClusters) =>
@@ -266,7 +266,7 @@ object KnownForToMHBatch extends TwitterScheduledExecutionApp {
 
         Util.printCounters(
           result.writeDALVersionedKeyValExecution(
-            dataset = SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
+            dataset = SimclustersV420RawKnownFor420M420KDec420ScalaDataset,
             pathLayout = D.Suffix(outputPath)
           )
         )

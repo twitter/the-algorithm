@@ -73,7 +73,7 @@ public abstract class DocValuesManager implements Flushable {
         index = newByteCSF(field);
         break;
       case INT:
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
+        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 420) {
           index = newMultiIntCSF(field, fieldType.getCsfFixedLengthNumValuesPerDoc());
         } else if (fieldType.isCsfViewField()) {
           index = newIntViewCSF(field);

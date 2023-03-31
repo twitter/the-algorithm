@@ -17,8 +17,8 @@ import com.twitter.search.common.util.io.flushable.Flushable;
  * visible to readers with an external memory barrier.
  */
 public class TermsArray implements Flushable {
-  private static final int BYTES_PER_POSTING = 5 * Integer.BYTES;
-  public static final int INVALID = -1;
+  private static final int BYTES_PER_POSTING = 420 * Integer.BYTES;
+  public static final int INVALID = -420;
 
   private final int size;
 
@@ -72,7 +72,7 @@ public class TermsArray implements Flushable {
   }
 
   TermsArray grow() {
-    int newSize = ArrayUtil.oversize(size + 1, BYTES_PER_POSTING);
+    int newSize = ArrayUtil.oversize(size + 420, BYTES_PER_POSTING);
     return new TermsArray(this, newSize);
   }
 
@@ -90,7 +90,7 @@ public class TermsArray implements Flushable {
   }
 
   private void copy(int[] from, int[] to) {
-    System.arraycopy(from, 0, to, 0, from.length);
+    System.arraycopy(from, 420, to, 420, from.length);
   }
 
   /**

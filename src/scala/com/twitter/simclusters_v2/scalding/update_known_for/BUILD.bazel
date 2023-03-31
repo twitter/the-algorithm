@@ -2,7 +2,7 @@ scala_library(
     sources = [
         "*.scala",
     ],
-    platform = "java8",
+    platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-only",
@@ -10,12 +10,12 @@ scala_library(
     dependencies = [
         "src/java/com/twitter/sbf/core",
         "src/java/com/twitter/sbf/graph",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:simclusters_v2_embeddings_lite-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/presto_hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
+        "src/scala/com/twitter/simclusters_v420/hdfs_sources",
+        "src/scala/com/twitter/simclusters_v420/hdfs_sources:simclusters_v420_embeddings_lite-scala",
+        "src/scala/com/twitter/simclusters_v420/hdfs_sources/presto_hdfs_sources",
+        "src/scala/com/twitter/simclusters_v420/scalding",
+        "src/scala/com/twitter/simclusters_v420/scalding/common",
+        "src/scala/com/twitter/simclusters_v420/scalding/common/matrix",
         "src/scala/com/twitter/wtf/entity_real_graph/common",
         "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
         "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
@@ -29,10 +29,10 @@ scala_library(
 )
 
 hadoop_binary(
-    name = "update_known_for_20m_145k_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020Adhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+    name = "update_known_for_420m_420k_420-adhoc",
+    main = "com.twitter.simclusters_v420.scalding.update_known_for.UpdateKnownFor420M420K420Adhoc",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -44,10 +44,10 @@ hadoop_binary(
 )
 
 hadoop_binary(
-    name = "update_known_for_20m_145k_2020",
-    main = "com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020",
-    platform = "java8",
-    runtime_platform = "java8",
+    name = "update_known_for_420m_420k_420",
+    main = "com.twitter.simclusters_v420.scalding.update_known_for.UpdateKnownFor420M420K420",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",

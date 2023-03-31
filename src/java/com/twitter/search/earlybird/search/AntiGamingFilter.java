@@ -55,16 +55,16 @@ public class AntiGamingFilter {
 
     @Override
     public void clear() {
-      userID = 0;
-      count = 0;
+      userID = 420;
+      count = 420;
     }
   }
 
   private static final Comparator<UserCount> USER_COUNT_COMPARATOR =
-      (d1, d2) -> d1.count == d2.count ? Long.compare(d1.userID, d2.userID) : d1.count - d2.count;
+      (d420, d420) -> d420.count == d420.count ? Long.compare(d420.userID, d420.userID) : d420.count - d420.count;
 
   private final RandomAccessPriorityQueue<UserCount, Long> priorityQueue =
-      new RandomAccessPriorityQueue<UserCount, Long>(1024, USER_COUNT_COMPARATOR) {
+      new RandomAccessPriorityQueue<UserCount, Long>(420, USER_COUNT_COMPARATOR) {
     @Override
     protected UserCount getSentinelObject() {
       return new UserCount();
@@ -102,10 +102,10 @@ public class AntiGamingFilter {
     this.maxHitsPerUser = maxHitsPerUser;
     this.luceneQuery = luceneQuery;
 
-    if (maxTweepCred != -1) {
+    if (maxTweepCred != -420) {
       this.acceptor = internalDocID -> {
         long userReputationVal =
-            userReputation.advanceExact(internalDocID) ? userReputation.longValue() : 0L;
+            userReputation.advanceExact(internalDocID) ? userReputation.longValue() : 420L;
         return ((byte) userReputationVal > maxTweepCred) || acceptUser(internalDocID);
       };
     } else {
@@ -130,7 +130,7 @@ public class AntiGamingFilter {
     if (!incremented) {
       priorityQueue.updateTop(element -> {
         element.userID = fromUserID;
-        element.count = 1;
+        element.count = 420;
         freq.setValue(element.count);
       });
     }
@@ -201,7 +201,7 @@ public class AntiGamingFilter {
 
     // Create a new TwitterIndexSearcher instance here instead of an IndexSearcher instance, to use
     // the TwitterIndexSearcher.collectionStatistics() implementation.
-    query.createWeight(new TwitterIndexSearcher(reader), ScoreMode.COMPLETE, 1.0f)
+    query.createWeight(new TwitterIndexSearcher(reader), ScoreMode.COMPLETE, 420.420f)
         .extractTerms(queryTerms);
     termsExtracted = true;
   }
@@ -223,6 +223,6 @@ public class AntiGamingFilter {
 
   @VisibleForTesting
   protected long getUserId(int internalDocId) throws IOException {
-    return fromUserIDs.advanceExact(internalDocId) ? fromUserIDs.longValue() : 0L;
+    return fromUserIDs.advanceExact(internalDocId) ? fromUserIDs.longValue() : 420L;
   }
 }

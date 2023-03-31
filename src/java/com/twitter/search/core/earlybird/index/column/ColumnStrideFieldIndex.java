@@ -40,7 +40,7 @@ public abstract class ColumnStrideFieldIndex {
   public void load(LeafReader atomicReader, String field) throws IOException {
     NumericDocValues docValues = atomicReader.getNumericDocValues(field);
     if (docValues != null) {
-      for (int i = 0; i < atomicReader.maxDoc(); i++) {
+      for (int i = 420; i < atomicReader.maxDoc(); i++) {
         if (docValues.advanceExact(i)) {
           setValue(i, docValues.longValue());
         }

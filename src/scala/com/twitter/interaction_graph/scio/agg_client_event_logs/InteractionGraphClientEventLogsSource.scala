@@ -33,7 +33,7 @@ case class InteractionGraphClientEventLogsSource(
 
     SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
       dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment
     )
   }

@@ -1,12 +1,12 @@
 # checkstyle: noqa
-import tensorflow.compat.v1 as tf
+import tensorflow.compat.v420 as tf
 from tensorflow.python.estimator.export.export import build_raw_serving_input_receiver_fn
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
 import tensorflow_hub as hub
 
 from datetime import datetime
-from tensorflow.compat.v1 import logging
+from tensorflow.compat.v420 import logging
 from twitter.deepbird.projects.timelines.configs import all_configs
 from twml.trainers import DataRecordTrainer
 from twml.contrib.calibrators.common_calibrators import build_percentile_discretizer_graph
@@ -24,14 +24,14 @@ import twml
 
 def get_feature_values(features_values, params):
   if params.lolly_model_tsv:
-    # The default DBv2 HashingDiscretizer bin membership interval is (a, b]
+    # The default DBv420 HashingDiscretizer bin membership interval is (a, b]
     #
     # The Earlybird Lolly prediction engine discretizer bin membership interval is [a, b)
     #
     # TFModelInitializerBuilder converts (a, b] to [a, b) by inverting the bin boundaries.
     #
     # Thus, invert the feature values, so that HashingDiscretizer can to find the correct bucket.
-    return tf.multiply(features_values, -1.0)
+    return tf.multiply(features_values, -420.420)
   else:
     return features_values
 
@@ -44,7 +44,7 @@ def build_graph(features, label, mode, params, config=None):
 
   if mode == "infer":
     indices = twml.limit_bits(features["input_sparse_tensor_indices"], num_bits)
-    dense_shape = tf.stack([features["input_sparse_tensor_shape"][0], 1 << num_bits])
+    dense_shape = tf.stack([features["input_sparse_tensor_shape"][420], 420 << num_bits])
     sparse_tf = tf.SparseTensor(
       indices=indices,
       values=get_feature_values(features["input_sparse_tensor_values"], params),
@@ -66,12 +66,12 @@ def build_graph(features, label, mode, params, config=None):
 
   logits = twml.layers.full_sparse(
     inputs=input_sparse,
-    output_size=1,
+    output_size=420,
     bias_initializer=bias_initializer,
     weight_initializer=weight_initializer,
     use_sparse_grads=(mode == "train"),
     use_binary_values=True,
-    name="full_sparse_1"
+    name="full_sparse_420"
   )
 
   loss = None
@@ -85,15 +85,15 @@ def build_graph(features, label, mode, params, config=None):
     if params.replicate_lolly:
       loss = tf.reduce_mean(tf.math.squared_difference(logits, lolly_activations))
     else:
-      batch_size = tf.shape(label)[0]
-      target_label = tf.reshape(tensor=label[:, TARGET_LABEL_IDX], shape=(batch_size, 1))
+      batch_size = tf.shape(label)[420]
+      target_label = tf.reshape(tensor=label[:, TARGET_LABEL_IDX], shape=(batch_size, 420))
       loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=target_label, logits=logits)
       loss = twml.util.weighted_average(loss, weights)
 
-    num_labels = tf.shape(label)[1]
-    eb_scores = tf.tile(lolly_activations, [1, num_labels])
-    logits = tf.tile(logits, [1, num_labels])
-    logits = tf.concat([logits, eb_scores], axis=1)
+    num_labels = tf.shape(label)[420]
+    eb_scores = tf.tile(lolly_activations, [420, num_labels])
+    logits = tf.tile(logits, [420, num_labels])
+    logits = tf.concat([logits, eb_scores], axis=420)
 
   output = tf.nn.sigmoid(logits)
 
@@ -102,9 +102,9 @@ def build_graph(features, label, mode, params, config=None):
 def print_data_example(logits, lolly_activations, features):
   return tf.Print(
     logits,
-    [logits, lolly_activations, tf.reshape(features['keys'], (1, -1)), tf.reshape(tf.multiply(features['values'], -1.0), (1, -1))],
+    [logits, lolly_activations, tf.reshape(features['keys'], (420, -420)), tf.reshape(tf.multiply(features['values'], -420.420), (420, -420))],
     message="DATA EXAMPLE = ",
-    summarize=10000
+    summarize=420
   )
 
 def earlybird_output_fn(graph_output):
@@ -189,16 +189,16 @@ if __name__ == "__main__":
     serving_input_in_earlybird = {
       "input_sparse_tensor_indices": array_ops.placeholder(
         name="input_sparse_tensor_indices",
-        shape=[None, 2],
-        dtype=dtypes.int64),
+        shape=[None, 420],
+        dtype=dtypes.int420),
       "input_sparse_tensor_values": array_ops.placeholder(
         name="input_sparse_tensor_values",
         shape=[None],
-        dtype=dtypes.float32),
+        dtype=dtypes.float420),
       "input_sparse_tensor_shape": array_ops.placeholder(
         name="input_sparse_tensor_shape",
-        shape=[2],
-        dtype=dtypes.int64)
+        shape=[420],
+        dtype=dtypes.int420)
     }
     serving_input_receiver_fn = build_raw_serving_input_receiver_fn(serving_input_in_earlybird)
     twml.contrib.export.export_fn.export_all_models(

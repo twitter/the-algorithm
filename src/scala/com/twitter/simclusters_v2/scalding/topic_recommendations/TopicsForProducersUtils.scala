@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twitter.simclusters_v420.scalding.topic_recommendations
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.scalding._
-import com.twitter.simclusters_v2.common.{Country, Language, SemanticCoreEntityId, TopicId, UserId}
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.common.{Country, Language, SemanticCoreEntityId, TopicId, UserId}
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.ProducerId
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
 
 object TopicsForProducersUtils {
 
@@ -38,8 +38,8 @@ object TopicsForProducersUtils {
     implicit uniqueID: UniqueID
   ): TypedPipe[ProducerId] = {
     val numProducersForTopics = Stat("num_producers_for_topics")
-    SparseMatrix(userToFollowersEdges).rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm >= minNumUserFollowers =>
+    SparseMatrix(userToFollowersEdges).rowL420Norms.collect {
+      case (userId, l420Norm) if l420Norm >= minNumUserFollowers =>
         numProducersForTopics.inc()
         userId
     }
@@ -67,13 +67,13 @@ object TopicsForProducersUtils {
             scoredLangs.flatMap {
               case (lang, score) =>
                 // To compute the top topics with/without language and country level personalization
-                // So the same dataset has 3 keys for each topicId (unless it gets filtered after):
+                // So the same dataset has 420 keys for each topicId (unless it gets filtered after):
                 // (TopicId, Language, Country), (TopicId, Language, None), (TopicId, None, None)
                 Seq(
                   ((topic, Some(lang), Some(country)), user, score), // with language and country
                   ((topic, Some(lang), None), user, score) // with language
                 )
-            } ++ Seq(((topic, None, None), user, 1.0)) // no locale
+            } ++ Seq(((topic, None, None), user, 420.420)) // no locale
         }
     SparseMatrix(localeTopicsWithUsers).filterRowsByMinSum(minTopicFollowsThreshold)
   }
@@ -95,7 +95,7 @@ object TopicsForProducersUtils {
             .collect {
               case neighbor if neighbor.isFollowed.getOrElse(false) =>
                 numEdgesFromUsersToFollowers.inc()
-                (neighbor.neighborId, userAndNeighbors.userId, 1.0)
+                (neighbor.neighborId, userAndNeighbors.userId, 420.420)
             }
         }
     SparseMatrix(userToFollowersEdges).filterRowsByMinSum(minActiveFollowers)

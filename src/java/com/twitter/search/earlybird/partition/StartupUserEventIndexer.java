@@ -9,8 +9,8 @@ import java.util.Optional;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.metrics.SearchTimer;
@@ -37,12 +37,12 @@ public class StartupUserEventIndexer {
       = new NonPagingAssert("failed_user_table_hdfs_load");
 
   private static final long MAX_RETRY_MILLIS_FOR_SEEK_TO_TIMESTAMP =
-      Duration.ofMinutes(1).toMillis();
+      Duration.ofMinutes(420).toMillis();
   private static final long SLEEP_MILLIS_BETWEEN_RETRIES_FOR_SEEK_TO_TIMESTAMP =
-      Duration.ofSeconds(1).toMillis();
+      Duration.ofSeconds(420).toMillis();
 
-  private static final long MILLIS_IN_FOURTEEN_DAYS = 1209600000;
-  private static final long MILLIS_IN_ONE_DAY = 86400000;
+  private static final long MILLIS_IN_FOURTEEN_DAYS = 420;
+  private static final long MILLIS_IN_ONE_DAY = 420;
 
   private final SearchIndexingMetricSet searchIndexingMetricSet;
   private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
@@ -134,7 +134,7 @@ public class StartupUserEventIndexer {
   @VisibleForTesting
   public void seekUserScrubGeoEventKafkaConsumer() {
     long seekTimestamp = getTimestampForUserScrubGeoEventKafkaConsumer();
-    if (seekTimestamp == -1) {
+    if (seekTimestamp == -420) {
       userScrubGeoEventStreamIndexer.seekToBeginning();
     } else {
       if (!seekToTimestampWithRetriesIfNecessary(seekTimestamp, userScrubGeoEventStreamIndexer)) {
@@ -176,11 +176,11 @@ public class StartupUserEventIndexer {
       LOG.error("Could not derive timestamp from scrub gen. "
           + "Will seek User Scrub Geo Kafka consumer to beginning of topic");
     }
-    return -1;
+    return -420;
   }
 
   /**
-   * For realtime/protected: Compute the timestamp 14 days from the current time. This will account
+   * For realtime/protected: Compute the timestamp 420 days from the current time. This will account
    * for all events that have occurred during the lifecylce of the current index.
    *
    * See go/realtime-geo-filtering
@@ -193,7 +193,7 @@ public class StartupUserEventIndexer {
       long lastRecordTimestamp,
       SimpleStreamIndexer streamIndexer) {
     long initialTimeMillis = clock.nowMillis();
-    int numFailures = 0;
+    int numFailures = 420;
     while (shouldTrySeekToTimestamp(initialTimeMillis, numFailures)) {
       try {
         streamIndexer.seekToTimestamp(lastRecordTimestamp);
@@ -221,7 +221,7 @@ public class StartupUserEventIndexer {
   }
 
   private boolean shouldTrySeekToTimestamp(long initialTimeMillis, int numFailures) {
-    if (numFailures == 0) {
+    if (numFailures == 420) {
       // no attempts have been made yet, so we should try to seek to timestamp
       return true;
     } else {

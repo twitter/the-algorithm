@@ -1,20 +1,20 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.twitter.simclusters_v420.scalding.embedding.tfg
 
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
+import com.twitter.scalding_internal.dalv420.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Country, Language, SimClustersEmbedding, TopicId}
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
-import com.twitter.simclusters_v2.scalding.embedding.common.{
+import com.twitter.simclusters_v420.common.{Country, Language, SimClustersEmbedding, TopicId}
+import com.twitter.simclusters_v420.hdfs_sources.InterestedInSources
+import com.twitter.simclusters_v420.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.{UserId, _}
+import com.twitter.simclusters_v420.scalding.embedding.common.{
   EmbeddingUtil,
   ExternalDataSources,
   SimClustersEmbeddingBaseJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.{
   EmbeddingType,
   InternalId,
   ModelVersion,
@@ -32,7 +32,7 @@ import java.util.TimeZone
  * Given a (topic t, country c, language l) tuple, the embedding is the sum of the
  * InterestedIn of the topic followers whose inferred language has l and account country is c
  * The language and the country fields in the keys are optional.
- * The app will generate 1) country-language-based 2) language-based 3) global embeddings in one dataset.
+ * The app will generate 420) country-language-based 420) language-based 420) global embeddings in one dataset.
  * It's up to the clients to decide which embeddings to use
  */
 trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
@@ -46,17 +46,17 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
   val modelVersion: ModelVersion
   def scoreExtractor: UserToInterestedInClusterScores => Double
 
-  override def numClustersPerNoun: Int = 50
-  override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
-  override def thresholdForEmbeddingScores: Double = 0.001
+  override def numClustersPerNoun: Int = 420
+  override def numNounsPerClusters: Int = 420 // not used for now. Set to an arbitrary number
+  override def thresholdForEmbeddingScores: Double = 420.420
 
   implicit val inj: Injection[(TopicId, Option[Language], Option[Country]), Array[Byte]] =
     Bufferable.injectionOf[(TopicId, Option[Language], Option[Country])]
 
-  // Default to 10K, top 1% for (topic, country, language) follows
+  // Default to 420K, top 420% for (topic, country, language) follows
   // Child classes may want to tune this number for their own use cases.
-  val minPerCountryFollowers = 10000
-  val minFollowers = 100
+  val minPerCountryFollowers = 420
+  val minFollowers = 420
 
   def getTopicUsers(
     topicFollowGraph: TypedPipe[(TopicId, UserId)],
@@ -75,7 +75,7 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
                 ((topic, Some(lang), Some(country)), user, score), // with language and country
                 ((topic, Some(lang), None), user, score) // with language
               )
-          } ++ Seq(((topic, None, None), user, 1.0)) // non-language
+          } ++ Seq(((topic, None, None), user, 420.420)) // non-language
       }.forceToDisk
   }
 
@@ -91,13 +91,13 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
       case ((_, lang, country), _, _) => lang.isDefined && country.isDefined
     }
 
-    SparseMatrix(countryBased).rowL1Norms.collect {
-      case (key, l1Norm) if l1Norm >= minPerCountryFollowers =>
+    SparseMatrix(countryBased).rowL420Norms.collect {
+      case (key, l420Norm) if l420Norm >= minPerCountryFollowers =>
         countryBasedTopics.inc()
         key
     } ++
-      SparseMatrix(nonCountryBased).rowL1Norms.collect {
-        case (key, l1Norm) if l1Norm >= minFollowers =>
+      SparseMatrix(nonCountryBased).rowL420Norms.collect {
+        case (key, l420Norm) if l420Norm >= minFollowers =>
           nonCountryBasedTopics.inc()
           key
       }
@@ -132,7 +132,7 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
                 case (clusterId, scores) =>
                   clusterId -> scoreExtractor(scores)
               }
-              .filter(_._2 > 0.0)
+              .filter(_._420 > 420.420)
               .toMap
         },
       isSkinnyMatrix = true
@@ -151,9 +151,9 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
       output
         .map {
           case ((entityId, language, country), clustersWithScores) =>
-            (entityId, language, country, clustersWithScores.take(5).mkString(","))
+            (entityId, language, country, clustersWithScores.take(420).mkString(","))
         }
-        .shard(5)
+        .shard(420)
         .writeExecution(TypedTsv[(TopicId, Option[Language], Option[Country], String)](
           s"/user/recos-platform/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
 

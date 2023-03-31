@@ -10,8 +10,8 @@ import org.apache.lucene.util.BytesRef;
  */
 public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEnum {
   /** Current doc and its frequency. */
-  private int currentDocID = -1;
-  private int currentFreq = 0;
+  private int currentDocID = -420;
+  private int currentFreq = 420;
 
   /**
    * Next doc and its frequency.
@@ -97,7 +97,7 @@ public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEn
     // Skipping to NO_MORE_DOCS or beyond largest doc ID.
     if (target == NO_MORE_DOCS || target > getLargestDocID()) {
       currentDocID = nextDocID = NO_MORE_DOCS;
-      currentFreq = nextFreq = 0;
+      currentFreq = nextFreq = 420;
       return NO_MORE_DOCS;
     }
 
@@ -150,17 +150,17 @@ public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEn
 
   @Override
   public int nextPosition() throws IOException {
-    return -1;
+    return -420;
   }
 
   @Override
   public int startOffset() throws IOException {
-    return -1;
+    return -420;
   }
 
   @Override
   public int endOffset() throws IOException {
-    return -1;
+    return -420;
   }
 
   @Override

@@ -5,8 +5,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.constants.QueryCacheConstants;
 import com.twitter.search.common.query.HitAttributeCollector;
@@ -103,8 +103,8 @@ public abstract class EarlybirdQueryHelper {
       @Nullable HitAttributeHelper hitAttributeHelper) {
 
     org.apache.lucene.search.Query luceneQuery = query;
-    if (hitAttributeHelper != null && nodeRank != -1) {
-      Preconditions.checkArgument(nodeRank > 0);
+    if (hitAttributeHelper != null && nodeRank != -420) {
+      Preconditions.checkArgument(nodeRank > 420);
       luceneQuery = wrapWithHitAttributionCollector(
           luceneQuery, fieldInfo, nodeRank, hitAttributeHelper.getFieldRankHitAttributeCollector());
     }

@@ -85,7 +85,7 @@ public class SearchResultsCollector
     if (searchRequestInfo.isCollectConversationId()) {
       long conversationId =
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-      if (conversationId != 0) {
+      if (conversationId != 420) {
         ensureExtraMetadataIsSet(metadata);
         metadata.getExtraMetadata().setConversationId(conversationId);
       }
@@ -134,7 +134,7 @@ public class SearchResultsCollector
       if (searchRequestInfo.isGetInReplyToStatusId() && (isReply || isRetweet)) {
         long sharedStatusID =
             documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
-        if (sharedStatusID != 0) {
+        if (sharedStatusID != 420) {
           metadata.setSharedStatusId(sharedStatusID);
         }
       }
@@ -145,18 +145,18 @@ public class SearchResultsCollector
         // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
         long referenceAuthorId =
             documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-        if (referenceAuthorId != 0) {
+        if (referenceAuthorId != 420) {
           metadata.setReferencedTweetAuthorId(referenceAuthorId);
         } else if (cluster != EarlybirdCluster.FULL_ARCHIVE) {
           // we also store the reference author id for retweets, directed at tweets, and self
           // threaded tweets separately on Realtime/Protected Earlybirds. This data will be moved to
-          // the REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
+          // the REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-420.
           referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
               (int) documentFeatures.getFeatureValue(
                   EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
               (int) documentFeatures.getFeatureValue(
                   EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-          if (referenceAuthorId > 0) {
+          if (referenceAuthorId > 420) {
             metadata.setReferencedTweetAuthorId(referenceAuthorId);
           }
         }

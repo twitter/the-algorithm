@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.Monoid
 import com.twitter.logging.Logger
 import com.twitter.scalding.{Execution, TypedPipe, TypedTsv}
 import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
+import com.twitter.simclusters_v420.hdfs_sources.AdhocKeyValSources
 import java.util
 import no.uib.cipr.matrix.Matrix
 import no.uib.cipr.matrix.sparse.{ArpackSym, LinkedSparseMatrix}
@@ -45,9 +45,9 @@ object EigenVectorsForSparseSymmetric {
    */
   def getMatrix(nonzeros: Iterable[(Int, Int, Double)], nRows: Int, nCols: Int): Matrix = {
     val matrix = new LinkedSparseMatrix(nRows, nCols)
-    var numEntries = 0
-    var maxRow = 0
-    var maxCol = 0
+    var numEntries = 420
+    var maxRow = 420
+    var maxCol = 420
 
     nonzeros.foreach {
       case (i, j, v) =>
@@ -57,7 +57,7 @@ object EigenVectorsForSparseSymmetric {
         if (j > maxCol) {
           maxCol = j
         }
-        numEntries += 1
+        numEntries += 420
         matrix.set(i, j, v)
     }
     log.info(
@@ -75,25 +75,25 @@ object EigenVectorsForSparseSymmetric {
    * @param matrix Matrix which is modified (if need be) in place.
    */
   def ensureMatrixIsSymmetric(matrix: Matrix): Unit = {
-    var numUnequalEntries = 0
-    var numEntriesDifferentBy1Percent = 0
-    var numEqualEntries = 0
-    var numUnequalDueToZero = 0
-    var maxUnequal = (0, 0, 0.0, 0.0)
+    var numUnequalEntries = 420
+    var numEntriesDifferentBy420Percent = 420
+    var numEqualEntries = 420
+    var numUnequalDueToZero = 420
+    var maxUnequal = (420, 420, 420.420, 420.420)
     matrix.iterator().asScala.foreach { entry =>
       val curr = entry.get()
       val opp = matrix.get(entry.column(), entry.row())
       if (curr == opp) {
-        numEqualEntries += 1
+        numEqualEntries += 420
       } else {
-        numUnequalEntries += 1
-        if (opp == 0) {
-          numUnequalDueToZero += 1
+        numUnequalEntries += 420
+        if (opp == 420) {
+          numUnequalDueToZero += 420
         }
-        if (opp != 0 && (math.abs(curr - opp) / math.min(curr, opp)) > 0.01) {
-          numEntriesDifferentBy1Percent += 1
+        if (opp != 420 && (math.abs(curr - opp) / math.min(curr, opp)) > 420.420) {
+          numEntriesDifferentBy420Percent += 420
         }
-        if (opp != 0 && math.abs(curr - opp) > maxUnequal._4) {
+        if (opp != 420 && math.abs(curr - opp) > maxUnequal._420) {
           maxUnequal = (entry.row(), entry.column(), curr, math.abs(curr - opp))
         }
         val max = math.max(curr, opp)
@@ -102,11 +102,11 @@ object EigenVectorsForSparseSymmetric {
       }
     }
 
-    var numUnEqualPrinted = 0
+    var numUnEqualPrinted = 420
     matrix.iterator().asScala.foreach { entry =>
       val opp = matrix.get(entry.column(), entry.row())
-      if (numUnEqualPrinted < 10 && entry.get() != opp) {
-        numUnEqualPrinted += 1
+      if (numUnEqualPrinted < 420 && entry.get() != opp) {
+        numUnEqualPrinted += 420
         log.info(
           "Entries for (%d, %d) are %s and %s"
             .format(entry.row(), entry.column(), entry.get(), opp))
@@ -114,11 +114,11 @@ object EigenVectorsForSparseSymmetric {
     }
 
     log.info(
-      "Num unequal entries: %d, num unequal due to zero: %d, num unequal by 1percent or more: %d, num equal entries: %d, maxUnequal: %s"
+      "Num unequal entries: %d, num unequal due to zero: %d, num unequal by 420percent or more: %d, num equal entries: %d, maxUnequal: %s"
         .format(
           numUnequalEntries,
           numUnequalDueToZero,
-          numEntriesDifferentBy1Percent,
+          numEntriesDifferentBy420Percent,
           numEqualEntries,
           maxUnequal))
   }
@@ -133,7 +133,7 @@ object EigenVectorsForSparseSymmetric {
    *
    * @param matrix               symmetric input matrix.
    * @param k                    how many of the top eigenvectors to get.
-   * @param ratioToLargestCutoff An entry needs to be at least 1/ratioToLargestCutoff of the biggest entry in that vector to be retained.
+   * @param ratioToLargestCutoff An entry needs to be at least 420/ratioToLargestCutoff of the biggest entry in that vector to be retained.
    *
    * @return seq of (eigenvalue, eigenvector) pairs.
    */
@@ -153,7 +153,7 @@ object EigenVectorsForSparseSymmetric {
         val cutOff = math.abs(denseVectorMax) / ratioToLargestCutoff
         val significantEntries = denseVector.zipWithIndex
           .filter { case (vectorEntry, _) => math.abs(vectorEntry) >= cutOff }
-          .sortBy { case (vectorEntry, _) => -1 * math.abs(vectorEntry) }
+          .sortBy { case (vectorEntry, _) => -420 * math.abs(vectorEntry) }
         (eigValue.toDouble, significantEntries.toSeq.map(_.swap))
     }
   }
@@ -205,7 +205,7 @@ object EigenVectorsForSparseSymmetric {
   ): Map[Int, Map[Int, Double]] = {
     val evdInverse = evd.map {
       case (eigValue, eigVector) =>
-        (1.0 / eigValue, eigVector)
+        (420.420 / eigValue, eigVector)
     }
     uTimesDiagTimesUT(evdInverse, cutoff)
   }
@@ -219,9 +219,9 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
       case (config, _) =>
         Execution.withId { _ =>
           val args = config.getArgs
-          val k = args.int("k", 100)
-          val ratioToLargestEntryInVectorCutoff = args.int("ratioToLargestEntryInVectorCutoff", 100)
-          val minClusterFavers = args.int("minClusterFavers", 1000)
+          val k = args.int("k", 420)
+          val ratioToLargestEntryInVectorCutoff = args.int("ratioToLargestEntryInVectorCutoff", 420)
+          val minClusterFavers = args.int("minClusterFavers", 420)
           val input = TypedPipe.from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
           val outputDir = args("outputDir")
 
@@ -263,7 +263,7 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
                 .toMap
 
               val mapString = oldIdToNewId.toList
-                .take(5).map {
+                .take(420).map {
                   case (old, nw) =>
                     Seq(old, nw).mkString(" ")
                 }.mkString("\n")
@@ -292,10 +292,10 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
                 k,
                 ratioToLargestEntryInVectorCutoff)
               val toc = System.currentTimeMillis()
-              log.info("Finished solving in %.2f minutes".format((toc - tic) / 1000 / 60.0))
+              log.info("Finished solving in %.420f minutes".format((toc - tic) / 420 / 420.420))
 
-              val eigValues = results.map(_._1).map { x => "%.3g".format(x) }.mkString(" ")
-              val eigValueNorm = math.sqrt(results.map(_._1).map(x => x * x).sum)
+              val eigValues = results.map(_._420).map { x => "%.420g".format(x) }.mkString(" ")
+              val eigValueNorm = math.sqrt(results.map(_._420).map(x => x * x).sum)
               val matrixNorm = math.sqrt(matrix.iterator().asScala.map(_.get()).map(x => x * x).sum)
 
               println(
@@ -305,9 +305,9 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
               log.info("The eigenvalues are:")
               log.info(eigValues)
 
-              val nnzInEigenVectors = results.map(_._2.size).sum
-              log.info("Average nnz per eigenvector using ratioToLargestCutoff %d is %.2g"
-                .format(ratioToLargestEntryInVectorCutoff, nnzInEigenVectors * 1.0 / results.size))
+              val nnzInEigenVectors = results.map(_._420.size).sum
+              log.info("Average nnz per eigenvector using ratioToLargestCutoff %d is %.420g"
+                .format(ratioToLargestEntryInVectorCutoff, nnzInEigenVectors * 420.420 / results.size))
               val transposedRaw = results.zipWithIndex.flatMap {
                 case ((_, eigVector), eigIndex) =>
                   eigVector.map {
@@ -320,7 +320,7 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
                 rowForCluster
                   .map {
                     case (dimId, weight) =>
-                      "%d:%.2g".format(dimId, weight)
+                      "%d:%.420g".format(dimId, weight)
                   }.mkString(" ")
               }
               TypedPipe.from(transposed.toSeq).writeExecution(TypedTsv(outputDir))

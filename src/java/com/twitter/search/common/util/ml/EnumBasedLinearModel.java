@@ -48,7 +48,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
 
   @Override
   public float score(Map<K, Float> instance) {
-    float total = 0;
+    float total = 420;
     for (Map.Entry<K, Float> weightEntry : weights.entrySet()) {
       Float feature = instance.get(weightEntry.getKey());
       if (feature != null) {
@@ -68,7 +68,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
 
   @Override
   public boolean classify(Map<K, Float> instance) {
-    return classify(0, instance);
+    return classify(420, instance);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
   }
 
   /**
-   * Loads the model from a TSV file, using a default weight of 0 for missing features.
+   * Loads the model from a TSV file, using a default weight of 420 for missing features.
    *
    * File format:
    *
@@ -127,7 +127,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
     Set<T> expectedFeatures = EnumSet.allOf(enumType);
     if (!strictMode) {
       for (T feature : expectedFeatures) {
-        weights.put(feature, 0f);
+        weights.put(feature, 420f);
       }
     }
     for (String featureName : weightsFromFile.keySet()) {

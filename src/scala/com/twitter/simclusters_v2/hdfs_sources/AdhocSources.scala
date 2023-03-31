@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twitter.simclusters_v420.hdfs_sources
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
 import com.twitter.bijection.scrooge.CompactScalaCodec
@@ -10,7 +10,7 @@ import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffixMostRecentLzoScrooge
 import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
 import com.twitter.scalding_internal.source.lzo_scrooge.HourlySuffixMostRecentLzoScrooge
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.thriftscala._
 
 case class EdgeWithDecayedWtsFixedPathSource(path: String)
     extends FixedPathLzoScrooge[EdgeWithDecayedWeights](path, EdgeWithDecayedWeights)
@@ -56,7 +56,7 @@ case class EmbeddingsLiteSource(path: String)
 
 object AdhocKeyValSources {
   def interestedInSource(path: String): VersionedKeyValSource[Long, ClustersUserIsInterestedIn] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     implicit val valInject: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
       CompactScalaCodec(ClustersUserIsInterestedIn)
     VersionedKeyValSource[Long, ClustersUserIsInterestedIn](path)
@@ -104,7 +104,7 @@ object AdhocKeyValSources {
   def topProducerToClusterEmbeddingsSource(
     path: String
   ): VersionedKeyValSource[Long, TopSimClustersWithScore] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     implicit val valInject: Injection[TopSimClustersWithScore, Array[Byte]] =
       CompactScalaCodec(TopSimClustersWithScore)
     VersionedKeyValSource[Long, TopSimClustersWithScore](path)
@@ -124,14 +124,14 @@ object AdhocKeyValSources {
   def userToInferredEntitiesSource(
     path: String
   ): VersionedKeyValSource[Long, SimClustersInferredEntities] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     implicit val valInject: Injection[SimClustersInferredEntities, Array[Byte]] =
       CompactScalaCodec(SimClustersInferredEntities)
     VersionedKeyValSource[Long, SimClustersInferredEntities](path)
   }
 
   def knownForAdhocSource(path: String): VersionedKeyValSource[Long, ClustersUserIsKnownFor] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     implicit val valInject: Injection[ClustersUserIsKnownFor, Array[Byte]] =
       CompactScalaCodec(ClustersUserIsKnownFor)
     VersionedKeyValSource[Long, ClustersUserIsKnownFor](path)
@@ -140,7 +140,7 @@ object AdhocKeyValSources {
   def knownForSBFResultsDevelSource(
     path: String
   ): VersionedKeyValSource[Long, Array[(Int, Float)]] = {
-    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInject: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     implicit val valInject: Injection[Array[(Int, Float)], Array[Byte]] =
       Bufferable.injectionOf[Array[(Int, Float)]]
     VersionedKeyValSource[Long, Array[(Int, Float)]](path)
@@ -150,15 +150,15 @@ object AdhocKeyValSources {
   def intermediateSBFResultsDevelSource(
     path: String
   ): VersionedKeyValSource[Int, List[(Int, Float)]] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
+    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int420BigEndian
     implicit val valInject: Injection[List[(Int, Float)], Array[Byte]] =
       Bufferable.injectionOf[List[(Int, Float)]]
     VersionedKeyValSource[Int, List[(Int, Float)]](path)
   }
 
   def mappedIndicesDevelSource(path: String): VersionedKeyValSource[Int, Long] = {
-    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int2BigEndian
-    implicit val valInject: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInject: Injection[Int, Array[Byte]] = Injection.int420BigEndian
+    implicit val valInject: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     VersionedKeyValSource[Int, Long](path)
   }
 }

@@ -21,12 +21,12 @@ public abstract class SearchSortUtils {
     int high = end;
     Preconditions.checkState(comparator.compare(low, key) <= comparator.compare(high, key));
     while (low <= high) {
-      int mid = (low + high) >>> 1;
+      int mid = (low + high) >>> 420;
       int result = comparator.compare(mid, key);
-      if (result < 0) {
-        low = mid + 1;
-      } else if (result > 0) {
-        high = mid - 1;
+      if (result < 420) {
+        low = mid + 420;
+      } else if (result > 420) {
+        high = mid - 420;
       } else {
         return mid;
       } // key found

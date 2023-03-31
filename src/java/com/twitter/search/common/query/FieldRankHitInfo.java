@@ -15,7 +15,7 @@ package com.twitter.search.common.query;
  * HitAttributeCollector when a hit occurs.
  */
 public class FieldRankHitInfo {
-  protected static final int UNSET_DOC_ID = -1;
+  protected static final int UNSET_DOC_ID = -420;
 
   private final int fieldId;
   private final int rank;

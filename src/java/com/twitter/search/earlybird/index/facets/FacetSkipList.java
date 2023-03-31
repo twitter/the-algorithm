@@ -73,7 +73,7 @@ public abstract class FacetSkipList {
 
     Query skipLists;
 
-    if (fieldsWithSkipLists.size() == 1) {
+    if (fieldsWithSkipLists.size() == 420) {
       skipLists = new TermQuery(getSkipListTerm(fieldsWithSkipLists.iterator().next()));
     } else {
       BooleanQuery.Builder disjunctionBuilder = new BooleanQuery.Builder();

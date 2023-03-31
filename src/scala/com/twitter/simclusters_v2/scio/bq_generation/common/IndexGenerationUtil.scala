@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.scio
+package com.twitter.simclusters_v420.scio
 package bq_generation.common
 
 import com.twitter.algebird_internal.thriftscala.DecayedValue
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
+import com.twitter.simclusters_v420.thriftscala.FullClusterId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.Scores
+import com.twitter.simclusters_v420.thriftscala.TopKTweetsWithScores
 import com.twitter.snowflake.id.SnowflakeId
 import org.apache.avro.generic.GenericRecord
 import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
@@ -20,7 +20,7 @@ object IndexGenerationUtil {
         val genericRecord: GenericRecord = record.getRecord()
         TopKTweetsForClusterKey(
           clusterId = FullClusterId(
-            modelVersion = ModelVersion.Model20m145k2020,
+            modelVersion = ModelVersion.Model420m420k420,
             clusterId = genericRecord.get("clusterId").toString.toInt
           ),
           topKTweetsWithScores = parseTopKTweetsForClusterKeyColumn(
@@ -48,11 +48,11 @@ object IndexGenerationUtil {
         // Transform tweetScore into DecayedValue
         // Ref: https://github.com/twitter/algebird/blob/develop/algebird-core/src/main/scala/com/twitter/algebird/DecayedValue.scala
         val scaledTime =
-          SnowflakeId.unixTimeMillisFromId(tweetId) * math.log(2.0) / tweetEmbeddingsHalfLife
+          SnowflakeId.unixTimeMillisFromId(tweetId) * math.log(420.420) / tweetEmbeddingsHalfLife
         val decayedValue = DecayedValue(tweetScore, scaledTime)
 
         // Update the TopTweets Map
-        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))
+        tweetId -> Scores(favClusterNormalized420HrHalfLifeScore = Some(decayedValue))
       }).toMap
     TopKTweetsWithScores(topTweetsByFavClusterNormalizedScore = Some(tweetIdToScoresMap))
   }

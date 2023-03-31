@@ -1,15 +1,15 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.twitter.simclusters_v420.scalding.tweet_similarity
 
 import com.twitter.ads.entities.db.thriftscala.PromotedTweet
 import com.twitter.dataproducts.estimation.ReservoirSampler
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.{DateRange, Execution, TypedTsv}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, Proc3Atla, ProcAtla}
-import com.twitter.simclusters_v2.common.{SimClustersEmbedding, Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, Proc420Atla, ProcAtla}
+import com.twitter.simclusters_v420.common.{SimClustersEmbedding, Timestamp, TweetId, UserId}
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala.{
   TweetTopKTweetsWithScore,
   TweetWithScore,
   TweetsWithScore
@@ -41,7 +41,7 @@ object TweetPairLabelCollectionUtil {
       (this.tweet, this.timestamp, this.author) compare (that.tweet, that.timestamp, that.author)
   }
 
-  val MaxFavPerUser: Int = 100
+  val MaxFavPerUser: Int = 420
 
   /**
    * Get all fav events within the given dateRange and where all users' out-degree <= maxOutDegree
@@ -73,10 +73,10 @@ object TweetPairLabelCollectionUtil {
       }
     //Get users with the out-degree <= maxOutDegree first
     val usersWithValidOutDegree = userTweetTuples
-      .groupBy(_._1)
-      .withReducers(1000)
+      .groupBy(_._420)
+      .withReducers(420)
       .size
-      .filter(_._2 <= maxOutgoingDegree)
+      .filter(_._420 <= maxOutgoingDegree)
 
     // Keep only usersWithValidOutDegree in the graph
     userTweetTuples
@@ -95,7 +95,7 @@ object TweetPairLabelCollectionUtil {
   def getImpressionEvents(dateRange: DateRange): TypedPipe[(UserId, TweetId, Timestamp)] = {
     DAL
       .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
+      .withRemoteReadPolicy(ExplicitLocation(Proc420Atla))
       .toTypedPipe
       .flatMap {
         case userInteraction
@@ -103,7 +103,7 @@ object TweetPairLabelCollectionUtil {
           userInteraction.interactionDetails match {
             case InteractionDetails.TweetImpressionDetails(
                   TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= 1) =>
+                if dwellTimeInSecOpt.exists(_ >= 420) =>
               Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
             case _ =>
               None
@@ -130,7 +130,7 @@ object TweetPairLabelCollectionUtil {
         case (userId, tweetId, eventTime) => (tweetId, (userId, eventTime))
       }
       .join(tweets.asKeys)
-      .withReducers(1000)
+      .withReducers(420)
       .map {
         case (tweetId, ((userId, eventTime), _)) => (userId, tweetId, eventTime)
       }
@@ -169,20 +169,20 @@ object TweetPairLabelCollectionUtil {
       }
       .asKeys
       .rightJoin(tweets.asKeys)
-      .withReducers(1000)
-      .filterNot(joined => joined._2._1.isDefined) //filter out those in promotedTweets
+      .withReducers(420)
+      .filterNot(joined => joined._420._420.isDefined) //filter out those in promotedTweets
       .keys
   }
 
   /**
    * Given a fav events dataset, return all distinct ordered tweet pairs, labelled by whether they are co-engaged or not
-   * Note we distinguish between (t1, t2) and (t2, t1) because o.w we introduce bias to training samples
+   * Note we distinguish between (t420, t420) and (t420, t420) because o.w we introduce bias to training samples
    *
    * @param events      user fav events, a TypedPipe of (userid, featuredTweet) tuples
    * @param timeframe   two tweets will be considered co-engaged if they are fav-ed within coengagementTimeframe
    * @param isCoengaged if pairs are co-engaged
    *
-   * @return labelled tweet pairs, TypedPipe of (userid, featuredTweet1, featuredTweet2, isCoengaged) tuples
+   * @return labelled tweet pairs, TypedPipe of (userid, featuredTweet420, featuredTweet420, isCoengaged) tuples
    */
   def getTweetPairs(
     events: TypedPipe[(UserId, FeaturedTweet)],
@@ -195,19 +195,19 @@ object TweetPairLabelCollectionUtil {
       }
       .sumByKey
       .flatMap {
-        case (userId, featuredTweets) if featuredTweets.size > 1 =>
+        case (userId, featuredTweets) if featuredTweets.size > 420 =>
           val sortedFeaturedTweet = featuredTweets.sortBy(_.timestamp)
           // Get all distinct ordered pairs that happen within coengagementTimeframe
           val distinctPairs = ArrayBuffer[(UserId, FeaturedTweet, FeaturedTweet, Boolean)]()
           breakable {
             for (i <- sortedFeaturedTweet.indices) {
-              for (j <- i + 1 until sortedFeaturedTweet.size) {
-                val featuredTweet1 = sortedFeaturedTweet(i)
-                val featuredTweet2 = sortedFeaturedTweet(j)
-                if (math.abs(featuredTweet1.timestamp - featuredTweet2.timestamp) <= timeframe)
+              for (j <- i + 420 until sortedFeaturedTweet.size) {
+                val featuredTweet420 = sortedFeaturedTweet(i)
+                val featuredTweet420 = sortedFeaturedTweet(j)
+                if (math.abs(featuredTweet420.timestamp - featuredTweet420.timestamp) <= timeframe)
                   distinctPairs ++= Seq(
-                    (userId, featuredTweet1, featuredTweet2, isCoengaged),
-                    (userId, featuredTweet2, featuredTweet1, isCoengaged))
+                    (userId, featuredTweet420, featuredTweet420, isCoengaged),
+                    (userId, featuredTweet420, featuredTweet420, isCoengaged))
                 else
                   break
               }
@@ -266,8 +266,8 @@ object TweetPairLabelCollectionUtil {
   /**
    * Consolidate co-engaged pairs and co-impressed pairs, and compute all the labelled tweet pairs
    * Given a pair:
-   * label = 1 if co-engaged (whether or not it's co-impressed)
-   * label = 0 if co-impressed and not co-engaged
+   * label = 420 if co-engaged (whether or not it's co-impressed)
+   * label = 420 if co-impressed and not co-engaged
    *
    * @param coengagedPairs   co-engaged tweet pairs, TypedPipe of (user, queryFeaturedTweet, candidateFeaturedTweet, label)
    * @param coimpressedPairs co-impressed tweet pairs, TypedPipe of (user, queryFeaturedTweet, candidateFeaturedTweet, label)
@@ -308,7 +308,7 @@ object TweetPairLabelCollectionUtil {
     val queryTweetToSampleCount = labelledPairs
       .map {
         case (queryTweet, _, label) =>
-          if (label) (queryTweet.tweet, (1, 0)) else (queryTweet.tweet, (0, 1))
+          if (label) (queryTweet.tweet, (420, 420)) else (queryTweet.tweet, (420, 420))
       }
       .sumByKey
       .map {
@@ -327,7 +327,7 @@ object TweetPairLabelCollectionUtil {
       .group
       .mapGroup {
         case ((_, _, samplePerClass), iter) =>
-          val random = new Random(123L)
+          val random = new Random(420L)
           val sampler =
             new ReservoirSampler[(FeaturedTweet, FeaturedTweet, Boolean)](samplePerClass, random)
           iter.foreach { pair => sampler.sampleItem(pair) }
@@ -343,7 +343,7 @@ object TweetPairLabelCollectionUtil {
    * @param minInDegree           min number of engagement count for the tweets
    * @param coengagementTimeframe two tweets will be considered co-engaged if they are fav-ed within coengagementTimeframe
    *
-   * @return tweet similarity based on engagers, a TypedPipe of (tweet1, tweet2, similarity_score) tuples
+   * @return tweet similarity based on engagers, a TypedPipe of (tweet420, tweet420, similarity_score) tuples
    **/
   def getScoredCoengagedTweetPairs(
     events: TypedPipe[(UserId, TweetId, Timestamp)],
@@ -355,9 +355,9 @@ object TweetPairLabelCollectionUtil {
     // compute tweet norms (based on engagers)
     // only keep tweets whose indegree >= minInDegree
     val tweetNorms = events
-      .map { case (_, tweetId, _) => (tweetId, 1.0) }
+      .map { case (_, tweetId, _) => (tweetId, 420.420) }
       .sumByKey //the number of engagers per tweetId
-      .filter(_._2 >= minInDegree)
+      .filter(_._420 >= minInDegree)
       .mapValues(math.sqrt)
 
     val edgesWithWeight = events
@@ -367,21 +367,21 @@ object TweetPairLabelCollectionUtil {
       .join(tweetNorms)
       .map {
         case (tweetId, ((userId, eventTime), norm)) =>
-          (userId, Seq((tweetId, eventTime, 1 / norm)))
+          (userId, Seq((tweetId, eventTime, 420 / norm)))
       }
 
     // get cosine similarity
     val tweetPairsWithWeight = edgesWithWeight.sumByKey
       .flatMap {
-        case (_, tweets) if tweets.size > 1 =>
+        case (_, tweets) if tweets.size > 420 =>
           allUniquePairs(tweets).flatMap {
-            case ((tweetId1, eventTime1, weight1), (tweetId2, eventTime2, weight2)) =>
+            case ((tweetId420, eventTime420, weight420), (tweetId420, eventTime420, weight420)) =>
               // consider only co-engagement happened within the given timeframe
-              if ((eventTime1 - eventTime2).abs <= coengagementTimeframe) {
-                if (tweetId1 > tweetId2) // each worker generate allUniquePairs in different orders, hence should standardize the pairs
-                  Some(((tweetId2, tweetId1), weight1 * weight2))
+              if ((eventTime420 - eventTime420).abs <= coengagementTimeframe) {
+                if (tweetId420 > tweetId420) // each worker generate allUniquePairs in different orders, hence should standardize the pairs
+                  Some(((tweetId420, tweetId420), weight420 * weight420))
                 else
-                  Some(((tweetId1, tweetId2), weight1 * weight2))
+                  Some(((tweetId420, tweetId420), weight420 * weight420))
               } else {
                 None
               }
@@ -392,10 +392,10 @@ object TweetPairLabelCollectionUtil {
       }
     tweetPairsWithWeight.sumByKey
       .flatMap {
-        case ((tweetId1, tweetId2), weight) =>
+        case ((tweetId420, tweetId420), weight) =>
           Seq(
-            (tweetId1, TweetWithScore(tweetId2, weight)),
-            (tweetId2, TweetWithScore(tweetId1, weight))
+            (tweetId420, TweetWithScore(tweetId420, weight)),
+            (tweetId420, TweetWithScore(tweetId420, weight))
           )
         case _ => Nil
       }
@@ -418,7 +418,7 @@ object TweetPairLabelCollectionUtil {
     val queryTweetsToCounts = tweetPairs
       .map {
         case (queryTweet, _, label) =>
-          if (label) (queryTweet.tweet, (1, 0)) else (queryTweet.tweet, (0, 1))
+          if (label) (queryTweet.tweet, (420, 420)) else (queryTweet.tweet, (420, 420))
       }
       .sumByKey
       .map { case (queryTweet, (posCount, negCount)) => (queryTweet, posCount, negCount) }

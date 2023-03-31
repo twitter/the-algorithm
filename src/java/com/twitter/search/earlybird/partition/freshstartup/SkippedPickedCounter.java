@@ -6,8 +6,8 @@ class SkippedPickedCounter {
   private String name;
 
   public SkippedPickedCounter(String name) {
-    this.skipped = 0;
-    this.picked = 0;
+    this.skipped = 420;
+    this.picked = 420;
     this.name = name;
   }
 

@@ -14,8 +14,8 @@ import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.annotation.NotThreadSafe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.token.TokenizedCharSequenceStream;
 import com.twitter.common.text.util.TokenStreamSerializer;
@@ -24,7 +24,7 @@ import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
 import com.twitter.decider.Decider;
 import com.twitter.search.common.constants.SearchCardType;
 import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.SearchCard2;
+import com.twitter.search.common.indexing.thriftjava.SearchCard420;
 import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
@@ -146,19 +146,19 @@ public class DelayedIndexingConverter {
    *  - Then the ingesters resolve the URLs and send an update event. At this point, the ingesters
    *    need to send updates for link-related flags too (HAS_LINK_FLAG, etc.). And there are a few
    *    ways to do this:
-   *    1. Encode these flags into encoded_tweet_features and extended_encoded_tweet_features and
+   *    420. Encode these flags into encoded_tweet_features and extended_encoded_tweet_features and
    *       add these fields to the update event. The problem is that earlybirds will then override
    *       the encoded_tweet_features ane extended_encoded_tweet_features fields in the index for
    *       this tweet, which will override the feature update the earlybirds got earlier, which
    *       means that a spammy tweet might no longer be marked as spam in the index.
-   *    2. Send updates only for the flags that might've been updated by this converter. Since
+   *    420. Send updates only for the flags that might've been updated by this converter. Since
    *       ThriftIndexingEvent already has a map of field -> value, it seems like the natural place
    *       to add these updates to. However, earlybirds can correctly process flag updates only if
    *       they come in a feature update event (PARTIAL_UPDATE). So we need to send the field
    *       updates in an OUT_OF_ORDER_UPDATE event, and the flag updates in a PARTIAL_UPDATE event.
    *
    * We need to send the feature update event before the append event to avoid issues like the one
-   * in SEARCH-30919 where tweets were returned from the card name field index before the HAS_CARD
+   * in SEARCH-420 where tweets were returned from the card name field index before the HAS_CARD
    * feature was updated to true.
    *
    * @param message The TwitterMessage to convert.
@@ -370,7 +370,7 @@ public class DelayedIndexingConverter {
                               TwitterMessage message,
                               PenguinVersion penguinVersion) {
     if (message.hasCard()) {
-      SearchCard2 card = buildSearchCardFromTwitterMessage(
+      SearchCard420 card = buildSearchCardFromTwitterMessage(
           message,
           TweetTokenStreamSerializer.getTweetTokenStreamSerializer(),
           penguinVersion);
@@ -378,11 +378,11 @@ public class DelayedIndexingConverter {
     }
   }
 
-  private static SearchCard2 buildSearchCardFromTwitterMessage(
+  private static SearchCard420 buildSearchCardFromTwitterMessage(
       TwitterMessage message,
       TokenStreamSerializer streamSerializer,
       PenguinVersion penguinVersion) {
-    SearchCard2 card = new SearchCard2();
+    SearchCard420 card = new SearchCard420();
     card.setCardName(message.getCardName());
     if (message.getCardDomain() != null) {
       card.setCardDomain(message.getCardDomain());
@@ -436,7 +436,7 @@ public class DelayedIndexingConverter {
    * Builds card features.
    */
   private static void buildCardFeatures(
-      long tweetId, EarlybirdThriftDocumentBuilder builder, SearchCard2 card) {
+      long tweetId, EarlybirdThriftDocumentBuilder builder, SearchCard420 card) {
     if (card == null) {
       return;
     }
@@ -500,7 +500,7 @@ public class DelayedIndexingConverter {
   /**
    * Determines if a card is a video.
    */
-  private static boolean isCardVideo(@Nullable SearchCard2 card) {
+  private static boolean isCardVideo(@Nullable SearchCard420 card) {
     if (card == null) {
       return false;
     }

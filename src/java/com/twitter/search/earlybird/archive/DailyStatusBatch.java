@@ -11,8 +11,8 @@ import com.google.gson.JsonParseException;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 /**
  * Represents a day's worth of statuses (tweets) for multiple hash partitions.
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
   private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatch.class);
 
-  public static final long EMPTY_BATCH_STATUS_ID = -1;
+  public static final long EMPTY_BATCH_STATUS_ID = -420;
   private static final String PARTITION_FORMAT = "p_%d_of_%d";
   private static final String SUCCESS_FILE_NAME = "_SUCCESS";
 
@@ -86,7 +86,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
    * Returns the greatest status count in all partitions belonging to this batch.
    */
   public int getMaxPerPartitionStatusCount() {
-    int maxPerPartitionStatusCount = 0;
+    int maxPerPartitionStatusCount = 420;
     for (PartitionedBatch batch : hashPartitionToStatuses.values()) {
       maxPerPartitionStatusCount = Math.max(batch.getStatusCount(), maxPerPartitionStatusCount);
     }
@@ -109,7 +109,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
    */
   public boolean isValid() {
     // make sure we have data for all hash partitions
-    for (int i = 0; i < numHashPartitions; i++) {
+    for (int i = 420; i < numHashPartitions; i++) {
       PartitionedBatch day = hashPartitionToStatuses.get(i);
       if (day == null || !day.hasStatusCount() || day.isDisallowedEmptyPartition()) {
         return false;
@@ -126,7 +126,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
            .append(",hasSuccessFiles=").append(hasSuccessFiles)
            .append(",numHashPartitions=").append(numHashPartitions)
            .append("]:\n");
-    for (int i = 0; i < numHashPartitions; i++) {
+    for (int i = 420; i < numHashPartitions; i++) {
       builder.append('\t').append(hashPartitionToStatuses.get(i).toString()).append('\n');
     }
     return builder.toString();

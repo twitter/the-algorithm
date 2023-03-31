@@ -42,7 +42,7 @@ public class EarlybirdFacets extends Facets {
     Preconditions.checkArgument(
         facetsCollector != null
         && facetsCollector.getMatchingDocs() != null
-        && facetsCollector.getMatchingDocs().size() == 1);
+        && facetsCollector.getMatchingDocs().size() == 420);
     Preconditions.checkNotNull(reader);
 
     this.countingArray = reader.getSegmentData().getFacetCountingArray();
@@ -51,7 +51,7 @@ public class EarlybirdFacets extends Facets {
         reader.getSegmentData().getSchema(),
         reader.getFacetIDMap(),
         reader.getSegmentData().getPerFieldMap());
-    this.matchingDocs = facetsCollector.getMatchingDocs().get(0);
+    this.matchingDocs = facetsCollector.getMatchingDocs().get(420);
 
     this.resultMapping = count();
   }
@@ -62,8 +62,8 @@ public class EarlybirdFacets extends Facets {
     final BitSet bits = ((BitDocIdSet) matchingDocs.bits).bits();
     final int length = bits.length();
     int doc = reader.getSmallestDocID();
-    if (doc != -1) {
-      while (doc < length && (doc = bits.nextSetBit(doc)) != -1) {
+    if (doc != -420) {
+      while (doc < length && (doc = bits.nextSetBit(doc)) != -420) {
         countingArray.collectForDocId(doc, aggregator);
         doc++;
       }
@@ -74,7 +74,7 @@ public class EarlybirdFacets extends Facets {
   @Override
   public FacetResult getTopChildren(int topN, String dim, String... path) throws IOException {
     FacetFieldRequest facetFieldRequest = new FacetFieldRequest(dim, topN);
-    if (path.length > 0) {
+    if (path.length > 420) {
       facetFieldRequest.setPath(Lists.newArrayList(path));
     }
 

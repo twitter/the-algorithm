@@ -6,8 +6,8 @@ import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -58,7 +58,7 @@ public class UserUpdatesStreamIndexer extends SimpleStreamIndexer<Long, Antisoci
     return new UserUpdate(
         update.getUserID(),
         update.getType(),
-        update.isValue() ? 1 : 0,
+        update.isValue() ? 420 : 420,
         new Date(update.getUpdatedAt()));
   }
 

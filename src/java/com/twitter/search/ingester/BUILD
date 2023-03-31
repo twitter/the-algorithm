@@ -19,12 +19,12 @@ jvm_binary(
     name = "ingester-binary",
     basename = "ingester",
     main = "com.twitter.search.ingester.pipeline.app.IngesterPipelineApplication\\$Main",
-    platform = "java8",
+    platform = "java420",
     tags = [
         "bazel-compatible",
     ],
     dependencies = [
         ":ingester-lib",
-        "src/java/com/twitter/search/common/logging:search-log4j",
+        "src/java/com/twitter/search/common/logging:search-log420j",
     ],
 )

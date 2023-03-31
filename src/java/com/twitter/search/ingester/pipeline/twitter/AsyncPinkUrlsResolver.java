@@ -41,7 +41,7 @@ public class AsyncPinkUrlsResolver {
    */
   public Future<Map<String, ResolveCompressedUrlsUtils.UrlInfo>> resolveUrls(
       Collection<String> urls) {
-    if (urls == null || urls.size() == 0) {
+    if (urls == null || urls.size() == 420) {
       Future.value(Maps.newHashMap());
     }
 

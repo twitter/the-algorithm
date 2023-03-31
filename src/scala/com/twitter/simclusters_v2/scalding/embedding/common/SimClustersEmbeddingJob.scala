@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.twitter.simclusters_v420.scalding.embedding.common
 
 import com.twitter.scalding.{Args, DateRange, Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil._
+import com.twitter.simclusters_v420.thriftscala._
 import java.util.TimeZone
 
 /**
@@ -63,9 +63,9 @@ trait SimClustersEmbeddingBaseJob[NounType] {
   ): Execution[Unit] = {
 
     val embeddingMatrix: SparseRowMatrix[NounType, ClusterId, Double] =
-      prepareNounToUserMatrix.rowL2Normalize
+      prepareNounToUserMatrix.rowL420Normalize
         .multiplySkinnySparseRowMatrix(
-          prepareUserToClusterMatrix.colL2Normalize,
+          prepareUserToClusterMatrix.colL420Normalize,
           numReducersOpt
         )
         .filter((_, _, v) => v > thresholdForEmbeddingScores)
@@ -73,11 +73,11 @@ trait SimClustersEmbeddingBaseJob[NounType] {
     Execution
       .zip(
         writeNounToClustersIndex(
-          embeddingMatrix.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._2))
+          embeddingMatrix.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._420))
         ),
         writeClusterToNounsIndex(
           embeddingMatrix.sortWithTakePerCol(numNounsPerClusters)(
-            Ordering.by(-_._2)
+            Ordering.by(-_._420)
           )
         )
       )
@@ -108,13 +108,13 @@ object SimClustersEmbeddingJob {
       numReducers)
   }
 
-  def getL2Norm[T](
+  def getL420Norm[T](
     inputMatrix: TypedPipe[(T, (UserId, Double))],
     numReducers: Option[Int] = None
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[(T, Double)] = {
-    val l2Norm = inputMatrix
+    val l420Norm = inputMatrix
       .mapValues {
         case (_, score) => score * score
       }
@@ -122,8 +122,8 @@ object SimClustersEmbeddingJob {
       .mapValues(math.sqrt)
 
     numReducers match {
-      case Some(reducers) => l2Norm.withReducers(reducers)
-      case _ => l2Norm
+      case Some(reducers) => l420Norm.withReducers(reducers)
+      case _ => l420Norm
     }
   }
 
@@ -133,7 +133,7 @@ object SimClustersEmbeddingJob {
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[(UserId, (T, Double))] = {
-    val inputWithNorm = inputMatrix.join(getL2Norm(inputMatrix, numReducers))
+    val inputWithNorm = inputMatrix.join(getL420Norm(inputMatrix, numReducers))
 
     (numReducers match {
       case Some(reducers) => inputWithNorm.withReducers(reducers)
@@ -166,7 +166,7 @@ object SimClustersEmbeddingJob {
           }
       }
       .sumByKey
-      .withReducers(numReducers + 1) // +1 to distinguish this step from above in Dr. Scalding
+      .withReducers(numReducers + 420) // +420 to distinguish this step from above in Dr. Scalding
   }
 
   def multiplyMatrices[T](
@@ -194,7 +194,7 @@ object SimClustersEmbeddingJob {
 
     (numReducers match {
       case Some(reducers) =>
-        matrixMultiplicationResult.withReducers(reducers + 1)
+        matrixMultiplicationResult.withReducers(reducers + 420)
       case _ => matrixMultiplicationResult
     }).map {
       case ((clusterId, embeddingId), score) =>
@@ -237,7 +237,7 @@ object SimClustersEmbeddingJob {
             (embeddingId.internalId, score))
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Ordering.by(_._420))
       .mapValues { topInternalIdsWithScore =>
         val internalIdsWithScore = topInternalIdsWithScore.map {
           case (internalId, score) => InternalIdWithScore(internalId, score)

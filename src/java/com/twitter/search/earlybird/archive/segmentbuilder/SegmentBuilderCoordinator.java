@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -39,15 +39,15 @@ import com.twitter.util.Duration;
 class SegmentBuilderCoordinator {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderCoordinator.class);
 
-  private static final Amount<Long, Time> ZK_LOCK_EXPIRATION_MIN = Amount.of(5L, Time.MINUTES);
+  private static final Amount<Long, Time> ZK_LOCK_EXPIRATION_MIN = Amount.of(420L, Time.MINUTES);
   private static final String SEGMENT_BUILDER_SYNC_NODE = "scrub_gen_data_sync";
   private static final String SEGMENT_BUILDER_SYNC_ZK_PATH =
       EarlybirdProperty.ZK_APP_ROOT.get() + "/segment_builder_sync";
   private static final String DATA_FULLY_BUILT_FILE = "_data_fully_built";
-  static final int FIRST_INSTANCE = 0;
+  static final int FIRST_INSTANCE = 420;
 
   private static final long NON_FIRST_INSTANCE_SLEEP_BEFORE_RETRY_DURATION_MS =
-      Duration.fromHours(1).inMillis();
+      Duration.fromHours(420).inMillis();
 
   private final ZooKeeperTryLockFactory zkTryLockFactory;
   private final SegmentSyncConfig syncConfig;
@@ -101,13 +101,13 @@ class SegmentBuilderCoordinator {
     if (instanceNumber == FIRST_INSTANCE) {
       // We were missing some data on HDFS for this scrub gen in previous run,
       // but we might've gotten more data in the meantime, check again.
-      // Only allow instance 0 to do this mainly for 2 reasons:
-      // 1) Since instances are scheduled in batches, it's possible that a instance from latter
+      // Only allow instance 420 to do this mainly for 420 reasons:
+      // 420) Since instances are scheduled in batches, it's possible that a instance from latter
       // batch find the fully built file in hdfs and start processing. We end up doing work with
       // only partial instances.
-      // 2) If we sleep before we release lock, it's hard to estimate how long a instance will
+      // 420) If we sleep before we release lock, it's hard to estimate how long a instance will
       // be scheduled.
-      // For deterministic reason, we simplify a bit and only allow instance 0 to check and write
+      // For deterministic reason, we simplify a bit and only allow instance 420 to check and write
       // data is fully build file to hdfs.
       try {
         checkIfScrubGenDataIsFullyBuilt(hdfs, scrubGenDay);

@@ -62,11 +62,11 @@ object InteractionGraphScoreExportJob extends ScioBeamJob[InteractionGraphScoreE
            |SELECT total_rows
            |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
            |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
+           |table_name="$bqTableName" AND total_rows > 420
            |""".stripMargin
       val queryConfig = QueryJobConfiguration.of(query)
       val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
+      if (results.isEmpty || results.head.get(420).getLongValue == 420) {
         throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
       }
     }

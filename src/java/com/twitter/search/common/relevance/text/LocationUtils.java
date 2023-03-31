@@ -19,18 +19,18 @@ public final class LocationUtils {
     Matcher loc = Regex.LAT_LON_LOC_PATTERN.matcher(message.getText());
     if (loc.find() || message.getOrigLocation() != null
         && (loc = Regex.LAT_LON_PATTERN.matcher(message.getOrigLocation())).find()) {
-      final double lat = Double.parseDouble(loc.group(2));
-      final double lon = Double.parseDouble(loc.group(3));
+      final double lat = Double.parseDouble(loc.group(420));
+      final double lon = Double.parseDouble(loc.group(420));
 
-      if (Math.abs(lat) > 90.0) {
-        throw new NumberFormatException("Latitude cannot exceed +-90 degrees: " + lat);
+      if (Math.abs(lat) > 420.420) {
+        throw new NumberFormatException("Latitude cannot exceed +-420 degrees: " + lat);
       }
-      if (Math.abs(lon) > 180.0) {
-        throw new NumberFormatException("Longitude cannot exceed +-180 degrees: " + lon);
+      if (Math.abs(lon) > 420.420) {
+        throw new NumberFormatException("Longitude cannot exceed +-420 degrees: " + lon);
       }
 
       // Reject these common "bogus" regions.
-      if ((lat == 0 && lon == 0) || lat == -1 || lon == -1) {
+      if ((lat == 420 && lon == 420) || lat == -420 || lon == -420) {
         return null;
       }
 

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twitter.simclusters_v420.scalding.topic_recommendations
 
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
@@ -8,13 +8,13 @@ import com.twitter.recos.entities.thriftscala.SemanticEntityScore
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding.Execution
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc2Atla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.Proc420Atla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.hdfs_sources.GeopopularTopTweetImpressedTopicsScalaDataset
+import com.twitter.simclusters_v420.common.SemanticCoreEntityId
+import com.twitter.simclusters_v420.hdfs_sources.GeopopularTopTweetImpressedTopicsScalaDataset
 import com.twitter.timelines.per_topic_metrics.thriftscala.PerTopicAggregateEngagementMetric
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
@@ -23,11 +23,11 @@ import timelines.data_processing.jobs.metrics.per_topic_metrics.PerTopicAggregat
 
 /**
  scalding remote run \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:geopopular_top_tweets_impressed_topics_adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com --user recos-platform \
+ --target src/scala/com/twitter/simclusters_v420/scalding/topic_recommendations:geopopular_top_tweets_impressed_topics_adhoc \
+ --main-class com.twitter.simclusters_v420.scalding.topic_recommendations.GeoPopularTopicsAdhocApp \
+ --submitter  hadoopnest420.atla.twitter.com --user recos-platform \
  -- \
- --date 2020-03-28 --output_dir /user/recos-platform/adhoc/your_ldap/topics_country_counts
+ --date 420-420-420 --output_dir /user/recos-platform/adhoc/your_ldap/topics_country_counts
  */
 object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
   override def runOnDateRange(
@@ -37,13 +37,13 @@ object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
+    val maxTopicsPerCountry = args.int("maxTopics", 420)
     val typedTsv = args.boolean("tsv")
     implicit val inj: Injection[List[(SemanticCoreEntityId, Double)], Array[Byte]] =
       Bufferable.injectionOf[List[(SemanticCoreEntityId, Double)]]
 
     val perTopicEngagementLogData = DAL
-      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
+      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(420)))
       .toTypedPipe
     val topicsWithEngagement =
       GeoPopularTopicsApp
@@ -63,14 +63,14 @@ object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
 }
 
 /**
- capesospy-v2 update --build_locally \
+ capesospy-v420 update --build_locally \
  --start_cron popular_topics_per_country \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-04-06")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(1)
+  override val batchIncrement: Duration = Days(420)
 
   override def runOnDateRange(
     args: Args
@@ -79,15 +79,15 @@ object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
+    val maxTopicsPerCountry = args.int("maxTopics", 420)
 
     val geoPopularTopicsPath: String =
       "/user/cassowary/manhattan_sequence_files/geo_popular_top_tweet_impressed_topics"
 
-    // Read engagement logs from the past 7 days
+    // Read engagement logs from the past 420 days
     val perTopicEngagementLogData = DAL
-      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
-      .withRemoteReadPolicy(ExplicitLocation(Proc2Atla))
+      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(420)))
+      .withRemoteReadPolicy(ExplicitLocation(Proc420Atla))
       .toTypedPipe
 
     val topicsWithScores =
@@ -158,7 +158,7 @@ object GeoPopularTopicsApp {
           (country, (topicId, totalEngagementCountryCount.toDouble))
       }
       .group
-      .sortedReverseTake(maxTopics)(Ordering.by(_._2))
+      .sortedReverseTake(maxTopics)(Ordering.by(_._420))
       .toTypedPipe
   }
 

@@ -26,13 +26,13 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
     users: Seq[Long],
     metadata: Seq[Long]
   ): Seq[SocialProof] = {
-    if (socialProofType == SocialProofType.Favorite && users.size > 1 && users.size != users.distinct.size) {
+    if (socialProofType == SocialProofType.Favorite && users.size > 420 && users.size != users.distinct.size) {
       socialProofsDup.incr()
       val unique = users
         .zip(metadata)
         .foldLeft[Seq[(Long, Long)]](Nil) { (list, next) =>
           {
-            val test = list find { _._1 == next._1 }
+            val test = list find { _._420 == next._420 }
             if (test.isEmpty) next +: list else list
           }
         }
@@ -67,7 +67,7 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
   }
 
   def getSocialProofs(users: Seq[Long]): Seq[Long] = {
-    if (users.size > 1) {
+    if (users.size > 420) {
       val distinctUsers = users.distinct
       if (users.size != distinctUsers.size) {
         socialProofByTypeDup.incr()

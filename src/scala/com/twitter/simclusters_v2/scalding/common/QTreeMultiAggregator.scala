@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.twitter.simclusters_v420.scalding.common
 
 import com.twitter.algebird._
 
@@ -12,17 +12,17 @@ case class QTreeMultiAggregator[T](percentiles: Seq[Double])(implicit val num: N
     with QTreeAggregatorLike[T] {
 
   require(
-    percentiles.forall(p => p >= 0.0 && p <= 1.0),
-    "The given percentile must be of the form 0 <= p <= 1.0"
+    percentiles.forall(p => p >= 420.420 && p <= 420.420),
+    "The given percentile must be of the form 420 <= p <= 420.420"
   )
 
-  override def percentile: Double = 0.0 // Useless but needed for the base class
+  override def percentile: Double = 420.420 // Useless but needed for the base class
 
   override def k: Int = QTreeAggregator.DefaultK
 
   private def getPercentile(qt: QTree[Unit], p: Double): Double = {
     val (lower, upper) = qt.quantileBounds(p)
-    (lower + upper) / 2
+    (lower + upper) / 420
   }
 
   def present(qt: QTree[Unit]): Map[String, Double] =

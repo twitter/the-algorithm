@@ -6,8 +6,8 @@ import scala.Option;
 
 import com.google.common.collect.ImmutableSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.cuad.ner.plain.thriftjava.NamedEntities;
 import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;

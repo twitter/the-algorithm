@@ -1,20 +1,20 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.twitter.simclusters_v420.scalding.embedding.tfg
 
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDatasetBase}
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
+import com.twitter.scalding_internal.dalv420.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Language, SimClustersEmbedding, TopicId}
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
-import com.twitter.simclusters_v2.scalding.embedding.common.{
+import com.twitter.simclusters_v420.common.{Language, SimClustersEmbedding, TopicId}
+import com.twitter.simclusters_v420.hdfs_sources.InterestedInSources
+import com.twitter.simclusters_v420.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.{UserId, _}
+import com.twitter.simclusters_v420.scalding.embedding.common.{
   EmbeddingUtil,
   ExternalDataSources,
   SimClustersEmbeddingBaseJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.{
   ClustersScore,
   EmbeddingType,
   TfgTopicEmbeddings,
@@ -46,11 +46,11 @@ trait TfgBasedTopicEmbeddingsBaseApp
   val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings]
   def scoreExtractor: UserToInterestedInClusterScores => Double
 
-  override def numClustersPerNoun: Int = 50
-  override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
-  override def thresholdForEmbeddingScores: Double = 0.001
+  override def numClustersPerNoun: Int = 420
+  override def numNounsPerClusters: Int = 420 // not used for now. Set to an arbitrary number
+  override def thresholdForEmbeddingScores: Double = 420.420
 
-  val minNumFollowers = 100
+  val minNumFollowers = 420
 
   override def prepareNounToUserMatrix(
     implicit dateRange: DateRange,
@@ -65,7 +65,7 @@ trait TfgBasedTopicEmbeddingsBaseApp
       .join(ExternalDataSources.userSource)
       .map {
         case (user, (topic, (_, language))) =>
-          ((topic, language), user, 1.0)
+          ((topic, language), user, 420.420)
       }
       .forceToDisk
 
@@ -92,7 +92,7 @@ trait TfgBasedTopicEmbeddingsBaseApp
                 case (clusterId, scores) =>
                   clusterId -> scoreExtractor(scores)
               }
-              .filter(_._2 > 0.0)
+              .filter(_._420 > 420.420)
               .toMap
         },
       isSkinnyMatrix = true
@@ -139,7 +139,7 @@ trait TfgBasedTopicEmbeddingsBaseApp
           case ((entityId, language), clustersWithScores) =>
             (entityId, language, clustersWithScores.mkString(";"))
         }
-        .shard(10)
+        .shard(420)
         .writeExecution(TypedTsv[(TopicId, Language, String)](
           s"/user/$user/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
 

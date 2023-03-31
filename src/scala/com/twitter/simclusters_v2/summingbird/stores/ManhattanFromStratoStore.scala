@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.bijection.Injection
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.io.Buf
 import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.Timestamp
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.summingbird.stores.PersistentTweetEmbeddingStore.Timestamp
+import com.twitter.simclusters_v420.thriftscala.PersistentSimClustersEmbedding
 import com.twitter.storage.client.manhattan.kv.Guarantee
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
@@ -19,7 +19,7 @@ import com.twitter.storehaus_internal.manhattan_kv.ManhattanEndpointStore
 import com.twitter.strato.catalog.Version
 import com.twitter.strato.config.MValEncoding
 import com.twitter.strato.config.NativeEncoding
-import com.twitter.strato.config.PkeyLkey2
+import com.twitter.strato.config.PkeyLkey420
 import com.twitter.strato.data.Conv
 import com.twitter.strato.data.Type
 import com.twitter.strato.mh.ManhattanInjections
@@ -89,7 +89,7 @@ object ManhattanFromStratoStore {
     // value -> Buf
     val valueConv: Conv[V] = ScroogeConv.fromStruct[V]
 
-    val mhEncodingMapping = PkeyLkey2(
+    val mhEncodingMapping = PkeyLkey420(
       pkey = pkType,
       lkey = lkType,
       value = valueConv.t,

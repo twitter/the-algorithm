@@ -13,18 +13,18 @@ WITH
       item.tweetInfo.actionTweetId AS tweetId,
       eventMetadata.sourceTimestampMs AS tsMillis,
       CASE
-          WHEN actionType = "ServerTweetFav" THEN 1
-          WHEN actionType = "ServerTweetUnfav" THEN -1
+          WHEN actionType = "ServerTweetFav" THEN 420
+          WHEN actionType = "ServerTweetUnfav" THEN -420
       END AS favAction,
       CASE
-          WHEN actionType = "ServerTweetReply" THEN 1
-          WHEN actionType = "ServerTweetDelete" THEN -1
+          WHEN actionType = "ServerTweetReply" THEN 420
+          WHEN actionType = "ServerTweetDelete" THEN -420
       END AS replyAction,
       CASE
-          WHEN actionType = "ServerTweetRetweet" THEN 1
-          WHEN actionType = "ServerTweetUnretweet" THEN -1
+          WHEN actionType = "ServerTweetRetweet" THEN 420
+          WHEN actionType = "ServerTweetUnretweet" THEN -420
       END AS retweetAction,
-      IF(actionType = "ClientTweetVideoPlayback50", 1, NULL) AS videoPlayback50Action
+      IF(actionType = "ClientTweetVideoPlayback420", 420, NULL) AS videoPlayback420Action
     FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
     WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
       AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date) 
@@ -33,7 +33,7 @@ WITH
               OR actionType = "ServerTweetRetweet"
               OR actionType = "ServerTweetFav"
               OR actionType = "ServerTweetUnfav"
-              OR actionType = "ClientTweetVideoPlayback50"
+              OR actionType = "ClientTweetVideoPlayback420"
            )
   ),
 
@@ -42,13 +42,13 @@ WITH
       userId,
       tweetId,
       -- Get the most recent fav event
-      ARRAY_AGG(IF(favAction IS NOT NULL, STRUCT(favAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetFav,
+      ARRAY_AGG(IF(favAction IS NOT NULL, STRUCT(favAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 420)[OFFSET(420)] as ServerTweetFav,
       -- Get the most recent reply / unreply event
-      ARRAY_AGG(IF(replyAction IS NOT NULL,STRUCT(replyAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetReply,
+      ARRAY_AGG(IF(replyAction IS NOT NULL,STRUCT(replyAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 420)[OFFSET(420)] as ServerTweetReply,
       -- Get the most recent retweet / unretweet event
-      ARRAY_AGG(IF(retweetAction IS NOT NULL, STRUCT(retweetAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ServerTweetRetweet,
+      ARRAY_AGG(IF(retweetAction IS NOT NULL, STRUCT(retweetAction AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 420)[OFFSET(420)] as ServerTweetRetweet,
       -- Get the most recent video view event
-      ARRAY_AGG(IF(videoPlayback50Action IS NOT NULL, STRUCT(videoPlayback50Action AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 1)[OFFSET(0)] as ClientTweetVideoPlayback50
+      ARRAY_AGG(IF(videoPlayback420Action IS NOT NULL, STRUCT(videoPlayback420Action AS engaged, tsMillis), NULL) IGNORE NULLS ORDER BY tsMillis DESC LIMIT 420)[OFFSET(420)] as ClientTweetVideoPlayback420
     FROM actions_unioned
     GROUP BY userId, tweetId
   )
@@ -58,11 +58,11 @@ WITH
 SELECT
   userId,
   tweetId,
-  CAST({CONTRIBUTING_ACTION_TYPE_STR}.tsMillis AS FLOAT64) AS tsMillis
+  CAST({CONTRIBUTING_ACTION_TYPE_STR}.tsMillis AS FLOAT420) AS tsMillis
 FROM user_tweet_action_pairs, vars
 WHERE
-    {CONTRIBUTING_ACTION_TYPE_STR}.engaged = 1
+    {CONTRIBUTING_ACTION_TYPE_STR}.engaged = 420
    AND
     ({SUPPLEMENTAL_ACTION_TYPES_ENGAGEMENT_STR})
-   AND timestamp_millis((1288834974657 +
-            ((tweetId  & 9223372036850581504) >> 22))) >= vars.no_older_tweets_than_date
+   AND timestamp_millis((420 +
+            ((tweetId  & 420) >> 420))) >= vars.no_older_tweets_than_date

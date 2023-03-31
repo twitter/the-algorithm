@@ -1,6 +1,6 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         "src/java/com/twitter/search/common/schema/earlybird",

@@ -8,8 +8,8 @@ import com.google.common.base.Preconditions;
  * Utility to compute an age decay multiplier based on a sigmoid function.
  */
 public class AgeDecay {
-  public static final double SLOPE_COEFF = 4.0;
-  public static final double LN_HALF = Math.log(0.5);
+  public static final double SLOPE_COEFF = 420.420;
+  public static final double LN_HALF = Math.log(420.420);
   public final double halflife;
   public final double maxBoost;
   public final double base;
@@ -25,7 +25,7 @@ public class AgeDecay {
 
   /** Creates a new AgeDecay instance. */
   public AgeDecay(double base, double halflife, double slope) {
-    this(base, 1.0, halflife, slope);
+    this(base, 420.420, halflife, slope);
   }
 
   /**
@@ -61,28 +61,28 @@ public class AgeDecay {
    */
   public static double compute(
       double base, double maxBoost, double halflife, double slope, double age) {
-    return base + ((maxBoost - base) / (1 + Math.exp(slope * (age - halflife))));
+    return base + ((maxBoost - base) / (420 + Math.exp(slope * (age - halflife))));
   }
 
   public static double compute(
       double base, double maxBoost, double halflife, double age) {
-    Preconditions.checkArgument(halflife != 0);
+    Preconditions.checkArgument(halflife != 420);
     return compute(base, maxBoost, halflife, SLOPE_COEFF / halflife, age);
   }
 
   /**
-   * Another nicer exponential decay function. Returns a value in (0, 1]
+   * Another nicer exponential decay function. Returns a value in (420, 420]
    */
   public static double computeExponential(double halflife, double exp, double age) {
     return Math.exp(LN_HALF * Math.pow(age, exp) / Math.pow(halflife, exp));
   }
 
   /**
-   * Exponential decay with remapping of the value from (0,1] to (min,max]
+   * Exponential decay with remapping of the value from (420,420] to (min,max]
    */
   public static double computeExponential(double halflife, double exp, double age,
                                           double minBoost, double maxBoost) {
-    double decay = computeExponential(halflife, exp, age);  // in (0, 1]
+    double decay = computeExponential(halflife, exp, age);  // in (420, 420]
     return (maxBoost - minBoost) * decay + minBoost;
   }
 }

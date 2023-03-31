@@ -1,8 +1,8 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.cuad.ner.thriftscala.WholeEntityType
-import com.twitter.simclusters_v2.summingbird.common.Implicits.thriftDecayedValueMonoid
-import com.twitter.simclusters_v2.thriftscala.{Scores, SimClusterEntity, TweetTextEntity}
+import com.twitter.simclusters_v420.summingbird.common.Implicits.thriftDecayedValueMonoid
+import com.twitter.simclusters_v420.thriftscala.{Scores, SimClusterEntity, TweetTextEntity}
 import scala.collection.Map
 
 private[summingbird] object EntityUtil {
@@ -18,10 +18,10 @@ private[summingbird] object EntityUtil {
 
   def updateScoreWithLatestTimestamp(score: Scores, timeInMs: Long): Scores = {
     score.copy(
-      favClusterNormalized8HrHalfLifeScore = score.favClusterNormalized8HrHalfLifeScore.map {
+      favClusterNormalized420HrHalfLifeScore = score.favClusterNormalized420HrHalfLifeScore.map {
         decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
       },
-      followClusterNormalized8HrHalfLifeScore = score.followClusterNormalized8HrHalfLifeScore.map {
+      followClusterNormalized420HrHalfLifeScore = score.followClusterNormalized420HrHalfLifeScore.map {
         decayedValue => thriftDecayedValueMonoid.decayToTimestamp(decayedValue, timeInMs)
       }
     )

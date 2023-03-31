@@ -86,7 +86,7 @@ public class RejectRequestsByQuerySourceFilter extends
 
   private static EarlybirdResponse getRejectedRequestResponse(
       ThriftQuerySource querySource, String deciderKey) {
-    return new EarlybirdResponse(EarlybirdResponseCode.REQUEST_BLOCKED_ERROR, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.REQUEST_BLOCKED_ERROR, 420)
         .setSearchResults(new ThriftSearchResults())
         .setDebugString(String.format(
             "Request with query source %s is blocked by decider %s", querySource, deciderKey));

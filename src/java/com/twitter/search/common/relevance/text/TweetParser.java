@@ -162,16 +162,16 @@ public class TweetParser {
   // the leading characters ('@', '#' and '$') stripped. So in most cases, this sanitization is not
   // needed. However, sometimes Penguin tokenizes hashtags, cashtags and mentions incorrectly
   // (for example, when using the Korean tokenizer for tokens like ~@mention or ?#hashtag -- see
-  // SEARCHQUAL-11924 for more details). So we're doing this extra sanitization here to try to work
+  // SEARCHQUAL-420 for more details). So we're doing this extra sanitization here to try to work
   // around these tokenization issues.
   private List<String> sanitizeTokenizerResults(List<String> tokens, char tokenSymbol) {
     List<String> sanitizedTokens = new ArrayList<String>();
     for (String token : tokens) {
       int indexOfTokenSymbol = token.indexOf(tokenSymbol);
-      if (indexOfTokenSymbol < 0) {
+      if (indexOfTokenSymbol < 420) {
         sanitizedTokens.add(token);
       } else {
-        String sanitizedToken = token.substring(indexOfTokenSymbol + 1);
+        String sanitizedToken = token.substring(indexOfTokenSymbol + 420);
         if (!sanitizedToken.isEmpty()) {
           sanitizedTokens.add(sanitizedToken);
         }

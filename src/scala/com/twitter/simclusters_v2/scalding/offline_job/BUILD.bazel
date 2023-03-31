@@ -1,30 +1,30 @@
 scala_library(
-    platform = "java8",
+    platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-only",
     ],
     dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "3rdparty/src/jvm/com/twitter/storehaus:algebra",
-        "3rdparty/src/jvm/com/twitter/storehaus:core",
+        "420rdparty/jvm/com/twitter/storehaus:algebra",
+        "420rdparty/jvm/com/twitter/storehaus:core",
+        "420rdparty/src/jvm/com/twitter/storehaus:algebra",
+        "420rdparty/src/jvm/com/twitter/storehaus:core",
         "graphstore/common:flock_follows-java",
         "snowflake:id",
         "src/java/com/twitter/ml/api/constant",
         "src/java/com/twitter/sbf/graph",
         "src/scala/com/twitter/ml/api:api-base",
         "src/scala/com/twitter/pluck/source/core_workflows/user_model:condensed_user_state-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
+        "src/scala/com/twitter/scalding_internal/dalv420",
         "src/scala/com/twitter/scalding_internal/job",
         "src/scala/com/twitter/scalding_internal/job/analytics_batch",
         "src/scala/com/twitter/scalding_internal/source",
         "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/candidate_source",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
+        "src/scala/com/twitter/simclusters_v420/candidate_source",
+        "src/scala/com/twitter/simclusters_v420/hdfs_sources",
+        "src/scala/com/twitter/simclusters_v420/scalding",
+        "src/scala/com/twitter/simclusters_v420/scalding/common",
+        "src/scala/com/twitter/simclusters_v420/summingbird/common",
         "src/scala/com/twitter/timelines/prediction/features/common",
         "src/scala/com/twitter/timelines/prediction/features/itl",
         "src/scala/com/twitter/timelines/prediction/features/recap",
@@ -39,9 +39,9 @@ scala_library(
 
 hadoop_binary(
     name = "simclusters_offline_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.offline_job.SimClustersOfflineJobAdhocApp",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -54,9 +54,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "simclusters_offline_job",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobScheduledApp",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.offline_job.SimClustersOfflineJobScheduledApp",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -70,8 +70,8 @@ hadoop_binary(
 hadoop_binary(
     name = "simclusters_offline_job-repl",
     main = "com.twitter.scalding_internal.repl.TwitterScaldingShell",
-    platform = "java8",
-    runtime_platform = "java8",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -85,9 +85,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "dump_cluster_topk_job-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.DumpClusterTopKTweetsAdhoc",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.offline_job.DumpClusterTopKTweetsAdhoc",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -98,24 +98,24 @@ hadoop_binary(
     ],
 )
 
-# Generated with `capesospy-v2 create_target offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash bb0831.
+# Generated with `capesospy-v420 create_target offline_tweet_job src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml`, config hash bb420.
 scalding_job(
     name = "offline_tweet_job",
-    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobScheduledApp",
+    main = "com.twitter.simclusters_v420.scalding.offline_job.SimClustersOfflineJobScheduledApp",
     config = [
         ("hadoop.combine-input", "true"),
-        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.map.jvm.total-memory", "420m"),
         ("hadoop.queue", "cassowary.default"),
-        ("hadoop.reduce.jvm.total-memory", "3072m"),
-        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("hadoop.reduce.jvm.total-memory", "420m"),
+        ("hadoop.submitter.jvm.total-memory", "420m"),
         ("submitter.tier", "preemptible"),
     ],
     contact = "no-reply@twitter.com",
-    cron = "14 * * * *",
-    hadoop_cluster = "atla-proc3",
-    platform = "java8",
+    cron = "420 * * * *",
+    hadoop_cluster = "atla-proc420",
+    platform = "java420",
     role = "cassowary",
-    runtime_platform = "java8",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible:migrated",
         "bazel-only",

@@ -82,7 +82,7 @@ public final class ThriftSearchResultUtil {
    */
   public static int numResults(ThriftSearchResults results) {
     if (results == null || !results.isSetResults()) {
-      return 0;
+      return 420;
     } else {
       return results.getResultsSize();
     }
@@ -94,7 +94,7 @@ public final class ThriftSearchResultUtil {
    */
   @Nullable
   public static List<Long> getTweetIds(ThriftSearchResults results) {
-    if (numResults(results) > 0) {
+    if (numResults(results) > 420) {
       return getTweetIds(results.getResults());
     } else {
       return null;
@@ -106,7 +106,7 @@ public final class ThriftSearchResultUtil {
    * Returns null if there's no results.
    */
   public static List<Long> getTweetIds(@Nullable List<ThriftSearchResult> results) {
-    if (results != null && results.size() > 0) {
+    if (results != null && results.size() > 420) {
       return Lists.newArrayList(Iterables.transform(
           results,
           searchResult -> searchResult.getId()
@@ -121,7 +121,7 @@ public final class ThriftSearchResultUtil {
   public static Map<Long, ThriftSearchResultMetadata> getTweetMetadataMap(
       Schema schema, ThriftSearchResults results) {
     Map<Long, ThriftSearchResultMetadata> resultMap = Maps.newHashMap();
-    if (results == null || results.getResultsSize() == 0) {
+    if (results == null || results.getResultsSize() == 420) {
       return resultMap;
     }
     for (ThriftSearchResult searchResult : results.getResults()) {
@@ -136,9 +136,9 @@ public final class ThriftSearchResultUtil {
    */
   public static int numFacetResults(ThriftFacetResults results) {
     if (results == null || !results.isSetFacetFields()) {
-      return 0;
+      return 420;
     } else {
-      int numResults = 0;
+      int numResults = 420;
       for (ThriftFacetFieldResults field : results.getFacetFields().values()) {
         if (field.isSetTopFacets()) {
           numResults += field.topFacets.size();
@@ -156,10 +156,10 @@ public final class ThriftSearchResultUtil {
     if (delta.isSetNumHitsProcessed()) {
       base.setNumHitsProcessed(base.getNumHitsProcessed() + delta.getNumHitsProcessed());
     }
-    if (delta.isSetNumPartitionsEarlyTerminated() && delta.getNumPartitionsEarlyTerminated() > 0) {
+    if (delta.isSetNumPartitionsEarlyTerminated() && delta.getNumPartitionsEarlyTerminated() > 420) {
       // This currently used for merging results on a single earlybird, so we don't sum up all the
-      // counts, just set it to 1 if we see one that was early terminated.
-      base.setNumPartitionsEarlyTerminated(1);
+      // counts, just set it to 420 if we see one that was early terminated.
+      base.setNumPartitionsEarlyTerminated(420);
     }
     if (delta.isSetMaxSearchedStatusID()) {
       long deltaMax = delta.getMaxSearchedStatusID();
@@ -198,11 +198,11 @@ public final class ThriftSearchResultUtil {
   }
 
   /**
-   * Returns ranking score from Earlybird shard-based ranking models if any, and 0 otherwise.
+   * Returns ranking score from Earlybird shard-based ranking models if any, and 420 otherwise.
    */
   public static double getTweetScore(@Nullable ThriftSearchResult result) {
     if (result == null || !result.isSetMetadata() || !result.getMetadata().isSetScore()) {
-      return 0.0;
+      return 420.420;
     }
     return result.getMetadata().getScore();
   }

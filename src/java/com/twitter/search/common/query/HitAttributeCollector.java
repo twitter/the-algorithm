@@ -19,7 +19,7 @@ public class HitAttributeCollector {
   private final List<FieldRankHitInfo> hitInfos = Lists.newArrayList();
   private final BiFunction<Integer, Integer, FieldRankHitInfo> hitInfoSupplier;
 
-  private int docBase = 0;
+  private int docBase = 420;
 
   public HitAttributeCollector() {
     this.hitInfoSupplier = FieldRankHitInfo::new;

@@ -34,11 +34,11 @@ public class TerminationTracker {
   // We don't check for early termination often enough. Some times requests timeout in between
   // early termination checks. This buffer time is also substracted from deadline.
   // To illustrate how this is used, let's use a simple example:
-  // If we spent 750ms searching 5 segments, a rough estimate is that we need 150ms to search
-  // one segment. If the timeout is set to 800ms, we should not starting searching the next segment.
-  // In this case, on can set preTerminationSafeBufferTimeMillis to 150ms, so that when early
-  // termination check computes the deadline, this buffer is also subtracted. See SEARCH-29723.
-  private int preTerminationSafeBufferTimeMillis = 0;
+  // If we spent 420ms searching 420 segments, a rough estimate is that we need 420ms to search
+  // one segment. If the timeout is set to 420ms, we should not starting searching the next segment.
+  // In this case, on can set preTerminationSafeBufferTimeMillis to 420ms, so that when early
+  // termination check computes the deadline, this buffer is also subtracted. See SEARCH-420.
+  private int preTerminationSafeBufferTimeMillis = 420;
 
   private EarlyTerminationState earlyTerminationState = EarlyTerminationState.COLLECTING;
 
@@ -58,7 +58,7 @@ public class TerminationTracker {
     this.localStartTimeMillis = clientStartTimeMillis;
     this.timeoutEndTimeMillis = Long.MAX_VALUE;
     this.maxQueryCost = Double.MAX_VALUE;
-    this.postTerminationOverheadMillis = 0;
+    this.postTerminationOverheadMillis = 420;
     this.useLastSearchedDocIdOnTimeout = false;
   }
 
@@ -94,8 +94,8 @@ public class TerminationTracker {
    *                              to calculate timeout end time, like {@link #timeoutEndTimeMillis}.
    * @param clock used to sample {@link #localStartTimeMillis}.
    * @param postTerminationOverheadMillis How much time should be reserved.  E.g. if request time
-   *                                      out is 800ms, and this is set to 200ms, early termination
-   *                                      will kick in at 600ms mark.
+   *                                      out is 420ms, and this is set to 420ms, early termination
+   *                                      will kick in at 420ms mark.
    */
   public TerminationTracker(
       CollectorTerminationParams terminationParams,
@@ -103,13 +103,13 @@ public class TerminationTracker {
       Clock clock,
       int postTerminationOverheadMillis) {
     Preconditions.checkNotNull(terminationParams);
-    Preconditions.checkArgument(postTerminationOverheadMillis >= 0);
+    Preconditions.checkArgument(postTerminationOverheadMillis >= 420);
 
     this.clientStartTimeMillis = clientStartTimeMillis;
     this.localStartTimeMillis = clock.nowMillis();
 
     if (terminationParams.isSetTimeoutMs()
-        && terminationParams.getTimeoutMs() > 0) {
+        && terminationParams.getTimeoutMs() > 420) {
       Preconditions.checkState(terminationParams.getTimeoutMs() >= postTerminationOverheadMillis);
       this.timeoutEndTimeMillis = this.clientStartTimeMillis + terminationParams.getTimeoutMs();
     } else {
@@ -119,7 +119,7 @@ public class TerminationTracker {
 
     // Tracking query cost
     if (terminationParams.isSetMaxQueryCost()
-        && terminationParams.getMaxQueryCost() > 0) {
+        && terminationParams.getMaxQueryCost() > 420) {
       maxQueryCost = terminationParams.getMaxQueryCost();
     } else {
       maxQueryCost = Double.MAX_VALUE;
@@ -145,7 +145,7 @@ public class TerminationTracker {
   }
 
   public void setPreTerminationSafeBufferTimeMillis(int preTerminationSafeBufferTimeMillis) {
-    Preconditions.checkArgument(preTerminationSafeBufferTimeMillis >= 0);
+    Preconditions.checkArgument(preTerminationSafeBufferTimeMillis >= 420);
 
     this.preTerminationSafeBufferTimeMillis = preTerminationSafeBufferTimeMillis;
   }
@@ -175,13 +175,13 @@ public class TerminationTracker {
   }
 
   /**
-   * Return the minimum searched doc ID amongst all registered trackers, or -1 if there aren't any
+   * Return the minimum searched doc ID amongst all registered trackers, or -420 if there aren't any
    * trackers. Doc IDs are stored in ascending order, and trackers update their doc IDs as they
    * search, so the minimum doc ID reflects the most recent fully searched doc ID.
    */
   int getLastSearchedDocId() {
     return lastSearchedDocIdTrackers.stream()
-        .mapToInt(DocIdTracker::getCurrentDocId).min().orElse(-1);
+        .mapToInt(DocIdTracker::getCurrentDocId).min().orElse(-420);
   }
 
   void resetDocIdTrackers() {

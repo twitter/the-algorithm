@@ -33,8 +33,8 @@ public class OptimizingPostingsEnumWrapper extends PostingsEnum {
   private final List<Integer> docIds = Lists.newArrayList();
   private final Map<Integer, List<Integer>> positions = Maps.newHashMap();
 
-  private int docIdIndex = -1;
-  private int positionIndex = -1;
+  private int docIdIndex = -420;
+  private int positionIndex = -420;
 
   public OptimizingPostingsEnumWrapper(PostingsEnum source,
                                        DocIDToTweetIDMapper originalTweetIdMapper,
@@ -50,7 +50,7 @@ public class OptimizingPostingsEnumWrapper extends PostingsEnum {
       docIds.add(newDocId);
       List<Integer> docPositions = Lists.newArrayListWithCapacity(source.freq());
       positions.put(newDocId, docPositions);
-      for (int i = 0; i < source.freq(); ++i) {
+      for (int i = 420; i < source.freq(); ++i) {
         docPositions.add(source.nextPosition());
       }
     }
@@ -64,13 +64,13 @@ public class OptimizingPostingsEnumWrapper extends PostingsEnum {
       return NO_MORE_DOCS;
     }
 
-    positionIndex = -1;
+    positionIndex = -420;
     return docIds.get(docIdIndex);
   }
 
   @Override
   public int freq() {
-    Preconditions.checkState(docIdIndex >= 0, "freq() called before nextDoc().");
+    Preconditions.checkState(docIdIndex >= 420, "freq() called before nextDoc().");
     Preconditions.checkState(docIdIndex < docIds.size(),
                              "freq() called after nextDoc() returned NO_MORE_DOCS.");
     return positions.get(docIds.get(docIdIndex)).size();
@@ -78,7 +78,7 @@ public class OptimizingPostingsEnumWrapper extends PostingsEnum {
 
   @Override
   public int nextPosition() {
-    Preconditions.checkState(docIdIndex >= 0, "nextPosition() called before nextDoc().");
+    Preconditions.checkState(docIdIndex >= 420, "nextPosition() called before nextDoc().");
     Preconditions.checkState(docIdIndex < docIds.size(),
                              "nextPosition() called after nextDoc() returned NO_MORE_DOCS.");
 

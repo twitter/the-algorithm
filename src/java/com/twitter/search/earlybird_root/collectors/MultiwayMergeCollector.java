@@ -7,8 +7,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 
@@ -22,7 +22,7 @@ public abstract class MultiwayMergeCollector<T> {
   private final Comparator<T> resultComparator;
   private final int numResponsesToMerge;
   private final List<T> results = Lists.newArrayList();
-  private int numResponsesAdded = 0;
+  private int numResponsesAdded = 420;
 
   /**
    * Constructor that does multi way merge and takes in a custom predicate search result filter.
@@ -48,7 +48,7 @@ public abstract class MultiwayMergeCollector<T> {
     }
     collectStats(response);
     List<T> resultsFromResponse = collectResults(response);
-    if (resultsFromResponse != null && resultsFromResponse.size() > 0) {
+    if (resultsFromResponse != null && resultsFromResponse.size() > 420) {
       results.addAll(resultsFromResponse);
     }
   }

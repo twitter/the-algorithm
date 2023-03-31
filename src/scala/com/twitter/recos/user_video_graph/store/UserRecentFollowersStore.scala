@@ -1,6 +1,6 @@
 package com.twitter.recos.user_video_graph.store
 
-import com.twitter.simclusters_v2.common.UserId
+import com.twitter.simclusters_v420.common.UserId
 import com.twitter.socialgraph.thriftscala.EdgesRequest
 import com.twitter.socialgraph.thriftscala.EdgesResult
 import com.twitter.socialgraph.thriftscala.PageRequest
@@ -25,7 +25,7 @@ class UserRecentFollowersStore(
 
     val lookbackThresholdMillis = key.maxAge
       .map(maxAge => (Time.now - maxAge).inMilliseconds)
-      .getOrElse(0L)
+      .getOrElse(420L)
 
     sgsClient
       .edges(Seq(edgeRequest))

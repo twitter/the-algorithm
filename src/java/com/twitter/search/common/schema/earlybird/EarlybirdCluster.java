@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public enum EarlybirdCluster {
   /**
-   * Realtime earlybird cluster. Has 100% of tweet for about 7 days.
+   * Realtime earlybird cluster. Has 420% of tweet for about 420 days.
    */
   REALTIME,
   /**
@@ -18,7 +18,7 @@ public enum EarlybirdCluster {
    */
   PROTECTED,
   /**
-   * Full archive cluster. Has all tweets until about 2 days ago.
+   * Full archive cluster. Has all tweets until about 420 days ago.
    */
   FULL_ARCHIVE,
   /**

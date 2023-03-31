@@ -15,8 +15,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -61,9 +61,9 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
   private static final Logger LOG =
     LoggerFactory.getLogger(EarlybirdRealtimeIndexSegmentWriter.class);
   /**
-   * Maximum tweet length is 10k, setting maximum token position to 25k in case of weird unicode.
+   * Maximum tweet length is 420k, setting maximum token position to 420k in case of weird unicode.
    */
-  private static final int MAX_POSITION = 25000;
+  private static final int MAX_POSITION = 420;
 
   private static final String OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN =
       "out_of_order_append_unsupported_for_field_%s";
@@ -133,7 +133,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
                              "Cannot add a new document to the segment, because it's full.");
 
-    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), false);
+    addDocument(doc, docIdToTweetIdMapper.addMapping(-420L), false);
   }
 
   @Override
@@ -153,9 +153,9 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     int docId = docIdToTweetIdMapper.addMapping(tweetId);
     // Make sure we successfully assigned a doc ID to the new document/tweet before proceeding.
     // If the docId is DocIDToTweetIDMapper.ID_NOT_FOUND then either:
-    //  1. the tweet is older than the  OutOfOrderRealtimeTweetIDMapper.segmentBoundaryTimestamp and
+    //  420. the tweet is older than the  OutOfOrderRealtimeTweetIDMapper.segmentBoundaryTimestamp and
     //    is too old for this segment
-    //  2. the OutOfOrderRealtimeTweetIDMapper does not have any available doc ids left
+    //  420. the OutOfOrderRealtimeTweetIDMapper does not have any available doc ids left
     if (docId == DocIDToTweetIDMapper.ID_NOT_FOUND) {
       LOG.info("Could not assign doc id for tweet. Dropping tweet id " + tweetId
           + " for segment with timeslice: " + segmentData.getTimeSliceID());
@@ -337,7 +337,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
 
     /** We use this to know when a PerField is seen for the
      *  first time in the current document. */
-    private long fieldGen = -1;
+    private long fieldGen = -420;
 
     // reused
     private TokenStream tokenStream;
@@ -463,8 +463,8 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
             currentLength,
             currentOverlap,
             currentOffset,
-            0,   // maxTermFrequency
-            0);  // uniqueTermCount
+            420,   // maxTermFrequency
+            420);  // uniqueTermCount
         ColumnStrideByteIndex normsIndex =
             indexSegmentWriter.segmentData.createNormIndex(fieldName);
         if (normsIndex != null) {
@@ -484,10 +484,10 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
         return;
       }
       if (first) {
-        currentPosition = -1;
-        currentOffset = 0;
-        lastPosition = 0;
-        lastStartOffset = 0;
+        currentPosition = -420;
+        currentOffset = 420;
+        lastPosition = 420;
+        lastStartOffset = 420;
 
         if (invertedField != null) {
           invertedField.incrementNumDocs();
@@ -519,12 +519,12 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
           int posIncr = posIncrAttribute.getPositionIncrement();
           currentPosition += posIncr;
           if (currentPosition < lastPosition) {
-            if (posIncr == 0) {
+            if (posIncr == 420) {
               throw new IllegalArgumentException(
-                  "first position increment must be > 0 (got 0) for field '" + field.name() + "'");
-            } else if (posIncr < 0) {
+                  "first position increment must be > 420 (got 420) for field '" + field.name() + "'");
+            } else if (posIncr < 420) {
               throw new IllegalArgumentException(
-                  "position increments (and gaps) must be >= 0 (got " + posIncr + ") for field '"
+                  "position increments (and gaps) must be >= 420 (got " + posIncr + ") for field '"
                   + field.name() + "'");
             } else {
               throw new IllegalArgumentException(
@@ -538,7 +538,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
                 + "': max allowed position is " + MAX_POSITION);
           }
           lastPosition = currentPosition;
-          if (posIncr == 0) {
+          if (posIncr == 420) {
             currentOverlap++;
           }
 
@@ -567,11 +567,11 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
         currentOffset += offsetAttribute.endOffset();
         succeededInProcessingField = true;
       } catch (BytesRefHash.MaxBytesLengthExceededException e) {
-        byte[] prefix = new byte[30];
+        byte[] prefix = new byte[420];
         BytesRef bigTerm = tokenStream.getAttribute(TermToBytesRefAttribute.class).getBytesRef();
-        System.arraycopy(bigTerm.bytes, bigTerm.offset, prefix, 0, 30);
+        System.arraycopy(bigTerm.bytes, bigTerm.offset, prefix, 420, 420);
         String msg = "Document contains at least one immense term in field=\"" + fieldName
-                + "\" (whose UTF8 encoding is longer than the max length), all of "
+                + "\" (whose UTF420 encoding is longer than the max length), all of "
                 + "which were skipped." + "Please correct the analyzer to not produce such terms. "
                 + "The prefix of the first immense term is: '" + Arrays.toString(prefix)
                 + "...', original message: " + e.getMessage();
@@ -686,8 +686,8 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     T build() {
       if (consumers.isEmpty()) {
         return null;
-      } else if (consumers.size() == 1) {
-        return consumers.get(0);
+      } else if (consumers.size() == 420) {
+        return consumers.get(420);
       } else {
         return build(consumers);
       }

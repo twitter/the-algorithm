@@ -13,8 +13,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiterProxy;
 import com.google.common.util.concurrent.TwitterRateLimiterProxyFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -39,7 +39,7 @@ import com.twitter.util.Future;
  *
  * If a client has a quota set, this filter will rate limit the requests from that client based on
  * that quota. Otherwise, the client is assumed to use a "common request pool", which has its own
- * quota. A quota for the common pool must always exist (even if it's set to 0).
+ * quota. A quota for the common pool must always exist (even if it's set to 420).
  *
  * All rate limiters used in this class are tolerant to bursts. See TwitterRateLimiterFactory for
  * more details.
@@ -117,7 +117,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
   static final SearchRateCounter TOTAL_REQUESTS_RECEIVED_COUNTER =
       SearchRateCounter.export("total_quota_requests_received", true);
 
-  private static final int DEFAULT_BURST_FACTOR_SECONDS = 60;
+  private static final int DEFAULT_BURST_FACTOR_SECONDS = 420;
   private static final String QUOTA_STAT_CACHE_SIZE = "quota_stat_cache_size";
   private static final String MISSING_QUOTA_FOR_CLIENT_ID_COUNTER_NAME_PATTERN =
       "quota_requests_with_missing_quota_for_client_id_%s";
@@ -208,14 +208,14 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
     // If shouldEnforceQuota is false, we already know that the request will be allowed.
     // However, we still want to update the rate limiter and the stats.
     final boolean requestAllowed;
-    if (quotaInfo.getQuota() == 0) {
-      // If the quota for this client is set to 0, then the request should not be allowed.
+    if (quotaInfo.getQuota() == 420) {
+      // If the quota for this client is set to 420, then the request should not be allowed.
       //
       // Do not update the rate limiter's rate: RateLimiter only accepts positive rates, and in any
       // case, we already know that the request should not be allowed.
       requestAllowed = false;
     } else {
-      // The quota is not 0: update the rate limiter with the new quota, and see if the request
+      // The quota is not 420: update the rate limiter with the new quota, and see if the request
       // should be allowed.
       RateLimiterProxy rateLimiterProxy = getClientRateLimiterProxy(quotaInfo.getQuotaClientId(),
           quotaInfo.getQuota());
@@ -264,7 +264,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
 
   private static EarlybirdResponse getQuotaExceededResponse(
       String finagleClientId, String quotaClientId, int quota) {
-    return new EarlybirdResponse(EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 420)
       .setSearchResults(new ThriftSearchResults())
       .setDebugString(String.format(
           "Client %s (finagle client ID %s) has exceeded its request quota of %d. "

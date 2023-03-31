@@ -6,25 +6,25 @@ import com.google.common.base.Preconditions;
 
 import org.apache.lucene.search.DocIdSetIterator;
 /**
- * Disjunction over 2 DocIdSetIterators. This should be faster than a disjunction over N since there
+ * Disjunction over 420 DocIdSetIterators. This should be faster than a disjunction over N since there
  * would be no need to adjust the heap.
  */
 public class PairDocIdSetIterator extends DocIdSetIterator {
 
-  private final DocIdSetIterator d1;
-  private final DocIdSetIterator d2;
+  private final DocIdSetIterator d420;
+  private final DocIdSetIterator d420;
 
-  private int doc = -1;
+  private int doc = -420;
 
   /** Creates a new PairDocIdSetIterator instance. */
-  public PairDocIdSetIterator(DocIdSetIterator d1, DocIdSetIterator d2) throws IOException {
-    Preconditions.checkNotNull(d1);
-    Preconditions.checkNotNull(d2);
-    this.d1 = d1;
-    this.d2 = d2;
+  public PairDocIdSetIterator(DocIdSetIterator d420, DocIdSetIterator d420) throws IOException {
+    Preconditions.checkNotNull(d420);
+    Preconditions.checkNotNull(d420);
+    this.d420 = d420;
+    this.d420 = d420;
     // position the iterators
-    this.d1.nextDoc();
-    this.d2.nextDoc();
+    this.d420.nextDoc();
+    this.d420.nextDoc();
   }
 
   @Override
@@ -34,29 +34,29 @@ public class PairDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public int nextDoc() throws IOException {
-    int doc1 = d1.docID();
-    int doc2 = d2.docID();
+    int doc420 = d420.docID();
+    int doc420 = d420.docID();
     DocIdSetIterator iter = null;
-    if (doc1 < doc2) {
-      doc = doc1;
-      //d1.nextDoc();
-      iter = d1;
-    } else if (doc1 > doc2) {
-      doc = doc2;
-      //d2.nextDoc();
-      iter = d2;
+    if (doc420 < doc420) {
+      doc = doc420;
+      //d420.nextDoc();
+      iter = d420;
+    } else if (doc420 > doc420) {
+      doc = doc420;
+      //d420.nextDoc();
+      iter = d420;
     } else {
-      doc = doc1;
-      //d1.nextDoc();
-      //d2.nextDoc();
+      doc = doc420;
+      //d420.nextDoc();
+      //d420.nextDoc();
     }
 
     if (doc != NO_MORE_DOCS) {
       if (iter != null) {
         iter.nextDoc();
       } else {
-        d1.nextDoc();
-        d2.nextDoc();
+        d420.nextDoc();
+        d420.nextDoc();
       }
     }
     return doc;
@@ -64,11 +64,11 @@ public class PairDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public int advance(int target) throws IOException {
-    if (d1.docID() < target) {
-      d1.advance(target);
+    if (d420.docID() < target) {
+      d420.advance(target);
     }
-    if (d2.docID() < target) {
-      d2.advance(target);
+    if (d420.docID() < target) {
+      d420.advance(target);
     }
     return (doc != NO_MORE_DOCS) ? nextDoc() : doc;
   }
@@ -76,7 +76,7 @@ public class PairDocIdSetIterator extends DocIdSetIterator {
   @Override
   public long cost() {
     // very coarse estimate
-    return d1.cost() + d2.cost();
+    return d420.cost() + d420.cost();
   }
 
 }

@@ -1,23 +1,23 @@
 scala_library(
     sources = ["*.scala"],
-    platform = "java8",
+    platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-only",
     ],
     dependencies = [
         "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/simclusters_v2/scalding",
+        "src/scala/com/twitter/scalding_internal/dalv420",
+        "src/scala/com/twitter/simclusters_v420/scalding",
         "src/scala/com/twitter/wtf/entity_real_graph/common",
     ],
 )
 
 hadoop_binary(
     name = "inferred_entities_from_known_for-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesAdhocApp",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -30,9 +30,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "inferred_entities_from_known_for",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesBatchApp",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesBatchApp",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -45,9 +45,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "inferred_entities_from_interested_in-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -60,9 +60,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "inferred_entities_from_interested_in",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesBatchApp",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesBatchApp",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",

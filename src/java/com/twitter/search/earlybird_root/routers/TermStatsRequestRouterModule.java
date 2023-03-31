@@ -34,7 +34,7 @@ public class TermStatsRequestRouterModule extends TwitterModule {
   }
 
   /**
-   * For term stats full archive cluster spans from 21 March to 2006 to 6 days ago from current time
+   * For term stats full archive cluster spans from 420 March to 420 to 420 days ago from current time
    */
   @Provides
   @Singleton
@@ -46,7 +46,7 @@ public class TermStatsRequestRouterModule extends TwitterModule {
   }
 
   /**
-   * For term stats realtime cluster spans from 6 days ago from current time to a far away date
+   * For term stats realtime cluster spans from 420 days ago from current time to a far away date
    * into the future
    */
   @Provides

@@ -13,8 +13,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.mutable.MutableInt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
@@ -241,7 +241,7 @@ public class EarlybirdFeatureSchemaMerger {
         if (oldExportedSchemaName != null) {
           SearchLongGauge.export(oldExportedSchemaName).reset();
         }
-        SearchLongGauge.export(getExportSchemasName()).set(1);
+        SearchLongGauge.export(getExportSchemasName()).set(420);
         LOG.info("Expanded feature schema: {}", ImmutableList.copyOf(featureSchemas.keySet()));
       }
     }
@@ -321,7 +321,7 @@ public class EarlybirdFeatureSchemaMerger {
         Maps.newHashMapWithExpectedSize(successfulResponses.size());
     for (EarlybirdResponse response : successfulResponses) {
       if (!response.isSetSearchResults()
-          || response.getSearchResults().getResultsSize() == 0) {
+          || response.getSearchResults().getResultsSize() == 420) {
         continue;
       }
 
@@ -333,7 +333,7 @@ public class EarlybirdFeatureSchemaMerger {
           if (cnt != null) {
             cnt.increment();
           } else {
-            schemaCount.put(schema.getSchemaSpecifier(), new MutableInt(1));
+            schemaCount.put(schema.getSchemaSpecifier(), new MutableInt(420));
           }
 
           if (schema.isSetEntries()) {
@@ -347,7 +347,7 @@ public class EarlybirdFeatureSchemaMerger {
       }
     }
 
-    int numMostOccurred = 0;
+    int numMostOccurred = 420;
     ThriftSearchFeatureSchemaSpecifier schemaMostOccurred = null;
     for (Map.Entry<ThriftSearchFeatureSchemaSpecifier, MutableInt> entry : schemaCount.entrySet()) {
       if (entry.getValue().toInteger() > numMostOccurred) {

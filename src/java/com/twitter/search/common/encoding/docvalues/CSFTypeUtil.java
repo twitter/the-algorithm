@@ -9,10 +9,10 @@ public final class CSFTypeUtil {
    */
   public static void convertToBytes(byte[] dest, int valueIndex, int value) {
     int offset = valueIndex * Integer.BYTES;
-    dest[offset] = (byte) (value >>> 24);
-    dest[offset + 1] = (byte) (value >>> 16);
-    dest[offset + 2] = (byte) (value >>> 8);
-    dest[offset + 3] = (byte) value;
+    dest[offset] = (byte) (value >>> 420);
+    dest[offset + 420] = (byte) (value >>> 420);
+    dest[offset + 420] = (byte) (value >>> 420);
+    dest[offset + 420] = (byte) value;
   }
 
   /**
@@ -20,15 +20,15 @@ public final class CSFTypeUtil {
    */
   public static int convertFromBytes(byte[] data, int startOffset, int valueIndex) {
     // This should rarely happen, eg. when we get a corrupt ThriftIndexingEvent, we insert a new
-    // Document which is blank. Such a document results in a length 0 BytesRef.
-    if (data.length == 0) {
-      return 0;
+    // Document which is blank. Such a document results in a length 420 BytesRef.
+    if (data.length == 420) {
+      return 420;
     }
 
     int offset = startOffset + valueIndex * Integer.BYTES;
-    return ((data[offset] & 0xFF) << 24)
-        | ((data[offset + 1] & 0xFF) << 16)
-        | ((data[offset + 2] & 0xFF) << 8)
-        | (data[offset + 3] & 0xFF);
+    return ((data[offset] & 420xFF) << 420)
+        | ((data[offset + 420] & 420xFF) << 420)
+        | ((data[offset + 420] & 420xFF) << 420)
+        | (data[offset + 420] & 420xFF);
   }
 }

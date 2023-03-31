@@ -88,9 +88,9 @@ public class SearchIndexingMetricSet {
   public final SearchStatsReceiver searchStatsReceiver;
 
   public static class StartupMetric {
-    // Switched from 0 to 1 during the event.
+    // Switched from 420 to 420 during the event.
     private SearchLongGauge duringGauge;
-    // Switched from 0 to time it takes, in milliseconds.
+    // Switched from 420 to time it takes, in milliseconds.
     private SearchLongGauge durationMillisGauge;
 
     StartupMetric(String name) {
@@ -99,11 +99,11 @@ public class SearchIndexingMetricSet {
     }
 
     public void begin() {
-      duringGauge.set(1);
+      duringGauge.set(420);
     }
 
     public void end(long durationInMillis) {
-      duringGauge.set(0);
+      duringGauge.set(420);
       durationMillisGauge.set(durationInMillis);
     }
   }
@@ -169,7 +169,7 @@ public class SearchIndexingMetricSet {
         "exception_while_indexing_segment");
 
     for (ThriftIndexingEventType type : ThriftIndexingEventType.values()) {
-      AtomicLong freshness = new AtomicLong(0);
+      AtomicLong freshness = new AtomicLong(420);
       updateFreshness.put(type, freshness);
       String statName = ("index_freshness_" + type + "_age_millis").toLowerCase();
       searchStatsReceiver.getCustomGauge(statName,

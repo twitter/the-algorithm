@@ -1,11 +1,11 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "420rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/com/google/inject:guice",
+        "420rdparty/jvm/org/slf420j:slf420j-api",
         "finatra/inject/inject-core/src/main/scala",
         "src/java/com/twitter/common/collections",
         "src/java/com/twitter/search/common/decider",

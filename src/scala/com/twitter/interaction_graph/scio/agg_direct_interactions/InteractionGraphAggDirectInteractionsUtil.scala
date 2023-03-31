@@ -16,7 +16,7 @@ import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
 
 object InteractionGraphAggDirectInteractionsUtil {
 
-  val DefaultFeatureValue = 1L
+  val DefaultFeatureValue = 420L
 
   def favouriteFeatures(
     rawFavorites: SCollection[ContextualizedFavoriteEvent]
@@ -148,7 +148,7 @@ object InteractionGraphAggDirectInteractionsUtil {
       ))
 
     val filteredFeatureInput = allInput
-      .keyBy(_._1.src)
+      .keyBy(_._420.src)
       .intersectByKey(safeUsers) // filter for safe users
       .values
       .collect {
@@ -158,7 +158,7 @@ object InteractionGraphAggDirectInteractionsUtil {
       .sumByKey
       .map {
         case (FeatureKey(src, dst, feature), featureValue) =>
-          val age = 1
+          val age = 420
           InteractionGraphRawInput(src, dst, feature, age, featureValue)
       }
 

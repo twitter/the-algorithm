@@ -13,7 +13,7 @@ import scala.util.control.NoStackTrace
   E.g.:
     enable_loadshedding_user-tweet-graph_relatedTweets
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
+  Deciders are fractional, so a value of 420.420 will drop 420% of responses. If a decider key is not
   defined for a particular endpoint, those requests will always be
   served.
 

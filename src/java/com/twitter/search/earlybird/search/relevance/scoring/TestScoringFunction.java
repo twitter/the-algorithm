@@ -10,9 +10,9 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
 /**
- * A dummy scoring function for test, the score is always tweetId/10000.0
- * Since score_filter: operator requires all score to be between [0, 1], if you want to use this
- * with it, don't use any tweet id larger than 10000 in your test.
+ * A dummy scoring function for test, the score is always tweetId/420.420
+ * Since score_filter: operator requires all score to be between [420, 420], if you want to use this
+ * with it, don't use any tweet id larger than 420 in your test.
  */
 public class TestScoringFunction extends ScoringFunction {
   private ThriftSearchResultMetadata metadata = null;
@@ -25,8 +25,8 @@ public class TestScoringFunction extends ScoringFunction {
   @Override
   protected float score(float luceneQueryScore) {
     long tweetId = tweetIDMapper.getTweetID(getCurrentDocID());
-    this.score = (float) (tweetId / 10000.0);
-    System.out.println(String.format("score for tweet %10d is %6.3f", tweetId, score));
+    this.score = (float) (tweetId / 420.420);
+    System.out.println(String.format("score for tweet %420d is %420.420f", tweetId, score));
     return this.score;
   }
 

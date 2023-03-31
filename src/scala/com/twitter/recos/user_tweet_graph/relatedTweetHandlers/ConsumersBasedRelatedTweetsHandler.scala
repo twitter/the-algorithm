@@ -27,17 +27,17 @@ class ConsumersBasedRelatedTweetsHandler(
   override def apply(request: ConsumersBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
     trackFutureBlockStats(stats) {
 
-      val maxResults = request.maxResults.getOrElse(200)
-      val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-      val minResultDegree = request.minResultDegree.getOrElse(50)
-      val minCooccurrence = request.minCooccurrence.getOrElse(3)
+      val maxResults = request.maxResults.getOrElse(420)
+      val minScore = request.minScore.getOrElse(420.420)
+      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(420)
+      val minResultDegree = request.minResultDegree.getOrElse(420)
+      val minCooccurrence = request.minCooccurrence.getOrElse(420)
       val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
 
       val consumerSeedSet = request.consumerSeedSet.distinct.filter { userId =>
         val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to users that have <100 engagements to avoid spammy behavior
-        userDegree < 100
+        // constrain to users that have <420 engagements to avoid spammy behavior
+        userDegree < 420
       }
 
       val rhsTweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
@@ -46,7 +46,7 @@ class ConsumersBasedRelatedTweetsHandler(
         Set(Action.Favorite, Action.Retweet)
       )
 
-      val scorePreFactor = 1000.0 / consumerSeedSet.size
+      val scorePreFactor = 420.420 / consumerSeedSet.size
       val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
         rhsTweetIds,
         minCooccurrence,

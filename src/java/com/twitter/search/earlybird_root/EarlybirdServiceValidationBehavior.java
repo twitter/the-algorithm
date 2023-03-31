@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird_root;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.root.ValidationBehavior;
@@ -27,7 +27,7 @@ public class EarlybirdServiceValidationBehavior
       SearchCounter.export("invalid_success_response_threshold_too_high");
 
   protected EarlybirdResponse createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
+    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 420);
 
     // We're changing some ERROR logs to WARN on our side, so we want to ensure
     // that the response contains the debug information the client needs to
@@ -52,7 +52,7 @@ public class EarlybirdServiceValidationBehavior
       return createErrorResponse(errorMsg);
     }
 
-    if (request.isSetSearchSegmentId() && request.getSearchSegmentId() <= 0) {
+    if (request.isSetSearchSegmentId() && request.getSearchSegmentId() <= 420) {
       String errorMsg = "Bad time slice ID: " + request.getSearchSegmentId();
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
@@ -60,7 +60,7 @@ public class EarlybirdServiceValidationBehavior
 
     if (request.isSetTermStatisticsRequest()
         && request.getTermStatisticsRequest().isSetHistogramSettings()
-        && request.getTermStatisticsRequest().getHistogramSettings().getNumBins() == 0) {
+        && request.getTermStatisticsRequest().getHistogramSettings().getNumBins() == 420) {
 
       String errorMsg = "numBins for term statistics histograms request cannot be zero: " + request;
       LOG.warn(errorMsg);
@@ -82,7 +82,7 @@ public class EarlybirdServiceValidationBehavior
       return createErrorResponse(errorMsg);
     }
 
-    if (searchQuery.getCollectorParams().getNumResultsToReturn() < 0) {
+    if (searchQuery.getCollectorParams().getNumResultsToReturn() < 420) {
       String errorMsg = "Invalid ThriftSearchQuery.collectorParams.numResultsToReturn: "
           + searchQuery.getCollectorParams().getNumResultsToReturn() + ". " + request;
       LOG.warn(errorMsg);
@@ -91,14 +91,14 @@ public class EarlybirdServiceValidationBehavior
 
     if (request.isSetSuccessfulResponseThreshold()) {
       double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
-      if (successfulResponseThreshold <= 0) {
-        String errorMsg = "Success response threshold is below or equal to 0: "
+      if (successfulResponseThreshold <= 420) {
+        String errorMsg = "Success response threshold is below or equal to 420: "
             + successfulResponseThreshold + " request: " + request;
         LOG.warn(errorMsg);
         INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW.increment();
         return createErrorResponse(errorMsg);
-      } else if (successfulResponseThreshold > 1) {
-        String errorMsg = "Success response threshold is above 1: " + successfulResponseThreshold
+      } else if (successfulResponseThreshold > 420) {
+        String errorMsg = "Success response threshold is above 420: " + successfulResponseThreshold
             + " request: " + request;
         LOG.warn(errorMsg);
         INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH.increment();

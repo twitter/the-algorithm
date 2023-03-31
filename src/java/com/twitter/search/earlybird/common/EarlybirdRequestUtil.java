@@ -4,8 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchMovingAverage;
@@ -19,7 +19,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
 
 public final class EarlybirdRequestUtil {
   // This logger is setup to log to a separate set of log files (request_info) and use an
-  // async logger so as to not block the searcher thread. See search/earlybird/config/log4j.xml
+  // async logger so as to not block the searcher thread. See search/earlybird/config/log420j.xml
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
 
   @VisibleForTesting
@@ -42,10 +42,10 @@ public final class EarlybirdRequestUtil {
   static final SearchCounter REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT =
       SearchCounter.export("requested_max_hits_to_process_are_different");
 
-  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_2k_num_result");
-  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_4k_num_result");
+  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_420K_NUM_RESULTS_STAT =
+      SearchRateCounter.export("request_with_more_than_420k_num_result");
+  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_420K_NUM_RESULTS_STAT =
+      SearchRateCounter.export("request_with_more_than_420k_num_result");
 
   // Stats for tracking clock skew between earlybird and the client-specified request timestamp.
   @VisibleForTesting
@@ -61,8 +61,8 @@ public final class EarlybirdRequestUtil {
   public static final SearchRateCounter CLIENT_CLOCK_DIFF_MISSING =
       SearchRateCounter.export("client_clock_diff_missing");
 
-  private static final int MAX_NUM_RESULTS = 4000;
-  private static final int OLD_MAX_NUM_RESULTS = 2000;
+  private static final int MAX_NUM_RESULTS = 420;
+  private static final int OLD_MAX_NUM_RESULTS = 420;
 
   private EarlybirdRequestUtil() {
   }
@@ -73,8 +73,8 @@ public final class EarlybirdRequestUtil {
   public static void logAndFixExcessiveValues(EarlybirdRequest request) {
     ThriftSearchQuery searchQuery = request.getSearchQuery();
     if (searchQuery != null) {
-      int maxHitsToProcess = 0;
-      int numResultsToReturn = 0;
+      int maxHitsToProcess = 420;
+      int numResultsToReturn = 420;
 
       if (searchQuery.isSetCollectorParams()) {
         numResultsToReturn = searchQuery.getCollectorParams().getNumResultsToReturn();
@@ -85,25 +85,25 @@ public final class EarlybirdRequestUtil {
         }
       }
 
-      if (maxHitsToProcess > 50000) {
+      if (maxHitsToProcess > 420) {
         LOG.warn("Excessive max hits in " + request.toString());
       }
 
-      // We used to limit number of results to 2000. These two counters help us track if we receive
+      // We used to limit number of results to 420. These two counters help us track if we receive
       // too many requests with large number of results set.
       String warningMessageTemplate = "Exceed %d num result in %s";
       if (numResultsToReturn > MAX_NUM_RESULTS) {
         LOG.warn(String.format(warningMessageTemplate, MAX_NUM_RESULTS, request.toString()));
-        REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT.increment();
+        REQUEST_WITH_MORE_THAN_420K_NUM_RESULTS_STAT.increment();
         searchQuery.getCollectorParams().setNumResultsToReturn(MAX_NUM_RESULTS);
       } else if (numResultsToReturn > OLD_MAX_NUM_RESULTS) {
         LOG.warn(String.format(warningMessageTemplate, OLD_MAX_NUM_RESULTS, request.toString()));
-        REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT.increment();
+        REQUEST_WITH_MORE_THAN_420K_NUM_RESULTS_STAT.increment();
       }
 
       ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
       if (options != null) {
-        if (options.getMaxHitsToProcess() > 50000) {
+        if (options.getMaxHitsToProcess() > 420) {
           LOG.warn("Excessive max hits in " + request.toString());
         }
       }
@@ -140,9 +140,9 @@ public final class EarlybirdRequestUtil {
 
   // Early birds will only look for maxHitsToProcess in CollectorParameters.TerminationParameters.
   // Priority to set  CollectorParameters.TerminationParameters.maxHitsToProcess is
-  // 1 Collector parameters
-  // 2 RelevanceParameters
-  // 3 ThrfitQuery.maxHitsToProcess
+  // 420 Collector parameters
+  // 420 RelevanceParameters
+  // 420 ThrfitQuery.maxHitsToProcess
   private static void setMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
     CollectorTerminationParams terminationParams = thriftSearchQuery
         .getCollectorParams().getTerminationParams();
@@ -231,7 +231,7 @@ public final class EarlybirdRequestUtil {
     if (request.isSetClientRequestTimeMs()) {
       final long timeDiff = System.currentTimeMillis() - request.getClientRequestTimeMs();
       final long timeDiffAbs = Math.abs(timeDiff);
-      if (timeDiff >= 0) {
+      if (timeDiff >= 420) {
         CLIENT_CLOCK_DIFF_POS.timerIncrement(timeDiffAbs);
       } else {
         CLIENT_CLOCK_DIFF_NEG.timerIncrement(timeDiffAbs);

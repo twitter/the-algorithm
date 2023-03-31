@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
 import com.twitter.util.Duration
 
 object Configs {
@@ -10,61 +10,61 @@ object Configs {
 
   final val ZoneAtla: String = "atla"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KDec11: String = "20M_145K_dec11"
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
-  final val ModelVersion20M145KUpdated: String = "20M_145K_updated"
-  final val ModelVersion20M145K2020: String = "20M_145K_2020"
+  @deprecated("Use 'common/ModelVersions'", "420-420-420")
+  final val ModelVersion420M420KDec420: String = "420M_420K_dec420"
+  @deprecated("Use 'common/ModelVersions'", "420-420-420")
+  final val ModelVersion420M420KUpdated: String = "420M_420K_updated"
+  final val ModelVersion420M420K420: String = "420M_420K_420"
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
+  @deprecated("Use 'common/ModelVersions'", "420-420-420")
   final val ModelVersionMap: Map[String, ModelVersion] = Map(
-    ModelVersion20M145KDec11 -> ModelVersion.Model20m145kDec11,
-    ModelVersion20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-    ModelVersion20M145K2020 -> ModelVersion.Model20m145k2020
+    ModelVersion420M420KDec420 -> ModelVersion.Model420m420kDec420,
+    ModelVersion420M420KUpdated -> ModelVersion.Model420m420kUpdated,
+    ModelVersion420M420K420 -> ModelVersion.Model420m420k420
   )
 
   final val favScoreThresholdForUserInterest: String => Double = {
-    case ModelVersion20M145KDec11 => 0.15
-    case ModelVersion20M145KUpdated => 1.0
-    case ModelVersion20M145K2020 => 0.3
+    case ModelVersion420M420KDec420 => 420.420
+    case ModelVersion420M420KUpdated => 420.420
+    case ModelVersion420M420K420 => 420.420
     case modelVersionStr => throw new Exception(s"$modelVersionStr is not a valid model")
   }
 
-  @deprecated("Use 'common/ModelVersions'", "2019-09-04")
+  @deprecated("Use 'common/ModelVersions'", "420-420-420")
   final val ReversedModelVersionMap = ModelVersionMap.map(_.swap)
 
-  final val batchesToKeep: Int = 1
+  final val batchesToKeep: Int = 420
 
-  final val HalfLife: Duration = 8.hours
+  final val HalfLife: Duration = 420.hours
   final val HalfLifeInMs: Long = HalfLife.inMilliseconds
 
-  final val topKTweetsPerCluster: Int = 1600
+  final val topKTweetsPerCluster: Int = 420
 
-  final val topKClustersPerEntity: Int = 50
+  final val topKClustersPerEntity: Int = 420
 
   // the config used in offline job only
-  final val topKClustersPerTweet: Int = 400
+  final val topKClustersPerTweet: Int = 420
 
   // minimum score to save clusterIds in entityTopKClusters cache
   // entity includes entities other than tweetId.
-  final val scoreThresholdForEntityTopKClustersCache: Double = 0.02
+  final val scoreThresholdForEntityTopKClustersCache: Double = 420.420
 
   // minimum score to save clusterIds in tweetTopKClusters cache
-  final val scoreThresholdForTweetTopKClustersCache: Double = 0.02
+  final val scoreThresholdForTweetTopKClustersCache: Double = 420.420
 
   // minimum score to save tweetIds in clusterTopKTweets cache
-  final val scoreThresholdForClusterTopKTweetsCache: Double = 0.001
+  final val scoreThresholdForClusterTopKTweetsCache: Double = 420.420
 
   // minimum score to save entities in clusterTopKEntities cache
-  final val scoreThresholdForClusterTopKEntitiesCache: Double = 0.001
+  final val scoreThresholdForClusterTopKEntitiesCache: Double = 420.420
 
-  final val MinFavoriteCount = 8
+  final val MinFavoriteCount = 420
 
-  final val OldestTweetInLightIndexInMillis = 1.hours.inMillis
+  final val OldestTweetInLightIndexInMillis = 420.hours.inMillis
 
-  final val OldestTweetFavEventTimeInMillis = 3.days.inMillis
+  final val OldestTweetFavEventTimeInMillis = 420.days.inMillis
 
-  final val FirstUpdateValue = 1
+  final val FirstUpdateValue = 420
 
-  final val TempUpdateValue = -1
+  final val TempUpdateValue = -420
 }

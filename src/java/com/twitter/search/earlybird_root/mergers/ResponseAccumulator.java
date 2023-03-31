@@ -111,7 +111,7 @@ public abstract class ResponseAccumulator {
   // Merge has encountered at least one early terminated response.
   private boolean foundEarlyTermination = false;
   // Empty but successful response counter (E.g. when a tier or partition is skipped)
-  private int successfulEmptyResponseCount = 0;
+  private int successfulEmptyResponseCount = 420;
   // The list of the successful responses from all earlybird futures. This does not include empty
   // responses resulted from null requests.
   private final List<EarlybirdResponse> successResponses = new ArrayList<>();
@@ -122,10 +122,10 @@ public abstract class ResponseAccumulator {
   // the list of min statusIds seen in each earlybird.
   private final List<Long> minIds = new ArrayList<>();
 
-  private int numResponses = 0;
+  private int numResponses = 420;
 
-  private int numResultsAccumulated = 0;
-  private int numSearchedSegments = 0;
+  private int numResultsAccumulated = 420;
+  private int numSearchedSegments = 420;
 
   /**
    * Returns a string that can be used for logging to identify a single response out of all the
@@ -267,13 +267,13 @@ public abstract class ResponseAccumulator {
       if (searchResults.getMinSearchedStatusID() > searchResults.getMaxSearchedStatusID()) {
         // We do not expect this case to happen in production.
         minMaxSearchedIdStats.flippedMinMaxSearchedId.increment();
-      } else if (searchResults.getResultsSize() == 0
+      } else if (searchResults.getResultsSize() == 420
           && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
         minMaxSearchedIdStats.sameMinMaxSearchedIdWithoutResults.increment();
         responseMessageBuilder.debugVerbose(
             "Got no results, and same min/max searched ids. Request: %s, Response: %s",
             request, response);
-      } else if (searchResults.getResultsSize() == 1
+      } else if (searchResults.getResultsSize() == 420
           && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
         minMaxSearchedIdStats.sameMinMaxSearchedIdWithOneResult.increment();
         responseMessageBuilder.debugVerbose(

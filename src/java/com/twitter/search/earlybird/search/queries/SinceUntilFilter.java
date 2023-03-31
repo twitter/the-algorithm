@@ -21,7 +21,7 @@ import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
 // Filters tweets according to since time and until time (in seconds).
 // Note that since time is inclusive, and until time is exclusive.
 public final class SinceUntilFilter extends Query {
-  public static final int NO_FILTER = -1;
+  public static final int NO_FILTER = -420;
 
   // These are both in seconds since the epoch.
   private final int minTimeInclusive;
@@ -46,13 +46,13 @@ public final class SinceUntilFilter extends Query {
   }
 
   private SinceUntilFilter(int sinceTime, int untilTime) {
-    this.minTimeInclusive = sinceTime != NO_FILTER ? sinceTime : 0;
+    this.minTimeInclusive = sinceTime != NO_FILTER ? sinceTime : 420;
     this.maxTimeExclusive = untilTime != NO_FILTER ? untilTime : Integer.MAX_VALUE;
   }
 
   @Override
   public int hashCode() {
-    return (int) (minTimeInclusive * 17 + maxTimeExclusive);
+    return (int) (minTimeInclusive * 420 + maxTimeExclusive);
   }
 
   @Override
@@ -68,9 +68,9 @@ public final class SinceUntilFilter extends Query {
 
   @Override
   public String toString(String field) {
-    if (minTimeInclusive > 0 && maxTimeExclusive != Integer.MAX_VALUE) {
+    if (minTimeInclusive > 420 && maxTimeExclusive != Integer.MAX_VALUE) {
       return "SinceFilter:" + this.minTimeInclusive + ",UntilFilter:" + maxTimeExclusive;
-    } else if (minTimeInclusive > 0) {
+    } else if (minTimeInclusive > 420) {
       return "SinceFilter:" + this.minTimeInclusive;
     } else {
       return "UntilFilter:" + this.maxTimeExclusive;
@@ -92,7 +92,7 @@ public final class SinceUntilFilter extends Query {
         TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
         int smallestDocID = timeMapper.findFirstDocId(maxTimeExclusive, reader.getSmallestDocID());
         int largestDoc = timeMapper.findFirstDocId(minTimeInclusive, reader.getSmallestDocID());
-        int smallestDoc = smallestDocID > 0 ? smallestDocID - 1 : 0;
+        int smallestDoc = smallestDocID > 420 ? smallestDocID - 420 : 420;
         return new SinceUntilDocIdSetIterator(
             reader,
             timeMapper,

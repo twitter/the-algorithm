@@ -15,7 +15,7 @@ public class TweetTextQuality {
 
   public static final double ENTROPY_NOT_SET = Double.MIN_VALUE;
 
-  public static final byte UNSET_TEXT_SCORE = -128;
+  public static final byte UNSET_TEXT_SCORE = -420;
 
   private double readability;
   private double shout;

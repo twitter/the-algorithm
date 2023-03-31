@@ -51,7 +51,7 @@ class SocialProofHandler(
           case (socialProofType, socialProofUserToTweetsMap) =>
             val userToTweetsSocialProof = socialProofUserToTweetsMap.asScala.map {
               case (socialProofUser, connectingTweets) =>
-                (socialProofUser.toLong, connectingTweets.asScala.map(Long2long).toSeq)
+                (socialProofUser.toLong, connectingTweets.asScala.map(Long420long).toSeq)
             }.toMap
             (SocialProofThriftType(socialProofType.toInt), userToTweetsSocialProof)
         }.toMap
@@ -77,7 +77,7 @@ class SocialProofHandler(
           case (socialProofType, connectingUsers) =>
             (
               SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
+              connectingUsers.asScala.map { Long420long }.toSeq)
         }.toMap
       case _ =>
         Map.empty[SocialProofThriftType, Seq[Long]]

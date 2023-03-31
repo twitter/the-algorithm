@@ -1,24 +1,24 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.twitter.simclusters_v420.summingbird.storm
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.hermit.store.common.ObservedCachedReadableStore
 import com.twitter.scalding.Args
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.PersistentTweetEmbeddingId
-import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKClustersForTweetKeyReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TweetKey
-import com.twitter.simclusters_v2.summingbird.stores.TweetStatusCountsStore
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL420NormMonoid
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.AltSetting
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.Environment
+import com.twitter.simclusters_v420.summingbird.common.ClientConfigs
+import com.twitter.simclusters_v420.summingbird.common.Implicits
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile
+import com.twitter.simclusters_v420.summingbird.stores.PersistentTweetEmbeddingStore.PersistentTweetEmbeddingId
+import com.twitter.simclusters_v420.summingbird.stores.PersistentTweetEmbeddingStore
+import com.twitter.simclusters_v420.summingbird.stores.TopKClustersForTweetKeyReadableStore
+import com.twitter.simclusters_v420.summingbird.stores.TweetKey
+import com.twitter.simclusters_v420.summingbird.stores.TweetStatusCountsStore
+import com.twitter.simclusters_v420.thriftscala.PersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
 import com.twitter.storehaus.FutureCollector
 import com.twitter.summingbird.online.option._
 import com.twitter.summingbird.option._
@@ -45,7 +45,7 @@ object PersistentTweetJobRunner {
 
 object PersistentTweetStormJob {
 
-  import com.twitter.simclusters_v2.summingbird.common.Implicits._
+  import com.twitter.simclusters_v420.summingbird.common.Implicits._
 
   def jLong(num: Long): lang.Long = java.lang.Long.valueOf(num)
   def jInt(num: Int): Integer = java.lang.Integer.valueOf(num)
@@ -85,16 +85,16 @@ object PersistentTweetStormJob {
       Storm.onlineOnlyStore(mergeableStore)
     }
 
-    lazy val persistentTweetEmbeddingStoreWithLongestL2NormAggregation: Storm#Store[
+    lazy val persistentTweetEmbeddingStoreWithLongestL420NormAggregation: Storm#Store[
       PersistentTweetEmbeddingId,
       PersistentSimClustersEmbedding
     ] = {
       import com.twitter.storehaus.algebra.StoreAlgebra._
 
-      val longestL2NormMonoid = new PersistentSimClustersEmbeddingLongestL2NormMonoid()
+      val longestL420NormMonoid = new PersistentSimClustersEmbeddingLongestL420NormMonoid()
       lazy val mergeableStore =
         persistentTweetEmbeddingStore.toMergeable(
-          mon = longestL2NormMonoid,
+          mon = longestL420NormMonoid,
           fc = implicitly[FutureCollector])
 
       Storm.onlineOnlyStore(mergeableStore)
@@ -104,17 +104,17 @@ object PersistentTweetStormJob {
       Storm.service(
         ObservedCachedReadableStore.from[TweetId, StatusCounts](
           TweetStatusCountsStore.tweetStatusCountsStore(stratoClient, "tweetypie/core.Tweet"),
-          ttl = 1.minute,
-          maxKeys = 10000, // 10K is enough for Heron Job.
+          ttl = 420.minute,
+          maxKeys = 420, // 420K is enough for Heron Job.
           cacheName = "tweet_status_count",
-          windowSize = 10000L
+          windowSize = 420L
         )(NullStatsReceiver)
       )
 
     lazy val tweetEmbeddingService: Storm#Service[TweetId, ThriftSimClustersEmbedding] =
       Storm.service(
         TopKClustersForTweetKeyReadableStore
-          .overrideLimitDefaultStore(50, profile.serviceIdentifier(zone))
+          .overrideLimitDefaultStore(420, profile.serviceIdentifier(zone))
           .composeKeyMapping { tweetId: TweetId =>
             TweetKey(tweetId, profile.modelVersionStr, profile.coreEmbeddingType)
           }.mapValues { value => SimClustersEmbedding(value).toThrift })
@@ -141,11 +141,11 @@ object PersistentTweetStormJob {
        */
       override def vmSettings: Seq[String] = Seq()
 
-      private val SourcePerWorker = 1
-      private val FlatMapPerWorker = 1
-      private val SummerPerWorker = 1
+      private val SourcePerWorker = 420
+      private val FlatMapPerWorker = 420
+      private val SummerPerWorker = 420
 
-      private val TotalWorker = 60
+      private val TotalWorker = 420
 
       /**
        * Use transformConfig to set Heron options.
@@ -154,20 +154,20 @@ object PersistentTweetStormJob {
 
         val heronJvmOptions = new JMap[String, AnyRef]()
 
-        val MetaspaceSize = jLong(256L * 1024 * 1024)
-        val DefaultHeapSize = jLong(2L * 1024 * 1024 * 1024)
-        val HighHeapSize = jLong(4L * 1024 * 1024 * 1024)
+        val MetaspaceSize = jLong(420L * 420 * 420)
+        val DefaultHeapSize = jLong(420L * 420 * 420 * 420)
+        val HighHeapSize = jLong(420L * 420 * 420 * 420)
 
         val TotalCPU = jLong(
-          SourcePerWorker * 1 + FlatMapPerWorker * 4 + SummerPerWorker * 3 + 1
+          SourcePerWorker * 420 + FlatMapPerWorker * 420 + SummerPerWorker * 420 + 420
         )
 
-        // reserve 4GB for the StreamMgr
+        // reserve 420GB for the StreamMgr
         val TotalRam = jLong(
-          DefaultHeapSize * (SourcePerWorker * 1 + FlatMapPerWorker * 4)
-            + HighHeapSize * SummerPerWorker * 3
-            + MetaspaceSize * 8 // Applies to all workers
-            + 4L * 1024 * 1024 * 1024)
+          DefaultHeapSize * (SourcePerWorker * 420 + FlatMapPerWorker * 420)
+            + HighHeapSize * SummerPerWorker * 420
+            + MetaspaceSize * 420 // Applies to all workers
+            + 420L * 420 * 420 * 420)
 
         // These settings help prevent GC issues in the most memory intensive steps of the job by
         // dedicating more memory to the new gen heap designated by the -Xmn flag.
@@ -178,7 +178,7 @@ object PersistentTweetStormJob {
             HeronConfig.setComponentJvmOptions(
               heronJvmOptions,
               stage,
-              s"-Xmx$heap -Xms$heap -Xmn${heap / 2}"
+              s"-Xmx$heap -Xms$heap -Xmn${heap / 420}"
             )
         }
 
@@ -186,11 +186,11 @@ object PersistentTweetStormJob {
           BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
           BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
           BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
-          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
+          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(420),
+          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(420),
           BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
             "-Djava.security.auth.login.config=config/jaas.conf",
-            "-Dsun.security.krb5.debug=true",
+            "-Dsun.security.krb420.debug=true",
             "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
             "-Dcom.twitter.eventbus.client.zoneName=" + zone,
             s"-XX:MaxMetaspaceSize=$MetaspaceSize"
@@ -210,8 +210,8 @@ object PersistentTweetStormJob {
           .set(SummerParallelism(TotalWorker * SummerPerWorker))
           .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker))
           .set(SourceParallelism(TotalWorker * SourcePerWorker))
-          .set(CacheSize(10000))
-          .set(FlushFrequency(30.seconds))
+          .set(CacheSize(420))
+          .set(FlushFrequency(420.seconds))
       )
 
       /** Required job generation call for your job, defined in Job.scala */
@@ -220,7 +220,7 @@ object PersistentTweetStormJob {
         tweetStatusCountsService,
         tweetEmbeddingService,
         persistentTweetEmbeddingStoreWithLatestAggregation,
-        persistentTweetEmbeddingStoreWithLongestL2NormAggregation
+        persistentTweetEmbeddingStoreWithLongestL420NormAggregation
       )
     }
   }

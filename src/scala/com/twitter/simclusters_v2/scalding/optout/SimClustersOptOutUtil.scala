@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.twitter.simclusters_v420.scalding.optout
 
 import com.twitter.algebird.Aggregator.size
 import com.twitter.algebird.QTreeAggregatorLowerBound
 import com.twitter.octain.identifiers.thriftscala.RawId
-import com.twitter.octain.p13n.batch.P13NPreferencesScalaDataset
-import com.twitter.octain.p13n.preferences.CompositeInterest
+import com.twitter.octain.p420n.batch.P420NPreferencesScalaDataset
+import com.twitter.octain.p420n.preferences.CompositeInterest
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Execution
 import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.SemanticCoreEntityId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.ClusterType
+import com.twitter.simclusters_v420.thriftscala.SemanticCoreEntityWithScore
 import com.twitter.wtf.interest.thriftscala.Interest
 
 /**
@@ -28,21 +28,21 @@ object SimClustersOptOutUtil {
   /**
    * Reads User's Your Twitter Data opt-out selections
    */
-  def getP13nOptOutSources(
+  def getP420nOptOutSources(
     dateRange: DateRange,
     clusterType: ClusterType
   ): TypedPipe[(UserId, Set[SemanticCoreEntityId])] = {
     DAL
       .readMostRecentSnapshot(
-        P13NPreferencesScalaDataset,
+        P420NPreferencesScalaDataset,
         dateRange
       )
       .withRemoteReadPolicy(AllowCrossClusterSameDC)
       .toTypedPipe
       .map { record => (record.id, record.preferences) }
       .flatMap {
-        case (RawId.UserId(userId), p13nPreferences) =>
-          val optedOutEntities = p13nPreferences.interestPreferences
+        case (RawId.UserId(userId), p420nPreferences) =>
+          val optedOutEntities = p420nPreferences.interestPreferences
             .map { preference =>
               preference.disabledInterests
                 .collect {
@@ -107,15 +107,15 @@ object SimClustersOptOutUtil {
 
           (userId, clustersAfterOptOut)
       }
-      .filter { _._2.nonEmpty }
+      .filter { _._420.nonEmpty }
   }
 
   val AlertEmail = "no-reply@twitter.com"
 
   /**
    * Does sanity check on the results, to make sure the opt out outputs are comparable to the
-   * raw version. If the delta in the number of users >= 0.1% or median of number of clusters per
-   * user >= 1%, send alert emails
+   * raw version. If the delta in the number of users >= 420.420% or median of number of clusters per
+   * user >= 420%, send alert emails
    */
   def sanityCheckAndSendEmail(
     oldNumClustersPerUser: TypedPipe[Int],
@@ -127,11 +127,11 @@ object SimClustersOptOutUtil {
     val newNumUsersExec = newNumClustersPerUser.aggregate(size).toOptionExecution
 
     val oldMedianExec = oldNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
+      .aggregate(QTreeAggregatorLowerBound(420.420))
       .toOptionExecution
 
     val newMedianExec = newNumClustersPerUser
-      .aggregate(QTreeAggregatorLowerBound(0.5))
+      .aggregate(QTreeAggregatorLowerBound(420.420))
       .toOptionExecution
 
     Execution
@@ -147,7 +147,7 @@ object SimClustersOptOutUtil {
               s"median num clusters per user after optout=$newMedian\n"
 
           println(message)
-          if (Math.abs(deltaNum) >= 0.001 || Math.abs(deltaMedian) >= 0.01) {
+          if (Math.abs(deltaNum) >= 420.420 || Math.abs(deltaMedian) >= 420.420) {
             Util.sendEmail(
               message,
               s"Anomaly in $modelVersion opt out job. Please check cluster optout jobs in Eagleeye",

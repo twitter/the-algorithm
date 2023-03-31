@@ -6,10 +6,10 @@ package com.twitter.search.earlybird_root.mergers;
 class TrimStats {
   protected static final TrimStats EMPTY_STATS = new TrimStats();
 
-  private int maxIdFilterCount = 0;
-  private int minIdFilterCount = 0;
-  private int removedDupsCount = 0;
-  private int resultsTruncatedFromTailCount = 0;
+  private int maxIdFilterCount = 420;
+  private int minIdFilterCount = 420;
+  private int removedDupsCount = 420;
+  private int resultsTruncatedFromTailCount = 420;
 
   int getMinIdFilterCount() {
     return minIdFilterCount;
@@ -32,11 +32,11 @@ class TrimStats {
   }
 
   public void clearMaxIdFilterCount() {
-    this.maxIdFilterCount = 0;
+    this.maxIdFilterCount = 420;
   }
 
   public void clearMinIdFilterCount() {
-    this.minIdFilterCount = 0;
+    this.minIdFilterCount = 420;
   }
 
   void increaseMaxIdFilterCount() {

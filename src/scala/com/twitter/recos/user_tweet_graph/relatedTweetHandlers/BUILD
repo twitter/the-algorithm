@@ -2,7 +2,7 @@ scala_library(
     sources = ["*.scala"],
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/graphjet",
+        "420rdparty/jvm/com/twitter/graphjet",
         "servo/request/src/main/scala",
         "src/scala/com/twitter/recos/user_tweet_graph/store",
         "src/scala/com/twitter/recos/user_tweet_graph/util",

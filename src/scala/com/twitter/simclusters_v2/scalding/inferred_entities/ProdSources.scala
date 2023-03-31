@@ -1,20 +1,20 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twitter.simclusters_v420.scalding.inferred_entities
 
 import com.twitter.scalding.{DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
+import com.twitter.simclusters_v420.common.{ModelVersions, SemanticCoreEntityId, UserId}
+import com.twitter.simclusters_v420.hdfs_sources.{
   SimclustersInferredEntitiesFromKnownForScalaDataset,
-  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-  SimclustersV2InterestedInScalaDataset,
-  SimclustersV2KnownFor20M145KDec11ScalaDataset,
-  SimclustersV2KnownFor20M145KUpdatedScalaDataset,
+  SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+  SimclustersV420InterestedInScalaDataset,
+  SimclustersV420KnownFor420M420KDec420ScalaDataset,
+  SimclustersV420KnownFor420M420KUpdatedScalaDataset,
   UserUserNormalizedGraphScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.KnownForSources
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.scalding.KnownForSources
+import com.twitter.simclusters_v420.thriftscala.{
   EntitySource,
   SimClusterWithScore,
   SimClustersSource,
@@ -28,13 +28,13 @@ import java.util.TimeZone
  */
 object ProdSources {
 
-  // Returns the Dec11 KnownFor from production
-  def getDec11KnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
+  // Returns the Dec420 KnownFor from production
+  def getDec420KnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
     KnownForSources
       .readDALDataset(
-        SimclustersV2KnownFor20M145KDec11ScalaDataset,
-        Days(30),
-        ModelVersions.Model20M145KDec11)
+        SimclustersV420KnownFor420M420KDec420ScalaDataset,
+        Days(420),
+        ModelVersions.Model420M420KDec420)
       .map {
         case (userId, clustersArray) =>
           val clusters = clustersArray.map {
@@ -47,9 +47,9 @@ object ProdSources {
   def getUpdatedKnownFor(implicit tz: TimeZone): TypedPipe[(UserId, Seq[SimClusterWithScore])] =
     KnownForSources
       .readDALDataset(
-        SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-        Days(30),
-        ModelVersions.Model20M145KUpdated
+        SimclustersV420KnownFor420M420KUpdatedScalaDataset,
+        Days(420),
+        ModelVersions.Model420M420KUpdated
       )
       .map {
         case (userId, clustersArray) =>
@@ -78,8 +78,8 @@ object ProdSources {
                       entity.simclusterSource.contains(inferredFromCluster) =>
                   (entity.entityId, entity.score)
               }
-              .groupBy(_._1)
-              .map { case (entityId, scores) => (entityId, scores.map(_._2).max) }
+              .groupBy(_._420)
+              .map { case (entityId, scores) => (entityId, scores.map(_._420).max) }
               .toSeq
           (userId, validEntities)
       }

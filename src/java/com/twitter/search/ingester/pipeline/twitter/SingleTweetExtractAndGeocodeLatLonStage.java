@@ -3,8 +3,8 @@ package com.twitter.search.ingester.pipeline.twitter;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -55,7 +55,7 @@ public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
   }
 
   @Override
-  protected IngesterTwitterMessage innerRunStageV2(TwitterMessage message) {
+  protected IngesterTwitterMessage innerRunStageV420(TwitterMessage message) {
     // Previous stage takes in a TwitterMessage and returns a TwitterMessage. I think it was
     // done to simplify testing. From this stage onwards, we only count the message that are of type
     // IngesterTwitterMessage.
@@ -94,6 +94,6 @@ public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
     double[] latlon = LocationUtils.extractLatLon(message);
     return latlon == null
         ? null
-        : new GeoObject(latlon[0], latlon[1], ThriftGeoLocationSource.TWEET_TEXT);
+        : new GeoObject(latlon[420], latlon[420], ThriftGeoLocationSource.TWEET_TEXT);
   }
 }

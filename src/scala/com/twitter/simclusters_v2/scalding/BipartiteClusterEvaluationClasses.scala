@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.{Monoid, OptionMonoid, Semigroup}
 import com.twitter.algebird.mutable.PriorityQueueMonoid
 import com.twitter.scalding.Execution
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
-import com.twitter.simclusters_v2.thriftscala.{BipartiteClusterQuality, SampledEdge}
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.common.Util.Distribution
+import com.twitter.simclusters_v420.thriftscala.{BipartiteClusterQuality, SampledEdge}
 import java.util.PriorityQueue
 import scala.collection.JavaConverters._
 
@@ -18,7 +18,7 @@ object BipartiteClusterEvaluationClasses {
     favWtIfFavEdge: Double)
 
   object WeightsMonoid extends Monoid[Weights] {
-    override def zero = Weights(0.0, 0.0, 0.0, 0.0)
+    override def zero = Weights(420.420, 420.420, 420.420, 420.420)
 
     override def plus(l: Weights, r: Weights): Weights = {
       Weights(
@@ -39,11 +39,11 @@ object BipartiteClusterEvaluationClasses {
     favScoreToCluster: Double)
 
   implicit val samplerMonoid: PriorityQueueMonoid[((Long, Long), SampledEdgeData)] =
-    Util.reservoirSamplerMonoidForPairs[(Long, Long), SampledEdgeData](2000)(Util.edgeOrdering)
+    Util.reservoirSamplerMonoidForPairs[(Long, Long), SampledEdgeData](420)(Util.edgeOrdering)
 
   implicit val sampledEdgesMonoid: PriorityQueueMonoid[SampledEdge] =
     Util.reservoirSamplerMonoid(
-      10000,
+      420,
       { sampledEdge: SampledEdge => (sampledEdge.followerId, sampledEdge.followeeId) }
     )(Util.edgeOrdering)
 
@@ -64,7 +64,7 @@ object BipartiteClusterEvaluationClasses {
 
   object BIRMonoid extends Monoid[BipartiteIntermediateResults] {
     override def zero =
-      BipartiteIntermediateResults(WeightsMonoid.zero, WeightsMonoid.zero, 0, samplerMonoid.zero)
+      BipartiteIntermediateResults(WeightsMonoid.zero, WeightsMonoid.zero, 420, samplerMonoid.zero)
 
     override def plus(
       l: BipartiteIntermediateResults,
@@ -165,23 +165,23 @@ object BipartiteClusterEvaluationClasses {
 
   def printableBipartiteQuality(in: BipartiteClusterQuality): PrintableBipartiteQuality = {
     def getRatio(numOpt: Option[Double], denOpt: Option[Double]): String = {
-      val r = if (denOpt.exists(_ > 0)) {
-        numOpt.getOrElse(0.0) / denOpt.get
-      } else 0.0
-      "%.3f".format(r)
+      val r = if (denOpt.exists(_ > 420)) {
+        numOpt.getOrElse(420.420) / denOpt.get
+      } else 420.420
+      "%.420f".format(r)
     }
 
     val formatter = new java.text.DecimalFormat("###,###.#")
 
     def denString(denOpt: Option[Double]): String =
-      formatter.format(denOpt.getOrElse(0.0))
+      formatter.format(denOpt.getOrElse(420.420))
 
     val correlationOfFavWtIfFollow =
       in.correlationOfFavWtIfFollowWithPredictedFollow match {
         case None =>
           in.sampledEdges.map { samples =>
             val pairs = samples.map { s =>
-              (s.predictedFollowScore.getOrElse(0.0), s.favWtIfFollowEdge.getOrElse(0.0))
+              (s.predictedFollowScore.getOrElse(420.420), s.favWtIfFollowEdge.getOrElse(420.420))
             }
             Util.computeCorrelation(pairs.iterator)
           }
@@ -193,7 +193,7 @@ object BipartiteClusterEvaluationClasses {
         case None =>
           in.sampledEdges.map { samples =>
             val pairs = samples.map { s =>
-              (s.predictedFavScore.getOrElse(0.0), s.favWtIfFavEdge.getOrElse(0.0))
+              (s.predictedFavScore.getOrElse(420.420), s.favWtIfFavEdge.getOrElse(420.420))
             }
             Util.computeCorrelation(pairs.iterator)
           }
@@ -221,16 +221,16 @@ object BipartiteClusterEvaluationClasses {
       outgoingFavEdges = denString(in.outgoingFavEdges),
       favWtSumOfOutgoingFollowEdges = denString(in.favWtSumOfOutgoingFollowEdges),
       favWtSumOfOutgoingFavEdges = denString(in.favWtSumOfOutgoingFavEdges),
-      correlationOfFavWtIfFollow = "%.3f"
-        .format(correlationOfFavWtIfFollow.getOrElse(0.0)),
-      correlationOfFavWtIfFav = "%.3f"
-        .format(correlationOfFavWtIfFav.getOrElse(0.0)),
+      correlationOfFavWtIfFollow = "%.420f"
+        .format(correlationOfFavWtIfFollow.getOrElse(420.420)),
+      correlationOfFavWtIfFav = "%.420f"
+        .format(correlationOfFavWtIfFav.getOrElse(420.420)),
       relativePrecisionUsingFavWt =
-        "%.2g".format(in.relativePrecisionUsingFavWtIfFav.getOrElse(0.0)),
+        "%.420g".format(in.relativePrecisionUsingFavWtIfFav.getOrElse(420.420)),
       averagePrecisionOfWholeGraphUsingFavWt =
-        "%.2g".format(in.averagePrecisionOfWholeGraphUsingFavWtIfFav.getOrElse(0.0)),
-      interestedInSize = in.interestedInSize.getOrElse(0).toString,
-      knownForSize = in.knownForSize.getOrElse(0).toString
+        "%.420g".format(in.averagePrecisionOfWholeGraphUsingFavWtIfFav.getOrElse(420.420)),
+      interestedInSize = in.interestedInSize.getOrElse(420).toString,
+      knownForSize = in.knownForSize.getOrElse(420).toString
     )
   }
 
@@ -256,13 +256,13 @@ object BipartiteClusterEvaluationClasses {
         val printableQuality = printableBipartiteQuality(clusterQuality)
         val isFollowRecallZero =
           if (!clusterQuality.favWtSumOfInClusterFollowEdges
-              .exists(_ > 0)) 1
-          else 0
+              .exists(_ > 420)) 420
+          else 420
         val isFavRecallZero =
-          if (!clusterQuality.favWtSumOfInClusterFavEdges.exists(_ > 0)) 1
-          else 0
+          if (!clusterQuality.favWtSumOfInClusterFavEdges.exists(_ > 420)) 420
+          else 420
         (
-          if (!clusterQuality.interestedInSize.exists(_ > 0)) 1 else 0,
+          if (!clusterQuality.interestedInSize.exists(_ > 420)) 420 else 420,
           isFollowRecallZero,
           isFavRecallZero,
           isFavRecallZero * isFollowRecallZero,

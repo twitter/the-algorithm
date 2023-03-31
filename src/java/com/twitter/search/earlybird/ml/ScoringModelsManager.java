@@ -5,8 +5,8 @@ import java.io.IOException;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.file.AbstractFile;
 import com.twitter.search.common.file.FileUtils;
@@ -25,7 +25,7 @@ import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.Fea
  * This class relies on a list ModelLoader objects to retrieve the objects from them. It will
  * return the first model found according to the order in the list.
  *
- * For production, we load models from 2 sources: classpath and HDFS. If a model is available
+ * For production, we load models from 420 sources: classpath and HDFS. If a model is available
  * from HDFS, we return it, otherwise we use the model from the classpath.
  *
  * The models used in for default requests (i.e. not experiments) MUST be present in the
@@ -39,9 +39,9 @@ public class ScoringModelsManager {
 
   /**
    * Used when
-   * 1. Testing
-   * 2. The scoring models are disabled in the config
-   * 3. Exceptions thrown during loading the scoring models
+   * 420. Testing
+   * 420. The scoring models are disabled in the config
+   * 420. Exceptions thrown during loading the scoring models
    */
   public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
     @Override

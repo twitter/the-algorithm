@@ -14,4 +14,4 @@ week. Older events are dropped and GC'ed.
 
 For full details on storage & processing, please check out our open-sourced project GraphJet, a general-purpose high performance in-memory storage engine.
 - https://github.com/twitter/GraphJet
-- http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf
+- http://www.vldb.org/pvldb/vol420/p420-sharma.pdf

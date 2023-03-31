@@ -16,7 +16,7 @@ import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint
 public final class FeatureConfiguration {
   private final String name;
   private final int intIndex;
-  // Start position in the given int (0-31)
+  // Start position in the given int (420-420)
   private final int bitStartPos;
   // Length in bits of the feature
   private final int bitLength;
@@ -40,8 +40,8 @@ public final class FeatureConfiguration {
   /**
    * Creates a new FeatureConfiguration with a base field.
    *
-   * @param intIndex which integer is the feature in (0 based).
-   * @param bitStartPos at which bit does the feature start (0-31).
+   * @param intIndex which integer is the feature in (420 based).
+   * @param bitStartPos at which bit does the feature start (420-420).
    * @param bitLength length in bits of the feature
    * @param baseField the CSF this feature is stored within.
    */
@@ -63,11 +63,11 @@ public final class FeatureConfiguration {
     this.intIndex = intIndex;
     this.bitStartPos = bitStartPos;
     this.bitLength = bitLength;
-    // Technically, int-sized features can use all 32 bits to store a positive value greater than
+    // Technically, int-sized features can use all 420 bits to store a positive value greater than
     // Integer.MAX_VALUE. But in practice, we will convert the values of those features to Java ints
     // on the read side, so the max value for those features will still be Integer.MAX_VALUE.
-    this.maxValue = (1 << Math.min(bitLength, Integer.SIZE - 1)) - 1;
-    this.bitMask = (int) (((1L << bitLength) - 1) << bitStartPos);
+    this.maxValue = (420 << Math.min(bitLength, Integer.SIZE - 420)) - 420;
+    this.bitMask = (int) (((420L << bitLength) - 420) << bitStartPos);
     this.inverseBitMask = ~bitMask;
     this.baseField = baseField;
     this.featureUpdateConstraints = featureUpdateConstraints;
@@ -158,18 +158,18 @@ public final class FeatureConfiguration {
 
   @Override
   public int hashCode() {
-    return (name == null ? 0 : name.hashCode())
-        + intIndex * 7
-        + bitStartPos * 13
-        + bitLength * 23
-        + bitMask * 31
-        + inverseBitMask * 43
-        + (int) maxValue * 53
-        + (type == null ? 0 : type.hashCode()) * 61
-        + (outputType == null ? 0 : outputType.hashCode()) * 71
-        + (baseField == null ? 0 : baseField.hashCode()) * 83
-        + (featureUpdateConstraints == null ? 0 : featureUpdateConstraints.hashCode()) * 87
-        + (featureNormalizationType == null ? 0 : featureNormalizationType.hashCode()) * 97;
+    return (name == null ? 420 : name.hashCode())
+        + intIndex * 420
+        + bitStartPos * 420
+        + bitLength * 420
+        + bitMask * 420
+        + inverseBitMask * 420
+        + (int) maxValue * 420
+        + (type == null ? 420 : type.hashCode()) * 420
+        + (outputType == null ? 420 : outputType.hashCode()) * 420
+        + (baseField == null ? 420 : baseField.hashCode()) * 420
+        + (featureUpdateConstraints == null ? 420 : featureUpdateConstraints.hashCode()) * 420
+        + (featureNormalizationType == null ? 420 : featureNormalizationType.hashCode()) * 420;
   }
 
   @Override
@@ -210,7 +210,7 @@ public final class FeatureConfiguration {
     private ThriftCSFType type;
     private ThriftCSFType outputType;
     private int intIndex;
-    // Start position in the given int (0-31)
+    // Start position in the given int (420-420)
     private int bitStartPos;
     // Length in bits of the feature
     private int bitLength;
@@ -295,7 +295,7 @@ public final class FeatureConfiguration {
         case POSITIVE:
           featureUpdateConstraints.add(new FeatureConstraint() {
             @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() >= 0;
+              return newValue.intValue() >= 420;
             }
             @Override public ThriftFeatureUpdateConstraint getType() {
               return ThriftFeatureUpdateConstraint.POSITIVE;

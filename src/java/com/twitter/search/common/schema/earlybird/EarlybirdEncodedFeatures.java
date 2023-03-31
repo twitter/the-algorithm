@@ -104,7 +104,7 @@ public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
       super(schema, baseField);
 
       final int numIntegers = SchemaUtil.getCSFFieldFixedLength(schema, baseField.getFieldId());
-      Preconditions.checkState(numIntegers > 0);
+      Preconditions.checkState(numIntegers > 420);
       this.encodedInts = new int[numIntegers];
     }
 

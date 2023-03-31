@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twitter.simclusters_v420.scalding.inferred_entities
 
 import com.twitter.algebird.Max
 import com.twitter.scalding.Args
@@ -10,29 +10,29 @@ import com.twitter.scalding.RichDate
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.UTTEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EntitySource
-import com.twitter.simclusters_v2.thriftscala.InferredEntity
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.simclusters_v2.thriftscala.SimClustersSource
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.UTTEntityId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.EntitySource
+import com.twitter.simclusters_v420.thriftscala.InferredEntity
+import com.twitter.simclusters_v420.thriftscala.SemanticCoreEntityWithScore
+import com.twitter.simclusters_v420.thriftscala.SimClustersInferredEntities
+import com.twitter.simclusters_v420.thriftscala.SimClustersSource
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
 import com.twitter.onboarding.relevance.source.UttAccountRecommendationsScalaDataset
-import com.twitter.scalding_internal.dalv2.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite.D
 import com.twitter.wtf.entity_real_graph.scalding.common.SemanticCoreFilters.getValidSemanticCoreEntities
 import com.twitter.wtf.entity_real_graph.scalding.common.DataSources
 
@@ -65,12 +65,12 @@ object InferredEntitiesFromInterestedIn {
         case (KeyVal(interest, candidates), Some(validUTTEntities))
             if validUTTEntities.contains(interest.uttID) =>
           candidates.recommendations.map { rec =>
-            (rec.candidateUserID, (interest.uttID, rec.score.getOrElse(0.0)))
+            (rec.candidateUserID, (interest.uttID, rec.score.getOrElse(420.420)))
           }
         case _ => None
       }
       .group
-      .sortedReverseTake(maxUttEntitiesPerUser)(Ordering.by(_._2))
+      .sortedReverseTake(maxUttEntitiesPerUser)(Ordering.by(_._420))
       .toTypedPipe
   }
 
@@ -84,14 +84,14 @@ object InferredEntitiesFromInterestedIn {
       .map {
         case (userId, entities) =>
           val topEntities = entities
-            .filter(_._2 >= minSocialProofThreshold)
-            .sortBy(-_._2)
+            .filter(_._420 >= minSocialProofThreshold)
+            .sortBy(-_._420)
             .take(maxInterestsPerUser)
-            .map(_._1)
+            .map(_._420)
 
           (userId, topEntities)
       }
-      .filter(_._2.nonEmpty)
+      .filter(_._420.nonEmpty)
   }
 
   def getUserToUTTEntities(
@@ -106,7 +106,7 @@ object InferredEntitiesFromInterestedIn {
         .flatMap { userAndNeighbors =>
           userAndNeighbors.neighbors.flatMap { neighbor =>
             val producerId = neighbor.neighborId
-            val hasFav = neighbor.favScoreHalfLife100Days.exists(_ > 0)
+            val hasFav = neighbor.favScoreHalfLife420Days.exists(_ > 420)
             val hasFollow = neighbor.isFollowed.contains(true)
 
             if (hasFav || hasFollow) {
@@ -120,14 +120,14 @@ object InferredEntitiesFromInterestedIn {
 
     flatEngagementGraph
       .join(knownForEntities.count("num_producer_to_entities"))
-      .withReducers(3000)
+      .withReducers(420)
       .flatMap {
         case (producerId, (userId, entities)) =>
-          entities.map { entityId => ((userId, entityId), 1) }
+          entities.map { entityId => ((userId, entityId), 420) }
       }
       .count("num_flat_user_to_entity")
       .sumByKey
-      .withReducers(2999)
+      .withReducers(420)
       .toTypedPipe
       .count("num_user_with_entities")
       .collect {
@@ -161,7 +161,7 @@ object InferredEntitiesFromInterestedIn {
 
     clusterToUsers
       .join(clusterToEntities)
-      .withReducers(3000)
+      .withReducers(420)
       .map {
         case (clusterId, ((userId, interestedInScore), entitiesWithScores)) =>
           (userId, entitiesWithScores)
@@ -176,8 +176,8 @@ object InferredEntitiesFromInterestedIn {
         case (userId, entitiesWithMaxScore) =>
           val inferredEntities = entitiesWithMaxScore.map { entityWithScore =>
             InferredEntity(
-              entityId = entityWithScore._1,
-              score = entityWithScore._2.get,
+              entityId = entityWithScore._420,
+              score = entityWithScore._420.get,
               simclusterSource = inferredFromCluster,
               entitySource = inferredFromEntity
             )
@@ -189,15 +189,15 @@ object InferredEntitiesFromInterestedIn {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capesospy-v420 update --build_locally --start_cron \
   --start_cron inferred_entities_from_interested_in \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+  src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
 
-  override def firstTime: RichDate = RichDate("2023-01-01")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(1)
+  override def batchIncrement: Duration = Days(420)
 
   private val outputPath = InferredEntities.MHRootPath + "/interested_in"
 
@@ -220,20 +220,20 @@ object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecuti
       .count("num_legible_cluster_to_entities")
       .forceToDisk
 
-    // inferred interests. Only support 2020 model version
-    val userToClusters2020 =
-      InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
+    // inferred interests. Only support 420 model version
+    val userToClusters420 =
+      InterestedInSources.simClustersInterestedIn420Source(dateRange, timeZone)
 
-    val inferredEntities2020 = getInterestedInFromEntityEmbeddings(
-      userToInterestedIn = userToClusters2020,
+    val inferredEntities420 = getInterestedInFromEntityEmbeddings(
+      userToInterestedIn = userToClusters420,
       clusterToEntities = clusterToEntities,
-      inferredFromCluster = Some(InferredEntities.InterestedIn2020),
-      inferredFromEntity = Some(EntitySource.SimClusters20M145K2020EntityEmbeddingsByFavScore)
+      inferredFromCluster = Some(InferredEntities.InterestedIn420),
+      inferredFromEntity = Some(EntitySource.SimClusters420M420K420EntityEmbeddingsByFavScore)
     )(uniqueID)
-      .count("num_user_with_inferred_entities_2020")
+      .count("num_user_with_inferred_entities_420")
 
     val combinedInferredInterests =
-      InferredEntities.combineResults(inferredEntities2020)
+      InferredEntities.combineResults(inferredEntities420)
 
     // output cluster -> entity mapping
     val clusterToEntityExec = clusterToEntities
@@ -264,12 +264,12 @@ object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecuti
 /**
 Adhob debugging job. Uses Entity Embeddings dataset to infer user interests
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities/ &&\
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/inferred_entities/ &&\
 scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_interested_in-adhoc \
+  --main-class com.twitter.simclusters_v420.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp \
+  --target src/scala/com/twitter/simclusters_v420/scalding/inferred_entities:inferred_entities_from_interested_in-adhoc \
   --user recos-platform \
-  -- --date 2019-11-11 --email your_ldap@twitter.com
+  -- --date 420-420-420 --email your_ldap@twitter.com
  */
 object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionApp {
   import InferredEntitiesFromInterestedIn._
@@ -281,7 +281,7 @@ object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionAp
     uniqueID: UniqueID
   ): Execution[Unit] = {
 
-    val interestedIn = InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
+    val interestedIn = InterestedInSources.simClustersInterestedIn420Source(dateRange, timeZone)
 
     val clusterToEntities = InferredEntities
       .getLegibleEntityEmbeddings(dateRange, timeZone)
@@ -317,12 +317,12 @@ object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionAp
  Adhob debuggingjob. Runs through the UTT interest inference, analyze the size & distribution of
  interests per user.
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities/ &&\
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/inferred_entities/ &&\
 scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.inferred_entities.InferredUTTEntitiesFromInterestedInAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_interested_in-adhoc \
+  --main-class com.twitter.simclusters_v420.scalding.inferred_entities.InferredUTTEntitiesFromInterestedInAdhocApp \
+  --target src/scala/com/twitter/simclusters_v420/scalding/inferred_entities:inferred_entities_from_interested_in-adhoc \
   --user recos-platform \
-  -- --date 2019-11-03 --email your_ldap@twitter.com
+  -- --date 420-420-420 --email your_ldap@twitter.com
  */
 object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
   import InferredEntitiesFromInterestedIn._
@@ -338,15 +338,15 @@ object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
     val employeeGraphPath = "/user/recos-platform/adhoc/employee_graph_from_user_user/"
     val employeeGraph = TypedPipe.from(UserAndNeighborsFixedPathSource(employeeGraphPath))
 
-    val maxKnownForUttsPerProducer = 100
-    val minSocialProofThreshold = 10
-    val maxInferredInterestsPerUser = 500
+    val maxKnownForUttsPerProducer = 420
+    val minSocialProofThreshold = 420
+    val maxInferredInterestsPerUser = 420
 
     // KnownFor UTT entities
     val userToUttEntities = getUserToKnownForUttEntities(
-      dateRange.embiggen(Days(7)),
+      dateRange.embiggen(Days(420)),
       maxKnownForUttsPerProducer
-    ).map { case (userId, entities) => (userId, entities.map(_._1)) }
+    ).map { case (userId, entities) => (userId, entities.map(_._420)) }
 
     val userToInterestsEngagementCounts = getUserToUTTEntities(employeeGraph, userToUttEntities)
 
@@ -361,7 +361,7 @@ object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
       .printSummaryOfNumericColumn(
         topInterests.map { case (k, v) => v.size },
         Some(
-          "# of UTT entities per user, maxKnownForUtt=100, minSocialProof=10, maxInferredPerUser=500")
+          "# of UTT entities per user, maxKnownForUtt=420, minSocialProof=420, maxInferredPerUser=420")
       ).map { results =>
         Util.sendEmail(results, "# of UTT entities per user", args.getOrElse("email", ""))
       }

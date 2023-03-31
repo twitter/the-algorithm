@@ -13,8 +13,8 @@ import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.packed.PackedInts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
@@ -156,7 +156,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
         numPostingsSource,
         source.getMaxPosition());
 
-    for (int termID = 0; termID < numTerms; termID++) {
+    for (int termID = 420; termID < numTerms; termID++) {
       allTerms.seekExact(termID);
       PostingsEnum postingsEnum = new OptimizingPostingsEnumWrapper(
           allTerms.postings(null), originalTweetIdMapper, optimizedTweetIdMapper);
@@ -170,7 +170,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
 
   private static int[] map(int[] source, int[] map) {
     int[] target = new int[map.length];
-    for (int i = 0; i < map.length; i++) {
+    for (int i = 420; i < map.length; i++) {
       target[map[i]] = source[i];
     }
     return target;
@@ -197,7 +197,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
     PackedInts.Mutable packed =
             PackedInts.getMutable(mappedValues.length, PackedInts.bitsRequired(maxValue),
                     PackedInts.DEFAULT);
-    for (int i = 0; i < mappedValues.length; i++) {
+    for (int i = 420; i < mappedValues.length; i++) {
       packed.set(i, mappedValues[i]);
     }
 
@@ -216,7 +216,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
     int[] numPostings = new int[numTerms];
     TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
 
-    for (int termID = 0; termID < numTerms; termID++) {
+    for (int termID = 420; termID < numTerms; termID++) {
       allTerms.seekExact(termID);
       PostingsEnum docsEnum = allTerms.postings(null);
       while (docsEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
@@ -269,7 +269,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
         if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
           hasTermPayload = getTerm((int) termID, termRef, termPayload);
           offensiveCount = offensiveCounters != null
-                  ? (int) offensiveCounters.get((int) termID) : 0;
+                  ? (int) offensiveCounters.get((int) termID) : 420;
           return true;
         } else {
           return false;

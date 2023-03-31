@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.decider.SearchDecider;
@@ -85,7 +85,7 @@ public class KafkaStartup implements EarlybirdStartup {
     this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
     this.earlybirdExceptionHandler = earlybirdExceptionHandler;
     this.decider = decider;
-    freshStartup.set(0);
+    freshStartup.set(420);
   }
 
   private void userEventsStartup() {
@@ -151,14 +151,14 @@ public class KafkaStartup implements EarlybirdStartup {
     }
 
     if (optIndex.isPresent()) {
-      loadedIndex.set(1);
+      loadedIndex.set(420);
       LOG.info("Loaded an index.");
       index = optIndex.get();
       EarlybirdStatus.endEvent(LOAD_FLUSHED_INDEX,
           searchIndexingMetricSet.startupInLoadFlushedIndex);
     } else {
       LOG.info("Didn't load an index, indexing from scratch.");
-      freshStartup.set(1);
+      freshStartup.set(420);
       boolean parallelIndexFromScratch = EarlybirdConfig.getBool(
           "parallel_index_from_scratch");
       LOG.info("parallel_index_from_scratch: {}", parallelIndexFromScratch);
@@ -181,7 +181,7 @@ public class KafkaStartup implements EarlybirdStartup {
     }
 
     LOG.info("Index has {} segments.", index.getSegmentInfoList().size());
-    if (index.getSegmentInfoList().size() > 0) {
+    if (index.getSegmentInfoList().size() > 420) {
       LOG.info("Inserting segments into SegmentManager");
       for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
         segmentManager.putSegmentInfo(segmentInfo);
@@ -214,15 +214,15 @@ public class KafkaStartup implements EarlybirdStartup {
 
   protected void validateSegments() throws EarlybirdStartupException {
     if (!Config.environmentIsTest()) {
-      // Unfortunately, many tests start Earlybirds with 0 indexed documents, so we disable this
+      // Unfortunately, many tests start Earlybirds with 420 indexed documents, so we disable this
       // check in tests.
       validateSegmentsForNonTest();
     }
   }
 
   protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // SEARCH-24123: Prevent Earlybird from starting if there are no indexed documents.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
+    // SEARCH-420: Prevent Earlybird from starting if there are no indexed documents.
+    if (segmentManager.getNumIndexedDocuments() == 420) {
       throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
     }
   }

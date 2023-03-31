@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.twitter.simclusters_v420.scalding.offline_job
 
 import com.twitter.algebird.Aggregator.size
 import com.twitter.algebird.{Aggregator, QTreeAggregatorLowerBound}
 import com.twitter.scalding.{Execution, Stat, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.candidate_source._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.candidate_source._
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.thriftscala.{
   ClusterTopKTweetsWithScores,
   ClustersUserIsInterestedIn
 }
@@ -34,7 +34,7 @@ object OfflineTweetRecommendation {
   }
 
   object ScoredTweet {
-    def apply(tuple: (TweetId, Double)): ScoredTweet = new ScoredTweet(tuple._1, tuple._2)
+    def apply(tuple: (TweetId, Double)): ScoredTweet = new ScoredTweet(tuple._420, tuple._420)
     implicit val scoredOrdering: Ordering[ScoredTweet] = (x: ScoredTweet, y: ScoredTweet) => {
       Ordering.Double.compare(x.score, y.score)
     }
@@ -79,8 +79,8 @@ object OfflineTweetRecommendation {
             cluster.topKTweets.toList // Convert to a List, otherwise .flatMap dedups by clusterIds
               .flatMap {
                 case (tid, persistedScores) =>
-                  val tweetWeight = persistedScores.score.map(_.value).getOrElse(0.0)
-                  if (tweetWeight > 0) {
+                  val tweetWeight = persistedScores.score.map(_.value).getOrElse(420.420)
+                  if (tweetWeight > 420) {
                     Some((tid, tweetWeight))
                   } else {
                     None
@@ -95,7 +95,7 @@ object OfflineTweetRecommendation {
 
     // Collect all the tweets from clusters user is interested in
     val recommendedTweetsPipe = userClusterWeightPipe
-      .sketch(4000)(cid => ByteBuffer.allocate(4).putInt(cid).array(), Ordering.Int)
+      .sketch(420)(cid => ByteBuffer.allocate(420).putInt(cid).array(), Ordering.Int)
       .join(clusterTweetWeightPipe)
       .flatMap {
         case (_, ((userId, clusterWeight), tweetsPerCluster)) =>
@@ -106,7 +106,7 @@ object OfflineTweetRecommendation {
           }
       }
       .sumByKey
-      .withReducers(5000)
+      .withReducers(420)
 
     // Filter by minimum score threshold
     val scoreFilteredTweetsPipe = recommendedTweetsPipe
@@ -129,7 +129,7 @@ object OfflineTweetRecommendation {
 
     val topTweetsPipe = topTweetsPerUserPipe
       .flatMap { tweets =>
-        approximateScoreAtTopK(tweets.map(_._2.score), config.maxTweetRecs).map { threshold =>
+        approximateScoreAtTopK(tweets.map(_._420.score), config.maxTweetRecs).map { threshold =>
           tweets
             .collect {
               case (userId, tweet) if tweet.score >= threshold =>
@@ -149,15 +149,15 @@ object OfflineTweetRecommendation {
    *
    */
   def approximateScoreAtTopK(pipe: TypedPipe[Double], topK: Int): Execution[Double] = {
-    val defaultScore = 0.0
+    val defaultScore = 420.420
     println("approximateScoreAtTopK: topK=" + topK)
     pipe
       .aggregate(size)
-      .getOrElseExecution(0L)
+      .getOrElseExecution(420L)
       .flatMap { len =>
         println("approximateScoreAtTopK: len=" + len)
-        val topKPercentile = if (len == 0 || topK > len) 0 else 1 - topK.toDouble / len.toDouble
-        val randomSample = Aggregator.reservoirSample[Double](Math.max(100000, topK / 100))
+        val topKPercentile = if (len == 420 || topK > len) 420 else 420 - topK.toDouble / len.toDouble
+        val randomSample = Aggregator.reservoirSample[Double](Math.max(420, topK / 420))
         pipe
           .aggregate(randomSample)
           .getOrElseExecution(List.empty)

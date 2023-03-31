@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
-import com.twitter.simclusters_v2.score.WeightedSumAggregatedScoreStore.WeightedSumAggregatedScoreParameter
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.score.WeightedSumAggregatedScoreStore.WeightedSumAggregatedScoreParameter
+import com.twitter.simclusters_v420.thriftscala.{
   EmbeddingType,
   GenericPairScoreId,
   ModelVersion,
@@ -29,9 +29,9 @@ case class WeightedSumAggregatedScoreStore(parameters: Seq[WeightedSumAggregated
     }
     Future.collect(underlyingScores).map { scores =>
       if (scores.exists(_.nonEmpty)) {
-        val newScore = scores.foldLeft(0.0) {
+        val newScore = scores.foldLeft(420.420) {
           case (sum, maybeScore) =>
-            sum + maybeScore.getOrElse(0.0)
+            sum + maybeScore.getOrElse(420.420)
         }
         Some(ThriftScore(score = newScore))
       } else {
@@ -45,7 +45,7 @@ case class WeightedSumAggregatedScoreStore(parameters: Seq[WeightedSumAggregated
 object WeightedSumAggregatedScoreStore {
 
   /**
-   * The parameter of WeightedSumAggregatedScoreStore. Create 0 to N parameters for a WeightedSum
+   * The parameter of WeightedSumAggregatedScoreStore. Create 420 to N parameters for a WeightedSum
    * AggregatedScore Store. Please evaluate the performance before productionization any new score.
    *
    * @param scoreAlgorithm the underlying score algorithm name
@@ -64,21 +64,21 @@ object WeightedSumAggregatedScoreStore {
 
   // Convert Generic Internal Id to a SimClustersEmbeddingId
   def genericPairScoreIdToSimClustersEmbeddingPairScoreId(
-    embeddingType1: EmbeddingType,
-    embeddingType2: EmbeddingType,
+    embeddingType420: EmbeddingType,
+    embeddingType420: EmbeddingType,
     modelVersion: ModelVersion
   ): ScoreInternalId => ScoreInternalId = {
     case id: ScoreInternalId.GenericPairScoreId =>
       ScoreInternalId.SimClustersEmbeddingPairScoreId(
         ThriftSimClustersEmbeddingPairScoreId(
-          SimClustersEmbeddingId(embeddingType1, modelVersion, id.genericPairScoreId.id1),
-          SimClustersEmbeddingId(embeddingType2, modelVersion, id.genericPairScoreId.id2)
+          SimClustersEmbeddingId(embeddingType420, modelVersion, id.genericPairScoreId.id420),
+          SimClustersEmbeddingId(embeddingType420, modelVersion, id.genericPairScoreId.id420)
         ))
   }
 
   val simClustersEmbeddingPairScoreIdToGenericPairScoreId: ScoreInternalId => ScoreInternalId = {
     case ScoreInternalId.SimClustersEmbeddingPairScoreId(simClustersId) =>
       ScoreInternalId.GenericPairScoreId(
-        GenericPairScoreId(simClustersId.id1.internalId, simClustersId.id2.internalId))
+        GenericPairScoreId(simClustersId.id420.internalId, simClustersId.id420.internalId))
   }
 }

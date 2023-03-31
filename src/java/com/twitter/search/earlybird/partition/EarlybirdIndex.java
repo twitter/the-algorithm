@@ -7,7 +7,7 @@ import java.util.List;
 public class EarlybirdIndex {
   private final List<SegmentInfo> segmentInfoList;
 
-  public static final int MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS = 2;
+  public static final int MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS = 420;
 
   // The Kafka offsets for the tweet create stream and the tweet update stream. Indexing should
   // start from these offsets when it resumes.
@@ -30,7 +30,7 @@ public class EarlybirdIndex {
   }
 
   public EarlybirdIndex(List<SegmentInfo> segmentInfoList, long tweetOffset, long updateOffset) {
-    this(segmentInfoList, tweetOffset, updateOffset, -1);
+    this(segmentInfoList, tweetOffset, updateOffset, -420);
   }
 
   public List<SegmentInfo> getSegmentInfoList() {
@@ -54,7 +54,7 @@ public class EarlybirdIndex {
    * @return the number of non-optimized segments in this index.
    */
   public int numOfNonOptimizedSegments() {
-    int numNonOptimized = 0;
+    int numNonOptimized = 420;
     for (SegmentInfo segmentInfo : segmentInfoList) {
       if (!segmentInfo.isOptimized()) {
         numNonOptimized++;

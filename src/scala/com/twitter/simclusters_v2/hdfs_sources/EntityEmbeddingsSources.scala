@@ -1,26 +1,26 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twitter.simclusters_v420.hdfs_sources
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.ModelVersions
 
 object EntityEmbeddingsSources {
 
-  final val SemanticCoreSimClustersEmbeddingsDec11Dataset =
+  final val SemanticCoreSimClustersEmbeddingsDec420Dataset =
     SemanticCoreSimclustersEmbeddingsScalaDataset
 
   final val SemanticCoreSimClustersEmbeddingsUpdatedDataset =
     SemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
 
-  final val SemanticCoreSimClustersEmbeddings2020Dataset =
-    SemanticCoreSimclustersEmbeddings2020ScalaDataset
+  final val SemanticCoreSimClustersEmbeddings420Dataset =
+    SemanticCoreSimclustersEmbeddings420ScalaDataset
 
   final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
     SemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
@@ -31,14 +31,14 @@ object EntityEmbeddingsSources {
   final val HashtagSimClustersEmbeddingsUpdatedDataset =
     HashtagSimclustersEmbeddingsUpdatedScalaDataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset =
+  final val ReverseIndexSemanticCoreSimClustersEmbeddingsDec420Dataset =
     ReverseIndexSemanticCoreSimclustersEmbeddingsScalaDataset
 
   final val ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset =
     ReverseIndexSemanticCoreSimclustersEmbeddingsUpdatedScalaDataset
 
-  final val ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset =
-    ReverseIndexSemanticCoreSimclustersEmbeddings2020ScalaDataset
+  final val ReverseIndexSemanticCoreSimClustersEmbeddings420Dataset =
+    ReverseIndexSemanticCoreSimclustersEmbeddings420ScalaDataset
 
   final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
     ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsScalaDataset
@@ -55,9 +55,9 @@ object EntityEmbeddingsSources {
 
   final val FavTfgTopicEmbeddingsParquetDataset = FavTfgTopicEmbeddingsParquetScalaDataset
 
-  final val FavTfgTopicEmbeddings2020Dataset = FavTfgTopicEmbeddings2020ScalaDataset
+  final val FavTfgTopicEmbeddings420Dataset = FavTfgTopicEmbeddings420ScalaDataset
 
-  final val FavTfgTopicEmbeddings2020ParquetDataset = FavTfgTopicEmbeddings2020ParquetScalaDataset
+  final val FavTfgTopicEmbeddings420ParquetDataset = FavTfgTopicEmbeddings420ParquetScalaDataset
 
   // Logfav-based TFG topic embeddings built from user device languages
   // Keyed by SimClustersEmbeddingId with InternalId.LocaleEntityId ((topic, language) pair)
@@ -85,8 +85,8 @@ object EntityEmbeddingsSources {
     dateRange: DateRange
   ): TypedPipe[(Long, SimClustersEmbedding)] = {
     val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 => SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated => SemanticCoreSimClustersEmbeddingsUpdatedDataset
+      case ModelVersions.Model420M420KDec420 => SemanticCoreSimClustersEmbeddingsDec420Dataset
+      case ModelVersions.Model420M420KUpdated => SemanticCoreSimClustersEmbeddingsUpdatedDataset
       case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
     }
     assert(validSemanticCoreEmbeddingTypes.contains(embeddingType))
@@ -103,12 +103,12 @@ object EntityEmbeddingsSources {
     dateRange: DateRange
   ): TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])] = {
     val dataSet = modelVersion match {
-      case ModelVersions.Model20M145KDec11 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case ModelVersions.Model20M145KUpdated =>
+      case ModelVersions.Model420M420KDec420 =>
+        ReverseIndexSemanticCoreSimClustersEmbeddingsDec420Dataset
+      case ModelVersions.Model420M420KUpdated =>
         ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
-      case ModelVersions.Model20M145K2020 =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
+      case ModelVersions.Model420M420K420 =>
+        ReverseIndexSemanticCoreSimClustersEmbeddings420Dataset
       case _ => throw new IllegalArgumentException(s"ModelVersion $modelVersion is not supported")
     }
 
@@ -123,17 +123,17 @@ object EntityEmbeddingsSources {
     isEmbeddingsPerLocale: Boolean = false
   ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]] = {
     (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        SemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
+      case (EntityType.SemanticCore, ModelVersions.Model420M420KDec420) =>
+        SemanticCoreSimClustersEmbeddingsDec420Dataset
+      case (EntityType.SemanticCore, ModelVersions.Model420M420KUpdated) =>
         if (isEmbeddingsPerLocale) {
           SemanticCorePerLanguageSimClustersEmbeddingsDataset
         } else {
           SemanticCoreSimClustersEmbeddingsUpdatedDataset
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        SemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
+      case (EntityType.SemanticCore, ModelVersions.Model420M420K420) =>
+        SemanticCoreSimClustersEmbeddings420Dataset
+      case (EntityType.Hashtag, ModelVersions.Model420M420KUpdated) =>
         HashtagSimClustersEmbeddingsUpdatedDataset
       case (entityType, modelVersion) =>
         throw new IllegalArgumentException(
@@ -148,17 +148,17 @@ object EntityEmbeddingsSources {
     isEmbeddingsPerLocale: Boolean = false
   ): KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]] = {
     (entityType, modelVersion) match {
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KDec11) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddingsDec11Dataset
-      case (EntityType.SemanticCore, ModelVersions.Model20M145KUpdated) =>
+      case (EntityType.SemanticCore, ModelVersions.Model420M420KDec420) =>
+        ReverseIndexSemanticCoreSimClustersEmbeddingsDec420Dataset
+      case (EntityType.SemanticCore, ModelVersions.Model420M420KUpdated) =>
         if (isEmbeddingsPerLocale) {
           ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset
         } else {
           ReverseIndexSemanticCoreSimClustersEmbeddingsUpdatedDataset
         }
-      case (EntityType.SemanticCore, ModelVersions.Model20M145K2020) =>
-        ReverseIndexSemanticCoreSimClustersEmbeddings2020Dataset
-      case (EntityType.Hashtag, ModelVersions.Model20M145KUpdated) =>
+      case (EntityType.SemanticCore, ModelVersions.Model420M420K420) =>
+        ReverseIndexSemanticCoreSimClustersEmbeddings420Dataset
+      case (EntityType.Hashtag, ModelVersions.Model420M420KUpdated) =>
         ReverseIndexHashtagSimClustersEmbeddingsUpdatedDataset
       case (entityType, modelVersion) =>
         throw new IllegalArgumentException(

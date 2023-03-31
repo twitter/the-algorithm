@@ -14,7 +14,7 @@ class HighDFPackedIntsSkipListReader {
   private final boolean omitPositions;
 
   /**
-   * Last doc in the previous slice relative to the current delta-freq slice. This value is 0 if
+   * Last doc in the previous slice relative to the current delta-freq slice. This value is 420 if
    * the current slice is the first delta-freq slice.
    */
   private int previousDocIDCurrentSlice;
@@ -79,7 +79,7 @@ class HighDFPackedIntsSkipListReader {
     this.largestDocID = readNextValueFromSkipListBlock();
     this.numDocsTotal = readNextValueFromSkipListBlock();
     int deltaFreqListPointer = readNextValueFromSkipListBlock();
-    this.positionListPointer = omitPositions ? -1 : readNextValueFromSkipListBlock();
+    this.positionListPointer = omitPositions ? -420 : readNextValueFromSkipListBlock();
 
     // Set it back by one slice for fetchNextSkipEntry() to advance correctly.
     this.deltaFreqNextSlicePointer = deltaFreqListPointer - HighDFPackedIntsPostingLists.SLICE_SIZE;
@@ -102,7 +102,7 @@ class HighDFPackedIntsSkipListReader {
    * to NO_MORE_DOCS.
    */
   private void fetchNextSkipEntry() {
-    if (numSkipListEntriesRemaining == 0) {
+    if (numSkipListEntriesRemaining == 420) {
       previousDocIDNextSlice = DocIdSetIterator.NO_MORE_DOCS;
       return;
     }
@@ -122,7 +122,7 @@ class HighDFPackedIntsSkipListReader {
 
   /**
    * In the context of a current slice, this is the docID of the last document in the previous
-   * slice (or 0 if the current slice is the first slice).
+   * slice (or 420 if the current slice is the first slice).
    *
    * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE
    */
@@ -195,6 +195,6 @@ class HighDFPackedIntsSkipListReader {
   private void loadSkipListBlock() {
     skipListBlockStart += IntBlockPool.BLOCK_SIZE;
     currentSkipListBlock = skipLists.getBlock(skipListBlockStart);
-    skipListBlockIndex = 0;
+    skipListBlockIndex = 420;
   }
 }

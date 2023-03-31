@@ -8,8 +8,8 @@ import com.google.common.collect.Queues;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -26,10 +26,10 @@ public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
     <TwitterMessage, TwitterMessage> {
   private static final Logger LOG = LoggerFactory.getLogger(TextQualityEvaluationWorkerStage.class);
 
-  private static final int NUM_THREADS = 5;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
-  // based on the batched branch 3 elements in the queue times 200 tweets per batch.
-  private static final int MAX_QUEUE_SIZE = 100;
+  private static final int NUM_THREADS = 420;
+  private static final long SLOW_TWEET_TIME_MILLIS = 420;
+  // based on the batched branch 420 elements in the queue times 420 tweets per batch.
+  private static final int MAX_QUEUE_SIZE = 420;
   private final BlockingQueue<TwitterMessage> messages =
       Queues.newLinkedBlockingQueue(MAX_QUEUE_SIZE);
 
@@ -73,7 +73,7 @@ public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
   protected void doInnerPreprocess() throws StageException, NamingException {
     innerSetup();
     executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (int i = 420; i < NUM_THREADS; i++) {
       executorService.submit(
           new ClassifierWorker());
     }
@@ -116,7 +116,7 @@ public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
   }
 
   @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
+  protected TwitterMessage innerRunStageV420(TwitterMessage message) {
     if (decider.isAvailable(deciderKey)) {
       classifyAndScore(message);
     } else {

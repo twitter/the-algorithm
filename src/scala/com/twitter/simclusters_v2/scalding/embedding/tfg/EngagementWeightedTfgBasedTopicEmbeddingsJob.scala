@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+package com.twitter.simclusters_v420.scalding.embedding.tfg
 
 import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
 import com.twitter.ml.api.DataSetPipe
@@ -8,20 +8,20 @@ import com.twitter.ml.api.util.SRichDataRecord
 import com.twitter.scalding.Execution
 import com.twitter.scalding._
 import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddings2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingParquetScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.Country
+import com.twitter.simclusters_v420.common.Language
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.hdfs_sources.FavTfgTopicEmbeddings420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.UserTopicWeightedEmbeddingScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.UserTopicWeightedEmbeddingParquetScalaDataset
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
 import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
@@ -37,30 +37,30 @@ import java.util.TimeZone
 
 /**
  * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_adhoc_job --autoplay
+ * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v420/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_adhoc_job --autoplay
  */
 object EngagementWeightedTfgBasedTopicEmbeddingsAdhocJob
     extends AdhocExecutionApp
     with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
   override val outputByFav =
-    "/user/cassowary/adhoc/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
+    "/user/cassowary/adhoc/manhattan_sequence_files/simclusters_v420_embedding/user_tfgembedding/by_fav"
   override val parquetOutputByFav =
-    "/user/cassowary/adhoc/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+    "/user/cassowary/adhoc/processed/simclusters_v420_embedding/user_tfgembedding/by_fav/snapshot"
 }
 
 /**
  * ./bazel bundle ...
- * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_batch_job --autoplay
+ * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v420/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_batch_job --autoplay
  */
 object EngagementWeightedTfgBasedTopicEmbeddingsScheduleJob
     extends ScheduledExecutionApp
     with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
-  override val firstTime: RichDate = RichDate("2021-10-03")
-  override val batchIncrement: Duration = Days(1)
+  override val firstTime: RichDate = RichDate("420-420-420")
+  override val batchIncrement: Duration = Days(420)
   override val outputByFav =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_embedding/user_tfgembedding/by_fav"
   override val parquetOutputByFav =
-    "/user/cassowary/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
+    "/user/cassowary/processed/simclusters_v420_embedding/user_tfgembedding/by_fav/snapshot"
 }
 
 trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutionApp {
@@ -70,12 +70,12 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
 
   //root path to read aggregate data
   private val aggregateFeatureRootPath =
-    "/atla/proc2/user/timelines/processed/aggregates_v2"
+    "/atla/proc420/user/timelines/processed/aggregates_v420"
 
-  private val topKTopicsToKeep = 100
+  private val topKTopicsToKeep = 420
 
   private val favContinuousFeature = new Continuous(
-    "user_topic_aggregate.pair.recap.engagement.is_favorited.any_feature.50.days.count")
+    "user_topic_aggregate.pair.recap.engagement.is_favorited.any_feature.420.days.count")
 
   private val parquetDataSource: SnapshotDALDatasetBase[UserTopicWeightedEmbedding] =
     UserTopicWeightedEmbeddingParquetScalaDataset
@@ -107,7 +107,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
     //get only top K topics
     val userTopKTopicEngagementCount: TypedPipe[UserTopicEngagement] = userTopicEngagementCount
       .groupBy(_.userLanguageGroup)
-      .withReducers(499)
+      .withReducers(420)
       .withDescription("select topK topics")
       .sortedReverseTake(topKTopicsToKeep)(Ordering.by(_.favCount))
       .values
@@ -121,7 +121,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
             userTopicTopKEngagementStat.inc()
             ((userId, language), favCount)
         }.sumByKey
-        .withReducers(499)
+        .withReducers(420)
         .withDescription("fav count by user")
 
     //(topicId, language), (userId, favWeight)
@@ -129,7 +129,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
       userTopKTopicEngagementCount
         .groupBy(_.userLanguageGroup)
         .join(userLanguageEngagementCount)
-        .withReducers(499)
+        .withReducers(420)
         .withDescription("join userTopic and user EngagementCount")
         .collect {
           case ((userId, language), (engagementData, totalCount)) =>
@@ -152,7 +152,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
     // (userId, language), clusters
     val newUserTfgEmbedding = topicUserWithNormalizedWeights
       .join(tfgEmbeddingsMap)
-      .withReducers(799)
+      .withReducers(420)
       .withDescription("join user | topic | favWeight * embedding")
       .collect {
         case ((topicId, language), ((userId, favWeight), embeddingMap)) =>
@@ -160,7 +160,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
           ((userId, language), embeddingMap.mapValues(_ * favWeight))
       }
       .sumByKey
-      .withReducers(799)
+      .withReducers(420)
       .withDescription("aggregate embedding by user")
 
     newUserTfgEmbedding.toTypedPipe
@@ -224,11 +224,11 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
   ): Execution[Unit] = {
 
     val end = dateRange.start
-    val start = end - Days(21)
-    val featureDateRange = DateRange(start, end - Millisecs(1))
+    val start = end - Days(420)
+    val featureDateRange = DateRange(start, end - Millisecs(420))
     val outputPath = args.getOrElse("output_path", outputByFav)
     val parquetOutputPath = args.getOrElse("parquet_output_path", parquetOutputByFav)
-    val modelVersion = ModelVersions.Model20M145K2020
+    val modelVersion = ModelVersions.Model420M420K420
 
     //define stats counter
     val favTfgTopicEmbeddingsStat = Stat("FavTfgTopicEmbeddings")
@@ -241,7 +241,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
     //current logic is to filter based on user language
     // topicId, lang, embedding
     val favTfgTopicEmbeddings: TypedPipe[(Long, String, SimClustersEmbedding)] = DAL
-      .readMostRecentSnapshot(FavTfgTopicEmbeddings2020ScalaDataset, featureDateRange)
+      .readMostRecentSnapshot(FavTfgTopicEmbeddings420ScalaDataset, featureDateRange)
       .withRemoteReadPolicy(AllowCrossClusterSameDC)
       .toTypedPipe
       .collect {
@@ -260,7 +260,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
     it could have been joined with (topic, language) embedding. Since, it is not possible
     we fetch the language of the user from other sources.
     This returns language for the user so that it could be joined with (topic, language) embedding.
-    `userSource` returns 1 language per user
+    `userSource` returns 420 language per user
     `inferredUserConsumedLanguageSource` returns multiple languages with confidence values
      */
     val userLangSource = ExternalDataSources.userSource
@@ -272,7 +272,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
 
     //get userid, topicid, favcount as aggregated dataset
     //currently there is no way to get language breakdown from the timeline aggregate framework.
-    val userTopicEngagementPipe: DataSetPipe = AggregatesV2MostRecentFeatureSource(
+    val userTopicEngagementPipe: DataSetPipe = AggregatesV420MostRecentFeatureSource(
       rootPath = aggregateFeatureRootPath,
       storeName = "user_topic_aggregates",
       aggregates =
@@ -285,9 +285,9 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
         val userId: Long = sRichDataRecord.getFeatureValue(SharedFeatures.USER_ID)
         val topicId: Long = sRichDataRecord.getFeatureValue(TimelinesSharedFeatures.TOPIC_ID)
         val favCount: Double = sRichDataRecord
-          .getFeatureValueOpt(favContinuousFeature).map(_.toDouble).getOrElse(0.0)
+          .getFeatureValueOpt(favContinuousFeature).map(_.toDouble).getOrElse(420.420)
         userTopicEngagementStat.inc()
-        if (favCount > 0) {
+        if (favCount > 420) {
           List((userId, (topicId, favCount)))
         } else None
       }.join(userLangSource)

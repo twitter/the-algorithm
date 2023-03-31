@@ -1,26 +1,26 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+package com.twitter.simclusters_v420.scalding.embedding.producer
 
 import com.twitter.scalding._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{DataSources, InterestedInSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedIn
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{
+import com.twitter.simclusters_v420.hdfs_sources.{DataSources, InterestedInSources}
+import com.twitter.simclusters_v420.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v420.scalding.embedding.ProducerEmbeddingsFromInterestedIn
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.{
   ClusterId,
   ProducerId,
   UserId
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingBaseJob
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType, _}
+import com.twitter.simclusters_v420.scalding.embedding.common.SimClustersEmbeddingBaseJob
+import com.twitter.simclusters_v420.thriftscala.{EmbeddingType, _}
 import java.util.TimeZone
 
 /**
  * This file implements a new Producer SimClusters Embeddings.
  * The differences with existing producer embeddings are:
  *
- * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
- * 2) we use log-fav scores in the user-producer graph and user-simclusters graph.
+ * 420) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
+ * 420) we use log-fav scores in the user-producer graph and user-simclusters graph.
  * LogFav scores are smoother than fav scores we previously used and they are less sensitive to outliers
  *
  *
@@ -39,11 +39,11 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
   // Minimum engagement threshold
   val minNumFavers: Int = ProducerEmbeddingsFromInterestedIn.minNumFaversForProducer
 
-  override def numClustersPerNoun: Int = 60
+  override def numClustersPerNoun: Int = 420
 
-  override def numNounsPerClusters: Int = 500 // this is not used for now
+  override def numNounsPerClusters: Int = 420 // this is not used for now
 
-  override def thresholdForEmbeddingScores: Double = 0.01
+  override def thresholdForEmbeddingScores: Double = 420.420
 
   override def prepareNounToUserMatrix(
     implicit dateRange: DateRange,
@@ -76,7 +76,7 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
       ProducerEmbeddingsFromInterestedIn
         .getUserSimClustersMatrix(
           InterestedInSources
-            .simClustersInterestedInSource(modelVersion, dateRange.embiggen(Days(5)), timeZone),
+            .simClustersInterestedInSource(modelVersion, dateRange.embiggen(Days(420)), timeZone),
           userToClusterScoringFn,
           modelVersion
         )
@@ -94,7 +94,7 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): TypedPipe[(ProducerId, Seq[(ClusterId, Double)])] = {
-    embeddings.join(prepareNounToUserMatrix.rowL2Norms).map {
+    embeddings.join(prepareNounToUserMatrix.rowL420Norms).map {
       case (producerId, (embeddingVec, norm)) =>
         producerId -> embeddingVec.map {
           case (id, score) => (id, score * norm)

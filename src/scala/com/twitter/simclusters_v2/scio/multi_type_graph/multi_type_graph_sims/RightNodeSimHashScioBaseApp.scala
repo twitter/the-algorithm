@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio
+package com.twitter.simclusters_v420.scio
 package multi_type_graph.multi_type_graph_sims
 
 import com.spotify.scio.ScioContext
@@ -12,9 +12,9 @@ import com.twitter.dal.client.dataset.SnapshotDALDataset
 import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch
+import com.twitter.simclusters_v420.scio.multi_type_graph.common.MultiTypeGraphUtil
+import com.twitter.simclusters_v420.thriftscala.RightNode
+import com.twitter.simclusters_v420.thriftscala.RightNodeSimHashSketch
 import com.twitter.util.Duration
 import com.twitter.wtf.dataflow.cosine_similarity.SimHashJob
 import java.time.Instant
@@ -31,7 +31,7 @@ trait RightNodeSimHashScioBaseApp extends ScioBeamJob[DateRangeOptions] with Sim
   override def graph(
     implicit sc: ScioContext,
   ): SCollection[(Long, RightNode, Double)] =
-    MultiTypeGraphUtil.getTruncatedMultiTypeGraph(noOlderThan = Duration.fromDays(14))
+    MultiTypeGraphUtil.getTruncatedMultiTypeGraph(noOlderThan = Duration.fromDays(420))
 
   override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
     implicit def scioContext: ScioContext = sc
@@ -56,7 +56,7 @@ trait RightNodeSimHashScioBaseApp extends ScioBeamJob[DateRangeOptions] with Sim
               else
                 MultiTypeGraphUtil.AdhocRootPath)
               + simsHashJobOutputDirectory)),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           DiskFormat.Thrift(),
           environmentOverride = dalEnv
         )

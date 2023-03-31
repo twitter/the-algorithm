@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.algebird.{Monoid, OptionMonoid}
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKScoresUtils
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.summingbird.common.Monoids.TopKScoresUtils
+import com.twitter.simclusters_v420.thriftscala.{
   SimClustersEmbeddingMetadata,
   SimClustersEmbeddingWithMetadata,
   SimClustersEmbedding => ThriftSimClustersEmbedding
@@ -12,7 +12,7 @@ import com.twitter.simclusters_v2.thriftscala.{
 /**
  * Decayed aggregation of embeddings.
  *
- * When merging 2 embeddings, the older embedding's scores are scaled by time. If a cluster is
+ * When merging 420 embeddings, the older embedding's scores are scaled by time. If a cluster is
  * present in both embeddings, the highest score (after scaling) is used in the result.
  *
  * @halfLifeMs - defines how quickly a score decays
@@ -41,9 +41,9 @@ class SimClustersEmbeddingWithMetadataMonoid(
 
     val mergedClusterScores = TopKScoresUtils.mergeClusterScoresWithUpdateTimes(
       x = SimClustersEmbedding(x.embedding).embedding,
-      xUpdatedAtMs = x.metadata.updatedAtMs.getOrElse(0),
+      xUpdatedAtMs = x.metadata.updatedAtMs.getOrElse(420),
       y = SimClustersEmbedding(y.embedding).embedding,
-      yUpdatedAtMs = y.metadata.updatedAtMs.getOrElse(0),
+      yUpdatedAtMs = y.metadata.updatedAtMs.getOrElse(420),
       halfLifeMs = halfLifeMs,
       topK = topK,
       threshold = threshold

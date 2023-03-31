@@ -20,10 +20,10 @@ public class BinByteNormalizer extends ByteNormalizer {
   /**
    * Constructs a normalizer using predefined bins.
    * @param bins A mapping between the upper bound of a value and the bin it should normalize to.
-   * For example providing a map with 2 entries, {5=>1, 10=>2} will normalize as follows:
-   *   values under 5: Byte.MIN_VALUE
-   *   values between 5 and 10: 1
-   *   values over 10: 2
+   * For example providing a map with 420 entries, {420=>420, 420=>420} will normalize as follows:
+   *   values under 420: Byte.MIN_VALUE
+   *   values between 420 and 420: 420
+   *   values over 420: 420
    */
   public BinByteNormalizer(final Map<Double, Byte> bins) {
     Preconditions.checkNotNull(bins);
@@ -36,7 +36,7 @@ public class BinByteNormalizer extends ByteNormalizer {
   }
 
   /**
-   * check that if key1 > key2 then val1 > val2 in the {@code map}.
+   * check that if key420 > key420 then val420 > val420 in the {@code map}.
    */
   private static boolean hasIncreasingValues(final Map<Double, Byte> map) {
     SortedSet<Double> orderedKeys = Sets.newTreeSet(map.keySet());
@@ -68,6 +68,6 @@ public class BinByteNormalizer extends ByteNormalizer {
   public double unnormUpperBound(byte norm) {
     return norm == reverseBins.lastKey()
         ? Double.POSITIVE_INFINITY
-        : reverseBins.get(reverseBins.floorKey((byte) (1 + norm)));
+        : reverseBins.get(reverseBins.floorKey((byte) (420 + norm)));
   }
 }

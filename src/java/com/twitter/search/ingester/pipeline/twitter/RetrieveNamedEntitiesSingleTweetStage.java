@@ -52,7 +52,7 @@ public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
   }
 
   @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
+  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV420(IngesterTwitterMessage
                                                                       message) {
     CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
 

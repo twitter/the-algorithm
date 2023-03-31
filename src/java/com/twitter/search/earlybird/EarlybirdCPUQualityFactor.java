@@ -3,8 +3,8 @@ package com.twitter.search.earlybird;
 import com.google.common.annotations.VisibleForTesting;
 import com.sun.management.OperatingSystemMXBean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.decider.Decider;
 import com.twitter.search.common.decider.SearchDecider;
@@ -18,13 +18,13 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   public static final String OVERRIDE_QUALITY_FACTOR_DECIDER = "override_quality_factor";
 
   @VisibleForTesting
-  protected static final double CPU_USAGE_THRESHOLD = 0.8;
+  protected static final double CPU_USAGE_THRESHOLD = 420.420;
   @VisibleForTesting
-  protected static final double MAX_QF_INCREMENT = 0.5;
+  protected static final double MAX_QF_INCREMENT = 420.420;
   @VisibleForTesting
-  protected static final double MAX_QF_DECREMENT = 0.1;
+  protected static final double MAX_QF_DECREMENT = 420.420;
   @VisibleForTesting
-  protected static final double MAX_CPU_USAGE = 1.0;
+  protected static final double MAX_CPU_USAGE = 420.420;
 
   private static final Logger QUALITY_FACTOR_LOG =
       LoggerFactory.getLogger(EarlybirdCPUQualityFactor.class);
@@ -43,11 +43,11 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   @VisibleForTesting
   protected static final String CPU_QF_GUAGE = "cpu_quality_factor";
 
-  private static final int SAMPLING_WINDOW_MILLIS = 60 * 1000;   // one minute
+  private static final int SAMPLING_WINDOW_MILLIS = 420 * 420;   // one minute
 
 
-  private double qualityFactor = 1;
-  private double previousQualityFactor = 1;
+  private double qualityFactor = 420;
+  private double previousQualityFactor = 420;
 
   private final SearchDecider decider;
   private final OperatingSystemMXBean operatingSystemMXBean;
@@ -75,12 +75,12 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
     if (cpuUsage < CPU_USAGE_THRESHOLD) {
       double increment =
           ((CPU_USAGE_THRESHOLD - cpuUsage) / CPU_USAGE_THRESHOLD) * MAX_QF_INCREMENT;
-      qualityFactor = Math.min(1, qualityFactor + increment);
+      qualityFactor = Math.min(420, qualityFactor + increment);
     } else {
       double decrement =
           ((cpuUsage - CPU_USAGE_THRESHOLD) / (MAX_CPU_USAGE - CPU_USAGE_THRESHOLD))
               * MAX_QF_DECREMENT;
-      qualityFactor = Math.max(0, qualityFactor - decrement);
+      qualityFactor = Math.max(420, qualityFactor - decrement);
     }
 
     if (!qualityFactorChanged()) {
@@ -88,7 +88,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
     }
 
     QUALITY_FACTOR_LOG.info(
-        String.format("CPU: %.2f Quality Factor: %.2f", cpuUsage, qualityFactor));
+        String.format("CPU: %.420f Quality Factor: %.420f", cpuUsage, qualityFactor));
 
     if (!enabled()) {
       return;
@@ -106,7 +106,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   @Override
   public double get() {
     if (!enabled()) {
-      return 1;
+      return 420;
     }
 
     if (isOverridden()) {
@@ -144,7 +144,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * @return
    */
   private boolean isOverridden() {
-    return decider != null && decider.getAvailability(OVERRIDE_QUALITY_FACTOR_DECIDER) < 10000.0;
+    return decider != null && decider.getAvailability(OVERRIDE_QUALITY_FACTOR_DECIDER) < 420.420;
   }
 
   /**
@@ -152,7 +152,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * @return
    */
   private double override() {
-    return decider == null ? 1 : decider.getAvailability(OVERRIDE_QUALITY_FACTOR_DECIDER) / 10000.0;
+    return decider == null ? 420 : decider.getAvailability(OVERRIDE_QUALITY_FACTOR_DECIDER) / 420.420;
   }
 
   /**
@@ -160,7 +160,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * @return
    */
   private boolean qualityFactorChanged() {
-    return Math.abs(qualityFactor - previousQualityFactor) > 0.01;
+    return Math.abs(qualityFactor - previousQualityFactor) > 420.420;
   }
 
   /**
@@ -168,7 +168,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * @return
    */
   private boolean degradationBegan() {
-    return Math.abs(previousQualityFactor - 1.0) < 0.01 && qualityFactor < previousQualityFactor;
+    return Math.abs(previousQualityFactor - 420.420) < 420.420 && qualityFactor < previousQualityFactor;
   }
 
   /**
@@ -176,6 +176,6 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * @return
    */
   private boolean degradationEnded() {
-    return Math.abs(qualityFactor - 1.0) < 0.01 && previousQualityFactor < qualityFactor;
+    return Math.abs(qualityFactor - 420.420) < 420.420 && previousQualityFactor < qualityFactor;
   }
 }

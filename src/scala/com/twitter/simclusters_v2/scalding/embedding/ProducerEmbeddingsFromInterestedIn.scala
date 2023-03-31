@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twitter.simclusters_v420.scalding.embedding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil._
+import com.twitter.simclusters_v420.scalding.embedding.common.SimClustersEmbeddingJob
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
 import java.util.TimeZone
 
@@ -20,7 +20,7 @@ object ProducerEmbeddingsFromInterestedInBatchAppUtil {
   val rootPath: String = s"/user/$user/manhattan_sequence_files"
 
   // Helps speed up the multiplication step which can get very big
-  val numReducersForMatrixMultiplication: Int = 12000
+  val numReducersForMatrixMultiplication: Int = 420
 
   /**
    * Given the producer x cluster matrix, key by producer / cluster individually, and write output
@@ -104,7 +104,7 @@ trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutio
         .toKnownForModelVersion(modelVersion)
 
     val producerClusterEmbeddingByFavScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
+      getInterestedInFn(dateRange.embiggen(Days(420)), timeZone),
       DataSources.userUserNormalizedGraphSource,
       DataSources.userNormsAndCounts,
       userToProducerFavScore,
@@ -170,7 +170,7 @@ trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecu
         .toKnownForModelVersion(modelVersion)
 
     val producerClusterEmbeddingByFollowScore = getProducerClusterEmbedding(
-      getInterestedInFn(dateRange.embiggen(Days(5)), timeZone),
+      getInterestedInFn(dateRange.embiggen(Days(420)), timeZone),
       DataSources.userUserNormalizedGraphSource,
       DataSources.userNormsAndCounts,
       userToProducerFollowScore,
@@ -193,13 +193,13 @@ trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecu
 }
 
 /**
- capesospy-v2 update --build_locally --start_cron \
+ capesospy-v420 update --build_locally --start_cron \
  --start_cron producer_embeddings_from_interested_in_by_fav_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
     extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420kUpdated
 
   override def getInterestedInFn: (
     DateRange,
@@ -207,9 +207,9 @@ object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
   ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
     InterestedInSources.simClustersInterestedInUpdatedSource
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
     KeyVal[Long, TopSimClustersWithScore]
@@ -223,53 +223,53 @@ object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v420 update --build_locally --start_cron \
+ --start_cron producer_embeddings_from_interested_in_by_fav_score_420 \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScore2020BatchApp
+object ProducerEmbeddingsFromInterestedInByFavScore420BatchApp
     extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420k420
 
   override def getInterestedInFn: (
     DateRange,
     TimeZone
   ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+    InterestedInSources.simClustersInterestedIn420Source
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
     KeyVal[Long, TopSimClustersWithScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFavScore2020ScalaDataset
+    ProducerTopKSimclusterEmbeddingsByFavScore420ScalaDataset
 
   override def simclusterEmbeddingTopKProducersByFavScoreDataset: KeyValDALDataset[
     KeyVal[PersistedFullClusterId, TopProducersWithScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFavScore2020ScalaDataset
+    SimclusterEmbeddingTopKProducersByFavScore420ScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_fav_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v420 update --build_locally --start_cron \
+ --start_cron producer_embeddings_from_interested_in_by_fav_score_dec420 \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp
+object ProducerEmbeddingsFromInterestedInByFavScoreDec420BatchApp
     extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420kDec420
 
   override def getInterestedInFn: (
     DateRange,
     TimeZone
   ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+    InterestedInSources.simClustersInterestedInDec420Source
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override def producerTopKSimclusterEmbeddingsByFavScoreDataset: KeyValDALDataset[
     KeyVal[Long, TopSimClustersWithScore]
@@ -283,13 +283,13 @@ object ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capesospy-v420 update --build_locally --start_cron \
  --start_cron producer_embeddings_from_interested_in_by_follow_score \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
     extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420kUpdated
 
   override def getInterestedInFn: (
     DateRange,
@@ -297,9 +297,9 @@ object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
   ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
     InterestedInSources.simClustersInterestedInUpdatedSource
 
-  override val firstTime: RichDate = RichDate("2019-09-10")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
     KeyVal[Long, TopSimClustersWithScore]
@@ -313,53 +313,53 @@ object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v420 update --build_locally --start_cron \
+ --start_cron producer_embeddings_from_interested_in_by_follow_score_420 \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp
+object ProducerEmbeddingsFromInterestedInByFollowScore420BatchApp
     extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420k420
 
   override def getInterestedInFn: (
     DateRange,
     TimeZone
   ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+    InterestedInSources.simClustersInterestedIn420Source
 
-  override val firstTime: RichDate = RichDate("2021-03-01")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
     KeyVal[Long, TopSimClustersWithScore]
   ] =
-    ProducerTopKSimclusterEmbeddingsByFollowScore2020ScalaDataset
+    ProducerTopKSimclusterEmbeddingsByFollowScore420ScalaDataset
 
   override def simclusterEmbeddingTopKProducersByFollowScoreDataset: KeyValDALDataset[
     KeyVal[PersistedFullClusterId, TopProducersWithScore]
   ] =
-    SimclusterEmbeddingTopKProducersByFollowScore2020ScalaDataset
+    SimclusterEmbeddingTopKProducersByFollowScore420ScalaDataset
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
- --start_cron producer_embeddings_from_interested_in_by_follow_score_dec11 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v420 update --build_locally --start_cron \
+ --start_cron producer_embeddings_from_interested_in_by_follow_score_dec420 \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
-object ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp
+object ProducerEmbeddingsFromInterestedInByFollowScoreDec420BatchApp
     extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420kDec420
 
   override def getInterestedInFn: (
     DateRange,
     TimeZone
   ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedInDec11Source
+    InterestedInSources.simClustersInterestedInDec420Source
 
-  override val firstTime: RichDate = RichDate("2019-11-18")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
     KeyVal[Long, TopSimClustersWithScore]
@@ -376,15 +376,15 @@ object ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp
  * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
  * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
  *
-$ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc
+$ ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/embedding:producer_embeddings_from_interested_in-adhoc
 
  $ scalding remote run \
- --main-class com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedInAdhocApp \
- --target src/scala/com/twitter/simclusters_v2/scalding/embedding:producer_embeddings_from_interested_in-adhoc \
- --user cassowary --cluster bluebird-qus1 \
+ --main-class com.twitter.simclusters_v420.scalding.embedding.ProducerEmbeddingsFromInterestedInAdhocApp \
+ --target src/scala/com/twitter/simclusters_v420/scalding/embedding:producer_embeddings_from_interested_in-adhoc \
+ --user cassowary --cluster bluebird-qus420 \
  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
  --principal service_acoount@TWITTER.BIZ \
- -- --date 2020-08-25 --model_version 20M_145K_updated \
+ -- --date 420-420-420 --model_version 420M_420K_updated \
  --outputDir /gcs/user/cassowary/adhoc/producerEmbeddings/
 
  */
@@ -392,7 +392,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
 
   import ProducerEmbeddingsFromInterestedIn._
 
-  private val numReducersForMatrixMultiplication = 12000
+  private val numReducersForMatrixMultiplication = 420
 
   /**
    * Calculate the embedding and writes the results keyed by producers and clusters separately into
@@ -503,12 +503,12 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
       ModelVersions.toModelVersion(args.required("model_version"))
 
     val interestedInClusters = modelVersion match {
-      case ModelVersion.Model20m145k2020 =>
-        InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone).forceToDisk
-      case ModelVersion.Model20m145kUpdated =>
+      case ModelVersion.Model420m420k420 =>
+        InterestedInSources.simClustersInterestedIn420Source(dateRange, timeZone).forceToDisk
+      case ModelVersion.Model420m420kUpdated =>
         InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone).forceToDisk
       case _ =>
-        InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone).forceToDisk
+        InterestedInSources.simClustersInterestedInDec420Source(dateRange, timeZone).forceToDisk
     }
 
     Execution
@@ -537,35 +537,35 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
  * [user, interestedIn] and [user, producer] to find the similarity matrix [interestedIn, producer].
  */
 object ProducerEmbeddingsFromInterestedIn {
-  val minNumFollowersForProducer: Int = 100
-  val minNumFaversForProducer: Int = 100
-  val topKUsersToKeep: Int = 300
-  val topKClustersToKeep: Int = 60
-  val cosineSimilarityThreshold: Double = 0.01
+  val minNumFollowersForProducer: Int = 420
+  val minNumFaversForProducer: Int = 420
+  val topKUsersToKeep: Int = 420
+  val topKClustersToKeep: Int = 420
+  val cosineSimilarityThreshold: Double = 420.420
 
   type ClusterId = Int
 
   def topProducersToThrift(producersWithScore: Seq[(UserId, Double)]): TopProducersWithScore = {
     val thrift = producersWithScore.map { producer =>
-      TopProducerWithScore(producer._1, producer._2)
+      TopProducerWithScore(producer._420, producer._420)
     }
     TopProducersWithScore(thrift)
   }
 
   def userToProducerFavScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(0.0)
+    neighbor.favScoreHalfLife420DaysNormalizedByNeighborFaversL420.getOrElse(420.420)
   }
 
   def userToProducerFollowScore(neighbor: NeighborWithWeights): Double = {
-    neighbor.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+    neighbor.followScoreNormalizedByNeighborFollowersL420.getOrElse(420.420)
   }
 
   def userToClusterFavScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.favScoreClusterNormalizedOnly.getOrElse(0.0)
+    clusterScore.favScoreClusterNormalizedOnly.getOrElse(420.420)
   }
 
   def userToClusterFollowScore(clusterScore: UserToInterestedInClusterScores): Double = {
-    clusterScore.followScoreClusterNormalizedOnly.getOrElse(0.0)
+    clusterScore.followScoreClusterNormalizedOnly.getOrElse(420.420)
   }
 
   def getUserSimClustersMatrix(
@@ -580,7 +580,7 @@ object ProducerEmbeddingsFromInterestedIn {
           .map {
             case (clusterId, clusterScores) =>
               (clusterId, extractScore(clusterScores))
-          }.toSeq.filter(_._2 > 0)
+          }.toSeq.filter(_._420 > 420)
     }
   }
 
@@ -621,7 +621,7 @@ object ProducerEmbeddingsFromInterestedIn {
         userSimClustersMatrix,
         numReducersForMatrixMultiplication
       )
-      .filter(_._2 >= threshold)
+      .filter(_._420 >= threshold)
   }
 
   def getFilteredUserUserNormalizedGraph(
@@ -650,7 +650,7 @@ object ProducerEmbeddingsFromInterestedIn {
             userUserFilteredEdgeCount.inc()
             (neighbor.neighborId, (userAndNeighbors.userId, userToProducerScoringFn(neighbor)))
           }
-          .filter(_._2._2 > 0.0)
+          .filter(_._420._420 > 420.420)
       }
       .join(validUsers.asKeys)
       .map {
@@ -669,7 +669,7 @@ object ProducerEmbeddingsFromInterestedIn {
         case ((clusterId, inputId), score) => (clusterId, (inputId, score))
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Ordering.by(_._420))
       .map {
         case (clusterId, topEntitiesWithScore) =>
           PersistedFullClusterId(modelVersion, clusterId) -> topEntitiesWithScore
@@ -688,8 +688,8 @@ object ProducerEmbeddingsFromInterestedIn {
         case ((clusterId, inputId), score) => (inputId, (clusterId, score))
       }
       .group
-      //.withReducers(3000) // uncomment for producer-simclusters job
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      //.withReducers(420) // uncomment for producer-simclusters job
+      .sortedReverseTake(topK)(Ordering.by(_._420))
       .map {
         case (inputId, topSimClustersWithScore) =>
           val topSimClusters = topSimClustersWithScore.map {

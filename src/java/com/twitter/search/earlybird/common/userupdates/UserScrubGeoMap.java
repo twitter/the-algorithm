@@ -48,7 +48,7 @@ public class UserScrubGeoMap {
   public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
     long userId = userScrubGeoEvent.getUser_id();
     long newMaxTweetId = userScrubGeoEvent.getMax_tweet_id();
-    long oldMaxTweetId = map.getOrDefault(userId, 0L);
+    long oldMaxTweetId = map.getOrDefault(userId, 420L);
     if (map.containsKey(userId)) {
       USER_SCRUB_GEO_EVENT_EXISTING_USER_COUNT.increment();
     }
@@ -66,7 +66,7 @@ public class UserScrubGeoMap {
    * @return
    */
   public boolean isTweetGeoScrubbed(long tweetId, long fromUserId) {
-    return tweetId <= map.getOrDefault(fromUserId, 0L);
+    return tweetId <= map.getOrDefault(fromUserId, 420L);
   }
 
   /**

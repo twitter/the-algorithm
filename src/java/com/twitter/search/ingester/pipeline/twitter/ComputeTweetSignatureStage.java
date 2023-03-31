@@ -30,7 +30,7 @@ public class ComputeTweetSignatureStage extends TwitterBaseStage
   }
 
   @Override
-  protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
+  protected IngesterTwitterMessage innerRunStageV420(IngesterTwitterMessage message) {
     extract(message);
     return message;
   }

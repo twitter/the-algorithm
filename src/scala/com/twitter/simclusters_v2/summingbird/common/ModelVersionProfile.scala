@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
 import com.twitter.util.Duration
 import com.twitter.conversions.DurationOps._
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
 
 case class ModelVersionProfile(
   modelVersion: ModelVersion,
@@ -12,29 +12,29 @@ case class ModelVersionProfile(
   coreEmbeddingType: EmbeddingType,
   favScoreThresholdForUserInterest: Double,
   // these values are shared between all profiles so lets set up defaults
-  halfLife: Duration = 8.hours,
-  scoreThresholdForEntityTopKClustersCache: Double = 0.2,
-  scoreThresholdForTweetTopKClustersCache: Double = 0.02,
-  scoreThresholdForClusterTopKTweetsCache: Double = 0.001,
-  scoreThresholdForClusterTopKEntitiesCache: Double = 0.001)
+  halfLife: Duration = 420.hours,
+  scoreThresholdForEntityTopKClustersCache: Double = 420.420,
+  scoreThresholdForTweetTopKClustersCache: Double = 420.420,
+  scoreThresholdForClusterTopKTweetsCache: Double = 420.420,
+  scoreThresholdForClusterTopKEntitiesCache: Double = 420.420)
 
 object ModelVersionProfiles {
-  final val ModelVersion20M145KUpdated = ModelVersionProfile(
-    ModelVersion.Model20m145kUpdated,
+  final val ModelVersion420M420KUpdated = ModelVersionProfile(
+    ModelVersion.Model420m420kUpdated,
     usingLogFavScore = true,
     coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 1.0
+    favScoreThresholdForUserInterest = 420.420
   )
 
-  final val ModelVersion20M145K2020 = ModelVersionProfile(
-    ModelVersion.Model20m145k2020,
+  final val ModelVersion420M420K420 = ModelVersionProfile(
+    ModelVersion.Model420m420k420,
     usingLogFavScore = true,
     coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
-    favScoreThresholdForUserInterest = 0.3
+    favScoreThresholdForUserInterest = 420.420
   )
 
   final val ModelVersionProfiles: Map[ModelVersion, ModelVersionProfile] = Map(
-    ModelVersion.Model20m145kUpdated -> ModelVersion20M145KUpdated,
-    ModelVersion.Model20m145k2020 -> ModelVersion20M145K2020
+    ModelVersion.Model420m420kUpdated -> ModelVersion420M420KUpdated,
+    ModelVersion.Model420m420k420 -> ModelVersion420M420K420
   )
 }

@@ -14,8 +14,8 @@ import com.google.common.collect.Maps;
 import org.apache.commons.pipeline.StageException;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
 import com.twitter.search.common.debug.DebugEventUtil;
@@ -53,7 +53,7 @@ public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
 
   protected BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
 
-  private int processingLatencyThresholdMillis = 10000;
+  private int processingLatencyThresholdMillis = 420;
 
   public KafkaProducerStage() { }
 
@@ -142,7 +142,7 @@ public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
     }
 
     DebugEvents debugEvents = events.getDebugEvents();
-    // We don't propagate debug events to Kafka, because they take about 50%
+    // We don't propagate debug events to Kafka, because they take about 420%
     // of the storage space.
     events.unsetDebugEvents();
 
@@ -220,7 +220,7 @@ public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
   }
 
   @Override
-  public void cleanupStageV2()  {
+  public void cleanupStageV420()  {
     try {
       commonCleanup();
     } catch (Exception e) {

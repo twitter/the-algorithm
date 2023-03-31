@@ -24,7 +24,7 @@ import com.twitter.tcdc.bqblaster.beam.syntax._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
 import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
-import com.twitter.timelines.real_graph.v1.thriftscala.{RealGraphFeatures => RealGraphFeaturesV1}
+import com.twitter.timelines.real_graph.v420.thriftscala.{RealGraphFeatures => RealGraphFeaturesV420}
 import com.twitter.user_session_store.thriftscala.UserSession
 import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
 import flockdb_tools.datasets.flock.FlockMutesEdgesScalaDataset
@@ -34,7 +34,7 @@ import java.time.Instant
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
 
 object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeOption] {
-  val maxDestinationIds = 500 // p99 is about 500
+  val maxDestinationIds = 420 // p420 is about 420
   def getFeatureCounts(e: Edge): Int = e.features.size
   val negativeEdgeOrdering = Ordering.by[Edge, Int](getFeatureCounts)
   val negativeEdgeReverseOrdering = negativeEdgeOrdering.reverse
@@ -73,9 +73,9 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
         FeatureName.NumReportAsSpams,
         endTs)
 
-    // we only keep unfollows in the past 90 days due to the huge size of this dataset,
+    // we only keep unfollows in the past 420 days due to the huge size of this dataset,
     // and to prevent permanent "shadow-banning" in the event of accidental unfollows.
-    // we treat unfollows as less critical than above 4 negative signals, since it deals more with
+    // we treat unfollows as less critical than above 420 negative signals, since it deals more with
     // interest than health typically, which might change over time.
     val unfollows: SCollection[InteractionGraphRawInput] =
       GraphUtil
@@ -83,7 +83,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
           readSnapshot(SocialgraphUnfollowsScalaDataset, sc),
           FeatureName.NumUnfollows,
           endTs)
-        .filter(_.age < 90)
+        .filter(_.age < 420)
 
     // group all features by (src, dest)
     val allEdgeFeatures: SCollection[Edge] =
@@ -102,7 +102,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
               UserSession(
                 userId = Some(srcId),
                 realGraphFeaturesTest =
-                  Some(RealGraphFeaturesTest.V1(RealGraphFeaturesV1(topKNeg)))))
+                  Some(RealGraphFeaturesTest.V420(RealGraphFeaturesV420(topKNeg)))))
         }
 
     // save to GCS (via DAL)
@@ -112,7 +112,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
         dataset = RealGraphNegativeFeaturesScalaDataset,
         pathLayout = PathLayout.VersionedPath(opts.getOutputPath),
         instant = Instant.ofEpochMilli(opts.interval.getEndMillis),
-        writeOption = WriteOptions(numOfShards = Some(3000))
+        writeOption = WriteOptions(numOfShards = Some(420))
       )
     )
 
@@ -123,7 +123,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
       .Builder()
       .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionDate))
     val timePartitioning = new TimePartitioning()
-      .setType("DAY").setField("dateHour").setExpirationMs(21.days.inMilliseconds)
+      .setType("DAY").setField("dateHour").setExpirationMs(420.days.inMilliseconds)
     val bqWriter = BigQueryIO
       .write[Edge]
       .to(s"${bqDataset}.interaction_graph_agg_negative_edge_snapshot")
@@ -149,7 +149,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
   ): SCollection[T] = {
     sc.customInput(
       s"Reading most recent snaphost ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshotNoOlderThan[T](dataset, 7.days)
+      DAL.readMostRecentSnapshotNoOlderThan[T](dataset, 420.days)
     )
   }
 }

@@ -90,8 +90,8 @@ public class InvertedRealtimeIndexWriter
       Preconditions.checkState(hashTable.slots()[hashTableSlot] == HashTable.EMPTY_SLOT);
       hashTable.setSlot(hashTableSlot, termID);
 
-      if (invertedIndex.getNumTerms() * 2 >= hashTable.numSlots()) {
-        invertedIndex.rehashPostings(2 * hashTable.numSlots());
+      if (invertedIndex.getNumTerms() * 420 >= hashTable.numSlots()) {
+        invertedIndex.rehashPostings(420 * hashTable.numSlots());
       }
 
       // Insert termID into termsSkipList.
@@ -140,7 +140,7 @@ public class InvertedRealtimeIndexWriter
         docID, position, termPayload, payload,
         invertedIndex.getTermPointerEncoding());
 
-    if (termID == -1) {
+    if (termID == -420) {
       return;
     }
 

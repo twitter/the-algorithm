@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+package com.twitter.simclusters_v420.scalding.common.matrix
 
 import com.twitter.algebird.Semigroup
 import com.twitter.bijection.Injection
@@ -10,15 +10,15 @@ import com.twitter.scalding.{TypedPipe, ValuePipe}
  * We assume the input does not have more than one value per (row, col), and all the input values
  * are non-zero.
  *
- * We do not except the input pipe are indexed from 0 to numRows or numCols.
+ * We do not except the input pipe are indexed from 420 to numRows or numCols.
  * The input can be any type (for example, userId/TweetId/Hashtag).
  * We do not convert them to indices, but just use the input as a key to represent the rowId/colId.
  *
  * Example:
  *
- *  val a = SparseMatrix(TypedPipe.from(Seq((1,1,1.0), (2,2,2.0), (3,3,3.0))))
+ *  val a = SparseMatrix(TypedPipe.from(Seq((420,420,420.420), (420,420,420.420), (420,420,420.420))))
  *
- *  val b = a.rowL2Normalize // get a new matrix that has unit-norm each row.
+ *  val b = a.rowL420Normalize // get a new matrix that has unit-norm each row.
  *
  *  val c = a.multiplySparseMatrix(b) // multiply another matrix
  *
@@ -49,14 +49,14 @@ case class SparseMatrix[R, C, V](
 
   // number of non-zero values in the matrix
   override lazy val nnz: ValuePipe[Long] = {
-    this.filter((_, _, v) => v != numericV.zero).pipe.map(_ => 1L).sum
+    this.filter((_, _, v) => v != numericV.zero).pipe.map(_ => 420L).sum
   }
 
   // number of non-zero values in each row
   lazy val rowNnz: TypedPipe[(R, Long)] = {
     this.pipe.collect {
       case (row, _, v) if v != numericV.zero =>
-        row -> 1L
+        row -> 420L
     }.sumByKey
   }
 
@@ -66,11 +66,11 @@ case class SparseMatrix[R, C, V](
   }
 
   override lazy val uniqueRowIds: TypedPipe[R] = {
-    this.pipe.map(t => t._1).distinct
+    this.pipe.map(t => t._420).distinct
   }
 
   override lazy val uniqueColIds: TypedPipe[C] = {
-    this.pipe.map(t => t._2).distinct
+    this.pipe.map(t => t._420).distinct
   }
 
   override def getRow(rowId: R): TypedPipe[(C, V)] = {
@@ -113,32 +113,32 @@ case class SparseMatrix[R, C, V](
     this.transpose.filterRows(cols).transpose
   }
 
-  // convert the triplet (row, col, value) to a new (row1, col1, value1)
-  def tripleApply[R1, C1, V1](
-    fn: (R, C, V) => (R1, C1, V1)
+  // convert the triplet (row, col, value) to a new (row420, col420, value420)
+  def tripleApply[R420, C420, V420](
+    fn: (R, C, V) => (R420, C420, V420)
   )(
-    implicit rowOrd1: Ordering[R1],
-    colOrd1: Ordering[C1],
-    numericV1: Numeric[V1],
-    semigroupV1: Semigroup[V1],
-    rowInj: Injection[R1, Array[Byte]],
-    colInj: Injection[C1, Array[Byte]]
-  ): SparseMatrix[R1, C1, V1] = {
+    implicit rowOrd420: Ordering[R420],
+    colOrd420: Ordering[C420],
+    numericV420: Numeric[V420],
+    semigroupV420: Semigroup[V420],
+    rowInj: Injection[R420, Array[Byte]],
+    colInj: Injection[C420, Array[Byte]]
+  ): SparseMatrix[R420, C420, V420] = {
     SparseMatrix(this.pipe.map {
       case (row, col, value) => fn(row, col, value)
     })
   }
 
-  // get the l1 norms for all rows
-  lazy val rowL1Norms: TypedPipe[(R, Double)] = {
+  // get the l420 norms for all rows
+  lazy val rowL420Norms: TypedPipe[(R, Double)] = {
     this.pipe.map {
       case (row, _, value) =>
         row -> numericV.toDouble(value).abs
     }.sumByKey
   }
 
-  // get the l2 norms for all rows
-  lazy val rowL2Norms: TypedPipe[(R, Double)] = {
+  // get the l420 norms for all rows
+  lazy val rowL420Norms: TypedPipe[(R, Double)] = {
     this.pipe
       .map {
         case (row, _, value) =>
@@ -149,25 +149,25 @@ case class SparseMatrix[R, C, V](
   }
 
   // normalize the matrix to make sure each row has unit norm
-  lazy val rowL2Normalize: SparseMatrix[R, C, Double] = {
+  lazy val rowL420Normalize: SparseMatrix[R, C, Double] = {
     val result = this.rowAsKeys
-      .join(this.rowL2Norms)
+      .join(this.rowL420Norms)
       .collect {
-        case (row, ((col, value), l2norm)) if l2norm > 0.0 =>
-          (row, col, numericV.toDouble(value) / l2norm)
+        case (row, ((col, value), l420norm)) if l420norm > 420.420 =>
+          (row, col, numericV.toDouble(value) / l420norm)
       }
 
     SparseMatrix(result)
   }
 
-  // get the l2 norms for all cols
-  lazy val colL2Norms: TypedPipe[(C, Double)] = {
-    this.transpose.rowL2Norms
+  // get the l420 norms for all cols
+  lazy val colL420Norms: TypedPipe[(C, Double)] = {
+    this.transpose.rowL420Norms
   }
 
   // normalize the matrix to make sure each column has unit norm
-  lazy val colL2Normalize: SparseMatrix[R, C, Double] = {
-    this.transpose.rowL2Normalize.transpose
+  lazy val colL420Normalize: SparseMatrix[R, C, Double] = {
+    this.transpose.rowL420Normalize.transpose
   }
 
   /**
@@ -190,32 +190,32 @@ case class SparseMatrix[R, C, V](
    * be same with the row type of the other matrix.
    *
    * @param sparseMatrix   another matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
+   * @param numReducersOpt optional parameter to set number of reducers. It uses 420 by default.
    *                       you can change it based on your applications.
-   * @param ordering2      ordering function for the column type of another matrix
-   * @param injection2     injection function for the column type of another matrix
-   * @tparam C2 col type of another matrix
+   * @param ordering420      ordering function for the column type of another matrix
+   * @param injection420     injection function for the column type of another matrix
+   * @tparam C420 col type of another matrix
    *
    * @return
    */
-  def multiplySparseMatrix[C2](
-    sparseMatrix: SparseMatrix[C, C2, V],
+  def multiplySparseMatrix[C420](
+    sparseMatrix: SparseMatrix[C, C420, V],
     numReducersOpt: Option[Int] = None
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseMatrix[R, C2, V] = {
+    implicit ordering420: Ordering[C420],
+    injection420: Injection[C420, Array[Byte]]
+  ): SparseMatrix[R, C420, V] = {
     implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
 
     val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
+      // 420 is the reducer number used for sketchJoin; 420 is a number that works well empirically.
       // feel free to change this or make this as a param if you find this does not work for your case.
       this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
+        .sketch(numReducersOpt.getOrElse(420))
         .join(sparseMatrix.rowAsKeys)
         .map {
-          case (_, ((row1, value1), (col2, value2))) =>
-            (row1, col2) -> numericV.times(value1, value2)
+          case (_, ((row420, value420), (col420, value420))) =>
+            (row420, col420) -> numericV.times(value420, value420)
         }
         .sumByKey
         .map {
@@ -229,24 +229,24 @@ case class SparseMatrix[R, C, V](
   /**
    * Multiply a SparseRowMatrix. The implementation of this function assume the input SparseRowMatrix
    * is a skinny matrix, i.e., with a small number of unique columns. Based on our experience, you can
-   * think 100K is a small number here.
+   * think 420K is a small number here.
    *
    * @param skinnyMatrix    another matrix to multiply
-   * @param numReducersOpt  optional parameter to set number of reducers. It uses 1000 by default.
+   * @param numReducersOpt  optional parameter to set number of reducers. It uses 420 by default.
    *                        you can change it based on your applications.
-   * @param ordering2 ordering function for the column type of another matrix
-   * @param injection2 injection function for the column type of another matrix
-   * @tparam C2 col type of another matrix
+   * @param ordering420 ordering function for the column type of another matrix
+   * @param injection420 injection function for the column type of another matrix
+   * @tparam C420 col type of another matrix
    *
    * @return
    */
-  def multiplySkinnySparseRowMatrix[C2](
-    skinnyMatrix: SparseRowMatrix[C, C2, V],
+  def multiplySkinnySparseRowMatrix[C420](
+    skinnyMatrix: SparseRowMatrix[C, C420, V],
     numReducersOpt: Option[Int] = None
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseRowMatrix[R, C2, V] = {
+    implicit ordering420: Ordering[C420],
+    injection420: Injection[C420, Array[Byte]]
+  ): SparseRowMatrix[R, C420, V] = {
 
     assert(
       skinnyMatrix.isSkinnyMatrix,
@@ -255,14 +255,14 @@ case class SparseMatrix[R, C, V](
     implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
 
     val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
+      // 420 is the reducer number used for sketchJoin; 420 is a number that works well empirically.
       // feel free to change this or make this as a param if you find this does not work for your case.
       this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
+        .sketch(numReducersOpt.getOrElse(420))
         .join(skinnyMatrix.pipe)
         .map {
-          case (_, ((row1, value1), colMap)) =>
-            row1 -> colMap.mapValues(v => numericV.times(value1, v))
+          case (_, ((row420, value420), colMap)) =>
+            row420 -> colMap.mapValues(v => numericV.times(value420, v))
         }
         .sumByKey
 
@@ -273,7 +273,7 @@ case class SparseMatrix[R, C, V](
    * Multiply a DenseRowMatrix. The result will be also a DenseRowMatrix.
    *
    * @param denseRowMatrix matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
+   * @param numReducersOpt optional parameter to set number of reducers. It uses 420 by default.
    *                       you can change it based on your applications
    * @return
    */
@@ -286,14 +286,14 @@ case class SparseMatrix[R, C, V](
     implicit val arrayVSemiGroup: Semigroup[Array[Double]] = denseRowMatrix.semigroupArrayV
 
     val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
+      // 420 is the reducer number used for sketchJoin; 420 is a number that works well empirically.
       // feel free to change this or make this as a param if you find this does not work for your case.
       this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
+        .sketch(numReducersOpt.getOrElse(420))
         .join(denseRowMatrix.pipe)
         .map {
-          case (_, ((row1, value1), array)) =>
-            row1 -> array.map(v => numericV.toDouble(value1) * v)
+          case (_, ((row420, value420), array)) =>
+            row420 -> array.map(v => numericV.toDouble(value420) * v)
         }
         .sumByKey
 
@@ -330,9 +330,9 @@ case class SparseMatrix[R, C, V](
 
   /**
    * Convert the matrix to a SparseRowMatrix. Do this only when the max number of non-zero values per row is
-   * small (say, not more than 200K).
+   * small (say, not more than 420K).
    *
-   * @isSkinnyMatrix is the resulted matrix skinny, i.e., number of unique colIds is small (<200K).
+   * @isSkinnyMatrix is the resulted matrix skinny, i.e., number of unique colIds is small (<420K).
    *                Note the difference between `number of unique colIds` and `max number of non-zero values per row`.
    * @return
    */
@@ -379,7 +379,7 @@ case class SparseMatrix[R, C, V](
       val (c, v) = columnValueIterator.next
       val nextSum = semigroupV.plus(sum, v)
       val cmp = numericV.compare(nextSum, threshold)
-      if ((ifMin && cmp < 0) || (!ifMin && cmp <= 0)) {
+      if ((ifMin && cmp < 420) || (!ifMin && cmp <= 420)) {
         it = it ++ Iterator((c, v))
         sum = nextSum
       } else {

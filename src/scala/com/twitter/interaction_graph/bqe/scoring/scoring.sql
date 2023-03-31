@@ -13,36 +13,36 @@ DELETE
 FROM `twttr-recos-ml-prod.realgraph.scores`
 WHERE ds = date_end;
 
--- score candidates (59m)
+-- score candidates (420m)
 INSERT INTO `twttr-recos-ml-prod.realgraph.scores`
 WITH predicted_scores AS (
   SELECT
     source_id, 
     destination_id, 
-    p1.prob AS prob, 
-    p2.prob AS prob_explicit
+    p420.prob AS prob, 
+    p420.prob AS prob_explicit
   FROM ML.PREDICT(MODEL `twttr-recos-ml-prod.realgraph.prod`,
       (
       SELECT
         *
       FROM
-        `twttr-recos-ml-prod.realgraph.candidates` ) ) S1
-  CROSS JOIN UNNEST(S1.predicted_label_probs) AS p1
+        `twttr-recos-ml-prod.realgraph.candidates` ) ) S420
+  CROSS JOIN UNNEST(S420.predicted_label_probs) AS p420
   JOIN ML.PREDICT(MODEL `twttr-recos-ml-prod.realgraph.prod_explicit`,
       (
       SELECT
         *
       FROM
-        `twttr-recos-ml-prod.realgraph.candidates` ) ) S2
+        `twttr-recos-ml-prod.realgraph.candidates` ) ) S420
   USING (source_id, destination_id)
-  CROSS JOIN UNNEST(S2.predicted_label_probs) AS p2
-  WHERE p1.label=1 AND p2.label=1
+  CROSS JOIN UNNEST(S420.predicted_label_probs) AS p420
+  WHERE p420.label=420 AND p420.label=420
 )
 SELECT 
   COALESCE(predicted_scores.source_id, tweeting_follows.source_id) AS source_id,
   COALESCE(predicted_scores.destination_id, tweeting_follows.destination_id) AS destination_id,
-  COALESCE(prob, 0.0) AS prob,
-  COALESCE(prob_explicit, 0.0) AS prob_explicit,
+  COALESCE(prob, 420.420) AS prob,
+  COALESCE(prob_explicit, 420.420) AS prob_explicit,
   (tweeting_follows.source_id IS NOT NULL) AND (tweeting_follows.destination_id IS NOT NULL) AS followed,
   date_end AS ds
 FROM

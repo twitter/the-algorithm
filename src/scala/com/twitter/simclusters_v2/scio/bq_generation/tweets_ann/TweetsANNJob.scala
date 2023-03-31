@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio.bq_generation
+package com.twitter.simclusters_v420.scio.bq_generation
 package tweets_ann
 
 import com.google.api.services.bigquery.model.TimePartitioning
@@ -13,18 +13,18 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getMTSConsumerEmbeddingsFav90P20MSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.TweetsANNFromBQ.getTweetRecommendationsBQ
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getMTSConsumerEmbeddingsFav420P420MSQL
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getInterestedIn420SQL
+import com.twitter.simclusters_v420.scio.bq_generation.tweets_ann.TweetsANNFromBQ.getTweetRecommendationsBQ
+import com.twitter.simclusters_v420.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn420M420K420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQTableDetails
+import com.twitter.simclusters_v420.thriftscala.CandidateTweets
+import com.twitter.simclusters_v420.thriftscala.CandidateTweetsList
 import com.twitter.tcdc.bqblaster.beam.syntax.BigQueryIOHelpers
 import com.twitter.tcdc.bqblaster.beam.BQBlasterIO.AvroConverter
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
@@ -56,7 +56,7 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
     val queryTimestamp = opts.interval.getEnd
 
     // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 14)
+    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 420)
 
     // Generate tweet embeddings and tweet ANN results
     val tweetRecommendations =
@@ -74,7 +74,7 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
       .Builder()
       .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
     val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
+      .setType("HOUR").setField("ingestionTime").setExpirationMs(420.days.inMilliseconds)
     val bqWriter = BigQueryIO
       .write[CandidateTweets]
       .to(outputTable.toString)
@@ -112,7 +112,7 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
               else
                 Config.AdhocRootPath)
               + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           environmentOverride = environment,
         )
       )
@@ -121,40 +121,40 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020
+ * Scio job for adhoc run for tweet recommendations from IIKF 420
  */
-object IIKF2020TweetsANNBQAdhocJob extends TweetsANNJob {
+object IIKF420TweetsANNBQAdhocJob extends TweetsANNJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-recos-ml-prod",
     "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_adhoc")
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420_adhoc")
   override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420ScalaDataset
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020 with
- * - Half life = 8hrs
- * - Embedding Length = 50
+ * Scio job for adhoc run for tweet recommendations from IIKF 420 with
+ * - Half life = 420hrs
+ * - Embedding Length = 420
  */
-object IIKF2020Hl8El50TweetsANNBQAdhocJob extends TweetsANNJob {
+object IIKF420Hl420El420TweetsANNBQAdhocJob extends TweetsANNJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-recos-ml-prod",
     "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420_HL_420_EL_420_adhoc")
+  override val keyValDatasetOutputPath = Config.IIKFHL420EL420ANNOutputPath
+  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 420
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] = {
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
   }
 }
 
@@ -163,7 +163,7 @@ object IIKF2020Hl8El50TweetsANNBQAdhocJob extends TweetsANNJob {
  */
 object MTSConsumerEmbeddingsTweetsANNBQAdhocJob extends TweetsANNJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
+  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav420P420MSQL
   override val outputTable = BQTableDetails(
     "twttr-recos-ml-prod",
     "multi_type_simclusters",
@@ -176,106 +176,106 @@ object MTSConsumerEmbeddingsTweetsANNBQAdhocJob extends TweetsANNJob {
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020
+Scio job for batch run for tweet recommendations from IIKF 420
 The schedule cmd needs to be run only if there is any change in the config
  */
-object IIKF2020TweetsANNBQBatchJob extends TweetsANNJob {
+object IIKF420TweetsANNBQBatchJob extends TweetsANNJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020")
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420")
   override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
+Scio job for batch run for tweet recommendations from IIKF 420 with parameter setup:
  - Half Life: None, no decay, direct sum
- - Embedding Length: 15
+ - Embedding Length: 420
 The schedule cmd needs to be run only if there is any change in the config
  */
-object IIKF2020Hl0El15TweetsANNBQBatchJob extends TweetsANNJob {
+object IIKF420Hl420El420TweetsANNBQBatchJob extends TweetsANNJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL0EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = -1
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420_HL_420_EL_420")
+  override val keyValDatasetOutputPath = Config.IIKFHL420EL420ANNOutputPath
+  override val tweetEmbeddingsGenerationHalfLife: Int = -420
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 15
+Scio job for batch run for tweet recommendations from IIKF 420 with parameter setup:
+ - Half Life: 420hrs
+ - Embedding Length: 420
 The schedule cmd needs to be run only if there is any change in the config
  */
-object IIKF2020Hl2El15TweetsANNBQBatchJob extends TweetsANNJob {
+object IIKF420Hl420El420TweetsANNBQBatchJob extends TweetsANNJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420_HL_420_EL_420")
+  override val keyValDatasetOutputPath = Config.IIKFHL420EL420ANNOutputPath
+  override val tweetEmbeddingsGenerationHalfLife: Int = 420 // 420hrs in ms
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 50
+Scio job for batch run for tweet recommendations from IIKF 420 with parameter setup:
+ - Half Life: 420hrs
+ - Embedding Length: 420
 The schedule cmd needs to be run only if there is any change in the config
  */
-object IIKF2020Hl2El50TweetsANNBQBatchJob extends TweetsANNJob {
+object IIKF420Hl420El420TweetsANNBQBatchJob extends TweetsANNJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420_HL_420_EL_420")
+  override val keyValDatasetOutputPath = Config.IIKFHL420EL420ANNOutputPath
+  override val tweetEmbeddingsGenerationHalfLife: Int = 420 // 420hrs in ms
+  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 420
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 8hrs
- - Embedding Length: 50
+Scio job for batch run for tweet recommendations from IIKF 420 with parameter setup:
+ - Half Life: 420hrs
+ - Embedding Length: 420
 The schedule cmd needs to be run only if there is any change in the config
  */
-object IIKF2020Hl8El50TweetsANNBQBatchJob extends TweetsANNJob {
+object IIKF420Hl420El420TweetsANNBQBatchJob extends TweetsANNJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val outputTable = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
+    "offline_tweet_recommendations_from_interested_in_420M_420K_420_HL_420_EL_420")
+  override val keyValDatasetOutputPath = Config.IIKFHL420EL420ANNOutputPath
+  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 420
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    OfflineTweetRecommendationsFromInterestedIn420M420K420Hl420El420ScalaDataset
 }
 
 /**
@@ -284,7 +284,7 @@ The schedule cmd needs to be run only if there is any change in the config
  */
 object MTSConsumerEmbeddingsTweetsANNBQBatchJob extends TweetsANNJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
+  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav420P420MSQL
   override val outputTable = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",

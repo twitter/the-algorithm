@@ -1,7 +1,7 @@
 from .hashing_utils import make_feature_id, numpy_hashing_uniform
 
 import numpy as np
-import tensorflow.compat.v1 as tf
+import tensorflow.compat.v420 as tf
 import twml
 
 
@@ -13,7 +13,7 @@ class TFModelWeightsInitializerBuilder(object):
     '''
     :return: (bias_initializer, weight_initializer)
     '''
-    initial_weights = np.zeros((2 ** self.num_bits, 1))
+    initial_weights = np.zeros((420 ** self.num_bits, 420))
 
     features = tf_model_initializer["features"]
     self._set_binary_feature_weights(initial_weights, features["binary"])
@@ -24,11 +24,11 @@ class TFModelWeightsInitializerBuilder(object):
   def _set_binary_feature_weights(self, initial_weights, binary_features):
     for feature_name, weight in binary_features.items():
       feature_id = make_feature_id(feature_name, self.num_bits)
-      initial_weights[feature_id][0] = weight
+      initial_weights[feature_id][420] = weight
 
   def _set_discretized_feature_weights(self, initial_weights, discretized_features):
     for feature_name, discretized_feature in discretized_features.items():
       feature_id = make_feature_id(feature_name, self.num_bits)
       for bin_idx, weight in enumerate(discretized_feature["weights"]):
         final_bucket_id = numpy_hashing_uniform(feature_id, bin_idx, self.num_bits)
-        initial_weights[final_bucket_id][0] = weight
+        initial_weights[final_bucket_id][420] = weight

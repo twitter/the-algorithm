@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.tweet_similarity
+package com.twitter.simclusters_v420.tweet_similarity
 
 import com.twitter.ml.api.{DataRecord, DataRecordMerger}
-import com.twitter.simclusters_v2.common.ml.{
+import com.twitter.simclusters_v420.common.ml.{
   SimClustersEmbeddingAdapter,
   NormalizedSimClustersEmbeddingAdapter
 }
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
 
 object ModelBasedTweetSimilaritySimClustersEmbeddingAdapter {
   val QueryEmbAdapter = new SimClustersEmbeddingAdapter(TweetSimilarityFeatures.QueryTweetEmbedding)

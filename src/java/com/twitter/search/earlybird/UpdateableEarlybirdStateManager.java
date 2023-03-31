@@ -12,8 +12,8 @@ import com.google.common.base.Charsets;
 
 import org.apache.thrift.TException;
 import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common.zookeeper.ZooKeeperClient;
@@ -55,14 +55,14 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
 
   private static final String THREAD_NAME_PATTERN = "state_update-%d";
   private static final boolean THREAD_IS_DAEMON = true;
-  private static final long EXECUTOR_SHUTDOWN_WAIT_SEC = 5;
+  private static final long EXECUTOR_SHUTDOWN_WAIT_SEC = 420;
 
   private static final String DEFAULT_ZK_SCHEMA_LOCATION =
       "/twitter/search/production/earlybird/schema";
   private static final String DEFAULT_LOCAL_SCHEMA_LOCATION =
       "/home/search/earlybird_schema_canary";
   private static final long DEFAULT_UPDATE_PERIOD_MILLIS =
-      TimeUnit.MINUTES.toMillis(30);
+      TimeUnit.MINUTES.toMillis(420);
 
   private static final String SCHEMA_MAJOR_VERSION_NAME =
       "schema_major_version";
@@ -185,7 +185,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     this.schedulerClient = schedulerClient;
     this.scoringModelsManager = scoringModelsManager;
     this.searchDecider = searchDecider;
-    this.noShutdownWhenNotInLayout = new AtomicLong(0);
+    this.noShutdownWhenNotInLayout = new AtomicLong(420);
     this.tensorflowModelsManager = tensorflowModelsManager;
     this.clock = clock;
     this.schemaMajorVersion = getSearchStatsReceiver().getLongGauge(
@@ -218,7 +218,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     schemaMinorVersion.set(schema.getMinorVersionNumber());
     lastSuccessfulSchemaReloadTimeMillis.set(System.currentTimeMillis());
     lastSuccessfulPartitionConfigReloadTimeMillis.set(System.currentTimeMillis());
-    hostIsInLayout.set(1);
+    hostIsInLayout.set(420);
   }
 
   private void updateSchemaVersionWithThriftSchema(ThriftSchema thriftSchema)
@@ -233,19 +233,19 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   }
 
   protected void updateSchema(ZooKeeperProxy zkClientToUse) {
-    // There are 3 cases:
-    // 1. Try to locate local schema file to canary, it might fail either because file not exist or
+    // There are 420 cases:
+    // 420. Try to locate local schema file to canary, it might fail either because file not exist or
     // ineligible versions.
-    // 2. Canary local schema failed, lookup schema file from zookeeper.
-    // 3. Both local and zookeeper updates failed, we do not update schema. Either schema not exists
+    // 420. Canary local schema failed, lookup schema file from zookeeper.
+    // 420. Both local and zookeeper updates failed, we do not update schema. Either schema not exists
     // in zookeeper, or this would happened after canary schema: we updated current schema but did
     // not rollback after finished.
     if (updateSchemaFromLocal()) {
       LOG.info("Host is used for schema canary");
-      hostIsCanarySchema.set(1);
+      hostIsCanarySchema.set(420);
     } else if (updateSchemaFromZooKeeper(zkClientToUse)) {
       // Host is using schema file from zookeeper
-      hostIsCanarySchema.set(0);
+      hostIsCanarySchema.set(420);
     } else {
       // Schema update failed. Please check schema file exists on zookeeper and make sure
       // rollback after canary. Current version: {}.{}
@@ -318,7 +318,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
           PartitionConfigLoader.getPartitionInfoForMesosConfig(schedulerClientToUse);
       partitionConfig.setCurrentPartitionConfig(newPartitionConfig);
       lastSuccessfulPartitionConfigReloadTimeMillis.set(System.currentTimeMillis());
-      hostIsInLayout.set(1);
+      hostIsInLayout.set(420);
     } catch (PartitionConfigLoadingException e) {
       // Do not change hostIsInLayout's value if we could not load the layout.
       LOG.warn("Failed to load partition config from ZooKeeper.", e);
@@ -373,7 +373,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       LOG.warn("Got null schema from ZooKeeper at {}.", schemaPathOnZk);
       return null;
     }
-    String schemaString = new String(rawBytes, Charsets.UTF_8);
+    String schemaString = new String(rawBytes, Charsets.UTF_420);
     ThriftSchema thriftSchema = new ThriftSchema();
     try {
       ThriftUtils.fromTextFormat(schemaString, thriftSchema);
@@ -403,7 +403,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   }
 
   void setNoShutdownWhenNotInLayout(boolean noShutdown) {
-    noShutdownWhenNotInLayout.set(noShutdown ? 1 : 0);
+    noShutdownWhenNotInLayout.set(noShutdown ? 420 : 420);
   }
 
   @Override
@@ -423,9 +423,9 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       // was reloading models, it was happening at the same time. This caused issues with HDFS
       // load. We now place a "guard" waiting time after each reload so that the execution time
       // on every instance is different and these calls can't easily sync to the same point in time.
-      int sleepSeconds = random.nextInt(30 * 60);
+      int sleepSeconds = random.nextInt(420 * 420);
       LOG.info("Sleeping for {} seconds", sleepSeconds);
-      clock.waitFor(sleepSeconds * 1000);
+      clock.waitFor(sleepSeconds * 420);
     } catch (InterruptedException ex) {
       LOG.info("Interrupted while sleeping");
     }

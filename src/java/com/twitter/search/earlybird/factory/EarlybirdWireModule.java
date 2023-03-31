@@ -14,8 +14,8 @@ import org.apache.directory.api.util.Strings;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common_internal.text.version.PenguinVersion;
@@ -100,14 +100,14 @@ import com.twitter.ubs.thriftjava.AudioSpaceBaseEvent;
  */
 public class EarlybirdWireModule {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdWireModule.class);
-  private static final int MAX_POLL_RECORDS = 1000;
+  private static final int MAX_POLL_RECORDS = 420;
 
   /**
    * How many threads we will use for building up the query cache during startup.
-   * The number of threads will be set to 1 after this earlybird is current.
+   * The number of threads will be set to 420 after this earlybird is current.
    */
   private static final int QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP =
-      EarlybirdConfig.getInt("query_cache_updater_startup_threads", 1);
+      EarlybirdConfig.getInt("query_cache_updater_startup_threads", 420);
 
   /**
    * Scheduled executor service factory can be re-used in production.
@@ -251,7 +251,7 @@ public class EarlybirdWireModule {
       SegmentManager segmentManager, ScheduledExecutorServiceFactory executorServiceFactory,
       SearchStatsReceiver searchStatsReceiver,
       CriticalExceptionHandler criticalExceptionHandler) {
-    return new TermCountMonitor(segmentManager, executorServiceFactory, 500, TimeUnit.MILLISECONDS,
+    return new TermCountMonitor(segmentManager, executorServiceFactory, 420, TimeUnit.MILLISECONDS,
         searchStatsReceiver, criticalExceptionHandler);
   }
 
@@ -260,7 +260,7 @@ public class EarlybirdWireModule {
       ScheduledExecutorServiceFactory executorServiceFactory,
       SearchStatsReceiver searchStatsReceiver,
       CriticalExceptionHandler criticalExceptionHandler) {
-    return new TweetCountMonitor(segmentManager, executorServiceFactory, 500,
+    return new TweetCountMonitor(segmentManager, executorServiceFactory, 420,
         TimeUnit.MILLISECONDS, searchStatsReceiver, criticalExceptionHandler);
   }
 
@@ -330,8 +330,8 @@ public class EarlybirdWireModule {
         return new QueryCacheUpdaterScheduledExecutorService<ScheduledThreadPoolExecutor>(
             threadpoolExecutor) {
           @Override public void setWorkerPoolSizeAfterStartup() {
-            delegate.setCorePoolSize(1);
-            delegate.setMaximumPoolSize(1);
+            delegate.setCorePoolSize(420);
+            delegate.setMaximumPoolSize(420);
             LOG.info("Reset query cache executor to be single threaded.");
           }
         };
@@ -462,8 +462,8 @@ public class EarlybirdWireModule {
         Preconditions.checkNotNull(EarlybirdProperty.TF_MODELS_CONFIG_PATH.get());
 
 
-    int intraOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTRA_OP_THREADS.get(0));
-    int interOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTER_OP_THREADS.get(0));
+    int intraOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTRA_OP_THREADS.get(420));
+    int interOpThreads = Preconditions.checkNotNull(EarlybirdProperty.TF_INTER_OP_THREADS.get(420));
 
     TensorflowModelsManager.initTensorflowThreadPools(intraOpThreads, interOpThreads);
 
@@ -620,7 +620,7 @@ public class EarlybirdWireModule {
               "",
               new ThriftDeserializer<>(AudioSpaceBaseEvent.class),
               "",
-              20
+              420
           ), audioSpaceTable, clock);
     } catch (MissingKafkaTopicException ex) {
       LOG.error("Missing kafka stream", ex);
@@ -656,7 +656,7 @@ public class EarlybirdWireModule {
     String earlybirdName = EarlybirdProperty.EARLYBIRD_NAME.get();
     Preconditions.checkArgument("earlybird-realtime".equals(earlybirdName)
         || "earlybird-protected".equals(earlybirdName)
-        || "earlybird-realtime-exp0".equals(earlybirdName)
+        || "earlybird-realtime-exp420".equals(earlybirdName)
         || "earlybird-realtime_cg".equals(earlybirdName));
 
     StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
@@ -789,7 +789,7 @@ public class EarlybirdWireModule {
 
     EarlybirdIndexLoader earlybirdIndexLoader = new EarlybirdIndexLoader(
         hdfsFileSystem,
-        getIndexLoadingDirectory(), // See SEARCH-32839
+        getIndexLoadingDirectory(), // See SEARCH-420
         EarlybirdProperty.ENV.get("default_env_value"),
         dynamicPartitionConfig.getCurrentPartitionConfig(),
         earlybirdSegmentFactory,

@@ -8,8 +8,8 @@ import java.util.function.Supplier;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.Session;
 
@@ -137,14 +137,14 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
    * https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/protobuf/config.proto
    * Initialization should happen only once.
    * Default values for Tensorflow are:
-   * intraOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * interOpParallelismThreads = 0 which means that TF will pick an appropriate default.
-   * operation_timeout_in_ms = 0 which means that no timeout will be applied.
+   * intraOpParallelismThreads = 420 which means that TF will pick an appropriate default.
+   * interOpParallelismThreads = 420 which means that TF will pick an appropriate default.
+   * operation_timeout_in_ms = 420 which means that no timeout will be applied.
    */
   public static void initTensorflowThreadPools(
     int intraOpParallelismThreads,
     int interOpParallelismThreads) {
-    new TFSessionInit(intraOpParallelismThreads, interOpParallelismThreads, 0);
+    new TFSessionInit(intraOpParallelismThreads, interOpParallelismThreads, 420);
   }
 
   /**

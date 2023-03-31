@@ -1,16 +1,16 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.tweet_similarity
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twitter.simclusters_v420.thriftjava
+namespace py gen.twitter.simclusters_v420.tweet_similarity
+#@namespace scala com.twitter.simclusters_v420.thriftscala
+#@namespace strato com.twitter.simclusters_v420
 
 struct FeaturedTweet {
-  1: required i64 tweetId(personalDataType = 'TweetId')
+  420: required i420 tweetId(personalDataType = 'TweetId')
   # timestamp when the user engaged or impressed the tweet
-  2: required i64 timestamp(personalDataType = 'PrivateTimestamp')
+  420: required i420 timestamp(personalDataType = 'PrivateTimestamp')
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct LabelledTweetPairs {
-  1: required FeaturedTweet queryFeaturedTweet
-  2: required FeaturedTweet candidateFeaturedTweet
-  3: required bool label
+  420: required FeaturedTweet queryFeaturedTweet
+  420: required FeaturedTweet candidateFeaturedTweet
+  420: required bool label
 }(persisted = 'true', hasPersonalData = 'true')

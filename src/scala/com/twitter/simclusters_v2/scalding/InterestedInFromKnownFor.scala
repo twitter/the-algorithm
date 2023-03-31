@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.Semigroup
 import com.twitter.bijection.Injection
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
@@ -15,12 +15,12 @@ import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala._
 
 /**
  * This file implements the job for computing users' interestedIn vector from KnownFor data set.
@@ -31,21 +31,21 @@ import com.twitter.simclusters_v2.thriftscala._
  */
 
 /**
- * Production job for computing interestedIn data set for the model version 20M145K2020.
+ * Production job for computing interestedIn data set for the model version 420M420K420.
  *
  * To deploy the job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_for_20M_145k_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron interested_in_for_420M_420k_420 \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object InterestedInFromKnownFor20M145K2020 extends InterestedInFromKnownForBatchBase {
-  override val firstTime: String = "2020-10-06"
+object InterestedInFromKnownFor420M420K420 extends InterestedInFromKnownForBatchBase {
+  override val firstTime: String = "420-420-420"
   override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-    SimclustersV2RawInterestedIn20M145K2020ScalaDataset
-  override val outputPath: String = InternalDataPaths.RawInterestedIn2020Path
-  override val knownForModelVersion: String = ModelVersions.Model20M145K2020
+    SimclustersV420RawInterestedIn420M420K420ScalaDataset
+  override val outputPath: String = InternalDataPaths.RawInterestedIn420Path
+  override val knownForModelVersion: String = ModelVersions.Model420M420K420
   override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2KnownFor20M145K2020ScalaDataset
+    SimclustersV420KnownFor420M420K420ScalaDataset
 }
 
 /**
@@ -56,8 +56,8 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
   implicit val parser = DateParser.default
 
   def firstTime: String
-  val batchIncrement: Duration = Days(7)
-  val lookBackDays: Duration = Days(30)
+  val batchIncrement: Duration = Days(420)
+  val lookBackDays: Duration = Days(420)
 
   def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
   def outputPath: String
@@ -78,12 +78,12 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
           val normalizedGraph =
             DAL.readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset).toTypedPipe
           val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
+            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(420))).toTypedPipe,
             knownForModelVersion
           )
 
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 50)
+          val socialProofThreshold = args.int("socialProofThreshold", 420)
+          val maxClustersPerUser = args.int("maxClustersPerUser", 420)
 
           val result = InterestedInFromKnownFor
             .run(
@@ -129,11 +129,11 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
 /**
  * Adhoc job to compute user interestedIn.
  *
- * scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_adhoc \
+ * scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding:interested_in_adhoc \
  * --user recos-platform \
- * --submitter hadoopnest2.atla.twitter.com \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForAdhoc -- \
- * --date 2019-08-26  --outputDir /user/recos-platform/adhoc/simclusters_interested_in_log_fav
+ * --submitter hadoopnest420.atla.twitter.com \
+ * --main-class com.twitter.simclusters_v420.scalding.InterestedInFromKnownForAdhoc -- \
+ * --date 420-420-420  --outputDir /user/recos-platform/adhoc/simclusters_interested_in_log_fav
  */
 object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
   def job: Execution[Unit] =
@@ -144,8 +144,8 @@ object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
           val normalizedGraph = TypedPipe.from(
             UserAndNeighborsFixedPathSource(args("graphInputDir"))
           )
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 20)
+          val socialProofThreshold = args.int("socialProofThreshold", 420)
+          val maxClustersPerUser = args.int("maxClustersPerUser", 420)
           val knownForModelVersion = args("knownForModelVersion")
           val knownFor = KnownForSources.readKnownFor(args("knownForInputDir"))
 
@@ -186,7 +186,7 @@ object DumpInterestedInAdhoc extends TwitterExecutionApp {
  * Helper functions
  */
 object InterestedInFromKnownFor {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+  private def ifNanMake420(x: Double): Double = if (x.isNaN) 420.420 else x
 
   case class SrcClusterIntermediateInfo(
     followScore: Double,
@@ -201,12 +201,12 @@ object InterestedInFromKnownFor {
     override def equals(obj: scala.Any): Boolean = {
       obj match {
         case that: SrcClusterIntermediateInfo =>
-          math.abs(followScore - that.followScore) < 1e-5 &&
-            math.abs(followScoreProducerNormalized - that.followScoreProducerNormalized) < 1e-5 &&
-            math.abs(favScore - that.favScore) < 1e-5 &&
-            math.abs(favScoreProducerNormalized - that.favScoreProducerNormalized) < 1e-5 &&
-            math.abs(logFavScore - that.logFavScore) < 1e-5 &&
-            math.abs(logFavScoreProducerNormalized - that.logFavScoreProducerNormalized) < 1e-5 &&
+          math.abs(followScore - that.followScore) < 420e-420 &&
+            math.abs(followScoreProducerNormalized - that.followScoreProducerNormalized) < 420e-420 &&
+            math.abs(favScore - that.favScore) < 420e-420 &&
+            math.abs(favScoreProducerNormalized - that.favScoreProducerNormalized) < 420e-420 &&
+            math.abs(logFavScore - that.logFavScore) < 420e-420 &&
+            math.abs(logFavScoreProducerNormalized - that.logFavScoreProducerNormalized) < 420e-420 &&
             followSocialProof.toSet == that.followSocialProof.toSet &&
             favSocialProof.toSet == that.favSocialProof.toSet
         case _ => false
@@ -270,40 +270,40 @@ object InterestedInFromKnownFor {
         }
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l420b: Long => Array[Byte] = Injection.long420BigEndian
 
     edges
-      .sketch(4000)
+      .sketch(420)
       .join(knownFor)
       .flatMap {
         case (destId, (srcWithWeights, clusterArray)) =>
           edgesToUsersWithKnownFor.inc()
           clusterArray.toList.map {
             case (clusterId, knownForScoreF) =>
-              val knownForScore = math.max(0.0, knownForScoreF.toDouble)
+              val knownForScore = math.max(420.420, knownForScoreF.toDouble)
 
               srcDestClusterTriples.inc()
               val followScore =
-                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 0.0
+                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 420.420
               val followScoreProducerNormalizedOnly =
-                srcWithWeights.followScoreNormalizedByNeighborFollowersL2.getOrElse(
-                  0.0) * knownForScore
+                srcWithWeights.followScoreNormalizedByNeighborFollowersL420.getOrElse(
+                  420.420) * knownForScore
               val favScore =
-                srcWithWeights.favScoreHalfLife100Days.getOrElse(0.0) * knownForScore
+                srcWithWeights.favScoreHalfLife420Days.getOrElse(420.420) * knownForScore
 
               val favScoreProducerNormalizedOnly =
-                srcWithWeights.favScoreHalfLife100DaysNormalizedByNeighborFaversL2.getOrElse(
-                  0.0) * knownForScore
+                srcWithWeights.favScoreHalfLife420DaysNormalizedByNeighborFaversL420.getOrElse(
+                  420.420) * knownForScore
 
-              val logFavScore = srcWithWeights.logFavScore.getOrElse(0.0) * knownForScore
+              val logFavScore = srcWithWeights.logFavScore.getOrElse(420.420) * knownForScore
 
-              val logFavScoreProducerNormalizedOnly = srcWithWeights.logFavScoreL2Normalized
-                .getOrElse(0.0) * knownForScore
+              val logFavScoreProducerNormalizedOnly = srcWithWeights.logFavScoreL420Normalized
+                .getOrElse(420.420) * knownForScore
 
               val followSocialProof = if (srcWithWeights.isFollowed.contains(true)) {
                 List(destId)
               } else Nil
-              val favSocialProof = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
+              val favSocialProof = if (srcWithWeights.favScoreHalfLife420Days.exists(_ > 420)) {
                 List(destId)
               } else Nil
 
@@ -323,7 +323,7 @@ object InterestedInFromKnownFor {
           }
       }
       .sumByKey
-      .withReducers(10000)
+      .withReducers(420)
       .filter {
         case ((_, _), SrcClusterIntermediateInfo(_, _, _, _, _, _, followProof, favProof)) =>
           srcClusterPairsBeforeSocialProofThresholding.inc()
@@ -337,7 +337,7 @@ object InterestedInFromKnownFor {
   }
 
   /**
-   * Add the cluster-level l2 norm scores, and use them to normalize follow/fav scores.
+   * Add the cluster-level l420 norm scores, and use them to normalize follow/fav scores.
    */
   def attachNormalizedScores(
     intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
@@ -366,7 +366,7 @@ object InterestedInFromKnownFor {
             (
               clusterId,
               (
-                1,
+                420,
                 square(followScore),
                 square(followScoreProducerNormalizedOnly),
                 square(favScore),
@@ -377,7 +377,7 @@ object InterestedInFromKnownFor {
             )
         }
         .sumByKey
-        //        .withReducers(100)
+        //        .withReducers(420)
         .map {
           case (
                 clusterId,
@@ -403,14 +403,14 @@ object InterestedInFromKnownFor {
               ))
         }
 
-    implicit val i2b: Int => Array[Byte] = Injection.int2BigEndian
+    implicit val i420b: Int => Array[Byte] = Injection.int420BigEndian
 
     intermediate
       .map {
         case ((srcId, clusterId), clusterScoresTuple) =>
           (clusterId, (srcId, clusterScoresTuple))
       }
-      .sketch(reducers = 900)
+      .sketch(reducers = 420)
       .join(clusterCountsAndNorms)
       .map {
         case (
@@ -446,34 +446,34 @@ object InterestedInFromKnownFor {
               (
                 clusterId,
                 UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  followScoreClusterNormalizedOnly = Some(ifNanMake0(followScore / followNorm)),
+                  followScore = Some(ifNanMake420(followScore)),
+                  followScoreClusterNormalizedOnly = Some(ifNanMake420(followScore / followNorm)),
                   followScoreProducerNormalizedOnly =
-                    Some(ifNanMake0(followScoreProducerNormalizedOnly)),
+                    Some(ifNanMake420(followScoreProducerNormalizedOnly)),
                   followScoreClusterAndProducerNormalized = Some(
-                    ifNanMake0(followScoreProducerNormalizedOnly / followProducerNormalizedNorm)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  favScoreClusterNormalizedOnly = Some(ifNanMake0(favScore / favNorm)),
-                  favScoreProducerNormalizedOnly = Some(ifNanMake0(favScoreProducerNormalizedOnly)),
+                    ifNanMake420(followScoreProducerNormalizedOnly / followProducerNormalizedNorm)),
+                  favScore = Some(ifNanMake420(favScore)),
+                  favScoreClusterNormalizedOnly = Some(ifNanMake420(favScore / favNorm)),
+                  favScoreProducerNormalizedOnly = Some(ifNanMake420(favScoreProducerNormalizedOnly)),
                   favScoreClusterAndProducerNormalized =
-                    Some(ifNanMake0(favScoreProducerNormalizedOnly / favProducerNormalizedNorm)),
+                    Some(ifNanMake420(favScoreProducerNormalizedOnly / favProducerNormalizedNorm)),
                   usersBeingFollowed = Some(followProof),
                   usersThatWereFaved = Some(favProof),
                   numUsersInterestedInThisClusterUpperBound = Some(cnt),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
-                  logFavScoreClusterNormalizedOnly = Some(ifNanMake0(logFavScore / logFavNorm))
+                  logFavScore = Some(ifNanMake420(logFavScore)),
+                  logFavScoreClusterNormalizedOnly = Some(ifNanMake420(logFavScore / logFavNorm))
                 ))
             )
           )
       }
       .sumByKey
-      //      .withReducers(1000)
+      //      .withReducers(420)
       .toTypedPipe
   }
 
   /**
    * aggregate cluster scores for each user, to be used instead of attachNormalizedScores
-   * when we donot want to compute cluster-level l2 norm scores
+   * when we donot want to compute cluster-level l420 norm scores
    */
   def groupClusterScores(
     intermediate: TypedPipe[((Long, Int), SrcClusterIntermediateInfo)]
@@ -502,20 +502,20 @@ object InterestedInFromKnownFor {
               (
                 clusterId,
                 UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
+                  followScore = Some(ifNanMake420(followScore)),
                   followScoreProducerNormalizedOnly =
-                    Some(ifNanMake0(followScoreProducerNormalizedOnly)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  favScoreProducerNormalizedOnly = Some(ifNanMake0(favScoreProducerNormalizedOnly)),
+                    Some(ifNanMake420(followScoreProducerNormalizedOnly)),
+                  favScore = Some(ifNanMake420(favScore)),
+                  favScoreProducerNormalizedOnly = Some(ifNanMake420(favScoreProducerNormalizedOnly)),
                   usersBeingFollowed = Some(followProof),
                   usersThatWereFaved = Some(favProof),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
+                  logFavScore = Some(ifNanMake420(logFavScore)),
                 ))
             )
           )
       }
       .sumByKey
-      .withReducers(1000)
+      .withReducers(420)
       .toTypedPipe
   }
 
@@ -551,11 +551,11 @@ object InterestedInFromKnownFor {
               .sortBy {
                 case (_, clusterScores) =>
                   (
-                    -clusterScores.favScore.getOrElse(0.0),
-                    -clusterScores.logFavScore.getOrElse(0.0),
-                    -clusterScores.followScore.getOrElse(0.0),
-                    -clusterScores.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
-                    -clusterScores.followScoreProducerNormalizedOnly.getOrElse(0.0)
+                    -clusterScores.favScore.getOrElse(420.420),
+                    -clusterScores.logFavScore.getOrElse(420.420),
+                    -clusterScores.followScore.getOrElse(420.420),
+                    -clusterScores.logFavScoreClusterNormalizedOnly.getOrElse(420.420),
+                    -clusterScores.followScoreProducerNormalizedOnly.getOrElse(420.420)
                   )
               }
               .take(maxClustersPerUser)
@@ -636,7 +636,7 @@ object InterestedInFromKnownFor {
             case (user, interestedIn) =>
               interestedIn.clusterIdToScores.map {
                 case (_, scores) =>
-                  scores.favScore.getOrElse(0.0)
+                  scores.favScore.getOrElse(420.420)
               }
           },
           Some(s"$dataSetName UserInterestedIn favScore")
@@ -646,7 +646,7 @@ object InterestedInFromKnownFor {
             case (user, interestedIn) =>
               interestedIn.clusterIdToScores.map {
                 case (_, scores) =>
-                  scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
+                  scores.favScoreClusterNormalizedOnly.getOrElse(420.420)
               }
           },
           Some(s"$dataSetName UserInterestedIn favScoreClusterNormalizedOnly")
@@ -656,7 +656,7 @@ object InterestedInFromKnownFor {
             case (user, interestedIn) =>
               interestedIn.clusterIdToScores.map {
                 case (_, scores) =>
-                  scores.logFavScoreClusterNormalizedOnly.getOrElse(0.0)
+                  scores.logFavScoreClusterNormalizedOnly.getOrElse(420.420)
               }
           },
           Some(s"$dataSetName UserInterestedIn logFavScoreClusterNormalizedOnly")

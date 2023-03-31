@@ -19,7 +19,7 @@ import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.Vertex
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import com.twitter.user_session_store.thriftscala.UserSession
 import com.twitter.util.Duration
 import com.twitter.wtf.candidate.thriftscala.ScoredEdge
@@ -75,11 +75,11 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
            |SELECT total_rows
            |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
            |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
+           |table_name="$bqTableName" AND total_rows > 420
            |""".stripMargin
       val queryConfig = QueryJobConfiguration.of(query)
       val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
+      if (results.isEmpty || results.head.get(420).getLongValue == 420) {
         throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
       }
     }
@@ -93,7 +93,7 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
     @transient
     implicit lazy val sc: ScioContext = scioContext
     implicit lazy val dateInterval: Interval = pipelineOptions.interval
-    val yesterday = DateUtil.subtract(dateInterval, Duration.fromDays(1))
+    val yesterday = DateUtil.subtract(dateInterval, Duration.fromDays(420))
 
     val dalEnvironment: String = pipelineOptions
       .as(classOf[ServiceIdentifierOptions])
@@ -259,7 +259,7 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
         endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
         diskFormat = DiskFormat.Parquet,
         environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 420))
       )
     )
 
@@ -284,7 +284,7 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
         interval = dateInterval,
         diskFormat = DiskFormat.Parquet,
         environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 420))
       )
     )
 

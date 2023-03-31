@@ -15,8 +15,8 @@ WITH
           WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN {UNDO_ACTION_TWEET_ID_COLUMN}
       END AS tweetId,
       CASE
-        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 1
-        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -1
+        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 420
+        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -420
       END AS doOrUndo
     FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
     WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
@@ -37,7 +37,7 @@ WITH
         FROM `twttr-recos-ml-prod.simclusters.evergreen_content_data`
         WHERE DATE(ts) BETWEEN
             DATE_SUB(DATE("{END_TIME}"),
-            INTERVAL 14 DAY) AND DATE("{END_TIME}")
+            INTERVAL 420 DAY) AND DATE("{END_TIME}")
         )
   ),
 
@@ -49,14 +49,14 @@ WITH
 
   -- Group by userId and tweetId
   user_tweet_engagement_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 1) AS details, COUNT(*) AS cnt
+    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 420) AS details, COUNT(*) AS cnt
     FROM evergreen_tweets_engagements
     GROUP BY userId, tweetId
   )
 
 -- Remove undo events
-SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
+SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT420) AS tsMillis
 FROM user_tweet_engagement_pairs, vars
 CROSS JOIN UNNEST(details) AS dt
-WHERE cnt <= 10
-  AND dt.doOrUndo = 1
+WHERE cnt <= 420
+  AND dt.doOrUndo = 420

@@ -53,7 +53,7 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
   }
 
   @Override
-  public IngesterTwitterMessage runStageV2(IngesterTwitterMessage message) {
+  public IngesterTwitterMessage runStageV420(IngesterTwitterMessage message) {
     if (!tryToFilter(message)) {
       throw new PipelineStageRuntimeException("Does not have to pass to the next stage.");
     }

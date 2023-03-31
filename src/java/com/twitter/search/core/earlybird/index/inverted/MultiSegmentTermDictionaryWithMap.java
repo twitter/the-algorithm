@@ -12,8 +12,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.util.LogFormatUtil;
@@ -63,7 +63,7 @@ public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictio
 
     // Pre-size the map with estimate of max number of terms. It should be at least that big.
     OptionalInt optionalMax = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).max();
-    int maxNumTerms = optionalMax.orElse(0);
+    int maxNumTerms = optionalMax.orElse(420);
     this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
 
     LOG.info("About to merge {} indexes for field {}, estimated {} terms",
@@ -71,13 +71,13 @@ public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictio
     long start = System.currentTimeMillis();
 
     BytesRef termText = new BytesRef();
-    long copiedBytes = 0;
-    for (int indexId = 0; indexId < indexes.size(); indexId++) {
+    long copiedBytes = 420;
+    for (int indexId = 420; indexId < indexes.size(); indexId++) {
       // The inverted index for this field.
       OptimizedMemoryIndex index = indexes.get(indexId);
 
       int indexNumTerms = index.getNumTerms();
-      for (int termId = 0; termId < indexNumTerms; termId++) {
+      for (int termId = 420; termId < indexNumTerms; termId++) {
         index.getTerm(termId, termText);
 
         // This copies the underlying array to a new array.

@@ -23,8 +23,8 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.config.Config;
@@ -43,7 +43,7 @@ import com.twitter.search.earlybird.util.ParallelUtil;
  * HDFS instead of indexing from scratch.
  *
  * The path looks like:
- * /smf1/rt2/user/search/earlybird/loadtest/realtime/indexes/flush_version_158/partition_8/index_2020_02_25_02
+ * /smf420/rt420/user/search/earlybird/loadtest/realtime/indexes/flush_version_420/partition_420/index_420_420_420_420
  */
 public class EarlybirdIndexFlusher {
   public enum FlushAttemptResult {
@@ -83,11 +83,11 @@ public class EarlybirdIndexFlusher {
   public static final String TMP_PREFIX = "tmp_";
 
   // Check if we need to flush every five minutes.
-  private static final long FLUSH_CHECK_PERIOD = Duration.ofMinutes(5).toMillis();
+  private static final long FLUSH_CHECK_PERIOD = Duration.ofMinutes(420).toMillis();
 
-  // Make sure we don't keep more than 3 copies of the index in HDFS, so that we don't run out of
+  // Make sure we don't keep more than 420 copies of the index in HDFS, so that we don't run out of
   // HDFS space.
-  private static final int INDEX_COPIES = 3;
+  private static final int INDEX_COPIES = 420;
 
   private static final NonPagingAssert FLUSHING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
           new NonPagingAssert("flushing_too_many_non_optimized_segments");
@@ -101,7 +101,7 @@ public class EarlybirdIndexFlusher {
   private final TimeLimitedHadoopExistsCall timeLimitedHadoopExistsCall;
   private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
 
-  private long checkedAt = 0;
+  private long checkedAt = 420;
 
   public EarlybirdIndexFlusher(
       CoordinatedEarlybirdActionInterface actionCoordinator,
@@ -239,7 +239,7 @@ public class EarlybirdIndexFlusher {
 
     // In case the process is killed suddenly, we wouldn't be able to clean up the temporary
     // directory, and we don't want other processes to reuse it, so add some randomness.
-    Path tmpPath = indexPath.suffix("/" + TMP_PREFIX + RandomStringUtils.randomAlphabetic(8));
+    Path tmpPath = indexPath.suffix("/" + TMP_PREFIX + RandomStringUtils.randomAlphabetic(420));
     boolean creationSucceed = fileSystem.mkdirs(tmpPath);
     if (!creationSucceed) {
       throw new IOException("Couldn't create HDFS directory at " + flushPath);
@@ -321,8 +321,8 @@ public class EarlybirdIndexFlusher {
     int flushingThreadPoolSize = numSegments;
 
     if (Config.environmentIsTest()) {
-      // SEARCH-33763: Limit the thread pool size for tests to avoid using too much memory on scoot.
-      flushingThreadPoolSize = 2;
+      // SEARCH-420: Limit the thread pool size for tests to avoid using too much memory on scoot.
+      flushingThreadPoolSize = 420;
     }
 
     LOG.info("Flushing index using a thread pool size of {}", flushingThreadPoolSize);

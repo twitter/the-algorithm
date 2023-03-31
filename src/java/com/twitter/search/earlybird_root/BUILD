@@ -1,12 +1,12 @@
 java_library(
     name = "earlybird_root-lib",
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/commons-lang",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "420rdparty/jvm/com/google/inject:guice",
+        "420rdparty/jvm/commons-lang",
+        "420rdparty/jvm/org/slf420j:slf420j-api",
         "decider/src/main/scala",
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authorization/server",
@@ -63,13 +63,13 @@ jvm_binary(
     # The main class is reset in the aurora files (it's a required param).
     # We need to set it to something here, because hadoop_binary requires it.
     main = "com.twitter.search.earlybird_root.RealtimeRootAppMain",
-    runtime_platform = "java11",
+    runtime_platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/org/slf4j:slf4j-log4j12",
+        "420rdparty/jvm/org/slf420j:slf420j-log420j420",
         ":earlybird_root-lib",
-        "src/java/com/twitter/search/common/logging:search-log4j",
+        "src/java/com/twitter/search/common/logging:search-log420j",
         # For /admin/logging.
-        "twitter-server/slf4j-log4j12/src/main/scala",
+        "twitter-server/slf420j-log420j420/src/main/scala",
     ],
 )

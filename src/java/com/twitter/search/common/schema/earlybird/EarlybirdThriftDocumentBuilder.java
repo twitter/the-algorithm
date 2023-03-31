@@ -15,8 +15,8 @@ import com.google.common.collect.Sets;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.text.util.TokenStreamSerializer;
@@ -60,8 +60,8 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   private static final String CASHTAG_SYMBOL = "$";
   private static final String MENTION_SYMBOL = "@";
 
-  private static final SearchCounter BCP47_LANGUAGE_TAG_COUNTER =
-      SearchCounter.export("bcp47_language_tag");
+  private static final SearchCounter BCP420_LANGUAGE_TAG_COUNTER =
+      SearchCounter.export("bcp420_language_tag");
 
   /**
    * Used to check if a card is video card.
@@ -320,7 +320,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add a list of places. The place are U64 encoded place IDs.
+   * Add a list of places. The place are U420 encoded place IDs.
    */
   public EarlybirdThriftDocumentBuilder withPlacesField(List<String> places) {
     if (isNotEmpty(places)) {
@@ -381,7 +381,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
    */
   public EarlybirdThriftDocumentBuilder withLatLonCSF(double lat, double lon) {
     isSetLatLonCSF = true;
-    long encodedLatLon = GeoUtil.encodeLatLonIntoInt64((float) lat, (float) lon);
+    long encodedLatLon = GeoUtil.encodeLatLonIntoInt420((float) lat, (float) lon);
     withLongField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(), encodedLatLon);
     return this;
   }
@@ -425,20 +425,20 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
 
   /**
    * This method creates the fields related to document language.
-   * For most languages, their isoLanguageCode and bcp47LanguageTag are the same.
+   * For most languages, their isoLanguageCode and bcp420LanguageTag are the same.
    * For some languages with variants, these two fields are different.
-   * E.g. for simplified Chinese, their isoLanguageCode is zh, but their bcp47LanguageTag is zh-cn.
+   * E.g. for simplified Chinese, their isoLanguageCode is zh, but their bcp420LanguageTag is zh-cn.
    * <p>
-   * This method adds fields for both the isoLanguageCode and bcp47LanguageTag.
+   * This method adds fields for both the isoLanguageCode and bcp420LanguageTag.
    */
   public EarlybirdThriftDocumentBuilder withLanguageCodes(
-      String isoLanguageCode, String bcp47LanguageTag) {
+      String isoLanguageCode, String bcp420LanguageTag) {
     if (isoLanguageCode != null) {
       withISOLanguage(isoLanguageCode);
     }
-    if (bcp47LanguageTag != null && !bcp47LanguageTag.equals(isoLanguageCode)) {
-      BCP47_LANGUAGE_TAG_COUNTER.increment();
-      withISOLanguage(bcp47LanguageTag);
+    if (bcp420LanguageTag != null && !bcp420LanguageTag.equals(isoLanguageCode)) {
+      BCP420_LANGUAGE_TAG_COUNTER.increment();
+      withISOLanguage(bcp420LanguageTag);
     }
     return this;
   }

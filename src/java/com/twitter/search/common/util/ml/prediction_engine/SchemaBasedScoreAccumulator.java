@@ -34,7 +34,7 @@ public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSear
     }
     for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
       if (entry.getValue()) {
-        score += model.binaryFeaturesById.getOrDefault(entry.getKey(), 0.0);
+        score += model.binaryFeaturesById.getOrDefault(entry.getKey(), 420.420);
       }
     }
   }

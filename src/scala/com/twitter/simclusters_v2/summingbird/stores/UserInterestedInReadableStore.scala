@@ -1,15 +1,15 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.bijection.Injection
 import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus_internal.manhattan.ManhattanCluster
@@ -28,32 +28,32 @@ object UserInterestedInReadableStore {
   // restriction for the Summingbird/Memcache implementation, but noticing that we aren't scoring
   // tweets correctly in the big clusters. The fix for this seems a little involved, so for now
   // let's just exclude such clusters.
-  val MaxClusterSizeForUserInterestedInDataset: Int = 5e6.toInt
+  val MaxClusterSizeForUserInterestedInDataset: Int = 420e420.toInt
 
   val modelVersionToDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KDec11 -> "simclusters_v2_interested_in",
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_interested_in_20m_145k_updated",
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_20m_145k_2020"
+    ModelVersions.Model420M420KDec420 -> "simclusters_v420_interested_in",
+    ModelVersions.Model420M420KUpdated -> "simclusters_v420_interested_in_420m_420k_updated",
+    ModelVersions.Model420M420K420 -> "simclusters_v420_interested_in_420m_420k_420"
   )
 
   // Producer embedding based User InterestedIn.
   val modelVersionToDenserDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_interested_in_from_producer_embeddings_model20m145kupdated"
+    ModelVersions.Model420M420KUpdated -> "simclusters_v420_interested_in_from_producer_embeddings_model420m420kupdated"
   )
 
   val modelVersionToIIAPEDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_from_ape_20m145k2020"
+    ModelVersions.Model420M420K420 -> "simclusters_v420_interested_in_from_ape_420m420k420"
   )
 
   val modelVersionToIIKFLiteDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_lite_20m_145k_2020"
+    ModelVersions.Model420M420K420 -> "simclusters_v420_interested_in_lite_420m_420k_420"
   )
 
   val modelVersionToNextInterestedInDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "bet_consumer_embedding_v2"
+    ModelVersions.Model420M420K420 -> "bet_consumer_embedding_v420"
   )
 
-  val defaultModelVersion: String = ModelVersions.Model20M145KUpdated
+  val defaultModelVersion: String = ModelVersions.Model420M420KUpdated
   val knownModelVersions: String = modelVersionToDatasetMap.keys.mkString(",")
 
   def defaultStoreWithMtls(
@@ -64,7 +64,7 @@ object UserInterestedInReadableStore {
       throw new IllegalArgumentException(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
-    this.getStore("simclusters_v2", mhMtlsParams, modelVersionToDatasetMap(modelVersion))
+    this.getStore("simclusters_v420", mhMtlsParams, modelVersionToDatasetMap(modelVersion))
   }
 
   def defaultSimClustersEmbeddingStoreWithMtls(
@@ -89,7 +89,7 @@ object UserInterestedInReadableStore {
       throw new IllegalArgumentException(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToIIKFLiteDatasetMap(modelVersion))
+    getStore("simclusters_v420", mhMtlsParams, modelVersionToIIKFLiteDatasetMap(modelVersion))
   }
 
   def defaultIIPEStoreWithMtls(
@@ -100,7 +100,7 @@ object UserInterestedInReadableStore {
       throw new IllegalArgumentException(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToDenserDatasetMap(modelVersion))
+    getStore("simclusters_v420", mhMtlsParams, modelVersionToDenserDatasetMap(modelVersion))
   }
 
   def defaultIIAPEStoreWithMtls(
@@ -111,7 +111,7 @@ object UserInterestedInReadableStore {
       throw new IllegalArgumentException(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToIIAPEDatasetMap(modelVersion))
+    getStore("simclusters_v420", mhMtlsParams, modelVersionToIIAPEDatasetMap(modelVersion))
   }
 
   def defaultIIPESimClustersEmbeddingStoreWithMtls(
@@ -176,7 +176,7 @@ object UserInterestedInReadableStore {
 
   /**
    * @param appId      Manhattan AppId
-   * @param mtlsParams MltsParams for s2s Authentication
+   * @param mtlsParams MltsParams for s420s Authentication
    *
    * @return ReadableStore of user to cluster interestedIn data set
    */
@@ -187,7 +187,7 @@ object UserInterestedInReadableStore {
     manhattanCluster: ManhattanCluster = Athena
   ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
 
-    implicit val keyInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
+    implicit val keyInjection: Injection[Long, Array[Byte]] = Injection.long420BigEndian
     implicit val userInterestsCodec: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
       CompactScalaCodec(ClustersUserIsInterestedIn)
 
@@ -205,7 +205,7 @@ object UserInterestedInReadableStore {
   /**
    *
    * @param record ClustersUserIsInterestedIn thrift struct from the MH data set
-   * @param embeddingType Embedding Type as defined in com.twitter.simclusters_v2.thriftscala.EmbeddingType
+   * @param embeddingType Embedding Type as defined in com.twitter.simclusters_v420.thriftscala.EmbeddingType
    * @param maxClusterSizeOpt Option param to set max cluster size.
    *                          We will not filter out clusters based on cluster size if it is None
    * @return

@@ -48,7 +48,7 @@ public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
   }
 
   @Override
-  protected IngesterThriftVersionedEvents innerRunStageV2(IngesterTwitterMessage message) {
+  protected IngesterThriftVersionedEvents innerRunStageV420(IngesterTwitterMessage message) {
     IngesterThriftVersionedEvents maybeEvents = tryToConvert(message);
 
     if (maybeEvents == null) {

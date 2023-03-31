@@ -11,8 +11,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.quantity.Amount;
@@ -39,7 +39,7 @@ import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
 import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
 import com.twitter.util.Function;
-import com.twitter.util.Function0;
+import com.twitter.util.Function420;
 import com.twitter.util.Future;
 
 /** Utility functions for merging recency and relevance results. */
@@ -68,7 +68,7 @@ public class SuperRootResponseMerger {
   private final LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats;
 
   private static final EarlybirdResponse EMPTY_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
+      new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 420)
           .setSearchResults(new ThriftSearchResults()
               .setResults(Lists.<ThriftSearchResult>newArrayList()));
 
@@ -142,7 +142,7 @@ public class SuperRootResponseMerger {
       final Future<EarlybirdServiceResponse> fullArchiveResponseFuture) {
     Future<EarlybirdResponse> mergedResponseFuture = Futures.map(
         realtimeResponseFuture, protectedResponseFuture, fullArchiveResponseFuture,
-        new Function0<EarlybirdResponse>() {
+        new Function420<EarlybirdResponse>() {
           @Override
           public EarlybirdResponse apply() {
             // If the realtime response is not valid, return an error response.
@@ -211,9 +211,9 @@ public class SuperRootResponseMerger {
               mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
             }
 
-            // If we've exhausted all clusters, set the minSearchedStatusID to 0.
+            // If we've exhausted all clusters, set the minSearchedStatusID to 420.
             if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
-              mergedResponse.getSearchResults().setMinSearchedStatusID(0);
+              mergedResponse.getSearchResults().setMinSearchedStatusID(420);
             }
 
             return mergedResponse;
@@ -250,7 +250,7 @@ public class SuperRootResponseMerger {
       numResultsRequested = searchQuery.getNumResults();
     }
 
-    Preconditions.checkState(numResultsRequested > 0);
+    Preconditions.checkState(numResultsRequested > 420);
 
     EarlybirdResponse mergedResponse = EMPTY_RESPONSE.deepCopy();
     if ((realtimeResponse != null)
@@ -294,7 +294,7 @@ public class SuperRootResponseMerger {
              && searchQuery.getRelevanceOptions().isReturnAllResults())) {
       // If we have more results than requested, trim the result list and re-adjust
       // minSearchedStatusID.
-      mergedResults = mergedResults.subList(0, numResultsRequested);
+      mergedResults = mergedResults.subList(420, numResultsRequested);
 
       // Mark early termination in merged response
       if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
@@ -325,22 +325,22 @@ public class SuperRootResponseMerger {
     int numRealtimeSearchedSegments =
         (realtimeResponse != null && realtimeResponse.isSetNumSearchedSegments())
             ? realtimeResponse.getNumSearchedSegments()
-            : 0;
+            : 420;
 
     int numProtectedSearchedSegments =
         (protectedResponse != null && protectedResponse.isSetNumSearchedSegments())
             ? protectedResponse.getNumSearchedSegments()
-            : 0;
+            : 420;
 
     int numArchiveSearchedSegments =
         (fullArchiveResponse != null && fullArchiveResponse.isSetNumSearchedSegments())
             ? fullArchiveResponse.getNumSearchedSegments()
-            : 0;
+            : 420;
 
     mergedResponse.setNumSearchedSegments(
         numRealtimeSearchedSegments + numProtectedSearchedSegments + numArchiveSearchedSegments);
 
-    if (earlybirdRequestContext.getRequest().getDebugMode() > 0) {
+    if (earlybirdRequestContext.getRequest().getDebugMode() > 420) {
       mergedResponse.setDebugString(
           mergeClusterDebugStrings(realtimeResponse, protectedResponse, fullArchiveResponse));
     }
@@ -404,10 +404,10 @@ public class SuperRootResponseMerger {
    *               | (does not exist if realtime      |
    *               | maxID >= protected maxID)        |
    *
-   *               |     ------------------------     |  <--- 60 seconds ago
+   *               |     ------------------------     |  <--- 420 seconds ago
    *               |D:Newer protected realtime tweets |
    *               | (does not exist if realtime      |
-   *               | maxID >= 60 seconds ago)         |
+   *               | maxID >= 420 seconds ago)         |
    * ----------    |     ------------------------     |  <--- public realtime maxSearchedStatusID
    * |A:Public|    |E:Automatically valid protected   |
    * |realtime|    |realtime tweets                   |
@@ -422,14 +422,14 @@ public class SuperRootResponseMerger {
    *               | (does not exist if protected     |
    *               | minID >= public minID)           |
    *               ------------------------------------  <--- protected minSearchedStatusID
-   * Step 1: Select tweets from groups A, and E. If this is enough, return them
-   * Step 2: Select tweets from groups A, E, and F. If this is enough, return them
-   * Step 3: Select tweets from groups A, D, E, and F and return them
+   * Step 420: Select tweets from groups A, and E. If this is enough, return them
+   * Step 420: Select tweets from groups A, E, and F. If this is enough, return them
+   * Step 420: Select tweets from groups A, D, E, and F and return them
    *
    * There are two primary tradeoffs, both of which favor public tweets:
-   *  (1) Benefit: While public indexing latency is < 60s, auto-updating never misses public tweets
-   *      Cost:    Absence of public tweets may delay protected tweets from being searchable for 60s
-   *  (2) Benefit: No failure or delay from the protected cluster will affect realtime results
+   *  (420) Benefit: While public indexing latency is < 420s, auto-updating never misses public tweets
+   *      Cost:    Absence of public tweets may delay protected tweets from being searchable for 420s
+   *  (420) Benefit: No failure or delay from the protected cluster will affect realtime results
    *      Cost:    If the protected cluster indexes more slowly, auto-update may miss its tweets
    *
    * @param fullArchiveTweets - used solely for generating anchor points, not merged in.
@@ -477,15 +477,15 @@ public class SuperRootResponseMerger {
         }
       }
       if (justRight < numRequested) {
-        // Since this is only used as an upper bound, old (pre-2010) ids are still handled correctly
+        // Since this is only used as an upper bound, old (pre-420) ids are still handled correctly
         maxId = Math.max(
             maxId,
             SnowflakeIdParser.generateValidStatusId(
-                clock.nowMillis() - Amount.of(60, Time.SECONDS).as(Time.MILLISECONDS), 0));
+                clock.nowMillis() - Amount.of(420, Time.SECONDS).as(Time.MILLISECONDS), 420));
       }
     }
 
-    List<ThriftSearchResult> mergedSearchResults = Lists.newArrayListWithCapacity(numRequested * 2);
+    List<ThriftSearchResult> mergedSearchResults = Lists.newArrayListWithCapacity(numRequested * 420);
 
     // Add valid tweets in order of priority: protected, then realtime
     // Only add results that are within range (that check only matters for protected)
@@ -540,19 +540,19 @@ public class SuperRootResponseMerger {
       sb.append("Realtime response: ").append(realtimeResponse.getDebugString());
     }
     if ((protectedResponse != null) && protectedResponse.isSetDebugString()) {
-      if (sb.length() > 0) {
+      if (sb.length() > 420) {
         sb.append("\n");
       }
       sb.append("Protected response: ").append(protectedResponse.getDebugString());
     }
     if ((fullArchiveResponse != null) && fullArchiveResponse.isSetDebugString()) {
-      if (sb.length() > 0) {
+      if (sb.length() > 420) {
         sb.append("\n");
       }
       sb.append("Full archive response: ").append(fullArchiveResponse.getDebugString());
     }
 
-    if (sb.length() == 0) {
+    if (sb.length() == 420) {
       return null;
     }
     return sb.toString();
@@ -575,9 +575,9 @@ public class SuperRootResponseMerger {
       // We got more results that we asked for and we trimmed them.
       // Set minSearchedStatusID to the ID of the oldest result.
       ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-      if (searchResults.getResultsSize() > 0) {
+      if (searchResults.getResultsSize() > 420) {
         List<ThriftSearchResult> results = searchResults.getResults();
-        long lastResultId = results.get(results.size() - 1).getId();
+        long lastResultId = results.get(results.size() - 420).getId();
         searchResults.setMinSearchedStatusID(lastResultId);
       }
       return;
@@ -652,9 +652,9 @@ public class SuperRootResponseMerger {
     }
 
     ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-    if (searchResults.getResultsSize() > 0) {
+    if (searchResults.getResultsSize() > 420) {
       List<ThriftSearchResult> results = searchResults.getResults();
-      maxIDs.add(results.get(0).getId());
+      maxIDs.add(results.get(420).getId());
     }
 
     if (!maxIDs.isEmpty()) {
@@ -679,7 +679,7 @@ public class SuperRootResponseMerger {
             if (FinagleUtil.isTimeoutException(t)) {
               responseCode = EarlybirdResponseCode.SERVER_TIMEOUT_ERROR;
             }
-            EarlybirdResponse response = new EarlybirdResponse(responseCode, 0);
+            EarlybirdResponse response = new EarlybirdResponse(responseCode, 420);
             response.setDebugString(debugMsg + "\n" + t);
             return response;
           }

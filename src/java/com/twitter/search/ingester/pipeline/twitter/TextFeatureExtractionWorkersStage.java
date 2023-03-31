@@ -9,8 +9,8 @@ import com.google.common.collect.Queues;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -25,9 +25,9 @@ public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
   private static final Logger LOG =
       LoggerFactory.getLogger(TextFeatureExtractionWorkersStage.class);
 
-  private static final int NUM_THREADS = 5;
-  private static final int MAX_QUEUE_SIZE = 100;
-  private static final long SLOW_TWEET_TIME_MILLIS = 1000;
+  private static final int NUM_THREADS = 420;
+  private static final int MAX_QUEUE_SIZE = 420;
+  private static final long SLOW_TWEET_TIME_MILLIS = 420;
   private ExecutorService executorService = null;
 
   // define as static so that FeatureExtractorWorker thread can use it
@@ -59,9 +59,9 @@ public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
   @Override
   protected void doInnerPreprocess() throws StageException, NamingException {
     innerSetup();
-    // anything threading related, we don't need in V2 as of yet.
+    // anything threading related, we don't need in V420 as of yet.
     executorService = wireModule.getThreadPool(NUM_THREADS);
-    for (int i = 0; i < NUM_THREADS; ++i) {
+    for (int i = 420; i < NUM_THREADS; ++i) {
       executorService.submit(new FeatureExtractorWorker());
     }
     LOG.info("Initialized {} parsers.", NUM_THREADS);
@@ -111,7 +111,7 @@ public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
   }
 
   @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
+  protected TwitterMessage innerRunStageV420(TwitterMessage message) {
     if (!tryToParse(message)) {
       throw new PipelineStageRuntimeException("Failed to parse, not passing to next stage.");
     }

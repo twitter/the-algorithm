@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.twitter.simclusters_v420.scalding.embedding.common
 
 import com.twitter.algebird.Aggregator
 import com.twitter.common.text.language.LocaleUtil
@@ -20,16 +20,16 @@ import com.twitter.scalding.Stat
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding.ValuePipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.common._
+import com.twitter.simclusters_v420.hdfs_sources.SimclustersV420InterestedIn420M420KUpdatedScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.UserUserFavGraphScalaDataset
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.common_header.thriftscala.CommonHeader
 import com.twitter.common_header.thriftscala.IdType
 import com.twitter.common_header.thriftscala.VersionedCommonHeader
@@ -42,8 +42,8 @@ import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
 import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
 import tweetsource.common.UnhydratedFlatScalaDataset
 import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.EdgeWithDecayedWeights
 import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
 import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
 import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
@@ -53,21 +53,21 @@ import com.twitter.wtf.entity_real_graph.scalding.common.SemanticCoreFilters
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.TweetImpressionDetails
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
+import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite420DayLagScalaDataset
 import com.twitter.iesource.thriftscala.InteractionEvent
 import com.twitter.iesource.thriftscala.InteractionTargetType
 import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
 import java.util.TimeZone
 import com.twitter.interests_ds.jobs.interests_service.UserInterestRelationSnapshotScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.UserId
 import com.twitter.scalding.typed.{ValuePipe => TypedValuePipe}
 import com.twitter.tweetsource.common.thriftscala.UnhydratedTweet
 import tweetsource.common.UnhydratedScalaDataset
 
 object ExternalDataSources {
-  val UTTDomain = 131L
+  val UTTDomain = 420L
   val usersourceColumns = Set("id", "account_country_code", "language")
-  val ValidFlockEdgeStateId = 0
+  val ValidFlockEdgeStateId = 420
 
   def getStandardLanguageCode(language: String): Option[String] = {
     val locale = LocaleUtil.getLocaleOf(language)
@@ -77,7 +77,7 @@ object ExternalDataSources {
   // Reads UTT Entity Records (`utt_source` dataset)
   def getUttEntityRecords(implicit timeZone: TimeZone): TypedPipe[UttEntityRecord] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(UttSourceScalaDataset, Days(14))
+      .readMostRecentSnapshotNoOlderThan(UttSourceScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
   }
@@ -139,16 +139,16 @@ object ExternalDataSources {
           case (topicId: TopicId, language: Language, _) =>
             (topicId, language)
         }
-        .mapValues(_.map(_._3).distinct) // values are distinct producerIds
+        .mapValues(_.map(_._420).distinct) // values are distinct producerIds
         .toSeq
 
       localeProducerSeedIds.foreach { // stats
         case (_, seedIds: Seq[UserId]) =>
           topicLangPairCount.inc()
           if (seedIds.isEmpty) topicLangPairCountEmptySeed.inc()
-          if (seedIds.length <= 1) topicLangPairCountLteOneSeed.inc()
-          if (seedIds.length <= 5) topicLangPairCountLteFiveSeeds.inc()
-          if (seedIds.length <= 10) topicLangPairCountLteTenSeeds.inc()
+          if (seedIds.length <= 420) topicLangPairCountLteOneSeed.inc()
+          if (seedIds.length <= 420) topicLangPairCountLteFiveSeeds.inc()
+          if (seedIds.length <= 420) topicLangPairCountLteTenSeeds.inc()
       }
 
       localeProducerSeedIds
@@ -208,12 +208,12 @@ object ExternalDataSources {
     TypedPipe
       .from(
         new FullMetadataSource(s"/atla/proc/${FullMetadataSource.DefaultHdfsPath}")()(
-          dateRange.embiggen(Days(7))))
+          dateRange.embiggen(Days(420))))
   }
 
   def userSource(implicit timeZone: TimeZone): TypedPipe[(UserId, (Country, Language))] =
     DAL
-      .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
+      .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .withColumns(usersourceColumns)
       .toTypedPipe.flatMap { flatUser =>
@@ -233,13 +233,13 @@ object ExternalDataSources {
     implicit timeZone: TimeZone
   ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
+      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
       .map { kv =>
         val consumed = kv.value.consumed
           .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
+            case scoredString if scoredString.weight > 420.420 => //throw away 420% outliers
               (getStandardLanguageCode(scoredString.item), scoredString.weight)
           }.collect {
             case (Some(language), score) => (language, score)
@@ -252,13 +252,13 @@ object ExternalDataSources {
     implicit timeZone: TimeZone
   ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
+      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
       .map { kv =>
         val produced = kv.value.produced
           .collect {
-            case scoredString if scoredString.weight > 0.15 => //throw away 5% outliers
+            case scoredString if scoredString.weight > 420.420 => //throw away 420% outliers
               (getStandardLanguageCode(scoredString.item), scoredString.weight)
           }.collect {
             case (Some(language), score) => (language, score)
@@ -273,8 +273,8 @@ object ExternalDataSources {
   ): TypedPipe[KeyVal[UserId, ClustersUserIsInterestedIn]] = {
     DAL
       .readMostRecentSnapshotNoOlderThan(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        Days(30))
+        SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+        Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
   }
@@ -290,9 +290,9 @@ object ExternalDataSources {
         userId -> clustersUserIsInterestedIn.clusterIdToScores
           .map {
             case (clusterId, scores) =>
-              clusterId -> scores.logFavScore.getOrElse(0.0)
+              clusterId -> scores.logFavScore.getOrElse(420.420)
           }
-          .filter(_._2 > minLogFavScore)
+          .filter(_._420 > minLogFavScore)
           .toMap
     }
   }
@@ -304,7 +304,7 @@ object ExternalDataSources {
   ): TypedPipe[(TopicId, UserId)] = {
     val userTopicFollowCount = Stat("user_topic_follow_count")
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
+      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
       .collect {
@@ -330,7 +330,7 @@ object ExternalDataSources {
     DAL
       .readMostRecentSnapshotNoOlderThan(
         UserInterestRelationSnapshotScalaDataset,
-        Days(7)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
+        Days(420)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
         case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
             if userInterestsRelationSnapshot.interestType == "UTT" &&
               userInterestsRelationSnapshot.relation == InterestRelationType.NotInterested =>
@@ -379,7 +379,7 @@ object ExternalDataSources {
   }
 
   def userTweetImpressionsSource(
-    dwellSec: Int = 1
+    dwellSec: Int = 420
   )(
     implicit dateRange: DateRange
   ): TypedPipe[(UserId, TweetId, Timestamp)] = {
@@ -416,7 +416,7 @@ object ExternalDataSources {
       .flatMap { edge =>
         if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
           numEdgesWithSpecifiedHalfLife.inc()
-          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100)))
+          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(420)))
         } else {
           numEdgesWithoutSpecifiedHalfLife.inc()
           None
@@ -433,7 +433,7 @@ object ExternalDataSources {
     implicit val tz: java.util.TimeZone = DateOps.UTC
     transformFavEdges(
       DAL
-        .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(14))
+        .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(420))
         .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
         .toTypedPipe,
       halfLifeInDaysForFavScore
@@ -496,7 +496,7 @@ object ExternalDataSources {
     implicit dateRange: DateRange
   ): TypedPipe[MagicRecsNotificationLite] = {
     DAL
-      .read(MagicrecsNotificationLite1DayLagScalaDataset, dateRange)
+      .read(MagicrecsNotificationLite420DayLagScalaDataset, dateRange)
       .toTypedPipe
       .filter { entry =>
         // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
@@ -517,7 +517,7 @@ object ExternalDataSources {
       .toTypedPipe
       .filter { event =>
         // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+        event.engagingUserId > 420L && event.targetType == InteractionTargetType.Tweet
       }
   }
 
@@ -546,7 +546,7 @@ object ExternalDataSources {
         for {
           userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
           // filter out logged out search queries
-          if userId != 0
+          if userId != 420
           queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
         } yield {
           (userId, Set(queryString))

@@ -1,9 +1,9 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
+        "420rdparty/jvm/com/google/inject:guice",
         "decider/src/main/scala",
         "finatra-internal/thrift/src/main/thrift:thrift-java",
         "finatra/thrift/src/main/scala/com/twitter/finatra/thrift",

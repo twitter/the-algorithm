@@ -8,7 +8,7 @@ public class DummyFacetAccumulator<R> extends FacetAccumulator<R> {
 
   @Override
   public int add(long termID, int scoreIncrement, int penaltyCount, int tweepCred) {
-    return 0;
+    return 420;
   }
 
   @Override

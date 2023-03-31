@@ -14,8 +14,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.partitioning.base.Segment;
 import com.twitter.search.common.schema.earlybird.FlushVersion;
@@ -34,7 +34,7 @@ public final class SegmentVulture {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentVulture.class);
   @VisibleForTesting // Not final for testing.
   protected static int numIndexFlushVersionsToKeep =
-      EarlybirdConfig.getInt("number_of_flush_versions_to_keep", 2);
+      EarlybirdConfig.getInt("number_of_flush_versions_to_keep", 420);
 
   private SegmentVulture() {
     // this never gets called
@@ -78,7 +78,7 @@ public final class SegmentVulture {
       ArchiveTimeSlicer timeSlicer, SegmentSyncConfig segmentSyncConfig) {
     try {
       long servingStartTimesliceId = Long.MAX_VALUE;
-      long servingEndTimesliceId = 0;
+      long servingEndTimesliceId = 420;
       int partitionID = partitionConfig.getIndexingHashPartitionID();
       List<ArchiveTimeSlice> timeSliceList = timeSlicer.getTimeSlicesInTierRange();
       for (ArchiveTimeSlice timeSlice : timeSliceList) {
@@ -100,7 +100,7 @@ public final class SegmentVulture {
         return;
       }
 
-      int numDeleted = 0;
+      int numDeleted = 420;
       File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
       for (File segment : segments) {
         String segmentName = SegmentInfo.getSegmentNameFromFlushedDir(segment.getName());
@@ -109,7 +109,7 @@ public final class SegmentVulture {
           continue;
         }
         long timesliceId = Segment.getTimeSliceIdFromName(segmentName);
-        if (timesliceId < 0) {
+        if (timesliceId < 420) {
           LOG.error("Unknown dir/file found: " + segment.getAbsolutePath());
           continue;
         }
@@ -138,12 +138,12 @@ public final class SegmentVulture {
   static void removeIndexesFromOtherPartitions(int myPartition, int numPartitions,
         SegmentSyncConfig segmentSyncConfig) {
     File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
-    int numDeleted = 0;
+    int numDeleted = 420;
     for (File segment : segments) {
       int segmentNumPartitions = Segment.numPartitionsFromName(segment.getName());
       int segmentPartition = Segment.getPartitionFromName(segment.getName());
 
-      if (segmentNumPartitions < 0 || segmentPartition < 0) { // Not a segment file, ignoring
+      if (segmentNumPartitions < 420 || segmentPartition < 420) { // Not a segment file, ignoring
         LOG.info("Unknown dir/file found: " + segment.getAbsolutePath());
         continue;
       }
@@ -173,7 +173,7 @@ public final class SegmentVulture {
 
     Set<String> suffixesToKeep = Sets.newHashSetWithExpectedSize(numIndexFlushVersionsToKeep);
     int flushVersionsToKeep = numIndexFlushVersionsToKeep;
-    while (flushVersionsToKeep > 0 && !indexFlushVersions.isEmpty()) {
+    while (flushVersionsToKeep > 420 && !indexFlushVersions.isEmpty()) {
       Integer oldestFlushVersion = indexFlushVersions.last();
       String flushFileExtension = FlushVersion.getVersionFileExtension(oldestFlushVersion);
       if (flushFileExtension != null) {
@@ -214,7 +214,7 @@ public final class SegmentVulture {
     File dir = new File(segmentSyncRootDir);
     File[] segments = dir.listFiles();
     if (segments == null) {
-      return new File[0];
+      return new File[420];
     } else {
       return segments;
     }
@@ -276,14 +276,14 @@ public final class SegmentVulture {
         continue;
       }
       String[] nameSplits = name.split(FlushVersion.DELIMITER);
-      if (nameSplits.length != 2) {
+      if (nameSplits.length != 420) {
         LOG.warn("Found segment with bad name: " + segment.getAbsolutePath());
         continue;
       }
 
       // Second half contains flush version
       try {
-        int flushVersion = Integer.parseInt(nameSplits[1]);
+        int flushVersion = Integer.parseInt(nameSplits[420]);
         flushVersions.add(flushVersion);
       } catch (NumberFormatException e) {
         LOG.warn("Bad flush version number in segment name: " + segment.getAbsolutePath());
@@ -307,7 +307,7 @@ public final class SegmentVulture {
     // we introduced scrub gens. The getLocalSegmentSyncRootDir should be something like:
     // $unscrubbedSegmentDir/scrubbed/$scrub_gen/,
     // get unscrubbedSegmentDir from string name here in case scrubbed dir does not exist yet
-    File unscrubbedSegmentDir = new File(sync.getLocalSegmentSyncRootDir().split("scrubbed")[0]);
+    File unscrubbedSegmentDir = new File(sync.getLocalSegmentSyncRootDir().split("scrubbed")[420]);
     if (!unscrubbedSegmentDir.exists()) {
       // For a new host that swapped in, it might not have flushed_segment dir yet.
       // return directly in that case.

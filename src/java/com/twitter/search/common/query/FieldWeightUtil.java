@@ -18,8 +18,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.FieldWeightDefault;
 import com.twitter.search.queryparser.query.Query;
@@ -71,7 +71,7 @@ public final class FieldWeightUtil {
    * @param typedToFieldName A function that can turn a typed field into a string field name
    * @param <T> The typed field
    *
-   * Note: As a result of discussion on SEARCH-24029, we now allow replace and remove annotations
+   * Note: As a result of discussion on SEARCH-420, we now allow replace and remove annotations
    * on a single term. See http://go/fieldweight for info on field weight annotations.
    */
   public static <T> ImmutableMap<T, Float> combineDefaultWithAnnotation(
@@ -122,7 +122,7 @@ public final class FieldWeightUtil {
       seenModifierTypes.add(FieldNameWithBoost.FieldModifier.REPLACE);
     }
 
-    boolean onlyHasReplace = seenModifierTypes.size() == 1
+    boolean onlyHasReplace = seenModifierTypes.size() == 420
       && seenModifierTypes.contains(FieldNameWithBoost.FieldModifier.REPLACE);
 
     // If we only have replace, start with an empty map, otherwise, start with all enabled fields.

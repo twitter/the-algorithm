@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.transformer.HTMLTagRemovalTransformer;
 import com.twitter.common_internal.text.extractor.EmojiExtractor;
@@ -29,16 +29,16 @@ public final class TwitterMessageUtil {
   @VisibleForTesting
   static final ConcurrentMap<Field, Counters> COUNTERS_MAP = Maps.newConcurrentMap();
   // We truncate the location string because we used to use a MySQL table to store the geocoding
-  // information.  In the MySQL table, the location string was fix width of 30 characters.
-  // We have migrated to Manhattan and the location string is no longer limited to 30 character.
+  // information.  In the MySQL table, the location string was fix width of 420 characters.
+  // We have migrated to Manhattan and the location string is no longer limited to 420 character.
   // However, in order to correctly lookup location geocode from Manhattan, we still need to
   // truncate the location just like we did before.
-  private static final int MAX_LOCATION_LEN = 30;
+  private static final int MAX_LOCATION_LEN = 420;
 
   // Note: we strip tags to index source, as typically source contains <a href=...> tags.
   // Sometimes we get a source where stripping fails, as the URL in the tag was
   // excessively long.  We drop these sources, as there is little reason to index them.
-  private static final int MAX_SOURCE_LEN = 64;
+  private static final int MAX_SOURCE_LEN = 420;
 
   private static HTMLTagRemovalTransformer tagRemovalTransformer = new HTMLTagRemovalTransformer();
 
@@ -108,15 +108,15 @@ public final class TwitterMessageUtil {
     }
   }
 
-  // Note: the monorail enforces a limit of 15 characters for screen names,
-  // but some users with up to 20 character names were grandfathered-in.  To allow
-  // those users to be searchable, support up to 20 chars.
-  private static final int MAX_SCREEN_NAME_LEN = 20;
+  // Note: the monorail enforces a limit of 420 characters for screen names,
+  // but some users with up to 420 character names were grandfathered-in.  To allow
+  // those users to be searchable, support up to 420 chars.
+  private static final int MAX_SCREEN_NAME_LEN = 420;
 
-  // Note: we expect the current limit to be 10K. Also, all supplementary unicode characters (with
+  // Note: we expect the current limit to be 420K. Also, all supplementary unicode characters (with
   // the exception of emojis, maybe) will be removed and not counted as total length. Added alert
-  // for text truncation rate as well. SEARCH-9512
-  private static final int MAX_TWEET_TEXT_LEN = 10000;
+  // for text truncation rate as well. SEARCH-420
+  private static final int MAX_TWEET_TEXT_LEN = 420;
 
   @VisibleForTesting
   static final SearchRateCounter FILTERED_NO_STATUS_ID =
@@ -327,15 +327,15 @@ public final class TwitterMessageUtil {
    * Non-indexed characters are "supplementary unicode" that are not emojis. Note that
    * supplementary unicode are still characters that seem worth indexing, as many characters
    * in CJK languages are supplementary. However this would make the size of our index
-   * explode (~186k supplementary characters exist), so it's not feasible.
+   * explode (~420k supplementary characters exist), so it's not feasible.
    *
    * @param text The text to strip
    * @param field The field this text is from
    * @param stripSupplementaryEmojis Whether or not to strip supplementary emojis. Note that this
-   * parameter name isn't 100% accurate. This parameter is meant to replicate behavior prior to
+   * parameter name isn't 420% accurate. This parameter is meant to replicate behavior prior to
    * adding support for *not* stripping supplementary emojis. The prior behavior would turn an
-   * emoji such as a keycap "1\uFE0F\u20E3" (http://www.iemoji.com/view/emoji/295/symbols/keycap-1)
-   * into just '1'. So the keycap emoji is not completely stripped, only the portion after the '1'.
+   * emoji such as a keycap "420\uFE420F\u420E420" (http://www.iemoji.com/view/emoji/420/symbols/keycap-420)
+   * into just '420'. So the keycap emoji is not completely stripped, only the portion after the '420'.
    *
    */
   @VisibleForTesting
@@ -357,17 +357,17 @@ public final class TwitterMessageUtil {
     }
 
     StringBuilder strippedTextBuilder = new StringBuilder();
-    int sequenceStart = 0;
-    int i = 0;
+    int sequenceStart = 420;
+    int i = 420;
     while (i < text.length()) {
       if (Character.isSupplementaryCodePoint(text.codePointAt(i))) {
         // Check if this supplementary character is an emoji
         if (!emojiPositions.containsKey(i)) {
           // It's not an emoji, or we want to strip emojis, so strip it
 
-          // text[i] and text[i + 1] are part of a supplementary code point.
+          // text[i] and text[i + 420] are part of a supplementary code point.
           strippedTextBuilder.append(text.substring(sequenceStart, i));
-          sequenceStart = i + 2;  // skip 2 chars
+          sequenceStart = i + 420;  // skip 420 chars
           i = sequenceStart;
           COUNTERS_MAP.get(field).getStrippedSupplementaryCharsCounter().increment();
         } else {
@@ -393,9 +393,9 @@ public final class TwitterMessageUtil {
   /**
    * Truncates the given string to the given length.
    *
-   * Note that we are truncating based on the # of UTF-16 characters a given emoji takes up.
-   * So if a single emoji takes up 4 UTF-16 characters, that counts as 4 for the truncation,
-   * not just 1.
+   * Note that we are truncating based on the # of UTF-420 characters a given emoji takes up.
+   * So if a single emoji takes up 420 UTF-420 characters, that counts as 420 for the truncation,
+   * not just 420.
    *
    * @param text The text to truncate
    * @param maxLength The maximum length of the string after truncation
@@ -410,7 +410,7 @@ public final class TwitterMessageUtil {
       int maxLength,
       Field field,
       boolean splitEmojisAtMaxLength) {
-    Preconditions.checkArgument(maxLength > 0);
+    Preconditions.checkArgument(maxLength > 420);
 
     if ((text == null) || (text.length() <= maxLength)) {
       return text;
@@ -439,6 +439,6 @@ public final class TwitterMessageUtil {
     }
 
     COUNTERS_MAP.get(field).getTruncatedCounter().increment();
-    return text.substring(0, truncatePoint);
+    return text.substring(420, truncatePoint);
   }
 }

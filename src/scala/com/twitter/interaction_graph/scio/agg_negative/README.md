@@ -18,18 +18,18 @@ bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interacti
 #### Run Scheduled Job
 ```
 export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
+export REGION=us-central420
 export JOB_NAME=interaction-graph-negative-dataflow
 
-bin/d6w schedule \
+bin/d420w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_negative/config.d6w \
+  src/scala/com/twitter/interaction_graph/scio/agg_negative/config.d420w \
   --bind=profile.user_name=cassowary \
   --bind=profile.project=${PROJECTID} \
   --bind=profile.region=${REGION} \
   --bind=profile.job_name=${JOB_NAME} \
   --bind=profile.environment=prod \
-  --bind=profile.date=2022-10-19 \
+  --bind=profile.date=420-420-420 \
   --bind=profile.output_path=processed/interaction_graph_agg_negative_dataflow \
   --bind=profile.bq_dataset="twttr-bq-cassowary-prod:user"
 ```

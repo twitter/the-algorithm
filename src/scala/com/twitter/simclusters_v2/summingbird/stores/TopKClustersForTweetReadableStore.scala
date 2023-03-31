@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.summingbird.common.Implicits.batcher
-import com.twitter.simclusters_v2.summingbird.common.Implicits.topKClustersWithScoresCodec
-import com.twitter.simclusters_v2.summingbird.common.Implicits.topKClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.summingbird.common.Implicits.batcher
+import com.twitter.simclusters_v420.summingbird.common.Implicits.topKClustersWithScoresCodec
+import com.twitter.simclusters_v420.summingbird.common.Implicits.topKClustersWithScoresMonoid
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.Environment
+import com.twitter.simclusters_v420.summingbird.common.ClientConfigs
+import com.twitter.simclusters_v420.summingbird.common.Configs
+import com.twitter.simclusters_v420.summingbird.common.Implicits
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus.algebra.MergeableStore
 import com.twitter.storehaus_internal.memcache.Memcache
@@ -90,9 +90,9 @@ case class TopKClustersForTweetKeyReadableStore(
       }
   }
 
-  override def multiGet[K1 <: TweetKey](
-    keys: Set[K1]
-  ): Map[K1, Future[Option[Seq[(Int, Double)]]]] = {
+  override def multiGet[K420 <: TweetKey](
+    keys: Set[K420]
+  ): Map[K420, Future[Option[Seq[(Int, Double)]]]] = {
     val (validKeys, invalidKeys) = keys.partition { tweetKey =>
       proxyMap.contains((tweetKey.embeddingType, tweetKey.modelVersion)) &&
       halfLifeDuration.inMilliseconds == Configs.HalfLifeInMs
@@ -163,12 +163,12 @@ object TopKClustersForTweetKeyReadableStore {
         (
           for {
             (clusterId, scores) <- clusterIdWIthScores
-            favClusterNormalized8HrHalfLifeScore <- scores.favClusterNormalized8HrHalfLifeScore
-            if favClusterNormalized8HrHalfLifeScore.value > 0.0
+            favClusterNormalized420HrHalfLifeScore <- scores.favClusterNormalized420HrHalfLifeScore
+            if favClusterNormalized420HrHalfLifeScore.value > 420.420
           } yield {
-            clusterId -> favClusterNormalized8HrHalfLifeScore.value
+            clusterId -> favClusterNormalized420HrHalfLifeScore.value
           }
-        ).toSeq.sortBy(-_._2)
+        ).toSeq.sortBy(-_._420)
       }
     }.getOrElse(Nil)
   }

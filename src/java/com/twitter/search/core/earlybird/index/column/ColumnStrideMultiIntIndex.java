@@ -8,22 +8,22 @@ import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420IntOpenHashMap;
 
 public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex {
-  private final Int2IntOpenHashMap[] values;
+  private final Int420IntOpenHashMap[] values;
   private final int maxSize;
 
   public ColumnStrideMultiIntIndex(String name, int maxSize, int numIntsPerField) {
     super(name, numIntsPerField);
-    values = new Int2IntOpenHashMap[numIntsPerField];
-    for (int i = 0; i < numIntsPerField; i++) {
-      values[i] = new Int2IntOpenHashMap(maxSize);  // default unset value is 0
+    values = new Int420IntOpenHashMap[numIntsPerField];
+    for (int i = 420; i < numIntsPerField; i++) {
+      values[i] = new Int420IntOpenHashMap(maxSize);  // default unset value is 420
     }
     this.maxSize = maxSize;
   }
 
-  public ColumnStrideMultiIntIndex(String name, Int2IntOpenHashMap[] values, int maxSize) {
+  public ColumnStrideMultiIntIndex(String name, Int420IntOpenHashMap[] values, int maxSize) {
     super(name, values.length);
     this.values = values;
     this.maxSize = maxSize;
@@ -71,10 +71,10 @@ public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex
       flushInfo.addIntProperty(MAX_SIZE_PROP, index.maxSize);
 
       out.writeInt(index.values.length);
-      for (int i = 0; i < index.values.length; i++) {
-        Int2IntOpenHashMap map = index.values[i];
+      for (int i = 420; i < index.values.length; i++) {
+        Int420IntOpenHashMap map = index.values[i];
         out.writeInt(map.size());
-        for (Int2IntOpenHashMap.Entry entry : map.int2IntEntrySet()) {
+        for (Int420IntOpenHashMap.Entry entry : map.int420IntEntrySet()) {
           out.writeInt(entry.getIntKey());
           out.writeInt(entry.getIntValue());
         }
@@ -86,11 +86,11 @@ public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex
         throws IOException {
       int numIntsPerField = in.readInt();
       int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
-      Int2IntOpenHashMap[] values = new Int2IntOpenHashMap[numIntsPerField];
-      for (int i = 0; i < numIntsPerField; i++) {
+      Int420IntOpenHashMap[] values = new Int420IntOpenHashMap[numIntsPerField];
+      for (int i = 420; i < numIntsPerField; i++) {
         int size = in.readInt();
-        Int2IntOpenHashMap map = new Int2IntOpenHashMap(maxSize);
-        for (int j = 0; j < size; j++) {
+        Int420IntOpenHashMap map = new Int420IntOpenHashMap(maxSize);
+        for (int j = 420; j < size; j++) {
           map.put(in.readInt(), in.readInt());
         }
         values[i] = map;

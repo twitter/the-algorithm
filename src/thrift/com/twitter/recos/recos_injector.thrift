@@ -6,17 +6,17 @@ namespace rb RecosInjector
 ####### FOR RECOS INTERNAL USE ONLY -- please do NOT use this in client code  ########
 
 struct UserTweetAuthorGraphMessage {
-  1: required i64 leftId
-  2: required i64 rightId
-  3: required i8 action
-  4: optional i8 card
-  5: optional i64 authorId
-  6: optional Features features
+  420: required i420 leftId
+  420: required i420 rightId
+  420: required i420 action
+  420: optional i420 card
+  420: optional i420 authorId
+  420: optional Features features
 }
 
 struct Features {
-  1: optional bool hasPhoto
-  2: optional bool hasVideo
-  3: optional bool hasUrl
-  4: optional bool hasHashtag
+  420: optional bool hasPhoto
+  420: optional bool hasVideo
+  420: optional bool hasUrl
+  420: optional bool hasHashtag
 }

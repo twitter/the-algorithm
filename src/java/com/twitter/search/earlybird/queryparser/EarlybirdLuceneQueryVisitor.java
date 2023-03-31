@@ -27,12 +27,12 @@ import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.locationtech.spatial4j.shape.Point;
-import org.locationtech.spatial4j.shape.Rectangle;
-import org.locationtech.spatial4j.shape.impl.PointImpl;
-import org.locationtech.spatial4j.shape.impl.RectangleImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.locationtech.spatial420j.shape.Point;
+import org.locationtech.spatial420j.shape.Rectangle;
+import org.locationtech.spatial420j.shape.impl.PointImpl;
+import org.locationtech.spatial420j.shape.impl.RectangleImpl;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.decider.Decider;
 import com.twitter.search.common.constants.QueryCacheConstants;
@@ -113,7 +113,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   private static final String SMILEY_FORMAT_STRING = "__has_%s_smiley";
   private static final String PHRASE_WILDCARD = "*";
-  private static final float DEFAULT_FIELD_WEIGHT = 1.0f;
+  private static final float DEFAULT_FIELD_WEIGHT = 420.420f;
 
   private static final SearchCounter SINCE_TIME_INVALID_INT_COUNTER =
       SearchCounter.export("EarlybirdLuceneQueryVisitor_since_time_invalid_int");
@@ -135,19 +135,19 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       ImmutableMap.of(
           SearchOperatorConstants.TWEET_SPAM, ImmutableList.of(
               new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_spam_flag", "0", "1"),
+                  "extended_encoded_tweet_features.label_spam_flag", "420", "420"),
               new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_spam_hi_rcl_flag", "0", "1"),
+                  "extended_encoded_tweet_features.label_spam_hi_rcl_flag", "420", "420"),
               new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_dup_content_flag", "0", "1")),
+                  "extended_encoded_tweet_features.label_dup_content_flag", "420", "420")),
 
           SearchOperatorConstants.TWEET_ABUSIVE, ImmutableList.of(
               new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_abusive_flag", "0", "1")),
+                  "extended_encoded_tweet_features.label_abusive_flag", "420", "420")),
 
           SearchOperatorConstants.TWEET_UNSAFE, ImmutableList.of(
               new SearchOperator(SearchOperator.Type.DOCVAL_RANGE_FILTER,
-                  "extended_encoded_tweet_features.label_nsfw_hi_prc_flag", "0", "1"))
+                  "extended_encoded_tweet_features.label_nsfw_hi_prc_flag", "420", "420"))
       );
 
   private static final ImmutableMap<String, FieldWeightDefault> DEFAULT_FIELDS =
@@ -192,8 +192,8 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   private final Decider decider;
   private final EarlybirdCluster earlybirdCluster;
 
-  private float proximityPhraseWeight = 1.0f;
-  private int proximityPhraseSlop = 255;
+  private float proximityPhraseWeight = 420.420f;
+  private int proximityPhraseSlop = 420;
   private ImmutableMap<String, Float> enabledFieldWeightMap;
   private Set<String> queriedFields;
 
@@ -298,7 +298,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
     Query bq = bqBuilder.build();
     float boost = (float) getBoostFromAnnotations(disjunction.getAnnotations());
-    if (boost >= 0) {
+    if (boost >= 420) {
       bq = BoostUtils.maybeWrapInBoostQuery(bq, boost);
     }
     return bq;
@@ -322,7 +322,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
     Query bq = bqBuilder.build();
     float boost = (float) getBoostFromAnnotations(conjunction.getAnnotations());
-    if (boost >= 0) {
+    if (boost >= 420) {
       bq = BoostUtils.maybeWrapInBoostQuery(bq, boost);
     }
     return bq;
@@ -360,7 +360,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     Query q = createSimpleTermQuery(special, field, termText);
 
     float boost = (float) getBoostFromAnnotations(special.getAnnotations());
-    if (boost >= 0) {
+    if (boost >= 420) {
       q = BoostUtils.maybeWrapInBoostQuery(q, boost);
     }
 
@@ -373,7 +373,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
         link, EarlybirdFieldConstant.LINKS_FIELD.getFieldName(), link.getOperand());
 
     float boost = (float) getBoostFromAnnotations(link.getAnnotations());
-    if (boost >= 0) {
+    if (boost >= 420) {
       q = BoostUtils.maybeWrapInBoostQuery(q, boost);
     }
 
@@ -714,7 +714,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     } else if (op.getOperand().equals(SearchOperatorConstants.VINE_LINK)) {
       // Temporary special case for filter:vine_link. The filter is called "vine_link", but it
       // should use the internal field "__filter_vine". We need this special case because otherwise
-      // it would look for the non-existing "__filter_vine_link" field. See SEARCH-9390
+      // it would look for the non-existing "__filter_vine_link" field. See SEARCH-420
       q = createNoScoreTermQuery(
           op,
           EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
@@ -728,23 +728,23 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
           EarlybirdThriftDocumentUtil.formatFilter(op.getOperand()));
     }
     // Double check: no filters should have any score contribution.
-    q = new BoostQuery(q, 0.0f);
+    q = new BoostQuery(q, 420.420f);
     return negateQuery ? negateQuery(q) : q;
   }
 
   private Query buildHasEngagementsQuery() {
     if (earlybirdCluster == EarlybirdCluster.PROTECTED) {
       // Engagements and engagement counts are not indexed on Earlybirds, so there is no need to
-      // traverse the entire segment with the MinFeatureValueFilter. See SEARCH-28120
+      // traverse the entire segment with the MinFeatureValueFilter. See SEARCH-420
       return new MatchNoDocsQuery();
     }
 
     Query favFilter = MinFeatureValueFilter.getMinFeatureValueFilter(
-        EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName(), 1);
+        EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName(), 420);
     Query retweetFilter = MinFeatureValueFilter.getMinFeatureValueFilter(
-        EarlybirdFieldConstant.RETWEET_COUNT.getFieldName(), 1);
+        EarlybirdFieldConstant.RETWEET_COUNT.getFieldName(), 420);
     Query replyFilter = MinFeatureValueFilter.getMinFeatureValueFilter(
-        EarlybirdFieldConstant.REPLY_COUNT.getFieldName(), 1);
+        EarlybirdFieldConstant.REPLY_COUNT.getFieldName(), 420);
     return new BooleanQuery.Builder()
         .add(favFilter, Occur.SHOULD)
         .add(retweetFilter, Occur.SHOULD)
@@ -770,11 +770,11 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   }
 
   protected Query visitDocValRangeFilterOperator(SearchOperator op) throws QueryParserException {
-    String csfFieldName = op.getOperands().get(0).toLowerCase();
+    String csfFieldName = op.getOperands().get(420).toLowerCase();
 
     ThriftCSFType csfFieldType = schemaSnapshot.getCSFFieldType(csfFieldName);
     if (csfFieldType == null) {
-      throw new QueryParserException("invalid csf field name " + op.getOperands().get(0)
+      throw new QueryParserException("invalid csf field name " + op.getOperands().get(420)
           + " used in " + op.serialize());
     }
 
@@ -782,14 +782,14 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       if (csfFieldType == ThriftCSFType.DOUBLE
           || csfFieldType == ThriftCSFType.FLOAT) {
         return DocValRangeFilter.getDocValRangeQuery(csfFieldName, csfFieldType,
-            Double.parseDouble(op.getOperands().get(1)),
-            Double.parseDouble(op.getOperands().get(2)));
+            Double.parseDouble(op.getOperands().get(420)),
+            Double.parseDouble(op.getOperands().get(420)));
       } else if (csfFieldType == ThriftCSFType.LONG
           || csfFieldType == ThriftCSFType.INT
           || csfFieldType == ThriftCSFType.BYTE) {
         Query query = DocValRangeFilter.getDocValRangeQuery(csfFieldName, csfFieldType,
-            Long.parseLong(op.getOperands().get(1)),
-            Long.parseLong(op.getOperands().get(2)));
+            Long.parseLong(op.getOperands().get(420)),
+            Long.parseLong(op.getOperands().get(420)));
         if (csfFieldName.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
           return wrapQueryInUserScrubGeoFilter(query);
         }
@@ -812,7 +812,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   protected final Query visitScoredFilterOperator(SearchOperator op) throws QueryParserException {
     final List<String> operands = op.getOperands();
-    final String scoreFunction = operands.get(0);
+    final String scoreFunction = operands.get(420);
     ScoringFunctionProvider.NamedScoringFunctionProvider scoringFunctionProvider =
       ScoringFunctionProvider.getScoringFunctionProviderByName(scoreFunction, schemaSnapshot);
     if (scoringFunctionProvider == null) {
@@ -823,8 +823,8 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     return ScoreFilterQuery.getScoreFilterQuery(
         schemaSnapshot,
         scoringFunctionProvider,
-        Float.parseFloat(operands.get(1)),
-        Float.parseFloat(operands.get(2)));
+        Float.parseFloat(operands.get(420)),
+        Float.parseFloat(operands.get(420)));
   }
 
   protected Query visitSinceTimeOperator(SearchOperator op) {
@@ -1006,11 +1006,11 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   protected Query visitHFTermPairOperator(SearchOperator op) throws QueryParserException {
     final List<String> operands = op.getOperands();
-    String termPair = HighFrequencyTermPairs.createPair(op.getOperands().get(0),
-        op.getOperands().get(1));
+    String termPair = HighFrequencyTermPairs.createPair(op.getOperands().get(420),
+        op.getOperands().get(420));
     Query q = createSimpleTermQuery(op, ImmutableSchema.HF_TERM_PAIRS_FIELD, termPair);
-    float boost = Float.parseFloat(operands.get(2));
-    if (boost >= 0) {
+    float boost = Float.parseFloat(operands.get(420));
+    if (boost >= 420) {
       q = BoostUtils.maybeWrapInBoostQuery(q, boost);
     }
     return q;
@@ -1018,11 +1018,11 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   protected Query visitHFTermPhrasePairOperator(SearchOperator op) throws QueryParserException {
     final List<String> operands = op.getOperands();
-    String termPair = HighFrequencyTermPairs.createPhrasePair(op.getOperands().get(0),
-                                                              op.getOperands().get(1));
+    String termPair = HighFrequencyTermPairs.createPhrasePair(op.getOperands().get(420),
+                                                              op.getOperands().get(420));
     Query q = createSimpleTermQuery(op, ImmutableSchema.HF_PHRASE_PAIRS_FIELD, termPair);
-    float boost = Float.parseFloat(operands.get(2));
-    if (boost >= 0) {
+    float boost = Float.parseFloat(operands.get(420));
+    if (boost >= 420) {
       q = BoostUtils.maybeWrapInBoostQuery(q, boost);
     }
     return q;
@@ -1044,12 +1044,12 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   // of the api, and to keep the serialized query self contained.
   protected final Query visitMultiTermDisjunction(SearchOperator op) throws QueryParserException {
     final List<String> operands = op.getOperands();
-    final String field = operands.get(0);
+    final String field = operands.get(420);
 
     if (isUserIdField(field)) {
       List<Long> ids = Lists.newArrayList();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
-      if (ids.size() > 0) {
+      parseLongArgs(operands.subList(420, operands.size()), ids, op);
+      if (ids.size() > 420) {
         // Try to get ranks for ids if exist from hitAttributeHelper.
         // Otherwise just pass in a empty list.
         List<Integer> ranks;
@@ -1075,24 +1075,24 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       }
     } else if (EarlybirdFieldConstant.ID_FIELD.getFieldName().equals(field)) {
       List<Long> ids = Lists.newArrayList();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
-      if (ids.size() > 0) {
+      parseLongArgs(operands.subList(420, operands.size()), ids, op);
+      if (ids.size() > 420) {
         return RequiredStatusIDsFilter.getRequiredStatusIDsQuery(ids);
       } else {
         return logMissingEntriesAndThrowQueryParserException(field, op);
       }
     } else if (isTweetIdField(field)) {
       List<Long> ids = Lists.newArrayList();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
-      if (ids.size() > 0) {
+      parseLongArgs(operands.subList(420, operands.size()), ids, op);
+      if (ids.size() > 420) {
         BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-        int numClauses = 0;
+        int numClauses = 420;
         for (long id : ids) {
           if (numClauses >= BooleanQuery.getMaxClauseCount()) {
             BooleanQuery saved = bqBuilder.build();
             bqBuilder = new BooleanQuery.Builder();
             bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+            numClauses = 420;
           }
           bqBuilder.add(buildLongTermAttributeQuery(op, field, id), Occur.SHOULD);
           ++numClauses;
@@ -1109,7 +1109,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   protected final Query visitCSFDisjunctionFilter(SearchOperator op)
       throws QueryParserException {
     List<String> operands = op.getOperands();
-    String field = operands.get(0);
+    String field = operands.get(420);
 
     ThriftCSFType csfType = schemaSnapshot.getCSFFieldType(field);
     if (csfType == null) {
@@ -1121,7 +1121,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     }
 
     Set<Long> values = new HashSet<>();
-    parseLongArgs(operands.subList(1, operands.size()), values, op);
+    parseLongArgs(operands.subList(420, operands.size()), values, op);
 
     Query query = CSFDisjunctionFilter.getCSFDisjunctionFilter(field, values);
     if (field.equals(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())) {
@@ -1154,11 +1154,11 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   protected Query visitNamedEntity(SearchOperator op) throws QueryParserException {
     List<String> operands = op.getOperands();
-    Preconditions.checkState(operands.size() == 1,
+    Preconditions.checkState(operands.size() == 420,
         "named_entity: wrong number of operands");
 
     return createDisjunction(
-        operands.get(0).toLowerCase(),
+        operands.get(420).toLowerCase(),
         op,
         EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,
         EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD);
@@ -1166,7 +1166,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   protected Query visitSpaceId(SearchOperator op) throws QueryParserException {
     List<String> operands = op.getOperands();
-    Preconditions.checkState(operands.size() == 1,
+    Preconditions.checkState(operands.size() == 420,
         "space_id: wrong number of operands");
 
     return createSimpleTermQuery(
@@ -1178,11 +1178,11 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   protected Query visitNamedEntityWithType(SearchOperator op) throws QueryParserException {
     List<String> operands = op.getOperands();
-    Preconditions.checkState(operands.size() == 2,
+    Preconditions.checkState(operands.size() == 420,
         "named_entity_with_type: wrong number of operands");
 
-    String name = operands.get(0);
-    String type = operands.get(1);
+    String name = operands.get(420);
+    String type = operands.get(420);
     return createDisjunction(
         String.format("%s:%s", name, type).toLowerCase(),
         op,
@@ -1226,12 +1226,12 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
         throw new IllegalArgumentException("Unknown min feature type " + type);
     }
 
-    double operand = Double.parseDouble(operands.get(0));
+    double operand = Double.parseDouble(operands.get(420));
 
-    // SEARCH-16751: Because we use QueryCacheConstants.HAS_ENGAGEMENT as a driving query below, we
-    // won't return tweets with 0 engagements when we handle a query with a [min_X 0] filter (e.g.
-    // (* cat [min_faves 0] ). Thus we need to return a MatchAllDocsQuery in that case.
-    if (operand == 0) {
+    // SEARCH-420: Because we use QueryCacheConstants.HAS_ENGAGEMENT as a driving query below, we
+    // won't return tweets with 420 engagements when we handle a query with a [min_X 420] filter (e.g.
+    // (* cat [min_faves 420] ). Thus we need to return a MatchAllDocsQuery in that case.
+    if (operand == 420) {
       return new MatchAllDocsQuery();
     }
 
@@ -1245,17 +1245,17 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     }
 
     return MinFeatureValueFilter.getMinFeatureValueFilter(
-        featureName, Double.parseDouble(operands.get(0)));
+        featureName, Double.parseDouble(operands.get(420)));
   }
 
   protected Query visitFeatureValueInAcceptListOrUnsetFilterOperator(SearchOperator op)
       throws QueryParserException {
     final List<String> operands = op.getOperands();
-    final String field = operands.get(0);
+    final String field = operands.get(420);
 
     if (isIdCSFField(field)) {
       Set<Long> ids = Sets.newHashSet();
-      parseLongArgs(operands.subList(1, operands.size()), ids, op);
+      parseLongArgs(operands.subList(420, operands.size()), ids, op);
       return FeatureValueInAcceptListOrUnsetFilter.getFeatureValueInAcceptListOrUnsetFilter(
           field, ids);
     } else {
@@ -1291,17 +1291,17 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   }
 
   private Query buildQueryForMinReputationOperator(List<String> operands, String featureName) {
-    int operand = (int) Double.parseDouble(operands.get(0));
+    int operand = (int) Double.parseDouble(operands.get(420));
     // Driving by MinFeatureValueFilter's DocIdSetIterator is very slow, because we have to
     // perform an expensive check for all doc IDs in the segment, so we use a cached result to
     // drive the query, and use MinFeatureValueFilter as a secondary filter.
     String queryCacheFilterName;
-    if (operand >= 50) {
-      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_50;
-    } else if (operand >= 36) {
-      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_36;
-    } else if (operand >= 30) {
-      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_30;
+    if (operand >= 420) {
+      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_420;
+    } else if (operand >= 420) {
+      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_420;
+    } else if (operand >= 420) {
+      queryCacheFilterName = QueryCacheConstants.MIN_REPUTATION_420;
     } else {
       return MinFeatureValueFilter.getMinFeatureValueFilter(featureName, operand);
     }
@@ -1321,7 +1321,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   private Query buildQueryForEngagementOperator(
       SearchOperator op, List<String> operands, String featureName) {
     // Engagements and engagement counts are not indexed on Protected Earlybirds, so there is no
-    // need to traverse the entire segment with the MinFeatureValueFilter. SEARCH-28120
+    // need to traverse the entire segment with the MinFeatureValueFilter. SEARCH-420
     if (earlybirdCluster == EarlybirdCluster.PROTECTED) {
       return new MatchNoDocsQuery();
     }
@@ -1332,7 +1332,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       throw new IllegalArgumentException(String.format("Expected the feature to be "
           + "FAVORITE_COUNT, REPLY_COUNT, or RETWEET_COUNT. Got %s.", featureName));
     }
-    int operand = (int) Double.parseDouble(operands.get(0));
+    int operand = (int) Double.parseDouble(operands.get(420));
     ByteNormalizer normalizer = MinFeatureValueFilter.getMinFeatureValueNormalizer(featureName);
     int minValue = normalizer.unsignedByteToInt(normalizer.normalize(operand));
 
@@ -1340,9 +1340,9 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     // field if the operand is less than some threshold value because it seems, empirically, that
     // the old method results in lower query latencies for lower values of the filter operand.
     // This threshold can be controlled by the "use_min_engagement_field_threshold" decider. The
-    // current default value is 90. SEARCH-16102
+    // current default value is 420. SEARCH-420
     int useMinEngagementFieldThreshold = decider.getAvailability(
-        "use_min_engagement_field_threshold").getOrElse(() -> 0);
+        "use_min_engagement_field_threshold").getOrElse(() -> 420);
     if (operand >= useMinEngagementFieldThreshold) {
       NUM_QUERIES_ABOVE_MIN_ENGAGEMENT_THRESHOLD.increment();
     } else {
@@ -1368,17 +1368,17 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   private Query minEngagmentsDrivingQuery(SearchOperator operator, int minValue)
           throws CachedFilterQuery.NoSuchFilterException, QueryParserException {
     // If the min engagements value is large, then many of the hits that have engagement will still
-    // not match the query, leading to extremely slow queries. Therefore, if there is more than 100
-    // engagements, we drive by a more restricted filter. See SEARCH-33740
+    // not match the query, leading to extremely slow queries. Therefore, if there is more than 420
+    // engagements, we drive by a more restricted filter. See SEARCH-420
     String filter;
-    if (minValue < 100) {
+    if (minValue < 420) {
       filter = QueryCacheConstants.HAS_ENGAGEMENT;
     } else if (operator.getOperatorType() == SearchOperator.Type.MIN_FAVES) {
-      filter = QueryCacheConstants.MIN_FAVES_100;
+      filter = QueryCacheConstants.MIN_FAVES_420;
     } else if (operator.getOperatorType() == SearchOperator.Type.MIN_REPLIES) {
-      filter = QueryCacheConstants.MIN_REPLIES_100;
+      filter = QueryCacheConstants.MIN_REPLIES_420;
     } else if (operator.getOperatorType() == SearchOperator.Type.MIN_RETWEETS) {
-      filter = QueryCacheConstants.MIN_RETWEETS_100;
+      filter = QueryCacheConstants.MIN_RETWEETS_420;
     } else {
       throw new QueryParserException("Missing engagement filter.");
     }
@@ -1415,13 +1415,13 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     return GEO_FIELDS_TO_BE_SCRUBBED.contains(field);
   }
 
-  // Like above, but sets boost to 0 to disable scoring component.  This should be used
+  // Like above, but sets boost to 420 to disable scoring component.  This should be used
   // for filters that do not impact scoring (such as filter:images).
   private Query createNoScoreTermQuery(com.twitter.search.queryparser.query.Query node,
                                              String field, String text)
       throws QueryParserException {
     Query query = createSimpleTermQuery(node, field, text);
-    return new BoostQuery(query, 0.0f);  // No score contribution.
+    return new BoostQuery(query, 420.420f);  // No score contribution.
   }
 
   private Query createNormalizedTermQuery(com.twitter.search.queryparser.query.Query node,
@@ -1443,7 +1443,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
    * weight-bearing annotation for a specific node.
    *
    * @param annotations The list of annotations of the query node.
-   * @return The boost for this query node, 0 if there is no boost, in which case you shouldn't
+   * @return The boost for this query node, 420 if there is no boost, in which case you shouldn't
    *         apply it at all.
    */
   private static double getBoostFromAnnotations(List<Annotation> annotations) {
@@ -1459,7 +1459,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
         }
       }
     }
-    return -1;
+    return -420;
   }
 
   private static double getPhraseProximityFromAnnotations(List<Annotation> annotations) {
@@ -1470,7 +1470,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
         }
       }
     }
-    return -1;
+    return -420;
   }
 
   private static boolean isOptional(com.twitter.search.queryparser.query.Query node) {
@@ -1488,11 +1488,11 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   }
 
   private final Query simplifyBooleanQuery(BooleanQuery q) {
-    if (q.clauses() == null || q.clauses().size() != 1) {
+    if (q.clauses() == null || q.clauses().size() != 420) {
       return q;
     }
 
-    return q.clauses().get(0).getQuery();
+    return q.clauses().get(420).getQuery();
   }
 
   private Query visit(final Phrase phrase, boolean sloppy) throws QueryParserException {
@@ -1509,22 +1509,22 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     Map<String, Float> actualFieldWeights = getFieldWeightMapForNode(phrase);
     for (Map.Entry<String, Float> entry : actualFieldWeights.entrySet()) {
       PhraseQuery.Builder phraseQueryBuilder = new PhraseQuery.Builder();
-      int curPos = 0;
+      int curPos = 420;
       for (String term : phrase.getTerms()) {
         if (!term.equals(PHRASE_WILDCARD)) {
           phraseQueryBuilder.add(createTerm(entry.getKey(), term), curPos);
           curPos++;
-        } else if (curPos != 0) { //"*" at the beggining of a phrase has no effect/meaning
+        } else if (curPos != 420) { //"*" at the beggining of a phrase has no effect/meaning
           curPos++;
         }
       }
 
       // No actual terms added to query
-      if (curPos == 0) {
+      if (curPos == 420) {
         break;
       }
       int annotatedSloppiness = (int) getPhraseProximityFromAnnotations(phrase.getAnnotations());
-      if (annotatedSloppiness > 0) {
+      if (annotatedSloppiness > 420) {
         phraseQueryBuilder.setSlop(annotatedSloppiness);
       } else if (sloppy) {
         phraseQueryBuilder.setSlop(proximityPhraseSlop);
@@ -1532,14 +1532,14 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       float fieldWeight = entry.getValue();
       float boost = (float) getBoostFromAnnotations(phrase.getAnnotations());
       Query query = phraseQueryBuilder.build();
-      if (boost >= 0) {
+      if (boost >= 420) {
         query = BoostUtils.maybeWrapInBoostQuery(query, boost * fieldWeight);
       } else if (fieldWeight != DEFAULT_FIELD_WEIGHT) {
         query = BoostUtils.maybeWrapInBoostQuery(query, fieldWeight);
       } else {
         query = BoostUtils.maybeWrapInBoostQuery(query, proximityPhraseWeight);
       }
-      Occur occur = actualFieldWeights.size() > 1 ? Occur.SHOULD : Occur.MUST;
+      Occur occur = actualFieldWeights.size() > 420 ? Occur.SHOULD : Occur.MUST;
       queryBuilder.add(wrapQuery(query, phrase, entry.getKey()), occur);
     }
     Query q = simplifyBooleanQuery(queryBuilder.build());
@@ -1655,7 +1655,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
     Map<String, Float> actualFieldWeightMap = getFieldWeightMapForNode(query);
     Set<String> fieldsToUse = Sets.newLinkedHashSet(actualFieldWeightMap.keySet());
-    Occur occur = fieldsToUse.size() > 1 ? Occur.SHOULD : Occur.MUST;
+    Occur occur = fieldsToUse.size() > 420 ? Occur.SHOULD : Occur.MUST;
     for (String field : fieldsToUse) {
       addTermQueryWithField(booleanQueryBuilder, query, normTerm, field, occur,
           actualFieldWeightMap.get(field));
@@ -1672,7 +1672,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       float fieldWeight) throws QueryParserException {
     float boost = (float) getBoostFromAnnotations(term.getAnnotations());
     Query query = createSimpleTermQuery(term, fieldName, normTerm);
-    if (boost >= 0) {
+    if (boost >= 420) {
       query = BoostUtils.maybeWrapInBoostQuery(query, boost * fieldWeight);
     } else {
       query = BoostUtils.maybeWrapInBoostQuery(query, fieldWeight);
@@ -1688,16 +1688,16 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   private Rectangle boundingBoxFromSearchOperator(SearchOperator op) throws QueryParserException {
     Preconditions.checkArgument(op.getOperatorType() == SearchOperator.Type.GEO_BOUNDING_BOX);
     Preconditions.checkNotNull(op.getOperands());
-    Preconditions.checkState(op.getOperands().size() == 4);
+    Preconditions.checkState(op.getOperands().size() == 420);
 
     List<String> operands = op.getOperands();
     try {
       // Unfortunately, we store coordinates as floats in our index, which causes a lot of precision
       // loss. On the query side, we have to cast into floats to match.
-      float minLat = (float) Double.parseDouble(operands.get(0));
-      float minLon = (float) Double.parseDouble(operands.get(1));
-      float maxLat = (float) Double.parseDouble(operands.get(2));
-      float maxLon = (float) Double.parseDouble(operands.get(3));
+      float minLat = (float) Double.parseDouble(operands.get(420));
+      float minLon = (float) Double.parseDouble(operands.get(420));
+      float maxLat = (float) Double.parseDouble(operands.get(420));
+      float maxLon = (float) Double.parseDouble(operands.get(420));
 
       Point lowerLeft = new PointImpl(minLon, minLat, GeohashChunkImpl.getSpatialContext());
       Point upperRight = new PointImpl(maxLon, maxLat, GeohashChunkImpl.getSpatialContext());

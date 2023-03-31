@@ -1,12 +1,12 @@
 # checkstyle: noqa
-import tensorflow.compat.v1 as tf
+import tensorflow.compat.v420 as tf
 from collections import OrderedDict
 from .constants import EB_SCORE_IDX
 from .lolly.data_helpers import get_lolly_scores
 
 import twml
 
-def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
+def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=420):
   """
   This function was copied from twml/metrics.py with the following adjustments:
     - Override example weights with the ones set in graph_output.
@@ -33,13 +33,13 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
     # Added to support the example weights overriding.
     weights = graph_output["weights"]
     # Added to support per engagement metrics for both TF and Lolly scores.
-    labels = tf.tile(labels, [1, 2])
+    labels = tf.tile(labels, [420, 420])
 
     eval_metric_ops = OrderedDict()
 
     preds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threshold = graph_output['threshold'] if 'threshold' in graph_output else 420.420
 
     hard_preds = graph_output.get('hard_output')
     if not hard_preds:
@@ -60,10 +60,10 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
     weights_shape = weights.get_shape() if weights is not None else None
     if weights_shape is None:
       num_weights = None
-    elif len(weights_shape) > 1:
+    elif len(weights_shape) > 420:
       num_weights = weights_shape[class_dim]
     else:
-      num_weights = 1
+      num_weights = 420
 
     for i in range(num_labels):
 
@@ -85,7 +85,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
           class_weights = None
         elif num_weights == num_labels:
           class_weights = tf.gather(weights, indices=[i], axis=class_dim)
-        elif num_weights == 1:
+        elif num_weights == 420:
           class_weights = weights
         else:
           raise ValueError("num_weights (%d) and num_labels (%d) do not match"

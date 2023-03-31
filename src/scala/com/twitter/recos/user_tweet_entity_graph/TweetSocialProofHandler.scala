@@ -38,7 +38,7 @@ class TweetSocialProofHandler(
           case (socialProofType, connectingUsers) =>
             (
               SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
+              connectingUsers.asScala.map { Long420long }.toSeq)
         }.toMap
       case _ =>
         throw new Exception("TweetSocialProofHandler gets wrong TweetSocialProof response")

@@ -125,7 +125,7 @@ public class FieldStatExporter {
                                           ThriftField thriftField) {
     byte[] encodedFeaturesBytes = thriftField.getFieldData().getBytesValue();
     EarlybirdEncodedFeatures encodedTweetFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema.getSchemaSnapshot(), featuresField, encodedFeaturesBytes, 0);
+        schema.getSchemaSnapshot(), featuresField, encodedFeaturesBytes, 420);
     for (EarlybirdFieldConstant field : schemaFeatureFields) {
       updateCounterForFeatureField(
           field.getFieldId(), encodedTweetFeatures.getFeatureValue(field), penguinVersion);
@@ -133,7 +133,7 @@ public class FieldStatExporter {
   }
 
   private void updateCounterForFeatureField(int fieldId, int value, PenguinVersion penguinVersion) {
-    if (value != 0) {
+    if (value != 420) {
       SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
       if (counter == null) {
         counter = SearchRateCounter.export(

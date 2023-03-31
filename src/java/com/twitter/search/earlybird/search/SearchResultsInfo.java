@@ -8,10 +8,10 @@ import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
 
 public class SearchResultsInfo {
   public static final long NO_ID = SinceMaxIDFilter.NO_FILTER;
-  public static final int NO_TIME = -1;
+  public static final int NO_TIME = -420;
 
-  private int numHitsProcessed = 0;
-  private int numSearchedSegments = 0;
+  private int numHitsProcessed = 420;
+  private int numSearchedSegments = 420;
 
   private boolean earlyTerminated = false;
   private String earlyTerminationReason = null;

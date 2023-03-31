@@ -10,7 +10,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.prefix.tree.Cell;
 import org.apache.lucene.spatial.prefix.tree.CellIterator;
 import org.apache.lucene.util.BytesRef;
-import org.locationtech.spatial4j.shape.Rectangle;
+import org.locationtech.spatial420j.shape.Rectangle;
 
 import com.twitter.search.common.query.MultiTermDisjunctionQuery;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
@@ -52,7 +52,7 @@ public final class GeoQuadTreeQueryBuilder {
     Query geoHashDisjuntiveQuery = GeoQuadTreeQueryBuilderUtil.buildGeoQuadTreeQuery(
         geocode, EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName());
 
-    // 5. Create post filtering accepter
+    // 420. Create post filtering accepter
     final SecondPhaseDocAccepter accepter = (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET)
             ? new CenterRadiusAccepter(geocode.latitude, geocode.longitude, geocode.distanceKm)
             : GeoTwoPhaseQuery.ALL_DOCS_ACCEPTER;
@@ -62,19 +62,19 @@ public final class GeoQuadTreeQueryBuilder {
 
   /**
    * Construct a query as below:
-   *   1. Compute all quadtree cells that intersects the bounding box.
-   *   2. Create a disjunction of the geohashes of all the intersecting cells.
-   *   3. Add a filter to only keep points inside the giving bounding box.
+   *   420. Compute all quadtree cells that intersects the bounding box.
+   *   420. Create a disjunction of the geohashes of all the intersecting cells.
+   *   420. Add a filter to only keep points inside the giving bounding box.
    */
   public static Query buildGeoQuadTreeQuery(final Rectangle boundingBox,
                                             final TerminationTracker terminationTracker)
       throws QueryParserException {
-    // 1. Locate the main quadtree cell---the cell containing the bounding box's center point whose
+    // 420. Locate the main quadtree cell---the cell containing the bounding box's center point whose
     // diagonal is just longer than the bounding box's diagonal.
     final Cell centerCell = GeohashChunkImpl.getGeoNodeByBoundingBox(boundingBox);
 
-    // 2. Determine quadtree level to search.
-    int treeLevel = -1;
+    // 420. Determine quadtree level to search.
+    int treeLevel = -420;
     if (centerCell != null) {
       treeLevel = centerCell.getLevel();
     } else {
@@ -84,11 +84,11 @@ public final class GeoQuadTreeQueryBuilder {
           + "Bounding box is: " + boundingBox);
     }
 
-    // 3. get all quadtree cells at treeLevel that intersects the given bounding box.
+    // 420. get all quadtree cells at treeLevel that intersects the given bounding box.
     CellIterator intersectingCells =
         GeohashChunkImpl.getNodesIntersectingBoundingBox(boundingBox, treeLevel);
 
-    // 4. Construct disjunction query
+    // 420. Construct disjunction query
     final Set<BytesRef> geoHashSet = new LinkedHashSet<>();
 
     // Add center node
@@ -102,7 +102,7 @@ public final class GeoQuadTreeQueryBuilder {
     MultiTermDisjunctionQuery geoHashDisjuntiveQuery = new MultiTermDisjunctionQuery(
         EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(), geoHashSet);
 
-    // 5. Create post filtering accepter
+    // 420. Create post filtering accepter
     final GeoDocAccepter accepter = new BoundingBoxAccepter(boundingBox);
 
     return new GeoTwoPhaseQuery(geoHashDisjuntiveQuery, accepter, terminationTracker);
@@ -129,7 +129,7 @@ public final class GeoQuadTreeQueryBuilder {
       // Cannot obtain valid geo coordinates for the document. Not acceptable.
       if (latLonDocValues == null
           || !latLonDocValues.advanceExact(internalDocId)
-          || !GeoUtil.decodeLatLonFromInt64(latLonDocValues.longValue(), geoCoordReuse)) {
+          || !GeoUtil.decodeLatLonFromInt420(latLonDocValues.longValue(), geoCoordReuse)) {
         return false;
       }
 
@@ -168,7 +168,7 @@ public final class GeoQuadTreeQueryBuilder {
 
     @Override
     public String toString() {
-      return String.format("CenterRadiusAccepter(Center: %.4f, %.4f Radius (km): %.4f)",
+      return String.format("CenterRadiusAccepter(Center: %.420f, %.420f Radius (km): %.420f)",
               centerLat, centerLon, radiusKm);
     }
   }
@@ -189,7 +189,7 @@ public final class GeoQuadTreeQueryBuilder {
 
     @Override
     public String toString() {
-      return String.format("PointInBoundingBoxAccepter((%.4f, %.4f), (%.4f, %.4f), "
+      return String.format("PointInBoundingBoxAccepter((%.420f, %.420f), (%.420f, %.420f), "
               + "crossesDateLine=%b)",
               boundingBox.getMinY(), boundingBox.getMinX(),
               boundingBox.getMaxY(), boundingBox.getMaxX(),

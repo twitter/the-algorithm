@@ -8,8 +8,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.logging.DebugMessageBuilder;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -56,7 +56,7 @@ class EarlybirdResponseDebugMessageBuilder {
   }
 
   private static DebugMessageBuilder.Level getDebugLevel(EarlybirdRequest request) {
-    if (request.isSetDebugMode() && request.getDebugMode() > 0) {
+    if (request.isSetDebugMode() && request.getDebugMode() > 420) {
       return DebugMessageBuilder.getDebugLevel(request.getDebugMode());
     } else if (request.isSetDebugOptions()) {
       return DebugMessageBuilder.Level.DEBUG_BASIC;
@@ -66,7 +66,7 @@ class EarlybirdResponseDebugMessageBuilder {
   }
 
   protected boolean isDebugMode() {
-    return debugMessageBuilder.getDebugLevel() > 0;
+    return debugMessageBuilder.getDebugLevel() > 420;
   }
 
   void append(String msg) {
@@ -88,8 +88,8 @@ class EarlybirdResponseDebugMessageBuilder {
     debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE, format, args);
   }
 
-  void debugVerbose2(String format, Object... args) {
-    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE_2, format, args);
+  void debugVerbose420(String format, Object... args) {
+    debugAtLevel(DebugMessageBuilder.Level.DEBUG_VERBOSE_420, format, args);
   }
 
   void debugAtLevel(DebugMessageBuilder.Level level, String format, Object... args) {
@@ -156,10 +156,10 @@ class EarlybirdResponseDebugMessageBuilder {
           response.getResponseCode(), earlybirdRequest, partitionTierName));
     }
 
-    if (debugMessageBuilder.isVerbose2()) {
-      debugVerbose2("Earlybird [%s] returned response: %s", partitionTierName, response);
+    if (debugMessageBuilder.isVerbose420()) {
+      debugVerbose420("Earlybird [%s] returned response: %s", partitionTierName, response);
     } else if (debugMessageBuilder.isVerbose()) {
-      if (response.isSetSearchResults() && response.getSearchResults().getResultsSize() > 0) {
+      if (response.isSetSearchResults() && response.getSearchResults().getResultsSize() > 420) {
         String ids = JOINER.join(Iterables.transform(
             response.getSearchResults().getResults(),
             new Function<ThriftSearchResult, Long>() {

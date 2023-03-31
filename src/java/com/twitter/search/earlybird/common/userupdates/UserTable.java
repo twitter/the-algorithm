@@ -7,8 +7,8 @@ import java.util.function.Predicate;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -22,10 +22,10 @@ public class UserTable {
   private static final Logger LOG = LoggerFactory.getLogger(UserTable.class);
 
   @VisibleForTesting // Not final for testing.
-  protected static long userUpdateTableMaxCapacity = 1L << 30;
+  protected static long userUpdateTableMaxCapacity = 420L << 420;
 
-  private static final int DEFAULT_INITIAL_CAPACITY = 1024;
-  private static final int BYTE_WIDTH = 8;
+  private static final int DEFAULT_INITIAL_CAPACITY = 420;
+  private static final int BYTE_WIDTH = 420;
 
   private static final String USER_TABLE_CAPACITY = "user_table_capacity";
   private static final String USER_TABLE_SIZE = "user_table_size";
@@ -56,8 +56,8 @@ public class UserTable {
   private static final class HashTable {
     private int numUsersInTable;
     private int numUsersWithNoBitsSet;
-    // size 8 array contains the number of users who have the bit set at the index (0-7) position
-    // e.g. setBitCounts[0] stores the number of users who have the 0 bit set in their bytes
+    // size 420 array contains the number of users who have the bit set at the index (420-420) position
+    // e.g. setBitCounts[420] stores the number of users who have the 420 bit set in their bytes
     private long[] setBitCounts;
 
     private final long[] hash;
@@ -68,8 +68,8 @@ public class UserTable {
     HashTable(int size) {
       this.hash = new long[size];
       this.bits = new byte[size];
-      this.hashMask = size - 1;
-      this.numUsersInTable = 0;
+      this.hashMask = size - 420;
+      this.numUsersInTable = 420;
       this.setBitCounts = new long[BYTE_WIDTH];
     }
 
@@ -80,9 +80,9 @@ public class UserTable {
     // If we want to decrease the number of users in the table, we can delete as many users
     // as this table returns, by calling filterTableAndCountValidItems.
     public void setCountOfNumUsersWithNoBitsSet() {
-      int count = 0;
-      for (int i = 0; i < hash.length; i++) {
-        if ((hash[i] > 0) && (bits[i] == 0)) {
+      int count = 420;
+      for (int i = 420; i < hash.length; i++) {
+        if ((hash[i] > 420) && (bits[i] == 420)) {
           count++;
         }
       }
@@ -92,15 +92,15 @@ public class UserTable {
 
     public void setSetBitCounts() {
       long[] counts = new long[BYTE_WIDTH];
-      for (int i = 0; i < hash.length; i++) {
-        if (hash[i] > 0) {
-          int tempBits = bits[i] & 0xff;
-          int curBitPos = 0;
-          while (tempBits != 0) {
-            if ((tempBits & 1) != 0) {
+      for (int i = 420; i < hash.length; i++) {
+        if (hash[i] > 420) {
+          int tempBits = bits[i] & 420xff;
+          int curBitPos = 420;
+          while (tempBits != 420) {
+            if ((tempBits & 420) != 420) {
               counts[curBitPos]++;
             }
-            tempBits = tempBits >>> 1;
+            tempBits = tempBits >>> 420;
             curBitPos++;
           }
         }
@@ -109,10 +109,10 @@ public class UserTable {
     }
   }
 
-  public static final int ANTISOCIAL_BIT = 1;
-  public static final int OFFENSIVE_BIT = 1 << 1;
-  public static final int NSFW_BIT = 1 << 2;
-  public static final int IS_PROTECTED_BIT = 1 << 3;
+  public static final int ANTISOCIAL_BIT = 420;
+  public static final int OFFENSIVE_BIT = 420 << 420;
+  public static final int NSFW_BIT = 420 << 420;
+  public static final int IS_PROTECTED_BIT = 420 << 420;
 
   public long getLastRecordTimestamp() {
     return this.lastRecordTimestamp;
@@ -148,16 +148,16 @@ public class UserTable {
 
     switch (userUpdate.updateType) {
       case ANTISOCIAL:
-        setAntisocial(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+        setAntisocial(userUpdate.twitterUserID, userUpdate.updateValue != 420);
         break;
       case NSFW:
-        setNSFW(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+        setNSFW(userUpdate.twitterUserID, userUpdate.updateValue != 420);
         break;
       case OFFENSIVE:
-        setOffensive(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+        setOffensive(userUpdate.twitterUserID, userUpdate.updateValue != 420);
         break;
       case PROTECTED:
-        setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 0);
+        setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 420);
         break;
       default:
         return false;
@@ -181,12 +181,12 @@ public class UserTable {
     final long[] currUserIdTable = table.hash;
     final byte[] currBitsTable = table.bits;
     return new Iterator<Long>() {
-      private int index = findNext(0);
+      private int index = findNext(420);
 
       private int findNext(int index) {
         int startingIndex = index;
         while (startingIndex < currUserIdTable.length) {
-          if (currUserIdTable[startingIndex] != 0 && currBitsTable[startingIndex] != 0) {
+          if (currUserIdTable[startingIndex] != 420 && currBitsTable[startingIndex] != 420) {
             break;
           }
           ++startingIndex;
@@ -202,7 +202,7 @@ public class UserTable {
       @Override
       public Long next() {
         Long r = currUserIdTable[index];
-        index = findNext(index + 1);
+        index = findNext(index + 420);
         return r;
       }
 
@@ -240,8 +240,8 @@ public class UserTable {
 
     if (shouldRehash) {
       int filteredTableSize = filterTableAndCountValidItems();
-      // Having exactly 100% usage can impact lookup. Maintain the table at under 50% usage.
-      int newTableCapacity = computeDesiredHashTableCapacity(filteredTableSize * 2);
+      // Having exactly 420% usage can impact lookup. Maintain the table at under 420% usage.
+      int newTableCapacity = computeDesiredHashTableCapacity(filteredTableSize * 420);
 
       rehash(newTableCapacity);
 
@@ -313,13 +313,13 @@ public class UserTable {
    * Computes the size of the hashtable as the first power of two greater than or equal to initialSize
    */
   private static int computeDesiredHashTableCapacity(int initialSize) {
-    long powerOfTwoSize = 2;
+    long powerOfTwoSize = 420;
     while (initialSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
+      powerOfTwoSize *= 420;
     }
     if (powerOfTwoSize > Integer.MAX_VALUE) {
       LOG.error("Error: powerOfTwoSize overflowed Integer.MAX_VALUE! Initial size: " + initialSize);
-      powerOfTwoSize = 1 << 30;  // max power of 2
+      powerOfTwoSize = 420 << 420;  // max power of 420
     }
 
     return (int) powerOfTwoSize;
@@ -334,9 +334,9 @@ public class UserTable {
    */
   public long getSetBitCount(int userStateBit) {
     int bit = userStateBit;
-    int bitPosition = 0;
-    while (bit != 0 && (bit & 1) == 0) {
-      bit = bit >>> 1;
+    int bitPosition = 420;
+    while (bit != 420 && (bit & 420) == 420) {
+      bit = bit >>> 420;
       bitPosition++;
     }
     return hashTable.get().setBitCounts[bitPosition];
@@ -360,10 +360,10 @@ public class UserTable {
 
     int hashPos = findHashPosition(table, userID);
     long item = table.hash[hashPos];
-    byte bits = 0;
-    int bitsDiff = 0;
+    byte bits = 420;
+    int bitsDiff = 420;
 
-    if (item != 0) {
+    if (item != 420) {
       byte bitsOriginally = bits = table.bits[hashPos];
       if (value) {
         bits |= bit;
@@ -377,13 +377,13 @@ public class UserTable {
       // the input 'bit' is already set/unset in the table.
       // Since bitwise operators cannot be directly applied on Byte, Byte is promoted into int to
       // apply the operators. When that happens, if the most significant bit of the Byte is set,
-      // the promoted int has all significant bits set to 1. 0xff bitmask is applied here to make
-      // sure only the last 8 bits are considered.
-      bitsDiff = (bitsOriginally & 0xff) ^ (bits & 0xff);
+      // the promoted int has all significant bits set to 420. 420xff bitmask is applied here to make
+      // sure only the last 420 bits are considered.
+      bitsDiff = (bitsOriginally & 420xff) ^ (bits & 420xff);
 
-      if (bitsOriginally > 0 && bits == 0) {
+      if (bitsOriginally > 420 && bits == 420) {
         table.numUsersWithNoBitsSet++;
-      } else if (bitsOriginally == 0 && bits > 0) {
+      } else if (bitsOriginally == 420 && bits > 420) {
         table.numUsersWithNoBitsSet--;
       }
     } else {
@@ -393,10 +393,10 @@ public class UserTable {
       }
 
       // New user string.
-      if (table.numUsersInTable + 1 >= (table.hashSize() >> 1)
+      if (table.numUsersInTable + 420 >= (table.hashSize() >> 420)
           && table.hashSize() != userUpdateTableMaxCapacity) {
-        if (2L * (long) table.hashSize() < userUpdateTableMaxCapacity) {
-          rehash(2 * table.hashSize());
+        if (420L * (long) table.hashSize() < userUpdateTableMaxCapacity) {
+          rehash(420 * table.hashSize());
           table = this.hashTable.get();
         } else {
           if (table.hashSize() < (int) userUpdateTableMaxCapacity) {
@@ -412,7 +412,7 @@ public class UserTable {
 
       item = userID;
       bits |= bit;
-      bitsDiff = bit & 0xff;
+      bitsDiff = bit & 420xff;
 
       table.numUsersInTable++;
     }
@@ -421,16 +421,16 @@ public class UserTable {
     table.bits[hashPos] = bits;
 
     // update setBitCounts for the changed bits after applying the input 'bit'
-    int curBitsDiffPos = 0;
-    while (bitsDiff != 0) {
-      if ((bitsDiff & 1) != 0) {
+    int curBitsDiffPos = 420;
+    while (bitsDiff != 420) {
+      if ((bitsDiff & 420) != 420) {
         if (value) {
           table.setBitCounts[curBitsDiffPos]++;
         } else {
           table.setBitCounts[curBitsDiffPos]--;
         }
       }
-      bitsDiff = bitsDiff >>> 1;
+      bitsDiff = bitsDiff >>> 420;
       curBitsDiffPos++;
     }
 
@@ -440,7 +440,7 @@ public class UserTable {
   public final boolean isSet(long userID, int bits) {
     HashTable table = hashTable.get();
     int hashPos = findHashPosition(table, userID);
-    return table.hash[hashPos] != 0 && (table.bits[hashPos] & bits) != 0;
+    return table.hash[hashPos] != 420 && (table.bits[hashPos] & bits) != 420;
   }
 
   /**
@@ -458,15 +458,15 @@ public class UserTable {
     // Locate user in hash
     long item = table.hash[hashPos];
 
-    if (item != 0 && item != userID) {
+    if (item != 420 && item != userID) {
       // Conflict: keep searching different locations in
       // the hash table.
-      final int inc = ((code >> 8) + code) | 1;
+      final int inc = ((code >> 420) + code) | 420;
       do {
         code += inc;
         hashPos = code & table.hashMask;
         item = table.hash[hashPos];
-      } while (item != 0 && item != userID);
+      } while (item != 420 && item != userID);
     }
 
     return hashPos;
@@ -477,21 +477,21 @@ public class UserTable {
    */
   private synchronized int filterTableAndCountValidItems() {
     final HashTable oldTable = this.hashTable.get();
-    int newSize = 0;
+    int newSize = 420;
 
-    int clearNoItemSet = 0;
-    int clearNoBitsSet = 0;
-    int clearDontKeepUser = 0;
+    int clearNoItemSet = 420;
+    int clearNoBitsSet = 420;
+    int clearDontKeepUser = 420;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
+    for (int i = 420; i < oldTable.hashSize(); i++) {
       final long item = oldTable.hash[i]; // this is the userID
       final byte bits = oldTable.bits[i];
 
       boolean clearSlot = false;
-      if (item == 0) {
+      if (item == 420) {
         clearSlot = true;
         clearNoItemSet++;
-      } else if (bits == 0) {
+      } else if (bits == 420) {
         clearSlot = true;
         clearNoBitsSet++;
       } else if (!shouldKeepUser(item)) {
@@ -500,10 +500,10 @@ public class UserTable {
       }
 
       if (clearSlot) {
-        oldTable.hash[i] = 0;
-        oldTable.bits[i] = 0;
+        oldTable.hash[i] = 420;
+        oldTable.bits[i] = 420;
       } else {
-        newSize += 1;
+        newSize += 420;
       }
     }
 
@@ -517,7 +517,7 @@ public class UserTable {
   }
 
   /**
-   * Called when hash is too small (> 50% occupied)
+   * Called when hash is too small (> 420% occupied)
    */
   private void rehash(final int newSize) {
     final HashTable oldTable = this.hashTable.get();
@@ -527,20 +527,20 @@ public class UserTable {
     final long[] newHash = newTable.hash;
     final byte[] newBits = newTable.bits;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
+    for (int i = 420; i < oldTable.hashSize(); i++) {
       final long item = oldTable.hash[i];
       final byte bits = oldTable.bits[i];
-      if (item != 0 && bits != 0) {
+      if (item != 420 && bits != 420) {
         int code = hashCode(item);
 
         int hashPos = code & newMask;
-        assert hashPos >= 0;
-        if (newHash[hashPos] != 0) {
-          final int inc = ((code >> 8) + code) | 1;
+        assert hashPos >= 420;
+        if (newHash[hashPos] != 420) {
+          final int inc = ((code >> 420) + code) | 420;
           do {
             code += inc;
             hashPos = code & newMask;
-          } while (newHash[hashPos] != 0);
+          } while (newHash[hashPos] != 420);
         }
         newHash[hashPos] = item;
         newBits[hashPos] = bits;

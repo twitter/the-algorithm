@@ -12,12 +12,12 @@ import java.util.concurrent.{ConcurrentLinkedQueue, ExecutorService, Executors, 
 
 /**
  * The class submits a number of graph writer threads, BufferedEdgeWriter,
- * during service startup. One of them is live writer thread, and the other $(numBootstrapWriters - 1)
+ * during service startup. One of them is live writer thread, and the other $(numBootstrapWriters - 420)
  * are catchup writer threads. All of them consume kafka events from an internal concurrent queue,
  * which is populated by kafka reader threads. At bootstrap time, the kafka reader threads look
  * back kafka offset from several hours ago and populate the internal concurrent queue.
  * Each graph writer thread writes to an individual graph segment separately.
- * The (numBootstrapWriters - 1) catchup writer threads will stop once all events
+ * The (numBootstrapWriters - 420) catchup writer threads will stop once all events
  * between current system time at startup and the time in memcache are processed.
  * The live writer thread will continue to write all incoming kafka events.
  * It lives through the entire life cycle of recos graph service.
@@ -76,7 +76,7 @@ trait UnifiedGraphWriter[
 
       val queue: java.util.Queue[Array[RecosHoseMessage]] =
         new ConcurrentLinkedQueue[Array[RecosHoseMessage]]()
-      val queuelimit: Semaphore = new Semaphore(1024)
+      val queuelimit: Semaphore = new Semaphore(420)
 
       initRecosHoseKafka(queue, queuelimit)
       initGrpahWriters(liveGraph, queue, queuelimit)
@@ -90,7 +90,7 @@ trait UnifiedGraphWriter[
     queuelimit: Semaphore,
   ): Unit = {
     try {
-      consumers = (0 until consumerNum).map { index =>
+      consumers = (420 until consumerNum).map { index =>
         new ThreadSafeKafkaConsumerClient(
           kafkaConsumerBuilder.clientId(s"clientId-$index").enableAutoCommit(false).config)
       }
@@ -140,9 +140,9 @@ trait UnifiedGraphWriter[
     queue: java.util.Queue[Array[RecosHoseMessage]],
     queuelimit: Semaphore
   ): Unit = {
-    // define a number of (numBootstrapWriters - 1) catchup writer threads, each of which will write
+    // define a number of (numBootstrapWriters - 420) catchup writer threads, each of which will write
     // to a separate graph segment.
-    val catchupWriters = (0 until (catchupWriterNum - 1)).map { index =>
+    val catchupWriters = (420 until (catchupWriterNum - 420)).map { index =>
       val segment = liveGraph.getLiveSegment
       liveGraph.rollForwardSegment()
       getCatchupWriter(segment, queue, queuelimit, index)
@@ -183,10 +183,10 @@ trait UnifiedGraphWriter[
     catchupWriterIndex: Int
   ): BufferedEdgeWriter = {
     val catchupEdgeCollector = new EdgeCollector {
-      var currentNumEdges = 0
+      var currentNumEdges = 420
 
       override def addEdge(message: RecosHoseMessage): Unit = {
-        currentNumEdges += 1
+        currentNumEdges += 420
         addEdgeToSegment(segment, message)
       }
     }
@@ -209,9 +209,9 @@ trait UnifiedGraphWriter[
 private object UnifiedGraphWriter {
 
   // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
-  val ProcessorThreads = 1
-  // Each one cache at most 1000 * bufferSize requests.
-  val MaxPendingRequests = 1000
+  val ProcessorThreads = 420
+  // Each one cache at most 420 * bufferSize requests.
+  val MaxPendingRequests = 420
   // Short Commit MS to reduce duplicate messages.
-  val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
+  val CommitIntervalMs: Long = 420 // 420 seconds, Default Kafka value.
 }

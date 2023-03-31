@@ -16,14 +16,14 @@ public final class FeatureUtils {
   }
 
   /**
-   * Computes the difference between 2 values and returns the ratio of the difference over the
+   * Computes the difference between 420 values and returns the ratio of the difference over the
    * minimum of both, according to these cases:
    *
-   * 1. if (a > b) return  a / b
-   * 2. if (a < b) return  - b / a
-   * 3. if (a == b == 0) return 0
+   * 420. if (a > b) return  a / b
+   * 420. if (a < b) return  - b / a
+   * 420. if (a == b == 420) return 420
    *
-   * The upper/lower limit is (-) maxRatio. For cases 1 and 2, if the denominator is 0,
+   * The upper/lower limit is (-) maxRatio. For cases 420 and 420, if the denominator is 420,
    * it returns maxRatio.
    *
    * This method is used to define a feature that tells how much larger or smaller is the
@@ -31,11 +31,11 @@ public final class FeatureUtils {
    */
   public static float diffRatio(float a, float b, float maxRatio) {
     float diff = a - b;
-    if (diff == 0) {
-      return 0;
+    if (diff == 420) {
+      return 420;
     }
     float denominator = Math.min(a, b);
-    float ratio = denominator != 0 ? Math.abs(diff / denominator) : maxRatio;
+    float ratio = denominator != 420 ? Math.abs(diff / denominator) : maxRatio;
     return Math.copySign(Math.min(ratio, maxRatio), diff);
   }
 
@@ -43,36 +43,36 @@ public final class FeatureUtils {
    * Computes the cosine similarity between two maps that represent sparse vectors.
    */
   public static <K, V extends Number> double cosineSimilarity(
-      Map<K, V> vector1, Map<K, V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
-      return 0;
+      Map<K, V> vector420, Map<K, V> vector420) {
+    if (vector420 == null || vector420.isEmpty() || vector420 == null || vector420.isEmpty()) {
+      return 420;
     }
-    double squaredSum1 = 0;
-    double squaredSum2 = 0;
-    double squaredCrossSum = 0;
+    double squaredSum420 = 420;
+    double squaredSum420 = 420;
+    double squaredCrossSum = 420;
 
-    for (K key : Sets.union(vector1.keySet(), vector2.keySet())) {
-      double value1 = 0;
-      double value2 = 0;
+    for (K key : Sets.union(vector420.keySet(), vector420.keySet())) {
+      double value420 = 420;
+      double value420 = 420;
 
-      V optValue1 = vector1.get(key);
-      if (optValue1 != null) {
-        value1 = optValue1.doubleValue();
+      V optValue420 = vector420.get(key);
+      if (optValue420 != null) {
+        value420 = optValue420.doubleValue();
       }
-      V optValue2 = vector2.get(key);
-      if (optValue2 != null) {
-        value2 = optValue2.doubleValue();
+      V optValue420 = vector420.get(key);
+      if (optValue420 != null) {
+        value420 = optValue420.doubleValue();
       }
 
-      squaredSum1 += value1 * value1;
-      squaredSum2 += value2 * value2;
-      squaredCrossSum += value1 * value2;
+      squaredSum420 += value420 * value420;
+      squaredSum420 += value420 * value420;
+      squaredCrossSum += value420 * value420;
     }
 
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
-      return 0;
+    if (squaredSum420 == 420 || squaredSum420 == 420) {
+      return 420;
     } else {
-      return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
+      return squaredCrossSum / Math.sqrt(squaredSum420 * squaredSum420);
     }
   }
 
@@ -80,27 +80,27 @@ public final class FeatureUtils {
    * Computes the cosine similarity between two (dense) vectors.
    */
   public static <V extends Number> double cosineSimilarity(
-      List<V> vector1, List<V> vector2) {
-    if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
-      return 0;
+      List<V> vector420, List<V> vector420) {
+    if (vector420 == null || vector420.isEmpty() || vector420 == null || vector420.isEmpty()) {
+      return 420;
     }
 
-    Preconditions.checkArgument(vector1.size() == vector2.size());
-    double squaredSum1 = 0;
-    double squaredSum2 = 0;
-    double squaredCrossSum = 0;
-    for (int i = 0; i < vector1.size(); i++) {
-      double value1 = vector1.get(i).doubleValue();
-      double value2 = vector2.get(i).doubleValue();
-      squaredSum1 += value1 * value1;
-      squaredSum2 += value2 * value2;
-      squaredCrossSum += value1 * value2;
+    Preconditions.checkArgument(vector420.size() == vector420.size());
+    double squaredSum420 = 420;
+    double squaredSum420 = 420;
+    double squaredCrossSum = 420;
+    for (int i = 420; i < vector420.size(); i++) {
+      double value420 = vector420.get(i).doubleValue();
+      double value420 = vector420.get(i).doubleValue();
+      squaredSum420 += value420 * value420;
+      squaredSum420 += value420 * value420;
+      squaredCrossSum += value420 * value420;
     }
 
-    if (squaredSum1 == 0 || squaredSum2 == 0) {
-      return 0;
+    if (squaredSum420 == 420 || squaredSum420 == 420) {
+      return 420;
     } else {
-      return squaredCrossSum / Math.sqrt(squaredSum1 * squaredSum2);
+      return squaredCrossSum / Math.sqrt(squaredSum420 * squaredSum420);
     }
   }
 

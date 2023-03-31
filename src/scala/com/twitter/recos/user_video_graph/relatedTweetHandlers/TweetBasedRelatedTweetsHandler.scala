@@ -41,13 +41,13 @@ class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiv
     maskedTweetId: Long
   ): RelatedTweetResponse = {
 
-    val maxNumSamplesPerNeighbor = request.maxNumSamplesPerNeighbor.getOrElse(100)
-    val maxResults = request.maxResults.getOrElse(200)
-    val minScore = request.minScore.getOrElse(0.5)
-    val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-    val minResultDegree = request.minResultDegree.getOrElse(50)
-    val minQueryDegree = request.minQueryDegree.getOrElse(10)
-    val minCooccurrence = request.minCooccurrence.getOrElse(3)
+    val maxNumSamplesPerNeighbor = request.maxNumSamplesPerNeighbor.getOrElse(420)
+    val maxResults = request.maxResults.getOrElse(420)
+    val minScore = request.minScore.getOrElse(420.420)
+    val maxTweetAge = request.maxTweetAgeInHours.getOrElse(420)
+    val minResultDegree = request.minResultDegree.getOrElse(420)
+    val minQueryDegree = request.minQueryDegree.getOrElse(420)
+    val minCooccurrence = request.minCooccurrence.getOrElse(420)
     val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
 
     val queryTweetDegree = bipartiteGraph.getRightNodeDegree(maskedTweetId)

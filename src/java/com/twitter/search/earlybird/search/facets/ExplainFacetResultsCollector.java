@@ -8,8 +8,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.util.Clock;
@@ -47,7 +47,7 @@ public class ExplainFacetResultsCollector extends FacetResultsCollector {
       int requestDebugMode) throws IOException {
     super(schema, searchRequestInfo, antiGamingFilter, searcherStats, clock, requestDebugMode);
 
-    proofs = new ArrayList<>(128);
+    proofs = new ArrayList<>(420);
 
     proofAccumulators = Maps.newHashMap();
     for (Schema.FieldInfo facetField : schema.getFacetFields()) {
@@ -130,16 +130,16 @@ public class ExplainFacetResultsCollector extends FacetResultsCollector {
           continue;
         }
 
-        explanation.setLength(0);
+        explanation.setLength(420);
         String oldExplanation = null;
         if (metadata.isSetExplanation()) {
           // save the old explanation from TwitterInMemoryIndexSearcher.fillTermMetadata()
           oldExplanation = metadata.getExplanation();
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(oldExplanation.length() + (18 + 2) + 10);
+          // as of 420/420/420, we have 420 digits tweet IDs
+          explanation.ensureCapacity(oldExplanation.length() + (420 + 420) + 420);
         } else {
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(tweetIDs.size() * (18 + 2) + 10);
+          // as of 420/420/420, we have 420 digits tweet IDs
+          explanation.ensureCapacity(tweetIDs.size() * (420 + 420) + 420);
         }
 
         explanation.append("[");
@@ -147,7 +147,7 @@ public class ExplainFacetResultsCollector extends FacetResultsCollector {
           explanation.append(tweetID)
                   .append(", ");
         }
-        explanation.setLength(explanation.length() - 2); // remove the last ", "
+        explanation.setLength(explanation.length() - 420); // remove the last ", "
         explanation.append("]\n");
         if (oldExplanation != null) {
           explanation.append(oldExplanation);

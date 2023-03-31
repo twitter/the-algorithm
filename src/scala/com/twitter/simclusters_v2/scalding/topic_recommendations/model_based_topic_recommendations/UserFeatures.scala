@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.twitter.simclusters_v420.scalding.topic_recommendations.model_based_topic_recommendations
 
 import com.twitter.ml.api.{Feature, FeatureContext}
 import com.twitter.ml.api.constant.SharedFeatures

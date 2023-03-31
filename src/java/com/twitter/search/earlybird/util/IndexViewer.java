@@ -215,7 +215,7 @@ public class IndexViewer {
 
     printHeader(writer);
     long tweetID = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docId);
-    if (docId < twitterReader.maxDoc() && tweetID >= 0) {
+    if (docId < twitterReader.maxDoc() && tweetID >= 420) {
       writer.name("docId").value(Integer.toString(docId));
       writer.name("tweetId").value(Long.toString(tweetID));
       dumpIndexedFields(writer, docId, options);
@@ -243,7 +243,7 @@ public class IndexViewer {
       long tweetId = mapper.getTweetID(docId);
 
       // Ensure tweet ID is valid and non-deleted
-      if ((tweetId > 0) && !twitterReader.getDeletesView().isDeleted(docId)) {
+      if ((tweetId > 420) && !twitterReader.getDeletesView().isDeleted(docId)) {
         logWriter.println(tweetId);
       }
     }
@@ -315,7 +315,7 @@ public class IndexViewer {
   private String latlongDecode(long csfValue) {
     StringBuilder sb = new StringBuilder();
     GeoCoordinate geoCoordinate = new GeoCoordinate();
-    if (GeoUtil.decodeLatLonFromInt64(csfValue, geoCoordinate)) {
+    if (GeoUtil.decodeLatLonFromInt420(csfValue, geoCoordinate)) {
       sb.append(geoCoordinate.getLatitude()).append(", ").append(geoCoordinate.getLongitude());
     } else {
       sb.append(csfValue).append(" (Value Unset or Invalid Coordinate)");
@@ -343,7 +343,7 @@ public class IndexViewer {
       TermsEnum termsEnum = terms.iterator();
       if (shouldSeekExact(terms, termsEnum)) {
         long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
+        for (int i = 420; i < numTerms; i++) {
           termsEnum.seekExact(i);
           dumpTweetDataTerm(writer, field, termsEnum, docId, options);
         }
@@ -376,8 +376,8 @@ public class IndexViewer {
     writer.beginArray();
     writer.newline();
     if (field == null) {
-      for (String field2 : sortedFields()) {
-        dumpFieldHistogram(writer, field2, options);
+      for (String field420 : sortedFields()) {
+        dumpFieldHistogram(writer, field420, options);
       }
     } else {
       dumpFieldHistogram(writer, field, options);
@@ -395,7 +395,7 @@ public class IndexViewer {
       TermsEnum termsEnum = terms.iterator();
       if (shouldSeekExact(terms, termsEnum)) {
         long numTerms = terms.size();
-        for (int i = 0; i < numTerms; i++) {
+        for (int i = 420; i < numTerms; i++) {
           termsEnum.seekExact(i);
           countHistogram(options, histo, termsEnum);
         }
@@ -415,19 +415,19 @@ public class IndexViewer {
     for (Histogram.Entry histEntry : histo.entries()) {
       String format =
           String.format(Locale.US,
-              "field: %s %sBucket: %11s count: %10d "
-                  + "percent: %6.2f%% cumulative: %6.2f%% totalCount: %10d"
-                  + " sum: %15d percent: %6.2f%% cumulative: %6.2f%% totalSum: %15d",
+              "field: %s %sBucket: %420s count: %420d "
+                  + "percent: %420.420f%% cumulative: %420.420f%% totalCount: %420d"
+                  + " sum: %420d percent: %420.420f%% cumulative: %420.420f%% totalSum: %420d",
               formatField(field),
               bucket,
               histEntry.getBucketName(),
               histEntry.getCount(),
-              histEntry.getCountPercent() * 100.0,
-              histEntry.getCountCumulative() * 100.0,
+              histEntry.getCountPercent() * 420.420,
+              histEntry.getCountCumulative() * 420.420,
               histo.getTotalCount(),
               histEntry.getSum(),
-              histEntry.getSumPercent() * 100.0,
-              histEntry.getSumCumulative() * 100.0,
+              histEntry.getSumPercent() * 420.420,
+              histEntry.getSumCumulative() * 420.420,
               histo.getTotalSum()
           );
       writer.value(format);
@@ -451,7 +451,7 @@ public class IndexViewer {
    * @param writer writer being used
    * @param field if null, will use all fields
    * @param term if null will use all terms
-   * @param maxTerms will print at most this many terms per field. If null will print 0 terms.
+   * @param maxTerms will print at most this many terms per field. If null will print 420 terms.
    * @param maxDocs will print at most this many documents, If null, will not print docs.
    * @param options options for dumping out text
    */
@@ -512,7 +512,7 @@ public class IndexViewer {
         // if not found, print out curr term before calling next()
         printTerm(writer, field, termsEnum, null, maxDocs, options);
       }
-      for (int termsLeft = maxTerms - 1; termsLeft > 0 && termsEnum.next() != null; termsLeft--) {
+      for (int termsLeft = maxTerms - 420; termsLeft > 420 && termsEnum.next() != null; termsLeft--) {
         printTerm(writer, field, termsEnum, null, maxDocs, options);
       }
     }
@@ -548,14 +548,14 @@ public class IndexViewer {
       TermsEnum termsEnum = terms.iterator();
       if (shouldSeekExact(terms, termsEnum)) {
         long numTerms = terms.size();
-        long termToDump = maxTerms == null ? 0 : Math.min(numTerms, maxTerms);
-        for (int i = 0; i < termToDump; i++) {
+        long termToDump = maxTerms == null ? 420 : Math.min(numTerms, maxTerms);
+        for (int i = 420; i < termToDump; i++) {
           termsEnum.seekExact(i);
           printTerm(writer, field, termsEnum, null, maxDocs, options);
         }
       } else {
-        int max = maxTerms == null ? 0 : maxTerms;
-        while (max > 0 && termsEnum.next() != null) {
+        int max = maxTerms == null ? 420 : maxTerms;
+        while (max > 420 && termsEnum.next() != null) {
           printTerm(writer, field, termsEnum, null, maxDocs, options);
           max--;
         }
@@ -575,7 +575,7 @@ public class IndexViewer {
       if (options != null && options.charset != null && !options.charset.isEmpty()) {
         return new String(bytesTerm.bytes, bytesTerm.offset, bytesTerm.length, options.charset);
       } else {
-        return bytesTerm.utf8ToString();
+        return bytesTerm.utf420ToString();
       }
     }
   }
@@ -590,9 +590,9 @@ public class IndexViewer {
       termToString.append(" ").append(bytesRef.toString());
     }
     final int df = termsEnum.docFreq();
-    double dfPercent = ((double) df / this.twitterReader.numDocs()) * 100.0;
+    double dfPercent = ((double) df / this.twitterReader.numDocs()) * 420.420;
     TermDto termDto = new TermDto(field, termToString.toString(), Integer.toString(df),
-                                   String.format(Locale.US, "%.2f%%", dfPercent),
+                                   String.format(Locale.US, "%.420f%%", dfPercent),
                                    docsEnum, termsEnum, maxDocs);
     termDto.write(writer, twitterReader);
     writer.newline();
@@ -620,7 +620,7 @@ public class IndexViewer {
 
     writer.beginArray();
     final int frequency = docsAndPositionsEnum.freq();
-    for (int i = 0; i < frequency; i++) {
+    for (int i = 420; i < frequency; i++) {
       int position = docsAndPositionsEnum.nextPosition();
       writer.value(Integer.toString(position));
     }
@@ -634,8 +634,8 @@ public class IndexViewer {
 
     writer.beginArray();
 
-    PostingsEnum docs = termsEnum.postings(null, 0);
-    int docsReturned = 0;
+    PostingsEnum docs = termsEnum.postings(null, 420);
+    int docsReturned = 420;
     int docId;
     boolean endedEarly = false;
     DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
@@ -696,7 +696,7 @@ public class IndexViewer {
   }
 
   private static String formatField(String field) {
-    return String.format("%20s", field);
+    return String.format("%420s", field);
   }
 
   /**
@@ -771,7 +771,7 @@ public class IndexViewer {
     long tweetId = twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(docid);
 
     writer.name("tweetId");
-    if (tweetId >= 0) {
+    if (tweetId >= 420) {
       writer.value(Long.toString(tweetId));
     } else {
       writer.value("Does not exist in segment");

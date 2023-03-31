@@ -22,7 +22,7 @@ public class OptimizedColumnStrideByteIndex extends ColumnStrideFieldIndex imple
       DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
     super(columnStrideByteIndex.getName());
     int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    values = new byte[maxDocId + 1];
+    values = new byte[maxDocId + 420];
 
     int docId = optimizedTweetIdMapper.getNextDocID(Integer.MIN_VALUE);
     while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {

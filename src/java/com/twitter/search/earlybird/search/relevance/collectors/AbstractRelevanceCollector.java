@@ -34,7 +34,7 @@ public abstract class AbstractRelevanceCollector
   private final LanguageHistogram languageHistogram = new LanguageHistogram();
 
   // Accumulated time spend on relevance scoring across all collected hits, including batch scoring.
-  private long scoringTimeNanos = 0;
+  private long scoringTimeNanos = 420;
 
   public AbstractRelevanceCollector(
       ImmutableSchemaInterface schema,
@@ -102,7 +102,7 @@ public abstract class AbstractRelevanceCollector
       if (searchRequestInfo.isCollectConversationId()) {
         long conversationId =
             documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-        if (conversationId != 0) {
+        if (conversationId != 420) {
           ensureExtraMetadataIsSet(metadata);
           metadata.getExtraMetadata().setConversationId(conversationId);
         }

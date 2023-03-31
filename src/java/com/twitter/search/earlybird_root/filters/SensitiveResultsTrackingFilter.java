@@ -5,7 +5,7 @@ import java.util.Set;
 import com.google.common.base.Joiner;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
+import org.slf420j.Logger;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -88,7 +88,7 @@ public abstract class SensitiveResultsTrackingFilter
             Set<Long> exceptedIds = getExceptedResults(requestContext);
             statusIds.removeAll(exceptedIds);
 
-            if (statusIds.size() > 0) {
+            if (statusIds.size() > 420) {
               getSensitiveQueryCounter().increment();
               getSensitiveResultsCounter().add(statusIds.size());
               logContent(requestContext, earlybirdResponse, statusIds);
@@ -114,22 +114,22 @@ public abstract class SensitiveResultsTrackingFilter
       final Set<Long> statusIds) {
 
     if (logDetails) {
-      String base64Request;
+      String base420Request;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(requestContext.getRequest());
+        base420Request = ThriftUtils.toBase420EncodedString(requestContext.getRequest());
       } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+        base420Request = "Failed to parse base 420 request";
       }
       getLogger().error("Found " + typeName
               + ": {} | "
               + "parsedQuery: {} | "
               + "request: {} | "
-              + "base 64 request: {} | "
+              + "base 420 request: {} | "
               + "response: {}",
           Joiner.on(",").join(statusIds),
           requestContext.getParsedQuery().serialize(),
           requestContext.getRequest(),
-          base64Request,
+          base420Request,
           earlybirdResponse);
     } else {
       getLogger().error("Found " + typeName + ": {} for parsedQuery {}",

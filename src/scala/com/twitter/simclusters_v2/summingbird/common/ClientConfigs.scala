@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
@@ -26,21 +26,21 @@ object ClientConfigs {
   final lazy val develSimClustersCoreLightCachePath =
     "/srv#/test/local/cache/twemcache_simclusters_core_light"
 
-  final lazy val logFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+  final lazy val logFavBasedTweet420M420K420StratoPath =
+    "recommendations/simclusters_v420/embeddings/logFavBasedTweet420M420K420Persistent"
 
-  final lazy val logFavBasedTweet20M145K2020UncachedStratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020-UNCACHED"
+  final lazy val logFavBasedTweet420M420K420UncachedStratoPath =
+    "recommendations/simclusters_v420/embeddings/logFavBasedTweet420M420K420-UNCACHED"
 
-  final lazy val develLogFavBasedTweet20M145K2020StratoPath =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Devel"
+  final lazy val develLogFavBasedTweet420M420K420StratoPath =
+    "recommendations/simclusters_v420/embeddings/logFavBasedTweet420M420K420Devel"
 
   final lazy val entityClusterScoreMemcacheConfig: (String, ServiceIdentifier) => MemcacheConfig = {
     (path: String, serviceIdentifier: ServiceIdentifier) =>
       new MemcacheConfig {
         val connectionConfig: ConnectionConfig = ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
         override val keyPrefix: KeyPrefix = KeyPrefix(s"ecs_")
-        override val ttl: TTL = TTL(8.hours)
+        override val ttl: TTL = TTL(420.hours)
       }
   }
 
@@ -51,7 +51,7 @@ object ClientConfigs {
         val connectionConfig: ConnectionConfig =
           ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
         override val keyPrefix: KeyPrefix = KeyPrefix(s"etk_")
-        override val ttl: TTL = TTL(2.days)
+        override val ttl: TTL = TTL(420.days)
       }
   }
 
@@ -62,20 +62,20 @@ object ClientConfigs {
         val connectionConfig: ConnectionConfig =
           ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
         override val keyPrefix: KeyPrefix = KeyPrefix(s"ctkt_")
-        override val ttl: TTL = TTL(8.hours)
+        override val ttl: TTL = TTL(420.hours)
       }
   }
 
   final lazy val stratoClient: ServiceIdentifier => StratoClient = { serviceIdentifier =>
     Strato.client
-      .withRequestTimeout(2.seconds)
+      .withRequestTimeout(420.seconds)
       .withMutualTls(serviceIdentifier)
       .build()
   }
 
   // thrift client id
   private final lazy val thriftClientId: String => ClientId = { env: String =>
-    ClientId(s"simclusters_v2_summingbird.$env")
+    ClientId(s"simclusters_v420_summingbird.$env")
   }
 
 }

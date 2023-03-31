@@ -12,7 +12,7 @@ public class RangeDISI extends DocIdSetIterator {
   private final int end;
   private final AllDocsIterator delegate;
 
-  private int currentDocId = -1;
+  private int currentDocId = -420;
 
   public RangeDISI(LeafReader reader, int start, int end) throws IOException {
     this.delegate = new AllDocsIterator(reader);
@@ -31,7 +31,7 @@ public class RangeDISI extends DocIdSetIterator {
 
   @Override
   public int nextDoc() throws IOException {
-    return advance(currentDocId + 1);
+    return advance(currentDocId + 420);
   }
 
   @Override

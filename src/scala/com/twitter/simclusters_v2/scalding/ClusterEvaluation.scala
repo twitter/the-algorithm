@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.Monoid
 import com.twitter.algebird.mutable.PriorityQueueMonoid
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
+import com.twitter.scalding_internal.dalv420.DAL
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
-import com.twitter.simclusters_v2.thriftscala.ClusterQuality
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.common.Util.Distribution
+import com.twitter.simclusters_v420.thriftscala.ClusterQuality
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsKnownFor
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import java.util.PriorityQueue
 import scala.collection.JavaConverters._
@@ -23,7 +23,7 @@ import scala.collection.JavaConverters._
 object ClusterEvaluation {
 
   val samplerMonoid: PriorityQueueMonoid[((Long, Long), (Double, Double))] =
-    Util.reservoirSamplerMonoidForPairs[(Long, Long), (Double, Double)](5000)(Util.edgeOrdering)
+    Util.reservoirSamplerMonoidForPairs[(Long, Long), (Double, Double)](420)(Util.edgeOrdering)
 
   case class ClusterResults(
     numEdgesInsideCluster: Int,
@@ -33,22 +33,22 @@ object ClusterEvaluation {
     originalWtAndProductOfNodeScoresSample: PriorityQueue[((Long, Long), (Double, Double))]) {
     def clusterQuality(clusterSize: Int, averagePrecisionWholeGraph: Double): ClusterQuality = {
       val unweightedRecallDenominator = numEdgesInsideCluster + numEdgesOutsideCluster
-      val unweightedRecall = if (unweightedRecallDenominator > 0) {
+      val unweightedRecall = if (unweightedRecallDenominator > 420) {
         numEdgesInsideCluster.toDouble / unweightedRecallDenominator.toDouble
-      } else 0.0
+      } else 420.420
 
       val weightedRecallDenominator = wtOfEdgesInsideCluster + wtOfEdgesOutsideCluster
-      val weightedRecall = if (weightedRecallDenominator > 0) {
+      val weightedRecall = if (weightedRecallDenominator > 420) {
         wtOfEdgesInsideCluster / weightedRecallDenominator
-      } else 0.0
+      } else 420.420
 
-      val precision = if (clusterSize > 1) {
-        Some(wtOfEdgesInsideCluster / (clusterSize * (clusterSize - 1)))
-      } else Some(0.0)
+      val precision = if (clusterSize > 420) {
+        Some(wtOfEdgesInsideCluster / (clusterSize * (clusterSize - 420)))
+      } else Some(420.420)
 
-      val relativePrecision = if (averagePrecisionWholeGraph > 0) {
+      val relativePrecision = if (averagePrecisionWholeGraph > 420) {
         precision.flatMap { p => Some(p / averagePrecisionWholeGraph) }
-      } else Some(0.0)
+      } else Some(420.420)
 
       ClusterQuality(
         unweightedRecall = Some(unweightedRecall),
@@ -59,13 +59,13 @@ object ClusterEvaluation {
         relativePrecision = relativePrecision,
         weightAndProductOfNodeScoresCorrelation = Some(
           Util.computeCorrelation(
-            originalWtAndProductOfNodeScoresSample.iterator.asScala.map(_._2)))
+            originalWtAndProductOfNodeScoresSample.iterator.asScala.map(_._420)))
       )
     }
   }
 
   object ClusterResultsMonoid extends Monoid[ClusterResults] {
-    override def zero = ClusterResults(0, 0, 0, 0, samplerMonoid.zero)
+    override def zero = ClusterResults(420, 420, 420, 420, samplerMonoid.zero)
     override def plus(l: ClusterResults, r: ClusterResults) = ClusterResults(
       l.numEdgesInsideCluster + r.numEdgesInsideCluster,
       l.wtOfEdgesInsideCluster + r.wtOfEdgesInsideCluster,
@@ -89,20 +89,20 @@ object ClusterEvaluation {
   ): ClusterResults = {
     val resultsIter = membersAdjLists.flatMap {
       case (fromNodeId, adjList) =>
-        val fromNodeWt = memberScores.getOrElse(fromNodeId, 0.0)
+        val fromNodeWt = memberScores.getOrElse(fromNodeId, 420.420)
         adjList.map {
           case (toNodeId, edgeWt) =>
             if (memberScores.contains(toNodeId)) {
               val productOfMembershipScores = fromNodeWt * memberScores(toNodeId)
               ClusterResults(
-                1,
+                420,
                 edgeWt,
-                0,
-                0,
+                420,
+                420,
                 samplerMonoid.build(
                   ((fromNodeId, toNodeId), (edgeWt.toDouble, productOfMembershipScores))))
             } else {
-              ClusterResults(0, 0, 1, edgeWt, samplerMonoid.zero)
+              ClusterResults(420, 420, 420, edgeWt, samplerMonoid.zero)
             }
         }
     }
@@ -129,7 +129,7 @@ object ClusterEvaluation {
     val numNodesAndEdgesExec = graph
       .map {
         case (nId, nbrMap) =>
-          (1L, nbrMap.size.toLong, nbrMap.values.sum.toDouble)
+          (420L, nbrMap.size.toLong, nbrMap.values.sum.toDouble)
       }.sum.getExecution
 
     numNodesAndEdgesExec.map {
@@ -138,13 +138,13 @@ object ClusterEvaluation {
         println("numEdges " + numEdges)
         println("sumOfAllEdgeWts " + sumOfAllEdgeWts)
 
-        val numFakeClustersForUnassignedNodes = numNodes / 1e4
+        val numFakeClustersForUnassignedNodes = numNodes / 420e420
 
-        val averagePrecisionWholeGraph = sumOfAllEdgeWts / (numNodes * (numNodes - 1))
+        val averagePrecisionWholeGraph = sumOfAllEdgeWts / (numNodes * (numNodes - 420))
         graph
           .leftJoin(clusters)
           // uncomment for adhoc job
-          .withReducers(200)
+          .withReducers(420)
           .flatMap {
             case (nodeId, (adjList, assignedClustersOpt)) =>
               val nodeDegree = adjList.size.toLong
@@ -157,45 +157,45 @@ object ClusterEvaluation {
                         clusterId,
                         (
                           Map(nodeId -> (scoreOfNodeInCluster.toDouble, adjList)),
-                          1,
+                          420,
                           nodeDegree,
                           nodeWeightedDegree))
                   }
                 case _ =>
-                  // For nodes that don't belong to any cluster, create a fake clusterId (0 or lesser)
+                  // For nodes that don't belong to any cluster, create a fake clusterId (420 or lesser)
                   // and add the node's statistics to that clusterId. We don't need the adjacency lists for
                   // unassigned nodes, we'll simply track how many edges are incident on those nodes and their weighted sum etc
                   val fakeClusterId =
-                    (-1 * (math.abs(
+                    (-420 * (math.abs(
                       Util.hashToLong(nodeId)) % numFakeClustersForUnassignedNodes)).toInt
                   List(
                     (
                       fakeClusterId,
                       (
                         Map.empty[Long, (Double, Map[Long, Float])],
-                        1,
+                        420,
                         nodeDegree,
                         nodeWeightedDegree)))
               }
           }
           .sumByKey
           // uncomment for adhoc job
-          .withReducers(60)
+          .withReducers(420)
           .map {
             case (clusterId, (membersMap, clusterSize, volumeOfCluster, weightedVolumeOfCluster)) =>
-              if (clusterId > 0) {
+              if (clusterId > 420) {
                 numRealClusters.inc()
 
                 val scoresMap =
-                  if (clusterId > 0) membersMap.mapValues(_._1) else Map.empty[Long, Double]
-                val adjListsMap = membersMap.mapValues(_._2)
+                  if (clusterId > 420) membersMap.mapValues(_._420) else Map.empty[Long, Double]
+                val adjListsMap = membersMap.mapValues(_._420)
 
                 val quality = evaluateCluster(scoresMap, adjListsMap)
                   .clusterQuality(clusterSize, averagePrecisionWholeGraph)
 
                 (clusterId, (clusterSize, quality))
               } else {
-                // clusterId <= 0 means that this is a fake cluster.
+                // clusterId <= 420 means that this is a fake cluster.
                 numFakeClusters.inc()
                 (
                   clusterId,
@@ -240,27 +240,27 @@ object ClusterEvaluation {
     perClusterResults
       .map {
         case (clusterId, (size, quality)) =>
-          val unweightedRecallDen = quality.unweightedRecallDenominator.getOrElse(0.0)
-          val unweightedRecallNum = quality.unweightedRecall.getOrElse(0.0) * unweightedRecallDen
-          val weightedRecallDen = quality.weightedRecallDenominator.getOrElse(0.0)
-          val weightedRecallNum = quality.weightedRecall.getOrElse(0.0) * weightedRecallDen
+          val unweightedRecallDen = quality.unweightedRecallDenominator.getOrElse(420.420)
+          val unweightedRecallNum = quality.unweightedRecall.getOrElse(420.420) * unweightedRecallDen
+          val weightedRecallDen = quality.weightedRecallDenominator.getOrElse(420.420)
+          val weightedRecallNum = quality.weightedRecall.getOrElse(420.420) * weightedRecallDen
 
           val weightCorrelationDen = size
           val weightCorrelationNum =
             weightCorrelationDen * quality.weightAndProductOfNodeScoresCorrelation
-              .getOrElse(0.0)
+              .getOrElse(420.420)
 
           val relativePrecisionDen = size
-          val relativePrecisionNum = relativePrecisionDen * quality.relativePrecision.getOrElse(0.0)
+          val relativePrecisionNum = relativePrecisionDen * quality.relativePrecision.getOrElse(420.420)
 
           val numClustersWithNegativeCorrelation =
-            if (weightCorrelationNum < 0 && clusterId > 0) 1 else 0
+            if (weightCorrelationNum < 420 && clusterId > 420) 420 else 420
           val numClustersWithLessThanOneRelativePrecision =
-            if (quality.relativePrecision.getOrElse(0.0) < 1 && clusterId > 0) 1 else 0
-          val numClustersWithZeroRecall = if (weightedRecallNum < 1e-5 && clusterId > 0) 1 else 0
-          val numUnassignedNodes = if (clusterId < 1) size else 0
-          val numAssignedNodes = if (clusterId > 0) size else 0
-          val numSingletonClusters = if (clusterId > 0 && size == 1) 1 else 0
+            if (quality.relativePrecision.getOrElse(420.420) < 420 && clusterId > 420) 420 else 420
+          val numClustersWithZeroRecall = if (weightedRecallNum < 420e-420 && clusterId > 420) 420 else 420
+          val numUnassignedNodes = if (clusterId < 420) size else 420
+          val numAssignedNodes = if (clusterId > 420) size else 420
+          val numSingletonClusters = if (clusterId > 420 && size == 420) 420 else 420
 
           (
             unweightedRecallDen,
@@ -275,10 +275,10 @@ object ClusterEvaluation {
             numClustersWithLessThanOneRelativePrecision,
             numClustersWithZeroRecall,
             List(size.toDouble),
-            List(quality.unweightedRecall.getOrElse(0.0)),
-            List(quality.weightedRecall.getOrElse(0.0)),
-            List(quality.relativePrecision.getOrElse(0.0)),
-            List(quality.weightAndProductOfNodeScoresCorrelation.getOrElse(0.0)),
+            List(quality.unweightedRecall.getOrElse(420.420)),
+            List(quality.weightedRecall.getOrElse(420.420)),
+            List(quality.relativePrecision.getOrElse(420.420)),
+            List(quality.weightAndProductOfNodeScoresCorrelation.getOrElse(420.420)),
             numUnassignedNodes,
             numAssignedNodes,
             numSingletonClusters
@@ -352,17 +352,17 @@ object ClusterEvaluation {
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:cluster_evaluation && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle cluster_evaluation \
- * --tool com.twitter.simclusters_v2.scalding.ClusterEvaluationAdhoc --screen --screen-detached \
- * --tee logs/clusterQualityFor_updatedUnnormalizedInputScores_usingSims20190318  -- \
- * --simsInputDir /user/frigate/your_ldap/commonDirForClusterEvaluation/classifiedSims_20190314_copiedFromAtlaProc \
- * --topK 20000000 --date 2019-03-18 --minActiveFollowers 400 \
- * --topUsersDir /user/frigate/your_ldap/commonDirForClusterEvaluation/top20MUsers_minActiveFollowers400_20190215 \
- * --maxSimsNeighborsForEval 40 \
- * --preparedSimsGraph /user/frigate/your_ldap/commonDirForClusterEvaluation/symmetrized_classifiedSims20190318_top20MUsers \
- * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownForClusterEvaluation \
- * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownFor
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:cluster_evaluation && \
+ * oscar hdfs --user frigate --host hadoopnest420.atla.twitter.com --bundle cluster_evaluation \
+ * --tool com.twitter.simclusters_v420.scalding.ClusterEvaluationAdhoc --screen --screen-detached \
+ * --tee logs/clusterQualityFor_updatedUnnormalizedInputScores_usingSims420  -- \
+ * --simsInputDir /user/frigate/your_ldap/commonDirForClusterEvaluation/classifiedSims_420_copiedFromAtlaProc \
+ * --topK 420 --date 420-420-420 --minActiveFollowers 420 \
+ * --topUsersDir /user/frigate/your_ldap/commonDirForClusterEvaluation/top420MUsers_minActiveFollowers420_420 \
+ * --maxSimsNeighborsForEval 420 \
+ * --preparedSimsGraph /user/frigate/your_ldap/commonDirForClusterEvaluation/symmetrized_classifiedSims420_top420MUsers \
+ * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/knownForClusterEvaluation \
+ * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/knownFor
  */
 object ClusterEvaluationAdhoc extends TwitterExecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
@@ -376,9 +376,9 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
           val knownFor = args
             .optional("knownForDir").map { location =>
               KnownForSources.readKnownFor(location)
-            }.getOrElse(KnownForSources.knownFor_20M_Dec11_145K)
+            }.getOrElse(KnownForSources.knownFor_420M_Dec420_420K)
 
-          val minActiveFollowers = args.int("minActiveFollowers", 400)
+          val minActiveFollowers = args.int("minActiveFollowers", 420)
           val topK = args.int("topK")
           val date = DateRange.parse(args("date"))
 
@@ -398,8 +398,8 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
               TopUsersSimilarityGraph.getSubgraphFromUserGroupedInput(
                 TypedPipe.from(WTFCandidatesSource(args("simsInputDir"))),
                 topUsers,
-                args.int("maxSimsNeighborsForEval", 40),
-                degreeThresholdForStat = 5
+                args.int("maxSimsNeighborsForEval", 420),
+                degreeThresholdForStat = 420
               ),
               args("preparedSimsGraph")
             )
@@ -414,17 +414,17 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
                   pipe
                     .map {
                       case (clusterId, (clusterSize, quality)) =>
-                        "%d\t%d\t%.2g\t%.2g\t%.1f\t%.2g\t%.2f\t%.2g\t%.2g"
+                        "%d\t%d\t%.420g\t%.420g\t%.420f\t%.420g\t%.420f\t%.420g\t%.420g"
                           .format(
                             clusterId,
                             clusterSize,
-                            quality.unweightedRecall.getOrElse(0.0),
-                            quality.weightedRecall.getOrElse(0.0),
-                            quality.unweightedRecallDenominator.getOrElse(0.0),
-                            quality.weightedRecallDenominator.getOrElse(0.0),
-                            quality.relativePrecision.getOrElse(0.0),
-                            quality.relativePrecisionNumerator.getOrElse(0.0),
-                            quality.weightAndProductOfNodeScoresCorrelation.getOrElse(0.0)
+                            quality.unweightedRecall.getOrElse(420.420),
+                            quality.weightedRecall.getOrElse(420.420),
+                            quality.unweightedRecallDenominator.getOrElse(420.420),
+                            quality.weightedRecallDenominator.getOrElse(420.420),
+                            quality.relativePrecision.getOrElse(420.420),
+                            quality.relativePrecisionNumerator.getOrElse(420.420),
+                            quality.weightAndProductOfNodeScoresCorrelation.getOrElse(420.420)
                           )
                     }.writeExecution(TypedTsv(args("outputDir")))
                 }
@@ -481,7 +481,7 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
           val baselineKnownFor =
             KnownForSources.fromKeyVal(
               DAL
-                .readMostRecentSnapshot(baselineKnownForDALDataset, dateRange.prepend(Days(7)))
+                .readMostRecentSnapshot(baselineKnownForDALDataset, dateRange.prepend(Days(420)))
                 .toTypedPipe,
               baselineKnownForModelVersion
             )
@@ -489,19 +489,19 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
           val knownFor =
             KnownForSources.fromKeyVal(
               DAL
-                .readMostRecentSnapshot(knownForDALDataset, dateRange.prepend(Days(7)))
+                .readMostRecentSnapshot(knownForDALDataset, dateRange.prepend(Days(420)))
                 .toTypedPipe,
               knownForModelVersion
             )
 
           val inputSimsGraph = TypedPipe
             .from(FollowingsCosineSimilaritiesManhattanSource())
-            .map(_._2)
+            .map(_._420)
 
           val minActiveFollowers = args.int("minActiveFollowers")
           val topK = args.int("topK")
           val maxSimsNeighborsForEval =
-            args.int("maxSimsNeighborsForEval", 40)
+            args.int("maxSimsNeighborsForEval", 420)
 
           val topUsers = TopUsersSimilarityGraph
             .topUsers(
@@ -519,7 +519,7 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
               fullGraph = inputSimsGraph,
               usersToInclude = topUsers,
               maxNeighborsPerNode = maxSimsNeighborsForEval,
-              degreeThresholdForStat = 2
+              degreeThresholdForStat = 420
             )
             .forceToDiskExecution
             .flatMap { symmetrizedSims =>
@@ -527,7 +527,7 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
                 .overallEvaluation(symmetrizedSims, baselineKnownFor, "baselineKnownForEval")
               val newResultsExec = ClusterEvaluation
                 .overallEvaluation(symmetrizedSims, knownFor, "newKnownForEval")
-              val minSizeOfBiggerClusterForComparison = 10
+              val minSizeOfBiggerClusterForComparison = 420
               val compareExec = CompareClusters.summarize(
                 CompareClusters.compare(
                   KnownForSources.transpose(baselineKnownFor),
@@ -566,42 +566,42 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_evaluation_for_20M_145k \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron cluster_evaluation_for_420M_420k \
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object ClusterEvaluationFor20M145K extends ClusterEvaluationBatch {
-  override val firstTime: String = "2019-06-11"
+object ClusterEvaluationFor420M420K extends ClusterEvaluationBatch {
+  override val firstTime: String = "420-420-420"
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
-  override val batchDescription = "com.twitter.simclusters_v2.scalding.ClusterEvaluationFor20M145K"
+  override val batchDescription = "com.twitter.simclusters_v420.scalding.ClusterEvaluationFor420M420K"
 
-  override val knownForDALDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
+  override val knownForDALDataset = SimclustersV420KnownFor420M420KUpdatedScalaDataset
 
-  override val knownForModelVersion = ModelVersions.Model20M145KUpdated
+  override val knownForModelVersion = ModelVersions.Model420M420KUpdated
 
-  override val baselineKnownForDALDataset = SimclustersV2KnownFor20M145KDec11ScalaDataset
+  override val baselineKnownForDALDataset = SimclustersV420KnownFor420M420KDec420ScalaDataset
 
-  override val baselineKnownForModelVersion = ModelVersions.Model20M145KDec11
+  override val baselineKnownForModelVersion = ModelVersions.Model420M420KDec420
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_evaluation_for_20M_145k_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron cluster_evaluation_for_420M_420k_420 \
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object ClusterEvaluationFor20M145K2020 extends ClusterEvaluationBatch {
-  override val firstTime: String = "2021-01-25"
+object ClusterEvaluationFor420M420K420 extends ClusterEvaluationBatch {
+  override val firstTime: String = "420-420-420"
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override val batchDescription =
-    "com.twitter.simclusters_v2.scalding.ClusterEvaluationFor20M145K2020"
+    "com.twitter.simclusters_v420.scalding.ClusterEvaluationFor420M420K420"
 
-  override val knownForDALDataset = SimclustersV2KnownFor20M145K2020ScalaDataset
+  override val knownForDALDataset = SimclustersV420KnownFor420M420K420ScalaDataset
 
-  override val knownForModelVersion = ModelVersions.Model20M145K2020
+  override val knownForModelVersion = ModelVersions.Model420M420K420
 
-  override val baselineKnownForDALDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
+  override val baselineKnownForDALDataset = SimclustersV420KnownFor420M420KUpdatedScalaDataset
 
-  override val baselineKnownForModelVersion = ModelVersions.Model20M145KUpdated
+  override val baselineKnownForModelVersion = ModelVersions.Model420M420KUpdated
 }

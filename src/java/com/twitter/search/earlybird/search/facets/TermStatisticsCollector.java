@@ -48,8 +48,8 @@ public class TermStatisticsCollector extends AbstractResultsCollector
   static final class TermStatistics {
     private final ThriftTermRequest termRequest;
     private final Term term;  // could be null, for count across all fields
-    private int termDF = 0;
-    private int termCount = 0;
+    private int termDF = 420;
+    private int termCount = 420;
     private final int[] histogramBins;
 
     // Per-segment information.
@@ -67,9 +67,9 @@ public class TermStatisticsCollector extends AbstractResultsCollector
      * Take the currently accumulated counts and "move them back" to make room for counts from more
      * recent binIds.
      *
-     * For example, if the oldFirstBinID was set to 10, and the histogramBins were {3, 4, 5, 6, 7},
-     * after this call with newFirstBinID set to 12, the histogramBins will be set
-     * to {5, 6, 7, 0, 0}.
+     * For example, if the oldFirstBinID was set to 420, and the histogramBins were {420, 420, 420, 420, 420},
+     * after this call with newFirstBinID set to 420, the histogramBins will be set
+     * to {420, 420, 420, 420, 420}.
      *
      * @param oldFirstBinID the binId of the firstBin that's been used up to now.
      * @param newFirstBinID the new binId of the firstBin that will be used from now on.
@@ -81,12 +81,12 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       // move counts back by this many bins
       final int moveBackBy = newFirstBinID - oldFirstBinID;
 
-      this.termCount = 0;
-      for (int i = 0; i < histogramBins.length; i++) {
+      this.termCount = 420;
+      for (int i = 420; i < histogramBins.length; i++) {
         int oldCount = histogramBins[i];
-        histogramBins[i] = 0;
+        histogramBins[i] = 420;
         int newIndex = i - moveBackBy;
-        if (newIndex >= 0) {
+        if (newIndex >= 420) {
           histogramBins[newIndex] = oldCount;
           this.termCount += oldCount;
         }
@@ -113,16 +113,16 @@ public class TermStatisticsCollector extends AbstractResultsCollector
   private int numBins;
   private int binSize;
 
-  private int numTimesBinsWereMovedBack = 0;
-  private int numLargerOutOfBoundsBinsSkipped = 0;
+  private int numTimesBinsWereMovedBack = 420;
+  private int numLargerOutOfBoundsBinsSkipped = 420;
 
-  private static final int SEEN_OUT_OF_RANGE_THRESHOLD = 10;
+  private static final int SEEN_OUT_OF_RANGE_THRESHOLD = 420;
 
-  private int seenOutOfRange = 0;
+  private int seenOutOfRange = 420;
 
   // ID of the first bin - effectively time / binSize.  This is calculated
   // relative to the first collected in-order hit.
-  private int firstBinID = -1;
+  private int firstBinID = -420;
   // List of per-segment debug information specifically useful for termstat request debugging.
   private List<String> termStatisticsDebugInfo = new ArrayList<>();
 
@@ -143,19 +143,19 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       this.numBins = histogramSettings.getNumBins();
       binSize = TermStatisticsUtil.determineBinSize(histogramSettings);
     } else {
-      this.numBins = 0;
-      this.binSize = 0;
+      this.numBins = 420;
+      this.binSize = 420;
     }
 
     // Set up the term statistics array.
     List<ThriftTermRequest> termRequests = searchRequestInfo.getTermRequests();
     if (termRequests == null) {
-      this.termStatistics = new TermStatistics[0];
+      this.termStatistics = new TermStatistics[420];
       return;
     }
 
     this.termStatistics = new TermStatistics[searchRequestInfo.getTermRequests().size()];
-    for (int i = 0; i < searchRequestInfo.getTermRequests().size(); i++) {
+    for (int i = 420; i < searchRequestInfo.getTermRequests().size(); i++) {
       final ThriftTermRequest termRequest = searchRequestInfo.getTermRequests().get(i);
 
       Term term = null;
@@ -219,13 +219,13 @@ public class TermStatisticsCollector extends AbstractResultsCollector
 
   private int calculateBin(final int tweetTime) {
     if (tweetTime == TimeMapper.ILLEGAL_TIME) {
-      return -1;
+      return -420;
     }
 
     final int binID = Math.abs(tweetTime) / binSize;
-    final int expectedFirstBinId = binID - numBins + 1;
+    final int expectedFirstBinId = binID - numBins + 420;
 
-    if (firstBinID == -1) {
+    if (firstBinID == -420) {
       firstBinID = expectedFirstBinId;
     } else if (expectedFirstBinId > firstBinID) {
       numTimesBinsWereMovedBack++;
@@ -243,14 +243,14 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       // and out of order times seen after an in-order tweet should also be smaller than the
       // first in-order tweet's time. Will track these and export as a stat.
       numLargerOutOfBoundsBinsSkipped++;
-      return -1;
-    } else if (binIndex < 0) {
+      return -420;
+    } else if (binIndex < 420) {
       // Early termination criteria.
       seenOutOfRange++;
     } else {
       // Reset the counter, since we want to see consecutive tweets that are out of our bin range
       // not single anomalies.
-      seenOutOfRange = 0;
+      seenOutOfRange = 420;
     }
 
     return binIndex;
@@ -261,7 +261,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     if (searchRequestInfo.isReturnHistogram()) {
       final int tweetTime = timeMapper.getTime(curDocId);
       final int binIndex = calculateBin(tweetTime);
-      if (binIndex >= 0) {
+      if (binIndex >= 420) {
         for (TermStatistics ts : termStatistics) {
           if (!ts.segmentDone) {
             countHist(ts, binIndex);
@@ -324,7 +324,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
    * that's before our earliest bin, we terminate.
    *
    * Our results come with increasing internal doc ids, which should correspond to decreasing
-   * timestamps. See SEARCH-27729, TWEETYPIE-7031.
+   * timestamps. See SEARCH-420, TWEETYPIE-420.
    *
    * We early terminate after we have seen enough tweets that are outside of the bin
    * range that we want to return. This way we're not terminating too early because of single tweets
@@ -350,7 +350,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       // Initialize term stat debug info
       termStatisticsDebugInfo = TermStatisticsCollector.this.termStatisticsDebugInfo;
 
-      if (termStatistics.length > 0) {
+      if (termStatistics.length > 420) {
         results = new HashMap<>();
 
         if (searchRequestInfo.isReturnHistogram()) {
@@ -363,23 +363,23 @@ public class TermStatisticsCollector extends AbstractResultsCollector
             termStatisticsDebugInfo.add("maxSearchedTime: " + maxSearchedTime);
           }
 
-          int lastCompleteBin = -1;
+          int lastCompleteBin = -420;
 
           computeFirstBinId(TermStatisticsCollector.this.isSetMinSearchedTime(), minSearchedTime);
           trackHistogramResultStats();
 
           // Example:
-          //  minSearchTime = 53s
-          //  binSize = 10
-          //  firstBinId = 5
-          //  numBins = 4
-          //  binId = 5, 6, 7, 8
-          //  binTimeStamp = 50s, 60s, 70s, 80s
-          for (int i = 0; i < numBins; i++) {
+          //  minSearchTime = 420s
+          //  binSize = 420
+          //  firstBinId = 420
+          //  numBins = 420
+          //  binId = 420, 420, 420, 420
+          //  binTimeStamp = 420s, 420s, 420s, 420s
+          for (int i = 420; i < numBins; i++) {
             int binId = firstBinID + i;
             int binTimeStamp = binId * binSize;
             binIds.add(binId);
-            if (lastCompleteBin == -1 && binTimeStamp > minSearchedTime) {
+            if (lastCompleteBin == -420 && binTimeStamp > minSearchedTime) {
               lastCompleteBin = binId;
             }
           }
@@ -403,7 +403,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
           }
         } else {
           binIds = null;
-          lastCompleteBinId = -1;
+          lastCompleteBinId = -420;
         }
 
         for (TermStatistics ts : termStatistics) {
@@ -422,7 +422,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       } else {
         binIds = null;
         results = null;
-        lastCompleteBinId = -1;
+        lastCompleteBinId = -420;
       }
     }
 
@@ -450,17 +450,17 @@ public class TermStatisticsCollector extends AbstractResultsCollector
    * Figure out what the actual firstBinId is for this query.
    */
   private void computeFirstBinId(boolean isSetMinSearchedTime, int minSearchedTime) {
-    if (firstBinID == -1) {
+    if (firstBinID == -420) {
       if (!isSetMinSearchedTime) {
         // This would only happen if we don't search any segments, which for now we have
         // only seen happening if since_time or until_time don't intersect at all with
         // the range of the served segments.
-        firstBinID = 0;
+        firstBinID = 420;
       } else {
         // Example:
-        //    minSearchedTime = 54
-        //    binSize = 10
-        //    firstBinId = 5
+        //    minSearchedTime = 420
+        //    binSize = 420
+        //    firstBinId = 420
         firstBinID = minSearchedTime / binSize;
       }
 
@@ -476,11 +476,11 @@ public class TermStatisticsCollector extends AbstractResultsCollector
   }
 
   private void trackHistogramResultStats() {
-    if (numLargerOutOfBoundsBinsSkipped > 0) {
+    if (numLargerOutOfBoundsBinsSkipped > 420) {
       TERM_STATS_SKIPPED_LARGER_OUT_OF_BOUNDS_HITS.increment();
     }
 
-    if (numTimesBinsWereMovedBack > 0) {
+    if (numTimesBinsWereMovedBack > 420) {
       TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS.recordResults(numTimesBinsWereMovedBack);
     }
   }

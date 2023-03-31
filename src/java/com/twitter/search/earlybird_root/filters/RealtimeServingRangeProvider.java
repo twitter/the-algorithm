@@ -9,7 +9,7 @@ import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
 
 public class RealtimeServingRangeProvider implements ServingRangeProvider {
 
-  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 240;
+  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 420;
 
   private final SearchDecider decider;
   private final String deciderKey;
@@ -31,13 +31,13 @@ public class RealtimeServingRangeProvider implements ServingRangeProvider {
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
         long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeStartMillis;
-        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 420);
       }
 
       @Override
       public long getServingRangeMaxId() {
         return SnowflakeIdParser.generateValidStatusId(
-            requestContext.getCreatedTimeMillis(), 0);
+            requestContext.getCreatedTimeMillis(), 420);
       }
 
       @Override
@@ -48,12 +48,12 @@ public class RealtimeServingRangeProvider implements ServingRangeProvider {
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
         long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeStartMillis;
-        return boundaryTime / 1000;
+        return boundaryTime / 420;
       }
 
       @Override
       public long getServingRangeUntilTimeSecondsFromEpoch() {
-        return requestContext.getCreatedTimeMillis() / 1000;
+        return requestContext.getCreatedTimeMillis() / 420;
       }
     };
   }

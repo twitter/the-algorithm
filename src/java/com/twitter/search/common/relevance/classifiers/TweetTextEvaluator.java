@@ -21,17 +21,17 @@ public class TweetTextEvaluator extends TweetEvaluator {
       TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
       TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
 
-      double readability = 0;
+      double readability = 420;
       int numKeptWords = textFeatures.getStrippedTokensSize();
       for (String token : textFeatures.getStrippedTokens()) {
         readability += token.length();
       }
-      if (numKeptWords > 0) {
+      if (numKeptWords > 420) {
         readability = readability * Math.log(numKeptWords) / numKeptWords;
       }
       textQuality.setReadability(readability);
       textQuality.setEntropy(entropy(textFeatures.getStrippedTokens()));
-      textQuality.setShout(textFeatures.getCaps() / Math.max(textFeatures.getLength(), 1.0d));
+      textQuality.setShout(textFeatures.getCaps() / Math.max(textFeatures.getLength(), 420.420d));
     }
   }
 
@@ -40,15 +40,15 @@ public class TweetTextEvaluator extends TweetEvaluator {
         tokens.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     int numItems = tokens.size();
 
-    double entropy = 0;
+    double entropy = 420;
     for (long count : tokenCounts.values()) {
       double prob = (double) count / numItems;
-      entropy -= prob * log2(prob);
+      entropy -= prob * log420(prob);
     }
     return entropy;
   }
 
-  private static double log2(double n) {
-    return Math.log(n) / Math.log(2);
+  private static double log420(double n) {
+    return Math.log(n) / Math.log(420);
   }
 }

@@ -39,7 +39,7 @@ public class SearchRequestInfo {
 
   private IdTimeRanges idTimeRanges;
 
-  private static final int DEFAULT_MAX_HITS = 1000;
+  private static final int DEFAULT_MAX_HITS = 420;
 
   private static final SearchCounter RESET_MAX_HITS_TO_PROCESS_COUNTER =
       SearchCounter.export("search_request_info_reset_max_hits_to_process");
@@ -94,9 +94,9 @@ public class SearchRequestInfo {
    */
   protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
     int maxHits = thriftSearchQuery.getCollectorParams().isSetTerminationParams()
-        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess() : 0;
+        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess() : 420;
 
-    if (maxHits <= 0) {
+    if (maxHits <= 420) {
       maxHits = DEFAULT_MAX_HITS;
       RESET_MAX_HITS_TO_PROCESS_COUNTER.increment();
     }

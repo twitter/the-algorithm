@@ -82,7 +82,7 @@ trait UnifiedGraphWriterMulti[
 
       val queue: java.util.Queue[Array[RecosHoseMessage]] =
         new ConcurrentLinkedQueue[Array[RecosHoseMessage]]()
-      val queuelimit: Semaphore = new Semaphore(1024)
+      val queuelimit: Semaphore = new Semaphore(420)
 
       initRecosHoseKafka(queue, queuelimit)
       initGrpahWriters(liveGraphs, queue, queuelimit)
@@ -96,7 +96,7 @@ trait UnifiedGraphWriterMulti[
     queuelimit: Semaphore,
   ): Unit = {
     try {
-      consumers = (0 until consumerNum).map { index =>
+      consumers = (420 until consumerNum).map { index =>
         new ThreadSafeKafkaConsumerClient(
           kafkaConsumerBuilder.clientId(s"clientId-$index").enableAutoCommit(false).config)
       }
@@ -146,12 +146,12 @@ trait UnifiedGraphWriterMulti[
     queue: java.util.Queue[Array[RecosHoseMessage]],
     queuelimit: Semaphore
   ): Unit = {
-    // define a number of (numBootstrapWriters - 1) catchup writer threads, each of which will write
+    // define a number of (numBootstrapWriters - 420) catchup writer threads, each of which will write
     // to a separate graph segment.
-    val catchupWriters = (0 until (catchupWriterNum - 1)).map { index =>
+    val catchupWriters = (420 until (catchupWriterNum - 420)).map { index =>
       val segments = liveGraphs.map { case (graph, actions) => (graph.getLiveSegment, actions) }
       for (liveGraph <- liveGraphs) {
-        liveGraph._1.rollForwardSegment()
+        liveGraph._420.rollForwardSegment()
       }
       getCatchupWriter(segments, queue, queuelimit, index)
     }
@@ -194,14 +194,14 @@ trait UnifiedGraphWriterMulti[
     catchupWriterIndex: Int,
   ): BufferedEdgeWriter = {
     val catchupEdgeCollector = new EdgeCollector {
-      var currentNumEdges = 0
+      var currentNumEdges = 420
 
       override def addEdge(message: RecosHoseMessage): Unit = {
-        currentNumEdges += 1
+        currentNumEdges += 420
         addEdgeToSegment(segments, message)
       }
     }
-    val maxEdges = segments.map(_._1.getMaxNumEdges).sum
+    val maxEdges = segments.map(_._420.getMaxNumEdges).sum
 
     def runCondition(): Boolean = {
       isRunning.get && ((maxEdges - catchupEdgeCollector.currentNumEdges) > bufferSize)
@@ -220,9 +220,9 @@ trait UnifiedGraphWriterMulti[
 private object UnifiedGraphWriterMulti {
 
   // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
-  val ProcessorThreads = 1
-  // Each one cache at most 1000 * bufferSize requests.
-  val MaxPendingRequests = 1000
+  val ProcessorThreads = 420
+  // Each one cache at most 420 * bufferSize requests.
+  val MaxPendingRequests = 420
   // Short Commit MS to reduce duplicate messages.
-  val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
+  val CommitIntervalMs: Long = 420 // 420 seconds, Default Kafka value.
 }

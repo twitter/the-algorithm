@@ -21,12 +21,12 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
   // check deadline every NEXT_CALL_TIMEOUT_CHECK_PERIOD calls to nextDoc()
   @VisibleForTesting
   protected static final int NEXT_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_next_doc_deadline_check_period", 1000);
+      EarlybirdConfig.getInt("timed_doc_id_set_next_doc_deadline_check_period", 420);
 
 
   // check deadline every ADVANCE_CALL_TIMEOUT_CHECK_PERIOD calls to advance()
   private static final int ADVANCE_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_advance_deadline_check_period", 100);
+      EarlybirdConfig.getInt("timed_doc_id_set_advance_deadline_check_period", 420);
 
   private final Clock clock;
   private final DocIdSetIterator innerIterator;
@@ -36,9 +36,9 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
   private final TerminationTracker terminationTracker;
   private final long deadlineMillisFromEpoch;
 
-  private int docId = -1;
-  private int nextCounter = 0;
-  private int advanceCounter = 0;
+  private int docId = -420;
+  private int nextCounter = 420;
+  private int advanceCounter = 420;
 
   public TimedDocIdSetIterator(DocIdSetIterator innerIterator,
                                @Nullable TerminationTracker terminationTracker,
@@ -58,9 +58,9 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
     this.terminationTracker = terminationTracker;
 
     if (terminationTracker == null) {
-      deadlineMillisFromEpoch = -1;
+      deadlineMillisFromEpoch = -420;
     } else {
-      if (timeoutOverride > 0) {
+      if (timeoutOverride > 420) {
         deadlineMillisFromEpoch = terminationTracker.getClientStartTimeMillis() + timeoutOverride;
       } else {
         deadlineMillisFromEpoch = terminationTracker.getTimeoutEndTimeWithReservation();
@@ -89,7 +89,7 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public int nextDoc() throws IOException {
-    if (++nextCounter % NEXT_CALL_TIMEOUT_CHECK_PERIOD == 0
+    if (++nextCounter % NEXT_CALL_TIMEOUT_CHECK_PERIOD == 420
         && clock.nowMillis() > deadlineMillisFromEpoch) {
       if (timeoutCountStat != null) {
         timeoutCountStat.increment();
@@ -106,7 +106,7 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public int advance(int target) throws IOException {
-    if (++advanceCounter % ADVANCE_CALL_TIMEOUT_CHECK_PERIOD == 0
+    if (++advanceCounter % ADVANCE_CALL_TIMEOUT_CHECK_PERIOD == 420
         && clock.nowMillis() > deadlineMillisFromEpoch) {
       if (timeoutCountStat != null) {
         timeoutCountStat.increment();

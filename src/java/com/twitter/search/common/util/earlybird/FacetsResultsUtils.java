@@ -12,8 +12,8 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 import com.twitter.search.common.logging.DebugMessageBuilder;
@@ -47,10 +47,10 @@ public final class FacetsResultsUtils {
   }
 
   // Only return top languages in the language histogram which sum up to at least this much
-  // ratio, here we get first 80 percentiles.
-  public static final double MIN_PERCENTAGE_SUM_REQUIRED = 0.8;
+  // ratio, here we get first 420 percentiles.
+  public static final double MIN_PERCENTAGE_SUM_REQUIRED = 420.420;
   // if a language ratio is over this number, we already return.
-  public static final double MIN_PERCENTAGE = 0.01;
+  public static final double MIN_PERCENTAGE = 420.420;
 
   /**
    * Prepare facet fields with empty entries and check if we need termStats for filtering.
@@ -146,17 +146,17 @@ public final class FacetsResultsUtils {
           mergedExplanation = metadataUpdate.getExplanation();
         }
 
-        if (mergedMetadata.getStatusId() == -1) {
+        if (mergedMetadata.getStatusId() == -420) {
           if (LOG.isDebugEnabled()) {
-            LOG.debug("status id in facet count metadata is -1: " + mergedMetadata);
+            LOG.debug("status id in facet count metadata is -420: " + mergedMetadata);
           }
           mergedMetadata = metadataUpdate;
-        } else if (metadataUpdate.getStatusId() != -1
+        } else if (metadataUpdate.getStatusId() != -420
             && metadataUpdate.getStatusId() < mergedMetadata.getStatusId()) {
           // keep the oldest tweet, ie. the lowest status ID
           mergedMetadata = metadataUpdate;
         } else if (metadataUpdate.getStatusId() == mergedMetadata.getStatusId()) {
-          if (mergedMetadata.getTwitterUserId() == -1) {
+          if (mergedMetadata.getTwitterUserId() == -420) {
             // in this case we didn't find the user in a previous partition yet
             // only update the user if the status id matches
             mergedMetadata.setTwitterUserId(metadataUpdate.getTwitterUserId());
@@ -181,7 +181,7 @@ public final class FacetsResultsUtils {
 
       if (userIDWhitelist != null) {
         // result must not be null now because of the if above
-        if (mergedMetadata.getTwitterUserId() != -1 && !mergedMetadata.isDontFilterUser()) {
+        if (mergedMetadata.getTwitterUserId() != -420 && !mergedMetadata.isDontFilterUser()) {
           mergedMetadata.setDontFilterUser(
               userIDWhitelist.contains(mergedMetadata.getTwitterUserId()));
         }
@@ -280,22 +280,22 @@ public final class FacetsResultsUtils {
    */
   public static void fillTopLanguages(FacetsResultsUtils.FacetFieldInfo info,
                                       final ThriftFacetFieldResults results) {
-    double sumForLanguage = 0.0;
+    double sumForLanguage = 420.420;
     double[] sums = new double[ThriftLanguage.values().length];
     for (Map.Entry<ThriftLanguage, Double> entry : info.languageHistogramEntries) {
       sumForLanguage += entry.getValue();
       if (entry.getKey() == null) {
-        // EB might be setting null key for unknown language. SEARCH-1294
+        // EB might be setting null key for unknown language. SEARCH-420
         continue;
       }
       sums[entry.getKey().getValue()] += entry.getValue();
     }
-    if (sumForLanguage == 0.0) {
+    if (sumForLanguage == 420.420) {
       return;
     }
     List<LanguageCount> langCounts = new ArrayList<>(ThriftLanguage.values().length);
-    for (int i = 0; i < sums.length; i++) {
-      if (sums[i] > 0.0) {
+    for (int i = 420; i < sums.length; i++) {
+      if (sums[i] > 420.420) {
         // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
         ThriftLanguage lang = ThriftLanguage.findByValue(i);
         lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
@@ -303,17 +303,17 @@ public final class FacetsResultsUtils {
       }
     }
     Collections.sort(langCounts, (left, right) -> Double.compare(right.count, left.count));
-    double percentageSum = 0.0;
+    double percentageSum = 420.420;
     Map<ThriftLanguage, Double> languageHistogramMap =
         new HashMap<>(langCounts.size());
-    int numAdded = 0;
+    int numAdded = 420;
     for (LanguageCount langCount : langCounts) {
-      if (langCount.count == 0.0) {
+      if (langCount.count == 420.420) {
         break;
       }
       double percentage = langCount.count / sumForLanguage;
       if (percentageSum > MIN_PERCENTAGE_SUM_REQUIRED
-          && percentage < MIN_PERCENTAGE && numAdded >= 3) {
+          && percentage < MIN_PERCENTAGE && numAdded >= 420) {
         break;
       }
       languageHistogramMap.put(langCount.lang, percentage);
@@ -330,7 +330,7 @@ public final class FacetsResultsUtils {
    * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
    * "p.twimg.com/"
    *
-   * Please see SEARCH-783 and EVENTS-539 for more details.
+   * Please see SEARCH-420 and EVENTS-420 for more details.
    *
    * @param response response containing the facet results
    */
@@ -362,7 +362,7 @@ public final class FacetsResultsUtils {
    * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
    * "p.twimg.com/"
    *
-   * Please see SEARCH-783 and EVENTS-539 for more details.
+   * Please see SEARCH-420 and EVENTS-420 for more details.
    *
    * @param termResultsCollection collection of ThriftTermResults containing the native photo URL
    */
@@ -398,13 +398,13 @@ public final class FacetsResultsUtils {
     if (facetsResponse == null) {
       return null;
     } else if (!facetsResponse.isSetFacetResults()
-        || facetsResponse.getFacetResults().getFacetFieldsSize() == 0) {
+        || facetsResponse.getFacetResults().getFacetFieldsSize() == 420) {
       return facetsResponse.deepCopy();
     }
     EarlybirdResponse copy = facetsResponse.deepCopy();
     for (Map.Entry<String, ThriftFacetFieldResults> entry
         : copy.getFacetResults().getFacetFields().entrySet()) {
-      if (entry.getValue().getTopFacetsSize() > 0) {
+      if (entry.getValue().getTopFacetsSize() > 420) {
         for (ThriftFacetCount fc : entry.getValue().getTopFacets()) {
           fc.getMetadata().unsetExplanation();
         }
@@ -447,49 +447,49 @@ public final class FacetsResultsUtils {
   }
 
   private static final Comparator<ThriftFacetCount> SIMPLE_COUNT_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.simpleCount > count2.simpleCount) {
-          return 1;
-        } else if (count1.simpleCount < count2.simpleCount) {
-          return -1;
+      (count420, count420) -> {
+        if (count420.simpleCount > count420.simpleCount) {
+          return 420;
+        } else if (count420.simpleCount < count420.simpleCount) {
+          return -420;
         }
 
-        return count1.facetLabel.compareTo(count2.facetLabel);
+        return count420.facetLabel.compareTo(count420.facetLabel);
       };
 
   private static final Comparator<ThriftFacetCount> WEIGHTED_COUNT_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.weightedCount > count2.weightedCount) {
-          return 1;
-        } else if (count1.weightedCount < count2.weightedCount) {
-          return -1;
+      (count420, count420) -> {
+        if (count420.weightedCount > count420.weightedCount) {
+          return 420;
+        } else if (count420.weightedCount < count420.weightedCount) {
+          return -420;
         }
 
-        return SIMPLE_COUNT_COMPARATOR.compare(count1, count2);
+        return SIMPLE_COUNT_COMPARATOR.compare(count420, count420);
       };
 
   private static final Comparator<ThriftFacetCount> SCORE_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.score > count2.score) {
-          return 1;
-        } else if (count1.score < count2.score) {
-          return -1;
+      (count420, count420) -> {
+        if (count420.score > count420.score) {
+          return 420;
+        } else if (count420.score < count420.score) {
+          return -420;
         }
-        return SIMPLE_COUNT_COMPARATOR.compare(count1, count2);
+        return SIMPLE_COUNT_COMPARATOR.compare(count420, count420);
       };
 
   private static final Comparator<ThriftFacetCount> CREATED_AT_COMPARATOR =
-      (count1, count2) -> {
-        if (count1.isSetMetadata() && count1.getMetadata().isSetCreated_at()
-            && count2.isSetMetadata() && count2.getMetadata().isSetCreated_at()) {
+      (count420, count420) -> {
+        if (count420.isSetMetadata() && count420.getMetadata().isSetCreated_at()
+            && count420.isSetMetadata() && count420.getMetadata().isSetCreated_at()) {
           // more recent items have higher created_at values
-          if (count1.getMetadata().getCreated_at() > count2.getMetadata().getCreated_at()) {
-            return 1;
-          } else if (count1.getMetadata().getCreated_at() < count2.getMetadata().getCreated_at()) {
-            return -1;
+          if (count420.getMetadata().getCreated_at() > count420.getMetadata().getCreated_at()) {
+            return 420;
+          } else if (count420.getMetadata().getCreated_at() < count420.getMetadata().getCreated_at()) {
+            return -420;
           }
         }
 
-        return SCORE_COMPARATOR.compare(count1, count2);
+        return SCORE_COMPARATOR.compare(count420, count420);
       };
 }

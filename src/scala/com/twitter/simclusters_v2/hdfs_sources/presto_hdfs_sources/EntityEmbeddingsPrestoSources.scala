@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.hdfs_sources.presto_hdfs_sources
+package com.twitter.simclusters_v420.hdfs_sources.presto_hdfs_sources
 
 object EntityEmbeddingsPrestoSources {
 

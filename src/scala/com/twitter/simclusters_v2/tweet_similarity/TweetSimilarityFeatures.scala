@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.tweet_similarity
+package com.twitter.simclusters_v420.tweet_similarity
 
 import com.twitter.ml.api.Feature.{Binary, Continuous, Discrete, SparseContinuous}
 import com.twitter.ml.api.util.FDsl._
@@ -47,7 +47,7 @@ class TweetSimilarityFeaturesStoreConfig(identifier: String) {
   val bindingIdentifier: Entity[UserId] = Entity[UserId](identifier)
 
   val featureStoreBoundFeatureSet: BoundFeatureSet = BoundFeatureSet(
-    ProducerSimClustersEmbedding.FavBasedEmbedding20m145kUpdated.bind(bindingIdentifier))
+    ProducerSimClustersEmbedding.FavBasedEmbedding420m420kUpdated.bind(bindingIdentifier))
 
   val predictionRecordAdapter: IRecordOneToOneAdapter[PredictionRecord] =
     PredictionRecordAdapter.oneToOne(featureStoreBoundFeatureSet)

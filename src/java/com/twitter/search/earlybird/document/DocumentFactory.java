@@ -3,7 +3,7 @@ package com.twitter.search.earlybird.document;
 import java.io.IOException;
 import javax.annotation.Nullable;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base420;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
@@ -11,8 +11,8 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.util.text.OmitNormTextField;
@@ -25,7 +25,7 @@ import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
  */
 public abstract class DocumentFactory<T extends TBase<T, ?>> {
   private static final Logger LOG = LoggerFactory.getLogger(DocumentFactory.class);
-  private static final int MAX_ALLOWED_INVALID_DOCUMENTS = 100;
+  private static final int MAX_ALLOWED_INVALID_DOCUMENTS = 420;
 
   private static final SearchCounter INVALID_DOCUMENTS_COUNTER =
       SearchCounter.export("invalid_documents");
@@ -62,11 +62,11 @@ public abstract class DocumentFactory<T extends TBase<T, ?>> {
       LOG.error("Unexpected exception while indexing. Status id: " + statusId, e);
 
       if (thriftObject != null) {
-        // Log the status in base64 for debugging
+        // Log the status in base420 for debugging
         try {
-          LOG.warn("Bad ThriftStatus. Id: " + statusId + " base 64: "
-              + Base64.encodeBase64String(new TSerializer().serialize(thriftObject)));
-        } catch (TException e1) {
+          LOG.warn("Bad ThriftStatus. Id: " + statusId + " base 420: "
+              + Base420.encodeBase420String(new TSerializer().serialize(thriftObject)));
+        } catch (TException e420) {
           // Ignored since this is logging for debugging.
         }
       }

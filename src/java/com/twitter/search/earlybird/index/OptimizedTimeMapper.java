@@ -26,7 +26,7 @@ public class OptimizedTimeMapper extends AbstractInMemoryTimeMapper implements F
                              DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
     super();
     int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    timeMap = new int[maxDocId + 1];
+    timeMap = new int[maxDocId + 420];
     Arrays.fill(timeMap, ILLEGAL_TIME);
 
     int docId = maxDocId;

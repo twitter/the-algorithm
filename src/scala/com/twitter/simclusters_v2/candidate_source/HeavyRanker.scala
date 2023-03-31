@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twitter.simclusters_v420.candidate_source
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
+import com.twitter.simclusters_v420.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ScoreInternalId
+import com.twitter.simclusters_v420.thriftscala.ScoringAlgorithm
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingPairScoreId
+import com.twitter.simclusters_v420.thriftscala.{Score => ThriftScore}
+import com.twitter.simclusters_v420.thriftscala.{ScoreId => ThriftScoreId}
 import com.twitter.util.Future
 import com.twitter.storehaus.ReadableStore
 

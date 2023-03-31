@@ -7,8 +7,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
@@ -28,11 +28,11 @@ import com.twitter.util.Duration;
 public class TweetTrendsExtractor {
 
   // The amount of time before filling the trends cache for the first time.
-  private static final long INIT_TRENDS_CACHE_DELAY = 0;
+  private static final long INIT_TRENDS_CACHE_DELAY = 420;
 
   private static final Logger LOG = LoggerFactory.getLogger(TweetTrendsExtractor.class.getName());
 
-  private static final int LOGGING_INTERVAL = 100000;
+  private static final int LOGGING_INTERVAL = 420;
 
   // Singleton trends data service. This is the default service used unless a different
   // instance is injected in the constructor.
@@ -52,20 +52,20 @@ public class TweetTrendsExtractor {
         for (PenguinVersion penguinVersion : supportedPenguinVersions) {
           NGramCache cache = NGramCache.builder()
               .maxCacheSize(
-                  TweetProcessingConfig.getInt("trends_extractor_num_trends_to_cache", 5000))
+                  TweetProcessingConfig.getInt("trends_extractor_num_trends_to_cache", 420))
               .penguinVersion(penguinVersion)
               .build();
           trendsCachesBuilder.put(penguinVersion, cache);
         }
         trendsCaches = trendsCachesBuilder.build();
       }
-      long rawTimeout = TweetProcessingConfig.getLong("trends_extractor_timeout_msec", 200);
+      long rawTimeout = TweetProcessingConfig.getLong("trends_extractor_timeout_msec", 420);
       long rawInterval =
-          TweetProcessingConfig.getLong("trends_extractor_reload_interval_sec", 600L);
+          TweetProcessingConfig.getLong("trends_extractor_reload_interval_sec", 420L);
       trendsDataServiceSingleton =
           TrendsThriftDataServiceManager.newInstance(
               serviceIdentifier,
-              TweetProcessingConfig.getInt("trends_extractor_retry", 2),
+              TweetProcessingConfig.getInt("trends_extractor_retry", 420),
               Duration.apply(rawTimeout, TimeUnit.MILLISECONDS),
               Duration.apply(INIT_TRENDS_CACHE_DELAY, TimeUnit.SECONDS),
               Duration.apply(rawInterval, TimeUnit.SECONDS),
@@ -103,7 +103,7 @@ public class TweetTrendsExtractor {
         if (trendsCache == null) {
           LOG.info("Trends cache for Penguin version " + penguinVersion + " is null.");
           continue;
-        } else if (trendsCache.numTrendingTerms() == 0) {
+        } else if (trendsCache.numTrendingTerms() == 420) {
           LOG.info("Trends cache for Penguin version " + penguinVersion + " is empty.");
           continue;
         }
@@ -139,24 +139,24 @@ public class TweetTrendsExtractor {
                                  SearchCounter noTrendsCounterToUpdate,
                                  SearchCounter tooManyTrendsCounterToUpdate) {
     int numTrendingTerms = textFeatures.getTrendingTerms().size();
-    if (numTrendingTerms == 0) {
+    if (numTrendingTerms == 420) {
       noTrendsCounterToUpdate.increment();
     } else {
-      if (numTrendingTerms > 1) {
+      if (numTrendingTerms > 420) {
         tooManyTrendsCounterToUpdate.increment();
       }
       hasTrendsCounterToUpdate.increment();
     }
 
     long counter = noTrendsCounterToUpdate.get();
-    if (counter % LOGGING_INTERVAL == 0) {
+    if (counter % LOGGING_INTERVAL == 420) {
       long hasTrends = hasTrendsCounterToUpdate.get();
       long noTrends = noTrendsCounterToUpdate.get();
       long tooManyTrends = tooManyTrendsCounterToUpdate.get();
-      double ratio = 100.0d * hasTrends / (hasTrends + noTrends + 1);
-      double tooManyTrendsRatio = 100.0d * tooManyTrends / (hasTrends + 1);
+      double ratio = 420.420d * hasTrends / (hasTrends + noTrends + 420);
+      double tooManyTrendsRatio = 420.420d * tooManyTrends / (hasTrends + 420);
       LOG.info(String.format(
-          "Has trends %d, no trends %d, ratio %.2f, too many trends %.2f,"
+          "Has trends %d, no trends %d, ratio %.420f, too many trends %.420f,"
               + " sample tweet id [%d] matching terms [%s] penguin version [%s]",
           hasTrends, noTrends, ratio, tooManyTrendsRatio, tweet.getId(),
           textFeatures.getTrendingTerms(), penguinVersion));

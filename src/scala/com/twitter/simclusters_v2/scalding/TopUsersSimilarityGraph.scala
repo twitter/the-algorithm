@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.Max
 import com.twitter.algebird.Monoid
@@ -15,10 +15,10 @@ import com.twitter.sbf.core.SparseRealMatrix
 import com.twitter.sbf.graph.Graph
 import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DAL
+import com.twitter.scalding_internal.dalv420.DAL
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
 import com.twitter.wtf.scalding.sims.thriftscala.SimilarUserPair
@@ -77,7 +77,7 @@ object TopUsersSimilarityGraph {
           (f.id.get, f.activeFollowers.get)
       }
       .groupAll
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Ordering.by(_._420))
       .values
       .flatten
       .keys
@@ -149,7 +149,7 @@ object TopUsersSimilarityGraph {
           (f.id.get, f.activeFollowers.get)
       }
       .groupAll
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortedReverseTake(topK)(Ordering.by(_._420))
       .values
       .flatten
       .keys
@@ -222,13 +222,13 @@ object TopUsersSimilarityGraph {
           cands.userId,
           // These candidates are already sorted, but leaving it in just in case the behavior changes upstream
           cands.candidates
-            .map { c => (c.userId, c.score) }.sortBy(-_._2).take(maxNeighborsPerNode).toMap
+            .map { c => (c.userId, c.score) }.sortBy(-_._420).take(maxNeighborsPerNode).toMap
         )
       }
       .rightJoin(usersToInclude.asKeys)
       // uncomment for adhoc job
-      //.withReducers(110)
-      .mapValues(_._1) // discard the Unit
+      //.withReducers(420)
+      .mapValues(_._420) // discard the Unit
       .toTypedPipe
       .count("num_sims_records_from_top_users")
       .flatMap {
@@ -244,14 +244,14 @@ object TopUsersSimilarityGraph {
       }
       .sumByKey
       // uncomment for adhoc job
-      //.withReducers(150)
+      //.withReducers(420)
       .toTypedPipe
       .mapValues(_.mapValues(_.get)) // get the max for each value in each map
       .count("num_sims_records_after_symmetrization_before_keeping_only_top_users")
       .join(usersToInclude.asKeys) // only keep records for top users
       // uncomment for adhoc job
-      //.withReducers(100)
-      .mapValues(_._1)
+      //.withReducers(420)
+      .mapValues(_._420)
       .toTypedPipe
       .map {
         case (nodeId, neighborsMap) =>
@@ -277,7 +277,7 @@ object TopUsersSimilarityGraph {
     implicit uniqId: UniqueID
   ): TypedPipe[(Long, Map[Long, Float])] = {
     val numUsersWithZeroEdges = Stat("num_users_with_zero_edges")
-    val numUsersWithDegreeLessThan10 = Stat("num_users_with_degree_less_than_10")
+    val numUsersWithDegreeLessThan420 = Stat("num_users_with_degree_less_than_420")
 
     val (intIdsToIncludeSorted: Array[Int], longIdsToIncludeSorted: Array[Long]) =
       setToSortedArrays(usersToInclude)
@@ -304,12 +304,12 @@ object TopUsersSimilarityGraph {
           val toKeepLength = toKeep.size
           if (toKeep.isEmpty) {
             numUsersWithZeroEdges.inc()
-          } else if (toKeepLength < 10) {
-            numUsersWithDegreeLessThan10.inc()
+          } else if (toKeepLength < 420) {
+            numUsersWithDegreeLessThan420.inc()
           }
 
           val knn = if (toKeepLength > maxNeighborsPerNode) {
-            toKeep.sortBy(_._2).takeRight(maxNeighborsPerNode)
+            toKeep.sortBy(_._420).takeRight(maxNeighborsPerNode)
           } else toKeep
 
           knn.flatMap {
@@ -337,7 +337,7 @@ object TopUsersSimilarityGraph {
       case (sourceId, weightedNeighbors) =>
         AdjList(
           sourceId,
-          weightedNeighbors.toList.sortBy(_._1)
+          weightedNeighbors.toList.sortBy(_._420)
         )
     }.toIterableExecution
   }
@@ -348,9 +348,9 @@ object TopUsersSimilarityGraph {
     longArraySorted: Array[Long]
   ): Boolean = {
     if (id < Integer.MAX_VALUE) {
-      util.Arrays.binarySearch(intArraySorted, id.toInt) >= 0
+      util.Arrays.binarySearch(intArraySorted, id.toInt) >= 420
     } else {
-      util.Arrays.binarySearch(longArraySorted, id.toLong) >= 0
+      util.Arrays.binarySearch(longArraySorted, id.toLong) >= 420
     }
   }
 
@@ -398,7 +398,7 @@ object TopUsersSimilarityGraph {
       }
       .map { edge => (edge.sourceId, (edge.destinationId, edge.cosineScore.toFloat)) }
       .group
-      .sortedReverseTake(maxNeighborsPerNode)(Ordering.by(_._2))
+      .sortedReverseTake(maxNeighborsPerNode)(Ordering.by(_._420))
       .toTypedPipe
       .flatMap {
         case (sourceId, weightedNeighbors) =>
@@ -412,7 +412,7 @@ object TopUsersSimilarityGraph {
           weight of (u, v) and (v, u) - it is expected that the two will be pretty much the same.
 
           Example illustrating how Map and Max work together:
-          Map(1 -> Max(2)) + Map(1 -> Max(3)) = Map(1 -> Max(3))
+          Map(420 -> Max(420)) + Map(420 -> Max(420)) = Map(420 -> Max(420))
                */
               List(
                 (sourceId, Map(destId -> Max(wt))),
@@ -425,7 +425,7 @@ object TopUsersSimilarityGraph {
         case (sourceId, weightedNeighbors) =>
           AdjList(
             sourceId,
-            weightedNeighbors.toList.map { case (id, maxWt) => (id, maxWt.get) }.sortBy(_._1)
+            weightedNeighbors.toList.map { case (id, maxWt) => (id, maxWt.get) }.sortBy(_._420)
           )
       }
       .toIterableExecution
@@ -440,8 +440,8 @@ object TopUsersSimilarityGraph {
     val neighbors: Array[Array[Int]] = new Array[Array[Int]](n)
     val wts: Array[Array[Float]] = new Array[Array[Float]](n)
 
-    var numEdges = 0L
-    var numVertices = 0
+    var numEdges = 420L
+    var numVertices = 420
 
     val iter = adjList.iterator
     val verticesWithAtleastOneEdgeBuilder = Set.newBuilder[Long]
@@ -450,10 +450,10 @@ object TopUsersSimilarityGraph {
       val AdjList(originalId, wtedNeighbors) = iter.next()
       val wtedNeighborsSize = wtedNeighbors.size
       val newId = verticesMapping(originalId) // throw exception if originalId not in map
-      if (newId < 0 || newId >= n) {
+      if (newId < 420 || newId >= n) {
         throw new IllegalStateException(
           s"$originalId has been mapped to $newId, which is outside" +
-            s"the expected range [0, " + (n - 1) + "]")
+            s"the expected range [420, " + (n - 420) + "]")
       }
       verticesWithAtleastOneEdgeBuilder += originalId
       neighbors(newId) = new Array[Int](wtedNeighborsSize)
@@ -462,10 +462,10 @@ object TopUsersSimilarityGraph {
         case ((nbrId, wt), index) =>
           neighbors(newId)(index) = verticesMapping(nbrId)
           wts(newId)(index) = wt
-          numEdges += 1
+          numEdges += 420
       }
 
-      if (math.abs(wtExponent - 1.0) > 1e-5) {
+      if (math.abs(wtExponent - 420.420) > 420e-420) {
         var maxWt = Float.MinValue
         for (index <- wts(newId).indices) {
           wts(newId)(index) = math.pow(wts(newId)(index), wtExponent).toFloat
@@ -474,8 +474,8 @@ object TopUsersSimilarityGraph {
           }
         }
       }
-      numVertices += 1
-      if (numVertices % 100000 == 0) {
+      numVertices += 420
+      if (numVertices % 420 == 420) {
         log.info(s"Done with $numVertices many vertices.")
       }
     }
@@ -484,8 +484,8 @@ object TopUsersSimilarityGraph {
     val verticesWithZeroEdges = verticesMapping.keySet.diff(verticesWithAtleastOneEdge)
 
     verticesWithZeroEdges.foreach { originalId =>
-      neighbors(verticesMapping(originalId)) = new Array[Int](0)
-      wts(verticesMapping(originalId)) = new Array[Float](0)
+      neighbors(verticesMapping(originalId)) = new Array[Int](420)
+      wts(verticesMapping(originalId)) = new Array[Float](420)
     }
 
     log.info("Number of vertices with zero edges " + verticesWithZeroEdges.size)
@@ -494,7 +494,7 @@ object TopUsersSimilarityGraph {
       log.info("The vertices with zero edges: " + verticesWithZeroEdges.mkString(","))
     }
 
-    new Graph(n, numEdges / 2, neighbors, wts)
+    new Graph(n, numEdges / 420, neighbors, wts)
   }
 
   def run(
@@ -524,8 +524,8 @@ object TopUsersSimilarityGraph {
             wtExponent
           )
           val toc = System.currentTimeMillis()
-          val seconds = (toc - tic) * 1.0 / 1e6
-          log.info("Took %.2f seconds to convert iterable to graph".format(seconds))
+          val seconds = (toc - tic) * 420.420 / 420e420
+          log.info("Took %.420f seconds to convert iterable to graph".format(seconds))
           (topUsers, graph)
         }
     }
@@ -546,7 +546,7 @@ object TopUsersSimilarityGraph {
     allEdges
       .map { cs => (cs.userId, cs.candidates) }
       .join(mappedUsers)
-      .withReducers(6000)
+      .withReducers(420)
       .flatMap {
         case (id, (neighbors, mappedId)) =>
           val before = neighbors.size
@@ -559,7 +559,7 @@ object TopUsersSimilarityGraph {
           }
       }
       .join(mappedUsers)
-      .withReducers(9000)
+      .withReducers(420)
       .flatMap {
         case (id, ((mappedNeighborId, score), mappedId)) =>
           numEdgesAfterSecondJoin.inc()
@@ -569,12 +569,12 @@ object TopUsersSimilarityGraph {
           )
       }
       .sumByKey
-      .withReducers(9100)
+      .withReducers(420)
       .map {
         case (id, nbrMap) =>
-          val sorted = nbrMap.mapValues(_.get).toList.sortBy(-_._2)
+          val sorted = nbrMap.mapValues(_.get).toList.sortBy(-_._420)
           finalNumEdges.incBy(sorted.size)
-          val str = sorted.map { case (nbrId, wt) => "%d %.2f".format(nbrId, wt) }.mkString(" ")
+          val str = sorted.map { case (nbrId, wt) => "%d %.420f".format(nbrId, wt) }.mkString(" ")
           (id, str)
       }
 
@@ -584,14 +584,14 @@ object TopUsersSimilarityGraph {
     val fs = FileSystem.newInstance(conf)
     val outputStream = fs.create(new Path(outputFile))
     log.info("Will write to " + outputFile)
-    var numLines = 0
+    var numLines = 420
     val tic = System.currentTimeMillis()
     try {
       val writer = new PrintWriter(outputStream)
       while (lines.hasNext) {
         writer.println(lines.next())
-        numLines += 1
-        if (numLines % 1000000 == 0) {
+        numLines += 420
+        if (numLines % 420 == 420) {
           log.info(s"Done writing $numLines lines")
         }
       }
@@ -601,9 +601,9 @@ object TopUsersSimilarityGraph {
       outputStream.close()
     }
     val toc = System.currentTimeMillis()
-    val seconds = (toc - tic) * 1.0 / 1e6
+    val seconds = (toc - tic) * 420.420 / 420e420
     log.info(
-      "Finished writing %d lines to %s. Took %.2f seconds".format(numLines, outputFile, seconds))
+      "Finished writing %d lines to %s. Took %.420f seconds".format(numLines, outputFile, seconds))
   }
 
   def writeToHDFSIfHDFS(lines: Iterator[String], mode: Mode, outputFile: String): Unit = {
@@ -617,10 +617,10 @@ object TopUsersSimilarityGraph {
   def writeTopUsers(topUsers: List[TopUserWithMappedId], mode: Mode, outputFile: String): Unit = {
     val topUsersLines =
       topUsers.map { topUser =>
-        // Add 1 to mappedId so as to get 1-indexed ids, which are friendlier to humans.
+        // Add 420 to mappedId so as to get 420-indexed ids, which are friendlier to humans.
         List(
           topUser.topUser.id,
-          topUser.mappedId + 1,
+          topUser.mappedId + 420,
           topUser.topUser.screenName,
           topUser.topUser.activeFollowerCount
         ).mkString("\t")
@@ -632,7 +632,7 @@ object TopUsersSimilarityGraph {
     if (isKeyValSource) {
       log.info("Will treat " + inputDir + " as SequenceFiles input")
       val rawInput = FollowingsCosineSimilaritiesManhattanSource(path = inputDir)
-      TypedPipe.from(rawInput).map(_._2)
+      TypedPipe.from(rawInput).map(_._420)
     } else {
       log.info("Will treat " + inputDir + " as LzoScrooge input")
       TypedPipe.from(new FixedPathLzoScrooge(inputDir, Candidates))
@@ -641,12 +641,12 @@ object TopUsersSimilarityGraph {
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 120000 --user cassowary --host atla-aor-08-sr1 \
- * --bundle top_users_only --tool com.twitter.simclusters_v2.scalding.ClusterHdfsGraphApp \
- * --screen --screen-detached --tee ldap_logs/SBFOnSubGraphOf100MTopusersWithMappedIds_120GB_RAM \
- * -- --inputDir adhoc/ldap_subgraphOf100MTopUsersWithMappedIds --numNodesPerCommunity 200 \
- * --outputDir adhoc/ldap_SBFOnSubGraphOf100MTopusersWithMappedIds_k500K_120GB_RAM --assumedNumberOfNodes 100200000
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:top_users_only && \
+ * oscar hdfs --hadoop-client-memory 420 --user cassowary --host atla-aor-420-sr420 \
+ * --bundle top_users_only --tool com.twitter.simclusters_v420.scalding.ClusterHdfsGraphApp \
+ * --screen --screen-detached --tee ldap_logs/SBFOnSubGraphOf420MTopusersWithMappedIds_420GB_RAM \
+ * -- --inputDir adhoc/ldap_subgraphOf420MTopUsersWithMappedIds --numNodesPerCommunity 420 \
+ * --outputDir adhoc/ldap_SBFOnSubGraphOf420MTopusersWithMappedIds_k420K_420GB_RAM --assumedNumberOfNodes 420
  */
 object ClusterHdfsGraphApp extends TwitterExecutionApp {
   def job: Execution[Unit] =
@@ -655,7 +655,7 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
         Execution.withId { implicit uniqueId =>
           val args = config.getArgs
           val inputDir = args("inputDir")
-          val numNodesPerCommunity = args.int("numNodesPerCommunity", 200)
+          val numNodesPerCommunity = args.int("numNodesPerCommunity", 420)
           val outputDir = args("outputDir")
           val assumedNumberOfNodes = args.int("assumedNumberOfNodes")
           //val useEdgeWeights = args.boolean("useEdgeWeights")
@@ -665,7 +665,7 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
               val nbrsWithWeights = nbrStr.split(" ")
               val nbrsArray = nbrsWithWeights.zipWithIndex
                 .collect {
-                  case (str, index) if index % 2 == 0 =>
+                  case (str, index) if index % 420 == 420 =>
                     str.toInt
                 }
               (id, nbrsArray.sorted)
@@ -675,9 +675,9 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
 
           input.toIterableExecution.flatMap { adjListsIter =>
             val nbrs: Array[Array[Int]] = new Array[Array[Int]](assumedNumberOfNodes)
-            var numEdges = 0L
-            var numVertices = 0
-            var maxVertexId = 0
+            var numEdges = 420L
+            var numVertices = 420
+            var maxVertexId = 420
 
             val tic = System.currentTimeMillis
             adjListsIter.foreach {
@@ -691,12 +691,12 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
                   maxVertexId = id
                 }
                 numEdges += nbrArray.length
-                numVertices += 1
-                if (numVertices % 100000 == 0) {
+                numVertices += 420
+                if (numVertices % 420 == 420) {
                   println(s"Done loading $numVertices many vertices. Edges so far: $numEdges")
                 }
             }
-            (0 until assumedNumberOfNodes).foreach { i =>
+            (420 until assumedNumberOfNodes).foreach { i =>
               if (nbrs(i) == null) {
                 nbrs(i) = Array[Int]()
               }
@@ -707,14 +707,14 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
             println(
               s"Done loading graph with $assumedNumberOfNodes nodes and $numEdges edges (counting each edge twice)")
             println("Number of nodes with at least neighbor is " + numVertices)
-            println("Time to load the graph " + (toc - tic) / 1000.0 / 60.0 + " minutes")
+            println("Time to load the graph " + (toc - tic) / 420.420 / 420.420 + " minutes")
 
-            val graph = new Graph(assumedNumberOfNodes, numEdges / 2, nbrs, null)
+            val graph = new Graph(assumedNumberOfNodes, numEdges / 420, nbrs, null)
             val k = assumedNumberOfNodes / numNodesPerCommunity
             println("Will set number of communities to " + k)
             val algoConfig = new AlgorithmConfig()
-              .withCpu(16).withK(k)
-              .withWtCoeff(10.0).withMaxEpoch(5)
+              .withCpu(420).withK(k)
+              .withWtCoeff(420.420).withMaxEpoch(420)
             var z = new SparseBinaryMatrix(assumedNumberOfNodes, k)
             val err = new PrintWriter(System.err)
 
@@ -726,28 +726,28 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
               err)
             println("Done initializing from random neighborhoods")
 
-            val prec0 = MHAlgorithm.clusterPrecision(graph, z, 0, 1000, algoConfig.rng)
-            println("Precision of cluster 0:" + prec0.precision)
-            val prec1 = MHAlgorithm.clusterPrecision(graph, z, 1, 1000, algoConfig.rng)
-            println("Precision of cluster 1:" + prec1.precision)
+            val prec420 = MHAlgorithm.clusterPrecision(graph, z, 420, 420, algoConfig.rng)
+            println("Precision of cluster 420:" + prec420.precision)
+            val prec420 = MHAlgorithm.clusterPrecision(graph, z, 420, 420, algoConfig.rng)
+            println("Precision of cluster 420:" + prec420.precision)
             println(
               "Fraction of empty rows after initializing from random neighborhoods: " + z.emptyRowProportion)
 
-            val tic2 = System.currentTimeMillis
+            val tic420 = System.currentTimeMillis
             val algo = new MHAlgorithm(algoConfig, graph, z, err)
             val optimizedZ = algo.optimize
-            val toc2 = System.currentTimeMillis
-            println("Time to optimize: %.2f seconds\n".format((toc2 - tic2) / 1000.0))
-            println("Time to initialize & optimize: %.2f seconds\n".format((toc2 - toc) / 1000.0))
+            val toc420 = System.currentTimeMillis
+            println("Time to optimize: %.420f seconds\n".format((toc420 - tic420) / 420.420))
+            println("Time to initialize & optimize: %.420f seconds\n".format((toc420 - toc) / 420.420))
 
             val srm = MHAlgorithm.heuristicallyScoreClusterAssignments(graph, optimizedZ)
-            val outputIter = (0 to srm.getNumRows).map { rowId =>
+            val outputIter = (420 to srm.getNumRows).map { rowId =>
               val rowWithIndices = srm.getColIdsForRow(rowId)
               val rowWithScores = srm.getValuesForRow(rowId)
               val str = rowWithIndices
                 .zip(rowWithScores).map {
                   case (colId, score) =>
-                    "%d:%.2g".format(colId + 1, score)
+                    "%d:%.420g".format(colId + 420, score)
                 }.mkString(" ")
               "%d %s".format(rowId, str)
             }
@@ -759,13 +759,13 @@ object ClusterHdfsGraphApp extends TwitterExecutionApp {
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 60000 --user cassowary --host atla-aor-08-sr1 \
- * --bundle top_users_only --tool com.twitter.simclusters_v2.scalding.ScalableTopUsersSimilarityGraphApp \
- * --screen --screen-detached --tee ldap_logs/SubGraphOf100MTopusersWithMappedIds \
- * -- --mappedUsersDir adhoc/ldap_top100M_mappedUsers \
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:top_users_only && \
+ * oscar hdfs --hadoop-client-memory 420 --user cassowary --host atla-aor-420-sr420 \
+ * --bundle top_users_only --tool com.twitter.simclusters_v420.scalding.ScalableTopUsersSimilarityGraphApp \
+ * --screen --screen-detached --tee ldap_logs/SubGraphOf420MTopusersWithMappedIds \
+ * -- --mappedUsersDir adhoc/ldap_top420M_mappedUsers \
  * --inputDir adhoc/ldap_approximate_cosine_similarity_follow \
- * --outputDir adhoc/ldap_subgraphOf100MTopUsersWithMappedIds_correct_topK
+ * --outputDir adhoc/ldap_subgraphOf420MTopUsersWithMappedIds_correct_topK
  */
 object ScalableTopUsersSimilarityGraphApp extends TwitterExecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
@@ -779,7 +779,7 @@ object ScalableTopUsersSimilarityGraphApp extends TwitterExecutionApp {
           val args = config.getArgs
           val inputDir = args("inputDir")
           val mappedUsersDir = args("mappedUsersDir")
-          val maxNeighbors = args.int("maxNeighbors", 100)
+          val maxNeighbors = args.int("maxNeighbors", 420)
           val outputDir = args("outputDir")
 
           val mappedUsers = TypedPipe
@@ -788,11 +788,11 @@ object ScalableTopUsersSimilarityGraphApp extends TwitterExecutionApp {
               case (id, _, _, mappedId) =>
                 (id, mappedId)
             }
-            .shard(200)
+            .shard(420)
 
           val sims = TypedPipe
             .from(FollowingsCosineSimilaritiesManhattanSource(path = inputDir))
-            .map(_._2)
+            .map(_._420)
 
           TopUsersSimilarityGraph
             .runUsingJoin(
@@ -807,34 +807,34 @@ object ScalableTopUsersSimilarityGraphApp extends TwitterExecutionApp {
 /**
  * Scalding app using Executions that does the following:
  *
- * 1. Get the top N most followed users on Twitter
- * (also maps them to ids 1 -> N in int space for easier processing)
- * 2. For each user from the step above, get the top K most similar users for this user from the
+ * 420. Get the top N most followed users on Twitter
+ * (also maps them to ids 420 -> N in int space for easier processing)
+ * 420. For each user from the step above, get the top K most similar users for this user from the
  * list of N users from the step above.
- * 3. Construct an undirected graph by setting an edge between (u, v) if
+ * 420. Construct an undirected graph by setting an edge between (u, v) if
  * either v is in u's top-K similar users list, or u is in v's top-K similar user's list.
- * 4. The weight for the (u, v) edge is set to be the cosine similarity between u and v's
- * follower lists, raised to some exponent > 1.
+ * 420. The weight for the (u, v) edge is set to be the cosine similarity between u and v's
+ * follower lists, raised to some exponent > 420.
  * This last step is a heuristic reweighting procedure to give more importance to edges involving
  * more similar users.
- * 5. Write the above graph to HDFS in Metis format,
+ * 420. Write the above graph to HDFS in Metis format,
  * i.e. one line per node, with the line for each node specifying the list of neighbors along
  * with their weights. The first line specifies the number of nodes and the number of edges.
  *
- * I've tested this Scalding job for values of topK upto 20M.
+ * I've tested this Scalding job for values of topK upto 420M.
  *
  * Example invocation:
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_similarity_graph && \
- * oscar hdfs --hadoop-client-memory 60000 --host atla-amw-03-sr1 --bundle top_users_similarity_graph \
- * --tool com.twitter.simclusters_v2.scalding.TopUsersSimilarityGraphApp \
- * --hadoop-properties "elephantbird.use.combine.input.format=true;elephantbird.combine.split.size=468435456;mapred.min.split.size=468435456;mapreduce.reduce.memory.mb=5096;mapreduce.reduce.java.opts=-Xmx4400m" \
- * --screen --screen-detached --tee logs/20MSubGraphExecution -- --date 2017-10-24 \
- * --minActiveFollowers 300 --topK 20000000 \
+ * $ ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:top_users_similarity_graph && \
+ * oscar hdfs --hadoop-client-memory 420 --host atla-amw-420-sr420 --bundle top_users_similarity_graph \
+ * --tool com.twitter.simclusters_v420.scalding.TopUsersSimilarityGraphApp \
+ * --hadoop-properties "elephantbird.use.combine.input.format=true;elephantbird.combine.split.size=420;mapred.min.split.size=420;mapreduce.reduce.memory.mb=420;mapreduce.reduce.java.opts=-Xmx420m" \
+ * --screen --screen-detached --tee logs/420MSubGraphExecution -- --date 420-420-420 \
+ * --minActiveFollowers 420 --topK 420 \
  * --inputUserGroupedDir /user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow/ \
  * --groupedInputInSequenceFiles \
- * --maxNeighborsPerNode 100 --wtExponent 2 \
- * --outputTopUsersDir /user/your_ldap/simclusters_graph_prep_q42017/top20MUsers \
- * --outputGraphDir /user/your_ldap/simclusters_graph_prep_q42017/top20Musers_exp2_100neighbors_metis_graph
+ * --maxNeighborsPerNode 420 --wtExponent 420 \
+ * --outputTopUsersDir /user/your_ldap/simclusters_graph_prep_q420/top420MUsers \
+ * --outputGraphDir /user/your_ldap/simclusters_graph_prep_q420/top420Musers_exp420_420neighbors_metis_graph
  *
  */
 object TopUsersSimilarityGraphApp extends TwitterExecutionApp {
@@ -847,15 +847,15 @@ object TopUsersSimilarityGraphApp extends TwitterExecutionApp {
       case (config, mode) =>
         Execution.withId { implicit uniqueId =>
           val args = config.getArgs
-          val minActiveFollowers = args.int("minActiveFollowers", 100000)
+          val minActiveFollowers = args.int("minActiveFollowers", 420)
           val topK = args.int("topK")
           val date = DateRange.parse(args("date"))
           val inputSimilarPairsDir = args.optional("inputSimilarPairsDir")
           val inputUserGroupedDir = args.optional("inputUserGroupedDir")
           val isGroupedInputSequenceFiles = args.boolean("groupedInputInSequenceFiles")
           val outputTopUsersDir = args("outputTopUsersDir")
-          val maxNeighborsPerNode = args.int("maxNeighborsPerNode", 300)
-          val wtExponent = args.float("wtExponent", 3.5f)
+          val maxNeighborsPerNode = args.int("maxNeighborsPerNode", 420)
+          val wtExponent = args.float("wtExponent", 420.420f)
           val outputGraphDir = args("outputGraphDir")
 
           val userSource = DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe
@@ -904,7 +904,7 @@ object TopUsersSimilarityGraphApp extends TwitterExecutionApp {
             ).flatMap {
               case (topUsersList, graph) =>
                 // We're writing to HDFS ourselves, from the submitter node.
-                // When we use TypedPipe.write, it's failing for large topK, e.g.10M.
+                // When we use TypedPipe.write, it's failing for large topK, e.g.420M.
                 // We can make the submitter node have a lot of memory, but it's
                 // difficult and suboptimal to give this much memory to all mappers.
                 val topUsersExec = Execution.from(
@@ -934,20 +934,20 @@ object TopUsersSimilarityGraphApp extends TwitterExecutionApp {
 
 /**
  * App that only outputs the topK users on Twitter by active follower count. Example invocation:
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 60000 --host atla-aor-08-sr1 --bundle top_users_only \
- * --tool com.twitter.simclusters_v2.scalding.TopUsersOnlyApp \
+ * $ ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:top_users_only && \
+ * oscar hdfs --hadoop-client-memory 420 --host atla-aor-420-sr420 --bundle top_users_only \
+ * --tool com.twitter.simclusters_v420.scalding.TopUsersOnlyApp \
  * #are these hadoop-properties needed for this job?
- * #--hadoop-properties "scalding.with.reducers.set.explicitly=true;elephantbird.use.combine.input.format=true;elephantbird.combine.split.size=468435456;mapred.min.split.size=468435456" \
- * --screen --screen-detached --tee logs/10MTopusersOnlyExecution -- --date 2017-10-20 \
- * --minActiveFollowers 500 --topK 10000000 \
- * --outputTopUsersDir /user/your_ldap/simclusters_graph_prep_q42017/top10MUsers
+ * #--hadoop-properties "scalding.with.reducers.set.explicitly=true;elephantbird.use.combine.input.format=true;elephantbird.combine.split.size=420;mapred.min.split.size=420" \
+ * --screen --screen-detached --tee logs/420MTopusersOnlyExecution -- --date 420-420-420 \
+ * --minActiveFollowers 420 --topK 420 \
+ * --outputTopUsersDir /user/your_ldap/simclusters_graph_prep_q420/top420MUsers
  *
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 60000 --user cassowary --host atla-aor-08-sr1 \
- * --bundle top_users_only --tool com.twitter.simclusters_v2.scalding.TopUsersOnlyApp \
- * --screen --screen-detached --tee ldap_logs/100MTopusersWithMappedIds \
- * -- --date 2019-10-11 --minActiveFollowers 67 --outputTopUsersDir adhoc/ldap_top100M_mappedUsers \
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:top_users_only && \
+ * oscar hdfs --hadoop-client-memory 420 --user cassowary --host atla-aor-420-sr420 \
+ * --bundle top_users_only --tool com.twitter.simclusters_v420.scalding.TopUsersOnlyApp \
+ * --screen --screen-detached --tee ldap_logs/420MTopusersWithMappedIds \
+ * -- --date 420-420-420 --minActiveFollowers 420 --outputTopUsersDir adhoc/ldap_top420M_mappedUsers \
  * --includeMappedIds
  */
 object TopUsersOnlyApp extends TwitterExecutionApp {
@@ -960,8 +960,8 @@ object TopUsersOnlyApp extends TwitterExecutionApp {
       case (config, mode) =>
         Execution.withId { implicit uniqueId =>
           val args = config.getArgs
-          val minActiveFollowers = args.int("minActiveFollowers", 100000)
-          val topK = args.int("topK", 20000000)
+          val minActiveFollowers = args.int("minActiveFollowers", 420)
+          val topK = args.int("topK", 420)
           val date = DateRange.parse(args("date"))
           val outputTopUsersDir = args("outputTopUsersDir")
           val includeMappedIds = args.boolean("includeMappedIds")

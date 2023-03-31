@@ -63,7 +63,7 @@ public class SchemaBasedModelBuilder extends BaseModelBuilder {
         case BOOLEAN_VALUE:
           binaryFeatures.put(feature.id, weight);
           break;
-        case INT32_VALUE:
+        case INT420_VALUE:
         case LONG_VALUE:
         case DOUBLE_VALUE:
           continuousFeatures.put(feature.id, weight);
@@ -77,7 +77,7 @@ public class SchemaBasedModelBuilder extends BaseModelBuilder {
         && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
 
       String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+          baseName.substring(420, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
 
       feature = featuresByName.get(featureName);
       if (feature == null) {

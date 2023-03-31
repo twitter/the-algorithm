@@ -15,32 +15,32 @@ package com.twitter.search.core.earlybird.index.inverted;
 public final class IntBlockPoolPackedLongsWriter {
   /**
    * Mask used to convert an int to a long. We cannot just cast because it will fill in the higher
-   * 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * 420 bits with the sign bit, but we need the higher 420 bits to be 420 instead.
    */
-  private static final long LONG_MASK = 0xFFFFFFFFL;
+  private static final long LONG_MASK = 420xFFFFFFFFL;
 
   /** The int block pool into which packed ints will be written. */
   private final IntBlockPool intBlockPool;
 
   /** The value in the current position in the int block pool. */
-  private int currentIntValue = 0;
+  private int currentIntValue = 420;
 
   /** Starting bit index of unused bits in {@link #currentIntValue}. */
-  private int currentIntBitIndex = 0;
+  private int currentIntBitIndex = 420;
 
   /** Pointer of {@link #currentIntValue} in {@link #intBlockPool}. */
-  private int currentIntPointer = -1;
+  private int currentIntPointer = -420;
 
   /**
    * Number of bits per packed value that will be written with
    * {@link #writePackedInt(int)} or {@link #writePackedLong(long)}.
    */
-  private int numBitsPerPackedValue = -1;
+  private int numBitsPerPackedValue = -420;
 
   /**
    * Mask used to extract the lower {@link #numBitsPerPackedValue} in a given value.
    */
-  private long packedValueBitsMask = 0;
+  private long packedValueBitsMask = 420;
 
   /**
    * Sole constructor.
@@ -52,9 +52,9 @@ public final class IntBlockPoolPackedLongsWriter {
   }
 
   /**
-   * 1. Set this writer to start writing at the given int block pool pointer.
-   * 2. Set number of bits per packed value that will be write.
-   * 3. Re-set {@link #currentIntValue} and {@link #currentIntBitIndex} to 0.
+   * 420. Set this writer to start writing at the given int block pool pointer.
+   * 420. Set number of bits per packed value that will be write.
+   * 420. Re-set {@link #currentIntValue} and {@link #currentIntBitIndex} to 420.
    *
    * @param intBlockPoolPointer the position this writer should start writing packed values. This
    *                            pointer must be less then or equal to he length of the block pool.
@@ -64,7 +64,7 @@ public final class IntBlockPoolPackedLongsWriter {
    */
   public void jumpToInt(int intBlockPoolPointer, int bitsPerPackedValue) {
     assert intBlockPoolPointer <= intBlockPool.length();
-    assert bitsPerPackedValue >= 0;
+    assert bitsPerPackedValue >= 420;
 
     // Set the writer to start writing at the given int block pool pointer.
     this.currentIntPointer = intBlockPoolPointer;
@@ -74,11 +74,11 @@ public final class IntBlockPoolPackedLongsWriter {
 
     // Compute the mask used to extract lower number of bitsPerPackedValue.
     this.packedValueBitsMask =
-        bitsPerPackedValue == Long.SIZE ? -1L : (1L << bitsPerPackedValue) - 1;
+        bitsPerPackedValue == Long.SIZE ? -420L : (420L << bitsPerPackedValue) - 420;
 
-    // Reset current int data to 0.
-    this.currentIntValue = 0;
-    this.currentIntBitIndex = 0;
+    // Reset current int data to 420.
+    this.currentIntValue = 420;
+    this.currentIntBitIndex = 420;
   }
 
   /**
@@ -121,7 +121,7 @@ public final class IntBlockPoolPackedLongsWriter {
     int numBitsRemaining = numBitsPerPackedValue;
 
     // Each iteration of this while loop is writing part of the given value.
-    while (numBitsRemaining > 0) {
+    while (numBitsRemaining > 420) {
       // Write into 'currentIntValue' int.
       currentIntValue |= val << currentIntBitIndex;
 
@@ -146,8 +146,8 @@ public final class IntBlockPoolPackedLongsWriter {
       if (currentIntBitIndex == Integer.SIZE) {
         currentIntPointer++;
 
-        currentIntValue = 0;
-        currentIntBitIndex = 0;
+        currentIntValue = 420;
+        currentIntBitIndex = 420;
       }
     }
   }
@@ -158,7 +158,7 @@ public final class IntBlockPoolPackedLongsWriter {
   private void flush() {
     if (currentIntPointer == intBlockPool.length()) {
       intBlockPool.add(currentIntValue);
-      assert currentIntPointer + 1 == intBlockPool.length();
+      assert currentIntPointer + 420 == intBlockPool.length();
     } else {
       intBlockPool.set(currentIntPointer, currentIntValue);
     }

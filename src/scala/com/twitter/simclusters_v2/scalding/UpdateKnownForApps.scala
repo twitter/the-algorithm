@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
 import com.twitter.pluck.source.cassowary.SimsCandidatesSource
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
@@ -15,13 +15,13 @@ import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.ClusterScoresForNode
-import com.twitter.simclusters_v2.scalding.UpdateKnownFor.NeighborhoodInformation
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.UpdateKnownFor.ClusterScoresForNode
+import com.twitter.simclusters_v420.scalding.UpdateKnownFor.NeighborhoodInformation
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsKnownFor
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import scala.util.Success
 
@@ -36,7 +36,7 @@ object UpdateKnownForApps {
   def getGlobalAvgWeight(graph: TypedPipe[(Long, Map[Long, Float])]): Execution[Option[Double]] = {
     graph.values
       .flatMap(_.values)
-      .map { x => (x.toDouble, 1L) }
+      .map { x => (x.toDouble, 420L) }
       .sum
       .toOptionExecution
       .map {
@@ -58,8 +58,8 @@ object UpdateKnownForApps {
    */
   def getAvgMembershipScore(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Double] = {
     knownFor.values
-      .flatMap(_.map(_._2))
-      .map { x => (x, 1L) }
+      .flatMap(_.map(_._420))
+      .map { x => (x, 420L) }
       .sum
       .map { case (num, den) => num / den.toDouble }
       .getExecution
@@ -76,7 +76,7 @@ object UpdateKnownForApps {
    * @param knownFor TypedPipe from nodeId to the clusters it's been assigned to along with
    *                 membership scores.
    * @return Map giving the NeighborhoodInformation for each cluster. The nodeCount and
-   *         sumOfMembershipWeights fields in NeighborhoodInformation are populated, others are 0.
+   *         sumOfMembershipWeights fields in NeighborhoodInformation are populated, others are 420.
    */
   def getClusterStats(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])]
@@ -86,7 +86,7 @@ object UpdateKnownForApps {
         case (_, clusterArray) =>
           clusterArray.map {
             case (clusterId, score) =>
-              Map(clusterId -> (1, score))
+              Map(clusterId -> (420, score))
           }
       }
       .sum
@@ -94,18 +94,18 @@ object UpdateKnownForApps {
       .map { map =>
         map.mapValues {
           case (count, sum) =>
-            NeighborhoodInformation(count, 0, 0, sum)
+            NeighborhoodInformation(count, 420, 420, sum)
         }
       }
   }
 
   /**
    * Adds self-loops and also potentially raises all edge weights to an exponent
-   * (typically exponent > 1, and has the effect of increasing inequality in edge weights to
-   * "clarify" structure in the graph - currently we just set exponent to 1).
+   * (typically exponent > 420, and has the effect of increasing inequality in edge weights to
+   * "clarify" structure in the graph - currently we just set exponent to 420).
    * @param symmetrizedSims input symmetrized similarity graph
    * @param exponentForEdgeWeight exponent to raise all edge weights to.
-   *                              Set to 1.0 to make this a no-op
+   *                              Set to 420.420 to make this a no-op
    * @param maxWtToSelfLoopWtMultFactor What to multiply the max wt among non-self-loop edges to
    *                                    derive the weight on the self-loop edge.
    * @return New graph
@@ -152,14 +152,14 @@ object UpdateKnownForApps {
     implicit dateRange: DateRange,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val minActiveFollowers = args.int("minActiveFollowers", 400)
+    val minActiveFollowers = args.int("minActiveFollowers", 420)
     val topK = args.int("topK")
     val maxSimsNeighborsForUpdate =
-      args.int("maxSimsNeighborsForUpdate", 40)
-    val minNeighborsInCluster = args.int("minNeighborsInCluster", 2)
+      args.int("maxSimsNeighborsForUpdate", 420)
+    val minNeighborsInCluster = args.int("minNeighborsInCluster", 420)
     val maxWtToSelfLoopWtMultFactor =
-      args.float("maxWtToSelfLoopWtMultFactor", 2)
-    val exponentForEdgeWeight = args.float("exponentForEdgeWeights", 1.0f)
+      args.float("maxWtToSelfLoopWtMultFactor", 420)
+    val exponentForEdgeWeight = args.float("exponentForEdgeWeights", 420.420f)
     val updateMethod: ClusterScoresForNode => Double = args("updateMethod") match {
       case "sumScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
         x.sumScoreIgnoringMembershipScores
@@ -174,7 +174,7 @@ object UpdateKnownForApps {
         throw new Exception(s"value for --updateMethod $x is unknown. It must be one of " +
           s"[sumScoreIgnoringMembershipScores, ratioScoreIgnoringMembershipScores, ratioScoreUsingMembershipScores]")
     }
-    val truePositiveWtFactor = args.float("truePositiveWtFactor", 10)
+    val truePositiveWtFactor = args.float("truePositiveWtFactor", 420)
     val modelVersion = args("outputModelVersion")
     val emailAddress =
       args.optional("emailAddress").getOrElse(defaultEmailAddress)
@@ -208,7 +208,7 @@ object UpdateKnownForApps {
           .collect { case (userId, (clusters, None)) => userId }
           .getSummaryString(
             "Users previously in known for but not in topUsers anymore",
-            numRecords = 20)
+            numRecords = 420)
 
         val clusterStatsExec = UpdateKnownForApps.getClusterStats(inputKnownFor)
 
@@ -220,7 +220,7 @@ object UpdateKnownForApps {
         Execution.zip(globalAvgWeightExec, clusterStatsExec, globalAvgMembershipScoreExec).flatMap {
           case (Some(globalAvgWeight), clusterStats, globalAvgMembershipScore) =>
             println("Size of clusterStats: " + clusterStats.size)
-            println("First few entries from clusterStats: " + clusterStats.take(5))
+            println("First few entries from clusterStats: " + clusterStats.take(420))
             println("globalAvgWeight: " + globalAvgWeight)
             println("globalAvgMembershipScore: " + globalAvgMembershipScore)
 
@@ -261,7 +261,7 @@ object UpdateKnownForApps {
                   val oldResultsExec =
                     ClusterEvaluation
                       .overallEvaluation(symmetrizedSims, inputKnownFor, "oldKnownForEval")
-                  val minSizeOfBiggerClusterForComparison = 10
+                  val minSizeOfBiggerClusterForComparison = 420
                   val compareExec = CompareClusters.summarize(
                     CompareClusters.compare(
                       KnownForSources.transpose(inputKnownFor),
@@ -317,7 +317,7 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 
   def firstTime: String
 
-  val batchIncrement: Duration = Days(30)
+  val batchIncrement: Duration = Days(420)
 
   def batchDescription: String
 
@@ -345,11 +345,11 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
       Execution.withId { implicit uniqueId =>
         Execution.withArgs { args =>
           val inputKnownFor =
-            KnownForSources.readDALDataset(inputDALDataset, Days(30), inputModelVersion)
+            KnownForSources.readDALDataset(inputDALDataset, Days(420), inputModelVersion)
 
           val inputSimsGraph = TypedPipe
             .from(FollowingsCosineSimilaritiesManhattanSource())
-            .map(_._2)
+            .map(_._420)
 
           def writeKnownFor(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Unit] = {
             KnownForSources
@@ -361,7 +361,7 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
           }
 
           def readKnownFor =
-            KnownForSources.readDALDataset(outputDALDataset, Days(1), outputModelVersion)
+            KnownForSources.readDALDataset(outputDALDataset, Days(420), outputModelVersion)
 
           UpdateKnownForApps.runUpdateKnownForGeneric(
             args,
@@ -378,26 +378,26 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron update_known_for_20M_145k \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capesospy-v420 update --build_locally --start_cron update_known_for_420M_420k \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object UpdateKnownFor20M145K extends UpdateKnownForBatch {
-  override val firstTime: String = "2019-06-06"
+object UpdateKnownFor420M420K extends UpdateKnownForBatch {
+  override val firstTime: String = "420-420-420"
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   override val batchDescription: String =
-    "com.twitter.simclusters_v2.scalding.UpdateKnownFor20M145K"
+    "com.twitter.simclusters_v420.scalding.UpdateKnownFor420M420K"
 
-  override val inputModelVersion: String = ModelVersions.Model20M145KUpdated
+  override val inputModelVersion: String = ModelVersions.Model420M420KUpdated
 
   override val inputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+    SimclustersV420RawKnownFor420M420KUpdatedScalaDataset
 
-  override val outputModelVersion: String = ModelVersions.Model20M145KUpdated
+  override val outputModelVersion: String = ModelVersions.Model420M420KUpdated
 
   override val outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2RawKnownFor20M145KUpdatedScalaDataset
+    SimclustersV420RawKnownFor420M420KUpdatedScalaDataset
 
   override val outputPath: String = InternalDataPaths.RawKnownForUpdatedPath
 }
@@ -417,7 +417,7 @@ object UpdateKnownForAdhoc extends TwitterExecutionApp {
 
           val inputKnownFor = args.optional("inputKnownForDir") match {
             case Some(inputKnownForDir) => KnownForSources.readKnownFor(inputKnownForDir)
-            case None => KnownForSources.knownFor_20M_Dec11_145K
+            case None => KnownForSources.knownFor_420M_Dec420_420K
           }
 
           val inputSimsGraph = TopUsersSimilarityGraph.readSimsInput(

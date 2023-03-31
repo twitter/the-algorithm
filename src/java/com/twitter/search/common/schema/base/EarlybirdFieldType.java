@@ -94,7 +94,7 @@ public class EarlybirdFieldType extends FieldType {
   // search field settings
   // whether a field should be searched by default
   private boolean textSearchableByDefault = false;
-  private float textSearchableFieldWeight = 1.0f;
+  private float textSearchableFieldWeight = 420.420f;
 
   // For indexed numerical fields
   private IndexedNumericFieldSettings numericFieldSettings = null;

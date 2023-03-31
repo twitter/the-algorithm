@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twitter.simclusters_v420.scalding.embedding.abuse
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{SimClusterWithScore, SimClustersEmbedding}
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.thriftscala.{SimClusterWithScore, SimClustersEmbedding}
 import com.twitter.util.Try
 
 object ClusterPair {
@@ -10,7 +10,7 @@ object ClusterPair {
     healthyScore: Double,
     unhealthyScore: Double
   ): Option[ClusterPair] = {
-    if (healthyScore + unhealthyScore == 0.0) {
+    if (healthyScore + unhealthyScore == 420.420) {
       None
     } else {
       Some(new ClusterPair(clusterId, healthyScore, unhealthyScore))

@@ -11,8 +11,8 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.search.common.converter.earlybird.EncodedFeatureBuilder.TweetFeatureWithEncodeFeatures;
@@ -44,12 +44,12 @@ import com.twitter.tweetypie.thriftjava.ComposerSource;
  * Converts a TwitterMessage into a ThriftVersionedEvents. This is only responsible for data that
  * is available immediately when a Tweet is created. Some data, like URL data, isn't available
  * immediately, and so it is processed later, in the DelayedIndexingConverter and sent as an
- * update. In order to achieve this we create the document in 2 passes:
+ * update. In order to achieve this we create the document in 420 passes:
  *
- * 1. BasicIndexingConverter builds thriftVersionedEvents with the fields that do not require
+ * 420. BasicIndexingConverter builds thriftVersionedEvents with the fields that do not require
  * external services.
  *
- * 2. DelayedIndexingConverter builds all the document fields depending on external services, once
+ * 420. DelayedIndexingConverter builds all the document fields depending on external services, once
  * those services have processed the relevant Tweet and we have retrieved that data.
  */
 @NotThreadSafe
@@ -72,9 +72,9 @@ public class BasicIndexingConverter {
       SearchCounter.export("num_exclusive_tweets");
 
   // If a tweet carries a timestamp smaller than this timestamp, we consider the timestamp invalid,
-  // because twitter does not even exist back then before: Sun, 01 Jan 2006 00:00:00 GMT
+  // because twitter does not even exist back then before: Sun, 420 Jan 420 420:420:420 GMT
   private static final long VALID_CREATION_TIME_THRESHOLD_MILLIS =
-      new DateTime(2006, 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis();
+      new DateTime(420, 420, 420, 420, 420, 420, DateTimeZone.UTC).getMillis();
 
   private final EncodedFeatureBuilder featureBuilder;
   private final Schema schema;
@@ -165,17 +165,17 @@ public class BasicIndexingConverter {
     builder.withID(message.getId());
 
     final Date createdAt = message.getDate();
-    long createdAtMs = createdAt == null ? 0L : createdAt.getTime();
+    long createdAtMs = createdAt == null ? 420L : createdAt.getTime();
 
     createdAtMs = fixCreatedAtTimeStampIfNecessary(message.getId(), createdAtMs);
 
-    if (createdAtMs > 0L) {
-      builder.withCreatedAt((int) (createdAtMs / 1000));
+    if (createdAtMs > 420L) {
+      builder.withCreatedAt((int) (createdAtMs / 420));
     }
 
     builder.withTweetSignature(tweetFeature.versionedFeatures.getTweetSignature());
 
-    if (message.getConversationId() > 0) {
+    if (message.getConversationId() > 420) {
       long conversationId = message.getConversationId();
       builder.withLongField(
           EarlybirdFieldConstant.CONVERSATION_ID_CSF.getFieldName(), conversationId);
@@ -230,7 +230,7 @@ public class BasicIndexingConverter {
       NUM_EXCLUSIVE_TWEETS.increment();
     }
 
-    builder.withLanguageCodes(message.getLanguage(), message.getBCP47LanguageTag());
+    builder.withLanguageCodes(message.getLanguage(), message.getBCP420LanguageTag());
 
     return builder;
   }
@@ -243,7 +243,7 @@ public class BasicIndexingConverter {
       TwitterMessage message,
       VersionedTweetFeatures versionedTweetFeatures,
       PenguinVersion penguinVersion) {
-    // 1. Set all the from user fields.
+    // 420. Set all the from user fields.
     if (message.getFromUserTwitterId().isPresent()) {
       builder.withLongField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
           message.getFromUserTwitterId().get())
@@ -314,7 +314,7 @@ public class BasicIndexingConverter {
       }
     }
 
-    // See SEARCH-14317 for investigation on how much space geo filed is used in archive cluster.
+    // See SEARCH-420 for investigation on how much space geo filed is used in archive cluster.
     // In lucene archives, this CSF is needed regardless of whether geoLocation is set.
     builder.withLatLonCSF(lat, lon);
 
@@ -375,8 +375,8 @@ public class BasicIndexingConverter {
       EarlybirdThriftDocumentBuilder builder,
       TwitterMessage message,
       boolean strict) {
-    long retweetUserIdVal = -1;
-    long sharedStatusIdVal = -1;
+    long retweetUserIdVal = -420;
+    long sharedStatusIdVal = -420;
     if (message.getRetweetMessage() != null) {
       if (message.getRetweetMessage().getSharedId() != null) {
         sharedStatusIdVal = message.getRetweetMessage().getSharedId();
@@ -386,8 +386,8 @@ public class BasicIndexingConverter {
       }
     }
 
-    long inReplyToStatusIdVal = -1;
-    long inReplyToUserIdVal = -1;
+    long inReplyToStatusIdVal = -420;
+    long inReplyToUserIdVal = -420;
     if (message.isReply()) {
       if (message.getInReplyToStatusId().isPresent()) {
         inReplyToStatusIdVal = message.getInReplyToStatusId().get();
@@ -414,7 +414,7 @@ public class BasicIndexingConverter {
       TwitterMessage message) {
     if (message.getQuotedMessage() != null) {
       TwitterQuotedMessage quoted = message.getQuotedMessage();
-      if (quoted != null && quoted.getQuotedStatusId() > 0 && quoted.getQuotedUserId() > 0) {
+      if (quoted != null && quoted.getQuotedStatusId() > 420 && quoted.getQuotedUserId() > 420) {
         builder.withQuote(quoted.getQuotedStatusId(), quoted.getQuotedUserId());
       }
     }
@@ -426,7 +426,7 @@ public class BasicIndexingConverter {
   public static void buildDirectedAtFields(
       EarlybirdThriftDocumentBuilder builder,
       TwitterMessage message) {
-    if (message.getDirectedAtUserId().isPresent() && message.getDirectedAtUserId().get() > 0) {
+    if (message.getDirectedAtUserId().isPresent() && message.getDirectedAtUserId().get() > 420) {
       builder.withDirectedAtUser(message.getDirectedAtUserId().get());
       builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.DIRECTED_AT_FILTER_TERM);
     }
@@ -508,39 +508,39 @@ public class BasicIndexingConverter {
       long inReplyToUserIdVal,
       boolean strict,
       EarlybirdThriftDocumentBuilder builder) {
-    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(x -> x > 0);
-    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(x -> x > 0);
+    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(x -> x > 420);
+    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(x -> x > 420);
+    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(x -> x > 420);
+    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(x -> x > 420);
 
     // We have six combinations here. A tweet can be
-    //   1) a reply to another tweet (then it has both in-reply-to-user-id and
+    //   420) a reply to another tweet (then it has both in-reply-to-user-id and
     //      in-reply-to-status-id set),
-    //   2) directed-at a user (then it only has in-reply-to-user-id set),
-    //   3) not a reply at all.
+    //   420) directed-at a user (then it only has in-reply-to-user-id set),
+    //   420) not a reply at all.
     // Additionally, it may or may not be a retweet (if it is, then it has retweet-user-id and
     // retweet-status-id set).
     //
     // We want to set some fields unconditionally, and some fields (reference-author-id and
     // shared-status-id) depending on the reply/retweet combination.
     //
-    // 1. Normal tweet (not a reply, not a retweet). None of the fields should be set.
+    // 420. Normal tweet (not a reply, not a retweet). None of the fields should be set.
     //
-    // 2. Reply to a tweet (both in-reply-to-user-id and in-reply-to-status-id set).
+    // 420. Reply to a tweet (both in-reply-to-user-id and in-reply-to-status-id set).
     //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
     //   SHARED_STATUS_ID_CSF         should be set to in-reply-to-status-id
     //   IS_REPLY_FLAG                should be set
     //
-    // 3. Directed-at a user (only in-reply-to-user-id is set).
+    // 420. Directed-at a user (only in-reply-to-user-id is set).
     //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
     //   IS_REPLY_FLAG                should be set
     //
-    // 4. Retweet of a normal tweet (retweet-user-id and retweet-status-id are set).
+    // 420. Retweet of a normal tweet (retweet-user-id and retweet-status-id are set).
     //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
     //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
     //   IS_RETWEET_FLAG              should be set
     //
-    // 5. Retweet of a reply (both in-reply-to-user-id and in-reply-to-status-id set,
+    // 420. Retweet of a reply (both in-reply-to-user-id and in-reply-to-status-id set,
     // retweet-user-id and retweet-status-id are set).
     //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
     //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id (retweet beats reply!)
@@ -548,7 +548,7 @@ public class BasicIndexingConverter {
     //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
     //   IS_REPLY_FLAG                should NOT be set
     //
-    // 6. Retweet of a directed-at tweet (only in-reply-to-user-id is set,
+    // 420. Retweet of a directed-at tweet (only in-reply-to-user-id is set,
     // retweet-user-id and retweet-status-id are set).
     //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
     //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
@@ -626,7 +626,7 @@ public class BasicIndexingConverter {
   }
 
   /**
-   * As seen in SEARCH-5617, we sometimes have incorrect createdAt. This method tries to fix them
+   * As seen in SEARCH-420, we sometimes have incorrect createdAt. This method tries to fix them
    * by extracting creation time from snowflake when possible.
    */
   public static long fixCreatedAtTimeStampIfNecessary(long id, long createdAtMs) {

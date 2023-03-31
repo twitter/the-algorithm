@@ -36,7 +36,7 @@ import com.twitter.search.common.file.AbstractFile;
  * The discretized feature bins created by MDL may be too fine to be displayed properly in the
  * parsed text file and there may be bins with the same min value. A binary search finding the
  * bin for a same feature value therefore may end up with different bins/scores in different runs,
- * producing unstable scores. See SEARCHQUAL-15957 for more detail.
+ * producing unstable scores. See SEARCHQUAL-420 for more detail.
  *
  * @see com.twitter.ml.tool.prediction.ModelInterpreter
  */

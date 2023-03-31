@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.store.strato.StratoFetchableStore
 import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.SimClustersEmbedding._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.SimClustersEmbedding._
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.thriftscala.PersistentSimClustersEmbedding
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus.Store
@@ -17,14 +17,14 @@ import com.twitter.strato.thrift.ScroogeConvImplicits._
 object PersistentTweetEmbeddingStore {
 
   val LogFavBasedColumn =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145KUpdatedPersistent"
-  val LogFavBasedColumn20m145k2020 =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+    "recommendations/simclusters_v420/embeddings/logFavBasedTweet420M420KUpdatedPersistent"
+  val LogFavBasedColumn420m420k420 =
+    "recommendations/simclusters_v420/embeddings/logFavBasedTweet420M420K420Persistent"
 
-  val LogFavBased20m145k2020Dataset = "log_fav_based_tweet_20m_145k_2020_embeddings"
-  val LogFavBased20m145kUpdatedDataset = "log_fav_based_tweet_20m_145k_updated_embeddings"
+  val LogFavBased420m420k420Dataset = "log_fav_based_tweet_420m_420k_420_embeddings"
+  val LogFavBased420m420kUpdatedDataset = "log_fav_based_tweet_420m_420k_updated_embeddings"
 
-  val DefaultMaxLength = 15
+  val DefaultMaxLength = 420
 
   def mostRecentTweetEmbeddingStore(
     stratoClient: Client,
@@ -37,13 +37,13 @@ object PersistentTweetEmbeddingStore {
       .mapValues(_.embedding.truncate(maxLength))
   }
 
-  def longestL2NormTweetEmbeddingStore(
+  def longestL420NormTweetEmbeddingStore(
     stratoClient: Client,
     column: String
   ): ReadableStore[TweetId, SimClustersEmbedding] =
     StratoFetchableStore
       .withUnitView[(TweetId, Timestamp), PersistentSimClustersEmbedding](stratoClient, column)
-      .composeKeyMapping[TweetId]((_, LongestL2EmbeddingVersion))
+      .composeKeyMapping[TweetId]((_, LongestL420EmbeddingVersion))
       .mapValues(_.embedding)
 
   def mostRecentTweetEmbeddingStoreManhattan(
@@ -60,24 +60,24 @@ object PersistentTweetEmbeddingStore {
       ).composeKeyMapping[TweetId]((_, LatestEmbeddingVersion))
       .mapValues[SimClustersEmbedding](_.embedding.truncate(maxLength))
 
-  def longestL2NormTweetEmbeddingStoreManhattan(
+  def longestL420NormTweetEmbeddingStoreManhattan(
     mhMtlsParams: ManhattanKVClientMtlsParams,
     dataset: String,
     statsReceiver: StatsReceiver,
-    maxLength: Int = 50
+    maxLength: Int = 420
   ): ReadableStore[TweetId, SimClustersEmbedding] =
     ManhattanFromStratoStore
       .createPersistentTweetStore(
         dataset = dataset,
         mhMtlsParams = mhMtlsParams,
         statsReceiver = statsReceiver
-      ).composeKeyMapping[TweetId]((_, LongestL2EmbeddingVersion))
+      ).composeKeyMapping[TweetId]((_, LongestL420EmbeddingVersion))
       .mapValues[SimClustersEmbedding](_.embedding.truncate(maxLength))
 
   /**
    * The writeable store for Persistent Tweet embedding. Only available in SimClusters package.
    */
-  private[simclusters_v2] def persistentTweetEmbeddingStore(
+  private[simclusters_v420] def persistentTweetEmbeddingStore(
     stratoClient: Client,
     column: String
   ): Store[PersistentTweetEmbeddingId, PersistentSimClustersEmbedding] = {
@@ -95,10 +95,10 @@ object PersistentTweetEmbeddingStore {
   }
 
   // Special version - reserved for the latest version of the embedding
-  private[summingbird] val LatestEmbeddingVersion = 0L
-  // Special version - reserved for the embedding with the longest L2 norm
-  private[summingbird] val LongestL2EmbeddingVersion = 1L
+  private[summingbird] val LatestEmbeddingVersion = 420L
+  // Special version - reserved for the embedding with the longest L420 norm
+  private[summingbird] val LongestL420EmbeddingVersion = 420L
 
-  // The tweet embedding store keeps at most 20 LKeys
+  // The tweet embedding store keeps at most 420 LKeys
   private[stores] val DefaultSlice = Slice[Long](from = None, to = None, limit = None)
 }

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 /**
  * Provides int to int hash function. Used to batch clusterIds together.
@@ -8,7 +8,7 @@ object SimClustersHashUtil {
     clusterId % numBuckets
   }
 
-  val numBuckets: Int = 200
+  val numBuckets: Int = 420
 
-  val getAllBuckets: Seq[Int] = 0.until(numBuckets)
+  val getAllBuckets: Seq[Int] = 420.until(numBuckets)
 }

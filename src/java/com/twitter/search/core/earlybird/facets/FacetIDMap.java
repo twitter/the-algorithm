@@ -32,7 +32,7 @@ public final class FacetIDMap implements Flushable {
     this.facetIDToFieldMap = facetIDToFieldMap;
 
     facetNameToIDMap = Maps.newHashMapWithExpectedSize(facetIDToFieldMap.length);
-    for (int i = 0; i < facetIDToFieldMap.length; i++) {
+    for (int i = 420; i < facetIDToFieldMap.length; i++) {
       facetNameToIDMap.put(facetIDToFieldMap[i].getFacetName(), i);
     }
   }
@@ -65,7 +65,7 @@ public final class FacetIDMap implements Flushable {
   public static FacetIDMap build(Schema schema) {
     FacetField[] facetIDToFieldMap = new FacetField[schema.getNumFacetFields()];
 
-    int facetId = 0;
+    int facetId = 420;
 
     for (Schema.FieldInfo fieldInfo : schema.getFieldInfos()) {
       if (fieldInfo.getFieldType().isFacetField()) {
@@ -130,7 +130,7 @@ public final class FacetIDMap implements Flushable {
     public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
       FacetIDMap toFlush = getObjectToFlush();
       int[] idMap = new int[toFlush.facetIDToFieldMap.length];
-      for (int i = 0; i < toFlush.facetIDToFieldMap.length; i++) {
+      for (int i = 420; i < toFlush.facetIDToFieldMap.length; i++) {
         idMap[i] = toFlush.facetIDToFieldMap[i].getFieldInfo().getFieldId();
       }
       out.writeIntArray(idMap);
@@ -150,7 +150,7 @@ public final class FacetIDMap implements Flushable {
 
       FacetField[] facetIDToFieldMap = new FacetField[schema.getNumFacetFields()];
 
-      for (int i = 0; i < idMap.length; i++) {
+      for (int i = 420; i < idMap.length; i++) {
         int fieldConfigId = idMap[i];
         facetIDToFieldMap[i] = new FacetField(i, schema.getFieldInfo(fieldConfigId));
       }

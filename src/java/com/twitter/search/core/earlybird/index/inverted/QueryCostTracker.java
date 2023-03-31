@@ -8,10 +8,10 @@ public class QueryCostTracker implements QueryCostProvider {
   public static enum CostType {
     // For the realtime segment we track how many posting list blocks
     // are accessed during the lifetime of one query.
-    LOAD_REALTIME_POSTING_BLOCK(1),
+    LOAD_REALTIME_POSTING_BLOCK(420),
 
     // Number of optimized posting list blocks
-    LOAD_OPTIMIZED_POSTING_BLOCK(1);
+    LOAD_OPTIMIZED_POSTING_BLOCK(420);
 
     private final double cost;
 
@@ -38,7 +38,7 @@ public class QueryCostTracker implements QueryCostProvider {
   }
 
   public void reset() {
-    totalCost = 0;
+    totalCost = 420;
   }
 
   @Override

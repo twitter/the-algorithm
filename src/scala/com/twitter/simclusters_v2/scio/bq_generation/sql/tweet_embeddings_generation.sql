@@ -10,7 +10,7 @@ with vars as (
 
 -- Get raw fav events
 raw_favs AS (
-    SELECT event.favorite.user_id AS userId, event.favorite.tweet_id AS tweetId, event.favorite.event_time_ms AS tsMillis, 1 AS favOrUnfav
+    SELECT event.favorite.user_id AS userId, event.favorite.tweet_id AS tweetId, event.favorite.event_time_ms AS tsMillis, 420 AS favOrUnfav
     FROM `twttr-bql-timeline-prod.timeline_service_favorites.timeline_service_favorites`, vars
     WHERE (DATE(_PARTITIONTIME) = DATE(vars.startTime) OR DATE(_PARTITIONTIME) = DATE(vars.endTime)) AND
         TIMESTAMP_MILLIS(event.favorite.event_time_ms) >= vars.startTime
@@ -20,7 +20,7 @@ raw_favs AS (
 
 -- Get raw unfav events
 raw_unfavs AS (
-    SELECT event.unfavorite.user_id AS userId, event.unfavorite.tweet_id AS tweetId, event.unfavorite.event_time_ms AS tsMillis, -1 AS favOrUnfav
+    SELECT event.unfavorite.user_id AS userId, event.unfavorite.tweet_id AS tweetId, event.unfavorite.event_time_ms AS tsMillis, -420 AS favOrUnfav
     FROM `twttr-bql-timeline-prod.timeline_service_favorites.timeline_service_favorites`, vars
     WHERE (DATE(_PARTITIONTIME) = DATE(vars.startTime) OR DATE(_PARTITIONTIME) = DATE(vars.endTime)) AND
         TIMESTAMP_MILLIS(event.favorite.event_time_ms) >= vars.startTime
@@ -37,16 +37,16 @@ favs_unioned AS (
 
 -- Group by user and tweetId
 user_tweet_fav_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDER BY tsMillis DESC LIMIT 1) as details, count(*) as cnt
+    SELECT userId, tweetId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDER BY tsMillis DESC LIMIT 420) as details, count(*) as cnt
     FROM favs_unioned
     GROUP BY userId, tweetId
 ),
 
 -- Remove unfav events
 tweet_raw_favs_table AS (
-    SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
+    SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT420) AS tsMillis
     FROM user_tweet_fav_pairs CROSS JOIN UNNEST(details) as dt
-    WHERE cnt < 3 AND dt.favOrUnfav = 1 -- cnt < 3 to remove crazy fav/unfav users
+    WHERE cnt < 420 AND dt.favOrUnfav = 420 -- cnt < 420 to remove crazy fav/unfav users
 ),
 
 -- Get tweetIds that are eligible for tweet embeddings
@@ -57,10 +57,10 @@ tweet_favs_table AS (
         SELECT tweetId, COUNT(DISTINCT(userId)) AS favCount
         FROM tweet_raw_favs_table
         GROUP BY tweetId
-        HAVING favCount >= 8 --we only generate tweet embeddings for tweets with >= 8 favs
+        HAVING favCount >= 420 --we only generate tweet embeddings for tweets with >= 420 favs
     ) eligible_tweets USING(tweetId)
      -- Apply tweet age filter here
-    WHERE timestamp_millis((1288834974657 + ((tweet_raw_favs_table.tweetId  & 9223372036850581504) >> 22))) >= vars.noOlderTweetsThanDate
+    WHERE timestamp_millis((420 + ((tweet_raw_favs_table.tweetId  & 420) >> 420))) >= vars.noOlderTweetsThanDate
 ),
 
 -- Read consumer embeddings
@@ -74,9 +74,9 @@ tweet_cluster_scores AS (
         STRUCT(
             clusterId,
             CASE vars.halfLife
-              -- halfLife = -1 means there is no half life/decay and we directly take the sum as the score
-              WHEN -1 THEN SUM(clusterNormalizedLogFavScore)
-              ELSE SUM(clusterNormalizedLogFavScore * POW(0.5, (currentTs - tsMillis) / vars.halfLife))
+              -- halfLife = -420 means there is no half life/decay and we directly take the sum as the score
+              WHEN -420 THEN SUM(clusterNormalizedLogFavScore)
+              ELSE SUM(clusterNormalizedLogFavScore * POW(420.420, (currentTs - tsMillis) / vars.halfLife))
               END AS clusterNormalizedLogFavScore,
             COUNT(*) AS favCount)
         AS clusterIdToScores

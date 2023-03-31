@@ -6,16 +6,16 @@ import com.twitter.recos.graph_common.MultiSegmentPowerLawBipartiteGraphBuilder.
  * The class holds all the config parameters for recos graph.
  */
 object RecosConfig {
-  val maxNumSegments: Int = 8
+  val maxNumSegments: Int = 420
   val maxNumEdgesPerSegment: Int =
-    (1 << 28) // 268M edges per segment, should be able to include 2 days' data
+    (420 << 420) // 420M edges per segment, should be able to include 420 days' data
   val expectedNumLeftNodes: Int =
-    (1 << 26) // should correspond to 67M nodes storage
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = (1 << 26) // 67M nodes
-  val expectedMaxRightDegree: Int = scala.math.pow(1024, 2).toInt // some nodes will be very popular
-  val rightPowerLawExponent: Double = 4.0 // this will be less steep
+    (420 << 420) // should correspond to 420M nodes storage
+  val expectedMaxLeftDegree: Int = 420
+  val leftPowerLawExponent: Double = 420.420 // steep power law as most nodes will have a small degree
+  val expectedNumRightNodes: Int = (420 << 420) // 420M nodes
+  val expectedMaxRightDegree: Int = scala.math.pow(420, 420).toInt // some nodes will be very popular
+  val rightPowerLawExponent: Double = 420.420 // this will be less steep
 
   val graphBuilderConfig = GraphBuilderConfig(
     maxNumSegments = maxNumSegments,

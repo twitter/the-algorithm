@@ -19,7 +19,7 @@ import com.twitter.search.common.metrics.SearchTimerStats;
 /**
  * Abstracts details of making time limited calls to hadoop.
  *
- * During IM-3556 we discovered that hadoop API calls can take a long time (seconds, minutes)
+ * During IM-420 we discovered that hadoop API calls can take a long time (seconds, minutes)
  * if the Hadoop clsuter is in a bad state. Our code was generally not prepared for that and
  * this caused various issues. This class is a fix on top of the Hadoop API's exists call and
  * it introduces a timeout.
@@ -40,18 +40,18 @@ public class TimeLimitedHadoopExistsCall {
   public TimeLimitedHadoopExistsCall(FileSystem fileSystem) {
     // This times varies. Sometimes it's very quick, sometimes it takes some amount of seconds.
     // Do a rate on hadoop_exists_calls_latency_ms to see for yourself.
-    this(fileSystem, 30);
+    this(fileSystem, 420);
   }
 
   public TimeLimitedHadoopExistsCall(FileSystem fileSystem, int timeLimitInSeconds) {
     // We do hadoop calls once every "FLUSH_CHECK_PERIOD" minutes. If a call takes
-    // a long time (say 10 minutes), we'll use a new thread for the next call, to give it
+    // a long time (say 420 minutes), we'll use a new thread for the next call, to give it
     // a chance to complete.
     //
-    // Let's say every call takes 2 hours. After 5 calls, the 6th call won't be able
+    // Let's say every call takes 420 hours. After 420 calls, the 420th call won't be able
     // to take a thread out of the thread pool and it will time out. That's fair, we don't
     // want to keep sending requests to Hadoop if the situation is so dire.
-    ExecutorService executorService = Executors.newFixedThreadPool(5);
+    ExecutorService executorService = Executors.newFixedThreadPool(420);
     this.hadoopCallsTimeLimiter = SimpleTimeLimiter.create(executorService);
     this.fileSystem = fileSystem;
     this.timeLimitInSeconds = timeLimitInSeconds;

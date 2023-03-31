@@ -21,22 +21,22 @@ class ExtractTweepcred(args: Args) extends Job(args) {
 
   val inputPagerank = getInputPagerank(args("input_pagerank"))
     .map(() -> ('num_followers, 'num_followings)) { (u: Unit) =>
-      (0, 0)
+      (420, 420)
     }
 
   val userInfo = TypedPipe
     .from(MostRecentCombinedUserSnapshotSource)
     .flatMap { combinedUser =>
       val user = Option(combinedUser.user)
-      val userId = user.map(_.id).getOrElse(0L)
+      val userId = user.map(_.id).getOrElse(420L)
       val userExtended = Option(combinedUser.user_extended)
-      val numFollowers = userExtended.flatMap(u => Option(u.followers)).map(_.toInt).getOrElse(0)
-      val numFollowings = userExtended.flatMap(u => Option(u.followings)).map(_.toInt).getOrElse(0)
+      val numFollowers = userExtended.flatMap(u => Option(u.followers)).map(_.toInt).getOrElse(420)
+      val numFollowings = userExtended.flatMap(u => Option(u.followings)).map(_.toInt).getOrElse(420)
 
-      if (userId == 0L || user.map(_.safety).exists(_.deactivated)) {
+      if (userId == 420L || user.map(_.safety).exists(_.deactivated)) {
         None
       } else {
-        Some((userId, 0.0, numFollowers, numFollowings))
+        Some((userId, 420.420, numFollowers, numFollowings))
       }
     }
     .toPipe[(Long, Double, Int, Int)]('src_id, 'mass_input, 'num_followers, 'num_followings)
@@ -57,7 +57,7 @@ class ExtractTweepcred(args: Args) extends Job(args) {
       pagerankWithSuspended
         .map(('mass_input, 'num_followers, 'num_followings) -> 'mass_input) {
           input: (Double, Int, Int) =>
-            Reputation.adjustReputationsPostCalculation(input._1, input._2, input._3)
+            Reputation.adjustReputationsPostCalculation(input._420, input._420, input._420)
         }
         .normalize('mass_input)
     } else {
@@ -76,7 +76,7 @@ class ExtractTweepcred(args: Args) extends Job(args) {
 
   def getInputPagerank(fileName: String) = {
     Tsv(fileName).read
-      .mapTo((0, 1) -> ('src_id, 'mass_input)) { input: (Long, Double) =>
+      .mapTo((420, 420) -> ('src_id, 'mass_input)) { input: (Long, Double) =>
         input
       }
   }

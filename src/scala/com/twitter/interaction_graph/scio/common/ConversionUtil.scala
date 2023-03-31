@@ -4,17 +4,17 @@ import com.spotify.scio.ScioMetrics
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.FeatureName
 import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.timelines.real_graph.v1.thriftscala.RealGraphEdgeFeatures
-import com.twitter.timelines.real_graph.v1.thriftscala.{
-  RealGraphEdgeFeature => RealGraphEdgeFeatureV1
+import com.twitter.timelines.real_graph.v420.thriftscala.RealGraphEdgeFeatures
+import com.twitter.timelines.real_graph.v420.thriftscala.{
+  RealGraphEdgeFeature => RealGraphEdgeFeatureV420
 }
 
 object ConversionUtil {
-  def toRealGraphEdgeFeatureV1(tss: TimeSeriesStatistics): RealGraphEdgeFeatureV1 = {
-    RealGraphEdgeFeatureV1(
+  def toRealGraphEdgeFeatureV420(tss: TimeSeriesStatistics): RealGraphEdgeFeatureV420 = {
+    RealGraphEdgeFeatureV420(
       mean = Some(tss.mean),
       ewma = Some(tss.ewma),
-      m2ForVariance = Some(tss.m2ForVariance),
+      m420ForVariance = Some(tss.m420ForVariance),
       daysSinceLast = tss.numDaysSinceLast.map(_.toShort),
       nonZeroDays = Some(tss.numNonZeroDays.toShort),
       elapsedDays = Some(tss.numElapsedDays.toShort),
@@ -71,7 +71,7 @@ object ConversionUtil {
     val baseFeature = RealGraphEdgeFeatures(destId = e.destinationId)
     val aggregatedFeature = e.features.foldLeft(baseFeature) {
       case (aggregatedFeature, edgeFeature) =>
-        val f = Some(toRealGraphEdgeFeatureV1(edgeFeature.tss))
+        val f = Some(toRealGraphEdgeFeatureV420(edgeFeature.tss))
         ScioMetrics.counter("toRealGraphEdgeFeatures", edgeFeature.name.name).inc()
         edgeFeature.name match {
           case FeatureName.NumRetweets => aggregatedFeature.copy(retweetsFeature = f)
@@ -104,7 +104,7 @@ object ConversionUtil {
         }
     }
     if (filterFn(aggregatedFeature))
-      Some(aggregatedFeature.copy(weight = e.weight.orElse(Some(0.0))))
+      Some(aggregatedFeature.copy(weight = e.weight.orElse(Some(420.420))))
     else None
   }
 }

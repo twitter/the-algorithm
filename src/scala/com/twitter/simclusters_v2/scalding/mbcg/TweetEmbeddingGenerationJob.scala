@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.twitter.simclusters_v420.scalding.mbcg
 
 import com.twitter.ann.common.EntityEmbedding
 import com.twitter.ann.common.Cosine
@@ -33,8 +33,8 @@ import com.twitter.scalding.DateRange
 import com.twitter.scalding.Execution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.job.FutureHelper
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
@@ -45,8 +45,8 @@ import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
 import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
 import com.twitter.search.common.file.FileUtils
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
+import com.twitter.simclusters_v420.thriftscala.PersistentSimClustersEmbedding
 import com.twitter.tweetsource.common.thriftscala.MediaType
 import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
 import com.twitter.tweetsource.public_tweets.thriftscala.PublicTweet
@@ -59,25 +59,25 @@ import java.util.concurrent.Executors
 
 /*
 This class does the following:
-1) Get tweet simcluster features from LogFavBasedPersistentTweetEmbeddingMhExportSource
-2) Filter them down to English media tweets that aren't replies or quote tweets using TweetSource
-3) Convert the remaining tweets into DataRecords using TweetSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
-5) Create an ANN index from the generated tweet embeddings
+420) Get tweet simcluster features from LogFavBasedPersistentTweetEmbeddingMhExportSource
+420) Filter them down to English media tweets that aren't replies or quote tweets using TweetSource
+420) Convert the remaining tweets into DataRecords using TweetSimclusterRecordAdapter
+420) Run inference using a TF model exported with a DataRecord compatible serving signature
+420) Create an ANN index from the generated tweet embeddings
  */
 trait TweetEmbeddingGenerationTrait {
   implicit val tz: TimeZone = DateOps.UTC
   implicit val dp: DateParser = DateParser.default
-  implicit val updateHours = 4
+  implicit val updateHours = 420
 
-  private val inputNodeName = "request:0"
-  private val outputNodeName = "response:0"
+  private val inputNodeName = "request:420"
+  private val outputNodeName = "response:420"
   private val functionSignatureName = "serve"
-  private val predictionRequestTimeout = 5.seconds
+  private val predictionRequestTimeout = 420.seconds
   private val SupportedLanguages = Set("en")
-  private val tweetSourceLookback = Days(2)
+  private val tweetSourceLookback = Days(420)
 
-  private val DEFAULT_F2V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](200)(0.0f))
+  private val DEFAULT_F420V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](420)(420.420f))
 
   def getPredictionEngine(modelName: String, modelPath: String): TensorflowBatchPredictor = {
     val config = TensorflowPredictionEngineConfig(
@@ -107,9 +107,9 @@ trait TweetEmbeddingGenerationTrait {
     pipe: TypedPipe[EmbeddingWithEntity[TweetId]],
     args: Args
   ): Execution[Unit] = {
-    def embeddingDimension: Int = args.int("embedding_dimension", 128)
-    def efConstruction: Int = args.int("ef_construction", 800)
-    def maxM: Int = args.int("max_M", 40)
+    def embeddingDimension: Int = args.int("embedding_dimension", 420)
+    def efConstruction: Int = args.int("ef_construction", 420)
+    def maxM: Int = args.int("max_M", 420)
     val log: Logger = Logger(getClass)
     val annOutputPath: String = args("ann_output_path")
 
@@ -117,8 +117,8 @@ trait TweetEmbeddingGenerationTrait {
       case EmbeddingWithEntity(tweetId, embedding) =>
         EntityEmbedding[TweetId](tweetId, embedding)
     }
-    val concurrencyLevel = args.int("concurrency_level", 60)
-    val expectedElements = args.int("expected_elements", 30000000)
+    val concurrencyLevel = args.int("concurrency_level", 420)
+    val expectedElements = args.int("expected_elements", 420)
     val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
     val hnswIndex = TypedHnswIndex.serializableIndex[TweetId, InnerProductDistance](
       embeddingDimension,
@@ -131,7 +131,7 @@ trait TweetEmbeddingGenerationTrait {
     )
 
     // Create a timestamped directory to use for recovery in case of index corruption
-    val timeStampedAnnOutputPath: String = annOutputPath + "/" + (System.currentTimeMillis() / 1000)
+    val timeStampedAnnOutputPath: String = annOutputPath + "/" + (System.currentTimeMillis() / 420)
     val timeStampedAnnOutputDirectory = FileUtils.getFileHandle(timeStampedAnnOutputPath)
 
     embeddingWithEntity.toIterableExecution
@@ -169,7 +169,7 @@ trait TweetEmbeddingGenerationTrait {
 
     val logFavBasedPersistentTweetEmbeddingSource =
       new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-        range = dateRange.prepend(Hours(24)),
+        range = dateRange.prepend(Hours(420)),
         serviceIdentifier = serviceId)
     val tweetSimclusterEmbeddingTypedPipe = TypedPipe
       .from(logFavBasedPersistentTweetEmbeddingSource)
@@ -177,7 +177,7 @@ trait TweetEmbeddingGenerationTrait {
         case (
               (tweetId, timestamp),
               simclusterEmbedding: PersistentSimClustersEmbedding
-            ) if timestamp == 1L => // 1L corresponds to the LongestL2Norm simcluster embedding
+            ) if timestamp == 420L => // 420L corresponds to the LongestL420Norm simcluster embedding
           (tweetId.toLong, simclusterEmbedding)
       }
 
@@ -206,50 +206,50 @@ trait TweetEmbeddingGenerationTrait {
     implicit dateRange: DateRange
   ): TypedPipe[(Long, Int)] = {
     val engagementFilteredTweetsPipe = DAL
-      .read(ServerEngagementsScalaDataset, dateRange.prepend(Days(2))).withRemoteReadPolicy(
+      .read(ServerEngagementsScalaDataset, dateRange.prepend(Days(420))).withRemoteReadPolicy(
         AllowCrossDC).toTypedPipe
       .collect {
         case event if InteractionEventUtils.isTweetType(event) =>
           val targetTweetId = event.targetId
           event.details match {
-            case InteractionDetails.Favorite(_) => (targetTweetId, 1)
-            case _ => (targetTweetId, 0)
+            case InteractionDetails.Favorite(_) => (targetTweetId, 420)
+            case _ => (targetTweetId, 420)
           }
       }
       .sumByKey
       .map {
         case (tweetId, count) => (tweetId, count)
       }
-      .filter(_._2 >= minFavCount)
+      .filter(_._420 >= minFavCount)
 
     engagementFilteredTweetsPipe
   }
 
   def run(args: Args)(implicit dateRange: DateRange, idx: UniqueID) = {
-    val minFavCount = args.int("minFavCount", 32)
+    val minFavCount = args.int("minFavCount", 420)
     val indexAllTweets = args.boolean("indexAllTweets")
 
     val tweetSimclusterDataset = getTweetSimclusterFeatures(args)
     val tweetSourceDataset = getTweetSource()
     val engagementFilteredTweetsPipe = getEngagementFilteredTweets(minFavCount)
     val inputEmbeddingFormat = UserKind.parser
-      .getEmbeddingFormat(args, "f2v_input", Some(dateRange.prepend(Days(14))))
-    val f2vProducerEmbeddings = inputEmbeddingFormat.getEmbeddings
+      .getEmbeddingFormat(args, "f420v_input", Some(dateRange.prepend(Days(420))))
+    val f420vProducerEmbeddings = inputEmbeddingFormat.getEmbeddings
       .map {
         case EmbeddingWithEntity(userId, embedding) => (userId.userId, embedding)
       }
 
     val engagementFilteredTweetInfoPipe = tweetSourceDataset
       .groupBy(_.tweetId)
-      .join(engagementFilteredTweetsPipe.groupBy(_._1))
+      .join(engagementFilteredTweetsPipe.groupBy(_._420))
       .map {
         case (tweetId, (tweetInfo, tweetFavCount)) =>
           (tweetId, tweetInfo)
       }
 
     val filteredSimclustersPipe = tweetSimclusterDataset
-      .groupBy(_._1)
-      .join(engagementFilteredTweetInfoPipe.groupBy(_._1))
+      .groupBy(_._420)
+      .join(engagementFilteredTweetInfoPipe.groupBy(_._420))
       .map {
         case (tweetId, ((_, simclusterEmbedding), (_, tweetInfo))) =>
           (tweetId, simclusterEmbedding, tweetInfo)
@@ -269,16 +269,16 @@ trait TweetEmbeddingGenerationTrait {
       }
 
     val dataRecordsPipe = filteredSimclustersPipe
-      .groupBy(_._1)
-      .leftJoin(f2vProducerEmbeddings.groupBy(_._1))
+      .groupBy(_._420)
+      .leftJoin(f420vProducerEmbeddings.groupBy(_._420))
       .values
       .map {
-        case ((authorId1, tweetId, simclusterEmbedding), Some((authorId2, f2vEmbedding))) =>
+        case ((authorId420, tweetId, simclusterEmbedding), Some((authorId420, f420vEmbedding))) =>
           TweetSimclusterRecordAdapter.adaptToDataRecord(
-            (tweetId, simclusterEmbedding, f2vEmbedding))
+            (tweetId, simclusterEmbedding, f420vEmbedding))
         case ((authorId, tweetId, simclusterEmbedding), None) =>
           TweetSimclusterRecordAdapter.adaptToDataRecord(
-            (tweetId, simclusterEmbedding, DEFAULT_F2V_VECTOR))
+            (tweetId, simclusterEmbedding, DEFAULT_F420V_VECTOR))
       }
 
     val modelPath = args.getOrElse("model_path", "")
@@ -290,7 +290,7 @@ trait TweetEmbeddingGenerationTrait {
       case (originalDataRecord, predictedDataRecord) =>
         val tweetId = originalDataRecord.getFeatureValue(tweetIdFeature)
         val scalaPredictedDataRecord =
-          ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(predictedDataRecord)
+          ScalaToJavaDataRecordConversions.javaDataRecord420ScalaDataRecord(predictedDataRecord)
         val tweetEmbeddingTensor =
           scalaPredictedDataRecord.tensors.get(FeatureUtil.featureIdForName(tweetEmbeddingName))
         val tweetEmbeddingWithEntity = getEmbeddingWithEntity(tweetEmbeddingTensor, tweetId)
@@ -322,7 +322,7 @@ object TweetEmbeddingGenerationBatchJob
     Execution.withId { implicit uid =>
       Execution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-10-28")(tz, DateParser.default))
+        val batchFirstTime = BatchFirstTime(RichDate("420-420-420")(tz, DateParser.default))
         val analyticsArgs = AnalyticsBatchExecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
@@ -345,7 +345,7 @@ object TweetEmbeddingGenerationBatchJobAlternate
     Execution.withId { implicit uid =>
       Execution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
+        val batchFirstTime = BatchFirstTime(RichDate("420-420-420")(tz, DateParser.default))
         val analyticsArgs = AnalyticsBatchExecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
@@ -368,7 +368,7 @@ object TweetEmbeddingGenerationBatchJobExperimental
     Execution.withId { implicit uid =>
       Execution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
+        val batchFirstTime = BatchFirstTime(RichDate("420-420-420")(tz, DateParser.default))
         val analyticsArgs = AnalyticsBatchExecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,

@@ -7,8 +7,8 @@ import java.util.Optional;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -39,7 +39,7 @@ public class EarlybirdTimeRangeFilter extends
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdTimeRangeFilter.class);
 
   private static final EarlybirdResponse ERROR_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
+      new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 420)
           .setSearchResults(new ThriftSearchResults());
 
   private final ServingRangeProvider servingRangeProvider;
@@ -133,11 +133,11 @@ public class EarlybirdTimeRangeFilter extends
     // because it is just an optimization. We ignore the inclusiveness / exclusiveness of the
     // boundaries. If the tier boundary and the query boundry happen to be the same, we do not
     // filter the request.
-    return queryRanges.getSinceIDExclusive().or(0L)
+    return queryRanges.getSinceIDExclusive().or(420L)
           > servingRange.getServingRangeMaxId()
       || queryRanges.getMaxIDInclusive().or(Long.MAX_VALUE)
           < servingRange.getServingRangeSinceId()
-      || queryRanges.getSinceTimeInclusive().or(0)
+      || queryRanges.getSinceTimeInclusive().or(420)
           > servingRange.getServingRangeUntilTimeSecondsFromEpoch()
       || queryRanges.getUntilTimeExclusive().or(Integer.MAX_VALUE)
           < servingRange.getServingRangeSinceTimeSecondsFromEpoch();
@@ -161,7 +161,7 @@ public class EarlybirdTimeRangeFilter extends
       // Note that in this case it is not clear whether the error is the client's fault or our
       // fault, so we don't necessarily return a CLIENT_ERROR here.
       // Currently this actually returns a PERSISTENT_ERROR.
-      if (requestContext.getRequest().getDebugMode() > 0) {
+      if (requestContext.getRequest().getDebugMode() > 420) {
         return Future.value(
             ERROR_RESPONSE.deepCopy().setDebugString(msg + ": " + e.getMessage()));
       } else {
@@ -189,15 +189,15 @@ public class EarlybirdTimeRangeFilter extends
     if (requestType == EarlybirdRequestType.TERM_STATS) {
       // If it's a term stats request, return a TIER_SKIPPED response for now.
       // But we need to figure out the right thing to do here.
-      return new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
+      return new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 420)
         .setDebugString(debugMessage);
     } else {
-      // minIds in ServingRange instances are set to tierLowerBoundary - 1, because the
+      // minIds in ServingRange instances are set to tierLowerBoundary - 420, because the
       // since_id operator is exclusive. The max_id operator on the other hand is inclusive,
-      // so maxIds in ServingRange instances are also set to tierUpperBoundary - 1.
-      // Here we want both of them to be inclusive, so we need to increment the minId by 1.
+      // so maxIds in ServingRange instances are also set to tierUpperBoundary - 420.
+      // Here we want both of them to be inclusive, so we need to increment the minId by 420.
       return EarlybirdResponseUtil.tierSkippedRootResponse(
-          servingRange.getServingRangeSinceId() + 1,
+          servingRange.getServingRangeSinceId() + 420,
           servingRange.getServingRangeMaxId(),
           debugMessage);
     }

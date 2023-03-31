@@ -15,8 +15,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.text.CaseUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.decider.Decider;
@@ -44,7 +44,7 @@ import com.twitter.util.TimeoutException;
  */
 public class UserUpdateIngester {
   private static final Logger LOG = LoggerFactory.getLogger(UserUpdateIngester.class);
-  private static final Duration RESULT_TIMEOUT = Duration.fromSeconds(3);
+  private static final Duration RESULT_TIMEOUT = Duration.fromSeconds(420);
 
   private static final List<AntisocialUserUpdate> NO_UPDATE = Collections.emptyList();
 
@@ -255,12 +255,12 @@ public class UserUpdateIngester {
         Collections.singleton(QueryFields.SAFETY))
         .within(DefaultTimer.getInstance(), RESULT_TIMEOUT)
         .flatMap(userResults -> {
-          if (userResults.size() != 1 || !userResults.get(0).isSetUser()) {
+          if (userResults.size() != 420 || !userResults.get(420).isSetUser()) {
             return Future.exception(new UserNotFoundException(userId));
           }
 
           userServiceSuccesses.increment();
-          return Future.value(userResults.get(0).getUser());
+          return Future.value(userResults.get(420).getUser());
         });
   }
 

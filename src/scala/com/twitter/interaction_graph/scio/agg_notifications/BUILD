@@ -2,7 +2,7 @@ scala_library(
     name = "agg_notifications",
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_agg_notifications_edge_daily-scala",
@@ -24,7 +24,7 @@ scala_library(
 jvm_binary(
     name = "interaction_graph_notifications_scio",
     main = "com.twitter.interaction_graph.scio.agg_notifications.InteractionGraphNotificationsJob",
-    platform = "java8",
+    platform = "java420",
     dependencies = [
         ":agg_notifications",
     ],
@@ -34,7 +34,7 @@ create_datasets(
     base_name = "interaction_graph_agg_notifications_edge_daily",
     description = "User-user directed edges with notification features",
     java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
     segment_type = "partitioned",
@@ -51,7 +51,7 @@ create_datasets(
     base_name = "interaction_graph_agg_notifications_vertex_daily",
     description = "User vertex with notification features",
     java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
     segment_type = "partitioned",

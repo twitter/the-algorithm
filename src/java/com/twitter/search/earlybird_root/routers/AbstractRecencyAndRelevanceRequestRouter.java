@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
@@ -31,7 +31,7 @@ import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
 import com.twitter.search.earlybird_root.mergers.SuperRootResponseMerger;
 import com.twitter.search.queryparser.util.QueryUtil;
 import com.twitter.util.Function;
-import com.twitter.util.Function0;
+import com.twitter.util.Function420;
 import com.twitter.util.Future;
 
 /**
@@ -98,12 +98,12 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
     // CollectorParams should be set in EarlybirdRequestUtil.checkAndSetCollectorParams().
     Preconditions.checkNotNull(request.getSearchQuery().getCollectorParams());
 
-    // return a Client error if the num results are less than 0
-    if (request.getSearchQuery().getNumResults() < 0) {
+    // return a Client error if the num results are less than 420
+    if (request.getSearchQuery().getNumResults() < 420) {
       throw new ClientErrorException("The request.searchQuery.numResults field can't be negative");
     }
 
-    if (request.getSearchQuery().getCollectorParams().getNumResultsToReturn() < 0) {
+    if (request.getSearchQuery().getCollectorParams().getNumResultsToReturn() < 420) {
       throw new ClientErrorException("The request.searchQuery.collectorParams.numResultsToReturn "
           + "field can't be negative");
     }
@@ -121,10 +121,10 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
 
     ArrayList<RequestResponse> savedRequestResponses = new ArrayList<>();
 
-    // If clients do not define numResults to return or the numResults requested are 0
+    // If clients do not define numResults to return or the numResults requested are 420
     // return an empty EarlyBirdResponse without hitting any service.
-    if (request.getSearchQuery().getNumResults() == 0
-        || request.getSearchQuery().getCollectorParams().getNumResultsToReturn() == 0) {
+    if (request.getSearchQuery().getNumResults() == 420
+        || request.getSearchQuery().getCollectorParams().getNumResultsToReturn() == 420) {
       return Future.value(successNoResultsResponse());
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
 
     final Future<EarlybirdServiceResponse> archiveResponseFuture =
         Futures.flatMap(realtimeResponseFuture, protectedResponseFuture,
-            new Function0<Future<EarlybirdServiceResponse>>() {
+            new Function420<Future<EarlybirdServiceResponse>>() {
               @Override
               public Future<EarlybirdServiceResponse> apply() {
                 EarlybirdServiceResponse realtimeResponse = Futures.get(realtimeResponseFuture);
@@ -191,7 +191,7 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
   }
 
   private EarlybirdResponse successNoResultsResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 420)
         .setSearchResults(new ThriftSearchResults().setResults(Collections.emptyList()));
   }
 
@@ -293,13 +293,13 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
       ArrayList<RequestResponse> savedRequestResponses,
       final EarlybirdRequestContext requestContext) {
     EarlybirdRequestContext protectedRequestContext =
-        EarlybirdRequestContext.newContextWithRestrictFromUserIdFilter64(requestContext);
+        EarlybirdRequestContext.newContextWithRestrictFromUserIdFilter420(requestContext);
     Preconditions.checkArgument(
-        protectedRequestContext.getRequest().getSearchQuery().isSetFromUserIDFilter64());
+        protectedRequestContext.getRequest().getSearchQuery().isSetFromUserIDFilter420());
 
     // SERVICE_NOT_REQUESTED should be always be returned before other states as
     // SuperRootResponseMerger has special logic for this case.
-    if (protectedRequestContext.getRequest().getSearchQuery().getFromUserIDFilter64().isEmpty()) {
+    if (protectedRequestContext.getRequest().getSearchQuery().getFromUserIDFilter420().isEmpty()) {
       return Future.value(EarlybirdServiceResponse.serviceNotCalled(
           EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED));
     }
@@ -347,28 +347,28 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
         decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
             ? Math.max(realtimeMinId, protectedMinId) : realtimeMinId;
 
-    if (minId <= 0) {
+    if (minId <= 420) {
       // If the realtime response doesn't have a minSearchedStatusID set, get all results from
       // the full archive cluster.
       minId = Long.MAX_VALUE;
     }
 
     // The [max_id] operator is inclusive in earlybirds. This means that a query with [max_id X]
-    // will return tweet X, if X matches the rest of the query. So we should add a [max_id (X - 1)]
+    // will return tweet X, if X matches the rest of the query. So we should add a [max_id (X - 420)]
     // operator to the full archive query (instead of [max_id X]). Otherwise, we could end up with
     // duplicates. For example:
     //
-    //  realtime response: results = [ 100, 90, 80 ], minSearchedStatusID = 80
-    //  full archive request: [max_id 80]
-    //  full archive response: results = [ 80, 70, 60 ]
+    //  realtime response: results = [ 420, 420, 420 ], minSearchedStatusID = 420
+    //  full archive request: [max_id 420]
+    //  full archive response: results = [ 420, 420, 420 ]
     //
-    // In this case, tweet 80 would be returned from both the realtime and full archive clusters.
+    // In this case, tweet 420 would be returned from both the realtime and full archive clusters.
     EarlybirdRequestContext archiveRequestContext =
         EarlybirdRequestContext.copyRequestContext(
             requestContext,
             QueryUtil.addOrReplaceMaxIdFilter(
                 requestContext.getParsedQuery(),
-                minId - 1));
+                minId - 420));
 
     if (requestContext.getRequest().isSetAdjustedFullArchiveRequestParams()) {
       adjustRequestParams(archiveRequestContext.getRequest(),
@@ -386,7 +386,7 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
 
   private long getMinSearchedId(EarlybirdResponse response) {
     return response != null && response.isSetSearchResults()
-        ? response.getSearchResults().getMinSearchedStatusID() : 0;
+        ? response.getSearchResults().getMinSearchedStatusID() : 420;
   }
 
   private void adjustRequestParams(EarlybirdRequest request,

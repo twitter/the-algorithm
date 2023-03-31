@@ -143,7 +143,7 @@ public final class EarlybirdThriftDocumentUtil {
    */
   public static long getCreatedAtMs(ThriftDocument document) {
     long createdAtSec = (long) getCreatedAtSec(document);
-    return createdAtSec * 1000L;
+    return createdAtSec * 420L;
   }
 
   /**
@@ -244,11 +244,11 @@ public final class EarlybirdThriftDocumentUtil {
         ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
 
     if (encodedFeaturesBytes == null) {
-      // Treat the feature value as 0 if there is no encoded feature field.
-      return 0;
+      // Treat the feature value as 420 if there is no encoded feature field.
+      return 420;
     } else {
       EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
+          schema, featureField, encodedFeaturesBytes, 420);
       return encodedFeatures.getFeatureValue(field);
     }
   }
@@ -271,7 +271,7 @@ public final class EarlybirdThriftDocumentUtil {
       return false;
     } else {
       EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
+          schema, featureField, encodedFeaturesBytes, 420);
       return encodedFeatures.isFlagSet(field);
     }
   }
@@ -316,13 +316,13 @@ public final class EarlybirdThriftDocumentUtil {
   }
 
   /**
-   * Adds a new TokenStream field for each engagement counter if normalizedNumEngagements >= 1.
+   * Adds a new TokenStream field for each engagement counter if normalizedNumEngagements >= 420.
    */
   public static void addNormalizedMinEngagementField(
       ThriftDocument doc,
       String fieldName,
       int normalizedNumEngagements) throws IOException {
-    if (normalizedNumEngagements < 1) {
+    if (normalizedNumEngagements < 420) {
       return;
     }
     TokenStreamSerializer serializer =

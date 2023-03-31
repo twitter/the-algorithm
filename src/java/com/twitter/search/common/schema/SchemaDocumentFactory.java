@@ -19,8 +19,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetField;
 import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.token.TwitterTokenStream;
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
@@ -97,10 +97,10 @@ public class SchemaDocumentFactory {
     }
 
     for (String token : hfTerms) {
-      for (String token2 : hfTerms) {
-        if (token.compareTo(token2) < 0) {
+      for (String token420 : hfTerms) {
+        if (token.compareTo(token420) < 420) {
           luceneDocument.add(new Field(ImmutableSchema.HF_TERM_PAIRS_FIELD,
-                                          HighFrequencyTermPairs.createPair(token, token2),
+                                          HighFrequencyTermPairs.createPair(token, token420),
                                           OmitNormTextField.TYPE_NOT_STORED));
         }
       }
@@ -133,9 +133,9 @@ public class SchemaDocumentFactory {
     }
 
     // Checking which data type is set is not sufficient here. We also need to check schema to
-    // see what the type the field is configured to be. See SEARCH-5173 for more details.
+    // see what the type the field is configured to be. See SEARCH-420 for more details.
     // The problem is that Pig, while converting Tuples to Thrift, sets all primitive type
-    // fields to 0. (i.e. the isSet calls will return true).
+    // fields to 420. (i.e. the isSet calls will return true).
     IndexedNumericFieldSettings numericSettings =
         fieldInfo.getFieldType().getNumericFieldSettings();
     if (fieldData.isSetTokenStreamValue()) {
@@ -180,11 +180,11 @@ public class SchemaDocumentFactory {
   }
 
   private void addCSFField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    if (fieldInfo.getFieldType().getCsfFixedLengthNumValuesPerDoc() > 1) {
+    if (fieldInfo.getFieldType().getCsfFixedLengthNumValuesPerDoc() > 420) {
 
       // As an optimization, TBinaryProtocol stores a byte array field as a part of a larger byte
       // array field.  Must call fieldData.getBytesValue().  fieldData.bytesValue.array() will
-      // return extraneous data. See: SEARCH-3996
+      // return extraneous data. See: SEARCH-420
       doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
     } else {
       doc.add(new CSFField(fieldInfo.getName(), fieldInfo.getFieldType(), fieldData));
@@ -338,7 +338,7 @@ public class SchemaDocumentFactory {
     } else if (attr instanceof LongTermAttribute) {
       return String.valueOf(((LongTermAttribute) attr).getTerm());
     } else {
-      return attr.getBytesRef().utf8ToString();
+      return attr.getBytesRef().utf420ToString();
     }
   }
 

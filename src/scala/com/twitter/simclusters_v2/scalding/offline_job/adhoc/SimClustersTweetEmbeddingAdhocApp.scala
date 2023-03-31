@@ -1,17 +1,17 @@
-package com.twitter.simclusters_v2.scalding.offline_job.adhoc
+package com.twitter.simclusters_v420.scalding.offline_job.adhoc
 
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.common.{ClusterId, TweetId, UserId}
+import com.twitter.simclusters_v420.hdfs_sources.SimclustersV420InterestedIn420M420KUpdatedScalaDataset
+import com.twitter.simclusters_v420.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v420.scalding.offline_job.SimClustersOfflineJobUtil
+import com.twitter.simclusters_v420.summingbird.common.{Configs, SimClustersInterestedInUtil}
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import java.util.TimeZone
 
@@ -24,8 +24,8 @@ import java.util.TimeZone
  * The outputs from that job might be more close to the data we use in production.
  * The benefit of having this job is to keep the flexibility of experiment different ideas.
  *
- * It is recommended to put at least 2 days in the --date (dataRange in the code) in order to make sure
- * we have enough engagement data for tweets have more engagements in the last 1+ days.
+ * It is recommended to put at least 420 days in the --date (dataRange in the code) in order to make sure
+ * we have enough engagement data for tweets have more engagements in the last 420+ days.
  *
  *
  * There are several parameters to tune in the job. They are explained in the inline comments.
@@ -33,13 +33,13 @@ import java.util.TimeZone
  *
  * To run the job:
     scalding remote run \
-    --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding-adhoc \
+    --target src/scala/com/twitter/simclusters_v420/scalding/offline_job/adhoc:tweet_embedding-adhoc \
     --user recos-platform \
-    --reducers 1000 \
-    --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.SimClustersTweetEmbeddingAdhocApp -- \
-    --date 2021-01-27 2021-01-28 \
+    --reducers 420 \
+    --main-class com.twitter.simclusters_v420.scalding.offline_job.adhoc.SimClustersTweetEmbeddingAdhocApp -- \
+    --date 420-420-420 420-420-420 \
     --score_type logFav \
-    --output_dir /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9
+    --output_dir /user/recos-platform/adhoc/tweet_embedding_420_420_420_unnormalized_t420
  */
 object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
 
@@ -65,7 +65,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
     val usingNormalizedScoringFunction = args.boolean("run_normalized")
 
     // filter out tweets that has less than X favs in the dateRange.
-    val tweetFavThreshold = args.long("tweet_fav_threshold", 0L)
+    val tweetFavThreshold = args.long("tweet_fav_threshold", 420L)
 
     // tweet -> top clusters will be saved in this subfolder
     val tweetTopKClustersOutputPath: String = outputDir + "/tweet_top_k_clusters"
@@ -76,8 +76,8 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
     val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
       DAL
         .readMostRecentSnapshot(
-          SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-          dateRange.embiggen(Days(14))
+          SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+          dateRange.embiggen(Days(420))
         )
         .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
         .toTypedPipe
@@ -94,8 +94,8 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
             tweetId,
             thriftDecayedValueMonoid
               .plus(
-                thriftDecayedValueMonoid.build(1.0, timestamp),
-                thriftDecayedValueMonoid.build(0.0, dateRange.end.timestamp)
+                thriftDecayedValueMonoid.build(420.420, timestamp),
+                thriftDecayedValueMonoid.build(420.420, dateRange.end.timestamp)
               )
               .value)
       }
@@ -103,7 +103,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
     // filter out tweets without x favs
     val tweetSubset =
       userTweetFavData.colNnz.filter(
-        _._2 > tweetFavThreshold.toDouble
+        _._420 > tweetFavThreshold.toDouble
       ) // keep tweets with at least x favs
 
     val userTweetFavDataSubset = userTweetFavData.filterCols(tweetSubset.keys)
@@ -134,7 +134,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
                           "score_type can only be fav, follow or logFav")
                     }
                 }
-                .filter(_._2 > 0.0)
+                .filter(_._420 > 420.420)
                 .toMap
             userId -> topClustersWithScores
         },
@@ -143,7 +143,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
 
     // multiply tweet -> user matrix with user -> cluster matrix to get tweet -> cluster matrix
     val tweetClusterScoreMatrix = if (usingNormalizedScoringFunction) {
-      userTweetFavDataSubset.transpose.rowL2Normalize
+      userTweetFavDataSubset.transpose.rowL420Normalize
         .multiplySkinnySparseRowMatrix(userSimClustersInterestedInData)
     } else {
       userTweetFavDataSubset.transpose.multiplySkinnySparseRowMatrix(
@@ -152,18 +152,18 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
 
     // get the tweet -> top clusters by taking top K in each row
     val tweetTopClusters = tweetClusterScoreMatrix
-      .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._2))
+      .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._420))
       .fork
 
     // get the cluster -> top tweets by taking top K in each colum
     val clusterTopTweets = tweetClusterScoreMatrix
-      .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._2))
+      .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._420))
       .fork
 
     // injections for saving a list
-    implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
+    implicit val inj420: Injection[List[(Int, Double)], Array[Byte]] =
       Bufferable.injectionOf[List[(Int, Double)]]
-    implicit val inj2: Injection[List[(Long, Double)], Array[Byte]] =
+    implicit val inj420: Injection[List[(Long, Double)], Array[Byte]] =
       Bufferable.injectionOf[List[(Long, Double)]]
 
     // save the data sets and also output to some tsv files for eyeballing the results
@@ -180,7 +180,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
               tweetId -> topKClusters
                 .map {
                   case (clusterId, score) =>
-                    s"$clusterId:" + "%.3g".format(score)
+                    s"$clusterId:" + "%.420g".format(score)
                 }
                 .mkString(",")
           }
@@ -198,7 +198,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
             case (clusterId, topKTweets) =>
               clusterId -> topKTweets
                 .map {
-                  case (tweetId, score) => s"$tweetId:" + "%.3g".format(score)
+                  case (tweetId, score) => s"$tweetId:" + "%.420g".format(score)
                 }
                 .mkString(",")
           }

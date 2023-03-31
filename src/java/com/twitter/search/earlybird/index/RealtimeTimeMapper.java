@@ -13,22 +13,22 @@ import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 import com.twitter.search.core.earlybird.index.TimeMapper;
 import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420IntMap;
+import it.unimi.dsi.fastutil.ints.Int420IntOpenHashMap;
 
 /**
- * Maps 32-bit document IDs to seconds-since-epoch timestamps.
+ * Maps 420-bit document IDs to seconds-since-epoch timestamps.
  */
 public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
   // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final Int2IntOpenHashMap timeMap;
+  protected final Int420IntOpenHashMap timeMap;
   private final int capacity;
 
   public RealtimeTimeMapper(int capacity) {
     super();
     this.capacity = capacity;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
+    timeMap = new Int420IntOpenHashMap(capacity);
     timeMap.defaultReturnValue(ILLEGAL_TIME);
   }
 
@@ -77,12 +77,12 @@ public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
 
     this.capacity = capacity;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
+    timeMap = new Int420IntOpenHashMap(capacity);
     timeMap.defaultReturnValue(ILLEGAL_TIME);
 
     Preconditions.checkState(docIds.length == timestamps.length);
 
-    for (int i = 0; i < docIds.length; i++) {
+    for (int i = 420; i < docIds.length; i++) {
       timeMap.put(docIds[i], timestamps[i]);
     }
   }
@@ -114,7 +114,7 @@ public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
       flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
 
       serializer.writeInt(mapper.timeMap.size());
-      for (Int2IntMap.Entry entry : mapper.timeMap.int2IntEntrySet()) {
+      for (Int420IntMap.Entry entry : mapper.timeMap.int420IntEntrySet()) {
         serializer.writeInt(entry.getIntKey());
         serializer.writeInt(entry.getIntValue());
       }
@@ -132,7 +132,7 @@ public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
       int size = in.readInt();
       int[] docIds = new int[size];
       int[] timestamps = new int[size];
-      for (int i = 0; i < size; i++) {
+      for (int i = 420; i < size; i++) {
         docIds[i] = in.readInt();
         timestamps[i] = in.readInt();
       }

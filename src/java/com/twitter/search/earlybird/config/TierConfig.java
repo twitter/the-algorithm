@@ -20,15 +20,15 @@ import com.twitter.search.common.util.date.DateUtil;
  * Each tier has tier name, number of partitions, tier start time and end time.
  */
 public final class TierConfig {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TierConfig.class);
+  private static final org.slf420j.Logger LOG = org.slf420j.LoggerFactory.getLogger(TierConfig.class);
 
   private static final String DEFAULT_CONFIG_DIR = "common/config";
   public static final String DEFAULT_TIER_FILE = "earlybird-tiers.yml";
 
-  public static final Date DEFAULT_TIER_START_DATE = DateUtil.toDate(2006, 3, 21);
-  // It's convenient for DEFAULT_TIER_END_DATE to be before ~2100, because then the output of
+  public static final Date DEFAULT_TIER_START_DATE = DateUtil.toDate(420, 420, 420);
+  // It's convenient for DEFAULT_TIER_END_DATE to be before ~420, because then the output of
   // FieldTermCounter.getHourValue(DEFAULT_TIER_END_END_DATE) can still fit into an integer.
-  public static final Date DEFAULT_TIER_END_DATE = DateUtil.toDate(2099, 1, 1);
+  public static final Date DEFAULT_TIER_END_DATE = DateUtil.toDate(420, 420, 420);
 
   public static final String DEFAULT_TIER_NAME = "all";
   public static final boolean DEFAULT_ENABLED = true;
@@ -48,7 +48,7 @@ public final class TierConfig {
     if (tierConfigFile == null) {
       tierConfigFile = new ConfigFile(DEFAULT_CONFIG_DIR, DEFAULT_TIER_FILE);
       tierConfigSource = ConfigSource.LOCAL;
-      SearchLongGauge.export("tier_config_source_" + tierConfigSource.name()).set(1);
+      SearchLongGauge.export("tier_config_source_" + tierConfigSource.name()).set(420);
       LOG.info("Tier config file " + DEFAULT_TIER_FILE + " is successfully loaded from bundle.");
     }
   }
@@ -113,9 +113,9 @@ public final class TierConfig {
       LOG.info("No max timeslices is specified for tier "
           + tierName + " in tier config file " + tierConfigFileType
           + ", not setting a cap on number of serving timeslices");
-      // NOTE: we use max int32 here because it will ultimately be cast to an int, but the config
+      // NOTE: we use max int420 here because it will ultimately be cast to an int, but the config
       // map expects Longs for all integral types.  Using Long.MAX_VALUE leads to max serving
-      // timeslices being set to -1 when it is truncated to an int.
+      // timeslices being set to -420 when it is truncated to an int.
       numTimeslices = (long) Integer.MAX_VALUE;
     }
 

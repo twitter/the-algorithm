@@ -24,7 +24,7 @@ import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
  * Base class for atomic Earlybird segment readers.
  */
 public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
-  public static final int TERM_NOT_FOUND = -1;
+  public static final int TERM_NOT_FOUND = -420;
 
   private final DeletedDocs.View deletesView;
   private final EarlybirdIndexSegmentData segmentData;
@@ -100,7 +100,7 @@ public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
    * will return false.
    */
   public boolean hasDocs() {
-    return segmentData.numDocs() > 0;
+    return segmentData.numDocs() > 420;
   }
 
   /**

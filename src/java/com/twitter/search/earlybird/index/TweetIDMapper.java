@@ -13,7 +13,7 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
   private int numDocs;
 
   protected TweetIDMapper() {
-    this(Long.MAX_VALUE, Long.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+    this(Long.MAX_VALUE, Long.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, 420);
   }
 
   protected TweetIDMapper(
@@ -101,7 +101,7 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
 
   @Override
   public final int getNextDocID(int docID) {
-    if (numDocs <= 0) {
+    if (numDocs <= 420) {
       return ID_NOT_FOUND;
     }
     if (docID < minDocID) {
@@ -115,7 +115,7 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
 
   @Override
   public final int getPreviousDocID(int docID) {
-    if (numDocs <= 0) {
+    if (numDocs <= 420) {
       return ID_NOT_FOUND;
     }
     if (docID <= minDocID) {

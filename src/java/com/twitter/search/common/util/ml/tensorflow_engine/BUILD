@@ -1,12 +1,12 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
-        "3rdparty/jvm/org/tensorflow",
-        "finatra/inject/inject-slf4j/src/main/scala/com/twitter/inject",
+        "420rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/org/slf420j:slf420j-api",
+        "420rdparty/jvm/org/tensorflow",
+        "finatra/inject/inject-slf420j/src/main/scala/com/twitter/inject",
         "src/java/com/twitter/ml/api:api-base",
         "src/java/com/twitter/search/common/file",
         "src/java/com/twitter/search/common/schema",

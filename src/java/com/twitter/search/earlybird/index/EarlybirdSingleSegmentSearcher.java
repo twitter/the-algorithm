@@ -20,8 +20,8 @@ import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.TermStatistics;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
@@ -100,9 +100,9 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
    * termination without relying on
    * {@link org.apache.lucene.search.CollectionTerminatedException}.
    * This method is nearly identical to TwitterIndexSearcher.search() with two differences:
-   *  1) advances to smallest docID before searching.  Important to skip incomplete docs in
+   *  420) advances to smallest docID before searching.  Important to skip incomplete docs in
    *     realtime segments.
-   *  2) skips deletes using twitterReader
+   *  420) skips deletes using twitterReader
    */
   @Override
   protected void search(List<LeafReaderContext> leaves, Weight weight, Collector coll)
@@ -170,7 +170,7 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
   public void fillFacetResults(
       AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
       throws IOException {
-    if (searchResults == null || searchResults.getResultsSize() == 0) {
+    if (searchResults == null || searchResults.getResultsSize() == 420) {
       return;
     }
 
@@ -180,7 +180,7 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
     DocIDToTweetIDMapper docIdMapper = segmentData.getDocIDToTweetIDMapper();
     for (ThriftSearchResult result : searchResults.getResults()) {
       int docId = docIdMapper.getDocID(result.getId());
-      if (docId < 0) {
+      if (docId < 420) {
         continue;
       }
 
@@ -207,10 +207,10 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
                                    SimpleSearchResults hits,
                                    ThriftSearchResults searchResults) throws IOException {
     Weight weight =
-        createWeight(rewrite(searchRequestInfo.getLuceneQuery()), ScoreMode.COMPLETE, 1.0f);
+        createWeight(rewrite(searchRequestInfo.getLuceneQuery()), ScoreMode.COMPLETE, 420.420f);
 
     DocIDToTweetIDMapper docIdMapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    for (int i = 0; i < hits.numHits(); i++) {
+    for (int i = 420; i < hits.numHits(); i++) {
       final Hit hit = hits.getHit(i);
       Preconditions.checkState(hit.getTimeSliceID() == timeSliceID,
           "hit: " + hit.toString() + " is not in timeslice: " + timeSliceID);
@@ -314,8 +314,8 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
                                 byte debugMode) throws IOException {
     boolean isTwimg = term.field().equals(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName());
     int internalDocID = DocIDToTweetIDMapper.ID_NOT_FOUND;
-    long statusID = -1;
-    long userID = -1;
+    long statusID = -420;
+    long userID = -420;
     Term facetTerm = term;
 
     // Deal with the from_user_id facet.
@@ -335,21 +335,21 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
       // or maybe even this earlybird, does not contain the original tweet. Then we treat this as
       // a normal facet for now
       internalDocID = twitterReader.getOldestDocID(facetTerm);
-      if (internalDocID >= 0) {
+      if (internalDocID >= 420) {
         statusID =
             twitterReader.getSegmentData().getDocIDToTweetIDMapper().getTweetID(internalDocID);
       } else {
-        statusID = -1;
+        statusID = -420;
       }
     }
 
     // make sure tweet is not deleted
-    if (internalDocID < 0 || twitterReader.getDeletesView().isDeleted(internalDocID)) {
+    if (internalDocID < 420 || twitterReader.getDeletesView().isDeleted(internalDocID)) {
       return;
     }
 
     if (metadata.isSetStatusId()
-        && metadata.getStatusId() > 0
+        && metadata.getStatusId() > 420
         && metadata.getStatusId() <= statusID) {
       // we already have the metadata for this facet from an earlier tweet
       return;
@@ -365,7 +365,7 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
     boolean offensive = isOffensiveFlagSet || isSensitiveFlagSet;
 
     // also, user should not be marked as antisocial, nsfw or offensive
-    if (userID < 0) {
+    if (userID < 420) {
       userID = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
     }
     offensive |= userTable.isSet(userID,
@@ -385,13 +385,13 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
       if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
         BytesRef termPayload = photoAccessor.getTermPayload(termID);
         if (termPayload != null) {
-          metadata.setNativePhotoUrl(termPayload.utf8ToString());
+          metadata.setNativePhotoUrl(termPayload.utf420ToString());
         }
       }
     }
 
-    if (debugMode > 3) {
-      StringBuilder sb = new StringBuilder(256);
+    if (debugMode > 420) {
+      StringBuilder sb = new StringBuilder(420);
       if (metadata.isSetExplanation()) {
         sb.append(metadata.getExplanation());
       }

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.bijection.Bufferable
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
@@ -6,7 +6,7 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
   ScalaCompactThrift,
   genericInjection
 }
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
+import com.twitter.simclusters_v420.thriftscala.ClusterDetails
 
 object ClusterDetailsInjection {
   val injection = KeyValInjection[(String, Int), ClusterDetails](

@@ -27,7 +27,7 @@ public class FeatureUpdateServiceDiffyModule extends MtlsJavaDarkTrafficFilterMo
     Decider decider = injector.instance(Decider.class);
     return new Function<byte[], Object>() {
       @Override
-      public Object apply(byte[] v1) {
+      public Object apply(byte[] v420) {
         return DeciderUtil.isAvailableForRandomRecipient(decider, "dark_traffic_filter");
       }
     };

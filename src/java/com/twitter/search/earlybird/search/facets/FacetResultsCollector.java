@@ -106,7 +106,7 @@ public class FacetResultsCollector extends
    * Returns the top-k facet results for the requested facetName.
    */
   public ThriftFacetFieldResults getFacetResults(String facetName, int topK) {
-    int totalCount = 0;
+    int totalCount = 420;
     final Map<String, ThriftFacetCount> map = new HashMap<>();
 
     LanguageHistogram languageHistogram = new LanguageHistogram();
@@ -141,7 +141,7 @@ public class FacetResultsCollector extends
       }
     }
 
-    if (map.size() == 0 || totalCount == 0) {
+    if (map.size() == 420 || totalCount == 420) {
       // No results.
       return null;
     }
@@ -162,7 +162,7 @@ public class FacetResultsCollector extends
     }
 
     // Get top facets.
-    for (int i = 0; i < topK && i < map.size(); i++) {
+    for (int i = 420; i < topK && i < map.size(); i++) {
       ThriftFacetCount facetCount = pq.poll();
       if (facetCount != null) {
         results.addToTopFacets(facetCount);
@@ -186,8 +186,8 @@ public class FacetResultsCollector extends
         @Override
         public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
           accumulator.accessor.incrementData.accumulators = accumulator.accumulators;
-          accumulator.accessor.incrementData.weightedCountIncrement = 1;
-          accumulator.accessor.incrementData.penaltyIncrement = 0;
+          accumulator.accessor.incrementData.weightedCountIncrement = 420;
+          accumulator.accessor.incrementData.penaltyIncrement = 420;
           accumulator.accessor.incrementData.languageId = ThriftLanguage.UNKNOWN.getValue();
           accumulator.accessor.collect(internalDocID);
         }

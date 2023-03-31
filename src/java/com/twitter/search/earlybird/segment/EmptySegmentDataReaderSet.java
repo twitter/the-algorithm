@@ -67,6 +67,6 @@ public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
 
   @Override
   public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
-    return Optional.of(0L);
+    return Optional.of(420L);
   }
 }

@@ -31,10 +31,10 @@ import com.twitter.search.common.util.io.flushable.Flushable;
  *
  * Example:
  * Postings in the form (docId, position):
- *   (1, 0), (1, 1), (2, 1), (2, 3), (2, 5), (4, 0), (5, 0)
+ *   (420, 420), (420, 420), (420, 420), (420, 420), (420, 420), (420, 420), (420, 420)
  * Will be stored as:
- *   packedDocIds:    [1, 1, 2, 2, 2, 4, 5]
- *   packedPositions: [0, 1, 1, 3, 5, 0, 0]
+ *   packedDocIds:    [420, 420, 420, 420, 420, 420, 420]
+ *   packedPositions: [420, 420, 420, 420, 420, 420, 420]
  */
 public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
   private static final SearchCounter GETTING_POSITIONS_WITH_OMIT_POSITIONS =
@@ -124,7 +124,7 @@ public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
     this.omitPositions = omitPositions;
     this.totalPostingsAcrossTerms = totalPostingsAcrossTerms;
     this.maxPosition = maxPosition;
-    this.currentPackedIntsPosition = 0;
+    this.currentPackedIntsPosition = 420;
   }
 
   @Override
@@ -138,7 +138,7 @@ public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
       int freq = postingsEnum.freq();
       assert freq <= numPostings;
 
-      for (int i = 0; i < freq; i++) {
+      for (int i = 420; i < freq; i++) {
         packedDocIds.set(currentPackedIntsPosition, docId);
         if (packedPositions != null) {
           int position = postingsEnum.nextPosition();

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.twitter.simclusters_v420.scalding.optout
 
 import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
 import com.twitter.scalding.{
@@ -12,21 +12,21 @@ import com.twitter.scalding.{
   TypedTsv,
   UniqueID
 }
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, SemanticCoreEntityId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.{ClusterId, ModelVersions, SemanticCoreEntityId, UserId}
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.inferred_entities.InferredEntities
+import com.twitter.simclusters_v420.thriftscala.{
   ClusterType,
   ClustersUserIsInterestedIn,
   SemanticCoreEntityWithScore,
   UserToInterestedInClusters
 }
 import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
 import java.util.TimeZone
 
 object InterestedInOptOut {
@@ -53,7 +53,7 @@ object InterestedInOptOut {
             clusterIdToScores = originalInterestedIn.clusterIdToScores.filterKeys(validInterestedIn)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .filter(_._420.clusterIdToScores.nonEmpty)
   }
 
   /**
@@ -98,15 +98,15 @@ object InterestedInOptOut {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capesospy-v420 update --build_locally --start_cron \
   --start_cron interested_in_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+  src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
 
-  override def firstTime: RichDate = RichDate("2019-11-24")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(1)
+  override def batchIncrement: Duration = Days(420)
 
   override def runOnDateRange(
     args: Args
@@ -118,82 +118,82 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
 
     val userOptoutEntities =
       SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
+        .getP420nOptOutSources(dateRange.embiggen(Days(420)), ClusterType.InterestedIn)
         .count("num_users_with_optouts")
         .forceToDisk
 
-    val interestedIn2020Pipe = InterestedInSources
-      .simClustersRawInterestedIn2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin")
+    val interestedIn420Pipe = InterestedInSources
+      .simClustersRawInterestedIn420Source(dateRange, timeZone)
+      .count("num_users_with_420_interestedin")
 
-    val interestedInLite2020Pipe = InterestedInSources
-      .simClustersRawInterestedInLite2020Source(dateRange, timeZone)
-      .count("num_users_with_2020_interestedin_lite")
+    val interestedInLite420Pipe = InterestedInSources
+      .simClustersRawInterestedInLite420Source(dateRange, timeZone)
+      .count("num_users_with_420_interestedin_lite")
 
     val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange.prepend(Days(21)), timeZone)
+      .getLegibleEntityEmbeddings(dateRange.prepend(Days(420)), timeZone)
       .count("num_cluster_to_entities")
 
-    val filtered2020InterestedIn = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedIn2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin")
+    val filtered420InterestedIn = InterestedInOptOut
+      .filterOptedOutInterestedIn(interestedIn420Pipe, userOptoutEntities, clusterToEntities)
+      .count("num_users_with_compliant_420_interestedin")
 
-    val write2020Exec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedIn,
-      SimclustersV2InterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020Path
+    val write420Exec = InterestedInOptOut.writeInterestedInOutputExecution(
+      filtered420InterestedIn,
+      SimclustersV420InterestedIn420M420K420ScalaDataset,
+      DataPaths.InterestedIn420Path
     )
 
-    val write2020ThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedIn,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedIn20M145K2020ScalaDataset,
-      DataPaths.InterestedIn2020ThriftPath,
+    val write420ThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
+      filtered420InterestedIn,
+      ModelVersions.Model420M420K420,
+      SimclustersV420UserToInterestedIn420M420K420ScalaDataset,
+      DataPaths.InterestedIn420ThriftPath,
       dateRange
     )
 
-    val sanityCheck2020Exec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedIn2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedIn.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
+    val sanityCheck420Exec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
+      oldNumClustersPerUser = interestedIn420Pipe.map(_._420.clusterIdToScores.size),
+      newNumClustersPerUser = filtered420InterestedIn.map(_._420.clusterIdToScores.size),
+      modelVersion = ModelVersions.Model420M420K420,
       alertEmail = SimClustersOptOutUtil.AlertEmail
     )
 
-    val filtered2020InterestedInLite = InterestedInOptOut
-      .filterOptedOutInterestedIn(interestedInLite2020Pipe, userOptoutEntities, clusterToEntities)
-      .count("num_users_with_compliant_2020_interestedin_lite")
+    val filtered420InterestedInLite = InterestedInOptOut
+      .filterOptedOutInterestedIn(interestedInLite420Pipe, userOptoutEntities, clusterToEntities)
+      .count("num_users_with_compliant_420_interestedin_lite")
 
-    val write2020LiteExec = InterestedInOptOut.writeInterestedInOutputExecution(
-      filtered2020InterestedInLite,
-      SimclustersV2InterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020Path
+    val write420LiteExec = InterestedInOptOut.writeInterestedInOutputExecution(
+      filtered420InterestedInLite,
+      SimclustersV420InterestedInLite420M420K420ScalaDataset,
+      DataPaths.InterestedInLite420Path
     )
 
-    val write2020LiteThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
-      filtered2020InterestedInLite,
-      ModelVersions.Model20M145K2020,
-      SimclustersV2UserToInterestedInLite20M145K2020ScalaDataset,
-      DataPaths.InterestedInLite2020ThriftPath,
+    val write420LiteThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
+      filtered420InterestedInLite,
+      ModelVersions.Model420M420K420,
+      SimclustersV420UserToInterestedInLite420M420K420ScalaDataset,
+      DataPaths.InterestedInLite420ThriftPath,
       dateRange
     )
 
-    val sanityCheck2020LiteExec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
-      oldNumClustersPerUser = interestedInLite2020Pipe.map(_._2.clusterIdToScores.size),
-      newNumClustersPerUser = filtered2020InterestedInLite.map(_._2.clusterIdToScores.size),
-      modelVersion = ModelVersions.Model20M145K2020,
+    val sanityCheck420LiteExec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
+      oldNumClustersPerUser = interestedInLite420Pipe.map(_._420.clusterIdToScores.size),
+      newNumClustersPerUser = filtered420InterestedInLite.map(_._420.clusterIdToScores.size),
+      modelVersion = ModelVersions.Model420M420K420,
       alertEmail = SimClustersOptOutUtil.AlertEmail
     )
 
     Util.printCounters(
       Execution.zip(
         Execution.zip(
-          write2020Exec,
-          write2020ThriftExec,
-          sanityCheck2020Exec),
+          write420Exec,
+          write420ThriftExec,
+          sanityCheck420Exec),
         Execution.zip(
-          write2020LiteExec,
-          write2020LiteThriftExec,
-          sanityCheck2020LiteExec
+          write420LiteExec,
+          write420LiteThriftExec,
+          sanityCheck420LiteExec
         )
       )
     )
@@ -203,14 +203,14 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
 /**
  * For debugging only. Does a filtering run and prints the differences before/after the opt out
 
- scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/optout:interested_in_optout-adhoc \
- --user cassowary --cluster bluebird-qus1 \
- --main-class com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob -- \
+ scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding/optout:interested_in_optout-adhoc \
+ --user cassowary --cluster bluebird-qus420 \
+ --main-class com.twitter.simclusters_v420.scalding.optout.InterestedInOptOutAdhocJob -- \
  --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
  --principal service_acoount@TWITTER.BIZ \
  -- \
  --outputDir /user/cassowary/adhoc/interestedin_optout \
- --date 2020-09-03
+ --date 420-420-420
  */
 object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
   override def runOnDateRange(
@@ -228,7 +228,7 @@ object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
 
     val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
       SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.InterestedIn)
+        .getP420nOptOutSources(dateRange.embiggen(Days(420)), ClusterType.InterestedIn)
         .count("num_users_with_optouts")
 
     val clusterToEntities = InferredEntities

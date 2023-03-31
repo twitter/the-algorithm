@@ -22,7 +22,7 @@ public class FinagleKafkaProducerModule extends TwitterModule {
       "kafka.topic.name.update_events";
   public static final String KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG =
           "kafka.topic.name.update_events_realtime_cg";
-  public static final String KAFKA_ENABLE_S2S_AUTH_FLAG = "kafka.enable_s2s_auth";
+  public static final String KAFKA_ENABLE_S420S_AUTH_FLAG = "kafka.enable_s420s_auth";
 
   public FinagleKafkaProducerModule() {
     flag(KAFKA_DEST_FLAG, "Kafka cluster destination", "", Flaggable.ofString());
@@ -30,7 +30,7 @@ public class FinagleKafkaProducerModule extends TwitterModule {
         "Topic name for update events", Flaggable.ofString());
     flag(KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG, "",
             "Topic name for update events", Flaggable.ofString());
-    flag(KAFKA_ENABLE_S2S_AUTH_FLAG, true, "enable s2s authentication configs",
+    flag(KAFKA_ENABLE_S420S_AUTH_FLAG, true, "enable s420s authentication configs",
         Flaggable.ofBoolean());
   }
 
@@ -38,7 +38,7 @@ public class FinagleKafkaProducerModule extends TwitterModule {
   @Named("KafkaProducer")
   public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer(
       @Flag(KAFKA_DEST_FLAG) String kafkaDest,
-      @Flag(KAFKA_ENABLE_S2S_AUTH_FLAG) boolean enableKafkaAuth) {
+      @Flag(KAFKA_ENABLE_S420S_AUTH_FLAG) boolean enableKafkaAuth) {
     return FinagleKafkaClientUtils.newFinagleKafkaProducer(
         kafkaDest, enableKafkaAuth, new CompactThriftSerializer<ThriftVersionedEvents>(),
         "search_cluster", SearchPartitioner.class);
@@ -48,7 +48,7 @@ public class FinagleKafkaProducerModule extends TwitterModule {
   @Named("KafkaProducerRealtimeCg")
   public BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg(
           @Flag(KAFKA_DEST_FLAG) String kafkaDest,
-          @Flag(KAFKA_ENABLE_S2S_AUTH_FLAG) boolean enableKafkaAuth) {
+          @Flag(KAFKA_ENABLE_S420S_AUTH_FLAG) boolean enableKafkaAuth) {
     return FinagleKafkaClientUtils.newFinagleKafkaProducer(
             kafkaDest, enableKafkaAuth, new CompactThriftSerializer<ThriftVersionedEvents>(),
             "search_cluster", SearchPartitionerRealtimeCg.class);

@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.stores
+package com.twitter.simclusters_v420.stores
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
 import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
+import com.twitter.simclusters_v420.common.Language
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.LeftNode
+import com.twitter.simclusters_v420.thriftscala.NounWithFrequencyList
+import com.twitter.simclusters_v420.thriftscala.RightNode
+import com.twitter.simclusters_v420.thriftscala.RightNodeTypeStruct
+import com.twitter.simclusters_v420.thriftscala.RightNodeWithEdgeWeightList
+import com.twitter.simclusters_v420.thriftscala.SimilarRightNodes
+import com.twitter.simclusters_v420.thriftscala.CandidateTweetsList
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus_internal.manhattan.Apollo
@@ -19,9 +19,9 @@ import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
 import com.twitter.storehaus_internal.util.ApplicationID
 import com.twitter.storehaus_internal.util.DatasetName
 import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
+import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long420BigEndian
+import com.twitter.simclusters_v420.thriftscala.FullClusterId
+import com.twitter.simclusters_v420.thriftscala.TopKTweetsWithScores
 
 object MultiTypeGraphStore {
 
@@ -106,14 +106,14 @@ object MultiTypeGraphStore {
     )
   }
 
-  def getOfflineTweet2020CandidateStore(
+  def getOfflineTweet420CandidateStore(
     mhMtlsParams: ManhattanKVClientMtlsParams
   ): ReadableStore[Long, CandidateTweetsList] = {
     ManhattanRO.getReadableStoreWithMtls[Long, CandidateTweetsList](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName("offline_tweet_recommendations_from_interestedin_2020"),
+        DatasetName("offline_tweet_recommendations_from_interestedin_420"),
         Apollo
       ),
       mhMtlsParams
@@ -210,7 +210,7 @@ object MultiTypeGraphStore {
       )
   }
 
-  def getFTRPop1000BasedClusterTopKTweets(
+  def getFTRPop420BasedClusterTopKTweets(
     mhMtlsParams: ManhattanKVClientMtlsParams
   ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
     ManhattanRO
@@ -218,14 +218,14 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ftr_pop1000_rank_decay_1_1_cluster_to_tweet_index"),
+          DatasetName("ftr_pop420_rank_decay_420_420_cluster_to_tweet_index"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getFTRPop10000BasedClusterTopKTweets(
+  def getFTRPop420BasedClusterTopKTweets(
     mhMtlsParams: ManhattanKVClientMtlsParams
   ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
     ManhattanRO
@@ -233,14 +233,14 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ftr_pop10000_rank_decay_1_1_cluster_to_tweet_index"),
+          DatasetName("ftr_pop420_rank_decay_420_420_cluster_to_tweet_index"),
           Apollo
         ),
         mhMtlsParams
       )
   }
 
-  def getOONFTRPop1000BasedClusterTopKTweets(
+  def getOONFTRPop420BasedClusterTopKTweets(
     mhMtlsParams: ManhattanKVClientMtlsParams
   ): ReadableStore[FullClusterId, TopKTweetsWithScores] = {
     ManhattanRO
@@ -248,7 +248,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index"),
+          DatasetName("oon_ftr_pop420_rnkdecay_cluster_to_tweet_index"),
           Apollo
         ),
         mhMtlsParams

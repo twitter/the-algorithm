@@ -47,7 +47,7 @@ public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, 
           "Client %s is not whitelisted for archive access. Request access at go/searchquota.",
           clientId);
       EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 420)
           .setDebugString(message);
       return Future.value(response);
     }

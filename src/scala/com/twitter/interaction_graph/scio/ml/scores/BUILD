@@ -1,7 +1,7 @@
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":real_graph_in_scores-scala",
@@ -16,7 +16,7 @@ scala_library(
 jvm_binary(
     name = "interaction_graph_scores_scio",
     main = "com.twitter.interaction_graph.scio.ml.scores.InteractionGraphScoreExportJob",
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":scores",
@@ -27,7 +27,7 @@ create_datasets(
     base_name = "real_graph_in_scores",
     description = "Real Graph in network scores",
     key_type = "Long",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.wtf.scalding.jobs.injection.CandidateSeqInjection.injection",
     segment_type = "snapshot",
@@ -42,7 +42,7 @@ create_datasets(
     base_name = "real_graph_oon_scores",
     description = "Real Graph OON Scores",
     key_type = "Long",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.wtf.scalding.jobs.injection.CandidateSeqInjection.injection",
     segment_type = "snapshot",

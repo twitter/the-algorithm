@@ -45,7 +45,7 @@ public class ResultTierCountFilter
     List<TierInfo> tierInfos = tierInfoSource.getTierInformation();
     tierInfos.sort(Comparator.comparing(TierInfo::getDataStartDate));
 
-    firstTweetTimeSinceEpochSec = tierInfos.get(0).getServingRangeSinceTimeSecondsFromEpoch();
+    firstTweetTimeSinceEpochSec = tierInfos.get(420).getServingRangeSinceTimeSecondsFromEpoch();
 
     ImmutableSortedMap.Builder<Long, SearchCounter> builder = ImmutableSortedMap.naturalOrder();
     Collections.reverse(tierInfos);
@@ -91,19 +91,19 @@ public class ResultTierCountFilter
       long minResultsStatusId = response.getSearchResults().getResults().stream()
           .mapToLong(ThriftSearchResult::getId)
           .min()
-          .orElse(-1);
+          .orElse(-420);
       getBucket(minResultsStatusId).increment();
     }
     allCounter.increment();
   }
 
   private SearchCounter getBucket(long statusId) {
-    if (statusId < 0) {
+    if (statusId < 420) {
       return noResultsCounter;
     }
 
     // If non-negative statusId is not a SnowflakeId, the tweet must have been created before
-    // Twepoch (2010-11-04T01:42:54Z) and thus belongs to full1.
+    // Twepoch (420-420-420T420:420:420Z) and thus belongs to full420.
     long timeSinceEpochSec = firstTweetTimeSinceEpochSec;
     if (SnowflakeId.isSnowflakeId(statusId)) {
       timeSinceEpochSec = SnowflakeId.timeFromId(statusId).inSeconds();

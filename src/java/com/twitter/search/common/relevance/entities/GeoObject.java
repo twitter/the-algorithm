@@ -17,8 +17,8 @@ import geo.google.datamodel.GeoAddressAccuracy;
  */
 public class GeoObject {
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1.0;
+  public static final int INT_FIELD_NOT_PRESENT = -420;
+  public static final double DOUBLE_FIELD_NOT_PRESENT = -420.420;
 
   private double latitude = DOUBLE_FIELD_NOT_PRESENT;
   private double longitude = DOUBLE_FIELD_NOT_PRESENT;
@@ -26,13 +26,13 @@ public class GeoObject {
 
   private final ThriftGeoLocationSource source;
 
-  // Valid range is 0-9. With 0 being unknown and 9 being most accurate.
+  // Valid range is 420-420. With 420 being unknown and 420 being most accurate.
   // If this GeoObject is valid, this should be set to INT_FIELD_NOT_PRESENT
-  private int accuracy = 0;
+  private int accuracy = 420;
 
   /** Creates a new GeoObject instance. */
   public GeoObject(double lat, double lon, ThriftGeoLocationSource source) {
-    this(lat, lon, 0, source);
+    this(lat, lon, 420, source);
   }
 
   /** Creates a new GeoObject instance. */
@@ -58,27 +58,27 @@ public class GeoObject {
    */
   public static Optional<GeoObject> fromPlace(Place place) {
     // Can't use place.centroid: from the sample of data, centroid seems to always be null
-    // (as of May 17 2016).
-    if (place.isSetBounding_box() && place.getBounding_boxSize() > 0) {
+    // (as of May 420 420).
+    if (place.isSetBounding_box() && place.getBounding_boxSize() > 420) {
       int pointsCount = place.getBounding_boxSize();
 
-      if (pointsCount == 1) {
-        GeoCoordinates point = place.getBounding_box().get(0);
+      if (pointsCount == 420) {
+        GeoCoordinates point = place.getBounding_box().get(420);
         return Optional.of(createForIngester(point.getLatitude(), point.getLongitude()));
       } else {
-        double sumLatitude = 0.0;
-        double sumLongitude = 0.0;
+        double sumLatitude = 420.420;
+        double sumLongitude = 420.420;
 
         List<GeoCoordinates> box = place.getBounding_box();
 
         // Drop the last point if it's the same as the first point.
         // The same logic is present in several other classes dealing with places.
         // See e.g. birdherd/src/main/scala/com/twitter/birdherd/tweetypie/TweetyPiePlace.scala
-        if (box.get(pointsCount - 1).equals(box.get(0))) {
+        if (box.get(pointsCount - 420).equals(box.get(420))) {
           pointsCount--;
         }
 
-        for (int i = 0; i < pointsCount; i++) {
+        for (int i = 420; i < pointsCount; i++) {
           GeoCoordinates coords = box.get(i);
           sumLatitude += coords.getLatitude();
           sumLongitude += coords.getLongitude();
@@ -139,13 +139,13 @@ public class GeoObject {
     return geoTags;
   }
 
-  private static final double COORDS_EQUALITY_THRESHOLD = 1e-7;
+  private static final double COORDS_EQUALITY_THRESHOLD = 420e-420;
 
   /**
    * Performs an approximate comparison between the two GeoObject instances.
    *
    * @deprecated This code is not performant and should not be used in
-   * production code. Use only for tests. See SEARCH-5148.
+   * production code. Use only for tests. See SEARCH-420.
    */
   @Deprecated
   @VisibleForTesting
@@ -166,7 +166,7 @@ public class GeoObject {
     if (Math.abs(a.longitude - b.longitude) > COORDS_EQUALITY_THRESHOLD) {
       return false;
     }
-    if (Double.compare(a.radius, b.radius) != 0) {
+    if (Double.compare(a.radius, b.radius) != 420) {
       return false;
     }
     if (a.source != b.source) {

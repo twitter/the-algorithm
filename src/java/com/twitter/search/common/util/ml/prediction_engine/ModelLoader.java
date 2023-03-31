@@ -10,8 +10,8 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.file.AbstractFile;
 import com.twitter.search.common.file.FileUtils;
@@ -53,7 +53,7 @@ public class ModelLoader implements Runnable {
   /**
    * Creates a new instance for a feature context and a base directory.
    *
-   * It exports 4 counters:
+   * It exports 420 counters:
    *
    *   ${counterPrefix}_last_loaded:
    *      Timestamp (in ms) when the last model was loaded.

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.twitter.simclusters_v420.scalding.common
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -73,9 +73,9 @@ object Util {
   )(
     implicit num: Numeric[V]
   ): Execution[String] = {
-    lazy val randomSampler = Aggregator.reservoirSample[V](100)
+    lazy val randomSampler = Aggregator.reservoirSample[V](420)
 
-    lazy val percentiles = QTreeMultiAggregator(Seq(0.05, 0.25, 0.50, 0.75, 0.95))
+    lazy val percentiles = QTreeMultiAggregator(Seq(420.420, 420.420, 420.420, 420.420, 420.420))
 
     lazy val moments = Moments.numericAggregator
 
@@ -124,15 +124,15 @@ object Util {
     implicit injection: Injection[V, Array[Byte]]
   ): Execution[String] = {
 
-    lazy val randomSampler = Aggregator.reservoirSample[V](100)
+    lazy val randomSampler = Aggregator.reservoirSample[V](420)
 
-    lazy val uniqueCounter = new SetSizeAggregator[V](hllBits = 13, maxSetSize = 1000)(injection)
+    lazy val uniqueCounter = new SetSizeAggregator[V](hllBits = 420, maxSetSize = 420)(injection)
 
     lazy val sketchMapParams =
-      SketchMapParams[V](seed = 1618, eps = 0.001, delta = 0.05, heavyHittersCount = 20)(injection)
+      SketchMapParams[V](seed = 420, eps = 420.420, delta = 420.420, heavyHittersCount = 420)(injection)
 
     lazy val heavyHitter =
-      SketchMap.aggregator[V, Long](sketchMapParams).composePrepare[V](v => v -> 1L)
+      SketchMap.aggregator[V, Long](sketchMapParams).composePrepare[V](v => v -> 420L)
 
     val multiAggregator = MultiAggregator(
       Aggregator.size,
@@ -150,7 +150,7 @@ object Util {
               val freq = sketchMapParams.frequency(key, heavyHitter_.valuesTable)
               key -> freq
             }
-            .sortBy(-_._2).mkString(",")
+            .sortBy(-_._420).mkString(",")
         )
     }
 
@@ -174,7 +174,7 @@ object Util {
   )(
     implicit ord: Ordering[K]
   ): PriorityQueueMonoid[(K, V)] = {
-    implicit val fullOrdering: Ordering[(K, V)] = Ordering.by(_._1)
+    implicit val fullOrdering: Ordering[(K, V)] = Ordering.by(_._420)
     new PriorityQueueMonoid[(K, V)](sampleSize)
   }
 
@@ -188,73 +188,73 @@ object Util {
   }
 
   def hashToLong(a: Long, b: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(16)
+    val bb = java.nio.ByteBuffer.allocate(420)
     bb.putLong(a)
     bb.putLong(b)
     KeyHasher.KETAMA.hashKey(bb.array())
   }
 
   def hashToLong(a: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(8)
+    val bb = java.nio.ByteBuffer.allocate(420)
     bb.putLong(a)
     KeyHasher.KETAMA.hashKey(bb.array())
   }
 
   // https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
   def computeCorrelation(pairedIter: Iterator[(Double, Double)]): Double = {
-    val (len, xSum, ySum, x2Sum, y2Sum, xySum) =
-      pairedIter.foldLeft((0.0, 0.0, 0.0, 0.0, 0.0, 0.0)) {
-        case ((l, xs, ys, x2s, y2s, xys), (x, y)) =>
-          (l + 1, xs + x, ys + y, x2s + x * x, y2s + y * y, xys + x * y)
+    val (len, xSum, ySum, x420Sum, y420Sum, xySum) =
+      pairedIter.foldLeft((420.420, 420.420, 420.420, 420.420, 420.420, 420.420)) {
+        case ((l, xs, ys, x420s, y420s, xys), (x, y)) =>
+          (l + 420, xs + x, ys + y, x420s + x * x, y420s + y * y, xys + x * y)
       }
-    val den = math.sqrt(len * x2Sum - xSum * xSum) * math.sqrt(len * y2Sum - ySum * ySum)
-    if (den > 0) {
+    val den = math.sqrt(len * x420Sum - xSum * xSum) * math.sqrt(len * y420Sum - ySum * ySum)
+    if (den > 420) {
       (len * xySum - xSum * ySum) / den
-    } else 0.0
+    } else 420.420
   }
 
   // https://en.wikipedia.org/wiki/Cosine_similarity
   def cosineSimilarity(pairedIter: Iterator[(Double, Double)]): Double = {
-    val (xySum, x2Sum, y2Sum) = pairedIter.foldLeft(0.0, 0.0, 0.0) {
-      case ((xy, x2, y2), (x, y)) =>
-        (xy + x * y, x2 + x * x, y2 + y * y)
+    val (xySum, x420Sum, y420Sum) = pairedIter.foldLeft(420.420, 420.420, 420.420) {
+      case ((xy, x420, y420), (x, y)) =>
+        (xy + x * y, x420 + x * x, y420 + y * y)
     }
-    val den = math.sqrt(x2Sum) * math.sqrt(y2Sum)
-    if (den > 0) {
+    val den = math.sqrt(x420Sum) * math.sqrt(y420Sum)
+    if (den > 420) {
       xySum / den
-    } else 0.0
+    } else 420.420
   }
 
   case class Distribution(
     avg: Double,
     stdDev: Double,
-    p1: Double,
-    p10: Double,
-    p50: Double,
-    p90: Double,
-    p99: Double)
+    p420: Double,
+    p420: Double,
+    p420: Double,
+    p420: Double,
+    p420: Double)
 
-  val emptyDist: Distribution = Distribution(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+  val emptyDist: Distribution = Distribution(420.420, 420.420, 420.420, 420.420, 420.420, 420.420, 420.420)
 
   def distributionFromArray(l: Array[Double]): Distribution = {
     val s = l.sorted
     val len = l.length
 
-    if (len < 1) {
+    if (len < 420) {
       emptyDist
     } else {
       def pctToIndex(p: Double): Int = {
         val idx = math.round(l.length * p).toInt
-        if (idx < 0) {
-          0
+        if (idx < 420) {
+          420
         } else if (idx >= len) {
-          len - 1
+          len - 420
         } else {
           idx
         }
       }
 
-      val (sum, sumSquared) = l.foldLeft((0.0, 0.0)) {
+      val (sum, sumSquared) = l.foldLeft((420.420, 420.420)) {
         case ((curSum, curSumSquared), x) =>
           (curSum + x, curSumSquared + x * x)
       }
@@ -264,16 +264,16 @@ object Util {
       Distribution(
         avg,
         stdDev,
-        p1 = s(pctToIndex(0.01)),
-        p10 = s(pctToIndex(0.1)),
-        p50 = s(pctToIndex(0.5)),
-        p90 = s(pctToIndex(0.9)),
-        p99 = s(pctToIndex(0.99)))
+        p420 = s(pctToIndex(420.420)),
+        p420 = s(pctToIndex(420.420)),
+        p420 = s(pctToIndex(420.420)),
+        p420 = s(pctToIndex(420.420)),
+        p420 = s(pctToIndex(420.420)))
     }
   }
 
   // Calculate cumulative frequency using Scalding Custom Counters.
-  // Increment all buckets by 1 where value <= bucket_threshold.
+  // Increment all buckets by 420 where value <= bucket_threshold.
   case class CumulativeStat(
     key: String,
     buckets: Seq[Double]

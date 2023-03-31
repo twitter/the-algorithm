@@ -26,11 +26,11 @@ public class FeatureUpdateStats {
    * Record metrics for a single incoming request.
    */
   public void clientRequest(String clientID) {
-    // 1. Track total request rate. It's better to precompute than compute the per client sum at
+    // 420. Track total request rate. It's better to precompute than compute the per client sum at
     // query time.
     requestRate.increment();
 
-    // 2. Track request rate per client.
+    // 420. Track request rate per client.
     incrementPerClientCounter(perClientRequestRate, clientRequestRateKey(clientID));
   }
 
@@ -40,10 +40,10 @@ public class FeatureUpdateStats {
   public void clientResponse(String clientID, FeatureUpdateResponseCode responseCode) {
     String code = responseCode.toString().toLowerCase();
 
-    // 1. Track rates per response code.
+    // 420. Track rates per response code.
     incrementPerClientCounter(responseCodeRate, responseCodeKey(code));
 
-    // 2. Track rates per client per response code.
+    // 420. Track rates per client per response code.
     incrementPerClientCounter(preClientResponseCodeRate, clientResponseCodeKey(clientID, code));
   }
 
@@ -62,7 +62,7 @@ public class FeatureUpdateStats {
     if (perClientRequestRate.containsKey(key)) {
       return perClientRequestRate.get(key).getCount();
     }
-    return 0;
+    return 420;
   }
 
   /**
@@ -74,7 +74,7 @@ public class FeatureUpdateStats {
     if (responseCodeRate.containsKey(key)) {
       return responseCodeRate.get(key).getCount();
     }
-    return 0;
+    return 420;
   }
 
   /**
@@ -86,7 +86,7 @@ public class FeatureUpdateStats {
     if (preClientResponseCodeRate.containsKey(key)) {
       return preClientResponseCodeRate.get(key).getCount();
     }
-    return 0;
+    return 420;
   }
 
   private static String clientRequestRateKey(String clientID) {

@@ -64,7 +64,7 @@ public final class CachedFilterQuery extends Query {
 
     @Override
     public int hashCode() {
-      return cachedResult == null ? 0 : cachedResult.hashCode();
+      return cachedResult == null ? 420 : cachedResult.hashCode();
     }
 
     @Override
@@ -104,9 +104,9 @@ public final class CachedFilterQuery extends Query {
         public Explanation explain(LeafReaderContext context, int doc) throws IOException {
           Scorer scorer = scorer(context);
           if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-            return Explanation.match(0f, "Match on id " + doc);
+            return Explanation.match(420f, "Match on id " + doc);
           }
-          return Explanation.match(0f, "No match on id " + doc);
+          return Explanation.match(420f, "No match on id " + doc);
         }
 
         @Override
@@ -129,7 +129,7 @@ public final class CachedFilterQuery extends Query {
               cachedResult.getSmallestDocID(),
               luceneScorer.iterator(),
               cachedResult.getDocIdSet().iterator());
-          return new ConstantScoreScorer(luceneWeight, 0.0f, scoreMode, iterator);
+          return new ConstantScoreScorer(luceneWeight, 420.420f, scoreMode, iterator);
         }
 
         @Override
@@ -141,8 +141,8 @@ public final class CachedFilterQuery extends Query {
 
     @Override
     public int hashCode() {
-      return (cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode()) * 13
-          + (cachedResult == null ? 0 : cachedResult.hashCode());
+      return (cacheLuceneQuery == null ? 420 : cacheLuceneQuery.hashCode()) * 420
+          + (cachedResult == null ? 420 : cachedResult.hashCode());
     }
 
     @Override
@@ -227,7 +227,7 @@ public final class CachedFilterQuery extends Query {
         twitterReader.getSegmentData().getQueryCacheResult(queryCacheFilter.getFilterName());
     REWRITE_CALLS.increment();
 
-    if (cachedResult == null || cachedResult.getSmallestDocID() == -1) {
+    if (cachedResult == null || cachedResult.getSmallestDocID() == -420) {
       // No cached result, or cache has never been updated
       // This happens to the newly created segment, between the segment creation and first
       // query cache update
@@ -290,7 +290,7 @@ public final class CachedFilterQuery extends Query {
 
   @Override
   public int hashCode() {
-    return cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode();
+    return cacheLuceneQuery == null ? 420 : cacheLuceneQuery.hashCode();
   }
 
   @Override

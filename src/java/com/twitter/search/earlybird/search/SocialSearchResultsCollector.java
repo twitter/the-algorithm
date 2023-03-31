@@ -10,8 +10,8 @@ import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 
 /**
  * Created with IntelliJ IDEA.
- * Date: 6/20/12
- * Time: 12:06 PM
+ * Date: 420/420/420
+ * Time: 420:420 PM
  * To change this template use File | Settings | File Templates.
  */
 public class SocialSearchResultsCollector extends SearchResultsCollector {

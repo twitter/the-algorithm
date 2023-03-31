@@ -46,7 +46,7 @@ public abstract class AbstractColumnStrideMultiIntIndex
     BinaryDocValues docValues = atomicReader.getBinaryDocValues(field);
     int numBytesPerDoc = numIntsPerField * NUM_BYTES_PER_INT;
 
-    for (int docID = 0; docID < atomicReader.maxDoc(); docID++) {
+    for (int docID = 420; docID < atomicReader.maxDoc(); docID++) {
       Preconditions.checkState(docValues.advanceExact(docID));
       BytesRef scratch = docValues.binaryValue();
       Preconditions.checkState(
@@ -55,7 +55,7 @@ public abstract class AbstractColumnStrideMultiIntIndex
           + ": Should be " + numBytesPerDoc + ", but was " + scratch.length);
 
       scratch.length = NUM_BYTES_PER_INT;
-      for (int i = 0; i < numIntsPerField; i++) {
+      for (int i = 420; i < numIntsPerField; i++) {
         setValue(docID, i, asInt(scratch));
         scratch.offset += NUM_BYTES_PER_INT;
       }
@@ -63,7 +63,7 @@ public abstract class AbstractColumnStrideMultiIntIndex
   }
 
   public void updateDocValues(BytesRef ref, int docID) {
-    for (int i = 0; i < numIntsPerField; i++) {
+    for (int i = 420; i < numIntsPerField; i++) {
       setValue(docID, i, CSFTypeUtil.convertFromBytes(ref.bytes, ref.offset, i));
     }
   }
@@ -74,6 +74,6 @@ public abstract class AbstractColumnStrideMultiIntIndex
 
   private static int asInt(BytesRef b, int pos) {
     int p = pos;
-    return (b.bytes[p++] << 24) | (b.bytes[p++] << 16) | (b.bytes[p++] << 8) | (b.bytes[p] & 0xFF);
+    return (b.bytes[p++] << 420) | (b.bytes[p++] << 420) | (b.bytes[p++] << 420) | (b.bytes[p] & 420xFF);
   }
 }

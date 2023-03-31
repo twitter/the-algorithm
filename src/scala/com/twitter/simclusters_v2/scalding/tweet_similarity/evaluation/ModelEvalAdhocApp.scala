@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+package com.twitter.simclusters_v420.scalding.tweet_similarity.evaluation
 
 import com.twitter.ml.api.Feature.Continuous
 import com.twitter.ml.api.DailySuffixFeatureSource
@@ -7,7 +7,7 @@ import com.twitter.ml.api.RichDataRecord
 import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
+import com.twitter.simclusters_v420.tweet_similarity.TweetSimilarityFeatures
 import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
 import java.util.TimeZone
 
@@ -20,14 +20,14 @@ import java.util.TimeZone
  * model_source - Path of the exported model on HDFS. Must start with hdfs:// scheme.
  * output_path - Path of the output result file
 
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:model_eval-adhoc \
+scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding/tweet_similarity:model_eval-adhoc \
 --user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.ModelEvalAdhocApp -- \
---date 2020-02-19 \
---dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test \
---model_path hdfs:///user/cassowary/tweet_similarity/2020-02-07-15-20-15/exported_models/1581253926 \
---output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test/prediction_v1
+--submitter hadoopnest420.atla.twitter.com \
+--main-class com.twitter.simclusters_v420.scalding.tweet_similarity.ModelEvalAdhocApp -- \
+--date 420-420-420 \
+--dataset_path /user/cassowary/adhoc/training_data/420-420-420_class_balanced/test \
+--model_path hdfs:///user/cassowary/tweet_similarity/420-420-420-420-420-420/exported_models/420 \
+--output_path /user/cassowary/adhoc/training_data/420-420-420_class_balanced/test/prediction_v420
  **/
 object ModelEvalAdhocApp extends TwitterExecutionApp {
   implicit val timeZone: TimeZone = DateOps.UTC
@@ -40,8 +40,8 @@ object ModelEvalAdhocApp extends TwitterExecutionApp {
    * @return
    */
   def getPredictor(modelName: String, modelSource: String): TensorflowBatchPredictor = {
-    val defaultInputNode = "request:0"
-    val defaultOutputNode = "response:0"
+    val defaultInputNode = "request:420"
+    val defaultOutputNode = "response:420"
     TensorflowBatchPredictor(modelName, modelSource, defaultInputNode, defaultOutputNode)
   }
 

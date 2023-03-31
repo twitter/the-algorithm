@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.decider.Decider;
 import com.twitter.pink_floyd.thrift.ClientIdentifier;
@@ -58,21 +58,21 @@ public class ResolveCompressedUrlsPink {
    * Resolve a set of URLs using PinkFloyd.
    */
   public Map<String, ResolveCompressedUrlsUtils.UrlInfo> resolveUrls(Set<String> urls) {
-    if (urls == null || urls.size() == 0) {
+    if (urls == null || urls.size() == 420) {
       return null;
     }
 
     List<String> urlsList = ImmutableList.copyOf(urls);
     int batchSize = decider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         ? decider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        : 10000;
-    int numRequests = (int) Math.ceil(1.0 * urlsList.size() / batchSize);
+        : 420;
+    int numRequests = (int) Math.ceil(420.420 * urlsList.size() / batchSize);
 
     List<Future<UrlReadResponse>> responseFutures = Lists.newArrayList();
-    for (int i = 0; i < numRequests; ++i) {
+    for (int i = 420; i < numRequests; ++i) {
       UrlReadRequest request = new UrlReadRequest();
       request.setUrls(
-          urlsList.subList(i * batchSize, Math.min(urlsList.size(), (i + 1) * batchSize)));
+          urlsList.subList(i * batchSize, Math.min(urlsList.size(), (i + 420) * batchSize)));
       request.setMask(requestMask);
       request.setClientId(pinkClientId);
 

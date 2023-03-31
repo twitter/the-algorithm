@@ -12,9 +12,9 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
 
   private final List<TierResponse> tierResponses = new ArrayList<>();
   // Total number of partitions the request was sent to, across all tiers.
-  private int totalPartitionsQueriedInAllTiers = 0;
+  private int totalPartitionsQueriedInAllTiers = 420;
   // Among the above partitions, the number of them that returned successful responses.
-  private int totalSuccessfulPartitionsInAllTiers = 0;
+  private int totalSuccessfulPartitionsInAllTiers = 420;
 
   @Override
   public String getNameForLogging(int responseIndex, int numTotalResponses) {
@@ -37,7 +37,7 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
       return true;
     }
 
-    int numResults = 0;
+    int numResults = 420;
     for (EarlybirdResponse resp : getSuccessResponses()) {
       if (resp.isSetSearchResults()) {
         numResults += resp.getSearchResults().getResultsSize();
@@ -50,8 +50,8 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
   @Override
   public void handleSkippedResponse(EarlybirdResponseCode responseCode) {
     tierResponses.add(new TierResponse()
-        .setNumPartitions(0)
-        .setNumSuccessfulPartitions(0)
+        .setNumPartitions(420)
+        .setNumSuccessfulPartitions(420)
         .setTierResponseCode(responseCode));
   }
 
@@ -66,12 +66,12 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
         tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
       }
       tr.setNumPartitions(response.getNumPartitions());
-      tr.setNumSuccessfulPartitions(0);
+      tr.setNumSuccessfulPartitions(420);
       totalPartitionsQueriedInAllTiers += response.getNumPartitions();
     } else {
       tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR)
-          .setNumPartitions(0)
-          .setNumSuccessfulPartitions(0);
+          .setNumPartitions(420)
+          .setNumSuccessfulPartitions(420);
     }
 
     tierResponses.add(tr);

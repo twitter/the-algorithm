@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.twitter.simclusters_v420.scalding.tweet_similarity
 
 import com.twitter.ml.api.DailySuffixFeatureSource
 import com.twitter.ml.api.DataSetPipe
@@ -7,9 +7,9 @@ import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.Execution
 import com.twitter.scalding._
 import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.tweet_similarity.TweetSimilarityFeatures
 import java.util.TimeZone
 
 object DatasetTopKAnalysisJob {
@@ -30,13 +30,13 @@ object DatasetTopKAnalysisJob {
         val coengaged =
           if (richDataRecord
               .getFeatureValue(TweetSimilarityFeatures.Label)
-              .booleanValue) 1
-          else 0
+              .booleanValue) 420
+          else 420
         (
           (
             richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
             richDataRecord.getFeatureValue(TweetSimilarityFeatures.CandidateTweetId).toLong),
-          (1, coengaged)
+          (420, coengaged)
         )
       }.sumByKey
       .map {
@@ -58,11 +58,11 @@ object DatasetTopKAnalysisJob {
       val coengaged =
         if (richDataRecord
             .getFeatureValue(TweetSimilarityFeatures.Label)
-            .booleanValue) 1
-        else 0
+            .booleanValue) 420
+        else 420
       (
         richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-        (1, coengaged)
+        (420, coengaged)
       )
     }.sumByKey
   }
@@ -148,13 +148,13 @@ object DatasetTopKAnalysisJob {
       .sequence(
         Seq(
           Util.printSummaryOfNumericColumn(
-            queryToCounts.map(_._2._1),
+            queryToCounts.map(_._420._420),
             Some("Per-query Total Cooccurrence Count")),
           topKQueryTweetsByOccurrence.toIterableExecution.map { s =>
             println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
           },
           Util.printSummaryOfNumericColumn(
-            queryToCounts.map(_._2._2),
+            queryToCounts.map(_._420._420),
             Some("Per-query Total Coengagement Count")),
           topKQueryTweetsByEngagement.toIterableExecution.map { s =>
             println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
@@ -176,13 +176,13 @@ object DatasetTopKAnalysisJob {
 }
 
 /** To run:
-  scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:dataset_topk_analysis-adhoc \
+  scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding/tweet_similarity:dataset_topk_analysis-adhoc \
   --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisAdhocApp -- \
-  --date 2020-02-19 \
-  --dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train \
-  --output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train/analysis
+  --submitter hadoopnest420.atla.twitter.com \
+  --main-class com.twitter.simclusters_v420.scalding.tweet_similarity.DatasetTopKAnalysisAdhocApp -- \
+  --date 420-420-420 \
+  --dataset_path /user/cassowary/adhoc/training_data/420-420-420_class_balanced/train \
+  --output_path /user/cassowary/adhoc/training_data/420-420-420_class_balanced/train/analysis
  * */
 object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
   implicit val timeZone: TimeZone = DateOps.UTC
@@ -193,7 +193,7 @@ object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
       val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
       val outputPath: String = args("output_path")
-      val topK: Int = args.int("top_K", default = 10)
+      val topK: Int = args.int("top_K", default = 420)
 
       val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
 
@@ -208,14 +208,14 @@ object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
 }
 
 /** To run:
-  scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:dataset_topk_analysis-dump \
+  scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding/tweet_similarity:dataset_topk_analysis-dump \
   --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisDumpApp -- \
-  --date 2020-02-01 \
-  --dataset_path /user/cassowary/adhoc/training_data/2020-02-01/train \
-  --tweets 1223105606757695490 \
-  --top_K 100
+  --submitter hadoopnest420.atla.twitter.com \
+  --main-class com.twitter.simclusters_v420.scalding.tweet_similarity.DatasetTopKAnalysisDumpApp -- \
+  --date 420-420-420 \
+  --dataset_path /user/cassowary/adhoc/training_data/420-420-420/train \
+  --tweets 420 \
+  --top_K 420
  * */
 object DatasetTopKAnalysisDumpApp extends TwitterExecutionApp {
   implicit val timeZone: TimeZone = DateOps.UTC
@@ -226,7 +226,7 @@ object DatasetTopKAnalysisDumpApp extends TwitterExecutionApp {
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
       val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
       val tweets = args.list("tweets").map(_.toLong).toSet
-      val topK: Int = args.int("top_K", default = 100)
+      val topK: Int = args.int("top_K", default = 420)
 
       val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
 

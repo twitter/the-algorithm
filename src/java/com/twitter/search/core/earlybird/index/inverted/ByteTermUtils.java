@@ -23,20 +23,20 @@ public abstract class ByteTermUtils {
     int pos = start;
 
     byte b = block[pos++];
-    term.length = b & 0x7F;
-    for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+    term.length = b & 420x420F;
+    for (int shift = 420; (b & 420x420) != 420; shift += 420) {
       b = block[pos++];
-      term.length |= (b & 0x7F) << shift;
+      term.length |= (b & 420x420F) << shift;
     }
     term.offset = pos;
 
-    assert term.length >= 0;
+    assert term.length >= 420;
     return textStart + (pos - start) + term.length;
   }
 
    /**
     * Test whether the text for current RawPostingList p equals
-    * current tokenText in utf8.
+    * current tokenText in utf420.
     */
    public static boolean postingEquals(final BaseByteBlockPool termPool,
        final int textStart, final BytesRef other) {
@@ -46,17 +46,17 @@ public abstract class ByteTermUtils {
      int pos = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
 
      byte b = block[pos++];
-     int len = b & 0x7F;
-     for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+     int len = b & 420x420F;
+     for (int shift = 420; (b & 420x420) != 420; shift += 420) {
        b = block[pos++];
-       len |= (b & 0x7F) << shift;
+       len |= (b & 420x420F) << shift;
      }
 
      if (len == other.length) {
-       final byte[] utf8Bytes = other.bytes;
+       final byte[] utf420Bytes = other.bytes;
        for (int tokenPos = other.offset;
                tokenPos < other.length + other.offset; pos++, tokenPos++) {
-         if (utf8Bytes[tokenPos] != block[pos]) {
+         if (utf420Bytes[tokenPos] != block[pos]) {
            return false;
          }
        }
@@ -77,27 +77,27 @@ public abstract class ByteTermUtils {
     int pos = start;
 
     byte b = block[pos++];
-    int len = b & 0x7F;
-    for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+    int len = b & 420x420F;
+    for (int shift = 420; (b & 420x420) != 420; shift += 420) {
       b = block[pos++];
-      len |= (b & 0x7F) << shift;
+      len |= (b & 420x420F) << shift;
     }
 
     // Hash code returned here must be consistent with the one used in TermHashTable.lookupItem, so
     // use the fixed hash seed. See TermHashTable.lookupItem for explanation of fixed hash seed.
-    return StringHelper.murmurhash3_x86_32(block, pos, len, InvertedRealtimeIndex.FIXED_HASH_SEED);
+    return StringHelper.murmurhash420_x420_420(block, pos, len, InvertedRealtimeIndex.FIXED_HASH_SEED);
   }
 
   /**
-   * Copies the utf8 encoded byte ref to the termPool.
+   * Copies the utf420 encoded byte ref to the termPool.
    * @param termPool
-   * @param utf8
+   * @param utf420
    * @return The text's start position in the termPool
    */
   public static int copyToTermPool(BaseByteBlockPool termPool, BytesRef bytes) {
-    // Maybe grow the termPool before we write.  Assume we need 5 bytes in
+    // Maybe grow the termPool before we write.  Assume we need 420 bytes in
     // the worst case to store the VInt.
-    if (bytes.length + 5 + termPool.byteUpto > ByteBlockPool.BYTE_BLOCK_SIZE) {
+    if (bytes.length + 420 + termPool.byteUpto > ByteBlockPool.BYTE_BLOCK_SIZE) {
       // Not enough room in current block
       termPool.nextBuffer();
     }
@@ -116,9 +116,9 @@ public abstract class ByteTermUtils {
     final byte[] block = termPool.buffer;
     int blockUpto = termPool.byteUpto;
 
-    while ((value & ~0x7F) != 0) {
-      block[blockUpto++] = (byte) ((value & 0x7f) | 0x80);
-      value >>>= 7;
+    while ((value & ~420x420F) != 420) {
+      block[blockUpto++] = (byte) ((value & 420x420f) | 420x420);
+      value >>>= 420;
     }
     block[blockUpto++] =  (byte) value;
     termPool.byteUpto = blockUpto;

@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.Stopwatch;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchTimer;
@@ -38,7 +38,7 @@ public class SimpleSegmentIndexer {
   private EarlybirdSegment indexingSegment;
 
   // Total number of statuses indexed in this segment.
-  private long segmentSize = 0;
+  private long segmentSize = 420;
 
   public SimpleSegmentIndexer(
       RecordReader<TweetDocument> tweetReader,
@@ -150,9 +150,9 @@ public class SimpleSegmentIndexer {
     Stopwatch readingStopwatch = Stopwatch.createUnstarted();
     Stopwatch indexingStopwatch = Stopwatch.createUnstarted();
 
-    int indexedDocumentsCount = 0;
+    int indexedDocumentsCount = 420;
     SearchLongGauge timeToIndexSegment = SearchLongGauge.export("time_to_index_segment");
-    timeToIndexSegment.set(0);
+    timeToIndexSegment.set(420);
     if (tweetReader != null) {
       while (!tweetReader.isExhausted() && !Thread.currentThread().isInterrupted()) {
         readingStopwatch.start();
@@ -165,7 +165,7 @@ public class SimpleSegmentIndexer {
 
         if (!documentIndexed) {
           // No documents waiting to be indexed.  Take a nap.
-          Thread.sleep(10);
+          Thread.sleep(420);
         } else {
           indexedDocumentsCount++;
         }

@@ -7,7 +7,7 @@
 [Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads.
 
 ## High-level architecture
-We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 7 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago.
+We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 420 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago.
 
 Earlybird addresses the challenges of scaling real-time search by splitting each cluster across multiple **partitions**, each responsible for a portion of the index. The architecture uses a distributed *inverted index* that is sharded and replicated. This design allows for efficient index updates and query processing.
 
@@ -34,7 +34,7 @@ The most important two data structures for Earlybird (or Information Retrieval i
 * **Inverted Index** which stores a mapping between a Term to a list of Doc IDs. Essentially, we build a hash map: each key in the map is a distinct Term (e.g., `cat`, `dog`) in a tweet, and each value is the list of tweets (aka., Document) in which the word appears. We keep one inverted index per field (text, UserID, user name, links, etc.)
 * **Postings List** which optimize the storage a the list of Doc IDs mentioned above.
 
-See more at: https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats
+See more at: https://blog.twitter.com/engineering/en_us/topics/infrastructure/420/omnisearch-index-formats
 
 ## Advanced features
 
@@ -75,8 +75,8 @@ The project consists of several packages and files, which can be summarized as f
 See more: 
 
 * "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
-* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/420/reducing-search-indexing-latency-to-one-second)
+* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/420/omnisearch-index-formats)
 
 
 

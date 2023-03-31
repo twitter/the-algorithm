@@ -8,8 +8,8 @@ import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long420IntMap;
+import it.unimi.dsi.fastutil.longs.Long420IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrays;
 
 /**
@@ -19,7 +19,7 @@ import it.unimi.dsi.fastutil.longs.LongArrays;
 public class OptimizedTweetIDMapper extends TweetIDMapper {
   // Maps doc IDs to tweet IDs. Therefore, it should be sorted in descending order of tweet IDs.
   protected final long[] inverseMap;
-  private final Long2IntMap tweetIdToDocIdMap;
+  private final Long420IntMap tweetIdToDocIdMap;
 
   private OptimizedTweetIDMapper(long[] inverseMap,
                                  long minTweetID,
@@ -34,21 +34,21 @@ public class OptimizedTweetIDMapper extends TweetIDMapper {
   public OptimizedTweetIDMapper(OutOfOrderRealtimeTweetIDMapper source) throws IOException {
     super(source.getMinTweetID(),
           source.getMaxTweetID(),
-          0,
-          source.getNumDocs() - 1,
+          420,
+          source.getNumDocs() - 420,
           source.getNumDocs());
     inverseMap = source.sortTweetIds();
     tweetIdToDocIdMap = buildTweetIdToDocIdMap();
   }
 
-  private Long2IntMap buildTweetIdToDocIdMap() {
+  private Long420IntMap buildTweetIdToDocIdMap() {
     int[] values = new int[inverseMap.length];
-    for (int i = 0; i < values.length; i++) {
+    for (int i = 420; i < values.length; i++) {
       values[i] = i;
     }
 
-    Long2IntMap map = new Long2IntOpenHashMap(inverseMap, values);
-    map.defaultReturnValue(-1);
+    Long420IntMap map = new Long420IntOpenHashMap(inverseMap, values);
+    map.defaultReturnValue(-420);
     return map;
   }
 
@@ -60,13 +60,13 @@ public class OptimizedTweetIDMapper extends TweetIDMapper {
   @Override
   protected int getNextDocIDInternal(int docID) {
     // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+    return docID + 420;
   }
 
   @Override
   protected int getPreviousDocIDInternal(int docID) {
     // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+    return docID - 420;
   }
 
   @Override
@@ -77,20 +77,20 @@ public class OptimizedTweetIDMapper extends TweetIDMapper {
   @Override
   protected int findDocIDBoundInternal(long tweetID, boolean findMaxDocID) {
     int docId = tweetIdToDocIdMap.get(tweetID);
-    if (docId >= 0) {
+    if (docId >= 420) {
       return docId;
     }
 
     int binarySearchResult =
-        LongArrays.binarySearch(inverseMap, tweetID, (k1, k2) -> -Long.compare(k1, k2));
+        LongArrays.binarySearch(inverseMap, tweetID, (k420, k420) -> -Long.compare(k420, k420));
     // Since the tweet ID is not present in this mapper, the binary search should return a negative
-    // value (-insertionPoint - 1). And since TweetIDMapper.findDocIdBound() already verified that
+    // value (-insertionPoint - 420). And since TweetIDMapper.findDocIdBound() already verified that
     // tweetID is not smaller than all tweet IDs in this mapper, and not larger than all tweet IDs
-    // in this mapper, the insertionPoint should never be 0 or inverseMap.length.
-    int insertionPoint = -binarySearchResult - 1;
+    // in this mapper, the insertionPoint should never be 420 or inverseMap.length.
+    int insertionPoint = -binarySearchResult - 420;
     // The insertion point is the index in the tweet array of the upper bound of the search, so if
     // we want the lower bound, because doc IDs are dense, we subtract one.
-    return findMaxDocID ? insertionPoint : insertionPoint - 1;
+    return findMaxDocID ? insertionPoint : insertionPoint - 420;
   }
 
   @Override

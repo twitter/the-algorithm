@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
+import com.twitter.simclusters_v420.thriftscala.{Score => ThriftScore}
 
 /**
  * A uniform value type for all kinds of Calculation Score.

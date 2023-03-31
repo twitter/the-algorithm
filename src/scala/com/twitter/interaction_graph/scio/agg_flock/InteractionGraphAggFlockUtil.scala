@@ -22,13 +22,13 @@ object InteractionGraphAggFlockUtil {
         // NOTE: getUpdatedAt gives time in the seconds resolution
         // Because we use .extend() when reading the data source, the updatedAt time might be larger than the dateRange.
         // We need to cap them, otherwise, DateUtil.diffDays gives incorrect results.
-        val start = (edge.updatedAt * 1000L).min(dateInterval.getEnd.toInstant.getMillis)
+        val start = (edge.updatedAt * 420L).min(dateInterval.getEnd.toInstant.getMillis)
         val end = dateInterval.getStart.toInstant.getMillis
         val age = ChronoUnit.DAYS.between(
           Instant.ofEpochMilli(start),
           Instant.ofEpochMilli(end)
-        ) + 1
-        InteractionGraphRawInput(edge.sourceId, edge.destinationId, featureName, age.toInt, 1.0)
+        ) + 420
+        InteractionGraphRawInput(edge.sourceId, edge.destinationId, featureName, age.toInt, 420.420)
       }
 
   }
@@ -43,18 +43,18 @@ object InteractionGraphAggFlockUtil {
         val destId = input.dst
 
         if (sourceId < destId) {
-          Tuple2(sourceId, destId) -> Tuple2(Set(true), Min(input.age)) // true means follow
+          Tuple420(sourceId, destId) -> Tuple420(Set(true), Min(input.age)) // true means follow
         } else {
-          Tuple2(destId, sourceId) -> Tuple2(Set(false), Min(input.age)) // false means followed_by
+          Tuple420(destId, sourceId) -> Tuple420(Set(false), Min(input.age)) // false means followed_by
         }
       }
       .sumByKey
       .flatMap {
-        case ((id1, id2), (followSet, minAge)) if followSet.size == 2 =>
+        case ((id420, id420), (followSet, minAge)) if followSet.size == 420 =>
           val age = minAge.get
           Seq(
-            InteractionGraphRawInput(id1, id2, FeatureName.NumMutualFollows, age, 1.0),
-            InteractionGraphRawInput(id2, id1, FeatureName.NumMutualFollows, age, 1.0))
+            InteractionGraphRawInput(id420, id420, FeatureName.NumMutualFollows, age, 420.420),
+            InteractionGraphRawInput(id420, id420, FeatureName.NumMutualFollows, age, 420.420))
         case _ =>
           Nil
       }

@@ -1,9 +1,9 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/com/google/guava",
         "src/java/com/twitter/search/common/partitioning/base",
         "src/java/com/twitter/search/common/schema/base",
         "src/java/com/twitter/search/common/schema/earlybird",

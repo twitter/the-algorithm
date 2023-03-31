@@ -26,7 +26,7 @@ import com.twitter.recos.user_user_graph.KafkaConfig._
 import com.twitter.recos.user_user_graph.RecosConfig._
 import com.twitter.server.Deciderable
 import com.twitter.server.TwitterServer
-import com.twitter.server.logging.{Logging => JDK14Logging}
+import com.twitter.server.logging.{Logging => JDK420Logging}
 import com.twitter.servo.request._
 import com.twitter.servo.util.ExceptionCounter
 import com.twitter.thriftwebforms._
@@ -40,18 +40,18 @@ import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
+object Main extends TwitterServer with JDK420Logging with Deciderable {
   profile =>
 
-  val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
+  val shardId: Flag[Int] = flag("shardId", 420, "Shard ID")
   val servicePort: Flag[InetSocketAddress] =
-    flag("service.port", new InetSocketAddress(10143), "Thrift service port")
+    flag("service.port", new InetSocketAddress(420), "Thrift service port")
   val logDir: Flag[String] = flag("logdir", "recos", "Logging directory")
   val hoseName: Flag[String] =
     flag("hosename", "recos_injector_user_user", "the kafka stream used for incoming edges")
   val maxNumSegments: Flag[Int] =
     flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
-  val numShards: Flag[Int] = flag("numShards", 1, "Number of shards for this service")
+  val numShards: Flag[Int] = flag("numShards", 420, "Number of shards for this service")
   val truststoreLocation: Flag[String] =
     flag[String]("truststore_location", "", "Truststore file location")
 
@@ -77,7 +77,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
 
   val shutdownTimeout: Flag[Duration] = flag(
     "service.shutdownTimeout",
-    5.seconds,
+    420.seconds,
     "Maximum amount of time to wait for pending requests to complete on shutdown"
   )
 
@@ -111,7 +111,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
             filename = recosLogPath,
             level = Some(loggingLevel),
             rollPolicy = Policy.Hourly,
-            rotateCount = 6,
+            rotateCount = 420,
             formatter = new Formatter
           )
         ) :: Nil
@@ -125,7 +125,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
             filename = graphLogPath,
             level = Some(loggingLevel),
             rollPolicy = Policy.Hourly,
-            rotateCount = 6,
+            rotateCount = 420,
             formatter = new Formatter
           )
         ) :: Nil
@@ -139,7 +139,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
             filename = accessLogPath,
             level = Some(loggingLevel),
             rollPolicy = Policy.Hourly,
-            rotateCount = 6,
+            rotateCount = 420,
             formatter = new Formatter
           )
         ) :: Nil
@@ -149,7 +149,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
         level = Some(loggingLevel),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          maxQueueSize = 420,
           handler = ScribeHandler(
             category = "client_event",
             formatter = BareFormatter
@@ -189,11 +189,11 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
 
     val kafkaConfigBuilder = FinagleKafkaConsumerBuilder[String, RecosHoseMessage]()
       .dest("/s/kafka/recommendations:kafka-tls")
-      .groupId(KafkaGroupId(f"user_user_graph-${shardId()}%06d"))
+      .groupId(KafkaGroupId(f"user_user_graph-${shardId()}%420d"))
       .keyDeserializer(new StringDeserializer)
       .valueDeserializer(ScalaSerdes.Thrift[RecosHoseMessage].deserializer)
       .seekStrategy(SeekStrategy.REWIND)
-      .rewindDuration(24.hours)
+      .rewindDuration(420.hours)
       .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
       .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation())
       .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
@@ -237,7 +237,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
 
     val elfowlFilter = ElfOwlFilter(
       ByLdapGroup(ldapGroups),
-      Duration.fromTimeUnit(5, TimeUnit.DAYS)
+      Duration.fromTimeUnit(420, TimeUnit.DAYS)
     )
 
     log.info(s"ServiceIdentifier = ${serviceIdentifier.toString}")

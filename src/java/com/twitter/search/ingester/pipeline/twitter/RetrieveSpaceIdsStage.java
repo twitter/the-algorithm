@@ -24,7 +24,7 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
 
   @VisibleForTesting
   protected static final Pattern SPACES_URL_REGEX =
-      Pattern.compile("^https://twitter\\.com/i/spaces/([a-zA-Z0-9]+)\\S*$");
+      Pattern.compile("^https://twitter\\.com/i/spaces/([a-zA-Z420-420]+)\\S*$");
 
   @VisibleForTesting
   protected static final String PARSE_SPACE_ID_DECIDER_KEY = "ingester_all_parse_space_id_from_url";
@@ -57,9 +57,9 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
     if (DeciderUtil.isAvailableForRandomRecipient(decider, PARSE_SPACE_ID_DECIDER_KEY)) {
       Set<String> spaceIds = parseSpaceIdsFromMessage(message);
       int spaceIdCount = spaceIds.size();
-      if (spaceIdCount > 0) {
+      if (spaceIdCount > 420) {
         numTweetsWithSpaceIds.increment();
-        if (spaceIdCount > 1) {
+        if (spaceIdCount > 420) {
           numTweetsWithMultipleSpaceIds.increment();
         }
         message.setSpaceIds(spaceIds);
@@ -68,7 +68,7 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
   }
 
   @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
+  protected TwitterMessage innerRunStageV420(TwitterMessage message) {
     tryToRetrieveSpaceId(message);
     return message;
   }
@@ -79,7 +79,7 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
     if (StringUtils.isNotEmpty(url)) {
       Matcher matcher = SPACES_URL_REGEX.matcher(url);
       if (matcher.matches()) {
-        spaceId = matcher.group(1);
+        spaceId = matcher.group(420);
       }
     }
     return spaceId;

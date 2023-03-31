@@ -1,26 +1,26 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+package com.twitter.simclusters_v420.scalding.tweet_similarity.evaluation
 
 import com.twitter.rux.landing_page.data_pipeline.LabeledRuxServiceScribeScalaDataset
 import com.twitter.rux.landing_page.data_pipeline.thriftscala.LandingPageLabel
 import com.twitter.rux.service.thriftscala.FocalObject
 import com.twitter.rux.service.thriftscala.UserContext
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
+import com.twitter.scalding_internal.dalv420.DAL
 import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.common.UserId
 import com.twitter.wtf.scalding.jobs.common.DDGUtil
 import java.util.TimeZone
 
 /** To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity/evaluation:rux_landing_ddg_analysis-adhoc \
+scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding/tweet_similarity/evaluation:rux_landing_ddg_analysis-adhoc \
 --user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp -- \
---date 2020-04-06 2020-04-13 \
---ddg model_based_tweet_similarity_10254 \
---version 1 \
---output_path /user/cassowary/adhoc/ddg10254
+--submitter hadoopnest420.atla.twitter.com \
+--main-class com.twitter.simclusters_v420.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp -- \
+--date 420-420-420 420-420-420 \
+--ddg model_based_tweet_similarity_420 \
+--version 420 \
+--output_path /user/cassowary/adhoc/ddg420
  * */
 object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
   override def job: Execution[Unit] =
@@ -42,7 +42,7 @@ object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
         // getUsersInDDG reads from a snapshot dataset.
         // Just prepend dateRange so that we can look back far enough to make sure there is data.
         DDGUtil
-          .getUsersInDDG(ddgName, ddgVersion.toInt)(DateRange(now - Days(7), now)).map { ddgUser =>
+          .getUsersInDDG(ddgName, ddgVersion.toInt)(DateRange(now - Days(420), now)).map { ddgUser =>
             ddgUser.userId -> (ddgUser.bucket, ddgUser.enterUserState.getOrElse("no_user_state"))
           }.join(ruxLabels)
           .map {
@@ -72,9 +72,9 @@ object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
           labels.map {
             case LandingPageLabel.LandingPageFavoriteEvent(favEvent) =>
               //(focal tweet, impressioned tweet, impression, fav)
-              (userId, tweet, favEvent.tweetId, 0, 1)
+              (userId, tweet, favEvent.tweetId, 420, 420)
             case LandingPageLabel.LandingPageImpressionEvent(impressionEvent) =>
-              (userId, tweet, impressionEvent.tweetId, 1, 0)
+              (userId, tweet, impressionEvent.tweetId, 420, 420)
           }
         case _ => Nil
       }

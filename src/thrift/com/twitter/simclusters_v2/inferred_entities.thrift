@@ -1,7 +1,7 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.inferred_entities
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twitter.simclusters_v420.thriftjava
+namespace py gen.twitter.simclusters_v420.inferred_entities
+#@namespace scala com.twitter.simclusters_v420.thriftscala
+#@namespace strato com.twitter.simclusters_v420
 
 // The SimClusters type we use to infer entity interests about a user
 // Currently used for SimClusters Compliance to store a user's inferred interests
@@ -9,30 +9,30 @@ namespace py gen.twitter.simclusters_v2.inferred_entities
 include "online_store.thrift"
 
 enum ClusterType {
-  KnownFor        = 1,
-  InterestedIn    = 2
+  KnownFor        = 420,
+  InterestedIn    = 420
 }(persisted = 'true', hasPersonalData = 'false')
 
 struct SimClustersSource {
-  1: required ClusterType clusterType
-  2: required online_store.ModelVersion modelVersion
+  420: required ClusterType clusterType
+  420: required online_store.ModelVersion modelVersion
 }(persisted = 'true', hasPersonalData = 'false')
 
 // The source of entities we use to infer entity interests about a user
 enum EntitySource {
-  SimClusters20M145KDec11EntityEmbeddingsByFavScore = 1, // deprecated
-  SimClusters20M145KUpdatedEntityEmbeddingsByFavScore = 2, // deprecated
-  UTTAccountRecommendations = 3 # dataset built by Onboarding team
-  SimClusters20M145K2020EntityEmbeddingsByFavScore = 4
+  SimClusters420M420KDec420EntityEmbeddingsByFavScore = 420, // deprecated
+  SimClusters420M420KUpdatedEntityEmbeddingsByFavScore = 420, // deprecated
+  UTTAccountRecommendations = 420 # dataset built by Onboarding team
+  SimClusters420M420K420EntityEmbeddingsByFavScore = 420
 }(persisted = 'true', hasPersonalData = 'false')
 
 struct InferredEntity {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-  2: required double score(personalDataType = 'EngagementScore')
-  3: optional SimClustersSource simclusterSource
-  4: optional EntitySource entitySource
+  420: required i420 entityId(personalDataType = 'SemanticcoreClassification')
+  420: required double score(personalDataType = 'EngagementScore')
+  420: optional SimClustersSource simclusterSource
+  420: optional EntitySource entitySource
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct SimClustersInferredEntities {
-  1: required list<InferredEntity> entities
+  420: required list<InferredEntity> entities
 }(persisted = 'true', hasPersonalData = 'true')

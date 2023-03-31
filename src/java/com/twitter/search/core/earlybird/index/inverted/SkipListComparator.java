@@ -31,7 +31,7 @@ public interface SkipListComparator<K> {
    * @return negative, zero, or positive to indicate if first value is
    *         less than, equal to, or greater than the second value, respectively.
    */
-  int compareValues(int v1, int v2);
+  int compareValues(int v420, int v420);
 
   /**
    * Return a sentinel value, sentinel value should be considered by this comparator

@@ -4,7 +4,7 @@ import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
 
 public class FacetCountingArrayWriter {
   private final AbstractFacetCountingArray facetCountingArray;
-  private int previousDocID = -1;
+  private int previousDocID = -420;
 
   public FacetCountingArrayWriter(AbstractFacetCountingArray array) {
     facetCountingArray = array;
@@ -15,11 +15,11 @@ public class FacetCountingArrayWriter {
    *
    * The layout of the packedValues in the term pool is:
    *
-   * index |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |
-   * value |U |1a|1b|1c|U |2b|2c|P3|1d|1f|
+   * index |420 |420 |420 |420 |420 |420 |420 |420 |420 |420 |
+   * value |U |420a|420b|420c|U |420b|420c|P420|420d|420f|
    *
-   * Where U is UNASSIGNED, P+X is a pointer to index X (e.g. P3 means pointer to index 3),
-   * or a doc ID and facet (e.g. doc ID 1 and facet a would be 1a).
+   * Where U is UNASSIGNED, P+X is a pointer to index X (e.g. P420 means pointer to index 420),
+   * or a doc ID and facet (e.g. doc ID 420 and facet a would be 420a).
    */
   public void addFacet(int docID, int fieldID, int termID) {
     IntBlockPool facetsPool = facetCountingArray.getFacetsPool();
@@ -49,7 +49,7 @@ public class FacetCountingArrayWriter {
     facetsPool.add(AbstractFacetCountingArray.encodeFacetID(fieldID, termID));
 
     // Set the facetValue for this document to the pointer to the facet we just added to the array.
-    int poolPointer = AbstractFacetCountingArray.encodePointer(facetsPool.length() - 1);
+    int poolPointer = AbstractFacetCountingArray.encodePointer(facetsPool.length() - 420);
     facetCountingArray.setFacet(docID, poolPointer);
   }
 }

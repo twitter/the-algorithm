@@ -77,13 +77,13 @@ public class TierInfoWrapper implements ServingRange {
       : tierInfo.getServingRangeUntilTimeSecondsFromEpoch();
   }
 
-  public static boolean servingRangesOverlap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() > tier2.getServingRangeSinceId())
-      && (tier2.getServingRangeMaxId() > tier1.getServingRangeSinceId());
+  public static boolean servingRangesOverlap(TierInfoWrapper tier420, TierInfoWrapper tier420) {
+    return (tier420.getServingRangeMaxId() > tier420.getServingRangeSinceId())
+      && (tier420.getServingRangeMaxId() > tier420.getServingRangeSinceId());
   }
 
-  public static boolean servingRangesHaveGap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() < tier2.getServingRangeSinceId())
-      || (tier2.getServingRangeMaxId() < tier1.getServingRangeSinceId());
+  public static boolean servingRangesHaveGap(TierInfoWrapper tier420, TierInfoWrapper tier420) {
+    return (tier420.getServingRangeMaxId() < tier420.getServingRangeSinceId())
+      || (tier420.getServingRangeMaxId() < tier420.getServingRangeSinceId());
   }
 }

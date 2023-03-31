@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
 
 /**
  * The utility to convert SimClusters Model version into different forms.
@@ -8,25 +8,25 @@ import com.twitter.simclusters_v2.thriftscala.ModelVersion
  */
 object ModelVersions {
 
-  val Model20M145KDec11 = "20M_145K_dec11"
-  val Model20M145KUpdated = "20M_145K_updated"
-  val Model20M145K2020 = "20M_145K_2020"
+  val Model420M420KDec420 = "420M_420K_dec420"
+  val Model420M420KUpdated = "420M_420K_updated"
+  val Model420M420K420 = "420M_420K_420"
 
   // Use Enum for feature switch
   object Enum extends Enumeration {
-    val Model20M145K2020, Model20M145KUpdated: Value = Value
+    val Model420M420K420, Model420M420KUpdated: Value = Value
     val enumToSimClustersModelVersionMap: Map[Enum.Value, ModelVersion] = Map(
-      Model20M145K2020 -> ModelVersion.Model20m145k2020,
-      Model20M145KUpdated -> ModelVersion.Model20m145kUpdated
+      Model420M420K420 -> ModelVersion.Model420m420k420,
+      Model420M420KUpdated -> ModelVersion.Model420m420kUpdated
     )
   }
 
   // Add the new model version into this map
   private val StringToThriftModelVersions: Map[String, ModelVersion] =
     Map(
-      Model20M145KDec11 -> ModelVersion.Model20m145kDec11,
-      Model20M145KUpdated -> ModelVersion.Model20m145kUpdated,
-      Model20M145K2020 -> ModelVersion.Model20m145k2020
+      Model420M420KDec420 -> ModelVersion.Model420m420kDec420,
+      Model420M420KUpdated -> ModelVersion.Model420m420kUpdated,
+      Model420M420K420 -> ModelVersion.Model420m420k420
     )
 
   private val ThriftModelVersionToStrings = StringToThriftModelVersions.map(_.swap)

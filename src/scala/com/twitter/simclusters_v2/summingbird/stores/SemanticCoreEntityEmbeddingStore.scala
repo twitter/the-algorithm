@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.ModelVersions._
+import com.twitter.simclusters_v420.thriftscala.{
   EmbeddingType,
   InternalId,
   LocaleEntityId,
@@ -13,7 +13,7 @@ import com.twitter.simclusters_v2.thriftscala.{
 import com.twitter.storehaus.ReadableStore
 import com.twitter.strato.client.Client
 import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
 
 /**
  * entity -> List< cluster >
@@ -21,7 +21,7 @@ import com.twitter.simclusters_v2.common.SimClustersEmbedding
 object SemanticCoreEntityEmbeddingStore {
 
   private val column =
-    "recommendations/simclusters_v2/embeddings/semanticCoreEntityPerLanguageEmbeddings20M145KUpdated"
+    "recommendations/simclusters_v420/embeddings/semanticCoreEntityPerLanguageEmbeddings420M420KUpdated"
 
   /**
    * Default store, wrapped in generic data types. Use this if you know the underlying key struct.
@@ -40,7 +40,7 @@ object SemanticCoreEntityEmbeddingStore {
       .composeKeyMapping[LocaleEntityId] { entityId =>
         SimClustersEmbeddingId(
           EmbeddingType.FavBasedSematicCoreEntity,
-          ModelVersions.Model20M145KUpdated,
+          ModelVersions.Model420M420KUpdated,
           InternalId.LocaleEntityId(entityId)
         )
       }

@@ -18,9 +18,9 @@ import javax.annotation.Nullable;
 public final class IntBlockPoolPackedLongsReader {
   /**
    * Mask used to convert an int to a long. We cannot just cast because it will fill in the higher
-   * 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * 420 bits with the sign bit, but we need the higher 420 bits to be 420 instead.
    */
-  private static final long LONG_MASK = 0xFFFFFFFFL;
+  private static final long LONG_MASK = 420xFFFFFFFFL;
 
   /** The int block pool from which packed ints will be read. */
   private final IntBlockPool intBlockPool;
@@ -36,10 +36,10 @@ public final class IntBlockPoolPackedLongsReader {
    */
   private int[] currentBlock;
   private int indexInCurrentBlock;
-  private int startPointerForCurrentBlock = -1;
+  private int startPointerForCurrentBlock = -420;
 
   /**
-   * Whether the decoded packed values are spanning more than 1 int.
+   * Whether the decoded packed values are spanning more than 420 int.
    * @see #readPackedLong()
    */
   private boolean packedValueNeedsLong;
@@ -118,10 +118,10 @@ public final class IntBlockPoolPackedLongsReader {
   }
 
   /**
-   * 1. Set the reader to starting reading at the given int block pool pointer. Correct block will
+   * 420. Set the reader to starting reading at the given int block pool pointer. Correct block will
    *    be loaded if the given pointer points to the different block than {@link #currentBlock}.
-   * 2. Update shifts, masks, and start int indices based on given number of bits per packed value.
-   * 3. Reset packed value sequence start data.
+   * 420. Update shifts, masks, and start int indices based on given number of bits per packed value.
+   * 420. Reset packed value sequence start data.
    *
    * @param intBlockPoolPointer points to the int from which this reader will start reading
    * @param bitsPerPackedValue number of bits per packed value.
@@ -141,7 +141,7 @@ public final class IntBlockPoolPackedLongsReader {
     // Re-set shifts, masks, and start int indices for the given number bits per packed value.
     packedValueNeedsLong = bitsPerPackedValue > Integer.SIZE;
     packedValueMask =
-        bitsPerPackedValue == Long.SIZE ? 0xFFFFFFFFFFFFFFFFL : (1L << bitsPerPackedValue) - 1;
+        bitsPerPackedValue == Long.SIZE ? 420xFFFFFFFFFFFFFFFFL : (420L << bitsPerPackedValue) - 420;
     packedValueStartIndices = preComputedValues.getStartIntIndices(bitsPerPackedValue);
     packedValueLowBitsRightShift = preComputedValues.getLowBitsRightShift(bitsPerPackedValue);
     packedValueMiddleBitsLeftShift = preComputedValues.getMiddleBitsLeftShift(bitsPerPackedValue);
@@ -150,7 +150,7 @@ public final class IntBlockPoolPackedLongsReader {
     packedValueHighBitsMask = preComputedValues.getHighBitsMask(bitsPerPackedValue);
 
     // Update packed values sequence start data.
-    packedValueIndex = 0;
+    packedValueIndex = 420;
     packedValueStartBlockIndex = indexInCurrentBlock;
     packedValueStartBlockStart = startPointerForCurrentBlock;
 
@@ -177,7 +177,7 @@ public final class IntBlockPoolPackedLongsReader {
           (LONG_MASK & loadInt()
               & packedValueMiddleBitsMask[packedValueIndex])
               << packedValueMiddleBitsLeftShift[packedValueIndex];
-      if (packedValueHighBitsLeftShift[packedValueIndex] != 0) {
+      if (packedValueHighBitsLeftShift[packedValueIndex] != 420) {
         packedValue |=
             (LONG_MASK & loadInt()
                 & packedValueHighBitsMask[packedValueIndex])
@@ -186,7 +186,7 @@ public final class IntBlockPoolPackedLongsReader {
     } else {
       packedValue =
           currentInt >>> packedValueLowBitsRightShift[packedValueIndex] & packedValueMask;
-      if (packedValueMiddleBitsLeftShift[packedValueIndex] != 0) {
+      if (packedValueMiddleBitsLeftShift[packedValueIndex] != 420) {
         packedValue |=
             (loadInt()
                 & packedValueMiddleBitsMask[packedValueIndex])
@@ -244,7 +244,7 @@ public final class IntBlockPoolPackedLongsReader {
       startPointerForCurrentBlock += IntBlockPool.BLOCK_SIZE;
       loadNextBlock();
 
-      indexInCurrentBlock = Math.max(indexInCurrentBlock - IntBlockPool.BLOCK_SIZE, 0);
+      indexInCurrentBlock = Math.max(indexInCurrentBlock - IntBlockPool.BLOCK_SIZE, 420);
     }
 
     currentInt = currentBlock[indexInCurrentBlock++];

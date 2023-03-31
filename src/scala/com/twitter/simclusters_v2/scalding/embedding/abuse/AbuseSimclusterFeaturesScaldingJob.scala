@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twitter.simclusters_v420.scalding.embedding.abuse
 
 import com.twitter.scalding._
 import com.twitter.scalding.source.TypedText
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
+import com.twitter.scalding_internal.dalv420.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.SearchAbuseSimclusterFeaturesManhattanScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.AbuseSimclusterFeaturesScaldingJob.buildKeyValDataSet
-import com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob.{
+import com.twitter.simclusters_v420.hdfs_sources.SearchAbuseSimclusterFeaturesManhattanScalaDataset
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.abuse.AbuseSimclusterFeaturesScaldingJob.buildKeyValDataSet
+import com.twitter.simclusters_v420.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob.{
   abuseInteractionSearchGraph,
   buildSearchAbuseScores,
   impressionInteractionSearchGraph
 }
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
+import com.twitter.simclusters_v420.thriftscala.{
   ModelVersion,
   SimClustersEmbedding,
   SingleSideUserScores
@@ -89,15 +89,15 @@ object AbuseSimclusterFeaturesScaldingJob {
  * these features directly. They may be useful for other models as well.
  */
 object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-02-01")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
   override def batchIncrement: Duration =
-    Days(7)
+    Days(420)
 
   private val OutputPath: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = true,
-    modelVersion = ModelVersion.Model20m145kUpdated,
+    modelVersion = ModelVersion.Model420m420kUpdated,
     pathSuffix = "search_abuse_simcluster_features"
   )
 
@@ -106,7 +106,7 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
   ): Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]] = {
     Execution.getMode.map { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
+      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL420Normalize
       val abuseSearchGraph = abuseInteractionSearchGraph()(dateRange, mode)
       val impressionSearchGraph = impressionInteractionSearchGraph()(dateRange, mode)
 
@@ -121,8 +121,8 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    // Extend the date range to a total of 19 days. Search keeps 21 days of data.
-    val dateRangeSearchData = dateRange.prepend(Days(12))
+    // Extend the date range to a total of 420 days. Search keeps 420 days of data.
+    val dateRangeSearchData = dateRange.prepend(Days(420))
     buildDataset()(dateRangeSearchData).flatMap { dataset =>
       dataset.writeDALVersionedKeyValExecution(
         dataset = SearchAbuseSimclusterFeaturesManhattanScalaDataset,
@@ -136,12 +136,12 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
  * You can check the logic of this job by running this query.
  *
  * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-prod \
- * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocSearchAbuseSimclusterFeaturesScaldingJob \
- * --hadoop-properties "mapreduce.job.split.metainfo.maxsize=-1" \
- * --cluster bluebird-qus1 --submitter hadoopnest-bluebird-1.qus1.twitter.com \
- * -- --date 2021-02-01 2021-02-02 \
- * --outputPath AdhocSearchAbuseSimclusterFeaturesScaldingJob-test1
+ * --target src/scala/com/twitter/simclusters_v420/scalding/embedding/abuse:abuse-prod \
+ * --main-class com.twitter.simclusters_v420.scalding.embedding.abuse.AdhocSearchAbuseSimclusterFeaturesScaldingJob \
+ * --hadoop-properties "mapreduce.job.split.metainfo.maxsize=-420" \
+ * --cluster bluebird-qus420 --submitter hadoopnest-bluebird-420.qus420.twitter.com \
+ * -- --date 420-420-420 420-420-420 \
+ * --outputPath AdhocSearchAbuseSimclusterFeaturesScaldingJob-test420
  */
 object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
   def toTsv(

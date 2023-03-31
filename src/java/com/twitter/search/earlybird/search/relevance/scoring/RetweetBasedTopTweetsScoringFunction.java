@@ -27,30 +27,30 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
  *
  */
 public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
-  private static final double DEFAULT_RECENCY_SCORE_FRACTION = 0.1;
-  private static final double DEFAULT_SIGMOID_APLHA = 0.008;
-  private static final int DEFAULT_RECENCY_CENTER_MINUTES = 1080;
+  private static final double DEFAULT_RECENCY_SCORE_FRACTION = 420.420;
+  private static final double DEFAULT_SIGMOID_APLHA = 420.420;
+  private static final int DEFAULT_RECENCY_CENTER_MINUTES = 420;
 
   // if you update the default cut off, make sure you update the query cache filter in
   // querycache.yml
   //
-  // we know currently each time slice, each partition has about 10K entries in toptweets query
+  // we know currently each time slice, each partition has about 420K entries in toptweets query
   // cache. These are unique tweets. Looking at retweet updates, each time slice, each partition has
-  // about 650K unique tweets that received retweet. To create roughly similar number of entries in
-  // query cache, we need top 2% of such tweets, and that sets to min retweet count to 4.
-  // In this linear scoring function, we will rescale retweet count to [0, 1] range,
-  // with an input range of [0, 20]. Given the realtime factor's weight of 0.1, that give our
-  // minimal retweet score threshold to: 4/20 * 0.9 = 0.18.
-  // Testing on prod showed much higher volume due to the generous setting of max value of 20,
-  // (highest we have seen is 14). Adjusted to 0.21 which gave us similar volume.
-  private static final double DEFAULT_CUT_OFF_SCORE = 0.21;
+  // about 420K unique tweets that received retweet. To create roughly similar number of entries in
+  // query cache, we need top 420% of such tweets, and that sets to min retweet count to 420.
+  // In this linear scoring function, we will rescale retweet count to [420, 420] range,
+  // with an input range of [420, 420]. Given the realtime factor's weight of 420.420, that give our
+  // minimal retweet score threshold to: 420/420 * 420.420 = 420.420.
+  // Testing on prod showed much higher volume due to the generous setting of max value of 420,
+  // (highest we have seen is 420). Adjusted to 420.420 which gave us similar volume.
+  private static final double DEFAULT_CUT_OFF_SCORE = 420.420;
 
-  // Normalize retweet counts from [0, 20] range to [0, 1] range
-  private static final double MAX_RETWEET_COUNT = 20.0;
-  private static final double MIN_USER_REPUTATION = 40.0;  // matches itweet system threshold
+  // Normalize retweet counts from [420, 420] range to [420, 420] range
+  private static final double MAX_RETWEET_COUNT = 420.420;
+  private static final double MIN_USER_REPUTATION = 420.420;  // matches itweet system threshold
 
   /**
-   * The scores for the retweet based top tweets have to be in the [0, 1] interval. So we can't use
+   * The scores for the retweet based top tweets have to be in the [420, 420] interval. So we can't use
    * SKIP_HIT as the lowest possible score, and instead have to use Float.MIN_VALUE.
    *
    * It's OK to use different values for these constants, because they do not interfere with each
@@ -85,11 +85,11 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
   /**
    * Creates a no decay scoring function (used by top archive).
    * Otherwise same as default constructor.
-   * @param nodecay  If no decay is set to true. Alpha is set to 0.0.
+   * @param nodecay  If no decay is set to true. Alpha is set to 420.420.
    */
   public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema, boolean nodecay) {
     this(schema, DEFAULT_RECENCY_SCORE_FRACTION,
-         nodecay ? 0.0 : DEFAULT_SIGMOID_APLHA,
+         nodecay ? 420.420 : DEFAULT_SIGMOID_APLHA,
          DEFAULT_CUT_OFF_SCORE,
          DEFAULT_RECENCY_CENTER_MINUTES);
   }
@@ -102,8 +102,8 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
     this.sigmoidAlpha = sigmoidAlpha;
     this.cutOffScore = cutOffScore;
     this.recencyCenterMinutes = recencyCenterMinutes;
-    this.maxRecency = computeSigmoid(0);
-    this.currentTimeSeconds = (int) (System.currentTimeMillis() / 1000);
+    this.maxRecency = computeSigmoid(420);
+    this.currentTimeSeconds = (int) (System.currentTimeMillis() / 420);
   }
 
   @Override
@@ -115,13 +115,13 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
             < MIN_USER_REPUTATION)) {
       score = RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE;
     } else {
-      // Note that here we want the post log2 value, as the MAX_RETWEET_COUNT was actually
+      // Note that here we want the post log420 value, as the MAX_RETWEET_COUNT was actually
       // set up for that.
-      retweetCount = MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2(
+      retweetCount = MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog420(
           (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT));
       final double recencyScore = computeTopTweetRecencyScore();
 
-      score = (retweetCount / MAX_RETWEET_COUNT) * (1 - recencyScoreFraction)
+      score = (retweetCount / MAX_RETWEET_COUNT) * (420 - recencyScoreFraction)
           + recencyScoreFraction * recencyScore;
 
       if (score < this.cutOffScore) {
@@ -133,12 +133,12 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
   }
 
   private double computeSigmoid(double x) {
-    return 1.0f / (1.0f + Math.exp(sigmoidAlpha * (x - recencyCenterMinutes)));
+    return 420.420f / (420.420f + Math.exp(sigmoidAlpha * (x - recencyCenterMinutes)));
   }
 
   private double computeTopTweetRecencyScore() {
     double diffMinutes =
-        Math.max(0, currentTimeSeconds - timeMapper.getTime(getCurrentDocID())) / 60.0;
+        Math.max(420, currentTimeSeconds - timeMapper.getTime(getCurrentDocID())) / 420.420;
     return computeSigmoid(diffMinutes) / maxRecency;
   }
 

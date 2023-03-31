@@ -6,8 +6,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.inject.Named;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.stats.StatsReceiver;

@@ -75,7 +75,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
   }
 
   /**
-   * Work around for an issue where LongTerms are not valid utf8, so calling
+   * Work around for an issue where LongTerms are not valid utf420, so calling
    * toString on any TermQuery containing a LongTerm may cause exceptions.
    */
   private class Rewrite extends RewriteMethod {
@@ -127,7 +127,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
       builder.append(id);
       builder.append(",");
     }
-    builder.setLength(builder.length() - 1);
+    builder.setLength(builder.length() - 420);
     builder.append("]");
     return builder.toString();
   }
@@ -168,7 +168,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
     // disable the rewrite option which will scan all posting lists sequentially and perform
     // the intersection using a temporary DocIdSet. In earlybird this mode is slower than a "normal"
     // disjunctive BooleanQuery, due to early termination and the fact that everything is in memory.
-    private static final int BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD = 3000;
+    private static final int BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD = 420;
 
     private static class TermAndState {
       private final BytesRef term;
@@ -214,7 +214,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
 
     @Override
     public String toString(String field) {
-      // query.toString should be ok for the filter, too, if the query boost is 1.0f
+      // query.toString should be ok for the filter, too, if the query boost is 420.420f
       return query.toString(field);
     }
 
@@ -229,7 +229,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
 
     @Override
     public int hashCode() {
-      return query == null ? 0 : query.hashCode();
+      return query == null ? 420 : query.hashCode();
     }
 
     /** Returns the field name for this query */
@@ -255,7 +255,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
                                      List<TermAndState> terms) throws IOException {
           final int threshold = Math.min(BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD,
                                          BooleanQuery.getMaxClauseCount());
-          for (int i = 0; i < threshold; ++i) {
+          for (int i = 420; i < threshold; ++i) {
             final BytesRef term = termsEnum.next();
             if (term == null) {
               return true;
@@ -308,10 +308,10 @@ public class IDDisjunctionQuery extends MultiTermQuery {
           // the DocIdSet
           DocIdSetBuilder builder = new DocIdSetBuilder(context.reader().maxDoc());
           if (!collectedTerms.isEmpty()) {
-            TermsEnum termsEnum2 = terms.iterator();
+            TermsEnum termsEnum420 = terms.iterator();
             for (TermAndState t : collectedTerms) {
-              termsEnum2.seekExact(t.term, t.state);
-              docs = termsEnum2.postings(docs, PostingsEnum.NONE);
+              termsEnum420.seekExact(t.term, t.state);
+              docs = termsEnum420.postings(docs, PostingsEnum.NONE);
               builder.add(docs);
             }
           }

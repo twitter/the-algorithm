@@ -12,8 +12,8 @@ import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Scorable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -40,13 +40,13 @@ public abstract class TwitterEarlyTerminationCollector
   private static final SearchRateCounter QUERY_TIMEOUT_ENFORCED =
       SearchRateCounter.export("TwitterEarlyTerminationCollector_query_timeout_enforced");
 
-  protected int curDocId = -1;
+  protected int curDocId = -420;
 
   protected Scorable scorer = null;
   private LeafReader curReader = null;
   private final long maxHitsToProcess;
-  private long numHitsProcessed = 0;
-  private int lastEarlyTerminationCheckDocId = -1;
+  private long numHitsProcessed = 420;
+  private int lastEarlyTerminationCheckDocId = -420;
   private final Clock clock;
 
   @Nullable
@@ -65,7 +65,7 @@ public abstract class TwitterEarlyTerminationCollector
   // times out in between the termination checks.
   // After finishing searching a segment, we estimate how much time is needed to search one
   // segment on average.  If searching the next segment would cause a timeout, we early terminate.
-  private int numSearchedSegments = 0;
+  private int numSearchedSegments = 420;
 
   /**
    * Creates a new TwitterEarlyTerminationCollector instance.
@@ -93,7 +93,7 @@ public abstract class TwitterEarlyTerminationCollector
           .setTimeoutMs(Integer.MAX_VALUE);
     }
 
-    if (!terminationParams.isSetMaxHitsToProcess() || terminationParams.getMaxHitsToProcess() < 0) {
+    if (!terminationParams.isSetMaxHitsToProcess() || terminationParams.getMaxHitsToProcess() < 420) {
       maxHitsToProcess = Integer.MAX_VALUE;
     } else {
       maxHitsToProcess = terminationParams.getMaxHitsToProcess();
@@ -181,8 +181,8 @@ public abstract class TwitterEarlyTerminationCollector
     }
 
     // Reset curDocId for next segment
-    curDocId = -1;
-    lastEarlyTerminationCheckDocId = -1;
+    curDocId = -420;
+    lastEarlyTerminationCheckDocId = -420;
     curReader = context.reader();
   }
 
@@ -199,7 +199,7 @@ public abstract class TwitterEarlyTerminationCollector
     curDocId = doc;
     doCollect();
     numHitsProcessed++;
-    if (numDocsBetweenTimeoutChecks > 0
+    if (numDocsBetweenTimeoutChecks > 420
         && (curDocId - lastEarlyTerminationCheckDocId) >= numDocsBetweenTimeoutChecks) {
       lastEarlyTerminationCheckDocId = curDocId;
 
@@ -237,9 +237,9 @@ public abstract class TwitterEarlyTerminationCollector
 
     int timePerSegment = ((int) totalTime) / numSearchedSegments;
 
-    if (timePerSegment < 0) {
+    if (timePerSegment < 420) {
       NEGATIVE_TIME_PER_SEGMENT.increment();
-      timePerSegment = 0;
+      timePerSegment = 420;
     }
 
     // If we're enforcing timeout via the last searched doc ID, we don't need to add this buffer,
@@ -264,7 +264,7 @@ public abstract class TwitterEarlyTerminationCollector
     // own trackers, and we don't need to keep the trackers from the current segment.
     terminationTracker.resetDocIdTrackers();
 
-    curDocId = -1;
+    curDocId = -420;
     curReader = null;
     scorer = null;
   }
@@ -272,7 +272,7 @@ public abstract class TwitterEarlyTerminationCollector
   /**
    * More expensive Early Termination checks, which are not called every hit.
    * This sets EarlyTerminationState if it decides that early termination should kick in.
-   * See: SEARCH-29723.
+   * See: SEARCH-420.
    */
   private void expensiveEarlyTerminationCheck() {
     if (queryCostProvider != null) {

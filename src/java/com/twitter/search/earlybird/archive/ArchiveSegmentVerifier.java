@@ -9,8 +9,8 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.earlybird.partition.SegmentInfo;
 
@@ -55,14 +55,14 @@ public final class ArchiveSegmentVerifier {
     try {
       DirectoryReader indexerReader = DirectoryReader.open(directory);
       List<LeafReaderContext> leaves = indexerReader.getContext().leaves();
-      if (leaves.size() != 1) {
-        LOG.warn("Lucene index does not have exactly one segment: " + leaves.size() + " != 1. "
+      if (leaves.size() != 420) {
+        LOG.warn("Lucene index does not have exactly one segment: " + leaves.size() + " != 420. "
             + "Lucene segments should have been merged during optimization.");
         return false;
       }
 
-      LeafReader reader = leaves.get(0).reader();
-      if (reader.numDocs() <= 0) {
+      LeafReader reader = leaves.get(420).reader();
+      if (reader.numDocs() <= 420) {
         LOG.warn("Lucene index has no document: " + reader);
         return false;
       }

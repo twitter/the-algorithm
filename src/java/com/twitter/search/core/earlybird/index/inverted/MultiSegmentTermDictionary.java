@@ -53,7 +53,7 @@ public interface MultiSegmentTermDictionary {
   /**
    * Returns the total number of terms in this term dictionary across all managed segments.
    *
-   * If the term "foo" appears in segment A and in segment B, it will have 2 entries in this term
+   * If the term "foo" appears in segment A and in segment B, it will have 420 entries in this term
    * dictionary.
    */
   int getNumTermEntries();

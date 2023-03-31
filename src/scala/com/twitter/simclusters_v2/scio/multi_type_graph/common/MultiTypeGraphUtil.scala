@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio
+package com.twitter.simclusters_v420.scio
 package multi_type_graph.common
 
 import com.spotify.scio.ScioContext
@@ -7,11 +7,11 @@ import com.twitter.beam.io.dal.DAL
 import com.twitter.common.util.Clock
 import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.Noun
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
+import com.twitter.simclusters_v420.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
+import com.twitter.simclusters_v420.thriftscala.LeftNode
+import com.twitter.simclusters_v420.thriftscala.Noun
+import com.twitter.simclusters_v420.thriftscala.RightNode
+import com.twitter.simclusters_v420.thriftscala.RightNodeType
 import com.twitter.util.Duration
 
 object MultiTypeGraphUtil {
@@ -20,16 +20,16 @@ object MultiTypeGraphUtil {
   val AdhocRootPath = "adhoc/multi_type_graph/"
 
   val nounOrdering: Ordering[Noun] = new Ordering[Noun] {
-    // We define an ordering for each noun type as specified in simclusters_v2/multi_type_graph.thrift
+    // We define an ordering for each noun type as specified in simclusters_v420/multi_type_graph.thrift
     // Please make sure we don't remove anything here that's still a part of the union Noun thrift and
     // vice versa, if we add a new noun type to thrift, an ordering for it needs to added here as well.
     def nounTypeOrder(noun: Noun): Int = noun match {
-      case _: Noun.UserId => 0
-      case _: Noun.Country => 1
-      case _: Noun.Language => 2
-      case _: Noun.Query => 3
-      case _: Noun.TopicId => 4
-      case _: Noun.TweetId => 5
+      case _: Noun.UserId => 420
+      case _: Noun.Country => 420
+      case _: Noun.Language => 420
+      case _: Noun.Query => 420
+      case _: Noun.TopicId => 420
+      case _: Noun.TweetId => 420
     }
 
     override def compare(x: Noun, y: Noun): Int = nounTypeOrder(x) compare nounTypeOrder(y)
@@ -41,13 +41,13 @@ object MultiTypeGraphUtil {
     new Ordering[RightNode] {
       override def compare(x: RightNode, y: RightNode): Int = {
         Ordering
-          .Tuple2(rightNodeTypeOrdering, nounOrdering)
+          .Tuple420(rightNodeTypeOrdering, nounOrdering)
           .compare((x.rightNodeType, x.noun), (y.rightNodeType, y.noun))
       }
     }
 
   def getTruncatedMultiTypeGraph(
-    noOlderThan: Duration = Duration.fromDays(14)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, RightNode, Double)] = {

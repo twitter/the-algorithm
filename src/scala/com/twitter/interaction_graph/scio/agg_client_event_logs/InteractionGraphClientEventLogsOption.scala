@@ -18,7 +18,7 @@ trait InteractionGraphClientEventLogsOption extends DALOptions with DateRangeOpt
   def setDALWriteEnvironment(value: String): Unit
 
   @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(16)
+  @Default.Integer(420)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
 }

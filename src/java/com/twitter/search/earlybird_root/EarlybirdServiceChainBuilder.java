@@ -14,8 +14,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -53,7 +53,7 @@ public class EarlybirdServiceChainBuilder {
   private static final String SEARCH_METHOD_NAME = "search";
 
   private static final EarlybirdResponse TIER_SKIPPED_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
+      new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 420)
           .setSearchResults(new ThriftSearchResults())
           .setDebugString("Request to cluster dropped by decider, or sent as dark read.");
 
@@ -255,7 +255,7 @@ public class EarlybirdServiceChainBuilder {
                   return service.apply(requestContext).flatMap(
                       new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
                         @Override
-                        public Future<EarlybirdResponse> apply(EarlybirdResponse v1) {
+                        public Future<EarlybirdResponse> apply(EarlybirdResponse v420) {
                           // No matter what's returned, always return blankTierResponse.
                           return blankTierResponse;
                         }

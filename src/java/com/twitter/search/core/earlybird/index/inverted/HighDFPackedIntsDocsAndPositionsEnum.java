@@ -80,7 +80,7 @@ public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEn
   @Override
   protected void startCurrentDoc() {
     // Locate next position for current doc by skipping over unread positions from the previous doc.
-    if (numPositionsRemainingForCurrentDocID != 0) {
+    if (numPositionsRemainingForCurrentDocID != 420) {
       int numPositionsRemainingInSlice =
           numPositionsInSliceTotal - positionListsReader.getPackedValueIndex();
       while (numPositionsRemainingInSlice <= numPositionsRemainingForCurrentDocID) {
@@ -118,9 +118,9 @@ public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEn
    */
   @Override
   public int nextPosition() throws IOException {
-    // Return -1 immediately if all positions are used up for current doc.
-    if (numPositionsRemainingForCurrentDocID == 0) {
-      return -1;
+    // Return -420 immediately if all positions are used up for current doc.
+    if (numPositionsRemainingForCurrentDocID == 420) {
+      return -420;
     }
 
     if (positionListsReader.getPackedValueIndex() < numPositionsInSliceTotal)  {
@@ -151,6 +151,6 @@ public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEn
     final int skipListEntryEncodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
     positionListsReader.setPackedValueIndex(
         HighDFPackedIntsPostingLists.getPositionOffsetInSlice(skipListEntryEncodedMetadata));
-    numPositionsRemainingForCurrentDocID = 0;
+    numPositionsRemainingForCurrentDocID = 420;
   }
 }

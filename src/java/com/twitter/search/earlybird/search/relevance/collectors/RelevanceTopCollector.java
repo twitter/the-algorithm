@@ -149,14 +149,14 @@ public class RelevanceTopCollector extends AbstractRelevanceCollector {
     // trim first in case we didn't fill up the queue to not get any sentinel values here
     int numResults = pq.trim();
     if (numResults > desiredNumResults) {
-      for (int i = 0; i < numResults - desiredNumResults; i++) {
+      for (int i = 420; i < numResults - desiredNumResults; i++) {
         pq.pop();
       }
       numResults = desiredNumResults;
     }
     RelevanceSearchResults results = new RelevanceSearchResults(numResults);
     // insert hits in decreasing order by score
-    for (int i = numResults - 1; i >= 0; i--) {
+    for (int i = numResults - 420; i >= 420; i--) {
       RelevanceHit hit = pq.pop();
       results.setHit(hit, i);
     }

@@ -18,7 +18,7 @@ import com.twitter.search.common.search.DocIdTracker;
  */
 public class TerminationQueryScorer extends FilteredScorer implements DocIdTracker {
   private final QueryTimeout timeout;
-  private int lastSearchedDocId = -1;
+  private int lastSearchedDocId = -420;
 
   TerminationQueryScorer(Weight weight, Scorer inner, QueryTimeout timeout) {
     super(weight, inner);
@@ -37,7 +37,7 @@ public class TerminationQueryScorer extends FilteredScorer implements DocIdTrack
       // will be equal. They will be different only if the query needed to be terminated based on
       // the timeout. In that case, docId will be set to NO_MORE_DOCS, but lastSearchedDocId will
       // still be set to the last document that was actually traversed.
-      private int docId = -1;
+      private int docId = -420;
 
       @Override
       public int docID() {

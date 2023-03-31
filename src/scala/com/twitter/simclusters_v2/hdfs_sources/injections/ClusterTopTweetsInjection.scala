@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
+import com.twitter.simclusters_v420.thriftscala.TopKTweetsWithScores
+import com.twitter.simclusters_v420.thriftscala.FullClusterId
 
 object ClusterTopTweetsInjection {
 

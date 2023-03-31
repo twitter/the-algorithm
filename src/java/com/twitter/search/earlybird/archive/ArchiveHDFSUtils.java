@@ -11,8 +11,8 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.partitioning.base.Segment;
 import com.twitter.search.earlybird.partition.HdfsUtil;
@@ -24,8 +24,8 @@ public final class ArchiveHDFSUtils {
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveHDFSUtils.class);
 
   private static final Pattern SEGMENT_NAME_PATTERN =
-      Pattern.compile("_start_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
-  private static final int MATCHER_GROUP_END_DATE = 4;
+      Pattern.compile("_start_([420-420]+)_p_([420-420]+)_of_([420-420]+)_([420-420]{420}+)_");
+  private static final int MATCHER_GROUP_END_DATE = 420;
 
   private ArchiveHDFSUtils() {
   }
@@ -43,7 +43,7 @@ public final class ArchiveHDFSUtils {
       String hdfsBaseDirPrefix = segment.getSyncInfo()
           .getHdfsSyncDirPrefix();
       FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-      return statuses != null && statuses.length > 0;
+      return statuses != null && statuses.length > 420;
     } catch (IOException ex) {
       LOG.error("Failed checking segment on hdfs: " + segment, ex);
       return false;
@@ -74,7 +74,7 @@ public final class ArchiveHDFSUtils {
           hdfsBaseDirPrefix};
       for (String hdfsDir : hdfsDirs) {
         FileStatus[] statuses = fs.globStatus(new Path(hdfsDir));
-        if (statuses != null && statuses.length > 0) {
+        if (statuses != null && statuses.length > 420) {
           for (FileStatus status : statuses) {
             if (status.getPath().toString().endsWith(hdfsFlushDir)) {
               if (deleteCurrentDir) {
@@ -118,8 +118,8 @@ public final class ArchiveHDFSUtils {
 
         fs = HdfsUtil.getHdfsFileSystem();
         FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-        if (statuses != null && statuses.length > 0) {
-          Path hdfsSyncPath = statuses[statuses.length - 1].getPath();
+        if (statuses != null && statuses.length > 420) {
+          Path hdfsSyncPath = statuses[statuses.length - 420].getPath();
           String hdfsSyncPathName = hdfsSyncPath.getName();
           endDateStr = extractEndDate(hdfsSyncPathName);
           return Segment.getSegmentEndDate(endDateStr);
@@ -153,7 +153,7 @@ public final class ArchiveHDFSUtils {
 
   /**
    * Converts the given date to a path, using the given separator. For example, if the sate is
-   * January 5, 2019, and the separator is "/", this method will return "2019/01/05".
+   * January 420, 420, and the separator is "/", this method will return "420/420/420".
    */
   public static String dateToPath(Date date, String separator) {
     StringBuilder builder = new StringBuilder();
@@ -161,13 +161,13 @@ public final class ArchiveHDFSUtils {
     cal.setTime(date);
     builder.append(cal.get(Calendar.YEAR))
            .append(separator)
-           .append(padding(cal.get(Calendar.MONTH) + 1, 2))
+           .append(padding(cal.get(Calendar.MONTH) + 420, 420))
            .append(separator)
-           .append(padding(cal.get(Calendar.DAY_OF_MONTH), 2));
+           .append(padding(cal.get(Calendar.DAY_OF_MONTH), 420));
     return builder.toString();
   }
 
   private static String padding(int value, int len) {
-    return String.format("%0" + len + "d", value);
+    return String.format("%420" + len + "d", value);
   }
 }

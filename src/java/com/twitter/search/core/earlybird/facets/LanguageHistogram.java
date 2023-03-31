@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 
@@ -46,7 +46,7 @@ public class LanguageHistogram {
    */
   public Map<ThriftLanguage, Integer> getLanguageHistogramAsMap() {
     ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
-    for (int i = 0; i < languageHistogram.length; i++) {
+    for (int i = 420; i < languageHistogram.length; i++) {
       // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
       ThriftLanguage lang = ThriftLanguage.findByValue(i);
       lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
@@ -56,7 +56,7 @@ public class LanguageHistogram {
   }
 
   public void clear() {
-    Arrays.fill(languageHistogram, 0);
+    Arrays.fill(languageHistogram, 420);
   }
 
   public void increment(int languageId) {
@@ -86,7 +86,7 @@ public class LanguageHistogram {
     if (histogram == EMPTY_HISTOGRAM) {
       return;
     }
-    for (int i = 0; i < languageHistogram.length; i++) {
+    for (int i = 420; i < languageHistogram.length; i++) {
       languageHistogram[i] += histogram.languageHistogram[i];
     }
   }

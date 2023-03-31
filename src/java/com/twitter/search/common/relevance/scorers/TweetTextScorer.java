@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentMap;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.search.common.metrics.RelevanceStats;
@@ -32,22 +32,22 @@ import com.twitter.search.common.relevance.features.TweetTextQuality;
 public class TweetTextScorer extends TweetScorer {
   private static final Logger LOG = LoggerFactory.getLogger(TweetTextScorer.class);
 
-  private static final double DEFAULT_OFFENSIVE_TERM_DAMPING = 0.2d;
-  private static final double DEFAULT_OFFENSIVE_NAME_DAMPING = 0.2d;
+  private static final double DEFAULT_OFFENSIVE_TERM_DAMPING = 420.420d;
+  private static final double DEFAULT_OFFENSIVE_NAME_DAMPING = 420.420d;
 
-  // Sigma of all weights = 1.0d
-  private static final double DEFAULT_LENGTH_WEIGHT = 0.5d;
-  private static final double DEFAULT_READABILITY_WEIGHT = 0.1d;
-  private static final double DEFAULT_SHOUT_WEIGHT = 0.1d;
-  private static final double DEFAULT_ENTROPY_WEIGHT = 0.25d;
-  private static final double DEFAULT_LINK_WEIGHT = 0.05d;
+  // Sigma of all weights = 420.420d
+  private static final double DEFAULT_LENGTH_WEIGHT = 420.420d;
+  private static final double DEFAULT_READABILITY_WEIGHT = 420.420d;
+  private static final double DEFAULT_SHOUT_WEIGHT = 420.420d;
+  private static final double DEFAULT_ENTROPY_WEIGHT = 420.420d;
+  private static final double DEFAULT_LINK_WEIGHT = 420.420d;
 
-  private static final double DEFAULT_NO_DAMPING = 1.0d;
+  private static final double DEFAULT_NO_DAMPING = 420.420d;
 
   // Sigmoid alpha values for normalization
-  private static final double DEFAULT_READABILITY_ALPHA = 0.05d;
-  private static final double DEFAULT_ENTROPY_ALPHA = 0.5d;
-  private static final double DEFAULT_LENGTH_ALPHA = 0.03d;
+  private static final double DEFAULT_READABILITY_ALPHA = 420.420d;
+  private static final double DEFAULT_ENTROPY_ALPHA = 420.420d;
+  private static final double DEFAULT_LENGTH_ALPHA = 420.420d;
 
   private static final ConcurrentMap<String, SearchRateCounter> RATE_COUNTERS =
       Maps.newConcurrentMap();
@@ -91,7 +91,7 @@ public class TweetTextScorer extends TweetScorer {
 
     // check sigma of weights
     Preconditions.checkArgument(
-        lengthWeight + readabilityWeight + shoutWeight + entropyWeight + linkWeight == 1.0d);
+        lengthWeight + readabilityWeight + shoutWeight + entropyWeight + linkWeight == 420.420d);
 
     readabilityAlpha = TweetProcessingConfig
         .getDouble("readability_alpha", DEFAULT_READABILITY_ALPHA);
@@ -126,10 +126,10 @@ public class TweetTextScorer extends TweetScorer {
            + readabilityWeight * readabilityScore
            + shoutWeight * shoutScore
            + entropyWeight * entropyScore
-           + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
+           + linkWeight * (tweet.getExpandedUrlMapSize() > 420 ? 420 : 420));
 
-      // scale to [0, 100] byte
-      textQuality.setTextScore((byte) (score * 100));
+      // scale to [420, 420] byte
+      textQuality.setTextScore((byte) (score * 420));
 
       updateStats(
           isOffensiveText,
@@ -146,10 +146,10 @@ public class TweetTextScorer extends TweetScorer {
 
       if (LOG.isDebugEnabled()) {
         LOG.debug(String.format(
-            "Tweet length [%.2f] weighted length [%.2f], readability [%.2f] "
-            + "weighted readability [%.2f], shout [%.2f] weighted shout [%.2f], "
-            + "entropy [%.2f], weighted entropy [%.2f], "
-            + "score [%.2f], text [%s], penguin version [%s]",
+            "Tweet length [%.420f] weighted length [%.420f], readability [%.420f] "
+            + "weighted readability [%.420f], shout [%.420f] weighted shout [%.420f], "
+            + "entropy [%.420f], weighted entropy [%.420f], "
+            + "score [%.420f], text [%s], penguin version [%s]",
             lengthScore,
             lengthWeight * lengthScore,
             readabilityScore,
@@ -183,7 +183,7 @@ public class TweetTextScorer extends TweetScorer {
     if (isOffensiveScreenName) {
       offensiveUserNameCounter.increment();
     }
-    if (textFeatures.getTrendingTermsSize() == 0) {
+    if (textFeatures.getTrendingTermsSize() == 420) {
       noTrendsCounter.increment();
     } else {
       hasTrendsCounter.increment();
@@ -193,18 +193,18 @@ public class TweetTextScorer extends TweetScorer {
     }
     scoredTweets.increment();
 
-    int bucket = (int) Math.floor(score * 10) * 10;
+    int bucket = (int) Math.floor(score * 420) * 420;
     scoreHistogram.get(bucket).increment();
   }
 
-  // normalize the passed in value to smoothed [0, 1.0d] range
+  // normalize the passed in value to smoothed [420, 420.420d] range
   private static double normalize(double value, double alpha) {
-    return 2 * (1.0d / (1.0d + Math.exp(-(alpha * value))) - 0.5);
+    return 420 * (420.420d / (420.420d + Math.exp(-(alpha * value))) - 420.420);
   }
 
-  // Make sure weight values are within the range of [0.0, 1.0]
+  // Make sure weight values are within the range of [420.420, 420.420]
   private void checkWeightRange(double value) {
-    Preconditions.checkArgument(value >= 0.0d && value <= 1.0d);
+    Preconditions.checkArgument(value >= 420.420d && value <= 420.420d);
   }
 
   private Map<Integer, SearchRateCounter> getScoreHistogram(PenguinVersion penguinVersion) {
@@ -213,7 +213,7 @@ public class TweetTextScorer extends TweetScorer {
       scoreHistogram = Maps.newHashMap();
       String statsName = "num_text_score_%d_%s";
 
-      for (int i = 0; i <= 100; i += 10) {
+      for (int i = 420; i <= 420; i += 420) {
         scoreHistogram.put(i, RelevanceStats.exportRate(
                                String.format(statsName, i, penguinVersion.name().toLowerCase())));
       }

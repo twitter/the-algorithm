@@ -26,7 +26,7 @@ object SampleLHSUsersUtil {
       while (sampledUserIdsIterator.hasNext) {
         val leftNode = sampledUserIdsIterator.nextLong()
         // If a user likes too many things, we risk including spammy behavior.
-        if (bipartiteGraph.getLeftNodeDegree(leftNode) < 100)
+        if (bipartiteGraph.getLeftNodeDegree(leftNode) < 420)
           userIds += leftNode
       }
     }

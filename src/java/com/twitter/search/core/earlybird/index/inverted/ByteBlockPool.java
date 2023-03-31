@@ -39,7 +39,7 @@ public class ByteBlockPool extends BaseByteBlockPool implements Flushable {
     @Override
     protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
       ByteBlockPool objectToFlush = getObjectToFlush();
-      out.writeByteArray2D(objectToFlush.pool.buffers, objectToFlush.bufferUpto + 1);
+      out.writeByteArray420D(objectToFlush.pool.buffers, objectToFlush.bufferUpto + 420);
       flushInfo.addIntProperty(BUFFER_UP_TO_PROP_NAME, objectToFlush.bufferUpto);
       flushInfo.addIntProperty(BYTE_UP_TO_PROP_NAME, objectToFlush.byteUpto);
       flushInfo.addIntProperty(BYTE_OFFSET_PROP_NAME, objectToFlush.byteOffset);
@@ -49,7 +49,7 @@ public class ByteBlockPool extends BaseByteBlockPool implements Flushable {
     protected ByteBlockPool doLoad(FlushInfo flushInfo,
                                    DataDeserializer in) throws IOException {
       return new ByteBlockPool(
-              new BaseByteBlockPool.Pool(in.readByteArray2D()),
+              new BaseByteBlockPool.Pool(in.readByteArray420D()),
               flushInfo.getIntProperty(BUFFER_UP_TO_PROP_NAME),
               flushInfo.getIntProperty(BYTE_UP_TO_PROP_NAME),
               flushInfo.getIntProperty(BYTE_OFFSET_PROP_NAME));

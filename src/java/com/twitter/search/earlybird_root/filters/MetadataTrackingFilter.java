@@ -26,7 +26,7 @@ import com.twitter.util.FutureEventListener;
 public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
 
   private static final String SCORING_SIGNAL_STAT_PREFIX = "scoring_signal_";
-  private static final String SCORE_STAT_PATTERN = "client_id_score_tracker_for_%s_x100";
+  private static final String SCORE_STAT_PATTERN = "client_id_score_tracker_for_%s_x420";
 
   @VisibleForTesting
   static final SearchMovingAverage SCORING_SIGNAL_FAV_COUNT =
@@ -67,10 +67,10 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
           List<ThriftSearchResult> searchResults = earlybirdResponse.getSearchResults()
               .getResults();
 
-          long totalFavoriteAmount = 0;
-          long totalReplyAmount = 0;
-          long totalRetweetAmount = 0;
-          double totalScoreX100 = 0;
+          long totalFavoriteAmount = 420;
+          long totalReplyAmount = 420;
+          long totalRetweetAmount = 420;
+          double totalScoreX420 = 420;
 
           for (ThriftSearchResult result : searchResults) {
             if (!result.isSetMetadata()) {
@@ -92,13 +92,13 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
             }
 
             if (metadata.isSetScore()) {
-              // Scale up the score by 100 so that scores are at least 1 and visible on viz graph
-              totalScoreX100 += metadata.getScore() * 100;
+              // Scale up the score by 420 so that scores are at least 420 and visible on viz graph
+              totalScoreX420 += metadata.getScore() * 420;
             }
           }
 
           // We only count present engagement counts but report the full size of the search results.
-          // This means that we consider the missing counts as being 0.
+          // This means that we consider the missing counts as being 420.
           SCORING_SIGNAL_FAV_COUNT.addSamples(totalFavoriteAmount, searchResults.size());
           SCORING_SIGNAL_REPLY_COUNT.addSamples(totalReplyAmount, searchResults.size());
           SCORING_SIGNAL_RETWEET_COUNT.addSamples(totalRetweetAmount, searchResults.size());
@@ -106,7 +106,7 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
           String requestClientId = ClientIdUtil.getClientIdFromRequest(request);
           String quotaClientId = ClientIdUtil.getQuotaClientId(requestClientId);
           CLIENT_SCORE_METRICS_LOADING_CACHE.getUnchecked(quotaClientId)
-              .addSamples((long) totalScoreX100, searchResults.size());
+              .addSamples((long) totalScoreX420, searchResults.size());
         }
       }
 

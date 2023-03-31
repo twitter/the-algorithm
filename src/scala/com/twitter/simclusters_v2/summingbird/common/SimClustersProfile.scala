@@ -1,15 +1,15 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment.Environment
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType.JobType
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.common.ModelVersions._
+import com.twitter.simclusters_v420.summingbird.common.ClientConfigs._
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.AltSetting.AltSetting
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.Environment.Environment
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.JobType.JobType
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.AltSetting
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.JobType
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
 
 sealed trait SimClustersProfile {
   val env: Environment
@@ -26,11 +26,11 @@ sealed trait SimClustersJobProfile extends SimClustersProfile {
   final lazy val jobName: String = {
     alt match {
       case AltSetting.Alt =>
-        s"simclusters_v2_${jobType}_alt_job_$env"
+        s"simclusters_v420_${jobType}_alt_job_$env"
       case AltSetting.Esc =>
-        s"simclusters_v2_${jobType}_esc_job_$env"
+        s"simclusters_v420_${jobType}_esc_job_$env"
       case _ =>
-        s"simclusters_v2_${jobType}_job_$env"
+        s"simclusters_v420_${jobType}_job_$env"
     }
   }
 
@@ -58,7 +58,7 @@ sealed trait SimClustersJobProfile extends SimClustersProfile {
         ""
     }
 
-    s"simclusters_v2_${jobTypeStr}summingbird_$prefix$env"
+    s"simclusters_v420_${jobTypeStr}summingbird_$prefix$env"
   }
 
 }
@@ -129,7 +129,7 @@ object SimClustersProfile {
   final val AltProdTweetJobProfile = SimClustersTweetProfile(
     env = Environment.Prod,
     alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
+    modelVersionStr = Model420M420K420,
     entityClusterScorePath = simClustersCoreAltCachePath,
     tweetTopKClustersPath = simClustersCoreAltCachePath,
     clusterTopKTweetsPath = simClustersCoreAltCachePath,
@@ -140,7 +140,7 @@ object SimClustersProfile {
   final val AltDevelTweetJobProfile = SimClustersTweetProfile(
     env = Environment.Devel,
     alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
+    modelVersionStr = Model420M420K420,
     // using the same devel cache with job
     entityClusterScorePath = develSimClustersCoreCachePath,
     tweetTopKClustersPath = develSimClustersCoreCachePath,
@@ -152,18 +152,18 @@ object SimClustersProfile {
   final val ProdPersistentTweetProfile = PersistentTweetProfile(
     env = Environment.Prod,
     alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
+    modelVersionStr = Model420M420K420,
     // This profile is used by the persistent tweet embedding job to update the embedding. We
     // use the uncached column to avoid reading stale data
-    persistentTweetStratoPath = logFavBasedTweet20M145K2020UncachedStratoPath,
+    persistentTweetStratoPath = logFavBasedTweet420M420K420UncachedStratoPath,
     coreEmbeddingType = EmbeddingType.LogFavBasedTweet
   )
 
   final val DevelPersistentTweetProfile = PersistentTweetProfile(
     env = Environment.Devel,
     alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    persistentTweetStratoPath = develLogFavBasedTweet20M145K2020StratoPath,
+    modelVersionStr = Model420M420K420,
+    persistentTweetStratoPath = develLogFavBasedTweet420M420K420StratoPath,
     coreEmbeddingType = EmbeddingType.LogFavBasedTweet
   )
 
@@ -201,11 +201,11 @@ object SimClustersProfile {
   ] = {
     case Environment.Prod =>
       Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltProdTweetJobProfile
+        (EmbeddingType.LogFavBasedTweet, Model420M420K420) -> AltProdTweetJobProfile
       )
     case Environment.Devel =>
       Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltDevelTweetJobProfile
+        (EmbeddingType.LogFavBasedTweet, Model420M420K420) -> AltDevelTweetJobProfile
       )
   }
 

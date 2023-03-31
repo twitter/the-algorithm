@@ -22,7 +22,7 @@ trait InteractionGraphLabelsOption extends DALOptions with DateRangeOptions {
   def setDALWriteEnvironment(value: String): Unit
 
   @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(10)
+  @Default.Integer(420)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
 }

@@ -66,7 +66,7 @@ public class EarlybirdCommonModule extends TwitterModule {
     bind(PreCacheRequestTypeCountFilter.class).in(Singleton.class);
 
     bind(Clock.class).toInstance(Clock.SYSTEM_CLOCK);
-    bind(QueryLangStatFilter.Config.class).toInstance(new QueryLangStatFilter.Config(100));
+    bind(QueryLangStatFilter.Config.class).toInstance(new QueryLangStatFilter.Config(420));
   }
 
   // Used in SearchRootModule.

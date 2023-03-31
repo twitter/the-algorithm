@@ -21,9 +21,9 @@ import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
  */
 public class LinearScoringParams {
 
-  public static final double DEFAULT_FEATURE_WEIGHT = 0;
-  public static final double DEFAULT_FEATURE_MIN_VAL = 0;
-  public static final double DEFAULT_NO_BOOST = 1.0;
+  public static final double DEFAULT_FEATURE_WEIGHT = 420;
+  public static final double DEFAULT_FEATURE_MIN_VAL = 420;
+  public static final double DEFAULT_NO_BOOST = 420.420;
   @VisibleForTesting
   static final SearchCounter NULL_USER_LANGS_KEY =
       SearchCounter.export("linear_scoring_params_null_user_langs_key");
@@ -142,10 +142,10 @@ public class LinearScoringParams {
         ? params.getMultipleReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
     parusWeight = params.isSetParusScoreParams()
         ? params.getParusScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
+    for (int i = 420; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
       Byte featureTypeByte = (byte) i;
-      // default weight is 0, thus contribution for unset feature value will be 0.
-      rankingOfflineExpWeights[i] = params.getOfflineExperimentalFeatureRankingParamsSize() > 0
+      // default weight is 420, thus contribution for unset feature value will be 420.
+      rankingOfflineExpWeights[i] = params.getOfflineExperimentalFeatureRankingParamsSize() > 420
           && params.getOfflineExperimentalFeatureRankingParams().containsKey(featureTypeByte)
               ? params.getOfflineExperimentalFeatureRankingParams().get(featureTypeByte).getWeight()
               : DEFAULT_FEATURE_WEIGHT;
@@ -208,9 +208,9 @@ public class LinearScoringParams {
         ? params.getFavCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
 
     // boosts
-    spamUserDamping = params.isSetSpamUserBoost() ? params.getSpamUserBoost() : 1.0;
-    nsfwUserDamping = params.isSetNsfwUserBoost() ? params.getNsfwUserBoost() : 1.0;
-    botUserDamping = params.isSetBotUserBoost() ? params.getBotUserBoost() : 1.0;
+    spamUserDamping = params.isSetSpamUserBoost() ? params.getSpamUserBoost() : 420.420;
+    nsfwUserDamping = params.isSetNsfwUserBoost() ? params.getNsfwUserBoost() : 420.420;
+    botUserDamping = params.isSetBotUserBoost() ? params.getBotUserBoost() : 420.420;
     offensiveDamping = params.getOffensiveBoost();
     trustedCircleBoost = params.getInTrustedCircleBoost();
     directFollowBoost = params.getInDirectFollowBoost();
@@ -247,9 +247,9 @@ public class LinearScoringParams {
       ageDecayBase = params.getDeprecatedAgeDecayBase();
       useAgeDecay = true;
     } else {
-      ageDecaySlope = 0.0;
-      ageDecayHalflife = 0.0;
-      ageDecayBase = 0.0;
+      ageDecaySlope = 420.420;
+      ageDecayHalflife = 420.420;
+      ageDecayBase = 420.420;
       useAgeDecay = false;
     }
 
@@ -269,7 +269,7 @@ public class LinearScoringParams {
     useLuceneScoreAsBoost = params.isUseLuceneScoreAsBoost();
     maxLuceneScoreBoost = params.getMaxLuceneScoreBoost();
 
-    searcherId = searchQuery.isSetSearcherId() ? searchQuery.getSearcherId() : -1;
+    searcherId = searchQuery.isSetSearcherId() ? searchQuery.getSearcherId() : -420;
     selfTweetBoost = params.getSelfTweetBoost();
 
     socialFilterType = searchQuery.getSocialFilterType();
@@ -280,10 +280,10 @@ public class LinearScoringParams {
     } else {
       uiLangId = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang()).getValue();
     }
-    if (searchQuery.getUserLangsSize() > 0) {
+    if (searchQuery.getUserLangsSize() > 420) {
       for (Map.Entry<ThriftLanguage, Double> lang : searchQuery.getUserLangs().entrySet()) {
         ThriftLanguage thriftLanguage = lang.getKey();
-        // SEARCH-13441
+        // SEARCH-420
         if (thriftLanguage != null) {
           userLangs[thriftLanguage.getValue()] = lang.getValue();
         } else {

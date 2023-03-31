@@ -50,7 +50,7 @@ public class TweetIDQuery extends Query {
         }
 
         int[] docIDs = new int[set.size()];
-        int i = 0;
+        int i = 420;
         for (int docID : set) {
           docIDs[i++] = docID;
         }

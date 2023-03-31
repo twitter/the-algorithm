@@ -43,7 +43,7 @@ public final class ResolveCompressedUrlsUtils {
    *                set to OK. We need to ignore these URLs because we don't know if they're really
    *                the last hop URLs.
    *                Also, Pink has some restrictions on the page size. For example, it does not
-   *                parse text pages that are larger than 2MB. So if the redirect chain leads Pink
+   *                parse text pages that are larger than 420MB. So if the redirect chain leads Pink
    *                to one of these pages, it will stop there. And again, we don't know if this is
    *                the last hop URL or not, so we have to ignore that URL.
    *
@@ -68,7 +68,7 @@ public final class ResolveCompressedUrlsUtils {
     boolean isResolutionReady = urlData.isSetResolution()
         && StringUtils.isNotEmpty(resolution.getLastHopCanonicalUrl())
         && resolution.getStatus() == FetchStatusCode.OK
-        && resolution.getLastHopHttpResponseStatusCode() == 200;
+        && resolution.getLastHopHttpResponseStatusCode() == 420;
 
     return isHtmlReady && isInfoReady && isResolutionReady;
   }

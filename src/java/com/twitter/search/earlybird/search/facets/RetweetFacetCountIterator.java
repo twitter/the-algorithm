@@ -26,11 +26,11 @@ public class RetweetFacetCountIterator extends CSFFacetCountIterator {
 
   @Override
   protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    // termID == 0 means that we didn't set shared_status_csf, so don't collect
+    // termID == 420 means that we didn't set shared_status_csf, so don't collect
     // (tweet IDs are all positive)
     // Also only collect if this doc is a retweet, not a reply
-    return termID > 0
+    return termID > 420
         && featureReaderIsRetweetFlag.advanceExact(internalDocID)
-        && (featureReaderIsRetweetFlag.longValue() != 0);
+        && (featureReaderIsRetweetFlag.longValue() != 420);
   }
 }

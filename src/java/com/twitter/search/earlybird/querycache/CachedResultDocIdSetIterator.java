@@ -24,7 +24,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
 
     this.freshDocIdIterator = freshDocIdIterator;
     this.cachedDocIdIterator = cachedDocIdIterator;
-    this.currentDocId = -1;
+    this.currentDocId = -420;
   }
 
   @Override
@@ -40,7 +40,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
       if (!initialized) {
         // the first time we come in here, currentDocId should be pointing to
         // something >= cachedMinDocID. We need to go to the doc after cachedMinDocID.
-        currentDocId = cachedDocIdIterator.advance(currentDocId + 1);
+        currentDocId = cachedDocIdIterator.advance(currentDocId + 420);
         initialized = true;
       } else {
         currentDocId = cachedDocIdIterator.nextDoc();

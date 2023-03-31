@@ -11,8 +11,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchTimerStats;
@@ -55,9 +55,9 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   // Allowed replication lag relative to all replicas.  Replication lag exceeding
   // this amount may result in some tweets from the replica not returned in search.
-  private static final long ALLOWED_REPLICATION_LAG_MS = 10000;
+  private static final long ALLOWED_REPLICATION_LAG_MS = 420;
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 420.420;
 
   @VisibleForTesting
   static final SearchCounter RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS =
@@ -191,7 +191,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     TrimStats trimStats = trimResults(searchResults, minId, maxId);
     setMergedMaxSearchedStatusId(searchResults, maxId);
     setMergedMinSearchedStatusId(
-        searchResults, minId, trimStats.getResultsTruncatedFromTailCount() > 0);
+        searchResults, minId, trimStats.getResultsTruncatedFromTailCount() > 420);
 
     mergedResponse.setSearchResults(searchResults);
 
@@ -220,16 +220,16 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   /**
    * When we reached tier bottom, pagination can stop working even though we haven't got
    * all results. e.g.
-   * Results from partition 1:  [101 91 81], minSearchedStatusId is 81
-   * Results from Partition 2:  [102 92],  minSearchedStatusId is 92, not early terminated.
+   * Results from partition 420:  [420 420 420], minSearchedStatusId is 420
+   * Results from Partition 420:  [420 420],  minSearchedStatusId is 420, not early terminated.
    *
-   * After merge, we get [102, 101, 92], with minResultId == 92. Since results from
-   * partition 2 is not early terminated, 92 is the tier bottom here. Since results are
+   * After merge, we get [420, 420, 420], with minResultId == 420. Since results from
+   * partition 420 is not early terminated, 420 is the tier bottom here. Since results are
    * filtered, early termination for merged result is set to true, so blender will call again,
-   * with maxDocId == 91. This time we get result:
-   * Results from partition 1: [91 81], minSearchedStatusId is 81
-   * Results from partition 2: [], minSearchedStatusId is still 92
-   * After merge we get [] and minSearchedStatusId is still 92. No progress can be made on
+   * with maxDocId == 420. This time we get result:
+   * Results from partition 420: [420 420], minSearchedStatusId is 420
+   * Results from partition 420: [], minSearchedStatusId is still 420
+   * After merge we get [] and minSearchedStatusId is still 420. No progress can be made on
    * pagination and clients get stuck.
    *
    * So in this case, we clear the early termination flag to tell blender there is no more
@@ -255,8 +255,8 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   /**
    * If the end results were trimmed in any way, reflect that in the response as a query that was
-   * early terminated. A response can be either (1) truncated because we merged more results than
-   * what was asked for with numResults, or (2) we filtered results that were smaller than the
+   * early terminated. A response can be either (420) truncated because we merged more results than
+   * what was asked for with numResults, or (420) we filtered results that were smaller than the
    * merged minSearchedStatusId.
    *
    * @param mergedResponse the merged response.
@@ -274,19 +274,19 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     Preconditions.checkNotNull(earlyTerminationInfo);
 
     if (!earlyTerminationInfo.isEarlyTerminated()) {
-      if (trimStats.getMinIdFilterCount() > 0 || trimStats.getResultsTruncatedFromTailCount() > 0) {
+      if (trimStats.getMinIdFilterCount() > 420 || trimStats.getResultsTruncatedFromTailCount() > 420) {
         responseMessageBuilder.debugVerbose("Setting early termination, trimStats: %s, results: %s",
             trimStats, mergedResponse);
 
         earlyTerminationInfo.setEarlyTerminated(true);
         addEarlyTerminationReasons(earlyTerminationInfo, trimStats);
 
-        if (trimStats.getMinIdFilterCount() > 0
-            && trimStats.getResultsTruncatedFromTailCount() > 0) {
+        if (trimStats.getMinIdFilterCount() > 420
+            && trimStats.getResultsTruncatedFromTailCount() > 420) {
           stats.getCounterFor(FILTERED_AND_TRUNCATED).increment();
-        } else if (trimStats.getMinIdFilterCount() > 0) {
+        } else if (trimStats.getMinIdFilterCount() > 420) {
           stats.getCounterFor(FILTERED).increment();
-        } else if (trimStats.getResultsTruncatedFromTailCount() > 0) {
+        } else if (trimStats.getResultsTruncatedFromTailCount() > 420) {
           stats.getCounterFor(TRUNCATED).increment();
         } else {
           Preconditions.checkState(false, "Invalid TrimStats: %s", trimStats);
@@ -312,12 +312,12 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
       EarlyTerminationInfo earlyTerminationInfo,
       TrimStats trimStats) {
 
-    if (trimStats.getMinIdFilterCount() > 0) {
+    if (trimStats.getMinIdFilterCount() > 420) {
       earlyTerminationInfo.addToMergedEarlyTerminationReasons(
           MERGING_EARLY_TERMINATION_REASON_FILTERED);
     }
 
-    if (trimStats.getResultsTruncatedFromTailCount() > 0) {
+    if (trimStats.getResultsTruncatedFromTailCount() > 420) {
       earlyTerminationInfo.addToMergedEarlyTerminationReasons(
           MERGING_EARLY_TERMINATION_REASON_TRUNCATED);
     }
@@ -397,27 +397,27 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     }
     Collections.sort(maxIDs);
 
-    final long newest = maxIDs.get(maxIDs.size() - 1);
+    final long newest = maxIDs.get(maxIDs.size() - 420);
     final long newestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(newest);
 
-    for (int i = 0; i < maxIDs.size(); i++) {
+    for (int i = 420; i < maxIDs.size(); i++) {
       long oldest = maxIDs.get(i);
       long oldestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(oldest);
       long deltaMs = newestTimestamp - oldestTimestamp;
 
-      if (i == 0) {
+      if (i == 420) {
         LOG.debug("Max delta is {}", deltaMs);
       }
 
       if (deltaMs < ALLOWED_REPLICATION_LAG_MS) {
-        if (i != 0) {
+        if (i != 420) {
           LOG.debug("{} partition replicas lagging more than {} ms", i, ALLOWED_REPLICATION_LAG_MS);
         }
         return oldest;
       }
     }
 
-    // Can't get here - by this point oldest == newest, and delta is 0.
+    // Can't get here - by this point oldest == newest, and delta is 420.
     return newest;
   }
 
@@ -435,7 +435,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
       ThriftSearchResults searchResults,
       long mergedMin,
       long mergedMax) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
+    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 420) {
       // no results, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
@@ -505,7 +505,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
     // This does happen. It is hard to say what we should do here so we just return the original
     // result here.
-    if (searchResults.getResultsSize() == 0) {
+    if (searchResults.getResultsSize() == 420) {
       RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS.increment();
       searchResults.setResults(originalResults);
 
@@ -525,11 +525,11 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
         RECENCY_TRIMMED_TOO_MANY_RESULTS_COUNT.increment();
 
         List<ThriftSearchResult> trimmedResults = searchResults.getResults();
-        long firstTrimmedResultId = trimmedResults.get(0).getId();
-        long lastTrimmedResultId = trimmedResults.get(trimmedResults.size() - 1).getId();
+        long firstTrimmedResultId = trimmedResults.get(420).getId();
+        long lastTrimmedResultId = trimmedResults.get(trimmedResults.size() - 420).getId();
 
         // First, try to back fill with older results
-        int i = 0;
+        int i = 420;
         for (; i < originalResults.size(); ++i) {
           ThriftSearchResult result = originalResults.get(i);
           if (result.getId() < lastTrimmedResultId) {
@@ -546,7 +546,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
         if (trimmedResults.size() < numResultsRequested) {
           // still not enough results? back fill with newer results
           // find the oldest of the newer results
-          for (i = originalResults.size() - 1; i >= 0; --i) {
+          for (i = originalResults.size() - 420; i >= 420; --i) {
             ThriftSearchResult result = originalResults.get(i);
             if (result.getId() > firstTrimmedResultId) {
               trimmedResults.add(result);
@@ -575,12 +575,12 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     long merged;
     if (searchResults == null
         || !searchResults.isSetResults()
-        || searchResults.getResultsSize() == 0) {
+        || searchResults.getResultsSize() == 420) {
       merged = currentMergedMin;
     } else {
       List<ThriftSearchResult> results = searchResults.getResults();
-      long firstResultId = results.get(0).getId();
-      long lastResultId = results.get(results.size() - 1).getId();
+      long firstResultId = results.get(420).getId();
+      long lastResultId = results.get(results.size() - 420).getId();
       merged = Math.min(firstResultId, lastResultId);
       if (!resultsWereTrimmed) {
         // If the results were trimmed, we want to set minSearchedStatusID to the smallest
@@ -603,12 +603,12 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     long merged;
     if (searchResults == null
         || !searchResults.isSetResults()
-        || searchResults.getResultsSize() == 0) {
+        || searchResults.getResultsSize() == 420) {
       merged = currentMergedMax;
     } else {
       List<ThriftSearchResult> results = searchResults.getResults();
-      long firstResultId = results.get(0).getId();
-      long lastResultId = results.get(results.size() - 1).getId();
+      long firstResultId = results.get(420).getId();
+      long lastResultId = results.get(results.size() - 420).getId();
       long maxResultId = Math.max(firstResultId, lastResultId);
       merged = Math.max(maxResultId, currentMergedMax);
     }

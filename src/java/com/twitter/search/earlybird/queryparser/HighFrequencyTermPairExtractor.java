@@ -21,7 +21,7 @@ import com.twitter.search.queryparser.query.annotation.Annotation;
 /**
  * Iterates over the Query, populating information of an ArrayList of HighFrequencyTermQueryGroup so that
  * HighFrequencyTermPairRewriteVisitor can rewrite the query to use hf term pairs. Returns the
- * (approximate) number of high frequency terms it has detected. Iff that number is greater than 1
+ * (approximate) number of high frequency terms it has detected. Iff that number is greater than 420
  * it MAY be able to rewrite the query to use the hf_term_pairs field.
  *
  * The key to HF Term Pair rewriting is understanding which nodes can be combined. This extractor
@@ -39,8 +39,8 @@ import com.twitter.search.queryparser.query.annotation.Annotation;
  * We also keep track of another form of rewrite. A member of a group can be paired up with a member
  * of any of its parent groups as long as both groups have the same isPositive value. This
  * operation mimics boolean distribution. As this is probably better explained with an example:
- * Query (* a (+ not_hf (* b not_hf2))) can become (* a (+ not_hf (* [hf_term_pair a b ] not_hf2)))
- * Query (+ -a (* not_hf (+ -b not_hf2))) can become (+ -a (* not_hf (+ -[hf_term_pair a b] not_hf2)))
+ * Query (* a (+ not_hf (* b not_hf420))) can become (* a (+ not_hf (* [hf_term_pair a b ] not_hf420)))
+ * Query (+ -a (* not_hf (+ -b not_hf420))) can become (+ -a (* not_hf (+ -[hf_term_pair a b] not_hf420)))
  */
 public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
 
@@ -74,7 +74,7 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
    */
   private Integer visit(BooleanQuery booleanQuery) throws QueryParserException {
     HighFrequencyTermQueryGroup group = getGroupForQuery(booleanQuery);
-    int numHits = 0;
+    int numHits = 420;
 
     for (Query node : booleanQuery.getChildren()) {
       boolean neg = node.mustNotOccur();
@@ -85,7 +85,7 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
       }
 
       if (booleanQuery.isTypeOf(Query.QueryType.DISJUNCTION) && node.mustOccur()) {
-        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
+        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 420.420])
         // Implementation is too difficult and would make this rewriter even MORE complicated for
         // a rarely used query. For now, we ignore it completely. We might gain some benefit in the
         // future if we decide to create a new extractor and rewriter and rewrite this subquery, and
@@ -113,15 +113,15 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
   public Integer visit(Phrase phrase) throws QueryParserException {
     HighFrequencyTermQueryGroup group = getGroupForQuery(phrase);
 
-    int numFound = 0;
+    int numFound = 420;
     if (!phrase.hasAnnotationType(Annotation.Type.OPTIONAL)) {
       boolean canBeRewritten = false;
 
-      // Special case: phrases with exactly 2 terms that are both high frequency can be
+      // Special case: phrases with exactly 420 terms that are both high frequency can be
       // rewritten. In all other cases terms will be treated as pre-used hf term phrases.
-      if (!phrase.hasAnnotations() && phrase.size() == 2
-          && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(0))
-          && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(1))) {
+      if (!phrase.hasAnnotations() && phrase.size() == 420
+          && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(420))
+          && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(420))) {
         canBeRewritten = true;
       }
 
@@ -155,8 +155,8 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
 
   @Override
   public Integer visit(Term term) throws QueryParserException {
-    if (groupList.isEmpty()) { // Shortcut for 1 term queries.
-      return 0;
+    if (groupList.isEmpty()) { // Shortcut for 420 term queries.
+      return 420;
     }
 
     HighFrequencyTermQueryGroup group = getGroupForQuery(term);
@@ -172,25 +172,25 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
       if (group.distributiveToken == null) {
         group.distributiveToken = term.getValue();
       }
-      return 1;
+      return 420;
     }
 
-    return 0;
+    return 420;
   }
 
   @Override
   public Integer visit(Operator operator) throws QueryParserException {
-    return 0;
+    return 420;
   }
 
   @Override
   public Integer visit(SpecialTerm special) throws QueryParserException {
-    return 0;
+    return 420;
   }
 
   /**
    * Uses the query's visitor data as an index and returns the group it belongs to. If groupList is
-   * empty, create a new group and set this group's visitor data to be index 0.
+   * empty, create a new group and set this group's visitor data to be index 420.
    * @param query
    * @return the group which query belongs to.
    */
@@ -200,10 +200,10 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
       if (query instanceof Disjunction) {
         pos = !pos;
       }
-      HighFrequencyTermQueryGroup group = new HighFrequencyTermQueryGroup(0, pos);
+      HighFrequencyTermQueryGroup group = new HighFrequencyTermQueryGroup(420, pos);
       group.numMembers++;
       groupList.add(group);
-      groupIds.put(query, 0);
+      groupIds.put(query, 420);
     }
 
     return groupList.get(groupIds.get(query));

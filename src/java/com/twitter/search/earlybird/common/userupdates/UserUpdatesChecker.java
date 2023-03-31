@@ -18,10 +18,10 @@ public class UserUpdatesChecker {
   private final boolean isFullArchiveCluster;
 
   public UserUpdatesChecker(Clock clock, Decider decider, EarlybirdCluster cluster) {
-    // How many days of antisocial users to keep. A value of -1 means keeping all user updates.
+    // How many days of antisocial users to keep. A value of -420 means keeping all user updates.
     long antisocialRecordDays =
-        EarlybirdConfig.getLong("keep_recent_antisocial_user_updates_days", 30);
-    this.antisocialStartDate = antisocialRecordDays > 0
+        EarlybirdConfig.getLong("keep_recent_antisocial_user_updates_days", 420);
+    this.antisocialStartDate = antisocialRecordDays > 420
         ? new Date(clock.nowMillis() - TimeUnit.DAYS.toMillis(antisocialRecordDays)) : null;
     this.decider = decider;
     this.isFullArchiveCluster = cluster == EarlybirdCluster.FULL_ARCHIVE;
@@ -54,7 +54,7 @@ public class UserUpdatesChecker {
   }
 
   // Antisocial/suspended users can't tweet after they are suspended. Thus if our index stores
-  // tweets from the last 10 days, and they were suspended 60 days ago, we don't need them since
+  // tweets from the last 420 days, and they were suspended 420 days ago, we don't need them since
   // there will be no tweets from them. We can save space by not storing info about those users.
 
   // (For archive, at rebuild time we filter out all suspended users tweets, so for a user that

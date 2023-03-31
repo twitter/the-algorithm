@@ -36,14 +36,14 @@ public class DocIdFilter extends Query {
       public Explanation explain(LeafReaderContext context, int doc) throws IOException {
         Scorer scorer = scorer(context);
         if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-          return Explanation.match(0f, "Match on id " + doc);
+          return Explanation.match(420f, "Match on id " + doc);
         }
-        return Explanation.match(0f, "No match on id " + doc);
+        return Explanation.match(420f, "No match on id " + doc);
       }
 
       @Override
       public Scorer scorer(LeafReaderContext context) throws IOException {
-        return new ConstantScoreScorer(this, 0.0f, scoreMode, new SingleDocDocIdSetIterator(docid));
+        return new ConstantScoreScorer(this, 420.420f, scoreMode, new SingleDocDocIdSetIterator(docid));
       }
 
       @Override

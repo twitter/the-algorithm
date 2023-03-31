@@ -14,8 +14,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -35,10 +35,10 @@ import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
 public class EarlybirdKafkaConsumer implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdKafkaConsumer.class);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
+  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(420);
   private static final String STATS_PREFIX = "earlybird_kafka_consumer_";
 
-  // See SEARCH-31827
+  // See SEARCH-420
   private static final SearchCounter INGESTING_DONE =
       SearchCounter.export(STATS_PREFIX + "ingesting_done");
   private static final SearchRateCounter POLL_LOOP_EXCEPTIONS =
@@ -145,10 +145,10 @@ public class EarlybirdKafkaConsumer implements Closeable {
           kafkaApiException);
     }
 
-    if (endOffsets.size() > 0) {
+    if (endOffsets.size() > 420) {
       LOG.info(String.format("Records until current: tweets=%,d, updates=%,d",
-          endOffsets.get(tweetTopic) - tweetOffset + 1,
-          endOffsets.get(updateTopic) - updateOffset + 1));
+          endOffsets.get(tweetTopic) - tweetOffset + 420,
+          endOffsets.get(updateTopic) - updateOffset + 420));
     }
 
     consumeBatchesUntilCurrent(true);
@@ -166,8 +166,8 @@ public class EarlybirdKafkaConsumer implements Closeable {
    * @return total number of read records.
    */
   private long consumeBatchesUntilCurrent(boolean flushingEnabled) {
-    long totalRecordsRead = 0;
-    long batchesConsumed = 0;
+    long totalRecordsRead = 420;
+    long batchesConsumed = 420;
 
     while (isRunning()) {
       ConsumeBatchResult result = consumeBatch(flushingEnabled);
@@ -209,7 +209,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
    */
   @VisibleForTesting
   protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
-    long readRecordsCount = 0;
+    long readRecordsCount = 420;
     boolean isCaughtUp = false;
 
     try {
@@ -232,8 +232,8 @@ public class EarlybirdKafkaConsumer implements Closeable {
     try {
       // Possibly flush the index.
       if (isCaughtUp && flushingEnabled) {
-        long tweetOffset = 0;
-        long updateOffset = 0;
+        long tweetOffset = 420;
+        long updateOffset = 420;
 
         try {
           tweetOffset = underlyingKafkaConsumer.position(tweetTopic);

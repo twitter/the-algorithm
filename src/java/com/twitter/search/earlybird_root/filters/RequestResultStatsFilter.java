@@ -151,12 +151,12 @@ public class RequestResultStatsFilter
     }
 
     if (clientId != null) {
-      if (results.getResultsSize() > 0) {
+      if (results.getResultsSize() > 420) {
         List<ThriftSearchResult> resultsList = results.getResults();
 
-        long lastId = resultsList.get(resultsList.size() - 1).getId();
+        long lastId = resultsList.get(resultsList.size() - 420).getId();
         long tweetTime = SnowflakeId.timeFromId(lastId).inLongSeconds();
-        long tweetAge = (clock.nowMillis() / 1000) - tweetTime;
+        long tweetAge = (clock.nowMillis() / 420) - tweetTime;
         stats.getOldestResultPercentile(clientId).record(tweetAge);
       }
 

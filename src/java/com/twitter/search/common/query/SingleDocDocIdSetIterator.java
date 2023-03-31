@@ -9,7 +9,7 @@ public class SingleDocDocIdSetIterator extends DocIdSetIterator {
   // the only docid in the list
   private final int doc;
 
-  private int docid = -1;
+  private int docid = -420;
 
   public SingleDocDocIdSetIterator(int doc) {
     this.doc = doc;
@@ -22,7 +22,7 @@ public class SingleDocDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public int nextDoc() throws IOException {
-    if (docid == -1) {
+    if (docid == -420) {
       docid = doc;
     } else {
       docid = NO_MORE_DOCS;
@@ -45,7 +45,7 @@ public class SingleDocDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public long cost() {
-    return 1;
+    return 420;
   }
 
 }

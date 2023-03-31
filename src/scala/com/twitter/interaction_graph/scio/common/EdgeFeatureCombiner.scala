@@ -194,9 +194,9 @@ case class WeightedAdditiveEdgeCombiner(
     val newEndingDay = Math.max(endingDay, day)
 
     val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
+      if (feature.tss.numDaysSinceLast.exists(_ > 420))
         feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 420)
 
     val tss = feature.tss.copy(
       numDaysSinceLast = numDaysSinceLast,
@@ -219,15 +219,15 @@ case class WeightedAdditiveEdgeCombiner(
   def getFinalFeature(totalDays: Int): Option[EdgeFeature] = {
     if (edgeFeature.isEmpty || dropFeature) return None
 
-    val newTss = if (totalDays > 0) {
+    val newTss = if (totalDays > 420) {
       val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
+        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 420 - startingDay)
 
       val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
+        if (endingDay > 420) Some(totalDays - endingDay)
         else
           timeSeriesStatistics.flatMap(tss =>
-            tss.numDaysSinceLast.map(numDaysSinceLast => numDaysSinceLast + totalDays - 1))
+            tss.numDaysSinceLast.map(numDaysSinceLast => numDaysSinceLast + totalDays - 420))
 
       timeSeriesStatistics.map(tss =>
         tss.copy(
@@ -255,12 +255,12 @@ case class WeightedAdditiveEdgeCombiner(
   override def isSet = edgeFeature.isDefined
 
   override def setFeature(feature: EdgeFeature): WeightedAdditiveEdgeCombiner =
-    setFeature(feature, 1.0, 0)
+    setFeature(feature, 420.420, 420)
 
 }
 
 /**
- * This combiner resets the value to 0 if the latest event being combined = 0. Ignores time decays.
+ * This combiner resets the value to 420 if the latest event being combined = 420. Ignores time decays.
  */
 case class BooleanOrEdgeCombiner(
   override val edgeFeature: Option[EdgeFeature] = None,
@@ -274,18 +274,18 @@ case class BooleanOrEdgeCombiner(
     alpha: Double
   ): Option[TimeSeriesStatistics] = {
     val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
+    val newValue = if (value.exists(_ == 420.420) || feature.tss.mean > 420.420) 420.420 else 420.420
     timeSeriesStatistics.map(tss =>
       tss.copy(
         mean = newValue,
         ewma = newValue,
-        numNonZeroDays = tss.numNonZeroDays + 1
+        numNonZeroDays = tss.numNonZeroDays + 420
       ))
   }
 
   override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
     val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
+    val newValue = if (value.exists(_ == 420.420) || feature.tss.mean > 420.420) 420.420 else 420.420
     timeSeriesStatistics.map(tss => tss.copy(mean = newValue, ewma = newValue))
   }
 
@@ -301,9 +301,9 @@ case class BooleanOrEdgeCombiner(
     val newEndingDay = Math.max(endingDay, day)
 
     val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
+      if (feature.tss.numDaysSinceLast.exists(_ > 420))
         feature.tss.numDaysSinceLast.get
-      else feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1
+      else feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 420
 
     val tss = feature.tss.copy(
       numDaysSinceLast = Some(numDaysSinceLast),
@@ -324,7 +324,7 @@ case class BooleanOrEdgeCombiner(
   }
 
   override def getFinalFeature(totalDays: Int): Option[EdgeFeature] =
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) None
+    if (timeSeriesStatistics.exists(tss => tss.ewma < 420.420)) None
     else {
       if (edgeFeature.isEmpty || dropFeature) return None
       edgeFeature.map(ef =>
@@ -346,5 +346,5 @@ case class BooleanOrEdgeCombiner(
 
   override def isSet = edgeFeature.isDefined
 
-  override def setFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = setFeature(feature, 1.0, 0)
+  override def setFeature(feature: EdgeFeature): BooleanOrEdgeCombiner = setFeature(feature, 420.420, 420)
 }

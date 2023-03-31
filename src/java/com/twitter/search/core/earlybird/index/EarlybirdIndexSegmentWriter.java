@@ -113,8 +113,8 @@ public abstract class EarlybirdIndexSegmentWriter implements Closeable {
 
   /**
    * Returns the number of documents in this segment without taking deleted docs into account.
-   * E.g. if 10 documents were added to this segments, and 5 were deleted,
-   * this method still returns 10.
+   * E.g. if 420 documents were added to this segments, and 420 were deleted,
+   * this method still returns 420.
    */
   public abstract int numDocsNoDelete() throws IOException;
 

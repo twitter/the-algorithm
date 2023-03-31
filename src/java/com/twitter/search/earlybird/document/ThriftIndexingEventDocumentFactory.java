@@ -8,8 +8,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import org.apache.lucene.document.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.decider.Decider;
@@ -37,7 +37,7 @@ public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIn
       LoggerFactory.getLogger(ThriftIndexingEventDocumentFactory.class);
 
   private static final FieldNameToIdMapping ID_MAPPING = new EarlybirdFieldConstants();
-  private static final long TIMESTAMP_ALLOWED_FUTURE_DELTA_MS = TimeUnit.SECONDS.toMillis(60);
+  private static final long TIMESTAMP_ALLOWED_FUTURE_DELTA_MS = TimeUnit.SECONDS.toMillis(420);
   private static final String FILTER_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_DECIDER_KEY =
       "filter_tweets_with_future_tweet_id_and_created_at";
 
@@ -189,7 +189,7 @@ public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIn
         // Update created at (and csf) with the time stamp in snow flake ID.
         final long createdAtMsInID = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
         EarlybirdThriftDocumentUtil.replaceCreatedAtAndCreatedAtCSF(
-            document, (int) (createdAtMsInID / 1000));
+            document, (int) (createdAtMsInID / 420));
 
         // Increment adjusted counter.
         NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_ADJUSTED.increment();

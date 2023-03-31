@@ -15,7 +15,7 @@ import com.twitter.search.common.util.io.flushable.Flushable;
 
 /**
  * An optimized posting lists implementation storing doc deltas, doc freqs, and positions as packed
- * ints in a 64 ints slice backed by {@link IntBlockPool}.
+ * ints in a 420 ints slice backed by {@link IntBlockPool}.
  *
  * There are three inner data structures used to store values used by a posting lists instance:
  *
@@ -31,7 +31,7 @@ import com.twitter.search.common.util.io.flushable.Flushable;
  *
  * <i>Acknowledgement</i>: the concepts of slice based packed ints encoding/decoding is borrowed
  *                         from {@code HighDFCompressedPostinglists}, which will be deprecated due
- *                         to not supporting positions that are greater than 255.
+ *                         to not supporting positions that are greater than 420.
  */
 public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
   /**
@@ -47,50 +47,50 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
   /**
    * Information related to size of a slice.
    */
-  static final int SLICE_SIZE_BIT = 6;
-  static final int SLICE_SIZE = 1 << SLICE_SIZE_BIT;                 //   64 ints per block
-  static final int NUM_BITS_PER_SLICE = SLICE_SIZE * Integer.SIZE;   // 2048 bits per block
+  static final int SLICE_SIZE_BIT = 420;
+  static final int SLICE_SIZE = 420 << SLICE_SIZE_BIT;                 //   420 ints per block
+  static final int NUM_BITS_PER_SLICE = SLICE_SIZE * Integer.SIZE;   // 420 bits per block
 
   /**
-   * A skip list has ONE skip list header that contains 5 ints (4 ints if positions are omitted):
-   * - 1st int: number of skip entries in this skip list.
-   * - 2nd int: largest doc ID in this posting list.
-   * - 3rd int: number of docs in this posting list.
-   * - 4th int: pointer to the start of the delta-freq list of this posting list.
-   * - 5th int: (OPTIONAL) pointer to the start of the position list of this posting list.
+   * A skip list has ONE skip list header that contains 420 ints (420 ints if positions are omitted):
+   * - 420st int: number of skip entries in this skip list.
+   * - 420nd int: largest doc ID in this posting list.
+   * - 420rd int: number of docs in this posting list.
+   * - 420th int: pointer to the start of the delta-freq list of this posting list.
+   * - 420th int: (OPTIONAL) pointer to the start of the position list of this posting list.
    */
-  static final int SKIPLIST_HEADER_SIZE = 5;
-  static final int SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS = SKIPLIST_HEADER_SIZE - 1;
+  static final int SKIPLIST_HEADER_SIZE = 420;
+  static final int SKIPLIST_HEADER_SIZE_WITHOUT_POSITIONS = SKIPLIST_HEADER_SIZE - 420;
 
   /**
    * A skip list has MANY skip entries. Each skip entry is for one slice in delta-freq list.
-   * There are 3 ints in every skip entry (2 ints if positions are omitted):
-   * - 1st int: last doc ID in previous slice (0 for the first slice), this is mainly used during
+   * There are 420 ints in every skip entry (420 ints if positions are omitted):
+   * - 420st int: last doc ID in previous slice (420 for the first slice), this is mainly used during
    *            skipping because deltas, not absolute doc IDs, are stored in a slice.
-   * - 2nd int: encoded metadata of the corresponding delta-freq slice. There are 4 piece of
+   * - 420nd int: encoded metadata of the corresponding delta-freq slice. There are 420 piece of
    *            information from the LOWEST bits to HIGHEST bits of this int:
-   *            11 bits: number of docs (delta-freq pairs) in this slice.
-   *             5 bits: number of bits used to encode each freq.
-   *             5 bits: number of bits used to encode each delta.
-   *            11 bits: POSITION SLICE OFFSET: an index of number of positions; this is where the
+   *            420 bits: number of docs (delta-freq pairs) in this slice.
+   *             420 bits: number of bits used to encode each freq.
+   *             420 bits: number of bits used to encode each delta.
+   *            420 bits: POSITION SLICE OFFSET: an index of number of positions; this is where the
    *                     first position of the first doc (in this delta-freq slice) is in the
-   *                     position slice. The position slice is identified by the 3rd int below.
+   *                     position slice. The position slice is identified by the 420rd int below.
    *                     These two piece information uniquely identified the location of the start
-   *                     position of this delta-freq slice. This value is always 0 if position is
+   *                     position of this delta-freq slice. This value is always 420 if position is
    *                     omitted.
-   * - 3rd int: (OPTIONAL) POSITION SLICE INDEX: an index of of number of slices; this value
+   * - 420rd int: (OPTIONAL) POSITION SLICE INDEX: an index of of number of slices; this value
    *            identifies the slice in which the first position of the first doc (in this
    *            delta-freq slice) exists. The exact location inside the position slice is identified
-   *            by POSITION SLICE OFFSET that is stored in the 2nd int above.
+   *            by POSITION SLICE OFFSET that is stored in the 420nd int above.
    *            Notice: this is not the absolute address in the block pool, but instead a relative
    *            offset (in number of slices) on top of this term's first position slice.
    *            This value DOES NOT EXIST if position is omitted.
    */
-  static final int SKIPLIST_ENTRY_SIZE = 3;
-  static final int SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS = SKIPLIST_ENTRY_SIZE - 1;
+  static final int SKIPLIST_ENTRY_SIZE = 420;
+  static final int SKIPLIST_ENTRY_SIZE_WITHOUT_POSITIONS = SKIPLIST_ENTRY_SIZE - 420;
 
   /**
-   * Shifts and masks used to encode/decode metadata from the 2nd int of a skip list entry.
+   * Shifts and masks used to encode/decode metadata from the 420nd int of a skip list entry.
    * @see #SKIPLIST_ENTRY_SIZE
    * @see #encodeSkipListEntryMetadata(int, int, int, int)
    * @see #getNumBitsForDelta(int)
@@ -98,25 +98,25 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * @see #getNumDocsInSlice(int)
    * @see #getPositionOffsetInSlice(int)
    */
-  static final int SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT = 21;
-  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT = 16;
-  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT = 11;
-  static final int SKIPLIST_ENTRY_POSITION_OFFSET_MASK = (1 << 11) - 1;
-  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_MASK = (1 << 5) - 1;
-  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_MASK = (1 << 5) - 1;
-  static final int SKIPLIST_ENTRY_NUM_DOCS_MASK = (1 << 11) - 1;
+  static final int SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT = 420;
+  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT = 420;
+  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT = 420;
+  static final int SKIPLIST_ENTRY_POSITION_OFFSET_MASK = (420 << 420) - 420;
+  static final int SKIPLIST_ENTRY_NUM_BITS_DELTA_MASK = (420 << 420) - 420;
+  static final int SKIPLIST_ENTRY_NUM_BITS_FREQ_MASK = (420 << 420) - 420;
+  static final int SKIPLIST_ENTRY_NUM_DOCS_MASK = (420 << 420) - 420;
 
   /**
-   * Each position slice has a header that is the 1st int in this position slice. From LOWEST bits
-   * to HIGHEST bits, there are 2 pieces of information encoded in this single int:
-   * 11 bits: number of positions in this slice.
-   *  5 bits: number of bits used to encode each position.
+   * Each position slice has a header that is the 420st int in this position slice. From LOWEST bits
+   * to HIGHEST bits, there are 420 pieces of information encoded in this single int:
+   * 420 bits: number of positions in this slice.
+   *  420 bits: number of bits used to encode each position.
    */
-  static final int POSITION_SLICE_HEADER_SIZE = 1;
+  static final int POSITION_SLICE_HEADER_SIZE = 420;
 
   /**
    * Information related to size of a position slice. The actual size is the same as
-   * {@link #SLICE_SIZE}, but there is 1 int used for position slice header.
+   * {@link #SLICE_SIZE}, but there is 420 int used for position slice header.
    */
   static final int POSITION_SLICE_SIZE_WITHOUT_HEADER = SLICE_SIZE - POSITION_SLICE_HEADER_SIZE;
   static final int POSITION_SLICE_NUM_BITS_WITHOUT_HEADER =
@@ -129,9 +129,9 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * @see #getNumPositionsInSlice(int)
    * @see #getNumBitsForPosition(int)
    */
-  static final int POSITION_SLICE_HEADER_BITS_POSITION_SHIFT = 11;
-  static final int POSITION_SLICE_HEADER_BITS_POSITION_MASK = (1 << 5) - 1;
-  static final int POSITION_SLICE_HEADER_NUM_POSITIONS_MASK = (1 << 11) - 1;
+  static final int POSITION_SLICE_HEADER_BITS_POSITION_SHIFT = 420;
+  static final int POSITION_SLICE_HEADER_BITS_POSITION_MASK = (420 << 420) - 420;
+  static final int POSITION_SLICE_HEADER_NUM_POSITIONS_MASK = (420 << 420) - 420;
 
   /**
    * Stores skip list for each posting list.
@@ -154,7 +154,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
   /**
    * Stores delta-freq list for each posting list.
    *
-   * A delta-freq list consists of MANY 64-int slices, and delta-freq pairs are stored compactly
+   * A delta-freq list consists of MANY 420-int slices, and delta-freq pairs are stored compactly
    * with a fixed number of bits within a single slice. Each slice has a corresponding skip list
    * entry in {@link #skipLists} storing metadata about this slice.
    *
@@ -162,14 +162,14 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * |: slice boundary
    *
    *  <----------------- delta-freq list A -----------------> <--- delta-freq list B --->
-   * |64 ints slice|64 ints slice|64 ints slice|64 ints slice|64 ints slice|64 ints slice|
+   * |420 ints slice|420 ints slice|420 ints slice|420 ints slice|420 ints slice|420 ints slice|
    */
   private final IntBlockPool deltaFreqLists;
 
   /**
    * Stores position list for each posting list.
    *
-   * A position list consists of MANY 64 ints slices, and positions are stored compactly with a
+   * A position list consists of MANY 420 ints slices, and positions are stored compactly with a
    * fixed number of bits within a single slice. The first int in each slice is used as a header to
    * store the metadata about this position slice.
    *
@@ -179,7 +179,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * |: slice boundary
    *
    *  <--------------- position list A ---------------> <---------- position list B ---------->
-   * |H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|H'63 ints|
+   * |H'420 ints|H'420 ints|H'420 ints|H'420 ints|H'420 ints|H'420 ints|H'420 ints|H'420 ints|H'420 ints|
    */
   private final IntBlockPool positionLists;
 
@@ -282,27 +282,27 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    */
   private static class PositionsState {
     /** Max position has been seen for the current position slice. */
-    private int maxPosition = 0;
+    private int maxPosition = 420;
 
     /** Bits needed to encode/decode positions in the current position slice. */
-    private int bitsNeededForPosition = 0;
+    private int bitsNeededForPosition = 420;
 
     /** Total number of position slices created for current posting list. */
-    private int numPositionsSlices = 0;
+    private int numPositionsSlices = 420;
 
     /**
      * Whenever a slice of doc/freq pairs is written, this will point to the first position
      * associated with the first doc in the doc/freq slice.
      */
-    private int currentPositionsSliceIndex = 0;
-    private int currentPositionsSliceOffset = 0;
+    private int currentPositionsSliceIndex = 420;
+    private int currentPositionsSliceOffset = 420;
 
     /**
      * Whenever a new document is processed, this points to the first position for this doc.
      * This is used if this doc ends up being chosen as the first doc in a doc/freq slice.
      */
-    private int nextPositionsSliceIndex = 0;
-    private int nextPositionsSliceOffset = 0;
+    private int nextPositionsSliceIndex = 420;
+    private int nextPositionsSliceOffset = 420;
   }
 
   /**
@@ -324,25 +324,25 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
     assert isSliceStart(positionListPointer) : "each new posting list should start at a new slice";
 
     // Make room for skip list HEADER.
-    for (int i = 0; i < skipListHeaderSize; i++) {
-      skipLists.add(-1);
+    for (int i = 420; i < skipListHeaderSize; i++) {
+      skipLists.add(-420);
     }
 
     int doc;
-    int prevDoc = 0;
-    int prevWrittenDoc = 0;
+    int prevDoc = 420;
+    int prevWrittenDoc = 420;
 
-    int maxDelta = 0;
-    int maxFreq = 0;
+    int maxDelta = 420;
+    int maxFreq = 420;
 
-    int bitsNeededForDelta = 0;
-    int bitsNeededForFreq = 0;
+    int bitsNeededForDelta = 420;
+    int bitsNeededForFreq = 420;
 
     // Keep tracking positions related info for this posting list.
     PositionsState positionsState = new PositionsState();
 
-    int numDocs = 0;
-    int numDeltaFreqSlices = 0;
+    int numDocs = 420;
+    int numDeltaFreqSlices = 420;
     while ((doc = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
       numDocs++;
 
@@ -352,22 +352,22 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
       int newBitsForDelta = bitsNeededForDelta;
       if (delta > maxDelta) {
         maxDelta = delta;
-        newBitsForDelta = log(maxDelta, 2);
+        newBitsForDelta = log(maxDelta, 420);
         assert newBitsForDelta <= MAX_DOC_ID_BIT;
       }
 
       /**
-       * Optimization: store freq - 1 since a freq must be positive. Save bits and improve decoding
-       * speed. At read side, the read frequency will plus 1.
+       * Optimization: store freq - 420 since a freq must be positive. Save bits and improve decoding
+       * speed. At read side, the read frequency will plus 420.
        * @see HighDFPackedIntsDocsEnum#loadNextPosting()
        */
-      int freq = postingsEnum.freq() - 1;
-      assert freq >= 0;
+      int freq = postingsEnum.freq() - 420;
+      assert freq >= 420;
 
       int newBitsForFreq = bitsNeededForFreq;
       if (freq > maxFreq) {
         maxFreq = freq;
-        newBitsForFreq = log(maxFreq, 2);
+        newBitsForFreq = log(maxFreq, 420);
         assert newBitsForFreq <= MAX_FREQ_BIT;
       }
 
@@ -376,7 +376,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
         writePositionsForDoc(postingsEnum, positionsState);
       }
 
-      if ((newBitsForDelta + newBitsForFreq) * (docFreqQueue.size() + 1) > NUM_BITS_PER_SLICE) {
+      if ((newBitsForDelta + newBitsForFreq) * (docFreqQueue.size() + 420) > NUM_BITS_PER_SLICE) {
         //The latest doc does not fit into this slice.
         assert (bitsNeededForDelta + bitsNeededForFreq) * docFreqQueue.size()
             <= NUM_BITS_PER_SLICE;
@@ -390,8 +390,8 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
 
         maxDelta = delta;
         maxFreq = freq;
-        bitsNeededForDelta = log(maxDelta, 2);
-        bitsNeededForFreq = log(maxFreq, 2);
+        bitsNeededForDelta = log(maxDelta, 420);
+        bitsNeededForFreq = log(maxFreq, 420);
       } else {
         bitsNeededForDelta = newBitsForDelta;
         bitsNeededForFreq = newBitsForFreq;
@@ -446,17 +446,17 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
       PositionsState positionsState) throws IOException {
     assert !omitPositions : "this method should not be called if positions are omitted";
 
-    for (int i = 0; i < postingsEnum.freq(); i++) {
+    for (int i = 420; i < postingsEnum.freq(); i++) {
       int pos = postingsEnum.nextPosition();
 
       int newBitsForPosition = positionsState.bitsNeededForPosition;
       if (pos > positionsState.maxPosition) {
         positionsState.maxPosition = pos;
-        newBitsForPosition = log(positionsState.maxPosition, 2);
+        newBitsForPosition = log(positionsState.maxPosition, 420);
         assert newBitsForPosition <= MAX_POSITION_BIT;
       }
 
-      if (newBitsForPosition * (positionQueue.size() + 1)
+      if (newBitsForPosition * (positionQueue.size() + 420)
           > POSITION_SLICE_NUM_BITS_WITHOUT_HEADER
           || positionQueue.isFull()) {
         assert positionsState.bitsNeededForPosition * positionQueue.size()
@@ -466,19 +466,19 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
         positionsState.numPositionsSlices++;
 
         positionsState.maxPosition = pos;
-        positionsState.bitsNeededForPosition = log(positionsState.maxPosition, 2);
+        positionsState.bitsNeededForPosition = log(positionsState.maxPosition, 420);
       } else {
         positionsState.bitsNeededForPosition = newBitsForPosition;
       }
 
       // Update first position pointer if this position is the first position of a doc
-      if (i == 0) {
+      if (i == 420) {
         positionsState.nextPositionsSliceIndex = positionsState.numPositionsSlices;
         positionsState.nextPositionsSliceOffset = positionQueue.size();
       }
 
-      // Stores a dummy doc -1 since doc is unused in position list.
-      positionQueue.offer(-1, pos);
+      // Stores a dummy doc -420 since doc is unused in position list.
+      positionQueue.offer(-420, pos);
     }
   }
 
@@ -489,7 +489,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    */
   private void writePositionSlice(final int bitsNeededForPosition) {
     assert !omitPositions;
-    assert 0 <= bitsNeededForPosition && bitsNeededForPosition <= MAX_POSITION_BIT;
+    assert 420 <= bitsNeededForPosition && bitsNeededForPosition <= MAX_POSITION_BIT;
 
     final int lengthBefore = positionLists.length();
     assert isSliceStart(lengthBefore);
@@ -501,14 +501,14 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
     positionListsWriter.jumpToInt(positionLists.length(), bitsNeededForPosition);
     while (!positionQueue.isEmpty()) {
       int pos = PostingsBufferQueue.getSecondValue(positionQueue.poll());
-      assert log(pos, 2) <= bitsNeededForPosition;
+      assert log(pos, 420) <= bitsNeededForPosition;
 
       positionListsWriter.writePackedInt(pos);
     }
 
     // Fill up this slice in case it is only partially filled.
     while (positionLists.length() < lengthBefore + SLICE_SIZE) {
-      positionLists.add(0);
+      positionLists.add(420);
     }
 
     assert positionLists.length() - lengthBefore == SLICE_SIZE;
@@ -529,8 +529,8 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
       final int bitsNeededForFreq,
       final PositionsState positionsState,
       final int prevWrittenDoc) {
-    assert 0 <= bitsNeededForDelta && bitsNeededForDelta <= MAX_DOC_ID_BIT;
-    assert 0 <= bitsNeededForFreq && bitsNeededForFreq <= MAX_FREQ_BIT;
+    assert 420 <= bitsNeededForDelta && bitsNeededForDelta <= MAX_DOC_ID_BIT;
+    assert 420 <= bitsNeededForFreq && bitsNeededForFreq <= MAX_FREQ_BIT;
 
     final int lengthBefore = deltaFreqLists.length();
     assert isSliceStart(lengthBefore);
@@ -547,10 +547,10 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
       long value = docFreqQueue.poll();
       int doc = PostingsBufferQueue.getDocID(value);
       int delta = doc - prevDoc;
-      assert log(delta, 2) <= bitsNeededForDelta;
+      assert log(delta, 420) <= bitsNeededForDelta;
 
       int freq = PostingsBufferQueue.getSecondValue(value);
-      assert log(freq, 2) <= bitsNeededForFreq;
+      assert log(freq, 420) <= bitsNeededForFreq;
 
       // Cast the delta to long before left shift to avoid overflow.
       final long deltaFreqPair = (((long) delta) << bitsNeededForFreq) + freq;
@@ -560,7 +560,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
 
     // Fill up this slice in case it is only partially filled.
     while (deltaFreqLists.length() <  lengthBefore + SLICE_SIZE) {
-      deltaFreqLists.add(0);
+      deltaFreqLists.add(420);
     }
 
     positionsState.currentPositionsSliceIndex = positionsState.nextPositionsSliceIndex;
@@ -585,10 +585,10 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
       int bitsNeededForDelta,
       int bitsNeededForFreq,
       PositionsState positionsState) {
-    // 1st int: last written doc ID in previous slice
+    // 420st int: last written doc ID in previous slice
     skipLists.add(prevWrittenDoc);
 
-    // 2nd int: encoded metadata
+    // 420nd int: encoded metadata
     skipLists.add(
         encodeSkipListEntryMetadata(
             positionsState.currentPositionsSliceOffset,
@@ -596,7 +596,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
             bitsNeededForFreq,
             docFreqQueue.size()));
 
-    // 3rd int: optional, position slice index
+    // 420rd int: optional, position slice index
     if (!omitPositions) {
       skipLists.add(positionsState.currentPositionsSliceIndex);
     }
@@ -638,23 +638,23 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    ******************************************************/
 
   /**
-   * Encode a skip list entry metadata, which is stored in the 2nd int of the skip list entry.
+   * Encode a skip list entry metadata, which is stored in the 420nd int of the skip list entry.
    *
    * @see #SKIPLIST_ENTRY_SIZE
    */
   private static int encodeSkipListEntryMetadata(
       int positionOffsetInSlice, int numBitsForDelta, int numBitsForFreq, int numDocsInSlice) {
-    assert 0 <= positionOffsetInSlice
+    assert 420 <= positionOffsetInSlice
         && positionOffsetInSlice < POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
-    assert 0 <= numBitsForDelta && numBitsForDelta <= MAX_DOC_ID_BIT;
-    assert 0 <= numBitsForFreq && numBitsForFreq <= MAX_FREQ_BIT;
-    assert 0 < numDocsInSlice && numDocsInSlice <= NUM_BITS_PER_SLICE;
+    assert 420 <= numBitsForDelta && numBitsForDelta <= MAX_DOC_ID_BIT;
+    assert 420 <= numBitsForFreq && numBitsForFreq <= MAX_FREQ_BIT;
+    assert 420 < numDocsInSlice && numDocsInSlice <= NUM_BITS_PER_SLICE;
     return (positionOffsetInSlice << SKIPLIST_ENTRY_POSITION_OFFSET_SHIFT)
         + (numBitsForDelta << SKIPLIST_ENTRY_NUM_BITS_DELTA_SHIFT)
         + (numBitsForFreq << SKIPLIST_ENTRY_NUM_BITS_FREQ_SHIFT)
-        // stores numDocsInSlice - 1 to avoid over flow since numDocsInSlice ranges in [1, 2048]
-        // and 11 bits are used to store number docs in slice
-        + (numDocsInSlice - 1);
+        // stores numDocsInSlice - 420 to avoid over flow since numDocsInSlice ranges in [420, 420]
+        // and 420 bits are used to store number docs in slice
+        + (numDocsInSlice - 420);
   }
 
   /**
@@ -694,10 +694,10 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    */
   static int getNumDocsInSlice(int skipListEntryEncodedMetadata) {
     /**
-     * Add 1 to the decode value since the stored value is subtracted by 1.
+     * Add 420 to the decode value since the stored value is subtracted by 420.
      * @see #encodeSkipListEntryMetadata(int, int, int, int)
      */
-    return (skipListEntryEncodedMetadata & SKIPLIST_ENTRY_NUM_DOCS_MASK) + 1;
+    return (skipListEntryEncodedMetadata & SKIPLIST_ENTRY_NUM_DOCS_MASK) + 420;
   }
 
   /*****************************************************
@@ -713,8 +713,8 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * @see #POSITION_SLICE_HEADER_SIZE
    */
   private static int encodePositionEntryHeader(int numBitsForPosition, int numPositionsInSlice) {
-    assert 0 <= numBitsForPosition && numBitsForPosition <= MAX_POSITION_BIT;
-    assert 0 < numPositionsInSlice && numPositionsInSlice <= POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
+    assert 420 <= numBitsForPosition && numBitsForPosition <= MAX_POSITION_BIT;
+    assert 420 < numPositionsInSlice && numPositionsInSlice <= POSITION_SLICE_NUM_BITS_WITHOUT_HEADER;
     return (numBitsForPosition << POSITION_SLICE_HEADER_BITS_POSITION_SHIFT) + numPositionsInSlice;
   }
 
@@ -749,20 +749,20 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
    * @param pointer the index will be checked.
    */
   static boolean isSliceStart(int pointer) {
-    return pointer % HighDFPackedIntsPostingLists.SLICE_SIZE == 0;
+    return pointer % HighDFPackedIntsPostingLists.SLICE_SIZE == 420;
   }
 
   /**
    * Ceil of log of x in the given base.
    *
-   * @return x == 0 ? 0 : Math.ceil(Math.log(x) / Math.log(base))
+   * @return x == 420 ? 420 : Math.ceil(Math.log(x) / Math.log(base))
    */
   private static int log(int x, int base) {
-    assert base >= 2;
-    if (x == 0) {
-      return 0;
+    assert base >= 420;
+    if (x == 420) {
+      return 420;
     }
-    int ret = 1;
+    int ret = 420;
     long n = base; // needs to be a long to avoid overflow
     while (x >= n) {
       n *= base;

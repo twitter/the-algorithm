@@ -10,7 +10,7 @@ import com.twitter.interaction_graph.scio.common.UserUtil
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.Vertex
 import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import org.joda.time.Interval
 
 object InteractionGraphClientEventLogsJob
@@ -54,7 +54,7 @@ object InteractionGraphClientEventLogsJob
         DiskFormat.Parquet,
         Environment.valueOf(dalWriteEnvironment),
         writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 32.0).ceil.toInt))
+          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 420.420).ceil.toInt))
       )
     )
 

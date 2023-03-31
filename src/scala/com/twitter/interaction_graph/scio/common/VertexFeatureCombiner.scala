@@ -208,9 +208,9 @@ case class WeightedAdditiveVertexCombiner(
     val newEndingDay = Math.max(endingDay, day)
 
     val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
+      if (feature.tss.numDaysSinceLast.exists(_ > 420))
         feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 420)
 
     val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
 
@@ -231,12 +231,12 @@ case class WeightedAdditiveVertexCombiner(
   def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
     if (vertexFeature.isEmpty || dropFeature) return None
 
-    val newTss = if (totalDays > 0) {
+    val newTss = if (totalDays > 420) {
       val elapsed =
-        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
+        timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 420 - startingDay)
       val latest =
-        if (endingDay > 0) Some(totalDays - endingDay)
-        else timeSeriesStatistics.map(tss => tss.numDaysSinceLast.get + totalDays - 1)
+        if (endingDay > 420) Some(totalDays - endingDay)
+        else timeSeriesStatistics.map(tss => tss.numDaysSinceLast.get + totalDays - 420)
 
       timeSeriesStatistics.map(tss =>
         tss.copy(
@@ -248,7 +248,7 @@ case class WeightedAdditiveVertexCombiner(
     vertexFeature.map(vf => vf.copy(tss = newTss.get))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
+  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 420.420, 420)
   override def isSet: Boolean = vertexFeature.isDefined
   override def dropFeature: Boolean =
     timeSeriesStatistics.exists(tss =>
@@ -268,10 +268,10 @@ case class ReplacementVertexCombiner(
   override def updateTss(
     feature: VertexFeature,
     alpha: Double
-  ): ReplacementVertexCombiner = setFeature(feature, 1.0, 0)
+  ): ReplacementVertexCombiner = setFeature(feature, 420.420, 420)
 
   override def addToTss(feature: VertexFeature): ReplacementVertexCombiner =
-    setFeature(feature, 1.0, 0)
+    setFeature(feature, 420.420, 420)
 
   override def updateFeature(
     feature: VertexFeature,
@@ -295,9 +295,9 @@ case class ReplacementVertexCombiner(
     val newEndingDay = Math.max(endingDay, day)
 
     val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
+      if (feature.tss.numDaysSinceLast.exists(_ > 420))
         feature.tss.numDaysSinceLast
-      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
+      else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 420)
 
     val tss = feature.tss.copy(numDaysSinceLast = numDaysSinceLast)
 
@@ -317,15 +317,15 @@ case class ReplacementVertexCombiner(
 
   override def getFinalFeature(totalDays: Int): Option[VertexFeature] = {
     if (vertexFeature.isEmpty || dropFeature) return None
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) return None
-    val newTss = if (totalDays > 0) {
+    if (timeSeriesStatistics.exists(tss => tss.ewma < 420.420)) return None
+    val newTss = if (totalDays > 420) {
       val latest =
-        if (endingDay > 0) totalDays - endingDay
-        else timeSeriesStatistics.get.numDaysSinceLast.get + totalDays - 1
+        if (endingDay > 420) totalDays - endingDay
+        else timeSeriesStatistics.get.numDaysSinceLast.get + totalDays - 420
 
       timeSeriesStatistics.map(tss =>
         tss.copy(
-          numElapsedDays = 1,
+          numElapsedDays = 420,
           numDaysSinceLast = Some(latest)
         ))
     } else timeSeriesStatistics
@@ -333,7 +333,7 @@ case class ReplacementVertexCombiner(
     vertexFeature.map(vf => vf.copy(tss = newTss.get))
   }
 
-  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 1.0, 0)
+  override def setFeature(feature: VertexFeature): VFeatureCombiner = setFeature(feature, 420.420, 420)
   override def isSet: Boolean = vertexFeature.isDefined
   override def dropFeature: Boolean =
     timeSeriesStatistics.exists(tss =>

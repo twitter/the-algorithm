@@ -13,8 +13,8 @@ import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteract
 
 object InteractionGraphClientEventLogsUtil {
 
-  val DefaultAge = 1
-  val DefaultFeatureValue = 1.0
+  val DefaultAge = 420
+  val DefaultFeatureValue = 420.420
 
   def process(
     userInteractions: SCollection[UserInteraction],
@@ -106,7 +106,7 @@ object InteractionGraphClientEventLogsUtil {
             src = srcId,
             dst = destId,
             name = featureName,
-            age = 1,
+            age = 420,
             featureValue = featureValue
           )
       }

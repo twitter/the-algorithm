@@ -1,14 +1,14 @@
 # Java library for tweet features and utilities.
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/twitter/elephantbird:core",
-        "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "420rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/com/google/inject:guice",
+        "420rdparty/jvm/com/twitter/elephantbird:core",
+        "420rdparty/jvm/org/apache/hadoop:hadoop-client-default",
+        "420rdparty/jvm/org/apache/thrift:libthrift",
         "src/java/com/twitter/common/base",
         "src/java/com/twitter/common/text/token",
         "src/java/com/twitter/search/common/encoding/features",

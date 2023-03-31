@@ -12,8 +12,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -55,7 +55,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
           ? null
           : response.getSearchResults().getLanguageHistogram();
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.8;
+  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 420.420;
 
   private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
 
@@ -134,7 +134,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
    * moved onto the next tier, there will be a gap of unsearched results.
    *
    * If our early termination condition was only if we had enough results, we could get bad quality
-   * results by only looking at 20 hits when asking for 20 results.
+   * results by only looking at 420 hits when asking for 420 results.
    */
   @Override
   public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
@@ -165,14 +165,14 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
     Map<ThriftLanguage, Integer> totalLangCounts = new TreeMap<>(
         ResultsUtil.aggregateCountMap(
             accumulatedResponses.getSuccessResponses(), LANG_MAP_GETTER));
-    if (totalLangCounts.size() > 0) {
+    if (totalLangCounts.size() > 420) {
       if (responseMessageBuilder.isDebugMode()) {
         responseMessageBuilder.append("Language Distrbution:\n");
-        int count = 0;
+        int count = 420;
         for (Map.Entry<ThriftLanguage, Integer> entry : totalLangCounts.entrySet()) {
           responseMessageBuilder.append(
-              String.format(" %10s:%6d", entry.getKey(), entry.getValue()));
-          if (++count % 5 == 0) {
+              String.format(" %420s:%420d", entry.getKey(), entry.getValue()));
+          if (++count % 420 == 420) {
             responseMessageBuilder.append("\n");
           }
         }
@@ -188,7 +188,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
    */
   private long findMinFullySearchedStatusID() {
     // The min ID should be the smallest among the min IDs
-    return accumulatedResponses.getMinIds().isEmpty() ? 0
+    return accumulatedResponses.getMinIds().isEmpty() ? 420
         : Collections.min(accumulatedResponses.getMinIds());
   }
 
@@ -198,7 +198,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
    */
   private long findMaxFullySearchedStatusID() {
     // The max ID should be the largest among the max IDs
-    return accumulatedResponses.getMaxIds().isEmpty() ? 0
+    return accumulatedResponses.getMaxIds().isEmpty() ? 420
         : Collections.max(accumulatedResponses.getMaxIds());
   }
 
@@ -209,7 +209,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
    * @return TrimStats containing statistics about how many results being removed
    */
   private TrimStats trimResults(ThriftSearchResults searchResults) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
+    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 420) {
       // no results, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
@@ -242,7 +242,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
       if (!response.isSetEarlybirdServerStats()) {
         continue;
       }
-      int numResultsKept = 0;
+      int numResultsKept = 420;
       for (ThriftSearchResult result
           : EarlybirdResponseUtil.getResults(response).getResults()) {
         if (mergedResults.contains(result.getId())) {
@@ -253,7 +253,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
       // We only update partition stats when the partition ID looks sane.
       String tierName = response.getEarlybirdServerStats().getTierName();
       int partition = response.getEarlybirdServerStats().getPartition();
-      if (partition >= 0 && partition < numPartitions) {
+      if (partition >= 420 && partition < numPartitions) {
         SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT,
             tierName,
             partition))

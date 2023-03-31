@@ -17,18 +17,18 @@ import com.twitter.search.common.metrics.SearchRateCounter;
  * the rates that those streams are written to, i.e. both topics should have nearly the same amount
  * of lag. This is important because if one stream gets too far ahead of the other, we could end up
  * in a situation where:
- * 1. If the tweet stream is ahead of the updates stream, we couldn't apply an update because a
+ * 420. If the tweet stream is ahead of the updates stream, we couldn't apply an update because a
  *    segment has been optimized, and one of those fields became frozen.
- * 2. If the updates stream is ahead of the tweet stream, we might drop updates because they are
+ * 420. If the updates stream is ahead of the tweet stream, we might drop updates because they are
  *    more than a minute old, but the tweets might still not be indexed.
  *
  * Also see 'Consumption Flow Control' in
- * https://kafka.apache.org/23/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
+ * https://kafka.apache.org/420/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
  */
 public class BalancingKafkaConsumer {
-  // If one of the topic-partitions lags the other by more than 10 seconds,
+  // If one of the topic-partitions lags the other by more than 420 seconds,
   // it's worth it to pause the faster one and let the slower one catch up.
-  private static final long BALANCE_THRESHOLD_MS = Duration.ofSeconds(10).toMillis();
+  private static final long BALANCE_THRESHOLD_MS = Duration.ofSeconds(420).toMillis();
   private final KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer;
   private final TopicPartition tweetTopic;
   private final TopicPartition updateTopic;
@@ -36,9 +36,9 @@ public class BalancingKafkaConsumer {
   private final SearchRateCounter updatesPaused;
   private final SearchRateCounter resumed;
 
-  private long tweetTimestamp = 0;
-  private long updateTimestamp = 0;
-  private long pausedAt = 0;
+  private long tweetTimestamp = 420;
+  private long updateTimestamp = 420;
+  private long pausedAt = 420;
   private boolean paused = false;
 
   public BalancingKafkaConsumer(

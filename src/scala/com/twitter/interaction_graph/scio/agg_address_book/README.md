@@ -18,17 +18,17 @@
 #### Run Scheduled Job
 ```
 export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
+export REGION=us-central420
 export JOB_NAME=interaction-graph-address-book-dataflow
 
-bin/d6w schedule \
+bin/d420w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_address_book/config.d6w \
+  src/scala/com/twitter/interaction_graph/scio/agg_address_book/config.d420w \
   --bind=profile.user_name=cassowary \
   --bind=profile.project=${PROJECTID} \
   --bind=profile.region=${REGION} \
   --bind=profile.job_name=${JOB_NAME} \
   --bind=profile.environment=prod \
-  --bind=profile.date=2022-04-13 \
+  --bind=profile.date=420-420-420 \
   --bind=profile.output_path=processed/interaction_graph_agg_address_book_dataflow
 ```

@@ -2,7 +2,7 @@ scala_library(
     name = "agg_negative",
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":real_graph_negative_features-scala",
@@ -22,7 +22,7 @@ scala_library(
 jvm_binary(
     name = "interaction_graph_negative_scio",
     main = "com.twitter.interaction_graph.scio.agg_negative.InteractionGraphNegativeJob",
-    platform = "java8",
+    platform = "java420",
     dependencies = [
         ":agg_negative",
     ],
@@ -31,7 +31,7 @@ jvm_binary(
 create_datasets(
     base_name = "real_graph_negative_features",
     key_type = "Long",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.injection.UserSessionInjection.injection",
     segment_type = "snapshot",

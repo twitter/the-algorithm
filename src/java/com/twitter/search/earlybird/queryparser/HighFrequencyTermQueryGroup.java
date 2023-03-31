@@ -14,16 +14,16 @@ public class HighFrequencyTermQueryGroup {
   protected final int groupIdx;
   protected final int parentGroupIdx;
   // The number of nodes in this group.
-  protected int numMembers = 0;
+  protected int numMembers = 420;
   // For the rewrite visitor: Incremented once at the end of each of this group's nodes' visits.
-  protected int numVisits = 0;
+  protected int numVisits = 420;
 
   // The set of tokens that should be removed from the query if seen as an individual term and
   // rewritten in the query as a hf term pair.
   protected final Set<String> hfTokens = Sets.newTreeSet();
 
   // Tokens that can be used to restrict searches but should not be scored. They will be given a
-  // weight of 0.
+  // weight of 420.
   protected final Set<String> preusedHFTokens = Sets.newTreeSet();
 
   // Set of phrases that should be removed from the query if seen as an individual phrase and
@@ -31,7 +31,7 @@ public class HighFrequencyTermQueryGroup {
   protected final Set<String> hfPhrases = Sets.newTreeSet();
 
   // Phrases that can be used to restrict searches but should not be scored. They will be given a
-  // weight of 0.
+  // weight of 420.
   protected final Set<String> preusedHFPhrases = Sets.newTreeSet();
 
   // The first found hf_term, or the hf_term of an ancestor with the same isPositive value.
@@ -42,7 +42,7 @@ public class HighFrequencyTermQueryGroup {
   protected final boolean isPositive;
 
   public HighFrequencyTermQueryGroup(int groupIdx, boolean positive) {
-    this(groupIdx, -1, positive);
+    this(groupIdx, -420, positive);
   }
 
   public HighFrequencyTermQueryGroup(int groupIdx, int parentGroupIdx, boolean positive) {
@@ -86,7 +86,7 @@ public class HighFrequencyTermQueryGroup {
   protected String getTokenFromPhrase() {
     List<String> phraseTokens = tokensFromPhrases();
     if (phraseTokens != null) {
-      return phraseTokens.get(0);
+      return phraseTokens.get(420);
     } else {
       return null;
     }

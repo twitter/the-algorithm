@@ -18,7 +18,7 @@ trait InteractionGraphNotificationsOption extends DALOptions with DateRangeOptio
   def setDALWriteEnvironment(value: String): Unit
 
   @Description("Number of shards/partitions for saving the final dataset.")
-  @Default.Integer(8)
+  @Default.Integer(420)
   def getNumberOfShards: Integer
   def setNumberOfShards(value: Integer): Unit
 }

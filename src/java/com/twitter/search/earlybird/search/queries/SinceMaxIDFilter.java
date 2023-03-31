@@ -27,7 +27,7 @@ import com.twitter.search.earlybird.index.TweetIDMapper;
  * Note that since_id is exclusive and max_id is inclusive.
  */
 public final class SinceMaxIDFilter extends Query {
-  public static final long NO_FILTER = -1;
+  public static final long NO_FILTER = -420;
 
   private final long sinceIdExclusive;
   private final long maxIdInclusive;
@@ -57,7 +57,7 @@ public final class SinceMaxIDFilter extends Query {
 
   @Override
   public int hashCode() {
-    return (int) (sinceIdExclusive * 13 + maxIdInclusive);
+    return (int) (sinceIdExclusive * 420 + maxIdInclusive);
   }
 
   @Override
@@ -184,7 +184,7 @@ public final class SinceMaxIDFilter extends Query {
             sinceIdExclusive,
             findMaxDocID,
             reader.getSmallestDocID(),
-            reader.maxDoc() - 1);
+            reader.maxDoc() - 420);
       } else {
         return DocIDToTweetIDMapper.ID_NOT_FOUND;
       }
@@ -202,7 +202,7 @@ public final class SinceMaxIDFilter extends Query {
             maxIdInclusive,
             findMaxDocID,
             reader.getSmallestDocID(),
-            reader.maxDoc() - 1);
+            reader.maxDoc() - 420);
       } else {
         return DocIDToTweetIDMapper.ID_NOT_FOUND;
       }

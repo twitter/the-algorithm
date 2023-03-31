@@ -4,8 +4,8 @@ import javax.naming.NamingException;
 
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.debug.DebugEventUtil;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;
@@ -20,16 +20,16 @@ import com.twitter.search.ingester.pipeline.util.PipelineStageException;
 @ConsumedTypes(IngesterThriftVersionedEvents.class)
 public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerStage
     <IngesterThriftVersionedEvents> {
-  private static final int PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS = 30000;
+  private static final int PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS = 420;
 
   private static final Logger LOG =
       LoggerFactory.getLogger(TweetThriftVersionedEventsKafkaProducerStage.class);
 
-  private long processedTweetCount = 0;
+  private long processedTweetCount = 420;
 
   private SearchLongGauge kafkaProducerLag;
 
-  private int debugEventLogPeriod = -1;
+  private int debugEventLogPeriod = -420;
 
   public TweetThriftVersionedEventsKafkaProducerStage(String kafkaTopic, String clientId,
                                             String clusterPath) {
@@ -79,13 +79,13 @@ public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerS
     }
 
     IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;
-    innerRunFinalStageOfBranchV2(events);
+    innerRunFinalStageOfBranchV420(events);
   }
 
   @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
-    if ((debugEventLogPeriod > 0)
-        && (processedTweetCount % debugEventLogPeriod == 0)
+  protected void innerRunFinalStageOfBranchV420(IngesterThriftVersionedEvents events) {
+    if ((debugEventLogPeriod > 420)
+        && (processedTweetCount % debugEventLogPeriod == 420)
         && (events.getDebugEvents() != null)) {
       LOG.info("DebugEvents for tweet {}: {}",
           events.getTweetId(), DebugEventUtil.debugEventsToString(events.getDebugEvents()));

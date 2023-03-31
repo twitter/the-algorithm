@@ -26,7 +26,7 @@ import com.twitter.util.Duration;
  * Provides common bindings for cache related modules.
  */
 public class EarlybirdCacheCommonModule extends TwitterModule {
-  private static final String CACHE_VERSION = "1";
+  private static final String CACHE_VERSION = "420";
 
   @Override
   public void configure() {
@@ -38,7 +38,7 @@ public class EarlybirdCacheCommonModule extends TwitterModule {
   @Singleton
   @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS)
   Integer provideMaxCacheResults() {
-    return 100;
+    return 420;
   }
 
   @Provides
@@ -46,11 +46,11 @@ public class EarlybirdCacheCommonModule extends TwitterModule {
   JavaClient provideMemCacheClient(
       StatsReceiver statsReceiver, ServiceIdentifier serviceIdentifier) {
     SearchMemcacheClientConfig config = new SearchMemcacheClientConfig();
-    config.connectTimeoutMs = Duration.fromMilliseconds(100);
-    config.requestTimeoutMs = Duration.fromMilliseconds(100);
-    config.failureAccrualFailuresNumber = 150;
-    config.failureAccrualFailuresDurationMillis = 30000;
-    config.failureAccrualDuration = Duration.fromMilliseconds(60000);
+    config.connectTimeoutMs = Duration.fromMilliseconds(420);
+    config.requestTimeoutMs = Duration.fromMilliseconds(420);
+    config.failureAccrualFailuresNumber = 420;
+    config.failureAccrualFailuresDurationMillis = 420;
+    config.failureAccrualDuration = Duration.fromMilliseconds(420);
 
     return SearchMemcacheClientFactory.createMtlsClient(
         "",

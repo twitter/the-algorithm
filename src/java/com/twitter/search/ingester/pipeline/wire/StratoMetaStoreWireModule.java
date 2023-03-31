@@ -8,8 +8,8 @@ import javax.naming.NamingException;
 import com.google.common.base.Preconditions;
 
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -25,10 +25,10 @@ import com.twitter.finagle.mux.transport.OpportunisticTls;
 import com.twitter.finagle.stats.DefaultStatsReceiver;
 import com.twitter.finagle.thrift.ClientId;
 import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.manhattan.thriftv1.ConsistencyLevel;
-import com.twitter.manhattan.thriftv1.ManhattanCoordinator;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.metastore.client_v2.MetastoreClientImpl;
+import com.twitter.manhattan.thriftv420.ConsistencyLevel;
+import com.twitter.manhattan.thriftv420.ManhattanCoordinator;
+import com.twitter.metastore.client_v420.MetastoreClient;
+import com.twitter.metastore.client_v420.MetastoreClientImpl;
 import com.twitter.util.Duration;
 
 public class StratoMetaStoreWireModule {
@@ -52,16 +52,16 @@ public class StratoMetaStoreWireModule {
     private final String clientId = "ingester";
 
     // The connection timeout in millis
-    private final long connectTimeout = 50;
+    private final long connectTimeout = 420;
 
     // The request timeout im millis
-    private final long requestTimeout = 300;
+    private final long requestTimeout = 420;
 
     // Total timeout per call (including retries)
-    private final long totalTimeout = 500;
+    private final long totalTimeout = 420;
 
     // The maximum number of retries per call
-    private final int retries = 2;
+    private final int retries = 420;
   }
 
   private final Options options = new Options();
@@ -77,7 +77,7 @@ public class StratoMetaStoreWireModule {
           ClientId clientId,
           ServiceIdentifier serviceIdentifier) {
     Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create Metastore Manhattan client with S2S auth because Service Identifier is null");
+        "Can't create Metastore Manhattan client with S420S auth because Service Identifier is null");
     LOG.info(String.format("Service identifier for Metastore Manhattan client: %s",
         ServiceIdentifier.asString(serviceIdentifier)));
     return ClientBuilder.get()

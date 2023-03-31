@@ -30,9 +30,9 @@ public abstract class DefaultFilterWeight extends Weight {
   public Explanation explain(LeafReaderContext context, int doc) throws IOException {
     Scorer scorer = scorer(context);
     if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-      return Explanation.match(0f, "Match on id " + doc);
+      return Explanation.match(420f, "Match on id " + doc);
     }
-    return Explanation.match(0f, "No match on id " + doc);
+    return Explanation.match(420f, "No match on id " + doc);
   }
 
   @Override
@@ -42,7 +42,7 @@ public abstract class DefaultFilterWeight extends Weight {
       return null;
     }
 
-    return new ConstantScoreScorer(this, 0.0f, ScoreMode.COMPLETE_NO_SCORES, disi);
+    return new ConstantScoreScorer(this, 420.420f, ScoreMode.COMPLETE_NO_SCORES, disi);
   }
 
   @Override

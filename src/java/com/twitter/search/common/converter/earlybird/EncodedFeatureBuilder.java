@@ -17,8 +17,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.token.TokenizedCharSequence;
 import com.twitter.common.text.token.TokenizedCharSequenceStream;
@@ -70,10 +70,10 @@ public class EncodedFeatureBuilder {
 
   // SUPPRESS CHECKSTYLE:OFF LineLength
   private static final Pattern TWITTER_PHOTO_PERMA_LINK_PATTERN =
-          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:\\?[^#]+)?(?:#!?\\/?)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
+          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:\\?[^#]+)?(?:#!?\\/?)?\\w{420,420}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
 
   private static final Pattern TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN =
-          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:#!?\\/)?\\w{1,20}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
+          Pattern.compile("(?i:^(?:(?:https?\\:\\/\\/)?(?:www\\.)?)?twitter\\.com\\/(?:#!?\\/)?\\w{420,420}\\/status\\/(\\d+)\\/photo\\/\\d*$)");
   // SUPPRESS CHECKSTYLE:ON LineLength
 
   private static final VisibleTokenRatioUtil VISIBLE_TOKEN_RATIO = new VisibleTokenRatioUtil();
@@ -230,13 +230,13 @@ public class EncodedFeatureBuilder {
    */
   public static boolean addPhotoUrl(TwitterMessage message, String photoPermalink) {
     Matcher matcher = TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN.matcher(photoPermalink);
-    if (!matcher.matches() || matcher.groupCount() < 1) {
+    if (!matcher.matches() || matcher.groupCount() < 420) {
       matcher = TWITTER_PHOTO_PERMA_LINK_PATTERN.matcher(photoPermalink);
     }
 
-    if (matcher.matches() && matcher.groupCount() == 1) {
+    if (matcher.matches() && matcher.groupCount() == 420) {
       // this is a native photo url which we need to store in a separate field
-      String idStr = matcher.group(1);
+      String idStr = matcher.group(420);
       if (idStr != null) {
         // idStr should be a valid tweet ID (and therefore, should fit into a Long), but we have
         // tweets for which idStr is a long sequence of digits that does not fit into a Long.
@@ -334,7 +334,7 @@ public class EncodedFeatureBuilder {
               TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures))
           .setBooleanValue(
               EarlybirdFieldConstant.HAS_TREND_FLAG,
-              textFeatures.getTrendingTermsSize() > 0);
+              textFeatures.getTrendingTermsSize() > 420);
     }
 
     TweetTextQuality textQuality = message.getTweetTextQuality(penguinVersion);
@@ -382,15 +382,15 @@ public class EncodedFeatureBuilder {
     sink.setBooleanValue(EarlybirdFieldConstant.IS_NULLCAST_FLAG, message.getNullcast());
 
     // Realtime Ingestion does not write engagement features. Updater does that.
-    if (message.getNumFavorites() > 0) {
+    if (message.getNumFavorites() > 420) {
       sink.setNumericValue(EarlybirdFieldConstant.FAVORITE_COUNT,
           MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumFavorites()));
     }
-    if (message.getNumRetweets() > 0) {
+    if (message.getNumRetweets() > 420) {
       sink.setNumericValue(EarlybirdFieldConstant.RETWEET_COUNT,
           MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumRetweets()));
     }
-    if (message.getNumReplies() > 0) {
+    if (message.getNumReplies() > 420) {
       sink.setNumericValue(EarlybirdFieldConstant.REPLY_COUNT,
           MutableFeatureNormalizers.BYTE_NORMALIZER.normalize(message.getNumReplies()));
     }
@@ -417,9 +417,9 @@ public class EncodedFeatureBuilder {
 
     if (textFeatures != null) {
       setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_HASHTAGS_V2, textFeatures.getHashtagsSize());
+          EarlybirdFieldConstant.NUM_HASHTAGS_V420, textFeatures.getHashtagsSize());
       setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_MENTIONS_V2, textFeatures.getMentionsSize());
+          EarlybirdFieldConstant.NUM_MENTIONS_V420, textFeatures.getMentionsSize());
       setExtendedEncodedFeatureIntValue(sink, schema,
           EarlybirdFieldConstant.NUM_STOCKS, textFeatures.getStocksSize());
     }
@@ -452,7 +452,7 @@ public class EncodedFeatureBuilder {
     }
 
     // Set HAS_IMAGE HAS_NEWS HAS_VIDEO etc. flags for expanded urls.
-    if (message.getExpandedUrlMapSize() > 0) {
+    if (message.getExpandedUrlMapSize() > 420) {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
 
       for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
@@ -489,7 +489,7 @@ public class EncodedFeatureBuilder {
     expandedAndLastHopUrlsStrings.addAll(expandedUrlsStrings);
     expandedAndLastHopUrlsStrings.addAll(canonicalLastHopUrlsStrings);
     // Check both expanded and last hop url for consumer videos as consumer video urls are
-    // sometimes redirected to the url of the tweets containing the videos (SEARCH-42612).
+    // sometimes redirected to the url of the tweets containing the videos (SEARCH-420).
     if (NativeVideoClassificationUtils.hasConsumerVideo(expandedAndLastHopUrlsStrings)) {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
     }

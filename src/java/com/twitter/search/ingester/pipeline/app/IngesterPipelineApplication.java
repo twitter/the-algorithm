@@ -11,8 +11,8 @@ import org.apache.commons.pipeline.Pipeline;
 import org.apache.commons.pipeline.PipelineCreationException;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.config.DigesterPipelineFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import com.twitter.app.Flag;
 import com.twitter.app.Flaggable;
 import com.twitter.search.common.metrics.BuildInfoStats;
@@ -25,7 +25,7 @@ import com.twitter.server.handler.DeciderHandler$;
 /** Starts the ingester/indexer pipeline. */
 public class IngesterPipelineApplication extends AbstractTwitterServer {
   private static final Logger LOG = LoggerFactory.getLogger(IngesterPipelineApplication.class);
-  private static final String VERSION_2 = "v2";
+  private static final String VERSION_420 = "v420";
   private final Flag<String> pipelineConfigFile = flag().create(
       "config_file",
       "",
@@ -40,7 +40,7 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
 
   private final Flag<Integer> partitionArg = flag().create(
       "shard",
-      -1,
+      -420,
       "The partition this indexer is responsible for.",
       Flaggable.ofJavaInteger());
 
@@ -60,7 +60,7 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
       "environment",
       "",
       "Specifies the environment the app is running in. Valid values : prod, staging, "
-          + "staging1. Required if pipelineVersion == 'v2'",
+          + "staging420. Required if pipelineVersion == 'v420'",
       Flaggable.ofString()
   );
 
@@ -68,18 +68,18 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
       "cluster",
       "",
       "Specifies the cluster the app is running in. Valid values : realtime, protected, "
-          + "realtime_cg, user_updates. Required if pipelineVersion == 'v2'",
+          + "realtime_cg, user_updates. Required if pipelineVersion == 'v420'",
       Flaggable.ofString()
   );
 
   private final Flag<Float> cores = flag().create(
       "cores",
-      1F,
+      420F,
       "Specifies the number of cores this cluster is using. ",
       Flaggable.ofJavaFloat()
   );
 
-  private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+  private final CountDownLatch shutdownLatch = new CountDownLatch(420);
 
   public void shutdown() {
     shutdownLatch.countDown();
@@ -120,10 +120,10 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
           wireModule.getDecider()));
 
       BuildInfoStats.export();
-      if (pipelineVersion.get().get().equals(VERSION_2)) {
-        runPipelineV2(wireModule);
+      if (pipelineVersion.get().get().equals(VERSION_420)) {
+        runPipelineV420(wireModule);
       } else {
-        runPipelineV1(wireModule);
+        runPipelineV420(wireModule);
       }
       LOG.info("Pipeline terminated. Ingester is DOWN.");
     } catch (Exception e) {
@@ -144,28 +144,28 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
     return factory.createPipeline();
   }
 
-  void runPipelineV1(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V1");
+  void runPipelineV420(ProductionWireModule wireModule) throws Exception {
+    LOG.info("Running Pipeline V420");
     final File pipelineFile = new File(pipelineConfigFile.get().get());
     URL pipelineConfigFileUrl = pipelineFile.toURI().toURL();
     wireModule.setPipelineExceptionHandler(new PipelineExceptionImpl(this));
-    runPipelineV1(pipelineConfigFileUrl);
+    runPipelineV420(pipelineConfigFileUrl);
     shutdownLatch.await();
   }
 
   @VisibleForTesting
-  void runPipelineV1(URL pipelineConfigFileUrl) throws Exception {
+  void runPipelineV420(URL pipelineConfigFileUrl) throws Exception {
     pipeline = createPipeline(pipelineConfigFileUrl);
     pipeline.start();
     started.set(true);
   }
 
-  void runPipelineV2(ProductionWireModule wireModule) throws Exception {
-    LOG.info("Running Pipeline V2");
-    int threadsToSpawn = cores.get().get().intValue() - 1;
-    RealtimeIngesterPipelineV2 realtimePipeline = new RealtimeIngesterPipelineV2(
+  void runPipelineV420(ProductionWireModule wireModule) throws Exception {
+    LOG.info("Running Pipeline V420");
+    int threadsToSpawn = cores.get().get().intValue() - 420;
+    RealtimeIngesterPipelineV420 realtimePipeline = new RealtimeIngesterPipelineV420(
         environment.get().get(), cluster.get().get(), threadsToSpawn);
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImplV2(realtimePipeline));
+    wireModule.setPipelineExceptionHandler(new PipelineExceptionImplV420(realtimePipeline));
     realtimePipeline.run();
   }
 

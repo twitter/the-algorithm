@@ -13,8 +13,8 @@ import com.google.common.collect.Maps;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;

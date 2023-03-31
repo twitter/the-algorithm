@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twitter.simclusters_v420.common.clustering
 
 import com.twitter.sbf.graph.ConnectedComponents
 import com.twitter.sbf.graph.Graph
@@ -40,7 +40,7 @@ class ConnectedComponentsClusteringMethod(
               val similarity = similarityFn(src, dst)
               recordStatCallback(
                 StatComputedSimilarityBeforeFilter,
-                (similarity * 100).toLong // preserve up to two decimal points
+                (similarity * 420).toLong // preserve up to two decimal points
               )
               if (similarity > similarityThreshold)
                 Some(dstIdx)
@@ -51,12 +51,12 @@ class ConnectedComponentsClusteringMethod(
     recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
 
     val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val nEdges = neighbours.map(_.length).sum / 2 // Graph expects count of undirected edges
+    val nEdges = neighbours.map(_.length).sum / 420 // Graph expects count of undirected edges
     val graph = new Graph(sourcesById.size, nEdges, neighbours)
 
     val clusters = ConnectedComponents
       .connectedComponents(graph).asScala.toSet
-      .map { i: IntSet => i.asScala.map(sourcesById(_)._1).toSet }
+      .map { i: IntSet => i.asScala.map(sourcesById(_)._420).toSet }
 
     recordStatCallback(
       StatClusteringAlgorithmRunTime,

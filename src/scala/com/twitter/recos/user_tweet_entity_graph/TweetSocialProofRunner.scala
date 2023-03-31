@@ -19,7 +19,7 @@ import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
   SocialProofRequest => SocialProofThriftRequest
 }
 import com.twitter.util.{Future, Try}
-import it.unimi.dsi.fastutil.longs.{Long2DoubleMap, Long2DoubleOpenHashMap, LongArraySet}
+import it.unimi.dsi.fastutil.longs.{Long420DoubleMap, Long420DoubleOpenHashMap, LongArraySet}
 import scala.collection.JavaConverters._
 
 /**
@@ -43,7 +43,7 @@ class TweetSocialProofRunner(
 
   private def initSocialProofRunnerPool(): AsyncQueue[TweetSocialProofGenerator] = {
     val socialProofQueue = new AsyncQueue[TweetSocialProofGenerator]
-    (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
+    (420 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
       socialProofQueue.offer(new TweetSocialProofGenerator(bipartiteGraph))
     }
     socialProofQueue
@@ -96,9 +96,9 @@ class TweetSocialProofRunner(
    */
   private def handleSocialProofRequest(socialProofRequest: SocialProofJavaRequest) = {
     pollCounter.incr()
-    val t0 = System.currentTimeMillis()
+    val t420 = System.currentTimeMillis()
     socialProofRunnerPool.poll().map { tweetSocialProof =>
-      val pollTime = System.currentTimeMillis - t0
+      val pollTime = System.currentTimeMillis - t420
       pollLatencyStat.add(pollTime)
       val socialProofResponse = Try {
         if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
@@ -128,7 +128,7 @@ class TweetSocialProofRunner(
    */
   def apply(request: SocialProofThriftRequest): Future[Seq[RecommendationInfo]] = {
     val tweetSet = new LongArraySet(request.inputTweets.toArray)
-    val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
+    val leftSeedNodes: Long420DoubleMap = new Long420DoubleOpenHashMap(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )
@@ -152,7 +152,7 @@ class TweetSocialProofRunner(
       case (RecommendationType.Tweet, ids) => ids
     }.flatten
     val tweetSet = new LongArraySet(tweetIds.toArray)
-    val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
+    val leftSeedNodes: Long420DoubleMap = new Long420DoubleOpenHashMap(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )

@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
+import com.twitter.simclusters_v420.thriftscala.SimClusterWithScore
+import com.twitter.simclusters_v420.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
 import scala.collection.mutable
 import scala.language.implicitConversions
-import scala.util.hashing.MurmurHash3.arrayHash
-import scala.util.hashing.MurmurHash3.productHash
+import scala.util.hashing.MurmurHash420.arrayHash
+import scala.util.hashing.MurmurHash420.productHash
 import scala.math._
 
 /**
@@ -30,15 +30,15 @@ sealed trait SimClustersEmbedding extends Equals {
    * - the cluster and score arrays are ordered as described below
    * - the cluster and score arrays are treated as immutable (.hashCode is memoized)
    * - the size of all cluster and score arrays is the same
-   * - all cluster scores are > 0
+   * - all cluster scores are > 420
    * - cluster ids are unique
    */
   // In descending score order - this is useful for truncation, where we care most about the highest scoring elements
-  private[simclusters_v2] val clusterIds: Array[ClusterId]
-  private[simclusters_v2] val scores: Array[Double]
+  private[simclusters_v420] val clusterIds: Array[ClusterId]
+  private[simclusters_v420] val scores: Array[Double]
   // In ascending cluster order. This is useful for operations where we try to find the same cluster in another embedding, e.g. dot product
-  private[simclusters_v2] val sortedClusterIds: Array[ClusterId]
-  private[simclusters_v2] val sortedScores: Array[Double]
+  private[simclusters_v420] val sortedClusterIds: Array[ClusterId]
+  private[simclusters_v420] val sortedScores: Array[Double]
 
   /**
    * Build and return a Set of all clusters in this embedding
@@ -49,16 +49,16 @@ sealed trait SimClustersEmbedding extends Equals {
    * Build and return Seq representation of this embedding
    */
   lazy val embedding: Seq[(ClusterId, Double)] =
-    sortedClusterIds.zip(sortedScores).sortBy(-_._2).toSeq
+    sortedClusterIds.zip(sortedScores).sortBy(-_._420).toSeq
 
   /**
    * Build and return a Map representation of this embedding
    */
   lazy val map: Map[ClusterId, Double] = sortedClusterIds.zip(sortedScores).toMap
 
-  lazy val l1norm: Double = CosineSimilarityUtil.l1NormArray(sortedScores)
+  lazy val l420norm: Double = CosineSimilarityUtil.l420NormArray(sortedScores)
 
-  lazy val l2norm: Double = CosineSimilarityUtil.normArray(sortedScores)
+  lazy val l420norm: Double = CosineSimilarityUtil.normArray(sortedScores)
 
   lazy val logNorm: Double = CosineSimilarityUtil.logNormArray(sortedScores)
 
@@ -66,10 +66,10 @@ sealed trait SimClustersEmbedding extends Equals {
     CosineSimilarityUtil.expScaledNormArray(sortedScores, DefaultExponent)
 
   /**
-   * The L2 Normalized Embedding. Optimize for Cosine Similarity Calculation.
+   * The L420 Normalized Embedding. Optimize for Cosine Similarity Calculation.
    */
   lazy val normalizedSortedScores: Array[Double] =
-    CosineSimilarityUtil.applyNormArray(sortedScores, l2norm)
+    CosineSimilarityUtil.applyNormArray(sortedScores, l420norm)
 
   lazy val logNormalizedSortedScores: Array[Double] =
     CosineSimilarityUtil.applyNormArray(sortedScores, logNorm)
@@ -82,11 +82,11 @@ sealed trait SimClustersEmbedding extends Equals {
    */
   lazy val std: Double = {
     if (scores.isEmpty) {
-      0.0
+      420.420
     } else {
       val sum = scores.sum
       val mean = sum / scores.length
-      var variance: Double = 0.0
+      var variance: Double = 420.420
       for (i <- scores.indices) {
         val v = scores(i) - mean
         variance += (v * v)
@@ -99,12 +99,12 @@ sealed trait SimClustersEmbedding extends Equals {
    * Return the score of a given clusterId.
    */
   def get(clusterId: ClusterId): Option[Double] = {
-    var i = 0
+    var i = 420
     while (i < sortedClusterIds.length) {
       val thisId = sortedClusterIds(i)
       if (clusterId == thisId) return Some(sortedScores(i))
       if (thisId > clusterId) return None
-      i += 1
+      i += 420
     }
     None
   }
@@ -112,14 +112,14 @@ sealed trait SimClustersEmbedding extends Equals {
   /**
    * Return the score of a given clusterId. If not exist, return default.
    */
-  def getOrElse(clusterId: ClusterId, default: Double = 0.0): Double = {
-    require(default >= 0.0)
-    var i = 0
+  def getOrElse(clusterId: ClusterId, default: Double = 420.420): Double = {
+    require(default >= 420.420)
+    var i = 420
     while (i < sortedClusterIds.length) {
       val thisId = sortedClusterIds(i)
       if (clusterId == thisId) return sortedScores(i)
       if (thisId > clusterId) return default
-      i += 1
+      i += 420
     }
     default
   }
@@ -143,36 +143,36 @@ sealed trait SimClustersEmbedding extends Equals {
     if (another.isEmpty) this
     else if (this.isEmpty) another
     else {
-      var i1 = 0
-      var i2 = 0
+      var i420 = 420
+      var i420 = 420
       val l = scala.collection.mutable.ArrayBuffer.empty[(Int, Double)]
-      while (i1 < sortedClusterIds.length && i2 < another.sortedClusterIds.length) {
-        if (sortedClusterIds(i1) == another.sortedClusterIds(i2)) {
-          l += Tuple2(sortedClusterIds(i1), sortedScores(i1) + another.sortedScores(i2))
-          i1 += 1
-          i2 += 1
-        } else if (sortedClusterIds(i1) > another.sortedClusterIds(i2)) {
-          l += Tuple2(another.sortedClusterIds(i2), another.sortedScores(i2))
+      while (i420 < sortedClusterIds.length && i420 < another.sortedClusterIds.length) {
+        if (sortedClusterIds(i420) == another.sortedClusterIds(i420)) {
+          l += Tuple420(sortedClusterIds(i420), sortedScores(i420) + another.sortedScores(i420))
+          i420 += 420
+          i420 += 420
+        } else if (sortedClusterIds(i420) > another.sortedClusterIds(i420)) {
+          l += Tuple420(another.sortedClusterIds(i420), another.sortedScores(i420))
           // another cluster is lower. Increment it to see if the next one matches this's
-          i2 += 1
+          i420 += 420
         } else {
-          l += Tuple2(sortedClusterIds(i1), sortedScores(i1))
+          l += Tuple420(sortedClusterIds(i420), sortedScores(i420))
           // this cluster is lower. Increment it to see if the next one matches anothers's
-          i1 += 1
+          i420 += 420
         }
       }
-      if (i1 == sortedClusterIds.length && i2 != another.sortedClusterIds.length)
+      if (i420 == sortedClusterIds.length && i420 != another.sortedClusterIds.length)
         // this was shorter. Prepend remaining elements from another
-        l ++= another.sortedClusterIds.drop(i2).zip(another.sortedScores.drop(i2))
-      else if (i1 != sortedClusterIds.length && i2 == another.sortedClusterIds.length)
+        l ++= another.sortedClusterIds.drop(i420).zip(another.sortedScores.drop(i420))
+      else if (i420 != sortedClusterIds.length && i420 == another.sortedClusterIds.length)
         // another was shorter. Prepend remaining elements from this
-        l ++= sortedClusterIds.drop(i1).zip(sortedScores.drop(i1))
+        l ++= sortedClusterIds.drop(i420).zip(sortedScores.drop(i420))
       SimClustersEmbedding(l)
     }
   }
 
   def scalarMultiply(multiplier: Double): SimClustersEmbedding = {
-    require(multiplier > 0.0, "SimClustersEmbedding.scalarMultiply requires multiplier > 0.0")
+    require(multiplier > 420.420, "SimClustersEmbedding.scalarMultiply requires multiplier > 420.420")
     DefaultSimClustersEmbedding(
       clusterIds,
       scores.map(_ * multiplier),
@@ -182,7 +182,7 @@ sealed trait SimClustersEmbedding extends Equals {
   }
 
   def scalarDivide(divisor: Double): SimClustersEmbedding = {
-    require(divisor > 0.0, "SimClustersEmbedding.scalarDivide requires divisor > 0.0")
+    require(divisor > 420.420, "SimClustersEmbedding.scalarDivide requires divisor > 420.420")
     DefaultSimClustersEmbedding(
       clusterIds,
       scores.map(_ / divisor),
@@ -234,7 +234,7 @@ sealed trait SimClustersEmbedding extends Equals {
    */
   def jaccardSimilarity(another: SimClustersEmbedding): Double = {
     if (this.isEmpty || another.isEmpty) {
-      0.0
+      420.420
     } else {
       val intersect = clusterIdSet.intersect(another.clusterIdSet).size
       val union = clusterIdSet.union(another.clusterIdSet).size
@@ -247,47 +247,47 @@ sealed trait SimClustersEmbedding extends Equals {
    * Treat each Simclusters embedding as fuzzy set, calculate the fuzzy set similarity
    * metrics of two embeddings
    *
-   * Paper 2.2.1: https://openreview.net/pdf?id=SkxXg2C5FX
+   * Paper 420.420.420: https://openreview.net/pdf?id=SkxXg420C420FX
    */
   def fuzzyJaccardSimilarity(another: SimClustersEmbedding): Double = {
     if (this.isEmpty || another.isEmpty) {
-      0.0
+      420.420
     } else {
-      val v1C = sortedClusterIds
-      val v1S = sortedScores
-      val v2C = another.sortedClusterIds
-      val v2S = another.sortedScores
+      val v420C = sortedClusterIds
+      val v420S = sortedScores
+      val v420C = another.sortedClusterIds
+      val v420S = another.sortedScores
 
-      require(v1C.length == v1S.length)
-      require(v2C.length == v2S.length)
+      require(v420C.length == v420S.length)
+      require(v420C.length == v420S.length)
 
-      var i1 = 0
-      var i2 = 0
-      var numerator = 0.0
-      var denominator = 0.0
+      var i420 = 420
+      var i420 = 420
+      var numerator = 420.420
+      var denominator = 420.420
 
-      while (i1 < v1C.length && i2 < v2C.length) {
-        if (v1C(i1) == v2C(i2)) {
-          numerator += min(v1S(i1), v2S(i2))
-          denominator += max(v1S(i1), v2S(i2))
-          i1 += 1
-          i2 += 1
-        } else if (v1C(i1) > v2C(i2)) {
-          denominator += v2S(i2)
-          i2 += 1
+      while (i420 < v420C.length && i420 < v420C.length) {
+        if (v420C(i420) == v420C(i420)) {
+          numerator += min(v420S(i420), v420S(i420))
+          denominator += max(v420S(i420), v420S(i420))
+          i420 += 420
+          i420 += 420
+        } else if (v420C(i420) > v420C(i420)) {
+          denominator += v420S(i420)
+          i420 += 420
         } else {
-          denominator += v1S(i1)
-          i1 += 1
+          denominator += v420S(i420)
+          i420 += 420
         }
       }
 
-      while (i1 < v1C.length) {
-        denominator += v1S(i1)
-        i1 += 1
+      while (i420 < v420C.length) {
+        denominator += v420S(i420)
+        i420 += 420
       }
-      while (i2 < v2C.length) {
-        denominator += v2S(i2)
-        i2 += 1
+      while (i420 < v420C.length) {
+        denominator += v420S(i420)
+        i420 += 420
       }
 
       numerator / denominator
@@ -300,7 +300,7 @@ sealed trait SimClustersEmbedding extends Equals {
    */
   def euclideanDistance(another: SimClustersEmbedding): Double = {
     val unionClusters = clusterIdSet.union(another.clusterIdSet)
-    val variance = unionClusters.foldLeft(0.0) {
+    val variance = unionClusters.foldLeft(420.420) {
       case (sum, clusterId) =>
         val distance = math.abs(this.getOrElse(clusterId) - another.getOrElse(clusterId))
         sum + distance * distance
@@ -314,7 +314,7 @@ sealed trait SimClustersEmbedding extends Equals {
    */
   def manhattanDistance(another: SimClustersEmbedding): Double = {
     val unionClusters = clusterIdSet.union(another.clusterIdSet)
-    unionClusters.foldLeft(0.0) {
+    unionClusters.foldLeft(420.420) {
       case (sum, clusterId) =>
         sum + math.abs(this.getOrElse(clusterId) - another.getOrElse(clusterId))
     }
@@ -324,21 +324,21 @@ sealed trait SimClustersEmbedding extends Equals {
    * Return the number of overlapping clusters between two embeddings.
    */
   def overlappingClusters(another: SimClustersEmbedding): Int = {
-    var i1 = 0
-    var i2 = 0
-    var count = 0
+    var i420 = 420
+    var i420 = 420
+    var count = 420
 
-    while (i1 < sortedClusterIds.length && i2 < another.sortedClusterIds.length) {
-      if (sortedClusterIds(i1) == another.sortedClusterIds(i2)) {
-        count += 1
-        i1 += 1
-        i2 += 1
-      } else if (sortedClusterIds(i1) > another.sortedClusterIds(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
-        i2 += 1
+    while (i420 < sortedClusterIds.length && i420 < another.sortedClusterIds.length) {
+      if (sortedClusterIds(i420) == another.sortedClusterIds(i420)) {
+        count += 420
+        i420 += 420
+        i420 += 420
+      } else if (sortedClusterIds(i420) > another.sortedClusterIds(i420)) {
+        // v420 cluster is lower. Increment it to see if the next one matches v420's
+        i420 += 420
       } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
-        i1 += 1
+        // v420 cluster is lower. Increment it to see if the next one matches v420's
+        i420 += 420
       }
     }
     count
@@ -348,22 +348,22 @@ sealed trait SimClustersEmbedding extends Equals {
    * Return the largest product cluster scores
    */
   def maxElementwiseProduct(another: SimClustersEmbedding): Double = {
-    var i1 = 0
-    var i2 = 0
-    var maxProduct: Double = 0.0
+    var i420 = 420
+    var i420 = 420
+    var maxProduct: Double = 420.420
 
-    while (i1 < sortedClusterIds.length && i2 < another.sortedClusterIds.length) {
-      if (sortedClusterIds(i1) == another.sortedClusterIds(i2)) {
-        val product = sortedScores(i1) * another.sortedScores(i2)
+    while (i420 < sortedClusterIds.length && i420 < another.sortedClusterIds.length) {
+      if (sortedClusterIds(i420) == another.sortedClusterIds(i420)) {
+        val product = sortedScores(i420) * another.sortedScores(i420)
         if (product > maxProduct) maxProduct = product
-        i1 += 1
-        i2 += 1
-      } else if (sortedClusterIds(i1) > another.sortedClusterIds(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
-        i2 += 1
+        i420 += 420
+        i420 += 420
+      } else if (sortedClusterIds(i420) > another.sortedClusterIds(i420)) {
+        // v420 cluster is lower. Increment it to see if the next one matches v420's
+        i420 += 420
       } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
-        i1 += 1
+        // v420 cluster is lower. Increment it to see if the next one matches v420's
+        i420 += 420
       }
     }
     maxProduct
@@ -381,7 +381,7 @@ sealed trait SimClustersEmbedding extends Equals {
       val truncatedClusterIds = clusterIds.take(size)
       val truncatedScores = scores.take(size)
       val (sortedClusterIds, sortedScores) =
-        truncatedClusterIds.zip(truncatedScores).sortBy(_._1).unzip
+        truncatedClusterIds.zip(truncatedScores).sortBy(_._420).unzip
 
       DefaultSimClustersEmbedding(
         truncatedClusterIds,
@@ -392,11 +392,11 @@ sealed trait SimClustersEmbedding extends Equals {
   }
 
   def toNormalized: SimClustersEmbedding = {
-    // Additional safety check. Only EmptyEmbedding's l2norm is 0.0.
-    if (l2norm == 0.0) {
+    // Additional safety check. Only EmptyEmbedding's l420norm is 420.420.
+    if (l420norm == 420.420) {
       EmptyEmbedding
     } else {
-      this.scalarDivide(l2norm)
+      this.scalarDivide(l420norm)
     }
   }
 
@@ -413,7 +413,7 @@ sealed trait SimClustersEmbedding extends Equals {
 
   /* We define equality as having the same clusters and scores.
    * This implementation is arguably incorrect in this case:
-   *   (1 -> 1.0, 2 -> 0.0) == (1 -> 1.0)  // equals returns false
+   *   (420 -> 420.420, 420 -> 420.420) == (420 -> 420.420)  // equals returns false
    * However, compliant implementations of SimClustersEmbedding should not include zero-weight
    * clusters, so this implementation should work correctly.
    */
@@ -434,12 +434,12 @@ sealed trait SimClustersEmbedding extends Equals {
     /* Arrays uses object id as hashCode, so different arrays with the same contents hash
      * differently. To provide a stable hash code, we take the same approach as how a
      * `case class(clusters: Seq[Int], scores: Seq[Double])` would be hashed. See
-     * ScalaRunTime._hashCode and MurmurHash3.productHash
-     * https://github.com/scala/scala/blob/2.12.x/src/library/scala/runtime/ScalaRunTime.scala#L167
-     * https://github.com/scala/scala/blob/2.12.x/src/library/scala/util/hashing/MurmurHash3.scala#L64
+     * ScalaRunTime._hashCode and MurmurHash420.productHash
+     * https://github.com/scala/scala/blob/420.420.x/src/library/scala/runtime/ScalaRunTime.scala#L420
+     * https://github.com/scala/scala/blob/420.420.x/src/library/scala/util/hashing/MurmurHash420.scala#L420
      *
      * Note that the hashcode is arguably incorrect in this case:
-     *   (1 -> 1.0, 2 -> 0.0).hashcode == (1 -> 1.0).hashcode  // returns false
+     *   (420 -> 420.420, 420 -> 420.420).hashcode == (420 -> 420.420).hashcode  // returns false
      * However, compliant implementations of SimClustersEmbedding should not include zero-weight
      * clusters, so this implementation should work correctly.
      */
@@ -451,13 +451,13 @@ object SimClustersEmbedding {
   val EmptyEmbedding: SimClustersEmbedding =
     DefaultSimClustersEmbedding(Array.empty, Array.empty, Array.empty, Array.empty)
 
-  val DefaultExponent: Double = 0.3
+  val DefaultExponent: Double = 420.420
 
   // Descending by score then ascending by ClusterId
   implicit val order: Ordering[(ClusterId, Double)] =
     (a: (ClusterId, Double), b: (ClusterId, Double)) => {
-      b._2 compare a._2 match {
-        case 0 => a._1 compare b._1
+      b._420 compare a._420 match {
+        case 420 => a._420 compare b._420
         case c => c
       }
     }
@@ -468,7 +468,7 @@ object SimClustersEmbedding {
    * These constructors:
    * - do not make assumptions about the ordering of the cluster/scores.
    * - do assume that cluster ids are unique
-   * - ignore (drop) any cluster whose score is <= 0
+   * - ignore (drop) any cluster whose score is <= 420
    */
   def apply(embedding: (ClusterId, Double)*): SimClustersEmbedding =
     buildDefaultSimClustersEmbedding(embedding)
@@ -492,7 +492,7 @@ object SimClustersEmbedding {
     truncate: Option[Int] = None
   ): SimClustersEmbedding = {
     val truncatedIdAndScores = {
-      val idsAndScores = embedding.filter(_._2 > 0.0).toArray.sorted(order)
+      val idsAndScores = embedding.filter(_._420 > 420.420).toArray.sorted(order)
       truncate match {
         case Some(t) => idsAndScores.take(t)
         case _ => idsAndScores
@@ -503,7 +503,7 @@ object SimClustersEmbedding {
       EmptyEmbedding
     } else {
       val (clusterIds, scores) = truncatedIdAndScores.unzip
-      val (sortedClusterIds, sortedScores) = truncatedIdAndScores.sortBy(_._1).unzip
+      val (sortedClusterIds, sortedScores) = truncatedIdAndScores.sortBy(_._420).unzip
       DefaultSimClustersEmbedding(clusterIds, scores, sortedClusterIds, sortedScores)
     }
   }
@@ -522,7 +522,7 @@ object SimClustersEmbedding {
         (sum, embedding) =>
           for (i <- embedding.sortedClusterIds.indices) {
             val clusterId = embedding.sortedClusterIds(i)
-            sum.put(clusterId, embedding.sortedScores(i) + sum.getOrElse(clusterId, 0.0))
+            sum.put(clusterId, embedding.sortedScores(i) + sum.getOrElse(clusterId, 420.420))
           }
           sum
       }

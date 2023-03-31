@@ -1,7 +1,7 @@
 create_thrift_libraries(
-    base_name = "simclusters_v2-thrift",
+    base_name = "simclusters_v420-thrift",
     sources = ["*.thrift"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependency_roots = [
         "src/thrift/com/twitter/algebird_internal",
@@ -18,6 +18,6 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "simclusters_v2-thrift-java",
-    provides_scala_name = "simclusters_v2-thrift-scala",
+    provides_java_name = "simclusters_v420-thrift-java",
+    provides_scala_name = "simclusters_v420-thrift-scala",
 )

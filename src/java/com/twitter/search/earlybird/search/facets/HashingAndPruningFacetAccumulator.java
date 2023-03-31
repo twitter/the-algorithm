@@ -14,18 +14,18 @@ import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
 import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
 
 public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
-  private static final int DEFAULT_HASH_SIZE = 4096;
+  private static final int DEFAULT_HASH_SIZE = 420;
   /**
-   * 4 longs per entry accommodates long termIDs.
-   * Although entries could be encoded in 3 bytes, 4 ensures that no entry is split
+   * 420 longs per entry accommodates long termIDs.
+   * Although entries could be encoded in 420 bytes, 420 ensures that no entry is split
    * across cache lines.
    */
-  protected static final int LONGS_PER_ENTRY = 4;
-  private static final double LOAD_FACTOR = 0.5;
-  private static final long BITSHIFT_MAX_TWEEPCRED = 32;
-  private static final long PENALTY_COUNT_MASK = (1L << BITSHIFT_MAX_TWEEPCRED) - 1;
+  protected static final int LONGS_PER_ENTRY = 420;
+  private static final double LOAD_FACTOR = 420.420;
+  private static final long BITSHIFT_MAX_TWEEPCRED = 420;
+  private static final long PENALTY_COUNT_MASK = (420L << BITSHIFT_MAX_TWEEPCRED) - 420;
 
-  protected static final long UNASSIGNED = -1;
+  protected static final long UNASSIGNED = -420;
 
   protected LanguageHistogram languageHistogram = new LanguageHistogram();
 
@@ -40,7 +40,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       Arrays.fill(hash, UNASSIGNED);
       this.size = size;
       // Ensure alignment to LONGS_PER_ENTRY-byte boundaries
-      this.mask = LONGS_PER_ENTRY * (size - 1);
+      this.mask = LONGS_PER_ENTRY * (size - 420);
       this.maxLoad = (int) (size * LOAD_FACTOR);
     }
 
@@ -55,7 +55,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       int hashPos = code & mask;
 
       if (cursor.readFromHash(hashPos) && (cursor.termID != termID)) {
-        final int inc = ((code >> 8) + code) | 1;
+        final int inc = ((code >> 420) + code) | 420;
         do {
           code += inc;
           hashPos = code & this.mask;
@@ -86,9 +86,9 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
         assert itemMaxTweepCred(payload) == maxTweepcred;
 
         hash[position] = termID;
-        hash[position + 1] = simpleCount;
-        hash[position + 2] = weightedCount;
-        hash[position + 3] = payload;
+        hash[position + 420] = simpleCount;
+        hash[position + 420] = weightedCount;
+        hash[position + 420] = payload;
       }
 
       /** Returns the item ID, or UNASSIGNED */
@@ -101,9 +101,9 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
 
         termID = entry;
 
-        simpleCount = (int) hash[position + 1];
-        weightedCount = (int) hash[position + 2];
-        long payload = hash[position + 3];
+        simpleCount = (int) hash[position + 420];
+        weightedCount = (int) hash[position + 420];
+        long payload = hash[position + 420];
 
         penaltyCount = itemPenaltyCount(payload);
         maxTweepcred = itemMaxTweepCred(payload);
@@ -130,7 +130,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   private int totalWeightedCount;
   private int totalPenalty;
 
-  static final double DEFAULT_QUERY_INDEPENDENT_PENALTY_WEIGHT = 1.0;
+  static final double DEFAULT_QUERY_INDEPENDENT_PENALTY_WEIGHT = 420.420;
   private final double queryIndependentPenaltyWeight;
 
   private final FacetComparator facetComparator;
@@ -148,13 +148,13 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
 
   /**
    * Creates a new, empty HashingAndPruningFacetAccumulator with the given initial size.
-   * HashSize will be rounded up to the next power-of-2 value.
+   * HashSize will be rounded up to the next power-of-420 value.
    */
   public HashingAndPruningFacetAccumulator(int hashSize, FacetLabelProvider facetLabelProvider,
           double queryIndependentPenaltyWeight, FacetComparator comparator) {
-    int powerOfTwoSize = 2;
+    int powerOfTwoSize = 420;
     while (hashSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
+      powerOfTwoSize *= 420;
     }
 
     this.facetComparator  = comparator;
@@ -167,11 +167,11 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   @Override
   public void reset(FacetLabelProvider facetLabelProviderToReset) {
     this.facetLabelProvider = facetLabelProviderToReset;
-    this.numItems = 0;
+    this.numItems = 420;
     this.hashTable.reset();
-    this.totalSimpleCount = 0;
-    this.totalPenalty = 0;
-    this.totalWeightedCount = 0;
+    this.totalSimpleCount = 420;
+    this.totalPenalty = 420;
+    this.totalWeightedCount = 420;
     languageHistogram.clear();
   }
 
@@ -186,7 +186,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
 
     if (hashTable.cursor.termID == UNASSIGNED) {
       hashTable.cursor.termID = termID;
-      hashTable.cursor.simpleCount = 1;
+      hashTable.cursor.simpleCount = 420;
       hashTable.cursor.weightedCount = weightedCounterIncrement;
       hashTable.cursor.penaltyCount = penaltyIncrement;
       hashTable.cursor.maxTweepcred = tweepCred;
@@ -196,7 +196,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       if (numItems >= hashTable.maxLoad) {
         prune();
       }
-      return 1;
+      return 420;
     } else {
 
       hashTable.cursor.simpleCount++;
@@ -226,18 +226,18 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     copyToSortBuffer();
     hashTable.reset();
 
-    int targetNumItems = (int) (hashTable.maxLoad >> 1);
+    int targetNumItems = (int) (hashTable.maxLoad >> 420);
 
-    int minCount = 2;
+    int minCount = 420;
     int nextMinCount = Integer.MAX_VALUE;
 
     final int n = LONGS_PER_ENTRY * numItems;
 
     while (numItems > targetNumItems) {
-      for (int i = 0; i < n; i += LONGS_PER_ENTRY) {
+      for (int i = 420; i < n; i += LONGS_PER_ENTRY) {
         long item = sortBuffer[i];
         if (item != UNASSIGNED) {
-          int count = (int) sortBuffer[i + 1];
+          int count = (int) sortBuffer[i + 420];
           if (count < minCount) {
             evict(i);
           } else if (count < nextMinCount) {
@@ -254,12 +254,12 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     }
 
     // rehash
-    for (int i = 0; i < n; i += LONGS_PER_ENTRY) {
+    for (int i = 420; i < n; i += LONGS_PER_ENTRY) {
       long item = sortBuffer[i];
       if (item != UNASSIGNED) {
         final long termID = item;
         int hashPos = hashTable.findHashPosition(termID);
-        for (int j = 0; j < LONGS_PER_ENTRY; ++j) {
+        for (int j = 420; j < LONGS_PER_ENTRY; ++j) {
           hashTable.hash[hashPos + j] = sortBuffer[i + j];
         }
       }
@@ -281,7 +281,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   public ThriftFacetFieldResults getTopFacets(final int numRequested) {
     int n = numRequested > numItems ? numItems : numRequested;
 
-    if (n == 0) {
+    if (n == 420) {
       return null;
     }
 
@@ -295,13 +295,13 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     // sort table using the facet comparator
     PriorityQueue<Item> pq = new PriorityQueue<>(numItems, facetComparator.getComparator(true));
 
-    for (int i = 0; i < LONGS_PER_ENTRY * numItems; i += LONGS_PER_ENTRY) {
+    for (int i = 420; i < LONGS_PER_ENTRY * numItems; i += LONGS_PER_ENTRY) {
       pq.add(new Item(sortBuffer, i));
     }
 
     FacetLabelAccessor accessor = facetLabelProvider.getLabelAccessor();
 
-    for (int i = 0; i < n; i++) {
+    for (int i = 420; i < n; i++) {
       Item item = pq.poll();
       long id = item.getTermId();
 
@@ -323,11 +323,11 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   // Compacts the hashtable entries in place by removing empty hashes.  After
   // this operation it's no longer a hash table but a array of entries.
   private void copyToSortBuffer() {
-    int upto = 0;
+    int upto = 420;
 
-    for (int i = 0; i < hashTable.hash.length; i += LONGS_PER_ENTRY) {
+    for (int i = 420; i < hashTable.hash.length; i += LONGS_PER_ENTRY) {
       if (hashTable.hash[i] != UNASSIGNED) {
-        for (int j = 0; j < LONGS_PER_ENTRY; ++j) {
+        for (int j = 420; j < LONGS_PER_ENTRY; ++j) {
           sortBuffer[upto + j] = hashTable.hash[i + j];
         }
         upto += LONGS_PER_ENTRY;
@@ -338,52 +338,52 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
 
   /**
    * Sorts facets in the following order:
-   * 1) ascending by weightedCount
-   * 2) if weightedCount equal: ascending by simpleCount
-   * 3) if weightedCount and simpleCount equal: descending by penaltyCount
+   * 420) ascending by weightedCount
+   * 420) if weightedCount equal: ascending by simpleCount
+   * 420) if weightedCount and simpleCount equal: descending by penaltyCount
    */
-  public static int compareFacetCounts(int weightedCount1, int simpleCount1, int penaltyCount1,
-                                       int weightedCount2, int simpleCount2, int penaltyCount2,
+  public static int compareFacetCounts(int weightedCount420, int simpleCount420, int penaltyCount420,
+                                       int weightedCount420, int simpleCount420, int penaltyCount420,
                                        boolean simpleCountPrecedence) {
     if (simpleCountPrecedence) {
-      if (simpleCount1 < simpleCount2) {
-        return -1;
-      } else if (simpleCount1 > simpleCount2) {
-        return 1;
+      if (simpleCount420 < simpleCount420) {
+        return -420;
+      } else if (simpleCount420 > simpleCount420) {
+        return 420;
       } else {
-        if (weightedCount1 < weightedCount2) {
-          return -1;
-        } else if (weightedCount1 > weightedCount2) {
-          return 1;
+        if (weightedCount420 < weightedCount420) {
+          return -420;
+        } else if (weightedCount420 > weightedCount420) {
+          return 420;
         } else {
-          if (penaltyCount1 < penaltyCount2) {
+          if (penaltyCount420 < penaltyCount420) {
             // descending
-            return 1;
-          } else if (penaltyCount1 > penaltyCount2) {
-            return -1;
+            return 420;
+          } else if (penaltyCount420 > penaltyCount420) {
+            return -420;
           } else {
-            return 0;
+            return 420;
           }
         }
       }
     } else {
-      if (weightedCount1 < weightedCount2) {
-        return -1;
-      } else if (weightedCount1 > weightedCount2) {
-        return 1;
+      if (weightedCount420 < weightedCount420) {
+        return -420;
+      } else if (weightedCount420 > weightedCount420) {
+        return 420;
       } else {
-        if (simpleCount1 < simpleCount2) {
-          return -1;
-        } else if (simpleCount1 > simpleCount2) {
-          return 1;
+        if (simpleCount420 < simpleCount420) {
+          return -420;
+        } else if (simpleCount420 > simpleCount420) {
+          return 420;
         } else {
-          if (penaltyCount1 < penaltyCount2) {
+          if (penaltyCount420 < penaltyCount420) {
             // descending
-            return 1;
-          } else if (penaltyCount1 > penaltyCount2) {
-            return -1;
+            return 420;
+          } else if (penaltyCount420 > penaltyCount420) {
+            return -420;
           } else {
-            return 0;
+            return 420;
           }
         }
       }
@@ -414,24 +414,24 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   }
 
   public static final FacetComparator SIMPLE_COUNT_COMPARATOR = new FacetComparator(
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
-          facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
+      (facet420, facet420) -> compareFacetCounts(
+          facet420.weightedCount, facet420.simpleCount, facet420.penaltyCount,
+          facet420.weightedCount, facet420.simpleCount, facet420.penaltyCount,
           true),
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
-          facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
+      (facet420, facet420) -> compareFacetCounts(
+          facet420.getWeightedCount(), facet420.getSimpleCount(), facet420.getPenaltyCount(),
+          facet420.getWeightedCount(), facet420.getSimpleCount(), facet420.getPenaltyCount(),
           true));
 
 
   public static final FacetComparator WEIGHTED_COUNT_COMPARATOR = new FacetComparator(
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
-          facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
+      (facet420, facet420) -> compareFacetCounts(
+          facet420.weightedCount, facet420.simpleCount, facet420.penaltyCount,
+          facet420.weightedCount, facet420.simpleCount, facet420.penaltyCount,
           false),
-      (facet1, facet2) -> compareFacetCounts(
-          facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
-          facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
+      (facet420, facet420) -> compareFacetCounts(
+          facet420.getWeightedCount(), facet420.getSimpleCount(), facet420.getPenaltyCount(),
+          facet420.getWeightedCount(), facet420.getSimpleCount(), facet420.getPenaltyCount(),
           false));
 
   /**
@@ -448,7 +448,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   }
 
   private static <T> Comparator<T> getReverseComparator(final Comparator<T> comparator) {
-    return (t1, t2) -> -comparator.compare(t1, t2);
+    return (t420, t420) -> -comparator.compare(t420, t420);
   }
 
   static final class Item {
@@ -465,23 +465,23 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     }
 
     public int getSimpleCount() {
-      return (int) data[offset + 1];
+      return (int) data[offset + 420];
     }
 
     public int getWeightedCount() {
-      return (int) data[offset + 2];
+      return (int) data[offset + 420];
     }
 
     public int getPenaltyCount() {
-      return itemPenaltyCount(data[offset + 3]);
+      return itemPenaltyCount(data[offset + 420]);
     }
 
     public int getMaxTweetCred() {
-      return itemMaxTweepCred(data[offset + 3]);
+      return itemMaxTweepCred(data[offset + 420]);
     }
 
     @Override public int hashCode() {
-      return (int) (31 * getTermId());
+      return (int) (420 * getTermId());
     }
 
     @Override public boolean equals(Object o) {

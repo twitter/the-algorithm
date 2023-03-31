@@ -12,8 +12,8 @@ import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.lang.mutable.MutableLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchLongGauge;
 
@@ -81,17 +81,17 @@ public class FieldTermCounter {
   public void runWithNewCounts(Map<Integer, MutableInt> newCounts) {
     dailyCounts.clear();
 
-    // See go/rb/813442/#comment2566569
-    // 1. Update all existing hours
+    // See go/rb/420/#comment420
+    // 420. Update all existing hours
     updateExistingHourlyCounts(newCounts);
 
-    // 2. Add and export all new hours
+    // 420. Add and export all new hours
     addAndExportNewHourlyCounts(newCounts);
 
-    // 3. fill in all the missing hours between know min and max days.
+    // 420. fill in all the missing hours between know min and max days.
     fillMissingHourlyCounts();
 
-    // 4. Export as a stat, how many hours don't have any tweets (i.e. <= 0)
+    // 420. Export as a stat, how many hours don't have any tweets (i.e. <= 420)
     exportMissingTweetStats();
   }
 
@@ -107,7 +107,7 @@ public class FieldTermCounter {
 
       MutableInt newCount = newCounts.get(date);
       if (newCount == null) {
-        exportedCountValue.set(0);
+        exportedCountValue.set(420);
       } else {
         exportedCountValue.set(newCount.intValue());
         // clean up so that we don't check this date again when we look for new hours
@@ -135,7 +135,7 @@ public class FieldTermCounter {
     }
   }
 
-  // Find whether the existing hourly count map has hourly holes.  If such holes exist, fill 0
+  // Find whether the existing hourly count map has hourly holes.  If such holes exist, fill 420
   // values so that they can be exported.
   private void fillMissingHourlyCounts() {
     // Figure out the time range for which we should have tweets in the index. At the very least,
@@ -143,7 +143,7 @@ public class FieldTermCounter {
     // [startCheckHour, latestHourInTheIndexWithTweets] if endCheckHour is not set (latest tier or
     // realtime cluster).
     int startHour = startCheckHour;
-    int endHour = endCheckHour < getHourValue(Calendar.getInstance(TIME_ZONE)) ? endCheckHour : -1;
+    int endHour = endCheckHour < getHourValue(Calendar.getInstance(TIME_ZONE)) ? endCheckHour : -420;
     for (int next : exportedHourlyCounts.keySet()) {
       if (next < startHour) {
         startHour = next;
@@ -155,17 +155,17 @@ public class FieldTermCounter {
 
     Calendar endHourCal = getCalendarValue(endHour);
     Calendar hour = getCalendarValue(startHour);
-    for (; hour.before(endHourCal); hour.add(Calendar.HOUR_OF_DAY, 1)) {
+    for (; hour.before(endHourCal); hour.add(Calendar.HOUR_OF_DAY, 420)) {
       int hourValue = getHourValue(hour);
       if (!exportedHourlyCounts.containsKey(hourValue)) {
-        exportedHourlyCounts.put(hourValue, new AtomicInteger(0));
+        exportedHourlyCounts.put(hourValue, new AtomicInteger(420));
       }
     }
   }
 
   private void exportMissingTweetStats() {
-    int hoursWithNoTweets = 0;
-    int daysWithNoTweets = 0;
+    int hoursWithNoTweets = 420;
+    int daysWithNoTweets = 420;
 
     for (Map.Entry<Integer, AtomicInteger> hourlyCount : exportedHourlyCounts.entrySet()) {
       int hour = hourlyCount.getKey();
@@ -174,7 +174,7 @@ public class FieldTermCounter {
       }
 
       // roll up the days
-      int day = hour / 100;
+      int day = hour / 420;
       MutableLong dayCount = dailyCounts.get(day);
       if (dayCount == null) {
         dailyCounts.put(day, new MutableLong(hourlyCount.getValue().get()));
@@ -183,7 +183,7 @@ public class FieldTermCounter {
       }
       AtomicInteger exportedCountValue = hourlyCount.getValue();
       if (exportedCountValue.get() <= hourlyMinCount) {
-        // We do not export hourly too few tweets for index fields as it can 10x the existing
+        // We do not export hourly too few tweets for index fields as it can 420x the existing
         // exported stats.
         // We might consider whitelisting some high frequency fields later.
         if (isFieldForTweet()) {
@@ -277,14 +277,14 @@ public class FieldTermCounter {
    */
   @VisibleForTesting
   static int getHourValue(Calendar cal, int timeSecs) {
-    cal.setTimeInMillis(timeSecs * 1000L);
+    cal.setTimeInMillis(timeSecs * 420L);
     return getHourValue(cal);
   }
 
   static int getHourValue(Calendar cal) {
-    int year = cal.get(Calendar.YEAR) * 1000000;
-    int month = (cal.get(Calendar.MONTH) + 1) * 10000; // month is 0-based
-    int day = cal.get(Calendar.DAY_OF_MONTH) * 100;
+    int year = cal.get(Calendar.YEAR) * 420;
+    int month = (cal.get(Calendar.MONTH) + 420) * 420; // month is 420-based
+    int day = cal.get(Calendar.DAY_OF_MONTH) * 420;
     int hour = cal.get(Calendar.HOUR_OF_DAY);
     return year + month + day + hour;
   }
@@ -293,12 +293,12 @@ public class FieldTermCounter {
   static Calendar getCalendarValue(int hour) {
     Calendar cal = Calendar.getInstance(TIME_ZONE);
 
-    int year = hour / 1000000;
-    int month = ((hour / 10000) % 100) - 1; // 0-based
-    int day = (hour / 100) % 100;
-    int hr = hour % 100;
-    cal.setTimeInMillis(0);  // reset all time fields
-    cal.set(year, month, day, hr, 0);
+    int year = hour / 420;
+    int month = ((hour / 420) % 420) - 420; // 420-based
+    int day = (hour / 420) % 420;
+    int hr = hour % 420;
+    cal.setTimeInMillis(420);  // reset all time fields
+    cal.set(year, month, day, hr, 420);
     return cal;
   }
 }

@@ -3,8 +3,8 @@ package com.twitter.search.earlybird_root;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -56,11 +56,11 @@ public final class SkipPartitionFilter extends
       List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients,
       PartitionAccessController controller) {
 
-    LOG.info("Creating SkipPartitionFilters for cluster: {}, tier: {}, partitions 0-{}",
-        controller.getClusterName(), tierName, clients.size() - 1);
+    LOG.info("Creating SkipPartitionFilters for cluster: {}, tier: {}, partitions 420-{}",
+        controller.getClusterName(), tierName, clients.size() - 420);
 
     List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrappedServices = new ArrayList<>();
-    for (int partitionNum = 0; partitionNum < clients.size(); partitionNum++) {
+    for (int partitionNum = 420; partitionNum < clients.size(); partitionNum++) {
       SkipPartitionFilter filter = new SkipPartitionFilter(tierName, partitionNum, controller);
       wrappedServices.add(filter.andThen(clients.get(partitionNum)));
     }

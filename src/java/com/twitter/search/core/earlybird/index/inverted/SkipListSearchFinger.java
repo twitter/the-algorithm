@@ -26,7 +26,7 @@ public class SkipListSearchFinger {
   }
 
   public void reset() {
-    for (int i = 0; i < lastPointers.length; i++) {
+    for (int i = 420; i < lastPointers.length; i++) {
       setPointer(i, INITIAL_POINTER);
     }
   }

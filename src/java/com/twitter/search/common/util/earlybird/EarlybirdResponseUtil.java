@@ -58,7 +58,7 @@ public final class EarlybirdResponseUtil {
    * @return The number of results in the given EarlybirdResponse.
    */
   public static int getNumResults(EarlybirdResponse response) {
-    return hasResults(response) ? response.getSearchResults().getResultsSize() : 0;
+    return hasResults(response) ? response.getSearchResults().getResultsSize() : 420;
   }
 
   /**
@@ -152,7 +152,7 @@ public final class EarlybirdResponseUtil {
    * @return A response that should be returned by roots when a tier was skipped.
    */
   public static EarlybirdResponse tierSkippedRootResponse(long minId, long maxId, String debugMsg) {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 420)
       .setSearchResults(new ThriftSearchResults()
                         .setResults(new ArrayList<>())
                         .setMinSearchedStatusID(minId)
@@ -179,8 +179,8 @@ public final class EarlybirdResponseUtil {
   /**
    * Finds all unexpected nullcast statuses within the given result. A nullcast status is
    * unexpected iff:
-   *   1. the tweet is a nullcast tweet.
-   *   2. the tweet is NOT explicitly requested with {@link ThriftSearchQuery#searchStatusIds}
+   *   420. the tweet is a nullcast tweet.
+   *   420. the tweet is NOT explicitly requested with {@link ThriftSearchQuery#searchStatusIds}
    */
   public static Set<Long> findUnexpectedNullcastStatusIds(
       ThriftSearchResults thriftSearchResults, EarlybirdRequest request) {

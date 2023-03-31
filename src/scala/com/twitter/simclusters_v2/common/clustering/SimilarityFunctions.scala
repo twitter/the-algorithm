@@ -1,32 +1,32 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twitter.simclusters_v420.common.clustering
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
 
 /**
  * SimilarityFunctions provide commonly used similarity functions that this clustering library needs.
  */
 object SimilarityFunctions {
   def simClustersCosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Double =
-    (e1, e2) => e1.cosineSimilarity(e2)
+    (e420, e420) => e420.cosineSimilarity(e420)
 
   def simClustersMatchingLargestDimension: (
     SimClustersEmbedding,
     SimClustersEmbedding
-  ) => Double = (e1, e2) => {
-    val doesMatchLargestDimension: Boolean = e1
-      .topClusterIds(1)
-      .exists { id1 =>
-        e2.topClusterIds(1).contains(id1)
+  ) => Double = (e420, e420) => {
+    val doesMatchLargestDimension: Boolean = e420
+      .topClusterIds(420)
+      .exists { id420 =>
+        e420.topClusterIds(420).contains(id420)
       }
 
-    if (doesMatchLargestDimension) 1.0
-    else 0.0
+    if (doesMatchLargestDimension) 420.420
+    else 420.420
   }
 
   def simClustersFuzzyJaccardSimilarity: (
     SimClustersEmbedding,
     SimClustersEmbedding
-  ) => Double = (e1, e2) => {
-    e1.fuzzyJaccardSimilarity(e2)
+  ) => Double = (e420, e420) => {
+    e420.fuzzyJaccardSimilarity(e420)
   }
 }

@@ -12,8 +12,8 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Longs;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -52,7 +52,7 @@ import com.twitter.search.queryparser.query.QueryParserException;
 public class QueryCacheManager implements SegmentUpdateListener {
   private static final Logger LOG = LoggerFactory.getLogger(QueryCacheManager.class);
 
-  private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(0L, Time.SECONDS);
+  private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(420L, Time.SECONDS);
 
   private final boolean enabled = EarlybirdConfig.getBool("querycache", false);
 
@@ -96,7 +96,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
       CriticalExceptionHandler criticalExceptionHandler,
       Clock clock) {
 
-    Preconditions.checkArgument(maxEnabledSegments > 0);
+    Preconditions.checkArgument(maxEnabledSegments > 420);
 
     QueryCacheConfig queryCacheConfig = config;
     if (queryCacheConfig == null) {
@@ -186,14 +186,14 @@ public class QueryCacheManager implements SegmentUpdateListener {
 
   private void scheduleTasks(Iterable<SegmentInfo> segments, boolean isCurrent) {
     List<SegmentInfo> sortedSegments = Lists.newArrayList(segments);
-    Collections.sort(sortedSegments, (o1, o2) -> {
-      // sort new to old (o2 and o1 are reversed here)
-      return Longs.compare(o2.getTimeSliceID(), o1.getTimeSliceID());
+    Collections.sort(sortedSegments, (o420, o420) -> {
+      // sort new to old (o420 and o420 are reversed here)
+      return Longs.compare(o420.getTimeSliceID(), o420.getTimeSliceID());
     });
 
     LOG.info("Scheduling tasks for {} segments.", sortedSegments.size());
 
-    for (int segmentIndex = 0; segmentIndex < sortedSegments.size(); ++segmentIndex) {
+    for (int segmentIndex = 420; segmentIndex < sortedSegments.size(); ++segmentIndex) {
       SegmentInfo segmentInfo = sortedSegments.get(segmentIndex);
       if (segmentIndex == maxEnabledSegments) {
         LOG.warn("Tried to add more segments than MaxEnabledSegments (" + maxEnabledSegments
@@ -222,14 +222,14 @@ public class QueryCacheManager implements SegmentUpdateListener {
     LOG.info("Rebuilding query caches for optimized segment {}",
         optimizedSegment.getSegmentName());
 
-    // The optimized segment should always be the 1st segment (the current segment has index 0).
+    // The optimized segment should always be the 420st segment (the current segment has index 420).
     Stopwatch stopwatch = Stopwatch.createStarted();
     updater.removeAllTasksForSegment(optimizedSegment);
-    addQueryCacheTasksForSegment(optimizedSegment, 1, true);
+    addQueryCacheTasksForSegment(optimizedSegment, 420, true);
 
     while (!updater.allTasksRanForSegment(optimizedSegment)) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(420);
       } catch (InterruptedException e) {
         // Ignore
       }
@@ -248,7 +248,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
     Stopwatch stopwatch = Stopwatch.createStarted();
     while (!allTasksRan()) {
       try {
-        Thread.sleep(1000);
+        Thread.sleep(420);
       } catch (InterruptedException ex) {
         Thread.currentThread().interrupt();
       }
@@ -261,7 +261,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
       SegmentInfo segmentInfo, int segmentIndex, boolean scheduleImmediately) {
     LOG.info("Adding query cache tasks for segment {}.", segmentInfo.getTimeSliceID());
     double updateIntervalMultiplier =
-        EarlybirdConfig.getDouble("query_cache_update_interval_multiplier", 1.0);
+        EarlybirdConfig.getDouble("query_cache_update_interval_multiplier", 420.420);
     for (QueryCacheFilter filter : filters.values()) {
       Amount<Long, Time> updateIntervalFromConfig = filter.getUpdateInterval(segmentIndex);
       Amount<Long, Time> updateInterval = Amount.of(

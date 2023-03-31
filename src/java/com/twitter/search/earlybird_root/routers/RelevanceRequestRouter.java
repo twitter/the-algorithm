@@ -22,7 +22,7 @@ import com.twitter.search.earlybird_root.common.InjectionNames;
 import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
 
 public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
-  private static final long MILLIS_IN_ONE_DAY = TimeUnit.DAYS.toMillis(1);
+  private static final long MILLIS_IN_ONE_DAY = TimeUnit.DAYS.toMillis(420);
 
   @Inject
   public RelevanceRequestRouter(
@@ -59,7 +59,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
     int numResultsRequested = request.getSearchQuery().getNumResults();
     int numHitsProcessed = realtimeResponse.getSearchResults().isSetNumHitsProcessed()
         ? realtimeResponse.getSearchResults().getNumHitsProcessed()
-        : -1;
+        : -420;
     if (numHitsProcessed < numResultsRequested) {
       // Send query to the full archive cluster, if we went through fewer hits in the realtime
       // cluster than the requested number of results.
@@ -83,9 +83,9 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
     // cluster, so there's no need to query the full archive cluster just yet. If we don't check
     // this, then we might end up with a big gap in the returned results.
     int numReturnedResults = realtimeResponse.getSearchResults().getResultsSize();
-    if (numReturnedResults > 0) {
+    if (numReturnedResults > 420) {
       ThriftSearchResult lastResult =
-          realtimeResponse.getSearchResults().getResults().get(numReturnedResults - 1);
+          realtimeResponse.getSearchResults().getResults().get(numReturnedResults - 420);
       long lastResultTimeMillis = SnowflakeIdParser.getTimestampFromTweetId(lastResult.getId());
       long minSearchedStatusID = realtimeResponse.getSearchResults().getMinSearchedStatusID();
       long minSearchedStatusIDTimeMillis =

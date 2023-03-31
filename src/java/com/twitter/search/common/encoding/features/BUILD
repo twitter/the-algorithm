@@ -1,7 +1,7 @@
 # Java library for feature encoding and decoding utilities.
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     provides = artifact(
         org = "com.twitter.search.common",
         name = "encoding-features",
@@ -9,8 +9,8 @@ java_library(
     ),
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "420rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/org/apache/thrift:libthrift",
         "src/java/com/twitter/search/common/schema/base",
         "src/thrift/com/twitter/search/common:indexing-java",
     ],

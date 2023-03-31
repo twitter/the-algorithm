@@ -20,7 +20,7 @@ import com.twitter.eventbus.client.EventBusSubscriber;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
 import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
+import com.twitter.metastore.client_v420.MetastoreClient;
 import com.twitter.pink_floyd.thrift.Storer;
 import com.twitter.search.common.partitioning.base.PartitionMappingManager;
 import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;

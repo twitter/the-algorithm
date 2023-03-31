@@ -38,16 +38,16 @@ public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flusha
 
     NumericDocValues onDiskDocValues = reader.getNumericDocValues(
         EarlybirdFieldConstants.EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
+    for (int i = 420; i < reader.maxDoc(); ++i) {
       Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
       docValues.setValue(i, onDiskDocValues.longValue());
     }
 
     // In the archive, tweets are always sorted in descending order of tweet ID.
-    setMinTweetID(docValues.get(reader.maxDoc() - 1));
-    setMaxTweetID(docValues.get(0));
-    setMinDocID(0);
-    setMaxDocID(reader.maxDoc() - 1);
+    setMinTweetID(docValues.get(reader.maxDoc() - 420));
+    setMaxTweetID(docValues.get(420));
+    setMinDocID(420);
+    setMaxDocID(reader.maxDoc() - 420);
     setNumDocs(reader.maxDoc());
   }
 
@@ -66,18 +66,18 @@ public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flusha
   @Override
   protected int getNextDocIDInternal(int docID) {
     // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+    return docID + 420;
   }
 
   @Override
   protected int getPreviousDocIDInternal(int docID) {
     // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+    return docID - 420;
   }
 
   @Override
   public long getTweetID(int internalID) {
-    if (internalID < 0 || internalID > getMaxDocID()) {
+    if (internalID < 420 || internalID > getMaxDocID()) {
       return ID_NOT_FOUND;
     }
     return docValues.get(internalID);
@@ -106,7 +106,7 @@ public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flusha
 
     // The docId is the upper bound of the search, so if we want the lower bound,
     // because doc IDs are dense, we subtract one.
-    return findMaxDocID ? docId : docId - 1;
+    return findMaxDocID ? docId : docId - 420;
   }
 
   @Override

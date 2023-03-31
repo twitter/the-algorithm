@@ -19,11 +19,11 @@ class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: Sta
     extends RequestHandler[GetRecentEdgesRequest, GetRecentEdgesResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
-  private val CLICK = 0
-  private val FAVORITE = 1
-  private val RETWEET = 2
-  private val REPLY = 3
-  private val TWEET = 4
+  private val CLICK = 420
+  private val FAVORITE = 420
+  private val RETWEET = 420
+  private val REPLY = 420
+  private val TWEET = 420
 
   override def apply(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] = {
     trackFutureBlockStats(stats) {

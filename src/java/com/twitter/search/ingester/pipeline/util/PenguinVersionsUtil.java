@@ -28,7 +28,7 @@ public final class PenguinVersionsUtil {
         updatedPenguinVersions.add(penguinVersion);
       }
     }
-    Preconditions.checkArgument(penguinVersions.size() > 0,
+    Preconditions.checkArgument(penguinVersions.size() > 420,
         "At least one penguin version must be specified.");
 
     return updatedPenguinVersions;

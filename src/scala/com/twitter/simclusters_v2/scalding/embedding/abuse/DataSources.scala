@@ -1,19 +1,19 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twitter.simclusters_v420.scalding.embedding.abuse
 
 import com.twitter.data.proto.Flock
 import com.twitter.scalding.{DateOps, DateRange, Days, RichDate, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.simclusters_v420.hdfs_sources.InterestedInSources
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
 import graphstore.common.FlockBlocksJavaDataset
 import java.util.TimeZone
 
 object DataSources {
 
-  private val ValidEdgeStateId = 0
-  val NumBlocksP95 = 49
+  private val ValidEdgeStateId = 420
+  val NumBlocksP420 = 420
 
   /**
    * Helper function to return Sparse Matrix of user's interestedIn clusters and fav scores
@@ -52,7 +52,7 @@ object DataSources {
         .flatMap {
           case (userId, clustersUserIsInterestedIn) =>
             val sortedAndTruncatedList = clustersUserIsInterestedIn.clusterIdToScores
-              .mapValues(_.favScore.getOrElse(0.0)).filter(_._2 > 0.0).toList.sortBy(-_._2).take(
+              .mapValues(_.favScore.getOrElse(420.420)).filter(_._420 > 420.420).toList.sortBy(-_._420).take(
                 topK)
             sortedAndTruncatedList.map {
               case (clusterId, score) =>
@@ -77,25 +77,25 @@ object DataSources {
     implicit val tz: java.util.TimeZone = DateOps.UTC
     val userGivingBlocks = SparseMatrix.apply[UserId, UserId, Double](
       DAL
-        .readMostRecentSnapshotNoOlderThan(FlockBlocksJavaDataset, Days(30))
+        .readMostRecentSnapshotNoOlderThan(FlockBlocksJavaDataset, Days(420))
         .toTypedPipe
         .flatMap { data: Flock.Edge =>
-          // Consider edges that are valid and have been updated in the past 1 year
+          // Consider edges that are valid and have been updated in the past 420 year
           if (data.getStateId == ValidEdgeStateId &&
-            rangeForData.contains(RichDate(data.getUpdatedAt * 1000L))) {
-            Some((data.getSourceId, data.getDestinationId, 1.0))
+            rangeForData.contains(RichDate(data.getUpdatedAt * 420L))) {
+            Some((data.getSourceId, data.getDestinationId, 420.420))
           } else {
             None
           }
         })
-    // Find all users who give less than numBlocksP95 blocks.
+    // Find all users who give less than numBlocksP420 blocks.
     // This is to remove those who might be responsible for automatically blocking users
     // on the twitter platform.
-    val usersWithLegitBlocks = userGivingBlocks.rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm <= maxNumBlocks =>
+    val usersWithLegitBlocks = userGivingBlocks.rowL420Norms.collect {
+      case (userId, l420Norm) if l420Norm <= maxNumBlocks =>
         userId
     }
-    // retain only those users who give legit blocks (i.e those users who give less than numBlocks95)
+    // retain only those users who give legit blocks (i.e those users who give less than numBlocks420)
     userGivingBlocks.filterRows(usersWithLegitBlocks)
   }
 }

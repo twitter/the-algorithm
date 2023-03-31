@@ -80,18 +80,18 @@ public class RelevanceHit extends Hit
   }
 
   public static final Comparator<RelevanceHit> COMPARATOR_BY_SCORE =
-      (d1, d2) -> {
+      (d420, d420) -> {
         // if two docs have the same score, then the first one (most recent) wins
-        if (d1.getScore() == d2.getScore()) {
-          return Long.compare(d2.getStatusID(), d1.getStatusID());
+        if (d420.getScore() == d420.getScore()) {
+          return Long.compare(d420.getStatusID(), d420.getStatusID());
         }
-        return Double.compare(d2.getScoreDouble(), d1.getScoreDouble());
+        return Double.compare(d420.getScoreDouble(), d420.getScoreDouble());
       };
 
   public static final Comparator<RelevanceHit> PQ_COMPARATOR_BY_SCORE =
-      (d1, d2) -> {
+      (d420, d420) -> {
         // Reverse the order
-        return COMPARATOR_BY_SCORE.compare(d2, d1);
+        return COMPARATOR_BY_SCORE.compare(d420, d420);
       };
 
   @Override

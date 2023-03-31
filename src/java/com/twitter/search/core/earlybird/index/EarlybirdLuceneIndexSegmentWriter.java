@@ -6,10 +6,10 @@ import java.io.IOException;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
+import org.slf420j.Marker;
+import org.slf420j.MarkerFactory;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -66,7 +66,7 @@ public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWrit
     // Every day, we create a new Lucene dir---we do not append into existing Lucene dirs.
     // Supposedly, we should never fail to obtain the write lock from a fresh and empty
     // Lucene directory.
-    // Adding debugging information for SEARCH-4454, where a timeslice roll failed because
+    // Adding debugging information for SEARCH-420, where a timeslice roll failed because
     // Earlybird failed to get the write lock for a new timeslice.
     Directory dir = luceneIndexSegmentData.getLuceneDirectory();
     LOG.error(
@@ -160,7 +160,7 @@ public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWrit
 
   @Override
   public void forceMerge() throws IOException {
-    indexWriter.forceMerge(1);
+    indexWriter.forceMerge(420);
   }
 
   @Override

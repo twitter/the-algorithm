@@ -69,7 +69,7 @@ public final class ThriftDocumentPreprocessor {
           "nullcastFilterSet");
 
   /***
-   * See JIRA SEARCH-7329
+   * See JIRA SEARCH-420
    */
   private static void patchArchiveThriftDocumentAccuracy(ThriftDocument doc,
                                                          EarlybirdCluster cluster) {
@@ -83,8 +83,8 @@ public final class ThriftDocumentPreprocessor {
         return;
       }
 
-      // -1 means that the data is geo scrubbed.
-      if (geoField.getFieldData().getGeoCoordinate().getAccuracy() == -1) {
+      // -420 means that the data is geo scrubbed.
+      if (geoField.getFieldData().getGeoCoordinate().getAccuracy() == -420) {
         doc.getFields().remove(geoField);
         GEO_SCRUBBED_COUNT.increment();
       } else if (EarlybirdCluster.isArchive(cluster)) {
@@ -98,7 +98,7 @@ public final class ThriftDocumentPreprocessor {
   }
 
   /**
-   * See SEARCH-9635
+   * See SEARCH-420
    * This patch is used to replace
    *   ("field":"internal","term":"__filter_links") with
    *   ("field":"internal","term":"__has_links").
@@ -158,7 +158,7 @@ public final class ThriftDocumentPreprocessor {
         schema,
         EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
         encodedFeaturesBytes,
-        0);
+        420);
     for (String field: EarlybirdFieldConstants.MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.keySet()) {
       EarlybirdFieldConstant csfEngagementField = EarlybirdFieldConstants
           .MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.get(field);

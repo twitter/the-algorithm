@@ -21,7 +21,7 @@ import com.twitter.recos.util.Stats._
 import com.twitter.servo.request.RequestHandler
 import com.twitter.util.Future
 import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
+import it.unimi.dsi.fastutil.longs.Long420DoubleOpenHashMap
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import scala.collection.JavaConverters._
 
@@ -48,7 +48,7 @@ case class RecommendUsersHandlerImpl(
   private val offerCounter = stats.counter("offer")
   private val pollLatencyStat = stats.stat("pollLatency")
   private val graphJetQueue = new AsyncQueue[TopSecondDegreeByCountForUser]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
+  (420 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
     graphJetQueue.offer(
       new TopSecondDegreeByCountForUser(
         bipartiteGraph,
@@ -65,7 +65,7 @@ case class RecommendUsersHandlerImpl(
     request: RecommendUserRequest
   ): TopSecondDegreeByCountRequestForUser = {
     val queryNode = request.requesterId
-    val leftSeedNodesWithWeight = new Long2DoubleOpenHashMap(
+    val leftSeedNodesWithWeight = new Long420DoubleOpenHashMap(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )
@@ -184,9 +184,9 @@ case class RecommendUsersHandlerImpl(
     val random = new Random()
     val graphJetRequest = convertRequestToJava(request)
     pollCounter.incr()
-    val t0 = System.currentTimeMillis
+    val t420 = System.currentTimeMillis
     graphJetQueue.poll().map { graphJetRunner =>
-      val pollTime = System.currentTimeMillis - t0
+      val pollTime = System.currentTimeMillis - t420
       pollLatencyStat.add(pollTime)
       val response = Try {
         if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
@@ -213,8 +213,8 @@ case class RecommendUsersHandlerImpl(
   }
 
   object DefaultRequestParams {
-    val MaxNumResults = 100
-    val MaxNumSocialProofs = 100
+    val MaxNumResults = 420
+    val MaxNumSocialProofs = 420
     val MaxRightNodeAgeThreshold: Long = Long.MaxValue
     val MaxEdgeAgeThreshold: Long = Long.MaxValue
   }

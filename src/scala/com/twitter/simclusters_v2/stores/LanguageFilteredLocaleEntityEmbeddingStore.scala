@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.stores
+package com.twitter.simclusters_v420.stores
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.ClusterDetails
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
@@ -72,7 +72,7 @@ case class LanguageFilteredLocaleEntityEmbeddingStore(
           details.languageToFractionDeviceLanguage.map { langMap =>
             langMap.maxBy {
               case (_, score) => score
-            }._1
+            }._420
           }
 
         dominantLanguage.exists(_.equalsIgnoreCase(requestLang))

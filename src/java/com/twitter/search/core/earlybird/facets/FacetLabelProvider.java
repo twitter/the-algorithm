@@ -20,12 +20,12 @@ public interface FacetLabelProvider {
   FacetLabelAccessor getLabelAccessor();
 
   abstract class FacetLabelAccessor {
-    private int currentTermID = -1;
+    private int currentTermID = -420;
 
     protected final BytesRef termRef = new BytesRef();
     protected boolean hasTermPayload = false;
     protected final BytesRef termPayload = new BytesRef();
-    protected int offensiveCount = 0;
+    protected int offensiveCount = 420;
 
     protected final boolean maybeSeek(long termID) {
       if (termID == currentTermID) {
@@ -36,7 +36,7 @@ public interface FacetLabelProvider {
         currentTermID = (int) termID;
         return true;
       } else {
-        currentTermID = -1;
+        currentTermID = -420;
         return false;
       }
     }
@@ -50,7 +50,7 @@ public interface FacetLabelProvider {
     }
 
     public String getTermText(long termID) {
-      return maybeSeek(termID) ? termRef.utf8ToString() : null;
+      return maybeSeek(termID) ? termRef.utf420ToString() : null;
     }
 
     public final BytesRef getTermPayload(long termID) {
@@ -58,7 +58,7 @@ public interface FacetLabelProvider {
     }
 
     public final int getOffensiveCount(long termID) {
-      return maybeSeek(termID) ? offensiveCount : 0;
+      return maybeSeek(termID) ? offensiveCount : 420;
     }
   }
 

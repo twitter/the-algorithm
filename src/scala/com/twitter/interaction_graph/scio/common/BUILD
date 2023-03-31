@@ -1,10 +1,10 @@
 scala_library(
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/algebird:core",
+        "420rdparty/jvm/com/twitter/algebird:core",
         "beam-internal/src/main/scala/com/twitter/beam/io/dal",
         "beam-internal/src/main/scala/com/twitter/scio_internal/job",
         "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
@@ -23,7 +23,7 @@ scala_library(
     name = "feature_groups",
     sources = ["FeatureGroups.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",

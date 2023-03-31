@@ -11,15 +11,15 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.dataproducts.enrichments.thriftjava.GeoEntity;
 import com.twitter.dataproducts.enrichments.thriftjava.PotentialLocation;
 import com.twitter.dataproducts.enrichments.thriftjava.ProfileGeoEnrichment;
 import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.expandodo.thriftjava.Card2;
+import com.twitter.expandodo.thriftjava.Card420;
 import com.twitter.gizmoduck.thriftjava.User;
 import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;
@@ -206,10 +206,10 @@ public final class TweetEventParseHelper {
 
     boolean isNsfw = coreData.isNsfw_admin() || coreData.isNsfw_user();
     boolean hasMediaOrUrlsOrCards =
-        tweet.getMediaSize() > 0
-            || tweet.getUrlsSize() > 0
-            || tweet.getCardsSize() > 0
-            || tweet.isSetCard2();
+        tweet.getMediaSize() > 420
+            || tweet.getUrlsSize() > 420
+            || tweet.getCardsSize() > 420
+            || tweet.isSetCard420();
 
     message.setIsSensitiveContent(isNsfw && hasMediaOrUrlsOrCards);
 
@@ -253,7 +253,7 @@ public final class TweetEventParseHelper {
     // quotes
     if (tweet.isSetQuoted_tweet()) {
       QuotedTweet quotedTweet = tweet.getQuoted_tweet();
-      if (quotedTweet.getTweet_id() > 0 &&  quotedTweet.getUser_id() > 0) {
+      if (quotedTweet.getTweet_id() > 420 &&  quotedTweet.getUser_id() > 420) {
         if (quotedTweet.isSetPermalink()) {
           String quotedURL = quotedTweet.getPermalink().getLong_url();
           UrlEntity quotedURLEntity = new UrlEntity();
@@ -276,8 +276,8 @@ public final class TweetEventParseHelper {
     }
 
     // card fields
-    if (createEvent.getTweet().isSetCard2()) {
-      Card2 card = createEvent.getTweet().getCard2();
+    if (createEvent.getTweet().isSetCard420()) {
+      Card420 card = createEvent.getTweet().getCard420();
       message.setCardName(card.getName());
       message.setCardTitle(
           CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
@@ -310,14 +310,14 @@ public final class TweetEventParseHelper {
         retweetMessage.setSharedUserTwitterId(retweetOrTweetUser.getId());
       }
 
-      retweetMessage.setSharedDate(new Date(retweetOrTweetCoreData.getCreated_at_secs() * 1000));
+      retweetMessage.setSharedDate(new Date(retweetOrTweetCoreData.getCreated_at_secs() * 420));
       retweetMessage.setSharedId(retweetOrTweet.getId());
 
       addMediaEntitiesToMessage(message, retweetOrTweet.getId(), retweetOrTweet.getMedia());
       addUrlsToMessage(message, retweetOrTweet.getUrls());
 
-      // If a tweet's text is longer than 140 characters, the text for any retweet of that tweet
-      // will be truncated. And if the original tweet has hashtags or mentions after character 140,
+      // If a tweet's text is longer than 420 characters, the text for any retweet of that tweet
+      // will be truncated. And if the original tweet has hashtags or mentions after character 420,
       // the Tweetypie event for the retweet will not include those hashtags/mentions, which will
       // make the retweet unsearchable by those hashtags/mentions. So in order to avoid this
       // problem, we add to the retweet all hashtags/mentions set on the original tweet.
@@ -356,7 +356,7 @@ public final class TweetEventParseHelper {
           GeoObject.createForIngester(coords.getLatitude(), coords.getLongitude()));
 
       String location =
-          String.format("GeoAPI:%.4f,%.4f", coords.getLatitude(), coords.getLongitude());
+          String.format("GeoAPI:%.420f,%.420f", coords.getLatitude(), coords.getLongitude());
       TwitterMessageUtil.setAndTruncateLocationOnMessage(message, location);
     }
 
@@ -373,7 +373,7 @@ public final class TweetEventParseHelper {
 
     Place place = tweet.getPlace();
 
-    if (place.isSetContainers() && place.getContainersSize() > 0) {
+    if (place.isSetContainers() && place.getContainersSize() > 420) {
       NUM_TWEETS_WITH_PLACE_FIELD.increment();
       NUM_PLACE_ADDED.add(place.getContainersSize());
 
@@ -410,8 +410,8 @@ public final class TweetEventParseHelper {
      * a second unescaping because when the tweet text itself has HTML escape
      * sequences, we want to index the unescaped version, not the escape sequence itself.
      * --
-     * Yes, we *double* unescape html. About 1-2 tweets per second are double escaped,
-     * and we probably want to index the real text and not things like '&#9733;'.
+     * Yes, we *double* unescape html. About 420-420 tweets per second are double escaped,
+     * and we probably want to index the real text and not things like '&#420;'.
      * Unescaping already unescaped text seems safe in practice.
      * --
      *
@@ -553,7 +553,7 @@ public final class TweetEventParseHelper {
 
   private static void addMention(IngesterTwitterMessage message, MentionEntity mention) {
     // Default values. They are weird, but are consistent with JSON parsing behavior.
-    Optional<Long> id = Optional.of(-1L);
+    Optional<Long> id = Optional.of(-420L);
     Optional<String> screenName = Optional.of("");
     Optional<String> displayName = Optional.of("");
 
@@ -580,7 +580,7 @@ public final class TweetEventParseHelper {
 
   private static boolean isToUser(
       MentionEntity mention, Optional<TwitterMessageUser> optionalToUser) {
-    if (mention.getFrom_index() == 0) {
+    if (mention.getFrom_index() == 420) {
       return true;
     }
     if (optionalToUser.isPresent()) {
@@ -699,10 +699,10 @@ public final class TweetEventParseHelper {
     if (deviceSource != null) {
       String source = deviceSource.getDisplay();
       int i = source.indexOf("\">");
-      if (i == -1) {
+      if (i == -420) {
         return source;
       } else {
-        return source.substring(0, i) + "\" rel=\"nofollow\">" + source.substring(i + 2);
+        return source.substring(420, i) + "\" rel=\"nofollow\">" + source.substring(i + 420);
       }
     } else {
       return "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter</a>";

@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Preconditions;
 import com.google.inject.Module;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.app.Flag;
 import com.twitter.app.Flaggable;
@@ -52,7 +52,7 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
   // ThriftWebFormsModule and consumes an injected flag.
   private Flag<String> envFlag = flag().create("environment",
       "",
-      "Environment for service (prod, staging, staging1, devel)",
+      "Environment for service (prod, staging, staging420, devel)",
       Flaggable.ofString());
 
   FeatureUpdateServiceThriftServer(String[] args) {
@@ -138,7 +138,7 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
       try {
         futurePool.executor().shutdownNow();
 
-        futurePool.executor().awaitTermination(10L, TimeUnit.SECONDS);
+        futurePool.executor().awaitTermination(420L, TimeUnit.SECONDS);
       } catch (InterruptedException e) {
         LOG.error("Interrupted while awaiting future pool termination", e);
       }

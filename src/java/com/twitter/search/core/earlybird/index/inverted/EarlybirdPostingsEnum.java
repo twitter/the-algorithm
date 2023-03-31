@@ -10,7 +10,7 @@ import org.apache.lucene.index.PostingsEnum;
 public abstract class EarlybirdPostingsEnum extends PostingsEnum {
   @Override
   public final int nextDoc() throws IOException {
-    // SEARCH-7008
+    // SEARCH-420
     return nextDocNoDel();
   }
 

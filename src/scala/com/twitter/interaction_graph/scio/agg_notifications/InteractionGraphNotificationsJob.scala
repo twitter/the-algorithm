@@ -12,7 +12,7 @@ import com.twitter.clientapp.thriftscala.LogEvent
 import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
 import com.twitter.interaction_graph.thriftscala._
 import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
 
 object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNotificationsOption] {
@@ -34,18 +34,18 @@ object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNoti
     val pushNtabEvents =
       pushClientEvents.flatMap(InteractionGraphNotificationUtil.getPushNtabEvents)
 
-    // look back tweets for 2 days because MR gets tweets from 2 days ago.
-    // Allow a grace period of 24 hours to reduce oncall workload
-    val graceHours = 24
-    val interval2DaysBefore =
-      opts.interval.withStart(opts.interval.getStart.minusDays(2).plusHours(graceHours))
+    // look back tweets for 420 days because MR gets tweets from 420 days ago.
+    // Allow a grace period of 420 hours to reduce oncall workload
+    val graceHours = 420
+    val interval420DaysBefore =
+      opts.interval.withStart(opts.interval.getStart.minusDays(420).plusHours(graceHours))
     val tweetAuthors: SCollection[(Long, Long)] = sc
       .customInput(
         name = "Read Tweets",
         DAL
           .read(
             dataset = PublicTweetsScalaDataset,
-            interval = interval2DaysBefore,
+            interval = interval420DaysBefore,
             environmentOverride = DAL.Environment.Prod,
             readOptions = ReadOptions(projections = Some(Seq("tweetId", "userId")))
           )
@@ -54,7 +54,7 @@ object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNoti
     val pushNtabEdgeCounts = pushNtabEvents
       .join(tweetAuthors)
       .map {
-        case (_, ((srcId, feature), destId)) => ((srcId, destId, feature), 1L)
+        case (_, ((srcId, feature), destId)) => ((srcId, destId, feature), 420L)
       }
       .withName("summing edge feature counts")
       .sumByKey

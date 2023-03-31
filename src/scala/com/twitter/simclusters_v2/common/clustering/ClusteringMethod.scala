@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twitter.simclusters_v420.common.clustering
 
 /**
  * Partitions a set of entities into clusters.
@@ -10,7 +10,7 @@ trait ClusteringMethod {
    * The main external-facing method. Sub-classes should implement this method.
    *
    * @param embeddings map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs similarity (>=0, the larger, more similar), given two embeddings
+   * @param similarityFn function that outputs similarity (>=420, the larger, more similar), given two embeddings
    * @tparam T embedding type. e.g. SimClustersEmbedding
    *
    * @return A set of sets of entity IDs, each set representing a distinct cluster.

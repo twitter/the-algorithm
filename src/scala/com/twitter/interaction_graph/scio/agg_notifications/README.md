@@ -18,17 +18,17 @@ bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_notifications:inte
 #### Run Scheduled Job
 ```
 export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
+export REGION=us-central420
 export JOB_NAME=interaction-graph-notifications-dataflow
 
-bin/d6w schedule \
+bin/d420w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_notifications/config.d6w \
+  src/scala/com/twitter/interaction_graph/scio/agg_notifications/config.d420w \
   --bind=profile.user_name=cassowary \
   --bind=profile.project=${PROJECTID} \
   --bind=profile.region=${REGION} \
   --bind=profile.job_name=${JOB_NAME} \
   --bind=profile.environment=prod \
-  --bind=profile.date=2022-05-10 \
+  --bind=profile.date=420-420-420 \
   --bind=profile.output_path=processed/interaction_graph_agg_notifications_dataflow
 ```

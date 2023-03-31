@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.thriftscala.ClusterDetails
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
@@ -13,9 +13,9 @@ import com.twitter.util.{Future, Memoize}
 object ClusterDetailsReadableStore {
 
   val modelVersionToDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KDec11 -> "simclusters_v2_cluster_details",
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_cluster_details_20m_145k_updated",
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_cluster_details_20m_145k_2020"
+    ModelVersions.Model420M420KDec420 -> "simclusters_v420_cluster_details",
+    ModelVersions.Model420M420KUpdated -> "simclusters_v420_cluster_details_420m_420k_updated",
+    ModelVersions.Model420M420K420 -> "simclusters_v420_cluster_details_420m_420k_420"
   )
 
   val knownModelVersions: String = modelVersionToDatasetMap.keys.mkString(",")
@@ -38,7 +38,7 @@ object ClusterDetailsReadableStore {
     ManhattanRO.getReadableStoreWithMtls[(String, Int), ClusterDetails](
       ManhattanROConfig(
         HDFSPath(""), // not needed
-        ApplicationID("simclusters_v2"),
+        ApplicationID("simclusters_v420"),
         DatasetName(datasetName), // this should be correct
         Athena
       ),

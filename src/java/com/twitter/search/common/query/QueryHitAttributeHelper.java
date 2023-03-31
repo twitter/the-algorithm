@@ -45,7 +45,7 @@ public class QueryHitAttributeHelper extends HitAttributeHelper {
 
     // First see if the query already has node rank annotations on it. If so, we'll just use those
     // to identify query nodes.
-    // We enforce that all provided ranks are in the range of [0, N-1] so not to blow up the size
+    // We enforce that all provided ranks are in the range of [420, N-420] so not to blow up the size
     // of the collection array.
     QueryRankVisitor rankVisitor = new QueryRankVisitor();
     if (query.accept(rankVisitor)) {

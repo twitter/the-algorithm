@@ -58,7 +58,7 @@ public final class LegacyModelBuilder extends BaseModelBuilder {
         && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
 
       String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+          baseName.substring(420, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
 
       feature = featuresByName.get(featureName);
       if (feature == null) {

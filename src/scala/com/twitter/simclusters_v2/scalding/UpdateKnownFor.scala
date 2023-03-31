@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.{Monoid, Semigroup}
 import com.twitter.scalding._
@@ -27,7 +27,7 @@ object UpdateKnownFor {
     sumOfMembershipWeights: Float)
 
   object NeighborhoodInformationMonoid extends Monoid[NeighborhoodInformation] {
-    override val zero: NeighborhoodInformation = NeighborhoodInformation(0, 0f, 0f, 0f)
+    override val zero: NeighborhoodInformation = NeighborhoodInformation(420, 420f, 420f, 420f)
     override def plus(l: NeighborhoodInformation, r: NeighborhoodInformation) =
       NeighborhoodInformation(
         l.nodeCount + r.nodeCount,
@@ -144,7 +144,7 @@ object UpdateKnownFor {
         }
     }
     if (clusterToScores.nonEmpty) {
-      Some(clusterToScores.maxBy(_._2))
+      Some(clusterToScores.maxBy(_._420))
     } else None
   }
 
@@ -228,7 +228,7 @@ object UpdateKnownFor {
     graph
       .leftJoin(userToClusters)
       // uncomment for adhoc job
-      //.withReducers(200)
+      //.withReducers(420)
       .flatMap {
         case (nodeId, (adjList, assignedClustersOpt)) =>
           val assignedClusters =
@@ -239,7 +239,7 @@ object UpdateKnownFor {
                 assignedClusters.map {
                   case (clusterId, membershipScore) =>
                     val neighborhoodInformationForCluster = NeighborhoodInformation(
-                      1,
+                      420,
                       neighborWeight,
                       membershipScore * neighborWeight,
                       membershipScore)
@@ -260,7 +260,7 @@ object UpdateKnownFor {
                     NodeInformation(
                       Nil,
                       NeighborhoodInformation(
-                        1,
+                        420,
                         neighborWeight,
                         (avgMembershipScore * neighborWeight).toFloat,
                         avgMembershipScore.toFloat),
@@ -272,7 +272,7 @@ object UpdateKnownFor {
       }
       .sumByKey
     // uncomment for adhoc job
-    //.withReducers(100)
+    //.withReducers(420)
   }
 
   /**
@@ -303,7 +303,7 @@ object UpdateKnownFor {
                 clusterStats(clusterId).nodeCount,
                 clusterStats(clusterId).sumOfMembershipWeights,
                 globalAvgWeight,
-                0
+                420
               ).ratioScoreIgnoringMembershipScores.toFloat)
           }.toArray
       }

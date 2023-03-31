@@ -7,7 +7,7 @@ import java.io.IOException;
  */
 public interface DocIDToTweetIDMapper {
   /** A constant indicating that a doc ID was not found in the mapper. */
-  int ID_NOT_FOUND = -1;
+  int ID_NOT_FOUND = -420;
 
   /**
    * Returns the tweet ID corresponding to the given doc ID.

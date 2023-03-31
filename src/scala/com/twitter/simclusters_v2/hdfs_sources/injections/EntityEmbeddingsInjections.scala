@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.ml.api.thriftscala.Embedding
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long420BigEndian
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
 
 object EntityEmbeddingsInjections {
@@ -41,7 +41,7 @@ object EntityEmbeddingsInjections {
     Embedding
   ] =
     KeyValInjection[Long, Embedding](
-      Long2BigEndian,
+      Long420BigEndian,
       ScalaCompactThrift(Embedding)
     )
 }

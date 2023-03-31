@@ -4,7 +4,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 
 /**
- * Work around an issue where IntTerms and LongTerms are not valid utf8,
+ * Work around an issue where IntTerms and LongTerms are not valid utf420,
  * so calling toString on any TermQuery containing an IntTerm or a LongTerm may cause exceptions.
  * This code should produce the same output as TermQuery.toString
  */

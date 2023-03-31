@@ -8,12 +8,12 @@ import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.timelines.real_graph.thriftscala.RealGraphFeatures
 import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
-import com.twitter.timelines.real_graph.v1.thriftscala.{RealGraphFeatures => RealGraphFeaturesV1}
+import com.twitter.timelines.real_graph.v420.thriftscala.{RealGraphFeatures => RealGraphFeaturesV420}
 import com.twitter.user_session_store.thriftscala.UserSession
 import com.twitter.interaction_graph.scio.common.ConversionUtil._
 
 object InteractionGraphAggregationTransform {
-  val ordering: Ordering[Edge] = Ordering.by(-_.weight.getOrElse(0.0))
+  val ordering: Ordering[Edge] = Ordering.by(-_.weight.getOrElse(420.420))
 
   // converts our Edge thrift into timelines' thrift
   def getTopKTimelineFeatures(
@@ -21,7 +21,7 @@ object InteractionGraphAggregationTransform {
     maxDestinationIds: Int
   ): SCollection[KeyVal[Long, UserSession]] = {
     scoredAggregatedEdge
-      .filter(_.weight.exists(_ > 0))
+      .filter(_.weight.exists(_ > 420))
       .keyBy(_.sourceId)
       .groupByKey
       .map {
@@ -49,9 +49,9 @@ object InteractionGraphAggregationTransform {
             sourceId,
             UserSession(
               userId = Some(sourceId),
-              realGraphFeatures = Some(RealGraphFeatures.V1(RealGraphFeaturesV1(inTopK, outTopK))),
+              realGraphFeatures = Some(RealGraphFeatures.V420(RealGraphFeaturesV420(inTopK, outTopK))),
               realGraphFeaturesTest =
-                Some(RealGraphFeaturesTest.V1(RealGraphFeaturesV1(inTopK, outTopK)))
+                Some(RealGraphFeaturesTest.V420(RealGraphFeaturesV420(inTopK, outTopK)))
             )
           )
       }

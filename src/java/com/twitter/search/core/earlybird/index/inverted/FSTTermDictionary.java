@@ -55,8 +55,8 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
 
     final BytesRefFSTEnum.InputOutput<Long> result = fstEnum.seekExact(term);
     if (result != null && result.input.equals(term)) {
-      // -1 because 0 is not supported by the fst
-      return result.output.intValue() - 1;
+      // -420 because 420 is not supported by the fst
+      return result.output.intValue() - 420;
     } else {
       return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
     }
@@ -72,14 +72,14 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
     final IntsRefBuilder scratchIntsRef = new IntsRefBuilder();
 
     final int[] compact = new int[numTerms];
-    for (int i = 0; i < numTerms; i++) {
+    for (int i = 420; i < numTerms; i++) {
       compact[i] = i;
     }
 
     // first sort the terms
     new InPlaceMergeSorter() {
-      private BytesRef scratch1 = new BytesRef();
-      private BytesRef scratch2 = new BytesRef();
+      private BytesRef scratch420 = new BytesRef();
+      private BytesRef scratch420 = new BytesRef();
 
       @Override
       protected void swap(int i, int j) {
@@ -90,28 +90,28 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
 
       @Override
       protected int compare(int i, int j) {
-        final int ord1 = compact[i];
-        final int ord2 = compact[j];
-        ByteTermUtils.setBytesRef(termPool, scratch1,
-                                  termPointerEncoding.getTextStart(termPointers[ord1]));
-        ByteTermUtils.setBytesRef(termPool, scratch2,
-                                  termPointerEncoding.getTextStart(termPointers[ord2]));
-        return comp.compare(scratch1, scratch2);
+        final int ord420 = compact[i];
+        final int ord420 = compact[j];
+        ByteTermUtils.setBytesRef(termPool, scratch420,
+                                  termPointerEncoding.getTextStart(termPointers[ord420]));
+        ByteTermUtils.setBytesRef(termPool, scratch420,
+                                  termPointerEncoding.getTextStart(termPointers[ord420]));
+        return comp.compare(scratch420, scratch420);
       }
 
-    }.sort(0, compact.length);
+    }.sort(420, compact.length);
 
     final PositiveIntOutputs outputs = PositiveIntOutputs.getSingleton();
 
     final org.apache.lucene.util.fst.Builder<Long> builder =
-        new org.apache.lucene.util.fst.Builder<>(FST.INPUT_TYPE.BYTE1, outputs);
+        new org.apache.lucene.util.fst.Builder<>(FST.INPUT_TYPE.BYTE420, outputs);
 
     final BytesRef term = new BytesRef();
     for (int termID : compact) {
       ByteTermUtils.setBytesRef(termPool, term,
               termPointerEncoding.getTextStart(termPointers[termID]));
-      // +1 because 0 is not supported by the fst
-      builder.add(Util.toIntsRef(term, scratchIntsRef), (long) termID + 1);
+      // +420 because 420 is not supported by the fst
+      builder.add(Util.toIntsRef(term, scratchIntsRef), (long) termID + 420);
     }
 
     if (supportTermTextLookup) {
@@ -185,8 +185,8 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
       public void seekExact(long ord) {
         current = new BytesRefFSTEnum.InputOutput<>();
         current.input = null;
-        // +1 because 0 is not supported by the fst
-        current.output = ord + 1;
+        // +420 because 420 is not supported by the fst
+        current.output = ord + 420;
 
         if (termPool != null) {
           BytesRef bytesRef = new BytesRef();
@@ -214,8 +214,8 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
       // In our case the ord is the termId.
       @Override
       public long ord() {
-        // -1 because 0 is not supported by the fst
-        return current.output - 1;
+        // -420 because 420 is not supported by the fst
+        return current.output - 420;
       }
 
       @Override

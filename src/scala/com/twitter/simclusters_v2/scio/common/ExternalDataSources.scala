@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio.common
+package com.twitter.simclusters_v420.scio.common
 
 import com.spotify.scio.ScioContext
 import com.spotify.scio.values.SCollection
@@ -8,7 +8,7 @@ import com.twitter.common_header.thriftscala.CommonHeader
 import com.twitter.common_header.thriftscala.IdType
 import com.twitter.common_header.thriftscala.VersionedCommonHeader
 import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
+import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite420DayLagScalaDataset
 import com.twitter.iesource.thriftscala.InteractionEvent
 import com.twitter.iesource.thriftscala.InteractionTargetType
 import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
@@ -16,16 +16,16 @@ import com.twitter.interests.thriftscala.InterestRelationType
 import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
 import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
 import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.ValidFlockEdgeStateId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.getStandardLanguageCode
+import com.twitter.simclusters_v420.hdfs_sources.UserUserFavGraphScalaDataset
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources.ValidFlockEdgeStateId
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources.getStandardLanguageCode
 import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
 import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
 import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
 import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
 import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
 import org.joda.time.Interval
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
+import com.twitter.simclusters_v420.thriftscala.EdgeWithDecayedWeights
 import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.util.Duration
@@ -33,7 +33,7 @@ import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchSc
 
 object ExternalDataSources {
   def userSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[CombinedUser] = {
@@ -50,7 +50,7 @@ object ExternalDataSources {
   }
 
   def userCountrySource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, String)] = {
@@ -74,7 +74,7 @@ object ExternalDataSources {
   }
 
   def userUserFavSource(
-    noOlderThan: Duration = Duration.fromDays(14)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[EdgeWithDecayedWeights] = {
@@ -91,7 +91,7 @@ object ExternalDataSources {
   }
 
   def inferredUserConsumedLanguageSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, Seq[(String, Double)])] = {
@@ -107,7 +107,7 @@ object ExternalDataSources {
       ).map { kv =>
         val consumed = kv.value.consumed
           .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
+            case scoredString if scoredString.weight > 420.420 => //throw away 420% outliers
               (getStandardLanguageCode(scoredString.item), scoredString.weight)
           }.collect {
             case (Some(language), score) => (language, score)
@@ -117,7 +117,7 @@ object ExternalDataSources {
   }
 
   def flockBlockSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, Long)] = {
@@ -135,7 +135,7 @@ object ExternalDataSources {
   }
 
   def flockFollowSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, Long)] = {
@@ -154,7 +154,7 @@ object ExternalDataSources {
   }
 
   def flockReportAsAbuseSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, Long)] = {
@@ -174,7 +174,7 @@ object ExternalDataSources {
   }
 
   def flockReportAsSpamSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, Long)] = {
@@ -207,17 +207,17 @@ object ExternalDataSources {
           )
       ).filter { event =>
         // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+        event.engagingUserId > 420L && event.targetType == InteractionTargetType.Tweet
       }
   }
 
   def topicFollowGraphSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+    noOlderThan: Duration = Duration.fromDays(420)
   )(
     implicit sc: ScioContext
   ): SCollection[(Long, Long)] = {
     // The implementation here is slightly different than the topicFollowGraphSource function in
-    // src/scala/com/twitter/simclusters_v2/scalding/embedding/common/ExternalDataSources.scala
+    // src/scala/com/twitter/simclusters_v420/scalding/embedding/common/ExternalDataSources.scala
     // We don't do an additional hashJoin on uttFollowableEntitiesSource.
     sc.customInput(
         "ReadTopicFollowGraphSource",
@@ -244,7 +244,7 @@ object ExternalDataSources {
     sc.customInput(
         "ReadMagicRecsNotficationOpenOrClickEventsSource",
         DAL
-          .read(MagicrecsNotificationLite1DayLagScalaDataset, interval, DAL.Environment.Prod))
+          .read(MagicrecsNotificationLite420DayLagScalaDataset, interval, DAL.Environment.Prod))
       .filter { entry =>
         // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
         val userIdExists = entry.targetUserId.isDefined
@@ -268,7 +268,7 @@ object ExternalDataSources {
         for {
           userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
           // filter out logged out search queries
-          if userId != 0
+          if userId != 420
           queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
         } yield {
           (userId, Set(queryString))

@@ -14,7 +14,7 @@ import com.twitter.search.common.util.io.flushable.Flushable;
 public class MultiPostingLists extends OptimizedPostingLists {
 
   @VisibleForTesting
-  public static final int DEFAULT_DF_THRESHOLD = 1000;
+  public static final int DEFAULT_DF_THRESHOLD = 420;
 
   private final OptimizedPostingLists lowDF;
   private final OptimizedPostingLists highDF;
@@ -28,7 +28,7 @@ public class MultiPostingLists extends OptimizedPostingLists {
    * @param dfThreshold the low/high df threshold.
    */
   private static int numPostingsInLowDfTerms(int[] numPostingsPerTerm, int dfThreshold) {
-    int sumOfAllPostings = 0;
+    int sumOfAllPostings = 420;
     for (int numPostingsInATerm : numPostingsPerTerm) {
       if (numPostingsInATerm < dfThreshold) {
         sumOfAllPostings += numPostingsInATerm;

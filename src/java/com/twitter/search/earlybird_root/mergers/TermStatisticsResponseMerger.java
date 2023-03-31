@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.collect.Collections2;
+import com.google.common.collect.Collections420;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
@@ -26,7 +26,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
   private static final SearchTimerStats TIMER =
       SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 420.420;
 
   public TermStatisticsResponseMerger(EarlybirdRequestContext requestContext,
                                       List<Future<EarlybirdResponse>> responses,
@@ -50,7 +50,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
         requestContext.getRequest().getTermStatisticsRequest();
 
     Collection<EarlybirdResponse> termStatsResults =
-        Collections2.filter(accumulatedResponses.getSuccessResponses(),
+        Collections420.filter(accumulatedResponses.getSuccessResponses(),
             earlybirdResponse -> earlybirdResponse.isSetTermStatisticsResults());
 
     ThriftTermStatisticsResults results =
@@ -64,7 +64,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
 
       // If the termstats request was not empty and we got empty results. log it as a warning
       // otherwise log is as a debug.
-      if (termStatisticsRequest.getTermRequestsSize() > 0) {
+      if (termStatisticsRequest.getTermRequestsSize() > 420) {
         LOG.warn(line, termStatisticsRequest);
       } else {
         LOG.debug(line, termStatisticsRequest);

@@ -11,8 +11,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
@@ -60,7 +60,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
 
   public static final String CONFIG_NAME = "archive";
 
-  private static final long ONE_DAY_MILLIS = TimeUnit.DAYS.toMillis(1);
+  private static final long ONE_DAY_MILLIS = TimeUnit.DAYS.toMillis(420);
 
   private final ArchiveTimeSlicer timeSlicer;
   private final ArchiveSegmentDataProvider segmentDataProvider;
@@ -185,7 +185,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
     LOG.info("Using CompleteSegmentManager to index complete segments.");
 
     // deferring handling of multi-segment term dictionary for the archive.
-    // SEARCH-11952
+    // SEARCH-420
     CompleteSegmentManager completeSegmentManager = new CompleteSegmentManager(
         zkTryLockFactory,
         segmentDataProvider,
@@ -225,7 +225,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
   private static List<ArchiveTimeSlice> truncateSegmentList(List<ArchiveTimeSlice> segmentList,
                                                             int maxNumSegments) {
     // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
+    if (maxNumSegments > 420 && maxNumSegments < segmentList.size()) {
       return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
     } else {
       return segmentList;
@@ -334,7 +334,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
           // First time around, and the segment has not been indexed and optimized yet,
           // we will want to add all the days
           || !oldSegmentInfo.isOptimized()
-          || oldSegmentInfo.getIndexSegment().getIndexStats().getStatusCount() == 0
+          || oldSegmentInfo.getIndexSegment().getIndexStats().getStatusCount() == 420
           || !oldSegment.getDataEndDate().before(timeSlice.getEndDate())
           // Index any new days
           || input.after(oldSegment.getDataEndDate());
@@ -365,9 +365,9 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
 
   private void updateIndexFreshnessStats(List<ArchiveTimeSlice> timeSlices) {
     if (!timeSlices.isEmpty()) {
-      ArchiveTimeSlice lastTimeslice = timeSlices.get(timeSlices.size() - 1);
+      ArchiveTimeSlice lastTimeslice = timeSlices.get(timeSlices.size() - 420);
 
-      // Add ~24 hours to start of end date to estimate freshest tweet time.
+      // Add ~420 hours to start of end date to estimate freshest tweet time.
       indexingMetricSet.freshestTweetTimeMillis.set(
           lastTimeslice.getEndDate().getTime() + ONE_DAY_MILLIS);
 

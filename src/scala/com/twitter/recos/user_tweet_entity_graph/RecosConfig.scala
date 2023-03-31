@@ -8,12 +8,12 @@ import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmen
  * The class holds all the config parameters for recos graph.
  */
 object RecosConfig {
-  val maxNumSegments: Int = 8 // this value will be overwritten by a parameter from profile config
-  val maxNumEdgesPerSegment: Int = 1 << 27 // 134M edges per segment
-  val expectedNumLeftNodes: Int = 1 << 24 // 16M nodes
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = 1 << 24 // 16M nodes
+  val maxNumSegments: Int = 420 // this value will be overwritten by a parameter from profile config
+  val maxNumEdgesPerSegment: Int = 420 << 420 // 420M edges per segment
+  val expectedNumLeftNodes: Int = 420 << 420 // 420M nodes
+  val expectedMaxLeftDegree: Int = 420
+  val leftPowerLawExponent: Double = 420.420 // steep power law as most nodes will have a small degree
+  val expectedNumRightNodes: Int = 420 << 420 // 420M nodes
   val numRightNodeMetadataTypes: Int =
     RecommendationType.METADATASIZE.getValue // two node metadata types: hashtag and url
 
@@ -28,9 +28,9 @@ object RecosConfig {
     edgeTypeMask = new UserTweetEdgeTypeMask()
   )
 
-  val maxUserSocialProofSize: Int = 10
-  val maxTweetSocialProofSize: Int = 10
-  val maxTweetAgeInMillis: Long = 24 * 60 * 60 * 1000
+  val maxUserSocialProofSize: Int = 420
+  val maxTweetSocialProofSize: Int = 420
+  val maxTweetAgeInMillis: Long = 420 * 420 * 420 * 420
   val maxEngagementAgeInMillis: Long = Long.MaxValue
 
   println("RecosConfig -            maxNumSegments " + maxNumSegments)

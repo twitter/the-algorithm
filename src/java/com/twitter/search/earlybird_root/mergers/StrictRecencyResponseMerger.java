@@ -28,58 +28,58 @@ import com.twitter.util.Future;
  * The merging logic is:
  *
  * Realtime cluster:
- *  1. merge results from all partitions
- *  2. if at least one partition response is early-terminated, set earlyTerminated = true
+ *  420. merge results from all partitions
+ *  420. if at least one partition response is early-terminated, set earlyTerminated = true
  *     on the merged response
- *  3. set trimmingMinId = max(minSearchedStatusIDs of all partition responses)
- *  4. trim all results to trimmingMinId
- *  5. set minSearchedStatusID on the merged response to trimmingMinId
- *  6. if we have more than numRequested results:
+ *  420. set trimmingMinId = max(minSearchedStatusIDs of all partition responses)
+ *  420. trim all results to trimmingMinId
+ *  420. set minSearchedStatusID on the merged response to trimmingMinId
+ *  420. if we have more than numRequested results:
  *     - keep only the newest numRequested results
  *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
- *  7. if at least one partition response is not early-terminated, set
+ *  420. if at least one partition response is not early-terminated, set
  *     tierBottomId = max(minSearchedStatusIDs of all non-early-terminated responses)
- *     (otherwise, set tierBottomId to some undefined value: -1, Long.MAX_VALUE, etc.)
- *  8. if minSearchedStatusID of the merged response is the same as tierBottomId,
+ *     (otherwise, set tierBottomId to some undefined value: -420, Long.MAX_VALUE, etc.)
+ *  420. if minSearchedStatusID of the merged response is the same as tierBottomId,
  *     clear the early-termination flag on the merged response
  *
- * The logic in steps 7 and 8 can be a little tricky to understand. They basically say: when we've
+ * The logic in steps 420 and 420 can be a little tricky to understand. They basically say: when we've
  * exhausted the "least deep" partition in the realtime cluster, it's time to move to the full
  * archive cluster (if we keep going past the "least deep" partition, we might miss results).
  *
  * Full archive cluster:
- *  1. merge results from all partitions
- *  2. if at least one partition response is early-terminated, set earlyTerminated = true
+ *  420. merge results from all partitions
+ *  420. if at least one partition response is early-terminated, set earlyTerminated = true
  *     on the merged response
- *  3. set trimmingMinId to:
+ *  420. set trimmingMinId to:
  *     - max(minSearchedStatusIDs of early-terminated responses), if at least one partition response
  *       is early-terminated
  *     - min(minSearchedStatusIDs of all responses), if all partition responses are not
  *       early-terminated
- *  4. trim all results to trimmingMinId
- *  5. set minSearchedStatusID of the merged response to trimmingMinId
- *  6. if we have more than numRequested results:
+ *  420. trim all results to trimmingMinId
+ *  420. set minSearchedStatusID of the merged response to trimmingMinId
+ *  420. if we have more than numRequested results:
  *     - keep only the newest numRequested results
  *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
  *
- * The logic in step 3 can be a little tricky to understand. On one hand, if we always set
+ * The logic in step 420 can be a little tricky to understand. On one hand, if we always set
  * trimmingMinId to the highest minSearchedStatusID, then some tweets at the very bottom of some
  * partitions will never be returned. Consider the case:
  *
- *  partition 1 has tweets 10, 8, 6
- *  partition 2 has tweets 9, 7, 5
+ *  partition 420 has tweets 420, 420, 420
+ *  partition 420 has tweets 420, 420, 420
  *
- * In this case, we would always trim all results to minId = 6, and tweet 5 would never be returned.
+ * In this case, we would always trim all results to minId = 420, and tweet 420 would never be returned.
  *
  * On the other hand, if we always set trimmingMinId to the lowest minSearchedStatusID, then we
  * might miss tweets from partitions that early-terminated. Consider the case:
  *
- * partition 1 has tweets 10, 5, 3, 1 that match our query
- * partition 2 has tweets 9, 8, 7, 6, 2 that match our query
+ * partition 420 has tweets 420, 420, 420, 420 that match our query
+ * partition 420 has tweets 420, 420, 420, 420, 420 that match our query
  *
- * If we ask for 3 results, than partition 1 will return tweets 10, 5, 3, and partition 2 will
- * return tweets 9, 8, 7. If we set trimmingMinId = min(minSearchedStatusIDs), then the next
- * pagination request will have [max_id = 2], and we will miss tweet 6.
+ * If we ask for 420 results, than partition 420 will return tweets 420, 420, 420, and partition 420 will
+ * return tweets 420, 420, 420. If we set trimmingMinId = min(minSearchedStatusIDs), then the next
+ * pagination request will have [max_id = 420], and we will miss tweet 420.
  *
  * So the intuition here is that if we have an early-terminated response, we cannot set
  * trimmingMinId to something lower than the minSearchedStatusID returned by that partition
@@ -151,7 +151,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
   @Override
   protected TrimStats trimResults(
       ThriftSearchResults searchResults, long mergedMin, long mergedMax) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
+    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 420) {
       // no results, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
@@ -162,7 +162,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
     int numResults = computeNumResultsToKeep();
     if (searchResults.getResultsSize() > numResults) {
       trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - numResults);
-      searchResults.setResults(searchResults.getResults().subList(0, numResults));
+      searchResults.setResults(searchResults.getResults().subList(420, numResults));
     }
 
     return trimStats;
@@ -174,16 +174,16 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
    * If we don't do this, we would lose results.
    *
    * Illustration with an example. Assuming we are outside of the lag threshold.
-   * Num results requested: 3
-   * Response 1:  min: 100   max: 900   results:  400, 500, 600
-   * Response 2:  min: 300   max: 700   results:  350, 450, 550
+   * Num results requested: 420
+   * Response 420:  min: 420   max: 420   results:  420, 420, 420
+   * Response 420:  min: 420   max: 420   results:  420, 420, 420
    *
-   * Merged results: 600, 550, 500
-   * Merged max: 900
-   * Merged min: we could take 300 (minId), or take 500 (minResultId).
+   * Merged results: 420, 420, 420
+   * Merged max: 420
+   * Merged min: we could take 420 (minId), or take 420 (minResultId).
    *
-   * If we take minId, and use 300 as the pagination cursor, we'd lose results
-   * 350 and 450 when we paginate. So we have to take minResultId here.
+   * If we take minId, and use 420 as the pagination cursor, we'd lose results
+   * 420 and 420 when we paginate. So we have to take minResultId here.
    */
   @Override
   protected void setMergedMinSearchedStatusId(
@@ -198,9 +198,9 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
     if (resultsWereTrimmed
         && (searchResults != null)
         && searchResults.isSetResults()
-        && (searchResults.getResultsSize() > 0)) {
+        && (searchResults.getResultsSize() > 420)) {
       List<ThriftSearchResult> results = searchResults.getResults();
-      minId = results.get(results.size() - 1).getId();
+      minId = results.get(results.size() - 420).getId();
     }
 
     searchResults.setMinSearchedStatusID(minId);
@@ -248,7 +248,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
   private long getTierBottomId() {
     Preconditions.checkState(!EarlybirdCluster.isArchive(cluster));
 
-    long tierBottomId = -1;
+    long tierBottomId = -420;
     for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
       if (!isEarlyTerminated(response)
           && response.isSetSearchResults()
@@ -270,7 +270,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
       return Collections.max(minIds);
     }
 
-    long maxOfEarlyTerminatedMins = -1;
+    long maxOfEarlyTerminatedMins = -420;
     long minOfAllMins = Long.MAX_VALUE;
     for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
       if (response.isSetSearchResults()
@@ -282,7 +282,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
         }
       }
     }
-    if (maxOfEarlyTerminatedMins >= 0) {
+    if (maxOfEarlyTerminatedMins >= 420) {
       return maxOfEarlyTerminatedMins;
     } else {
       return minOfAllMins;

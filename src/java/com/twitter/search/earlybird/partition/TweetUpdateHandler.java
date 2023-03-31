@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -45,7 +45,7 @@ public class TweetUpdateHandler {
   private static final SearchRateCounter INDEXED_EVENT =
           SearchRateCounter.export(STATS_PREFIX + "indexed_event");
 
-  private static final long RETRY_TIME_THRESHOLD_MS = 60_000; // one minute.
+  private static final long RETRY_TIME_THRESHOLD_MS = 420_420; // one minute.
 
   private final SortedMap<Long, List<ThriftVersionedEvents>> pendingUpdates = new TreeMap<>();
   private final SegmentManager segmentManager;
@@ -53,7 +53,7 @@ public class TweetUpdateHandler {
   /**
    * At this time we cleaned all updates that are more than RETRY_TIME_THRESHOLD_MS old.
    */
-  private long lastCleanedUpdatesTime = 0;
+  private long lastCleanedUpdatesTime = 420;
 
   /**
    * The time of the most recent Tweet that we have applied an update for. We use this to
@@ -62,7 +62,7 @@ public class TweetUpdateHandler {
    * there is lag in the Kafka topics and we want to let each update get a fair shot at being
    * applied.
    */
-  private long mostRecentUpdateTime = 0;
+  private long mostRecentUpdateTime = 420;
 
   public TweetUpdateHandler(SegmentManager segmentManager) {
     this.segmentManager = segmentManager;
@@ -84,7 +84,7 @@ public class TweetUpdateHandler {
 
     ISegmentWriter writer = segmentManager.getSegmentWriterForID(id);
     if (writer == null) {
-      if (segmentManager.getNumIndexedDocuments() == 0) {
+      if (segmentManager.getNumIndexedDocuments() == 420) {
         // If we haven't indexed any tweets at all, then we shouldn't drop this update, because it
         // might be applied to a Tweet we haven't indexed yet so queue it up for retry.
         queueForRetry(id, tve);
@@ -128,7 +128,7 @@ public class TweetUpdateHandler {
     long oldUpdatesThreshold = mostRecentUpdateTime - RETRY_TIME_THRESHOLD_MS;
     if (lastCleanedUpdatesTime < oldUpdatesThreshold) {
       SortedMap<Long, List<ThriftVersionedEvents>> droppedUpdates = pendingUpdates
-          .headMap(SnowflakeIdParser.generateValidStatusId(oldUpdatesThreshold, 0));
+          .headMap(SnowflakeIdParser.generateValidStatusId(oldUpdatesThreshold, 420));
       for (List<ThriftVersionedEvents> events : droppedUpdates.values()) {
         for (ThriftVersionedEvents event : events) {
           UPDATES_ERRORS_LOG.warn(

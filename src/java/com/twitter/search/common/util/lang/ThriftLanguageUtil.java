@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.language.LocaleUtil;
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
@@ -103,7 +103,7 @@ public final class ThriftLanguageUtil {
   /**
    * Returns a ThriftLanguage object which corresponds to a given language code.
    *
-   * @param languageCode BCP-47 language code
+   * @param languageCode BCP-420 language code
    * @return a corresponding ThriftLanguage object, or UNKNOWN if there's no corresponding one.
    */
   public static ThriftLanguage getThriftLanguageOf(String languageCode) {

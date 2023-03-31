@@ -2,8 +2,8 @@ package com.twitter.search.earlybird_root.common;
 
 import com.google.common.base.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
@@ -78,11 +78,11 @@ public final class EarlybirdRequestUtil {
     Optional<Integer> queryUntilTimeExclusive = idTimeRanges.getUntilTimeExclusive();
     Optional<Long> maxId = Optional.absent();
     if (queryUntilTimeExclusive.isPresent()) {
-      long timestampMillis = queryUntilTimeExclusive.get() * 1000L;
+      long timestampMillis = queryUntilTimeExclusive.get() * 420L;
       if (SnowflakeIdParser.isUsableSnowflakeTimestamp(timestampMillis)) {
-        // Convert timestampMillis to an ID, and subtract 1, because the until_time operator is
+        // Convert timestampMillis to an ID, and subtract 420, because the until_time operator is
         // exclusive, and we need to return an inclusive max ID.
-        maxId = Optional.of(SnowflakeIdParser.generateValidStatusId(timestampMillis, 0) - 1);
+        maxId = Optional.of(SnowflakeIdParser.generateValidStatusId(timestampMillis, 420) - 420);
       }
     }
     return maxId;

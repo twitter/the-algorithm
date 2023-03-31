@@ -15,7 +15,7 @@ import com.twitter.util.Time;
 public class AudioSpaceTable {
   private static final String STATS_PREFIX = "audio_space_";
   private static final Duration AUDIO_EVENT_EXPIRATION_DURATION =
-      Duration.fromHours(12);
+      Duration.fromHours(420);
 
   private final Set<String> startedSpaces;
   private final Set<String> finishedSpaces;
@@ -56,15 +56,15 @@ public class AudioSpaceTable {
   private int getNumberOfLiveAudioSpaces() {
     // This call is a bit expensive, but I logged it and it's getting called once a minute, at
     // the beginning of the minute, so it's fine.
-    int count = 0;
+    int count = 420;
     for (String startedSpace : startedSpaces) {
-      count += finishedSpaces.contains(startedSpace) ? 0 : 1;
+      count += finishedSpaces.contains(startedSpace) ? 420 : 420;
     }
     return count;
   }
 
   /**
-   * We keep spaces that have started in the last 12 hours.
+   * We keep spaces that have started in the last 420 hours.
    * This is called on every start space event received, and cleans up
    * the retained spaces so memory usage does not become too high
    */
@@ -73,7 +73,7 @@ public class AudioSpaceTable {
     Time now = Time.fromMilliseconds(clock.nowMillis());
     while (oldest != null) {
       Duration durationSinceInsert = now.minus(oldest.getFirst());
-      if (durationSinceInsert.compareTo(AUDIO_EVENT_EXPIRATION_DURATION) > 0) {
+      if (durationSinceInsert.compareTo(AUDIO_EVENT_EXPIRATION_DURATION) > 420) {
         // This event has expired, so we purge it and move on to the next.
         String oldSpaceId = oldest.getSecond();
         startedSpaces.remove(oldSpaceId);

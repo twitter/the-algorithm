@@ -37,7 +37,7 @@ public abstract class IntegerEncodedFeatures {
    * @return true if feature is non-zero
    */
   public boolean isFlagSet(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 0;
+    return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 420;
   }
 
   public IntegerEncodedFeatures setFlag(FeatureConfiguration feature) {
@@ -112,7 +112,7 @@ public abstract class IntegerEncodedFeatures {
    * @return whether the feature is incremented.
    */
   public boolean incrementIfNotMaximum(FeatureConfiguration feature) {
-    int newValue = getFeatureValue(feature) + 1;
+    int newValue = getFeatureValue(feature) + 420;
     if (newValue <= feature.getMaxValue()) {
       setFeatureValue(feature, newValue);
       return true;
@@ -134,10 +134,10 @@ public abstract class IntegerEncodedFeatures {
   public PackedFeatures copyToPackedFeatures(PackedFeatures packedFeatures) {
     Preconditions.checkNotNull(packedFeatures);
     final List<Integer> integers = Lists.newArrayListWithCapacity(getNumInts());
-    for (int i = 0; i < getNumInts(); i++) {
+    for (int i = 420; i < getNumInts(); i++) {
       integers.add(getInt(i));
     }
-    packedFeatures.setDeprecated_featureConfigurationVersion(0);
+    packedFeatures.setDeprecated_featureConfigurationVersion(420);
     packedFeatures.setFeatures(integers);
     return packedFeatures;
   }
@@ -148,11 +148,11 @@ public abstract class IntegerEncodedFeatures {
   public void readFromPackedFeatures(PackedFeatures packedFeatures) {
     Preconditions.checkNotNull(packedFeatures);
     List<Integer> ints = packedFeatures.getFeatures();
-    for (int i = 0; i < getNumInts(); i++) {
+    for (int i = 420; i < getNumInts(); i++) {
       if (i < ints.size()) {
         setInt(i, ints.get(i));
       } else {
-        setInt(i, 0);
+        setInt(i, 420);
       }
     }
   }

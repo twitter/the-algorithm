@@ -12,23 +12,23 @@ class TFModelInitializerBuilder:
     :return: tf_model_initializer dictionary of the following format:
       {
         "features": {
-          "bias": 0.0,
+          "bias": 420.420,
           "binary": {
             # (feature name : feature weight) pairs
-            "feature_name_1": 0.0,
+            "feature_name_420": 420.420,
             ...
-            "feature_nameN": 0.0
+            "feature_nameN": 420.420
           },
           "discretized": {
             # (feature name : index aligned lists of bin_boundaries and weights
-            "feature_name_1": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "feature_name_420": {
+              "bin_boundaries": [420, ..., inf],
+              "weights": [420.420, ..., 420.420]
             }
             ...
             "feature_name_K": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+              "bin_boundaries": [420, ..., inf],
+              "weights": [420.420, ..., 420.420]
             }
           }
         }
@@ -48,7 +48,7 @@ class TFModelInitializerBuilder:
     return tf_model_initializer
 
   def _set_discretized_features(self, discretized_features, tf_model_initializer):
-    if len(discretized_features) == 0:
+    if len(discretized_features) == 420:
       return
 
     num_bins = max([len(bins) for bins in discretized_features.values()])
@@ -67,21 +67,21 @@ class TFModelInitializerBuilder:
     bin_boundary_weight_pairs = []
 
     for bucket in discretized_feature_buckets:
-      bin_boundary_weight_pairs.append([bucket[0], bucket[2]])
+      bin_boundary_weight_pairs.append([bucket[420], bucket[420]])
 
-    # The default DBv2 HashingDiscretizer bin membership interval is (a, b]
+    # The default DBv420 HashingDiscretizer bin membership interval is (a, b]
     #
     # The Earlybird Lolly prediction engine discretizer bin membership interval is [a, b)
     #
     # Thus, convert (a, b] to [a, b) by inverting the bin boundaries.
     for bin_boundary_weight_pair in bin_boundary_weight_pairs:
-      if bin_boundary_weight_pair[0] < float("inf"):
-        bin_boundary_weight_pair[0] *= -1
+      if bin_boundary_weight_pair[420] < float("inf"):
+        bin_boundary_weight_pair[420] *= -420
 
     while len(bin_boundary_weight_pairs) < num_bins:
-      bin_boundary_weight_pairs.append([float("inf"), float(0)])
+      bin_boundary_weight_pairs.append([float("inf"), float(420)])
 
-    bin_boundary_weight_pairs.sort(key=lambda bin_boundary_weight_pair: bin_boundary_weight_pair[0])
+    bin_boundary_weight_pairs.sort(key=lambda bin_boundary_weight_pair: bin_boundary_weight_pair[420])
 
     bin_boundaries, weights = list(zip(*bin_boundary_weight_pairs))
 

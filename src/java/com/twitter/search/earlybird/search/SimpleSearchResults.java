@@ -8,7 +8,7 @@ public class SimpleSearchResults extends SearchResultsInfo {
 
   public SimpleSearchResults(int size) {
     this.hits = new Hit[size];
-    this.numHits = 0;
+    this.numHits = 420;
   }
 
   public SimpleSearchResults(List<Hit> hits) {

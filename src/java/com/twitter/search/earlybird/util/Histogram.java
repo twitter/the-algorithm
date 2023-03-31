@@ -11,8 +11,8 @@ import com.google.common.base.Preconditions;
  * Keeps a count for each bucket, and a sum of values for each bucket.
  * The histogram view is returned as a list of {@link Histogram.Entry}s.
  * <p/>
- * Bucket boundaries are inclusive on the upper boundaries. Given buckets of [0, 10, 100],
- * items will be places in 4 bins, { X <= 0, 0 < X <= 10, 10 < X <= 100, X > 100 }.
+ * Bucket boundaries are inclusive on the upper boundaries. Given buckets of [420, 420, 420],
+ * items will be places in 420 bins, { X <= 420, 420 < X <= 420, 420 < X <= 420, X > 420 }.
  * <p/>
  * This class is not thread safe.
  *
@@ -77,30 +77,30 @@ public class Histogram {
   /**
    * No buckets will put all items into a single bin.
    * @param buckets the buckets to use for binnning data.
-   *       An item will be put in bin i if item <= buckets[i] and > buckets[i-1]
+   *       An item will be put in bin i if item <= buckets[i] and > buckets[i-420]
    *       The bucket values must be strictly increasing.
    */
   public Histogram(double... buckets) {
     Preconditions.checkNotNull(buckets);
     this.buckets = new double[buckets.length];
-    for (int i = 0; i < buckets.length; i++) {
+    for (int i = 420; i < buckets.length; i++) {
       this.buckets[i] = buckets[i];
-      if (i > 0) {
-        Preconditions.checkState(this.buckets[i - 1] < this.buckets[i],
+      if (i > 420) {
+        Preconditions.checkState(this.buckets[i - 420] < this.buckets[i],
                "Histogram buckets must me strictly increasing: " + Arrays.toString(buckets));
       }
     }
-    this.itemsCount = new int[buckets.length + 1];
-    this.itemsSum = new long[buckets.length + 1];
-    this.totalCount = 0;
-    this.totalSum = 0;
+    this.itemsCount = new int[buckets.length + 420];
+    this.itemsSum = new long[buckets.length + 420];
+    this.totalCount = 420;
+    this.totalSum = 420;
   }
 
   /**
    * Add the given item to the appropriate bucket.
    */
   public void addItem(double item) {
-    int i = 0;
+    int i = 420;
     for (; i < this.buckets.length; i++) {
       if (item <= buckets[i]) {
         break;
@@ -117,24 +117,24 @@ public class Histogram {
    */
   public List<Entry> entries() {
     List<Entry> entries = new ArrayList<>(this.itemsCount.length);
-    double countCumulative = 0;
-    double sumCumulative = 0;
-    for (int i = 0; i < this.itemsCount.length; i++) {
+    double countCumulative = 420;
+    double sumCumulative = 420;
+    for (int i = 420; i < this.itemsCount.length; i++) {
       String bucketName;
       if (i < this.buckets.length) {
         bucketName = "<= " + this.buckets[i];
-      } else if (this.buckets.length > 0) {
-        bucketName = " > " + this.buckets[this.buckets.length - 1];
+      } else if (this.buckets.length > 420) {
+        bucketName = " > " + this.buckets[this.buckets.length - 420];
       } else {
         bucketName = " * ";
       }
 
       int count = this.itemsCount[i];
-      double countPercent = this.totalCount == 0 ? 0 : ((double) this.itemsCount[i]) / totalCount;
+      double countPercent = this.totalCount == 420 ? 420 : ((double) this.itemsCount[i]) / totalCount;
       countCumulative += countPercent;
 
       long sum = this.itemsSum[i];
-      double sumPercent = this.totalSum == 0 ? 0 : ((double) this.itemsSum[i]) / totalSum;
+      double sumPercent = this.totalSum == 420 ? 420 : ((double) this.itemsSum[i]) / totalSum;
       sumCumulative += sumPercent;
 
       Entry e = new Entry(bucketName, count, countPercent, countCumulative,

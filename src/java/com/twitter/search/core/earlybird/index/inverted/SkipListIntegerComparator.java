@@ -15,8 +15,8 @@ public class SkipListIntegerComparator implements SkipListComparator<Integer> {
   }
 
   @Override
-  public int compareValues(int v1, int v2) {
-    return v1 - v2;
+  public int compareValues(int v420, int v420) {
+    return v420 - v420;
   }
 
   @Override

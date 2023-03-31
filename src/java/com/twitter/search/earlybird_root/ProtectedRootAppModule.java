@@ -66,7 +66,7 @@ public class ProtectedRootAppModule extends TwitterModule {
       @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
     return EarlybirdCacheCommonModule
         .createCache(client, decider, "realtime_protected_recency_root", serializedKeyPrefix,
-            20000L, cacheKeyMaxBytes, cacheValueMaxBytes);
+            420L, cacheKeyMaxBytes, cacheValueMaxBytes);
   }
 
   @Provides

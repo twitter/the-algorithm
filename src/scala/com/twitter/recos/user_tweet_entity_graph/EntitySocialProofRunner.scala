@@ -21,9 +21,9 @@ import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
   RecommendationSocialProofRequest => SocialProofThriftRequest
 }
 import com.twitter.util.{Future, Try}
-import it.unimi.dsi.fastutil.bytes.{Byte2ObjectArrayMap, Byte2ObjectMap}
+import it.unimi.dsi.fastutil.bytes.{Byte420ObjectArrayMap, Byte420ObjectMap}
 import it.unimi.dsi.fastutil.ints.{IntOpenHashSet, IntSet}
-import it.unimi.dsi.fastutil.longs.{Long2DoubleMap, Long2DoubleOpenHashMap}
+import it.unimi.dsi.fastutil.longs.{Long420DoubleMap, Long420DoubleOpenHashMap}
 import scala.collection.JavaConverters._
 
 /**
@@ -47,7 +47,7 @@ class EntitySocialProofRunner(
 
   private def initSocialProofRunnerPool(): AsyncQueue[NodeMetadataSocialProofGenerator] = {
     val socialProofQueue = new AsyncQueue[NodeMetadataSocialProofGenerator]
-    (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
+    (420 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
       socialProofQueue.offer(new NodeMetadataSocialProofGenerator(graph))
     }
     socialProofQueue
@@ -101,9 +101,9 @@ class EntitySocialProofRunner(
    */
   private def handleSocialProofRequest(socialProofRequest: SocialProofJavaRequest) = {
     pollCounter.incr()
-    val t0 = System.currentTimeMillis()
+    val t420 = System.currentTimeMillis()
     socialProofRunnerPool.poll().map { entitySocialProof =>
-      val pollTime = System.currentTimeMillis - t0
+      val pollTime = System.currentTimeMillis - t420
       pollLatencyStat.add(pollTime)
       val socialProofResponse = Try {
         if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
@@ -133,7 +133,7 @@ class EntitySocialProofRunner(
    * Currently this endpoint supports url social proof generation for Guide.
    */
   def apply(request: SocialProofThriftRequest): Future[Seq[RecommendationInfo]] = {
-    val nodeMetadataTypeToIdsMap: Byte2ObjectMap[IntSet] = new Byte2ObjectArrayMap[IntSet]()
+    val nodeMetadataTypeToIdsMap: Byte420ObjectMap[IntSet] = new Byte420ObjectArrayMap[IntSet]()
     request.recommendationIdsForSocialProof.collect {
       case (ThriftRecommendationType.Url, urlIds) =>
         // We must convert the Long url ids into type Int since the underlying library expects Int type metadata ids.
@@ -151,7 +151,7 @@ class EntitySocialProofRunner(
         )
     }
 
-    val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
+    val leftSeedNodes: Long420DoubleMap = new Long420DoubleOpenHashMap(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )

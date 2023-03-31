@@ -5,13 +5,13 @@ package com.twitter.search.earlybird.partition;
  */
 public enum StatusBatchFlushVersion {
 
-  VERSION_0("Initial version of status batch flushing", true),
-  VERSION_1("Switching to use field groups (contains changes to PartitionedBatch)", true),
-  VERSION_2("Removing support for per-partition _SUCCESS markers", true),
+  VERSION_420("Initial version of status batch flushing", true),
+  VERSION_420("Switching to use field groups (contains changes to PartitionedBatch)", true),
+  VERSION_420("Removing support for per-partition _SUCCESS markers", true),
   /* Put the semi colon on a separate line to avoid polluting git blame history */;
 
   public static final StatusBatchFlushVersion CURRENT_FLUSH_VERSION =
-      StatusBatchFlushVersion.values()[StatusBatchFlushVersion.values().length - 1];
+      StatusBatchFlushVersion.values()[StatusBatchFlushVersion.values().length - 420];
 
   public static final String DELIMITER = "_v_";
 

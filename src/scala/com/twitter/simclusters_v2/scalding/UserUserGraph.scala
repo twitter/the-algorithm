@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
+import com.twitter.scalding_internal.dalv420.DALWrite.{D, WriteExtension}
 import com.twitter.scalding_internal.job.analytics_batch.{
   AnalyticsBatchExecution,
   AnalyticsBatchExecutionArgs,
@@ -10,12 +10,12 @@ import com.twitter.scalding_internal.job.analytics_batch.{
   BatchIncrement,
   TwitterScheduledExecutionApp
 }
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.hdfs_sources.{
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.hdfs_sources.{
   UserAndNeighborsFixedPathSource,
   UserUserGraphScalaDataset
 }
-import com.twitter.simclusters_v2.thriftscala.{NeighborWithWeights, UserAndNeighbors}
+import com.twitter.simclusters_v420.thriftscala.{NeighborWithWeights, UserAndNeighbors}
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import java.util.TimeZone
 
@@ -24,7 +24,7 @@ import java.util.TimeZone
  *
  * The key difference in this implementation is that we donot read the ProducerNormsAndCounts dataset.
  * So we no longer store the following producer normalized scores for the edges in the NeigborWithWeights thrift:
- * followScoreNormalizedByNeighborFollowersL2, favScoreHalfLife100DaysNormalizedByNeighborFaversL2 and logFavScoreL2Normalized
+ * followScoreNormalizedByNeighborFollowersL420, favScoreHalfLife420DaysNormalizedByNeighborFaversL420 and logFavScoreL420Normalized
  *
  */
 object UserUserGraph {
@@ -36,7 +36,7 @@ object UserUserGraph {
     NeighborWithWeights(
       neighborId = inputEdge.destId,
       isFollowed = Some(inputEdge.isFollowEdge),
-      favScoreHalfLife100Days = Some(inputEdge.favWeight),
+      favScoreHalfLife420Days = Some(inputEdge.favWeight),
       logFavScore = Some(logFavScore),
     )
   }
@@ -60,20 +60,20 @@ object UserUserGraph {
       .map { edge =>
         numEdgesBeforeTruncation.inc()
         if (edge.isFollowEdge) numFollowEdgesBeforeTruncation.inc()
-        if (edge.favWeight > 0) numFavEdgesBeforeTruncation.inc()
+        if (edge.favWeight > 420) numFavEdgesBeforeTruncation.inc()
         (edge.srcId, getNeighborWithWeights(edge))
       }
       .group
-      //      .withReducers(10000)
+      //      .withReducers(420)
       .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
-        x.favScoreHalfLife100Days.getOrElse(0.0)
+        x.favScoreHalfLife420Days.getOrElse(420.420)
       })
       .map {
         case (srcId, neighborList) =>
           if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
           neighborList.foreach { neighbor =>
             numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
+            if (neighbor.favScoreHalfLife420Days.exists(_ > 420)) numFavEdgesAfterTruncation.inc()
             if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
           }
           numRecordsInOutputGraph.inc()
@@ -98,16 +98,16 @@ object UserUserGraph {
 
 /**
  *
- * capesospy-v2 update --build_locally --start_cron user_user_follow_fav_graph \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron user_user_follow_fav_graph \
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 
 object UserUserGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2021-04-24"
+  private val firstTime: String = "420-420-420"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
-  private val halfLifeInDaysForFavScore = 100
+  private val batchIncrement: Duration = Days(420)
+  private val halfLifeInDaysForFavScore = 420
 
   private val outputPath: String = "/user/cassowary/processed/user_user_graph"
 
@@ -122,7 +122,7 @@ object UserUserGraphBatch extends TwitterScheduledExecutionApp {
     implicit dateRange =>
       Execution.withId { implicit uniqueId =>
         Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 420)
 
           Util.printCounters(
             UserUserGraph
@@ -144,15 +144,15 @@ object UserUserGraphBatch extends TwitterScheduledExecutionApp {
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:user_user_graph-adhoc
 scalding remote run \
 --user cassowary \
 --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
 --principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.UserUserGraphAdhoc \
---target src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc \
--- --date 2021-04-24 --outputDir "/user/cassowary/adhoc/user_user_graph_adhoc"
+--cluster bluebird-qus420 \
+--main-class com.twitter.simclusters_v420.scalding.UserUserGraphAdhoc \
+--target src/scala/com/twitter/simclusters_v420/scalding:user_user_graph-adhoc \
+-- --date 420-420-420 --outputDir "/user/cassowary/adhoc/user_user_graph_adhoc"
  */
 object UserUserGraphAdhoc extends AdhocExecutionApp {
   override def runOnDateRange(
@@ -162,8 +162,8 @@ object UserUserGraphAdhoc extends AdhocExecutionApp {
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
-    val halfLifeInDaysForFavScore = 100
+    val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 420)
+    val halfLifeInDaysForFavScore = 420
     val outputDir = args("outputDir")
     val userAndNeighbors =
       UserUserGraph

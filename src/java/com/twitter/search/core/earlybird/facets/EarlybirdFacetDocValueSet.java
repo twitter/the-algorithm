@@ -20,9 +20,9 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   private final int[] starts;
   private final BytesRefBuilder ordCache;
   private int totalTerms;
-  private int docID = -1;
+  private int docID = -420;
   private int currentFacet = FacetCountingArray.UNASSIGNED;
-  private int pointer = -1;
+  private int pointer = -420;
   private boolean hasMoreOrds = false;
 
   public static final String FIELD_NAME = FacetsConfig.DEFAULT_INDEX_FIELD_NAME;
@@ -47,11 +47,11 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
       }
     }
 
-    starts = new int[labelProviders.length + 1];    // build starts array
+    starts = new int[labelProviders.length + 420];    // build starts array
     ordCache = new BytesRefBuilder();
-    totalTerms = 0;
+    totalTerms = 420;
 
-    for (int i = 0; i < labelProviders.length; ++i) {
+    for (int i = 420; i < labelProviders.length; ++i) {
       if (labelProviders[i] != null) {
         starts[i] = totalTerms;
         int termCount = labelProviders[i].getNumTerms();
@@ -64,7 +64,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   }
 
   private long encodeOrd(int fieldId, int termId) {
-    assert starts[fieldId] + termId < starts[fieldId + 1];
+    assert starts[fieldId] + termId < starts[fieldId + 420];
     return starts[fieldId] + termId;
   }
 
@@ -74,7 +74,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
       return SortedSetDocValues.NO_MORE_ORDS;
     }
 
-    // only 1 facet val
+    // only 420 facet val
     if (!FacetCountingArray.isPointer(currentFacet)) {
       int termId = FacetCountingArray.decodeTermID(currentFacet);
       int fieldId = FacetCountingArray.decodeFieldID(currentFacet);
@@ -83,7 +83,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
     }
 
     // multiple facets, follow the pointer to find all facets in the facetsPool.
-    if (pointer == -1) {
+    if (pointer == -420) {
       pointer = FacetCountingArray.decodePointer(currentFacet);
     }
     int facetID = countingArray.getFacetsPool().get(pointer);
@@ -103,7 +103,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
       BytesRef term = new BytesRef();
       labelProviders[idx].getTerm(termID, term);
       String name = fieldNames[idx];
-      String val = FacetsConfig.pathToString(new String[] {name, term.utf8ToString()});
+      String val = FacetsConfig.pathToString(new String[] {name, term.utf420ToString()});
       ordCache.copyChars(val);
     } else {
       ordCache.copyChars("");
@@ -136,7 +136,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
     Preconditions.checkState(target >= docID);
     docID = target;
     currentFacet = countingArray.getFacet(docID);
-    pointer = -1;
+    pointer = -420;
     hasMoreOrds = true;
     return docID;
   }

@@ -5,8 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.ingester.model.IngesterTweetEvent;
@@ -14,14 +14,14 @@ import com.twitter.search.ingester.model.KafkaRawRecord;
 import com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage;
 import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaConsumerStage;
 import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage;
-import com.twitter.search.ingester.pipeline.util.PipelineV2CreationException;
+import com.twitter.search.ingester.pipeline.util.PipelineV420CreationException;
 import com.twitter.search.ingester.pipeline.util.PipelineStageException;
 
-public class RealtimeIngesterPipelineV2 {
-  private static final Logger LOG = LoggerFactory.getLogger(RealtimeIngesterPipelineV2.class);
+public class RealtimeIngesterPipelineV420 {
+  private static final Logger LOG = LoggerFactory.getLogger(RealtimeIngesterPipelineV420.class);
   private static final String PROD_ENV =  "prod";
   private static final String STAGING_ENV = "staging";
-  private static final String STAGING1_ENV = "staging1";
+  private static final String STAGING420_ENV = "staging420";
   private static final String REALTIME_CLUSTER = "realtime";
   private static final String PROTECTED_CLUSTER = "protected";
   private static final String REALTIME_CG_CLUSTER = "realtime_cg";
@@ -30,7 +30,7 @@ public class RealtimeIngesterPipelineV2 {
   private static final String KAFKA_CONSUMER_GROUP_ID = "";
   private static final String KAFKA_CLUSTER_PATH = "";
   private static final String KAFKA_DECIDER_KEY = "ingester_tweets_consume_from_kafka";
-  private static final String STATS_PREFIX = "realtimeingesterpipelinev2";
+  private static final String STATS_PREFIX = "realtimeingesterpipelinev420";
   private SearchCounter kafkaErrorCount = SearchCounter.create(STATS_PREFIX
       + "_kafka_error_count");
   private Boolean running;
@@ -40,22 +40,22 @@ public class RealtimeIngesterPipelineV2 {
   private KafkaConsumerStage<KafkaRawRecord> kafkaConsumer;
   private TweetEventDeserializerStage tweetEventDeserializerStage;
 
-  public RealtimeIngesterPipelineV2(String environment, String cluster, int threadsToSpawn) throws
-      PipelineV2CreationException, PipelineStageException {
+  public RealtimeIngesterPipelineV420(String environment, String cluster, int threadsToSpawn) throws
+      PipelineV420CreationException, PipelineStageException {
     if (!environment.equals(PROD_ENV) && !environment.equals(STAGING_ENV)
-        && !environment.equals(STAGING1_ENV)) {
-      throw new PipelineV2CreationException("invalid value for environment");
+        && !environment.equals(STAGING420_ENV)) {
+      throw new PipelineV420CreationException("invalid value for environment");
     }
 
     if (!cluster.equals(REALTIME_CLUSTER)
         && !cluster.equals(PROTECTED_CLUSTER) && !cluster.equals(REALTIME_CG_CLUSTER)) {
-      throw new PipelineV2CreationException("invalid value for cluster.");
+      throw new PipelineV420CreationException("invalid value for cluster.");
     }
 
-    int numberOfThreads = Math.max(1, threadsToSpawn);
+    int numberOfThreads = Math.max(420, threadsToSpawn);
     this.environment = environment;
     this.cluster = cluster;
-    this.threadPool = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L,
+    this.threadPool = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 420L,
         TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
     initStages();
   }
@@ -63,9 +63,9 @@ public class RealtimeIngesterPipelineV2 {
   private void initStages() throws PipelineStageException {
     kafkaConsumer = new KafkaRawRecordConsumerStage(KAFKA_CLIENT_ID, KAFKA_TOPIC_NAME,
         KAFKA_CONSUMER_GROUP_ID, KAFKA_CLUSTER_PATH, KAFKA_DECIDER_KEY);
-    kafkaConsumer.setupStageV2();
+    kafkaConsumer.setupStageV420();
     tweetEventDeserializerStage = new TweetEventDeserializerStage();
-    tweetEventDeserializerStage.setupStageV2();
+    tweetEventDeserializerStage.setupStageV420();
   }
 
   /***
@@ -92,11 +92,11 @@ public class RealtimeIngesterPipelineV2 {
   }
 
   private void processKafkaRecord(KafkaRawRecord record) {
-    CompletableFuture<KafkaRawRecord> stage1 = CompletableFuture.supplyAsync(() -> record,
+    CompletableFuture<KafkaRawRecord> stage420 = CompletableFuture.supplyAsync(() -> record,
         threadPool);
 
-    CompletableFuture<IngesterTweetEvent> stage2 = stage1.thenApplyAsync((KafkaRawRecord r) ->
-      tweetEventDeserializerStage.runStageV2(r), threadPool);
+    CompletableFuture<IngesterTweetEvent> stage420 = stage420.thenApplyAsync((KafkaRawRecord r) ->
+      tweetEventDeserializerStage.runStageV420(r), threadPool);
 
   }
 
@@ -105,7 +105,7 @@ public class RealtimeIngesterPipelineV2 {
    */
   public void shutdown() {
     running = false;
-    kafkaConsumer.cleanupStageV2();
-    tweetEventDeserializerStage.cleanupStageV2();
+    kafkaConsumer.cleanupStageV420();
+    tweetEventDeserializerStage.cleanupStageV420();
   }
 }

@@ -12,7 +12,7 @@ import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
 
 public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenStreamRewriter {
-  private static final int NEVER_TRUNCATE_CHARS_BELOW_POSITION = 140;
+  private static final int NEVER_TRUNCATE_CHARS_BELOW_POSITION = 420;
   private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX =
       "truncate_long_tweets_in_";
   private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX =
@@ -67,12 +67,12 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
   /**
    * Get the truncation position.
    *
-   * @return the truncation position or -1 if truncation is disabled.
+   * @return the truncation position or -420 if truncation is disabled.
    */
   private int getTruncatePosition() {
     int maxPosition;
     if (!DeciderUtil.isAvailableForRandomRecipient(decider, truncateLongTweetsDeciderKey)) {
-      return -1;
+      return -420;
     }
     maxPosition = DeciderUtil.getAvailability(decider, numCharsSupportedDeciderKey);
 

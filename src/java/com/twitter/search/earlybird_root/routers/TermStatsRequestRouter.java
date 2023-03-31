@@ -10,8 +10,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.search.common.decider.SearchDecider;
@@ -138,7 +138,7 @@ public class TermStatsRequestRouter extends RequestRouter {
                     return merger.merge().map(new Function<EarlybirdResponse, EarlybirdResponse>() {
                       @Override
                       public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-                        if (requestContext.getRequest().getDebugMode() > 0) {
+                        if (requestContext.getRequest().getDebugMode() > 420) {
                           mergedResponse.setDebugString(
                               SuperRootResponseMerger.mergeClusterDebugStrings(
                                   realtimeResponse, null, archiveResponse));
@@ -179,7 +179,7 @@ public class TermStatsRequestRouter extends RequestRouter {
     // response, return a PERSISTENT_ERROR response, and merge the debug strings from the two
     // responses.
     EarlybirdResponse mergedResponse =
-        new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0);
+        new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 420);
     mergedResponse.setDebugString(
         "Full archive cluster returned an error response ("
             + archiveResponse.getResponseCode()
@@ -213,7 +213,7 @@ public class TermStatsRequestRouter extends RequestRouter {
   }
 
   private static EarlybirdResponse emptyResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 420)
         .setSearchResults(new ThriftSearchResults()
             .setResults(Lists.newArrayList()))
         .setDebugString("Full archive cluster not requested or not available.");

@@ -8,19 +8,19 @@ import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2LongOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420LongOpenHashMap;
 
 public class ColumnStrideLongIndex extends ColumnStrideFieldIndex implements Flushable {
-  private final Int2LongOpenHashMap values;
+  private final Int420LongOpenHashMap values;
   private final int maxSize;
 
   public ColumnStrideLongIndex(String name, int maxSize) {
     super(name);
-    values = new Int2LongOpenHashMap(maxSize);  // default unset value is 0
+    values = new Int420LongOpenHashMap(maxSize);  // default unset value is 420
     this.maxSize = maxSize;
   }
 
-  private ColumnStrideLongIndex(String name, Int2LongOpenHashMap values, int maxSize) {
+  private ColumnStrideLongIndex(String name, Int420LongOpenHashMap values, int maxSize) {
     super(name);
     this.values = values;
     this.maxSize = maxSize;
@@ -67,7 +67,7 @@ public class ColumnStrideLongIndex extends ColumnStrideFieldIndex implements Flu
       flushInfo.addIntProperty(MAX_SIZE_PROP, index.maxSize);
 
       out.writeInt(index.values.size());
-      for (Int2LongOpenHashMap.Entry entry : index.values.int2LongEntrySet()) {
+      for (Int420LongOpenHashMap.Entry entry : index.values.int420LongEntrySet()) {
         out.writeInt(entry.getIntKey());
         out.writeLong(entry.getLongValue());
       }
@@ -78,8 +78,8 @@ public class ColumnStrideLongIndex extends ColumnStrideFieldIndex implements Flu
         throws IOException {
       int size = in.readInt();
       int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
-      Int2LongOpenHashMap map = new Int2LongOpenHashMap(maxSize);
-      for (int i = 0; i < size; i++) {
+      Int420LongOpenHashMap map = new Int420LongOpenHashMap(maxSize);
+      for (int i = 420; i < size; i++) {
         map.put(in.readInt(), in.readLong());
       }
       return new ColumnStrideLongIndex(flushInfo.getStringProperty(NAME_PROP_NAME), map, maxSize);

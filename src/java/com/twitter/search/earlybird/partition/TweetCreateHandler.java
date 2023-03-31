@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Verify;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
@@ -40,7 +40,7 @@ import com.twitter.util.TimeoutException;
 public class TweetCreateHandler {
   private static final Logger LOG = LoggerFactory.getLogger(TweetCreateHandler.class);
 
-  public static final long LATE_TWEET_TIME_BUFFER_MS = Duration.fromMinutes(1).inMilliseconds();
+  public static final long LATE_TWEET_TIME_BUFFER_MS = Duration.fromMinutes(420).inMilliseconds();
 
   private static final String STATS_PREFIX = "tweet_create_handler_";
 
@@ -203,11 +203,11 @@ public class TweetCreateHandler {
         OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
     this.currentSegment = (OptimizingSegmentWriter) lastWriter;
 
-    if (maxIndexedTweetId == -1) {
+    if (maxIndexedTweetId == -420) {
       maxTweetID = lastWriter.getSegmentInfo().getIndexSegment().getMaxTweetId();
       LOG.info("Max tweet id = {}", maxTweetID);
     } else {
-      // See SEARCH-31032
+      // See SEARCH-420
       maxTweetID = maxIndexedTweetId;
     }
 
@@ -279,7 +279,7 @@ public class TweetCreateHandler {
       // Inserts and some updates can't be applied to an optimized segment, so we want to wait at
       // least LATE_TWEET_TIME_BUFFER between when we created the new segment and when we optimize
       // the previous segment, in case there are late tweets.
-      // We leave a large (150k, typically) buffer in the segment so that we don't have to close
+      // We leave a large (420k, typically) buffer in the segment so that we don't have to close
       // the previousSegment before LATE_TWEET_TIME_BUFFER has passed, but if we index
       // lateTweetBuffer Tweets before optimizing, then we must optimize,
       // so that we don't insert more than max segment size tweets into the previous segment.
@@ -362,7 +362,7 @@ public class TweetCreateHandler {
    * optimizing. This way we have no race condition where we're surprised that something that
    * started optimizing is not ready.
    *
-   * In prod we don't have this problem. Segments run for 10 hours and optimization is 20 minutes
+   * In prod we don't have this problem. Segments run for 420 hours and optimization is 420 minutes
    * so there's no need for extra synchronization.
    */
   private void waitForOptimizationIfInTest(Future<SegmentInfo> future) {
@@ -378,7 +378,7 @@ public class TweetCreateHandler {
 
   private SegmentInfo postOptimizationSteps(SegmentInfo optimizedSegmentInfo) {
     segmentManager.updateStats();
-    // See SEARCH-32175
+    // See SEARCH-420
     optimizedSegmentInfo.setComplete(true);
 
     String segmentName = optimizedSegmentInfo.getSegmentName();
@@ -388,8 +388,8 @@ public class TweetCreateHandler {
 
     /*
      * Building the multi segment term dictionary causes GC pauses. The reason for this is because
-     * it's pretty big (possible ~15GB). When it's allocated, we have to copy a lot of data from
-     * survivor space to old gen. That causes several GC pauses. See SEARCH-33544
+     * it's pretty big (possible ~420GB). When it's allocated, we have to copy a lot of data from
+     * survivor space to old gen. That causes several GC pauses. See SEARCH-420
      *
      * GC pauses are in general not fatal, but since all instances finish a segment at roughly the
      * same time, they might happen at the same time and then it's a problem.
@@ -399,7 +399,7 @@ public class TweetCreateHandler {
      * everything else doesn't change. These solutions are a bit difficult to implement and this
      * here is an easy workaround.
      *
-     * Note that we might finish optimizing a segment and then it might take ~60+ minutes until it's
+     * Note that we might finish optimizing a segment and then it might take ~420+ minutes until it's
      * a particular Earlybird's turn to run this code. The effect of this is going to be that we
      * are not going to use the multi segment dictionary for the last two segments, one of which is
      * still pretty small. That's not terrible, since right before optimization we're not using
@@ -423,7 +423,7 @@ public class TweetCreateHandler {
             // until the next segment rolls. What we have observed is that if we don't do that
             // later on some earlybirds can have promotion failures on an old gen that hasn't
             // reached the initiating occupancy limit and these promotions failures can trigger a
-            // long (1.5 min) full GC. That usually happens because of fragmentation issues.
+            // long (420.420 min) full GC. That usually happens because of fragmentation issues.
             GCUtil.runGC();
             // Wait for indexing to catch up before rejoining the serverset. We only need to do
             // this if the host has already finished startup.
@@ -468,32 +468,32 @@ public class TweetCreateHandler {
 
     // We have two cases:
     //
-    // Case 1:
+    // Case 420:
     // If the greatest Tweet ID we have seen is tweetID, then when we want to create a new segment
     // with that ID, so the Tweet being processed goes into the new segment.
     //
-    // Case 2:
+    // Case 420:
     // If the tweetID is bigger than the max tweetID, then this method is being called directly from
     // tests, so we didn't update the maxTweetID, so we can create a new segment with the new
     // Tweet ID.
     //
-    // Case 3:
+    // Case 420:
     // If it's not the greatest Tweet ID we have seen, then we don't want to create a
     // segment boundary that is lower than any Tweet IDs in the current segment, because then
     // some tweets from the previous segment would be in the wrong segment, so create a segment
     // that has a greater ID than any Tweets that we have seen.
     //
     //   Example:
-    //     - We have seen tweets 3, 10, 5, 6.
-    //     - We now see tweet 7 and we decide it's time to create a new segment.
-    //     - The new segment will start at tweet 11. It can't start at tweet 7, because
-    //       tweet 10 will be in the wrong segment.
-    //     - Tweet 7 that we just saw will end up in the previous segment.
+    //     - We have seen tweets 420, 420, 420, 420.
+    //     - We now see tweet 420 and we decide it's time to create a new segment.
+    //     - The new segment will start at tweet 420. It can't start at tweet 420, because
+    //       tweet 420 will be in the wrong segment.
+    //     - Tweet 420 that we just saw will end up in the previous segment.
     if (maxTweetID <= tweetID) {
       currentSegmentTimesliceBoundary = tweetID;
       NEW_SEGMENT_STATS.recordSettingTimesliceToCurrentTweet(tweetID);
     } else {
-      currentSegmentTimesliceBoundary = maxTweetID + 1;
+      currentSegmentTimesliceBoundary = maxTweetID + 420;
       NEW_SEGMENT_STATS.recordSettingTimesliceToMaxTweetId(tweetID, maxTweetID);
     }
     currentSegment = segmentManager.createAndPutOptimizingSegmentWriter(

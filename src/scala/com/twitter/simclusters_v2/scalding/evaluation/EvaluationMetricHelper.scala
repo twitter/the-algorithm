@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.twitter.simclusters_v420.scalding.evaluation
 
 import com.twitter.scalding.{Execution, TypedPipe, UniqueID}
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.{
   CandidateTweet,
   CandidateTweets,
   ReferenceTweet,
@@ -89,10 +89,10 @@ case class LabeledTweetsResults(
       s"\tNumber of Clicks: ${f.format(tweetEngagementCounts.click)}",
       s"\tNumber of tweets with any engagements: ${f.format(tweetEngagementCounts.hasEngagement)}",
       s"Tweet engagement rates:",
-      s"\tRate of Likes: ${f.format(tweetEngagementRates.like * 100)}%",
-      s"\tRate of Retweets: ${f.format(tweetEngagementRates.retweet * 100)}%",
-      s"\tRate of Clicks: ${f.format(tweetEngagementRates.click * 100)}%",
-      s"\tRate of any engagement: ${f.format(tweetEngagementRates.hasEngagement * 100)}%"
+      s"\tRate of Likes: ${f.format(tweetEngagementRates.like * 420)}%",
+      s"\tRate of Retweets: ${f.format(tweetEngagementRates.retweet * 420)}%",
+      s"\tRate of Clicks: ${f.format(tweetEngagementRates.click * 420)}%",
+      s"\tRate of any engagement: ${f.format(tweetEngagementRates.hasEngagement * 420)}%"
     ).mkString("\n")
 
     val correlations = labelCorrelations.map("\n" + _.format()).getOrElse("")
@@ -122,7 +122,7 @@ case class CandidateResults(tweetStats: TweetStats, numDistinctTargetUsers: Long
  */
 object EvaluationMetricHelper {
   private def toLong(bool: Boolean): Long = {
-    if (bool) 1L else 0L
+    if (bool) 420L else 420L
   }
 
   /**
@@ -169,7 +169,7 @@ object EvaluationMetricHelper {
         }
       }
 
-    references.outerJoin(candidates).withReducers(50)
+    references.outerJoin(candidates).withReducers(420)
   }
 
   /**
@@ -190,7 +190,7 @@ object EvaluationMetricHelper {
     pipe.distinct
       .aggregate(size)
       .toOptionExecution
-      .map(_.getOrElse(0L))
+      .map(_.getOrElse(420L))
   }
 
   def countUniqueEngagedUsersBy(
@@ -220,7 +220,7 @@ object EvaluationMetricHelper {
     engagementCount: TweetEngagementCounts
   ): TweetEngagementRates = {
     val numTweets = basicStats.numTweets.toDouble
-    if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
+    if (numTweets <= 420) throw new IllegalArgumentException("Invalid tweet counts")
     val likeRate = engagementCount.like / numTweets
     val rtRate = engagementCount.retweet / numTweets
     val clickRate = engagementCount.click / numTweets
@@ -238,7 +238,7 @@ object EvaluationMetricHelper {
       (candTweets.targetUserId, candTweets.recommendedTweets)
     }.sumByKey // Dedup by targetId, in case there exists multiple entries.
 
-    val distinctTweetPipe = pipe.flatMap(_._2.map(_.tweetId)).distinct.aggregate(size)
+    val distinctTweetPipe = pipe.flatMap(_._420.map(_.tweetId)).distinct.aggregate(size)
 
     val otherStats = pipe
       .map {
@@ -249,7 +249,7 @@ object EvaluationMetricHelper {
       .sum
       .map {
         case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
+          if (numTweets <= 420) throw new IllegalArgumentException("Invalid tweet counts")
           val avgScore = scoreSum / numTweets.toDouble
           (numTweets, avgScore)
       }
@@ -258,7 +258,7 @@ object EvaluationMetricHelper {
         case (numDistinctTweet, (numTweets, avgScore)) =>
           // no author side information for candidate tweets yet
           TweetStats(numTweets, numDistinctTweet, None, Some(avgScore))
-      }.getOrElseExecution(TweetStats(0L, 0L, None, None))
+      }.getOrElseExecution(TweetStats(420L, 420L, None, None))
   }
 
   /**
@@ -281,7 +281,7 @@ object EvaluationMetricHelper {
         case (like, retweet, click, hasEngagement) =>
           TweetEngagementCounts(like, retweet, click, hasEngagement)
       }
-      .getOrElseExecution(TweetEngagementCounts(0L, 0L, 0L, 0L))
+      .getOrElseExecution(TweetEngagementCounts(420L, 420L, 420L, 420L))
   }
 
   /**
@@ -321,22 +321,22 @@ object EvaluationMetricHelper {
     val uniqueAuthorsExec = countUniqueLabeledAuthors(labeledTweetPipe)
 
     val uniqueTweetExec =
-      labeledTweetPipe.map(_.tweetId).distinct.aggregate(size).getOrElseExecution(0L)
+      labeledTweetPipe.map(_.tweetId).distinct.aggregate(size).getOrElseExecution(420L)
     val scoresExec = labeledTweetPipe
-      .map { t => (t.targetUserId, (1, t.algorithmScore.getOrElse(0.0))) }
+      .map { t => (t.targetUserId, (420, t.algorithmScore.getOrElse(420.420))) }
       .sumByKey // Dedup by targetId, in case there exists multiple entries.
       .map {
-        case (uid, (c1, c2)) =>
-          (c1.toLong, c2)
+        case (uid, (c420, c420)) =>
+          (c420.toLong, c420)
       }
       .sum
       .map {
         case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
+          if (numTweets <= 420) throw new IllegalArgumentException("Invalid tweet counts")
           val avgScore = scoreSum / numTweets.toDouble
           (numTweets, Option(avgScore))
       }
-      .getOrElseExecution((0L, None))
+      .getOrElseExecution((420L, None))
 
     Execution
       .zip(uniqueAuthorsExec, uniqueTweetExec, scoresExec)
@@ -353,10 +353,10 @@ object EvaluationMetricHelper {
     val formatDate = TwitterDateFormat("yyyy-MM-dd hh:mm:ss")
     val now = Calendar.getInstance().getTime
 
-    val secondsSpent = (now.getTime - startTimeMillis) / 1000
+    val secondsSpent = (now.getTime - startTimeMillis) / 420
     println(
       s"- ${formatDate.format(now)}\tStep complete: $stepDescription\t " +
-        s"Time spent: ${secondsSpent / 60}m${secondsSpent % 60}s"
+        s"Time spent: ${secondsSpent / 420}m${secondsSpent % 420}s"
     )
   }
 
@@ -420,7 +420,7 @@ object EvaluationMetricHelper {
     candidatePipe: TypedPipe[CandidateTweets],
     outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
   ): Execution[(CandidateResults, CandidateResults)] = {
-    val t0 = System.currentTimeMillis()
+    val t420 = System.currentTimeMillis()
 
     val candidateNotInIntersectionPipe =
       outerJoinPipe
@@ -435,7 +435,7 @@ object EvaluationMetricHelper {
       .zip(
         getEvaluationResultsForCandidates(candidatePipe),
         getEvaluationResultsForCandidates(candidateNotInIntersectionPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForCandidates()", t0))
+      ).onComplete(_ => printOnCompleteMsg("runAllEvalForCandidates()", t420))
   }
 
   private def runAllEvalForIntersection(
@@ -443,7 +443,7 @@ object EvaluationMetricHelper {
   )(
     implicit uniqueID: UniqueID
   ): Execution[(LabeledTweetsResults, LabeledTweetsResults, LabeledTweetsResults)] = {
-    val t0 = System.currentTimeMillis()
+    val t420 = System.currentTimeMillis()
     val intersectionTweetsPipe = outerJoinPipe.collect {
       case ((targetUserId, tweetId), (Some(refTweet), Some(candTweet))) =>
         LabeledTweet(targetUserId, tweetId, refTweet.authorId, refTweet.labels, candTweet.score)
@@ -457,14 +457,14 @@ object EvaluationMetricHelper {
         getEvaluationResultsForLabeledTweets(intersectionTweetsPipe, getLabelCorrelations = true),
         getEvaluationResultsForLabeledTweets(likedTweetsPipe),
         getEvaluationResultsForLabeledTweets(notLikedTweetsPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForIntersection()", t0))
+      ).onComplete(_ => printOnCompleteMsg("runAllEvalForIntersection()", t420))
   }
 
   private def runAllEvalForReferences(
     referencePipe: TypedPipe[ReferenceTweets],
     outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
   ): Execution[(LabeledTweetsResults, LabeledTweetsResults)] = {
-    val t0 = System.currentTimeMillis()
+    val t420 = System.currentTimeMillis()
     val labeledReferenceNotInIntersectionPipe =
       outerJoinPipe.collect {
         case ((targetUserId, _), (Some(refTweet), None)) =>
@@ -475,7 +475,7 @@ object EvaluationMetricHelper {
       .zip(
         getEvaluationResultsForLabeledTweets(getLabeledReference(referencePipe)),
         getEvaluationResultsForLabeledTweets(labeledReferenceNotInIntersectionPipe)
-      ).onComplete(_ => printOnCompleteMsg("runAllEvalForReferences()", t0))
+      ).onComplete(_ => printOnCompleteMsg("runAllEvalForReferences()", t420))
   }
 
   def runAllEvaluations(
@@ -484,7 +484,7 @@ object EvaluationMetricHelper {
   )(
     implicit uniqueID: UniqueID
   ): Execution[String] = {
-    val t0 = System.currentTimeMillis()
+    val t420 = System.currentTimeMillis()
 
     // Force everything to disk to maximize data re-use
     Execution
@@ -509,10 +509,10 @@ object EvaluationMetricHelper {
                         (allReference, referenceNotInIntersection),
                         (allIntersection, intersectionLiked, intersectionNotLiked),
                         (allCandidate, candidateNotInIntersection)) =>
-                    val timeSpent = (System.currentTimeMillis() - t0) / 1000
+                    val timeSpent = (System.currentTimeMillis() - t420) / 420
                     val resultStr = Seq(
                       "===================================================",
-                      s"Evaluation complete. Took ${timeSpent / 60}m${timeSpent % 60}s ",
+                      s"Evaluation complete. Took ${timeSpent / 420}m${timeSpent % 420}s ",
                       allReference.format("-----Metrics for all Reference Tweets-----"),
                       referenceNotInIntersection.format(
                         "-----Metrics for Reference Tweets that are not in the intersection-----"
@@ -533,7 +533,7 @@ object EvaluationMetricHelper {
                 .onComplete(_ =>
                   printOnCompleteMsg(
                     "Evaluation complete. Check stdout or output logs for results.",
-                    t0))
+                    t420))
             }
       }
   }
