@@ -32,6 +32,23 @@ These are the main components of the Recommendation Algorithm included in this r
 
 We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
 
+## Development environment
+
+The unified developement environment is still in an experimental state.
+Contributions are welcome!
+
+You can set up a development environment with various tooling via the nix flake:
+
+1. Install the [nix package manager](https://nixos.org/download.html) and enable
+   [flakes](https://nixos.wiki/wiki/Flakes).
+
+2. Enter the development shell by running `nix develop` in the root directory of
+   the repository.
+
+3. Optionally, install [direnv](https://github.com/direnv/direnv/blob/master/docs/installation.md)
+   which will automatically drop you into the development environment when you
+   `cd` into your local clone.
+
 ## Contributing
 
 We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
