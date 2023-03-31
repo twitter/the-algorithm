@@ -23,12 +23,15 @@ While Navi's features may not be as comprehensive as its open-source counterpart
 - `thrift_bpr_adapter`: generated thrift code for BatchPredictionRequest
 
 ## Content
+
 We include all *.rs source code that makes up the main navi binaries for you to examine. The test and benchmark code, as well as configuration files are not included due to data security concerns.
 
 ## Run
-in navi/navi you can run. Note you need to create a models directory and create some versions, preferably using epoch time, e.g., 1679693908377
+
+In navi/navi you can run. Note you need to create a models directory and create some versions, preferably using epoch time, e.g., 1679693908377
 - scripts/run_tf2.sh
 - scripts/run_onnx.sh
 
 ## Build
-you can adapt the above scripts to build using Cargo
+
+You can adapt the above scripts to build using Cargo.
