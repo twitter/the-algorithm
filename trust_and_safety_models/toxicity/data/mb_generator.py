@@ -198,7 +198,7 @@ class BalancedMiniBatchLoader(object):
         for label, group in label_groups
       }
 
-    datasets = [label_datasets[0], label_datasets[1]]
+    datasets = [label_datasets[label] for label in range(2)]
     weights = [1 - self.perc_training_tox, self.perc_training_tox]
     if num_classes == 3:
       datasets.append(label_datasets[2])
