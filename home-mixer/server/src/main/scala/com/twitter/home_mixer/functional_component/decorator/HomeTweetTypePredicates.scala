@@ -221,11 +221,7 @@ object HomeTweetTypePredicates {
     ("conversation_module_has_gap", _.getOrElse(ConversationModuleHasGapFeature, false)),
     ("served_in_recap_tweet_candidate_module_injection", _ => false),
     ("served_in_threaded_conversation_module", _ => false),
-    (
-      "author_is_elon",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None).contains(candidate.getOrElse(DDGStatsElonFeature, 0L))),
+    // no more elon 😭😭😭
     (
       "author_is_power_user",
       candidate =>
