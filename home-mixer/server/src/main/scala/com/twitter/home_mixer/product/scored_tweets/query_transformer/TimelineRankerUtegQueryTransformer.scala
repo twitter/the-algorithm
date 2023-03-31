@@ -19,7 +19,7 @@ import com.twitter.util.Duration
 
 object TimelineRankerUtegQueryTransformer {
   private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 500
+  private val MaxTweetsToFetch = 420
   private val MaxUtegCandidates = 800
 
   private val TensorflowModel = "timelines_rectweet_replica"

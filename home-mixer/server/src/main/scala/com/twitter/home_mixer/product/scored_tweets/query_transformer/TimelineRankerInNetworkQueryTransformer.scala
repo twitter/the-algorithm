@@ -14,7 +14,7 @@ import com.twitter.util.Duration
 
 object TimelineRankerInNetworkQueryTransformer {
   private val SinceDuration = 24.hours
-  private val MaxTweetsToFetch = 500
+  private val MaxTweetsToFetch = 420
 
   private val tweetKindOptions: TweetKindOption.ValueSet = TweetKindOption(
     includeReplies = true,
