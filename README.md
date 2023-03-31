@@ -8,6 +8,7 @@ diagram below illustrates how major services and jobs interconnect.
 
 These are the main components of the Recommendation Algorithm included in this repository:
 
+
 | Type | Component | Description |
 |------------|------------|------------|
 | Feature | [simclusters-ann](simclusters-ann/README.md) | Community detection and sparse embeddings into those communities. |
