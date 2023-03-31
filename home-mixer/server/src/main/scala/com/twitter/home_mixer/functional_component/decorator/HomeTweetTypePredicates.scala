@@ -244,6 +244,12 @@ object HomeTweetTypePredicates {
         candidate
           .getOrElse(AuthorIdFeature, None)
           .exists(candidate.getOrElse(DDGStatsRepublicansFeature, Set.empty[Long]).contains)),
+    (
+      "author_is_YAP",
+      candidate =>
+        candidate
+          .getOrElse(AuthorIdFeature, None)
+          .exists(candidate.getOrElse(DDGStatsYAPFeature, Set.empty[Long]).contains)),
   )
 
   val PredicateMap = CandidatePredicates.toMap
