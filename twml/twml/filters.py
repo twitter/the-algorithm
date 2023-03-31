@@ -1,9 +1,2 @@
-'''
-Includes functions to filter features dict build from
-data records.
-'''
-
-from twitter.deepbird.io.legacy.filters import (
-  balance_binary_class_samples,  # noqa: F401
-  sparse_keep_feature_if,  # noqa: F401
-  sparse_keep_sample_if)  # noqa: F401
+'\nIncludes functions to filter features dict build from\ndata records.\n'
+from twitter.deepbird.io.legacy.filters import balance_binary_class_samples,sparse_keep_feature_if,sparse_keep_sample_if

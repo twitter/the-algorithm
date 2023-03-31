@@ -1,74 +1,8 @@
-"""
-Implementing partition Layer
-"""
-
-
+'\nImplementing partition Layer\n'
 from .layer import Layer
-
 import tensorflow.compat.v1 as tf
-
-
 class Partition(Layer):
-  """
-  This layer implements:
-
-  .. code-block:: python
-
-    tf.dynamic_partition(input_vals, partition_ids, self.partitions)
-
-  Input:
-    partitions:
-      the number of partitions which we will divide the hashmap keys/bvalues
-
-  Output:
-    A layer that performs partitioning
-   """
-
-  def __init__(self, partitions=2, **kwargs):
-    self.partitions = partitions
-    super(Partition, self).__init__(**kwargs)
-
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
-
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
-
-    Raises NotImplementedError.
-
-    """
-    raise NotImplementedError
-
-  def call(self, partition_ids, input_vals, input_keys, **kwargs):
-    """This layer is responsible for partitioning the values/keys of a hashmap
-
-    Arguments:
-      partition_ids:
-        Tensor that is equivalent to boolean (int32).
-      input_vals:
-        Tensor that represents the values of the hashmap(float).
-      input_keys:
-        Tensor that represents the keys of the hashmap(float)
-
-    Returns:
-      The output of the partition layer, which is a list of lists which looks
-      something like:
-
-      .. code-block:: python
-
-        [[vals_0, vals_1], [keys_0, keys_1], [indices_0, indices_1]]
-
-      where:
-        vals_x:
-          values of the hashmap for partition x
-        keys_x:
-          keys of the hashmap for partition x
-        indices_x:
-          indices of the hashmap for partition x
-    """
-    partioned_val = tf.dynamic_partition(input_vals, partition_ids, self.partitions)
-    partioned_keys = tf.dynamic_partition(input_keys, partition_ids, self.partitions)
-    partioned_indices = tf.dynamic_partition(tf.range(tf.shape(partition_ids)[0]),
-                                             tf.cast(partition_ids, tf.int32), self.partitions)
-    return [partioned_val, partioned_keys, partioned_indices]
+	'\n  This layer implements:\n\n  .. code-block:: python\n\n    tf.dynamic_partition(input_vals, partition_ids, self.partitions)\n\n  Input:\n    partitions:\n      the number of partitions which we will divide the hashmap keys/bvalues\n\n  Output:\n    A layer that performs partitioning\n   '
+	def __init__(A,partitions=2,**B):A.partitions=partitions;super(Partition,A).__init__(**B)
+	def compute_output_shape(A,input_shape):'Computes the output shape of the layer given the input shape.\n\n    Args:\n      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not\n        be fully defined (e.g. the batch size may be unknown).\n\n    Raises NotImplementedError.\n\n    ';raise NotImplementedError
+	def call(B,partition_ids,input_vals,input_keys,**F):'This layer is responsible for partitioning the values/keys of a hashmap\n\n    Arguments:\n      partition_ids:\n        Tensor that is equivalent to boolean (int32).\n      input_vals:\n        Tensor that represents the values of the hashmap(float).\n      input_keys:\n        Tensor that represents the keys of the hashmap(float)\n\n    Returns:\n      The output of the partition layer, which is a list of lists which looks\n      something like:\n\n      .. code-block:: python\n\n        [[vals_0, vals_1], [keys_0, keys_1], [indices_0, indices_1]]\n\n      where:\n        vals_x:\n          values of the hashmap for partition x\n        keys_x:\n          keys of the hashmap for partition x\n        indices_x:\n          indices of the hashmap for partition x\n    ';A=partition_ids;C=tf.dynamic_partition(input_vals,A,B.partitions);D=tf.dynamic_partition(input_keys,A,B.partitions);E=tf.dynamic_partition(tf.range(tf.shape(A)[0]),tf.cast(A,tf.int32),B.partitions);return[C,D,E]

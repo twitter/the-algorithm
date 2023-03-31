@@ -1,220 +1,87 @@
+_C='epoch'
+_B=False
+_A=None
 from collections import defaultdict
 import os
-
 from toxicity_ml_pipeline.settings.default_settings_tox import REMOTE_LOGDIR
 from toxicity_ml_pipeline.settings.default_settings_abs import LABEL_NAMES
 from toxicity_ml_pipeline.utils.absv_utils import parse_labeled_data
-from toxicity_ml_pipeline.utils.helpers import compute_precision_fixed_recall, execute_command
-
-from sklearn.metrics import average_precision_score, roc_auc_score
-import tensorflow as tf
-import wandb
-
-
+from toxicity_ml_pipeline.utils.helpers import compute_precision_fixed_recall,execute_command
+from sklearn.metrics import average_precision_score,roc_auc_score
+import tensorflow as tf,wandb
 class NothingCallback(tf.keras.callbacks.Callback):
-  def on_epoch_begin(self, epoch, logs=None):
-    print("ici, ", epoch)
-
-  def on_epoch_end(self, epoch, logs=None):
-    print("fin ", epoch)
-
-  def on_train_batch_end(self, batch, logs=None):
-    print("fin de batch ", batch)
-
-
+	def on_epoch_begin(A,epoch,logs=_A):print('ici, ',epoch)
+	def on_epoch_end(A,epoch,logs=_A):print('fin ',epoch)
+	def on_train_batch_end(A,batch,logs=_A):print('fin de batch ',batch)
 class ControlledStoppingCheckpointCallback(tf.keras.callbacks.ModelCheckpoint):
-  def __init__(self, stopping_epoch, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self.stopping_epoch = stopping_epoch
-
-  def on_epoch_end(self, epoch, logs=None):
-    super().on_epoch_end(epoch, logs)
-    if epoch == self.stopping_epoch:
-      self.model.stop_training = True
-
-
+	def __init__(A,stopping_epoch,*B,**C):super().__init__(*(B),**C);A.stopping_epoch=stopping_epoch
+	def on_epoch_end(A,epoch,logs=_A):
+		B=epoch;super().on_epoch_end(B,logs)
+		if B==A.stopping_epoch:A.model.stop_training=True
 class SyncingTensorBoard(tf.keras.callbacks.TensorBoard):
-  def __init__(self, remote_logdir=None, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self.remote_logdir = remote_logdir if remote_logdir is not None else REMOTE_LOGDIR
-
-  def on_epoch_end(self, epoch, logs=None):
-    super().on_epoch_end(epoch, logs=logs)
-    self.synchronize()
-
-  def synchronize(self):
-    base_dir = os.path.dirname(self.log_dir)
-    cmd = f"gsutil -m rsync -r {base_dir} {self.remote_logdir}"
-    execute_command(cmd)
-
-
+	def __init__(B,remote_logdir=_A,*C,**D):A=remote_logdir;super().__init__(*(C),**D);B.remote_logdir=A if A is not _A else REMOTE_LOGDIR
+	def on_epoch_end(A,epoch,logs=_A):super().on_epoch_end(epoch,logs=logs);A.synchronize()
+	def synchronize(A):B=os.path.dirname(A.log_dir);C=f"gsutil -m rsync -r {B} {A.remote_logdir}";execute_command(C)
 class GradientLoggingTensorBoard(SyncingTensorBoard):
-  def __init__(self, loader, val_data, freq, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    val_dataset = loader.get_balanced_dataset(
-      training_data=val_data, size_limit=50, return_as_batch=False
-    )
-    data_args = list(val_dataset.batch(32).take(1))[0]
-    self.x_batch, self.y_batch = data_args[0], data_args[1]
-    self.freq = freq
-    self.counter = 0
-
-  def _log_gradients(self):
-    writer = self._train_writer
-
-    with writer.as_default():
-      with tf.GradientTape() as tape:
-        y_pred = self.model(self.x_batch)
-        loss = self.model.compiled_loss(y_true=self.y_batch, y_pred=y_pred)
-        gradient_norm = tf.linalg.global_norm(tape.gradient(loss, self.model.trainable_weights))
-
-      tf.summary.scalar("gradient_norm", data=gradient_norm, step=self.counter)
-    writer.flush()
-
-  def on_train_batch_end(self, batch, logs=None):
-    super().on_batch_end(batch, logs=logs)
-    self.counter += 1
-    if batch % self.freq == 0:
-      self._log_gradients()
-
-
+	def __init__(A,loader,val_data,freq,*C,**D):super().__init__(*(C),**D);E=loader.get_balanced_dataset(training_data=val_data,size_limit=50,return_as_batch=_B);B=list(E.batch(32).take(1))[0];A.x_batch,A.y_batch=B[0],B[1];A.freq=freq;A.counter=0
+	def _log_gradients(A):
+		B=A._train_writer
+		with B.as_default():
+			with tf.GradientTape()as C:D=A.model(A.x_batch);E=A.model.compiled_loss(y_true=A.y_batch,y_pred=D);F=tf.linalg.global_norm(C.gradient(E,A.model.trainable_weights))
+			tf.summary.scalar('gradient_norm',data=F,step=A.counter)
+		B.flush()
+	def on_train_batch_end(A,batch,logs=_A):
+		B=batch;super().on_batch_end(B,logs=logs);A.counter+=1
+		if B%A.freq==0:A._log_gradients()
 class AdditionalResultLogger(tf.keras.callbacks.Callback):
-  def __init__(
-    self,
-    data,
-    set_,
-    fixed_recall=0.85,
-    from_logits=False,
-    dataset_transform_func=None,
-    batch_size=64,
-    dual_head=None,
-    *args,
-    **kwargs,
-  ):
-    super().__init__(*args, **kwargs)
-    self.set_ = set_
-    if data is None:
-      return None    
-
-    self.single_head = True
-    try:
-      self.labels = data.int_label.values
-    except AttributeError:
-      self.labels = data.to_dataframe()[LABEL_NAMES].values.astype('int')
-      self.data = data.to_tf_dataset().map(parse_labeled_data).batch(batch_size)
-      self.label_names = LABEL_NAMES
-    else:
-      self.label_names = ['']
-      if dual_head:
-        self.label_names = [f'{e}_label' for e in dual_head]
-        self.labels = {f'{e}_output': data[f'{e}_label'].values for e in dual_head}
-        self.single_head = False
-      if dataset_transform_func is None:
-        self.data = data.text.values
-      else:
-        self.data = dataset_transform_func(data, mb_size=batch_size, shuffle=False)
-        
-    finally:
-      if len(self.label_names) == 1:
-        self.metric_kw = {}
-      else:
-        self.metric_kw = {'average': None}
-
-      self.counter = 0
-      self.best_metrics = defaultdict(float)
-      self.from_logits = from_logits
-      print(f"Loaded callback for {set_}, from_logits: {from_logits}, labels {self.label_names}")
-
-      if 1 < fixed_recall <= 100:
-        fixed_recall = fixed_recall / 100
-      elif not (0 < fixed_recall <= 100):
-        raise ValueError("Threshold should be between 0 and 1, or 0 and 100")
-      self.fixed_recall = fixed_recall
-      self.batch_size = batch_size
-
-  def compute_precision_fixed_recall(self, labels, preds):
-    result, _ = compute_precision_fixed_recall(labels=labels, preds=preds,
-      fixed_recall=self.fixed_recall)
-
-    return result
-
-  def on_epoch_end(self, epoch, logs=None):
-    self.additional_evaluations(step=epoch, eval_time="epoch")
-
-  def on_train_batch_end(self, batch, logs=None):
-    self.counter += 1
-    if self.counter % 2000 == 0:
-      self.additional_evaluations(step=self.counter, eval_time="batch")
-
-  def _binary_evaluations(self, preds, label_name=None, class_index=None):
-    mask = None
-    curr_labels = self.labels
-    if label_name is not None:
-      curr_labels = self.labels[label_name]
-      if class_index is not None:
-        curr_labels = (curr_labels == class_index).astype(int)
-
-    if -1 in curr_labels:
-      mask = curr_labels != -1   
-      curr_labels = curr_labels[mask]
-      preds = preds[mask] 
-    
-    return {
-        f"precision_recall{self.fixed_recall}": self.compute_precision_fixed_recall(
-          labels=curr_labels, preds=preds
-        ),
-        "pr_auc": average_precision_score(y_true=curr_labels, y_score=preds),
-        "roc_auc": roc_auc_score(y_true=curr_labels, y_score=preds),
-      }
-
-
-  def _multiclass_evaluations(self, preds):
-    pr_auc_l = average_precision_score(y_true=self.labels, y_score=preds, **self.metric_kw)
-    roc_auc_l = roc_auc_score(y_true=self.labels, y_score=preds, **self.metric_kw)
-    metrics = {}
-    for i, label in enumerate(self.label_names):
-      metrics[f'pr_auc_{label}'] = pr_auc_l[i]
-      metrics[f'roc_auc_{label}'] = roc_auc_l[i]
-
-    return metrics
-  
-  def additional_evaluations(self, step, eval_time):
-    print("Evaluating ", self.set_, eval_time, step)
-
-    preds = self.model.predict(x=self.data, batch_size=self.batch_size)
-    if self.from_logits:
-      preds = tf.keras.activations.sigmoid(preds.logits).numpy()
-    
-    if self.single_head:
-      if len(self.label_names) == 1:
-        metrics = self._binary_evaluations(preds)
-      else:
-        metrics = self._multiclass_evaluations(preds)
-    else:
-      if preds[0].shape[1] == 1:
-        binary_preds = preds[0]
-        multic_preds = preds[1]
-      else:
-        binary_preds = preds[1]
-        multic_preds = preds[0]
-
-      binary_metrics = self._binary_evaluations(binary_preds, label_name='target_output')
-      metrics = {f'{k}_target': v for k, v in binary_metrics.items()}
-      num_classes = multic_preds.shape[1]
-      for class_ in range(num_classes):
-        binary_metrics = self._binary_evaluations(multic_preds[:, class_], label_name='content_output', class_index=class_)
-        metrics.update({f'{k}_content_{class_}': v for k, v in binary_metrics.items()})
-
-    for k, v in metrics.items():
-      self.best_metrics[f"max_{k}"] = max(v, self.best_metrics[f"max_{k}"])
-
-    self.log_metrics(metrics, step=step, eval_time=eval_time)
-
-  def log_metrics(self, metrics_d, step, eval_time):
-    commit = False if self.set_ == "validation" else True
-    to_report = {self.set_: {**metrics_d, **self.best_metrics}}
-
-    if eval_time == "epoch":
-      to_report["epoch"] = step
-
-    wandb.log(to_report, commit=commit)
+	def __init__(A,data,set_,fixed_recall=0.85,from_logits=_B,dataset_transform_func=_A,batch_size=64,dual_head=_A,*H,**I):
+		F=dataset_transform_func;G=from_logits;D=dual_head;E=batch_size;C=fixed_recall;B=data;super().__init__(*(H),**I);A.set_=set_
+		if B is _A:return _A
+		A.single_head=True
+		try:A.labels=B.int_label.values
+		except AttributeError:A.labels=B.to_dataframe()[LABEL_NAMES].values.astype('int');A.data=B.to_tf_dataset().map(parse_labeled_data).batch(E);A.label_names=LABEL_NAMES
+		else:
+			A.label_names=['']
+			if D:A.label_names=[f"{A}_label"for A in D];A.labels={f"{A}_output":B[f"{A}_label"].values for A in D};A.single_head=_B
+			if F is _A:A.data=B.text.values
+			else:A.data=F(B,mb_size=E,shuffle=_B)
+		finally:
+			if len(A.label_names)==1:A.metric_kw={}
+			else:A.metric_kw={'average':_A}
+			A.counter=0;A.best_metrics=defaultdict(float);A.from_logits=G;print(f"Loaded callback for {set_}, from_logits: {G}, labels {A.label_names}")
+			if 1<C<=100:C=C/100
+			elif not 0<C<=100:raise ValueError('Threshold should be between 0 and 1, or 0 and 100')
+			A.fixed_recall=C;A.batch_size=E
+	def compute_precision_fixed_recall(A,labels,preds):B,C=compute_precision_fixed_recall(labels=labels,preds=preds,fixed_recall=A.fixed_recall);return B
+	def on_epoch_end(A,epoch,logs=_A):A.additional_evaluations(step=epoch,eval_time=_C)
+	def on_train_batch_end(A,batch,logs=_A):
+		A.counter+=1
+		if A.counter%2000==0:A.additional_evaluations(step=A.counter,eval_time='batch')
+	def _binary_evaluations(C,preds,label_name=_A,class_index=_A):
+		E=class_index;F=label_name;B=preds;D=_A;A=C.labels
+		if F is not _A:
+			A=C.labels[F]
+			if E is not _A:A=(A==E).astype(int)
+		if-1 in A:D=A!=-1;A=A[D];B=B[D]
+		return{f"precision_recall{C.fixed_recall}":C.compute_precision_fixed_recall(labels=A,preds=B),'pr_auc':average_precision_score(y_true=A,y_score=B),'roc_auc':roc_auc_score(y_true=A,y_score=B)}
+	def _multiclass_evaluations(A,preds):
+		C=preds;F=average_precision_score(y_true=A.labels,y_score=C,**A.metric_kw);G=roc_auc_score(y_true=A.labels,y_score=C,**A.metric_kw);B={}
+		for (D,E) in enumerate(A.label_names):B[f"pr_auc_{E}"]=F[D];B[f"roc_auc_{E}"]=G[D]
+		return B
+	def additional_evaluations(A,step,eval_time):
+		G=eval_time;print('Evaluating ',A.set_,G,step);B=A.model.predict(x=A.data,batch_size=A.batch_size)
+		if A.from_logits:B=tf.keras.activations.sigmoid(B.logits).numpy()
+		if A.single_head:
+			if len(A.label_names)==1:C=A._binary_evaluations(B)
+			else:C=A._multiclass_evaluations(B)
+		else:
+			if B[0].shape[1]==1:H=B[0];D=B[1]
+			else:H=B[1];D=B[0]
+			E=A._binary_evaluations(H,label_name='target_output');C={f"{A}_target":B for(A,B)in E.items()};J=D.shape[1]
+			for F in range(J):E=A._binary_evaluations(D[:,F],label_name='content_output',class_index=F);C.update({f"{A}_content_{F}":B for(A,B)in E.items()})
+		for (I,K) in C.items():A.best_metrics[f"max_{I}"]=max(K,A.best_metrics[f"max_{I}"])
+		A.log_metrics(C,step=step,eval_time=G)
+	def log_metrics(A,metrics_d,step,eval_time):
+		C=_B if A.set_=='validation'else True;B={A.set_:{**metrics_d,**A.best_metrics}}
+		if eval_time==_C:B[_C]=step
+		wandb.log(B,commit=C)

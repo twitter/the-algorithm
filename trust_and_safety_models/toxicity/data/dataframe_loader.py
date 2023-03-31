@@ -1,348 +1,114 @@
-from abc import ABC, abstractmethod
+_O='causal prevalence'
+_N='prevalence'
+_M='insults'
+_L='politics'
+_K=' LIMIT 500'
+_J='prev'
+_I='% action rate'
+_H='precision'
+_G='label'
+_F='origin'
+_E='...'
+_D='table'
+_C=False
+_B=None
+_A=True
+from abc import ABC,abstractmethod
 from datetime import date
 from importlib import import_module
 import pickle
-
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  CLIENT,
-  EXISTING_TASK_VERSIONS,
-  GCS_ADDRESS,
-  TRAINING_DATA_LOCATION,
-)
-from toxicity_ml_pipeline.utils.helpers import execute_command, execute_query
-from toxicity_ml_pipeline.utils.queries import (
-  FULL_QUERY,
-  FULL_QUERY_W_TWEET_TYPES,
-  PARSER_UDF,
-  QUERY_SETTINGS,
-)
-
-import numpy as np
-import pandas
-
-
+from toxicity_ml_pipeline.settings.default_settings_tox import CLIENT,EXISTING_TASK_VERSIONS,GCS_ADDRESS,TRAINING_DATA_LOCATION
+from toxicity_ml_pipeline.utils.helpers import execute_command,execute_query
+from toxicity_ml_pipeline.utils.queries import FULL_QUERY,FULL_QUERY_W_TWEET_TYPES,PARSER_UDF,QUERY_SETTINGS
+import numpy as np,pandas
 class DataframeLoader(ABC):
-
-  def __init__(self, project):
-    self.project = project
-
-  @abstractmethod
-  def produce_query(self):
-    pass
-
-  @abstractmethod
-  def load_data(self, test=False):
-    pass
-
-
+	def __init__(A,project):A.project=project
+	@abstractmethod
+	def produce_query(self):0
+	@abstractmethod
+	def load_data(self,test=_C):0
 class ENLoader(DataframeLoader):
-  def __init__(self, project, setting_file):
-    super(ENLoader, self).__init__(project=project)
-    self.date_begin = setting_file.DATE_BEGIN
-    self.date_end = setting_file.DATE_END
-    TASK_VERSION = setting_file.TASK_VERSION
-    if TASK_VERSION not in EXISTING_TASK_VERSIONS:
-      raise ValueError
-    self.task_version = TASK_VERSION
-    self.query_settings = dict(QUERY_SETTINGS)
-    self.full_query = FULL_QUERY
-
-  def produce_query(self, date_begin, date_end, task_version=None, **keys):
-    task_version = self.task_version if task_version is None else task_version
-
-    if task_version in keys["table"]:
-      table_name = keys["table"][task_version]
-      print(f"Loading {table_name}")
-
-      main_query = keys["main"].format(
-        table=table_name,
-        parser_udf=PARSER_UDF[task_version],
-        date_begin=date_begin,
-        date_end=date_end,
-      )
-
-      return self.full_query.format(
-        main_table_query=main_query, date_begin=date_begin, date_end=date_end
-      )
-    return ""
-
-  def _reload(self, test, file_keyword):
-    query = f"SELECT * from `{TRAINING_DATA_LOCATION.format(project=self.project)}_{file_keyword}`"
-
-    if test:
-      query += " ORDER BY RAND() LIMIT 1000"
-    try:
-      df = execute_query(client=CLIENT, query=query)
-    except Exception:
-      print(
-        "Loading from BQ failed, trying to load from GCS. "
-        "NB: use this option only for intermediate files, which will be deleted at the end of "
-        "the project."
-      )
-      copy_cmd = f"gsutil cp {GCS_ADDRESS.format(project=self.project)}/training_data/{file_keyword}.pkl ."
-      execute_command(copy_cmd)
-      try:
-        with open(f"{file_keyword}.pkl", "rb") as file:
-          df = pickle.load(file)
-      except Exception:
-        return None
-
-      if test:
-        df = df.sample(frac=1)
-        return df.iloc[:1000]
-
-    return df
-
-  def load_data(self, test=False, **kwargs):
-    if "reload" in kwargs and kwargs["reload"]:
-      df = self._reload(test, kwargs["reload"])
-      if df is not None and df.shape[0] > 0:
-        return df
-
-    df = None
-    query_settings = self.query_settings
-    if test:
-      query_settings = {"fairness": self.query_settings["fairness"]}
-      query_settings["fairness"]["main"] += " LIMIT 500"
-
-    for table, query_info in query_settings.items():
-      curr_query = self.produce_query(
-        date_begin=self.date_begin, date_end=self.date_end, **query_info
-      )
-      if curr_query == "":
-        continue
-      curr_df = execute_query(client=CLIENT, query=curr_query)
-      curr_df["origin"] = table
-      df = curr_df if df is None else pandas.concat((df, curr_df))
-
-    df["loading_date"] = date.today()
-    df["date"] = pandas.to_datetime(df.date)
-    return df
-
-  def load_precision_set(
-    self, begin_date="...", end_date="...", with_tweet_types=False, task_version=3.5
-  ):
-    if with_tweet_types:
-      self.full_query = FULL_QUERY_W_TWEET_TYPES
-
-    query_settings = self.query_settings
-    curr_query = self.produce_query(
-      date_begin=begin_date,
-      date_end=end_date,
-      task_version=task_version,
-      **query_settings["precision"],
-    )
-    curr_df = execute_query(client=CLIENT, query=curr_query)
-
-    curr_df.rename(columns={"media_url": "media_presence"}, inplace=True)
-    return curr_df
-
-
+	def __init__(A,project,setting_file):
+		B=setting_file;super(ENLoader,A).__init__(project=project);A.date_begin=B.DATE_BEGIN;A.date_end=B.DATE_END;C=B.TASK_VERSION
+		if C not in EXISTING_TASK_VERSIONS:raise ValueError
+		A.task_version=C;A.query_settings=dict(QUERY_SETTINGS);A.full_query=FULL_QUERY
+	def produce_query(C,date_begin,date_end,task_version=_B,**B):
+		E=date_end;D=date_begin;A=task_version;A=C.task_version if A is _B else A
+		if A in B[_D]:F=B[_D][A];print(f"Loading {F}");G=B['main'].format(table=F,parser_udf=PARSER_UDF[A],date_begin=D,date_end=E);return C.full_query.format(main_table_query=G,date_begin=D,date_end=E)
+		return''
+	def _reload(C,test,file_keyword):
+		B=file_keyword;D=f"SELECT * from `{TRAINING_DATA_LOCATION.format(project=C.project)}_{B}`"
+		if test:D+=' ORDER BY RAND() LIMIT 1000'
+		try:A=execute_query(client=CLIENT,query=D)
+		except Exception:
+			print('Loading from BQ failed, trying to load from GCS. NB: use this option only for intermediate files, which will be deleted at the end of the project.');E=f"gsutil cp {GCS_ADDRESS.format(project=C.project)}/training_data/{B}.pkl .";execute_command(E)
+			try:
+				with open(f"{B}.pkl",'rb')as F:A=pickle.load(F)
+			except Exception:return _B
+			if test:A=A.sample(frac=1);return A.iloc[:1000]
+		return A
+	def load_data(B,test=_C,**C):
+		G='fairness';F='reload'
+		if F in C and C[F]:
+			A=B._reload(test,C[F])
+			if A is not _B and A.shape[0]>0:return A
+		A=_B;D=B.query_settings
+		if test:D={G:B.query_settings[G]};D[G]['main']+=_K
+		for (I,J) in D.items():
+			H=B.produce_query(date_begin=B.date_begin,date_end=B.date_end,**J)
+			if H=='':continue
+			E=execute_query(client=CLIENT,query=H);E[_F]=I;A=E if A is _B else pandas.concat((A,E))
+		A['loading_date']=date.today();A['date']=pandas.to_datetime(A.date);return A
+	def load_precision_set(A,begin_date=_E,end_date=_E,with_tweet_types=_C,task_version=3.5):
+		if with_tweet_types:A.full_query=FULL_QUERY_W_TWEET_TYPES
+		C=A.query_settings;D=A.produce_query(date_begin=begin_date,date_end=end_date,task_version=task_version,**C[_H]);B=execute_query(client=CLIENT,query=D);B.rename(columns={'media_url':'media_presence'},inplace=_A);return B
 class ENLoaderWithSampling(ENLoader):
-
-  keywords = {
-    "politics": [
-...
-    ],
-    "insults": [
-...    
-    ],
-    "race": [
-...
-    ],
-  }
-  n = ...
-  N = ...
-
-  def __init__(self, project):
-    self.raw_loader = ENLoader(project=project)
-    if project == ...:
-      self.project = project
-    else:
-      raise ValueError
-
-  def sample_with_weights(self, df, n):
-    w = df["label"].value_counts(normalize=True)[1]
-    dist = np.full((df.shape[0],), w)
-    sampled_df = df.sample(n=n, weights=dist, replace=False)
-    return sampled_df
-
-  def sample_keywords(self, df, N, group):
-    print("\nmatching", group, "keywords...")
-
-    keyword_list = self.keywords[group]
-    match_df = df.loc[df.text.str.lower().str.contains("|".join(keyword_list), regex=True)]
-
-    print("sampling N/3 from", group)
-    if match_df.shape[0] <= N / 3:
-      print(
-        "WARNING: Sampling only",
-        match_df.shape[0],
-        "instead of",
-        N / 3,
-        "examples from race focused tweets due to insufficient data",
-      )
-      sample_df = match_df
-
-    else:
-      print(
-        "sampling",
-        group,
-        "at",
-        round(match_df["label"].value_counts(normalize=True)[1], 3),
-        "% action rate",
-      )
-      sample_df = self.sample_with_weights(match_df, int(N / 3))
-    print(sample_df.shape)
-    print(sample_df.label.value_counts(normalize=True))
-
-    print("\nshape of df before dropping sampled rows after", group, "matching..", df.shape[0])
-    df = df.loc[
-      df.index.difference(sample_df.index),
-    ]
-    print("\nshape of df after dropping sampled rows after", group, "matching..", df.shape[0])
-
-    return df, sample_df
-
-  def sample_first_set_helper(self, train_df, first_set, new_n):
-    if first_set == "prev":
-      fset = train_df.loc[train_df["origin"].isin(["prevalence", "causal prevalence"])]
-      print(
-        "sampling prev at", round(fset["label"].value_counts(normalize=True)[1], 3), "% action rate"
-      )
-    else:
-      fset = train_df
-
-    n_fset = self.sample_with_weights(fset, new_n)
-    print("len of sampled first set", n_fset.shape[0])
-    print(n_fset.label.value_counts(normalize=True))
-
-    return n_fset
-
-  def sample(self, df, first_set, second_set, keyword_sampling, n, N):
-    train_df = df[df.origin != "precision"]
-    val_test_df = df[df.origin == "precision"]
-
-    print("\nsampling first set of data")
-    new_n = n - N if second_set is not None else n
-    n_fset = self.sample_first_set_helper(train_df, first_set, new_n)
-
-    print("\nsampling second set of data")
-    train_df = train_df.loc[
-      train_df.index.difference(n_fset.index),
-    ]
-
-    if second_set is None:
-      print("no second set sampling being done")
-      df = n_fset.append(val_test_df)
-      return df
-
-    if second_set == "prev":
-      sset = train_df.loc[train_df["origin"].isin(["prevalence", "causal prevalence"])]
-
-    elif second_set == "fdr":
-      sset = train_df.loc[train_df["origin"] == "fdr"]
-
-    else: 
-      sset = train_df
-
-    if keyword_sampling == True:
-      print("sampling based off of keywords defined...")
-      print("second set is", second_set, "with length", sset.shape[0])
-
-      sset, n_politics = self.sample_keywords(sset, N, "politics")
-      sset, n_insults = self.sample_keywords(sset, N, "insults")
-      sset, n_race = self.sample_keywords(sset, N, "race")
-
-      n_sset = n_politics.append([n_insults, n_race]) 
-      print("len of sampled second set", n_sset.shape[0])
-
-    else:
-      print(
-        "No keyword sampling. Instead random sampling from",
-        second_set,
-        "at",
-        round(sset["label"].value_counts(normalize=True)[1], 3),
-        "% action rate",
-      )
-      n_sset = self.sample_with_weights(sset, N)
-      print("len of sampled second set", n_sset.shape[0])
-      print(n_sset.label.value_counts(normalize=True))
-
-    df = n_fset.append([n_sset, val_test_df])
-    df = df.sample(frac=1).reset_index(drop=True)
-
-    return df
-
-  def load_data(
-    self, first_set="prev", second_set=None, keyword_sampling=False, test=False, **kwargs
-  ):
-    n = kwargs.get("n", self.n)
-    N = kwargs.get("N", self.N)
-
-    df = self.raw_loader.load_data(test=test, **kwargs)
-    return self.sample(df, first_set, second_set, keyword_sampling, n, N)
-
-
+	keywords={_L:[...],_M:[...],'race':[...]};n=...;N=...
+	def __init__(B,project):
+		A=project;B.raw_loader=ENLoader(project=A)
+		if A==...:B.project=A
+		else:raise ValueError
+	def sample_with_weights(D,df,n):A=df[_G].value_counts(normalize=_A)[1];B=np.full((df.shape[0],),A);C=df.sample(n=n,weights=B,replace=_C);return C
+	def sample_keywords(E,df,N,group):
+		F='matching..';B=group;A=df;print('\nmatching',B,'keywords...');G=E.keywords[B];C=A.loc[A.text.str.lower().str.contains('|'.join(G),regex=_A)];print('sampling N/3 from',B)
+		if C.shape[0]<=N/3:print('WARNING: Sampling only',C.shape[0],'instead of',N/3,'examples from race focused tweets due to insufficient data');D=C
+		else:print('sampling',B,'at',round(C[_G].value_counts(normalize=_A)[1],3),_I);D=E.sample_with_weights(C,int(N/3))
+		print(D.shape);print(D.label.value_counts(normalize=_A));print('\nshape of df before dropping sampled rows after',B,F,A.shape[0]);A=A.loc[A.index.difference(D.index),];print('\nshape of df after dropping sampled rows after',B,F,A.shape[0]);return A,D
+	def sample_first_set_helper(D,train_df,first_set,new_n):
+		A=train_df
+		if first_set==_J:B=A.loc[A[_F].isin([_N,_O])];print('sampling prev at',round(B[_G].value_counts(normalize=_A)[1],3),_I)
+		else:B=A
+		C=D.sample_with_weights(B,new_n);print('len of sampled first set',C.shape[0]);print(C.label.value_counts(normalize=_A));return C
+	def sample(E,df,first_set,second_set,keyword_sampling,n,N):
+		J='len of sampled second set';I='fdr';D=second_set;B=df;C=B[B.origin!=_H];H=B[B.origin==_H];print('\nsampling first set of data');K=n-N if D is not _B else n;G=E.sample_first_set_helper(C,first_set,K);print('\nsampling second set of data');C=C.loc[C.index.difference(G.index),]
+		if D is _B:print('no second set sampling being done');B=G.append(H);return B
+		if D==_J:A=C.loc[C[_F].isin([_N,_O])]
+		elif D==I:A=C.loc[C[_F]==I]
+		else:A=C
+		if keyword_sampling==_A:print('sampling based off of keywords defined...');print('second set is',D,'with length',A.shape[0]);A,L=E.sample_keywords(A,N,_L);A,M=E.sample_keywords(A,N,_M);A,O=E.sample_keywords(A,N,'race');F=L.append([M,O]);print(J,F.shape[0])
+		else:print('No keyword sampling. Instead random sampling from',D,'at',round(A[_G].value_counts(normalize=_A)[1],3),_I);F=E.sample_with_weights(A,N);print(J,F.shape[0]);print(F.label.value_counts(normalize=_A))
+		B=G.append([F,H]);B=B.sample(frac=1).reset_index(drop=_A);return B
+	def load_data(A,first_set=_J,second_set=_B,keyword_sampling=_C,test=_C,**B):C=B.get('n',A.n);D=B.get('N',A.N);E=A.raw_loader.load_data(test=test,**B);return A.sample(E,first_set,second_set,keyword_sampling,C,D)
 class I18nLoader(DataframeLoader):
-  def __init__(self):
-    super().__init__(project=...)
-    from archive.settings.... import ACCEPTED_LANGUAGES, QUERY_SETTINGS
-
-    self.accepted_languages = ACCEPTED_LANGUAGES
-    self.query_settings = dict(QUERY_SETTINGS)
-
-  def produce_query(self, language, query, dataset, table, lang):
-    query = query.format(dataset=dataset, table=table)
-    add_query = f"AND reviewed.{lang}='{language}'"
-    query += add_query
-
-    return query
-
-  def query_keys(self, language, task=2, size="50"):
-    if task == 2:
-      if language == "ar":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "tr":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "es":
-        self.query_settings["adhoc_v2"]["table"] = f"..."
-      else:
-        self.query_settings["adhoc_v2"]["table"] = "..."
-
-      return self.query_settings["adhoc_v2"]
-
-    if task == 3:
-      return self.query_settings["adhoc_v3"]
-
-    raise ValueError(f"There are no other tasks than 2 or 3. {task} does not exist.")
-
-  def load_data(self, language, test=False, task=2):
-    if language not in self.accepted_languages:
-      raise ValueError(
-        f"Language not in the data {language}. Accepted values are " f"{self.accepted_languages}"
-      )
-
-    print(".... adhoc data")
-    key_dict = self.query_keys(language=language, task=task)
-    query_adhoc = self.produce_query(language=language, **key_dict)
-    if test:
-      query_adhoc += " LIMIT 500"
-    adhoc_df = execute_query(CLIENT, query_adhoc)
-
-    if not (test or language == "tr" or task == 3):
-      if language == "es":
-        print(".... additional adhoc data")
-        key_dict = self.query_keys(language=language, size="100")
-        query_adhoc = self.produce_query(language=language, **key_dict)
-        adhoc_df = pandas.concat(
-          (adhoc_df, execute_query(CLIENT, query_adhoc)), axis=0, ignore_index=True
-        )
-
-      print(".... prevalence data")
-      query_prev = self.produce_query(language=language, **self.query_settings["prevalence_v2"])
-      prev_df = execute_query(CLIENT, query_prev)
-      prev_df["description"] = "Prevalence"
-      adhoc_df = pandas.concat((adhoc_df, prev_df), axis=0, ignore_index=True)
-
-    return self.clean(adhoc_df)
+	def __init__(A):super().__init__(project=...);from archive.settings import ACCEPTED_LANGUAGES as B,QUERY_SETTINGS as C;A.accepted_languages=B;A.query_settings=dict(C)
+	def produce_query(C,language,query,dataset,table,lang):A=query;A=A.format(dataset=dataset,table=table);B=f"AND reviewed.{lang}='{language}'";A+=B;return A
+	def query_keys(A,language,task=2,size='50'):
+		D=task;C=language;B='adhoc_v2'
+		if D==2:
+			if C=='ar':A.query_settings[B][_D]=_E
+			elif C=='tr':A.query_settings[B][_D]=_E
+			elif C=='es':A.query_settings[B][_D]=f"..."
+			else:A.query_settings[B][_D]=_E
+			return A.query_settings[B]
+		if D==3:return A.query_settings['adhoc_v3']
+		raise ValueError(f"There are no other tasks than 2 or 3. {D} does not exist.")
+	def load_data(A,language,test=_C,task=2):
+		B=language
+		if B not in A.accepted_languages:raise ValueError(f"Language not in the data {B}. Accepted values are {A.accepted_languages}")
+		print('.... adhoc data');E=A.query_keys(language=B,task=task);D=A.produce_query(language=B,**E)
+		if test:D+=_K
+		C=execute_query(CLIENT,D)
+		if not(test or B=='tr'or task==3):
+			if B=='es':print('.... additional adhoc data');E=A.query_keys(language=B,size='100');D=A.produce_query(language=B,**E);C=pandas.concat((C,execute_query(CLIENT,D)),axis=0,ignore_index=_A)
+			print('.... prevalence data');G=A.produce_query(language=B,**A.query_settings['prevalence_v2']);F=execute_query(CLIENT,G);F['description']='Prevalence';C=pandas.concat((C,F),axis=0,ignore_index=_A)
+		return A.clean(C)

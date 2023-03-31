@@ -1,259 +1,31 @@
-# pylint: disable=no-member,arguments-differ, attribute-defined-outside-init
-"""
-Implementing Full Dense Layer
-"""
+'\nImplementing Full Dense Layer\n'
+_B=True
+_A=None
 from tensorflow.python.layers import core as core_layers
 from tensorflow.python.ops import init_ops
 from tensorflow.python.framework import tensor_shape
 from tensorflow.python.keras.engine.base_layer import InputSpec
 import tensorflow.compat.v1 as tf
-
-
 class FullDense(core_layers.Dense):
-  """
-  Densely-connected layer class.
-  This is wrapping tensorflow.python.layers.core.Dense
-  This layer implements the operation:
-
-  .. code-block:: python
-
-    outputs = activation(inputs.weight + bias)
-
-  Where ``activation`` is the activation function passed as the ``activation``
-  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,
-  and ``bias`` is a bias vector created by the layer.
-
-  Arguments:
-    output_size:
-      Integer or Long, dimensionality of the output space.
-    activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    weight_initializer:
-      Initializer function for the weight matrix.
-    bias_initializer:
-      Initializer function for the bias.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
-    bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
-
-  Properties:
-    output_size:
-      Python integer, dimensionality of the output space.
-    activation:
-      Activation function (callable).
-    weight_initializer:
-      Initializer instance (or name) for the weight matrix.
-    bias_initializer:
-      Initializer instance (or name) for the bias.
-    weight:
-      Weight matrix (TensorFlow variable or tensor). (weight)
-    bias:
-      Bias vector, if applicable (TensorFlow variable or tensor).
-    weight_regularizer:
-      Regularizer instance for the weight matrix (callable)
-    bias_regularizer:
-      Regularizer instance for the bias (callable).
-    activity_regularizer:
-      Regularizer instance for the output (callable)
-    weight_constraint:
-      Constraint function for the weight matrix.
-    bias_constraint:
-      Constraint function for the bias.
-
-  """
-
-  def __init__(self, output_size,
-               weight_initializer=None,
-               weight_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
-               num_partitions=None,
-               **kwargs):
-    super(FullDense, self).__init__(units=output_size,
-                                    kernel_initializer=weight_initializer,
-                                    kernel_regularizer=weight_regularizer,
-                                    kernel_constraint=weight_constraint,
-                                    **kwargs)
-    self._num_partitions = num_partitions
-
-  def build(self, input_shape):
-    '''
-    code adapted from TF 1.12 Keras Dense layer:
-    https://github.com/tensorflow/tensorflow/blob/r1.12/tensorflow/python/keras/layers/core.py#L930-L956
-    '''
-    input_shape = tensor_shape.TensorShape(input_shape)
-    if input_shape[-1] is None:
-      raise ValueError('The last dimension of the inputs to `Dense` '
-                       'should be defined. Found `None`.')
-    self.input_spec = InputSpec(min_ndim=2,
-                                axes={-1: input_shape[-1]})
-
-    partitioner = None
-    if self._num_partitions:
-      partitioner = tf.fixed_size_partitioner(self._num_partitions)
-
-    self.kernel = self.add_weight(
-        'kernel',
-        shape=[input_shape[-1], self.units],
-        initializer=self.kernel_initializer,
-        regularizer=self.kernel_regularizer,
-        constraint=self.kernel_constraint,
-        dtype=self.dtype,
-        partitioner=partitioner,
-        trainable=True)
-
-    if self.use_bias:
-      self.bias = self.add_weight(
-          'bias',
-          shape=[self.units, ],
-          initializer=self.bias_initializer,
-          regularizer=self.bias_regularizer,
-          constraint=self.bias_constraint,
-          dtype=self.dtype,
-          trainable=True)
-    else:
-      self.bias = None
-    self.built = True
-
-  @property
-  def output_size(self):
-    """
-    Returns output_size
-    """
-    return self.units
-
-  @property
-  def weight(self):
-    """
-    Returns weight
-    """
-    return self.kernel
-
-  @property
-  def weight_regularizer(self):
-    """
-    Returns weight_regularizer
-    """
-    return self.kernel_regularizer
-
-  @property
-  def weight_initializer(self):
-    """
-    Returns weight_initializer
-    """
-    return self.kernel_initializer
-
-  @property
-  def weight_constraint(self):
-    """
-    Returns weight_constraint
-    """
-    return self.kernel_constraint
-
-
-def full_dense(inputs, output_size,
-               activation=None,
-               use_bias=True,
-               weight_initializer=None,
-               bias_initializer=init_ops.zeros_initializer(),
-               weight_regularizer=None,
-               bias_regularizer=None,
-               activity_regularizer=None,
-               weight_constraint=None,
-               bias_constraint=None,
-               trainable=True,
-               name=None,
-               num_partitions=None,
-               reuse=None):
-  """Functional interface for the densely-connected layer.
-  This layer implements the operation:
-  `outputs = activation(inputs.weight + bias)`
-  Where `activation` is the activation function passed as the `activation`
-  argument (if not `None`), `weight` is a weights matrix created by the layer,
-  and `bias` is a bias vector created by the layer
-  (only if `use_bias` is `True`).
-
-  Arguments:
-    inputs: Tensor input.
-    units: Integer or Long, dimensionality of the output space.
-    activation: Activation function (callable). Set it to None to maintain a
-      linear activation.
-    use_bias: Boolean, whether the layer uses a bias.
-    weight_initializer: Initializer function for the weight matrix.
-      If `None` (default), weights are initialized using the default
-      initializer used by `tf.get_variable`.
-    bias_initializer:
-      Initializer function for the bias.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    bias_regularizer:
-      Regularizer function for the bias.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activity_regularizer:
-      Regularizer function for the output.
-    weight_constraint:
-      An optional projection function to be applied to the
-      weight after being updated by an `Optimizer` (e.g. used to implement
-      norm constraints or value constraints for layer weights). The function
-      must take as input the unprojected variable and must return the
-      projected variable (which must have the same shape). Constraints are
-      not safe to use when doing asynchronous distributed training.
-    bias_constraint:
-      An optional projection function to be applied to the
-      bias after being updated by an `Optimizer`.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      `GraphKeys.TRAINABLE_VARIABLES` (see `tf.Variable`).
-    name:
-      String, the name of the layer.
-    reuse:
-      Boolean, whether to reuse the weights of a previous layer
-      by the same name.
-
-  Returns:
-    Output tensor the same shape as `inputs` except the last dimension is of
-    size `units`.
-
-  Raises:
-    ValueError: if eager execution is enabled.
-  """
-  layer = FullDense(output_size,
-                    activation=activation,
-                    use_bias=use_bias,
-                    weight_initializer=weight_initializer,
-                    bias_initializer=bias_initializer,
-                    weight_regularizer=weight_regularizer,
-                    bias_regularizer=bias_regularizer,
-                    activity_regularizer=activity_regularizer,
-                    weight_constraint=weight_constraint,
-                    bias_constraint=bias_constraint,
-                    trainable=trainable,
-                    name=name,
-                    dtype=inputs.dtype.base_dtype,
-                    num_partitions=num_partitions,
-                    _scope=name,
-                    _reuse=reuse)
-  return layer.apply(inputs)
+	'\n  Densely-connected layer class.\n  This is wrapping tensorflow.python.layers.core.Dense\n  This layer implements the operation:\n\n  .. code-block:: python\n\n    outputs = activation(inputs.weight + bias)\n\n  Where ``activation`` is the activation function passed as the ``activation``\n  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,\n  and ``bias`` is a bias vector created by the layer.\n\n  Arguments:\n    output_size:\n      Integer or Long, dimensionality of the output space.\n    activation:\n      Activation function (callable). Set it to None to maintain a linear activation.\n    weight_initializer:\n      Initializer function for the weight matrix.\n    bias_initializer:\n      Initializer function for the bias.\n    weight_regularizer:\n      Regularizer function for the weight matrix.\n      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.\n    bias_regularizer:\n      Regularizer function for the bias.\n      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.\n    activity_regularizer:\n      Regularizer function for the output.\n    weight_constraint:\n      An optional projection function to be applied to the\n      weight after being updated by an `Optimizer` (e.g. used to implement\n      norm constraints or value constraints for layer weights). The function\n      must take as input the unprojected variable and must return the\n      projected variable (which must have the same shape). Constraints are\n      not safe to use when doing asynchronous distributed training.\n    bias_constraint:\n      An optional projection function to be applied to the\n      bias after being updated by an `Optimizer`.\n    trainable:\n      Boolean, if `True` also add variables to the graph collection\n      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable\n      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).\n    name:\n      String, the name of the layer. Layers with the same name will\n      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.\n\n  Properties:\n    output_size:\n      Python integer, dimensionality of the output space.\n    activation:\n      Activation function (callable).\n    weight_initializer:\n      Initializer instance (or name) for the weight matrix.\n    bias_initializer:\n      Initializer instance (or name) for the bias.\n    weight:\n      Weight matrix (TensorFlow variable or tensor). (weight)\n    bias:\n      Bias vector, if applicable (TensorFlow variable or tensor).\n    weight_regularizer:\n      Regularizer instance for the weight matrix (callable)\n    bias_regularizer:\n      Regularizer instance for the bias (callable).\n    activity_regularizer:\n      Regularizer instance for the output (callable)\n    weight_constraint:\n      Constraint function for the weight matrix.\n    bias_constraint:\n      Constraint function for the bias.\n\n  '
+	def __init__(A,output_size,weight_initializer=_A,weight_regularizer=_A,weight_constraint=_A,bias_constraint=_A,num_partitions=_A,**B):super(FullDense,A).__init__(units=output_size,kernel_initializer=weight_initializer,kernel_regularizer=weight_regularizer,kernel_constraint=weight_constraint,**B);A._num_partitions=num_partitions
+	def build(A,input_shape):
+		'\n    code adapted from TF 1.12 Keras Dense layer:\n    https://github.com/tensorflow/tensorflow/blob/r1.12/tensorflow/python/keras/layers/core.py#L930-L956\n    ';B=input_shape;B=tensor_shape.TensorShape(B)
+		if B[-1]is _A:raise ValueError('The last dimension of the inputs to `Dense` should be defined. Found `None`.')
+		A.input_spec=InputSpec(min_ndim=2,axes={-1:B[-1]});C=_A
+		if A._num_partitions:C=tf.fixed_size_partitioner(A._num_partitions)
+		A.kernel=A.add_weight('kernel',shape=[B[-1],A.units],initializer=A.kernel_initializer,regularizer=A.kernel_regularizer,constraint=A.kernel_constraint,dtype=A.dtype,partitioner=C,trainable=_B)
+		if A.use_bias:A.bias=A.add_weight('bias',shape=[A.units],initializer=A.bias_initializer,regularizer=A.bias_regularizer,constraint=A.bias_constraint,dtype=A.dtype,trainable=_B)
+		else:A.bias=_A
+		A.built=_B
+	@property
+	def output_size(self):'\n    Returns output_size\n    ';return self.units
+	@property
+	def weight(self):'\n    Returns weight\n    ';return self.kernel
+	@property
+	def weight_regularizer(self):'\n    Returns weight_regularizer\n    ';return self.kernel_regularizer
+	@property
+	def weight_initializer(self):'\n    Returns weight_initializer\n    ';return self.kernel_initializer
+	@property
+	def weight_constraint(self):'\n    Returns weight_constraint\n    ';return self.kernel_constraint
+def full_dense(inputs,output_size,activation=_A,use_bias=_B,weight_initializer=_A,bias_initializer=init_ops.zeros_initializer(),weight_regularizer=_A,bias_regularizer=_A,activity_regularizer=_A,weight_constraint=_A,bias_constraint=_A,trainable=_B,name=_A,num_partitions=_A,reuse=_A):'Functional interface for the densely-connected layer.\n  This layer implements the operation:\n  `outputs = activation(inputs.weight + bias)`\n  Where `activation` is the activation function passed as the `activation`\n  argument (if not `None`), `weight` is a weights matrix created by the layer,\n  and `bias` is a bias vector created by the layer\n  (only if `use_bias` is `True`).\n\n  Arguments:\n    inputs: Tensor input.\n    units: Integer or Long, dimensionality of the output space.\n    activation: Activation function (callable). Set it to None to maintain a\n      linear activation.\n    use_bias: Boolean, whether the layer uses a bias.\n    weight_initializer: Initializer function for the weight matrix.\n      If `None` (default), weights are initialized using the default\n      initializer used by `tf.get_variable`.\n    bias_initializer:\n      Initializer function for the bias.\n    weight_regularizer:\n      Regularizer function for the weight matrix.\n      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.\n    bias_regularizer:\n      Regularizer function for the bias.\n      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.\n    activity_regularizer:\n      Regularizer function for the output.\n    weight_constraint:\n      An optional projection function to be applied to the\n      weight after being updated by an `Optimizer` (e.g. used to implement\n      norm constraints or value constraints for layer weights). The function\n      must take as input the unprojected variable and must return the\n      projected variable (which must have the same shape). Constraints are\n      not safe to use when doing asynchronous distributed training.\n    bias_constraint:\n      An optional projection function to be applied to the\n      bias after being updated by an `Optimizer`.\n    trainable:\n      Boolean, if `True` also add variables to the graph collection\n      `GraphKeys.TRAINABLE_VARIABLES` (see `tf.Variable`).\n    name:\n      String, the name of the layer.\n    reuse:\n      Boolean, whether to reuse the weights of a previous layer\n      by the same name.\n\n  Returns:\n    Output tensor the same shape as `inputs` except the last dimension is of\n    size `units`.\n\n  Raises:\n    ValueError: if eager execution is enabled.\n  ';A=inputs;B=FullDense(output_size,activation=activation,use_bias=use_bias,weight_initializer=weight_initializer,bias_initializer=bias_initializer,weight_regularizer=weight_regularizer,bias_regularizer=bias_regularizer,activity_regularizer=activity_regularizer,weight_constraint=weight_constraint,bias_constraint=bias_constraint,trainable=trainable,name=name,dtype=A.dtype.base_dtype,num_partitions=num_partitions,_scope=name,_reuse=reuse);return B.apply(A)

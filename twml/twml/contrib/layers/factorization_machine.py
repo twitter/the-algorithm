@@ -1,179 +1,33 @@
-# pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
-"""
-Implementing factorization Layer
-"""
-
+'\nImplementing factorization Layer\n'
+_B=True
+_A=None
 from twitter.deepbird.sparse.sparse_ops import _pad_empty_outputs
-
-import tensorflow.compat.v1 as tf
-import twml
+import tensorflow.compat.v1 as tf,twml
 from twml.layers.layer import Layer
-
-
 class FactorizationMachine(Layer):
-  """factorization machine layer class.
-  This layer implements the factorization machine operation.
-  The paper is "Factorization Machines" by Steffen Rendle.
-  TDD: go/tf-fm-tdd
-
-  Arguments:
-    num_latent_variables:
-      num of latent variables
-      The number of parameter in this layer is num_latent_variables x n where n is number of
-      input features.
-    weight_initializer:
-      Initializer function for the weight matrix.
-      This argument defaults to zeros_initializer().
-      This is valid when the FullSparse is the first layer of
-      parameters but should be changed otherwise.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
-    use_sparse_grads:
-      Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
-      speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
-      be large, so it's better to set it to `True`
-    use_binary_values:
-      Assume all non zero values are 1. Defaults to False.
-      This can improve training if used in conjunction with MDL.
-      This parameter can also be a list of binary values if `inputs` passed to `call` a list.
-  """
-
-  def __init__(self,
-    num_latent_variables=10,
-    weight_initializer=None,
-    activation=None,
-    trainable=True,
-    name=None,
-    use_sparse_grads=True,
-    use_binary_values=False,
-    weight_regularizer=None,
-    substract_self_cross=True,
-    **kwargs):
-    super(FactorizationMachine, self).__init__(trainable=trainable, name=name, **kwargs)
-
-    if weight_initializer is None:
-      weight_initializer = tf.zeros_initializer()
-    self.weight_initializer = weight_initializer
-    self.num_latent_variables = num_latent_variables
-    self.activation = activation
-    self.use_sparse_grads = use_sparse_grads
-    self.use_binary_values = use_binary_values
-    self.weight_regularizer = weight_regularizer
-    self.substract_self_cross = substract_self_cross
-
-  def build(self, input_shape):
-    """
-    creates``weight`` Variable of shape``[input_size, num_latent_variables]``.
-
-    """
-
-    shape = [input_shape[1], self.num_latent_variables]
-
-    # There is a 2GB limitation for each tensor because of protobuf.
-    # 2**30 is 1GB. 2 * (2**30) is 2GB.
-    dtype = tf.as_dtype(self.dtype)
-    requested_size = input_shape[1] * self.num_latent_variables * dtype.size
-    if (requested_size >= 2**31):
-      raise ValueError("Weight tensor can not be larger than 2GB. " %
-                       "Requested Dimensions(%d, %d) of type %s (%d bytes total)"
-                       (input_shape[1], self.num_latent_variables, dtype.name))
-
-    if not callable(self.weight_initializer):
-      shape = None
-
-    # dense tensor
-    self.weight = self.add_variable(
-      'weight',
-      initializer=self.weight_initializer,
-      regularizer=self.weight_regularizer,
-      shape=shape,
-      dtype=self.dtype,
-      trainable=True,
-    )
-
-    self.built = True
-
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
-
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
-
-    Raises NotImplementedError.
-
-    """
-    raise NotImplementedError
-
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
-
-    Arguments:
-      inputs:
-        A SparseTensor
-    Returns:
-      - If `inputs` is `SparseTensor`, then returns a number with cross info
-    """
-    # The following are given:
-    # - inputs is a sparse tensor, we call it sp_x.
-    # - The dense_v tensor is a dense matrix, whose row i
-    #   corresponds to the vector V_i.
-    #   weights has shape [num_features, k]
-    sp_x = inputs
-    if isinstance(inputs, twml.SparseTensor):
-      sp_x = inputs.to_tf()
-    elif not isinstance(sp_x, tf.SparseTensor):
-      raise TypeError("The sp_x must be of type tf.SparseTensor or twml.SparseTensor")
-
-    indices = sp_x.indices[:, 1]
-    batch_ids = sp_x.indices[:, 0]
-    values = tf.reshape(sp_x.values, [-1, 1], name=self.name)
-    if self.use_sparse_grads:
-      v = tf.nn.embedding_lookup(self.weight, indices)
-      # if (self.use_binary_values):
-      #   values = tf.ones(tf.shape(values), dtype=values.dtype)
-      v_times_x = v * values
-      # First term: Sum_k  [Sum_i (v_ik * x_i)]^2
-      all_crosses = tf.segment_sum(v_times_x, batch_ids, name=self.name)
-      all_crosses_squared = tf.reduce_sum((all_crosses * all_crosses), 1)
-
-      if self.substract_self_cross:
-        # Second term: Sum_k Sum_i [ (v_ik * x_i)^2 ]
-        v_times_x_2 = v_times_x**2
-        self_crosses = tf.reduce_sum(tf.segment_sum(v_times_x_2, batch_ids, name=self.name), 1)
-        outputs = all_crosses_squared - self_crosses
-      else:
-        outputs = all_crosses_squared
-    else:
-      # need to check if prediction is faster with code below
-      crossTerm = tf.reduce_sum((tf.sparse_tensor_dense_matmul(sp_x, self.weight)**2), 1)
-
-      if self.substract_self_cross:
-        # compute self-cross term
-        self_crossTerm = tf.reduce_sum(tf.segment_sum((tf.gather(self.weight, indices) * values)**2, batch_ids), 1)
-        outputs = crossTerm - self_crossTerm
-      else:
-        outputs = crossTerm
-
-    if self.activation is not None:
-      outputs = self.activation(outputs)
-
-    outputs = tf.reshape(outputs, [-1, 1], name=self.name)
-    outputs = _pad_empty_outputs(outputs, tf.cast(sp_x.dense_shape[0], tf.int32))
-    # set more explicit and static shape to avoid shape inference error
-    # valueError: The last dimension of the inputs to `Dense` should be defined. Found `None`
-    outputs.set_shape([None, 1])
-    return outputs
+	'factorization machine layer class.\n  This layer implements the factorization machine operation.\n  The paper is "Factorization Machines" by Steffen Rendle.\n  TDD: go/tf-fm-tdd\n\n  Arguments:\n    num_latent_variables:\n      num of latent variables\n      The number of parameter in this layer is num_latent_variables x n where n is number of\n      input features.\n    weight_initializer:\n      Initializer function for the weight matrix.\n      This argument defaults to zeros_initializer().\n      This is valid when the FullSparse is the first layer of\n      parameters but should be changed otherwise.\n    weight_regularizer:\n      Regularizer function for the weight matrix.\n      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.\n    activation:\n      Activation function (callable). Set it to None to maintain a linear activation.\n    trainable:\n      Boolean, if `True` also add variables to the graph collection\n      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable\n      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).\n    name:\n      String, the name of the layer. Layers with the same name will\n      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.\n    use_sparse_grads:\n      Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will\n      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial\n      speed up at training time when input_size is large and optimizer handles sparse gradients\n      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it\'s recommended\n      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will\n      be large, so it\'s better to set it to `True`\n    use_binary_values:\n      Assume all non zero values are 1. Defaults to False.\n      This can improve training if used in conjunction with MDL.\n      This parameter can also be a list of binary values if `inputs` passed to `call` a list.\n  '
+	def __init__(A,num_latent_variables=10,weight_initializer=_A,activation=_A,trainable=_B,name=_A,use_sparse_grads=_B,use_binary_values=False,weight_regularizer=_A,substract_self_cross=_B,**C):
+		B=weight_initializer;super(FactorizationMachine,A).__init__(trainable=trainable,name=name,**C)
+		if B is _A:B=tf.zeros_initializer()
+		A.weight_initializer=B;A.num_latent_variables=num_latent_variables;A.activation=activation;A.use_sparse_grads=use_sparse_grads;A.use_binary_values=use_binary_values;A.weight_regularizer=weight_regularizer;A.substract_self_cross=substract_self_cross
+	def build(A,input_shape):
+		'\n    creates``weight`` Variable of shape``[input_size, num_latent_variables]``.\n\n    ';B=input_shape;C=[B[1],A.num_latent_variables];D=tf.as_dtype(A.dtype);E=B[1]*A.num_latent_variables*D.size
+		if E>=2**31:raise ValueError('Weight tensor can not be larger than 2GB. '%'Requested Dimensions(%d, %d) of type %s (%d bytes total)'(B[1],A.num_latent_variables,D.name))
+		if not callable(A.weight_initializer):C=_A
+		A.weight=A.add_variable('weight',initializer=A.weight_initializer,regularizer=A.weight_regularizer,shape=C,dtype=A.dtype,trainable=_B);A.built=_B
+	def compute_output_shape(A,input_shape):'Computes the output shape of the layer given the input shape.\n\n    Args:\n      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not\n        be fully defined (e.g. the batch size may be unknown).\n\n    Raises NotImplementedError.\n\n    ';raise NotImplementedError
+	def call(A,inputs,**P):
+		'The logic of the layer lives here.\n\n    Arguments:\n      inputs:\n        A SparseTensor\n    Returns:\n      - If `inputs` is `SparseTensor`, then returns a number with cross info\n    ';D=inputs;C=D
+		if isinstance(D,twml.SparseTensor):C=D.to_tf()
+		elif not isinstance(C,tf.SparseTensor):raise TypeError('The sp_x must be of type tf.SparseTensor or twml.SparseTensor')
+		F=C.indices[:,1];E=C.indices[:,0];G=tf.reshape(C.values,[-1,1],name=A.name)
+		if A.use_sparse_grads:
+			L=tf.nn.embedding_lookup(A.weight,F);H=L*G;I=tf.segment_sum(H,E,name=A.name);J=tf.reduce_sum(I*I,1)
+			if A.substract_self_cross:M=H**2;N=tf.reduce_sum(tf.segment_sum(M,E,name=A.name),1);B=J-N
+			else:B=J
+		else:
+			K=tf.reduce_sum(tf.sparse_tensor_dense_matmul(C,A.weight)**2,1)
+			if A.substract_self_cross:O=tf.reduce_sum(tf.segment_sum((tf.gather(A.weight,F)*G)**2,E),1);B=K-O
+			else:B=K
+		if A.activation is not _A:B=A.activation(B)
+		B=tf.reshape(B,[-1,1],name=A.name);B=_pad_empty_outputs(B,tf.cast(C.dense_shape[0],tf.int32));B.set_shape([_A,1]);return B

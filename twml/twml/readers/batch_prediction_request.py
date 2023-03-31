@@ -1,8 +1,2 @@
-# pylint: disable=invalid-name
-"""
-This module implements the reader for BatchPredictionRequest.
-"""
-
-from twitter.deepbird.io.legacy.readers.batch_prediction_request import (
-  BatchPredictionRequest  # noqa: F401
-)
+'\nThis module implements the reader for BatchPredictionRequest.\n'
+from twitter.deepbird.io.legacy.readers.batch_prediction_request import BatchPredictionRequest

@@ -1,39 +1,4 @@
 import tensorflow.compat.v1 as tf
 from twml.contrib.utils import math_fns
-
-
-def mean_max_normalizaiton(dense_tensor):
-  """
-  In-batch normalization
-  Args:
-    dense_tensor: A dense `Tensor`.
-  Returns:
-    (dense_tensor - mean) / abs(max value)
-  Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
-  """
-  dense_mean = tf.reduce_mean(dense_tensor, reduction_indices=[0])
-  dense_abs_max = tf.abs(tf.reduce_max(dense_tensor, reduction_indices=[0]))
-  dense_tensor = math_fns.safe_div(dense_tensor - dense_mean, dense_abs_max,
-    'mean_max_normalization_in_batch')
-  return dense_tensor
-
-
-def standard_normalizaiton(dense_tensor):
-  """
-  In-batch normalization
-  z-normalization or standard_normalization in batch
-  Args:
-    dense_tensor: A dense `Tensor`.
-  Returns:
-    (dense_tensor - mean) / variance
-  Note:
-    when dense_tensor is of size [1, ?] it will give 0
-    If this is not what you want handle it outside the function
-  """
-  epsilon = 1E-7
-  dense_mean, dense_variance = tf.nn.moments(dense_tensor, 0)
-  # using epsilon is safer than math_fns.safe_div in here
-  dense_tensor = (dense_tensor - dense_mean) / (dense_variance + epsilon)
-  return dense_tensor
+def mean_max_normalizaiton(dense_tensor):'\n  In-batch normalization\n  Args:\n    dense_tensor: A dense `Tensor`.\n  Returns:\n    (dense_tensor - mean) / abs(max value)\n  Note:\n    when dense_tensor is of size [1, ?] it will give 0\n    If this is not what you want handle it outside the function\n  ';A=dense_tensor;B=tf.reduce_mean(A,reduction_indices=[0]);C=tf.abs(tf.reduce_max(A,reduction_indices=[0]));A=math_fns.safe_div(A-B,C,'mean_max_normalization_in_batch');return A
+def standard_normalizaiton(dense_tensor):'\n  In-batch normalization\n  z-normalization or standard_normalization in batch\n  Args:\n    dense_tensor: A dense `Tensor`.\n  Returns:\n    (dense_tensor - mean) / variance\n  Note:\n    when dense_tensor is of size [1, ?] it will give 0\n    If this is not what you want handle it outside the function\n  ';A=dense_tensor;B=1e-07;C,D=tf.nn.moments(A,0);A=(A-C)/(D+B);return A

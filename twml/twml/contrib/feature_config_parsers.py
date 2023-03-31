@@ -1,224 +1,102 @@
-"""Utility functions to create FeatureConfig objects from feature_spec.yaml files"""
-import os
-import re
-
-import tensorflow.compat.v1 as tf
-import yaml
+'Utility functions to create FeatureConfig objects from feature_spec.yaml files'
+_V="Format '%s' not implemented"
+_U='denseFeatures'
+_T='denseFeatureGroups'
+_S='sparseFeatureGroups'
+_R='sparseTensors'
+_Q="'format' must be 'exported' or 'manual'"
+_P='Manual config support not yet implemented'
+_O='manual'
+_N="'%s' is not a dict"
+_M='twml.contrib.FeatureConfig'
+_L='twml.FeatureConfig'
+_K='images'
+_J="'%s' key not found"
+_I='tensors'
+_H='filters'
+_G='weight'
+_F='labels'
+_E='exported'
+_D='class'
+_C='featureName'
+_B='features'
+_A='format'
+import os,re,tensorflow.compat.v1 as tf,yaml
 from twml.feature_config import FeatureConfigBuilder
 from twml.contrib.feature_config import FeatureConfigBuilder as FeatureConfigBuilderV2
-
-
 def _get_config_version(config_dict):
-  doc = config_dict
-  supported_classes = {
-    "twml.FeatureConfig": "v1",
-    "twml.contrib.FeatureConfig": "v2"
-  }
-  if "class" not in doc:
-    raise ValueError("'class' key not found")
-  if doc["class"] not in supported_classes.keys():
-    raise ValueError("Class %s not supported. Supported clases are %s"
-                     % (doc["class"], supported_classes.keys()))
-  return supported_classes[doc["class"]]
-
-
+	A=config_dict;B={_L:'v1',_M:'v2'}
+	if _D not in A:raise ValueError("'class' key not found")
+	if A[_D]not in B.keys():raise ValueError('Class %s not supported. Supported clases are %s'%(A[_D],B.keys()))
+	return B[A[_D]]
 def _validate_config_dict_v1(config_dict):
-  """
-  Validate spec exported by twml.FeatureConfig
-  """
-  doc = config_dict
-
-  def malformed_error(msg):
-    raise ValueError("twml.FeatureConfig: Malformed feature_spec. %s" % msg)
-
-  if doc["class"] != "twml.FeatureConfig":
-    malformed_error("'class' is not twml.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format' key not found")
-
-  # validate spec exported by twml.FeatureConfig
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparse_tensors"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    if "filters" not in doc:
-      malformed_error("'filters' key not found")
-    elif type(doc["filters"]) != list:
-      malformed_error("'filters' is not a list")
-
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
-  else:
-    malformed_error("'format' must be 'exported' or 'manual'")
-
-
+	'\n  Validate spec exported by twml.FeatureConfig\n  ';A=config_dict
+	def B(msg):raise ValueError('twml.FeatureConfig: Malformed feature_spec. %s'%msg)
+	if A[_D]!=_L:B("'class' is not twml.FeatureConfig")
+	if _A not in A:B("'format' key not found")
+	if A[_A]==_E:
+		D=[_B,_F,_G,_I,'sparse_tensors']
+		for C in D:
+			if C not in A:B(_J%C)
+			if type(A[C])!=dict:B(_N%C)
+		if _H not in A:B("'filters' key not found")
+		elif type(A[_H])!=list:B("'filters' is not a list")
+	elif A[_A]==_O:raise NotImplementedError(_P)
+	else:B(_Q)
 def _validate_config_dict_v2(config_dict):
-  """
-  Validate spec exported by twml.contrib.FeatureConfig
-  """
-  doc = config_dict
-
-  def malformed_error(msg):
-    raise ValueError("twml.contrib.FeatureConfig: Malformed feature_spec. %s" % msg)
-
-  if doc["class"] != "twml.contrib.FeatureConfig":
-    malformed_error("'class' is not twml.contrib.FeatureConfig")
-  if "format" not in doc:
-    malformed_error("'format key not found'")
-
-  # validate spec exported by twml.contrib.FeatureConfig (basic validation only)
-  if doc["format"] == "exported":
-    dict_keys = ["features", "labels", "weight", "tensors", "sparseTensors", "discretizeConfig"]
-    for key in dict_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != dict:
-        malformed_error("'%s' is not a dict" % key)
-    list_keys = ["sparseFeatureGroups", "denseFeatureGroups", "denseFeatures", "images", "filters"]
-    for key in list_keys:
-      if key not in doc:
-        malformed_error("'%s' key not found" % key)
-      if type(doc[key]) != list:
-        malformed_error("'%s' is not a list" % key)
-
-  # validate spec provided by modeler
-  elif doc["format"] == "manual":
-    raise NotImplementedError("Manual config support not yet implemented")
-  else:
-    malformed_error("'format' must be 'exported' or 'manual'")
-
-
-def _create_feature_config_v1(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilder(data_spec_path)
-
-  if config_dict["format"] == "exported":
-    # add features
-    for feature_info in config_dict["features"].values():
-      feature_name = re.escape(feature_info["featureName"])
-      feature_group = feature_info["featureGroup"]
-      fc_builder.add_feature(feature_name, feature_group)
-    # add labels
-    labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
-    # feature filters
-    for feature_name in config_dict["filters"]:
-      fc_builder.add_filter(feature_name)
-    # weight
-    if config_dict["weight"]:
-      weight_feature = list(config_dict["weight"].values())[0]["featureName"]
-      fc_builder.define_weight(weight_feature)
-  else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
-
-  return fc_builder.build()
-
-
-def _create_feature_config_v2(config_dict, data_spec_path):
-  fc_builder = FeatureConfigBuilderV2(data_spec_path)
-
-  if config_dict["format"] == "exported":
-    # add sparse group extraction configs
-    for sparse_group in config_dict["sparseFeatureGroups"]:
-      fids = sparse_group["features"].keys()
-      fnames = [sparse_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_features_as_hashed_sparse(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        output_tensor_name=sparse_group["outputName"],
-        hash_space_size_bits=sparse_group["hashSpaceBits"],
-        discretize_num_bins=sparse_group["discretize"]["numBins"],
-        discretize_output_size_bits=sparse_group["discretize"]["outputSizeBits"],
-        discretize_type=sparse_group["discretize"]["type"],
-        type_filter=sparse_group["filterType"])
-
-    # add dense group extraction configs
-    for dense_group in config_dict["denseFeatureGroups"]:
-      fids = dense_group["features"].keys()
-      fnames = [dense_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_feature_group(
-        feature_regexes=[re.escape(fname) for fname in fnames],
-        group_name=dense_group["outputName"],
-        type_filter=dense_group["filterType"],
-        default_value=dense_group["defaultValue"])
-
-    # add dense feature configs
-    for dense_features in config_dict["denseFeatures"]:
-      fids = dense_features["features"].keys()
-      fnames = [dense_features["features"][fid]["featureName"] for fid in fids]
-      default_value = dense_features["defaultValue"]
-      if len(fnames) == 1 and type(default_value) != dict:
-        fc_builder.extract_feature(
-          feature_name=re.escape(fnames[0]),
-          expected_shape=dense_features["expectedShape"],
-          default_value=dense_features["defaultValue"])
-      else:
-        fc_builder.extract_features(
-          feature_regexes=[re.escape(fname) for fname in fnames],
-          default_value_map=dense_features["defaultValue"])
-
-    # add image feature configs
-    for image in config_dict["images"]:
-      fc_builder.extract_image(
-        feature_name=image["featureName"],
-        preprocess=image["preprocess"],
-        out_type=tf.as_dtype(image["outType"].lower()),
-        channels=image["channels"],
-        default_image=image["defaultImage"],
-      )
-
-    # add other tensor features (non-image)
-    tensor_fnames = []
-    image_fnames = [img["featureName"] for img in config_dict["images"]]
-    for tensor_fname in config_dict["tensors"]:
-      if tensor_fname not in image_fnames:
-        tensor_fnames.append(tensor_fname)
-    for sparse_tensor_fname in config_dict["sparseTensors"]:
-      tensor_fnames.append(sparse_tensor_fname)
-    fc_builder.extract_tensors(tensor_fnames)
-
-    # add labels
-    labels = []
-    for label_info in config_dict["labels"].values():
-      labels.append(label_info["featureName"])
-    fc_builder.add_labels(labels)
-
-  else:
-    raise ValueError("Format '%s' not implemented" % config_dict["format"])
-
-  return fc_builder.build()
-
-
-def create_feature_config_from_dict(config_dict, data_spec_path):
-  """
-  Create a FeatureConfig object from a feature spec dict.
-  """
-  config_version = _get_config_version(config_dict)
-  if config_version == "v1":
-    _validate_config_dict_v1(config_dict)
-    feature_config = _create_feature_config_v1(config_dict, data_spec_path)
-  elif config_version == "v2":
-    _validate_config_dict_v2(config_dict)
-    feature_config = _create_feature_config_v2(config_dict, data_spec_path)
-  else:
-    raise ValueError("version not supported")
-
-  return feature_config
-
-
-def create_feature_config(config_path, data_spec_path):
-  """
-  Create a FeatureConfig object from a feature_spec.yaml file.
-  """
-  _, ext = os.path.splitext(config_path)
-  if ext not in ['.yaml', '.yml']:
-    raise ValueError("create_feature_config_from_yaml: Only .yaml/.yml supported")
-
-  with tf.io.gfile.GFile(config_path, mode='r') as fs:
-    config_dict = yaml.safe_load(fs)
-
-  return create_feature_config_from_dict(config_dict, data_spec_path)
+	'\n  Validate spec exported by twml.contrib.FeatureConfig\n  ';B=config_dict
+	def C(msg):raise ValueError('twml.contrib.FeatureConfig: Malformed feature_spec. %s'%msg)
+	if B[_D]!=_M:C("'class' is not twml.contrib.FeatureConfig")
+	if _A not in B:C("'format key not found'")
+	if B[_A]==_E:
+		D=[_B,_F,_G,_I,_R,'discretizeConfig']
+		for A in D:
+			if A not in B:C(_J%A)
+			if type(B[A])!=dict:C(_N%A)
+		E=[_S,_T,_U,_K,_H]
+		for A in E:
+			if A not in B:C(_J%A)
+			if type(B[A])!=list:C("'%s' is not a list"%A)
+	elif B[_A]==_O:raise NotImplementedError(_P)
+	else:C(_Q)
+def _create_feature_config_v1(config_dict,data_spec_path):
+	A=config_dict;B=FeatureConfigBuilder(data_spec_path)
+	if A[_A]==_E:
+		for D in A[_B].values():C=re.escape(D[_C]);F=D['featureGroup'];B.add_feature(C,F)
+		E=[]
+		for G in A[_F].values():E.append(G[_C])
+		B.add_labels(E)
+		for C in A[_H]:B.add_filter(C)
+		if A[_G]:H=list(A[_G].values())[0][_C];B.define_weight(H)
+	else:raise ValueError(_V%A[_A])
+	return B.build()
+def _create_feature_config_v2(config_dict,data_spec_path):
+	L='filterType';M='outputName';J='discretize';I='defaultValue';A=config_dict;B=FeatureConfigBuilderV2(data_spec_path)
+	if A[_A]==_E:
+		for C in A[_S]:F=C[_B].keys();D=[C[_B][A][_C]for A in F];B.extract_features_as_hashed_sparse(feature_regexes=[re.escape(A)for A in D],output_tensor_name=C[M],hash_space_size_bits=C['hashSpaceBits'],discretize_num_bins=C[J]['numBins'],discretize_output_size_bits=C[J]['outputSizeBits'],discretize_type=C[J]['type'],type_filter=C[L])
+		for G in A[_T]:F=G[_B].keys();D=[G[_B][A][_C]for A in F];B.extract_feature_group(feature_regexes=[re.escape(A)for A in D],group_name=G[M],type_filter=G[L],default_value=G[I])
+		for E in A[_U]:
+			F=E[_B].keys();D=[E[_B][A][_C]for A in F];P=E[I]
+			if len(D)==1 and type(P)!=dict:B.extract_feature(feature_name=re.escape(D[0]),expected_shape=E['expectedShape'],default_value=E[I])
+			else:B.extract_features(feature_regexes=[re.escape(A)for A in D],default_value_map=E[I])
+		for H in A[_K]:B.extract_image(feature_name=H[_C],preprocess=H['preprocess'],out_type=tf.as_dtype(H['outType'].lower()),channels=H['channels'],default_image=H['defaultImage'])
+		K=[];Q=[A[_C]for A in A[_K]]
+		for N in A[_I]:
+			if N not in Q:K.append(N)
+		for R in A[_R]:K.append(R)
+		B.extract_tensors(K);O=[]
+		for S in A[_F].values():O.append(S[_C])
+		B.add_labels(O)
+	else:raise ValueError(_V%A[_A])
+	return B.build()
+def create_feature_config_from_dict(config_dict,data_spec_path):
+	'\n  Create a FeatureConfig object from a feature spec dict.\n  ';B=data_spec_path;A=config_dict;C=_get_config_version(A)
+	if C=='v1':_validate_config_dict_v1(A);D=_create_feature_config_v1(A,B)
+	elif C=='v2':_validate_config_dict_v2(A);D=_create_feature_config_v2(A,B)
+	else:raise ValueError('version not supported')
+	return D
+def create_feature_config(config_path,data_spec_path):
+	'\n  Create a FeatureConfig object from a feature_spec.yaml file.\n  ';A=config_path;E,B=os.path.splitext(A)
+	if B not in['.yaml','.yml']:raise ValueError('create_feature_config_from_yaml: Only .yaml/.yml supported')
+	with tf.io.gfile.GFile(A,mode='r')as C:D=yaml.safe_load(C)
+	return create_feature_config_from_dict(D,data_spec_path)

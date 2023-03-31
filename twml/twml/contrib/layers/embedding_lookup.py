@@ -1,419 +1,73 @@
-import os
-import re
-import time
-
+_C=False
+_B=True
+_A=None
+import os,re,time
 from collections import OrderedDict
-
 from absl import logging
-import numpy as np
-import tensorflow.compat.v1 as tf
+import numpy as np,tensorflow.compat.v1 as tf
 from tensorflow.python.ops.lookup_ops import index_table_from_tensor
-
 import twml
-
-# Padding is 0, UNK is 1:
-PAD_WORD_ID = 0
-OOV_WORD_ID = 1
-
-
-def load_initializers_from_csv(
-  embedding_path, vocab_size=-1, embedding_size=None, separator=None, vocab=None
-):
-  """
-  Loads embeddings saved in the `glove format <https://nlp.stanford.edu/projects/glove/>`_.
-  The glove format is a txt file separated by spaces.
-  Each line looks like: "word 0.00001 0.2334 ...".
-
-  Arguments:
-    embedding_path:
-      path to the embeddings file on HDFS (hdfs://default/...)
-      or its local_path (/path/to/...).
-      The embedding_path may also specify a pattern. In which case, the embeddings
-      are read in the lexical order of the filenames that match the order.
-    vocab_size:
-      the maximum size of the vocabulary. The top ``vocab_size`` words in the file
-      are included in the vocabulary. If you specify a positive vocab_size,
-      the words are expected to be in descending order of frequency.
-      This allows the embeddings to be easily filtered to top vocab_size words.
-      Reducing the vocab_size acts as a regularizer, preventing the model to overfit on rarer words.
-      A negative vocab_size loads all embeddings.
-      Reducing the vocab_size may also help with memory issues,
-      allowing the embedding initializers to fit inside the graph.
-    embedding_size:
-      Defaults to None. If None, the embedding size is infered from the file name.
-      For example, ``glove.300d.txt`` and ``glove300d200.txt`` will both infrered
-      as ``embedding_size=300``. If this can't be done, the ``embedding_size`` is
-      inferred from the first line in the file. If ``embedding_size`` is provided,
-      only the last ``embedding_size`` values of each line are considered. This
-      allows the line parser to recover from partial word parsing errors.
-    separator:
-      Specifies the separator to use when splitting each line into values.
-      Default value is a whitespace (same as glove format).
-    vocab:
-      OrderedDict mapping words to np.array embedding vectors. Initializes the vocabulary.
-      Duplicate words found in the file are ignored.
-      Defaults to a vocabulary of two words::
-
-        vocab = OrderedDict()
-        vocab[''] = np.random.randn(embedding_size)
-        vocab['<UNK>'] = np.random.randn(embedding_size)
-
-  Returns:
-    tuple of (vocab_initializer, weight_initializer, shape)
-
-    vocab_initializer:
-      A tf.constant_initializer containing a vector of word strings of size vocab_size.
-    weight_initializer:
-      A twml.contrib.initializers.partition_constant_initializer containing
-      the weight matrix of embeddings of size vocab_size x embedding_size.
-    shape:
-      A tuple containing of (vocab_size, embedding_size).
-
-  """
-
-  start = time.time()
-
-  embedding_path = twml.util.sanitize_hdfs_path(embedding_path)
-
-  is_user_vocab = True
-  if vocab is None:
-    vocab = OrderedDict()
-    vocab[''] = True
-    vocab['<UNK>'] = True
-    is_user_vocab = False
-  elif not isinstance(vocab, OrderedDict):
-    raise RuntimeError(
-      "Expecting vocab argument of type OrderedDict or None. "
-      "Got type %s instead." % type(vocab).__name__
-    )
-
-  if embedding_size is None:
-    embedding_file = os.path.basename(embedding_path)
-    match = re.search(r"[^\d]([\d]+)d", embedding_file)
-    if match is not None:
-      embedding_size = int(match.group(1))
-
-  if embedding_size is not None and not isinstance(embedding_size, int):
-    raise RuntimeError(
-      "Expecting embedding_size argument of type int or None. "
-      "Got type %s, instead." % type(embedding_size).__name__
-    )
-
-  embedding_paths = sorted(tf.io.gfile.glob(embedding_path))
-
-  if len(embedding_paths) > 1:
-    raise ValueError(
-      "You are most likely using a the wrong --embedding.path"
-    )
-
-  embedding_path = embedding_paths[0]
-  logging.info("Reading embeddings file from path %s.." % embedding_path)
-
-  with tf.io.gfile.GFile(embedding_path) as f:
-    lines = f.readlines()
-
-  logging.info("Done reading embeddings file from path %s." % embedding_path)
-
-  logging.info("Parsing vocbulary and embeddings...")
-
-  for line in lines:
-    # Word and weights separated by space
-    values = line.strip().split(separator)
-    # Word is first symbol on each line
-    word = values[0]
-
-    if word not in vocab:
-      if embedding_size is None or embedding_size <= 0:
-        # get all elements after the first one.
-        word_weights = values[1:]
-        embedding_size = len(word_weights)
-      else:
-        # get the last embedding_size elements
-        word_weights = values[-min(embedding_size, len(values) - 1) :]
-
-      try:
-        if len(word_weights) != embedding_size:
-          raise ValueError
-
-        word_weights = np.asarray(word_weights, dtype=np.float32)
-        vocab[word] = word_weights
-      except ValueError:
-        logging.info("Wasn't able to load embeddings for word '%s'. Ignoring it" % word)
-
-      vocab_len = len(vocab)
-      if vocab_size > 0 and vocab_len == vocab_size:
-        # Limit vocabulary to top terms
-        break
-      elif (vocab_len % 1000) == 0:
-        logging.info("Loaded %d words into vocab" % vocab_len)
-
-    else:
-      logging.info("found duplicate word: %s" % word)
-
-  if not is_user_vocab:
-    vocab[''] = np.random.randn(embedding_size)
-    vocab['<UNK>'] = np.random.randn(embedding_size)
-
-  words = list(vocab.keys())
-  weights = list(vocab.values())
-
-  weights = np.asarray(weights, dtype=np.float32)
-  assert weights.shape[0] == len(vocab)
-  assert weights.shape[1] == embedding_size
-
-  vocab_initializer = tf.constant_initializer(words, tf.string)
-  weight_initializer = twml.contrib.initializers.PartitionConstant(weights, tf.float32)
-
-  logging.info("Loaded %d embeddings in %d seconds." % (len(vocab), time.time() - start))
-  return vocab_initializer, weight_initializer, weights.shape
-
-
-def add_parser_arguments(parser):
-  """
-  Adds the embedding.path and embedding.vocab_size command-line arguments to the parser.
-  These can be used to call an initializer loader function like
-  the ``load_initializers_from_csv`` function.
-
-  Arguments:
-    parser: argparse.ArgumentParser instance obtained from Trainer.get_trainer_parser
-
-  Returns:
-    argparse.ArgumentParser instance with discretizer-specific arguments added
-  """
-
-  parser.add_argument(
-    "--embedding.path",
-    "--embedding_path",
-    dest="embedding_path",
-    type=str,
-    default=None,
-    help="When specified, loads glove embeddings from .txt glove file",
-  )
-  parser.add_argument(
-    "--embedding.vocab_size",
-    "--embedding_vocab_size",
-    dest="embedding_vocab_size",
-    type=int,
-    default=-1,
-    help="Size of vocabulary. Uses this many of the most frequent terms. Defaults to -1 (use full vocab).",
-  )
-
-  return parser
-
-
+PAD_WORD_ID=0
+OOV_WORD_ID=1
+def load_initializers_from_csv(embedding_path,vocab_size=-1,embedding_size=_A,separator=_A,vocab=_A):
+	'\n  Loads embeddings saved in the `glove format <https://nlp.stanford.edu/projects/glove/>`_.\n  The glove format is a txt file separated by spaces.\n  Each line looks like: "word 0.00001 0.2334 ...".\n\n  Arguments:\n    embedding_path:\n      path to the embeddings file on HDFS (hdfs://default/...)\n      or its local_path (/path/to/...).\n      The embedding_path may also specify a pattern. In which case, the embeddings\n      are read in the lexical order of the filenames that match the order.\n    vocab_size:\n      the maximum size of the vocabulary. The top ``vocab_size`` words in the file\n      are included in the vocabulary. If you specify a positive vocab_size,\n      the words are expected to be in descending order of frequency.\n      This allows the embeddings to be easily filtered to top vocab_size words.\n      Reducing the vocab_size acts as a regularizer, preventing the model to overfit on rarer words.\n      A negative vocab_size loads all embeddings.\n      Reducing the vocab_size may also help with memory issues,\n      allowing the embedding initializers to fit inside the graph.\n    embedding_size:\n      Defaults to None. If None, the embedding size is infered from the file name.\n      For example, ``glove.300d.txt`` and ``glove300d200.txt`` will both infrered\n      as ``embedding_size=300``. If this can\'t be done, the ``embedding_size`` is\n      inferred from the first line in the file. If ``embedding_size`` is provided,\n      only the last ``embedding_size`` values of each line are considered. This\n      allows the line parser to recover from partial word parsing errors.\n    separator:\n      Specifies the separator to use when splitting each line into values.\n      Default value is a whitespace (same as glove format).\n    vocab:\n      OrderedDict mapping words to np.array embedding vectors. Initializes the vocabulary.\n      Duplicate words found in the file are ignored.\n      Defaults to a vocabulary of two words::\n\n        vocab = OrderedDict()\n        vocab[\'\'] = np.random.randn(embedding_size)\n        vocab[\'<UNK>\'] = np.random.randn(embedding_size)\n\n  Returns:\n    tuple of (vocab_initializer, weight_initializer, shape)\n\n    vocab_initializer:\n      A tf.constant_initializer containing a vector of word strings of size vocab_size.\n    weight_initializer:\n      A twml.contrib.initializers.partition_constant_initializer containing\n      the weight matrix of embeddings of size vocab_size x embedding_size.\n    shape:\n      A tuple containing of (vocab_size, embedding_size).\n\n  ';I='<UNK>';J=vocab_size;C=embedding_path;B=embedding_size;A=vocab;N=time.time();C=twml.util.sanitize_hdfs_path(C);K=_B
+	if A is _A:A=OrderedDict();A['']=_B;A[I]=_B;K=_C
+	elif not isinstance(A,OrderedDict):raise RuntimeError('Expecting vocab argument of type OrderedDict or None. Got type %s instead.'%type(A).__name__)
+	if B is _A:
+		O=os.path.basename(C);L=re.search('[^\\d]([\\d]+)d',O)
+		if L is not _A:B=int(L.group(1))
+	if B is not _A and not isinstance(B,int):raise RuntimeError('Expecting embedding_size argument of type int or None. Got type %s, instead.'%type(B).__name__)
+	M=sorted(tf.io.gfile.glob(C))
+	if len(M)>1:raise ValueError('You are most likely using a the wrong --embedding.path')
+	C=M[0];logging.info('Reading embeddings file from path %s..'%C)
+	with tf.io.gfile.GFile(C)as P:Q=P.readlines()
+	logging.info('Done reading embeddings file from path %s.'%C);logging.info('Parsing vocbulary and embeddings...')
+	for R in Q:
+		F=R.strip().split(separator);G=F[0]
+		if G not in A:
+			if B is _A or B<=0:D=F[1:];B=len(D)
+			else:D=F[-min(B,len(F)-1):]
+			try:
+				if len(D)!=B:raise ValueError
+				D=np.asarray(D,dtype=np.float32);A[G]=D
+			except ValueError:logging.info("Wasn't able to load embeddings for word '%s'. Ignoring it"%G)
+			H=len(A)
+			if J>0 and H==J:break
+			elif H%1000==0:logging.info('Loaded %d words into vocab'%H)
+		else:logging.info('found duplicate word: %s'%G)
+	if not K:A['']=np.random.randn(B);A[I]=np.random.randn(B)
+	S=list(A.keys());E=list(A.values());E=np.asarray(E,dtype=np.float32);assert E.shape[0]==len(A);assert E.shape[1]==B;T=tf.constant_initializer(S,tf.string);U=twml.contrib.initializers.PartitionConstant(E,tf.float32);logging.info('Loaded %d embeddings in %d seconds.'%(len(A),time.time()-N));return T,U,E.shape
+def add_parser_arguments(parser):'\n  Adds the embedding.path and embedding.vocab_size command-line arguments to the parser.\n  These can be used to call an initializer loader function like\n  the ``load_initializers_from_csv`` function.\n\n  Arguments:\n    parser: argparse.ArgumentParser instance obtained from Trainer.get_trainer_parser\n\n  Returns:\n    argparse.ArgumentParser instance with discretizer-specific arguments added\n  ';A=parser;A.add_argument('--embedding.path','--embedding_path',dest='embedding_path',type=str,default=_A,help='When specified, loads glove embeddings from .txt glove file');A.add_argument('--embedding.vocab_size','--embedding_vocab_size',dest='embedding_vocab_size',type=int,default=-1,help='Size of vocabulary. Uses this many of the most frequent terms. Defaults to -1 (use full vocab).');return A
 class EmbeddingLookup(twml.layers.Layer):
-  """Layer for looking up embeddings.
-  Transforms a sequence of strings to a sequence of embeddings.
-
-  Arguments:
-    vocab_size:
-      The number of word strings and embeddings in the vocabulary.
-    output_size:
-      Long or Integer, dimensionality of the output space. The embedding vector size.
-    vocab_initializer:
-      Initializer function for the vocabulary. Required. The initializer should
-      return a list of strings of size vocab_size.
-    weight_initializer:
-      Initializer function for the weight matrix of size vocab_size x output_size.
-      This argument defaults to zeros_initializer().
-      This is valid when the EmbeddingLookup is the first layer of
-      parameters but should be changed otherwise.
-    trainable:
-      Boolean, if `True` adds variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-      Defaults to True: trains the embeddings.
-    num_oov_buckets:
-      The number of buckets to use for OOV strings. These bucket ids occur after the vocab bucket
-      ids. Hashing is used to assign OOV strings to these buckets. If `num_oov_buckets` is not
-      specified, index `OOV_WORD_ID` is used for OOV strings.
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
-    num_partitions:
-      Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
-      Defaults to 0 (partition by row).
-      Must be 0 (row) or 1 (column, does not support yet)
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
-    dtype:
-      Defaults to tf.float32. Specifies the dtype of the weights.
-    use_placeholder:
-      Defaults to True.
-      If set to `True`, the initializer is passed via a placeholder. The initializer in this case needs to be of type `keras.initializers.Constant`.
-      If set to `False`, the initializer becomes part of the graph. This can sometimes be beyond what protobuf clients support.
-    checkpoint_dir:
-      Default to None.
-      If set to the path of a checkpoint, load embedding from the checkpoint.
-    convert_to_lowercase:
-      Default to True.
-      Converting all string inputs to lowercase.
-
-  Notes: If `use_placeholder` is set to `True`, the feed dictionary can be accessed by calling `twml.contrib.initializers.get_init_feed_dict()`.
-  """
-
-  def __init__(
-    self,
-    vocab_size,
-    output_size,
-    vocab_initializer,
-    weight_initializer=None,
-    trainable=True,
-    num_oov_buckets=None,
-    oov_word_id=None,
-    name=None,
-    num_partitions=1,
-    partition_axis=0,
-    weight_regularizer=None,
-    dtype=None,
-    use_placeholder=True,
-    checkpoint_dir=None,
-    convert_to_lowercase=True,
-    **kwargs,
-  ):
-    if dtype is None:
-      # prevents a bug where the parent class defaults to the type of the first input tensor.
-      dtype = tf.float32
-    super().__init__(trainable=trainable, name=name, dtype=dtype, **kwargs)
-    # Weights initialization is set to 0s. This is safe for full sparse layers because
-    # you are supposed to learn your embedding from the label.
-
-    is_constant_init = isinstance(weight_initializer, tf.keras.initializers.Constant)
-    if use_placeholder and (not is_constant_init) and (weight_initializer is not None):
-      raise ValueError("Weight initializer should be a `Constant` or `None`.")
-
-    if weight_initializer is None:
-      self.weight_initializer = tf.zeros_initializer()
-    else:
-      self.weight_initializer = weight_initializer
-    self.use_placeholder = use_placeholder
-    self.checkpoint_dir = checkpoint_dir
-    self.convert_to_lowercase = convert_to_lowercase
-
-    self.vocab_initializer = vocab_initializer
-    self.vocab_size = vocab_size
-    self.output_size = output_size
-    self.num_partitions = num_partitions
-    self.partition_axis = partition_axis
-    self.weight_regularizer = weight_regularizer
-    self.trainable = trainable
-    self.oov_word_id = oov_word_id
-    self.num_oov_buckets = num_oov_buckets
-
-    if self.oov_word_id is not None and self.num_oov_buckets is not None:
-      raise ValueError("At most one of oov_word_id or num_oov_buckets should be specified")
-    elif self.oov_word_id is None and self.num_oov_buckets is None:
-      self.oov_word_id = OOV_WORD_ID  # use the default OOV word id
-
-    if partition_axis != 0:
-      raise NotImplementedError("embedding_lookup only supports partition_axis = 0")
-
-  def build(self, input_shapes):
-    """
-    creates the ``vocab`` and ``weight`` Variables
-    of shape ``[vocab_size]`` and ``[vocab_size, output_size]`` respectively.
-    """
-    partitioner = None
-
-    additional_buckets_for_oov = self.num_oov_buckets if self.num_oov_buckets is not None else 0
-    shape = [self.vocab_size + additional_buckets_for_oov, self.output_size]
-
-    if self.use_placeholder:
-      embedding_weight_initializer = twml.contrib.initializers.PlaceholderInitializer(
-        shape, self.dtype
-      )
-      tf.add_to_collection(
-        twml.contrib.initializers.TWML_INIT_FEED_KEY,
-        {embedding_weight_initializer.value: self.weight_initializer.value},
-      )
-    else:
-      embedding_weight_initializer = self.weight_initializer
-
-    if self.num_partitions:
-      partition_axis = int(self.partition_axis)
-      partitioner = tf.fixed_size_partitioner(self.num_partitions, axis=partition_axis)
-    else:
-      # Regular variables do not like it when you pass both constant tensors and shape
-      if not callable(self.weight_initializer):
-        shape = None
-
-    self.vocab = self.add_variable(
-      'vocab',
-      initializer=self.vocab_initializer,
-      shape=[self.vocab_size],
-      dtype=tf.string,
-      trainable=False,
-    )
-
-    self.weight = self.add_variable(
-      'weight',
-      initializer=None if self.checkpoint_dir is not None else embedding_weight_initializer,
-      regularizer=self.weight_regularizer,
-      shape=shape,
-      dtype=self.dtype,
-      trainable=self.trainable,
-      partitioner=partitioner,
-    )
-    if self.checkpoint_dir is not None:
-      twml.trainers.trainer.init_from_checkpoint(self.checkpoint_dir, {'weight': self.weight.name})
-
-    self.built = True
-
-  def call(
-    self, inputs, debug=False, oov_summaries=False, **kwargs
-  ):  # pylint: disable=unused-argument
-    """Converts word strings to word ids using the vocabulary lookup table.
-    Then converts the word ids to their commensurate embedding vector.
-
-    Arguments:
-      inputs:
-        A tensor of word strings. Typically, of size batch_size x seq_len.
-      debug:
-        When True, prints the input strings and their commensurate input_ids.
-        Defaults to False.
-      oov_summaries:
-        When True, log the out-of-vocabulary (OOV) rate to TensorBoard
-        Defaults to False.
-
-    Returns:
-      The mapping of input word strings to output embedding vectors.
-      Given an input of shape ``batch_size x seq_len``, the output has shape
-      ``batch_size x seq_len x embedding_size``.
-    """
-    if self.convert_to_lowercase:
-      inputs = tf.strings.lower(inputs)
-    if self.num_oov_buckets is None:
-      lookup_table = index_table_from_tensor(self.vocab, default_value=self.oov_word_id)
-    else:
-      lookup_table = index_table_from_tensor(self.vocab, num_oov_buckets=self.num_oov_buckets)
-    input_ids = lookup_table.lookup(inputs)
-
-    if oov_summaries:
-      oov_count = tf.reduce_sum(
-        tf.cast(tf.math.equal(input_ids, self.oov_word_id), tf.dtypes.float32)
-      )
-      valid_count = tf.reduce_sum(
-        tf.cast(tf.math.not_equal(input_ids, PAD_WORD_ID), tf.dtypes.float32)
-      )
-      oov_rate = oov_count / valid_count
-      tf.summary.scalar('OOV_rate', oov_rate)
-
-    if debug:
-
-      def print_debug():
-        return tf.print("input_strings:", inputs, "\ninput_ids: ", input_ids, summarize=140)
-
-      with tf.control_dependencies([twml.util.do_every_n_steps(print_debug, 1000)]):
-        input_ids = tf.identity(input_ids)
-
-    output_embeddings = tf.nn.embedding_lookup(
-      params=self.weight, ids=input_ids, partition_strategy='div'
-    )
-
-    output_shape = inputs.shape.concatenate(tf.TensorShape([self.output_size]))
-    output_embeddings.set_shape(output_shape)
-
-    return output_embeddings
+	'Layer for looking up embeddings.\n  Transforms a sequence of strings to a sequence of embeddings.\n\n  Arguments:\n    vocab_size:\n      The number of word strings and embeddings in the vocabulary.\n    output_size:\n      Long or Integer, dimensionality of the output space. The embedding vector size.\n    vocab_initializer:\n      Initializer function for the vocabulary. Required. The initializer should\n      return a list of strings of size vocab_size.\n    weight_initializer:\n      Initializer function for the weight matrix of size vocab_size x output_size.\n      This argument defaults to zeros_initializer().\n      This is valid when the EmbeddingLookup is the first layer of\n      parameters but should be changed otherwise.\n    trainable:\n      Boolean, if `True` adds variables to the graph collection\n      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable\n      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).\n      Defaults to True: trains the embeddings.\n    num_oov_buckets:\n      The number of buckets to use for OOV strings. These bucket ids occur after the vocab bucket\n      ids. Hashing is used to assign OOV strings to these buckets. If `num_oov_buckets` is not\n      specified, index `OOV_WORD_ID` is used for OOV strings.\n    name:\n      String, the name of the layer. Layers with the same name will\n      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.\n    num_partitions:\n      Number of partitions to use for the weight variable. Defaults to 1.\n    partition_axis:\n      If num_partitions is specified, the partition axis for the weight variable\n      Defaults to 0 (partition by row).\n      Must be 0 (row) or 1 (column, does not support yet)\n    weight_regularizer:\n      Regularizer function for the weight matrix.\n      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.\n    dtype:\n      Defaults to tf.float32. Specifies the dtype of the weights.\n    use_placeholder:\n      Defaults to True.\n      If set to `True`, the initializer is passed via a placeholder. The initializer in this case needs to be of type `keras.initializers.Constant`.\n      If set to `False`, the initializer becomes part of the graph. This can sometimes be beyond what protobuf clients support.\n    checkpoint_dir:\n      Default to None.\n      If set to the path of a checkpoint, load embedding from the checkpoint.\n    convert_to_lowercase:\n      Default to True.\n      Converting all string inputs to lowercase.\n\n  Notes: If `use_placeholder` is set to `True`, the feed dictionary can be accessed by calling `twml.contrib.initializers.get_init_feed_dict()`.\n  '
+	def __init__(A,vocab_size,output_size,vocab_initializer,weight_initializer=_A,trainable=_B,num_oov_buckets=_A,oov_word_id=_A,name=_A,num_partitions=1,partition_axis=0,weight_regularizer=_A,dtype=_A,use_placeholder=_B,checkpoint_dir=_A,convert_to_lowercase=_B,**G):
+		D=use_placeholder;E=partition_axis;F=trainable;C=dtype;B=weight_initializer
+		if C is _A:C=tf.float32
+		super().__init__(trainable=F,name=name,dtype=C,**G);H=isinstance(B,tf.keras.initializers.Constant)
+		if D and not H and B is not _A:raise ValueError('Weight initializer should be a `Constant` or `None`.')
+		if B is _A:A.weight_initializer=tf.zeros_initializer()
+		else:A.weight_initializer=B
+		A.use_placeholder=D;A.checkpoint_dir=checkpoint_dir;A.convert_to_lowercase=convert_to_lowercase;A.vocab_initializer=vocab_initializer;A.vocab_size=vocab_size;A.output_size=output_size;A.num_partitions=num_partitions;A.partition_axis=E;A.weight_regularizer=weight_regularizer;A.trainable=F;A.oov_word_id=oov_word_id;A.num_oov_buckets=num_oov_buckets
+		if A.oov_word_id is not _A and A.num_oov_buckets is not _A:raise ValueError('At most one of oov_word_id or num_oov_buckets should be specified')
+		elif A.oov_word_id is _A and A.num_oov_buckets is _A:A.oov_word_id=OOV_WORD_ID
+		if E!=0:raise NotImplementedError('embedding_lookup only supports partition_axis = 0')
+	def build(A,input_shapes):
+		'\n    creates the ``vocab`` and ``weight`` Variables\n    of shape ``[vocab_size]`` and ``[vocab_size, output_size]`` respectively.\n    ';D='weight';E=_A;F=A.num_oov_buckets if A.num_oov_buckets is not _A else 0;B=[A.vocab_size+F,A.output_size]
+		if A.use_placeholder:C=twml.contrib.initializers.PlaceholderInitializer(B,A.dtype);tf.add_to_collection(twml.contrib.initializers.TWML_INIT_FEED_KEY,{C.value:A.weight_initializer.value})
+		else:C=A.weight_initializer
+		if A.num_partitions:G=int(A.partition_axis);E=tf.fixed_size_partitioner(A.num_partitions,axis=G)
+		elif not callable(A.weight_initializer):B=_A
+		A.vocab=A.add_variable('vocab',initializer=A.vocab_initializer,shape=[A.vocab_size],dtype=tf.string,trainable=_C);A.weight=A.add_variable(D,initializer=_A if A.checkpoint_dir is not _A else C,regularizer=A.weight_regularizer,shape=B,dtype=A.dtype,trainable=A.trainable,partitioner=E)
+		if A.checkpoint_dir is not _A:twml.trainers.trainer.init_from_checkpoint(A.checkpoint_dir,{D:A.weight.name})
+		A.built=_B
+	def call(A,inputs,debug=_C,oov_summaries=_C,**K):
+		'Converts word strings to word ids using the vocabulary lookup table.\n    Then converts the word ids to their commensurate embedding vector.\n\n    Arguments:\n      inputs:\n        A tensor of word strings. Typically, of size batch_size x seq_len.\n      debug:\n        When True, prints the input strings and their commensurate input_ids.\n        Defaults to False.\n      oov_summaries:\n        When True, log the out-of-vocabulary (OOV) rate to TensorBoard\n        Defaults to False.\n\n    Returns:\n      The mapping of input word strings to output embedding vectors.\n      Given an input of shape ``batch_size x seq_len``, the output has shape\n      ``batch_size x seq_len x embedding_size``.\n    ';C=inputs
+		if A.convert_to_lowercase:C=tf.strings.lower(C)
+		if A.num_oov_buckets is _A:D=index_table_from_tensor(A.vocab,default_value=A.oov_word_id)
+		else:D=index_table_from_tensor(A.vocab,num_oov_buckets=A.num_oov_buckets)
+		B=D.lookup(C)
+		if oov_summaries:F=tf.reduce_sum(tf.cast(tf.math.equal(B,A.oov_word_id),tf.dtypes.float32));G=tf.reduce_sum(tf.cast(tf.math.not_equal(B,PAD_WORD_ID),tf.dtypes.float32));H=F/G;tf.summary.scalar('OOV_rate',H)
+		if debug:
+			def I():return tf.print('input_strings:',C,'\ninput_ids: ',B,summarize=140)
+			with tf.control_dependencies([twml.util.do_every_n_steps(I,1000)]):B=tf.identity(B)
+		E=tf.nn.embedding_lookup(params=A.weight,ids=B,partition_strategy='div');J=C.shape.concatenate(tf.TensorShape([A.output_size]));E.set_shape(J);return E

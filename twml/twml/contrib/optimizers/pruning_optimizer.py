@@ -1,164 +1,20 @@
-"""
-Provides a general optimizer for pruning features of a neural network.
-
-The optimizer estimates the computational cost of features, combines this information with pruning
-signals indicating their usefulness, and disables features via binary masks at regular intervals.
-
-To make a layer prunable, use `twml.contrib.pruning.apply_mask`:
-
-  dense1 = tf.layers.dense(inputs=inputs, units=50, activation=tf.nn.relu)
-  dense1 = apply_mask(dense1)
-
-To prune the network, apply PruningOptimizer to any cross-entropy loss:
-
-  loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
-
-  optimizer = PruningOptimizer(learning_rate=0.001, momentum=0.5)
-  minimize = optimizer.minimize(
-      loss=loss,
-      prune_every=10,
-      burn_in=100,
-      global_step=tf.train.get_global_step())
-"""
-
+'\nProvides a general optimizer for pruning features of a neural network.\n\nThe optimizer estimates the computational cost of features, combines this information with pruning\nsignals indicating their usefulness, and disables features via binary masks at regular intervals.\n\nTo make a layer prunable, use `twml.contrib.pruning.apply_mask`:\n\n  dense1 = tf.layers.dense(inputs=inputs, units=50, activation=tf.nn.relu)\n  dense1 = apply_mask(dense1)\n\nTo prune the network, apply PruningOptimizer to any cross-entropy loss:\n\n  loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)\n\n  optimizer = PruningOptimizer(learning_rate=0.001, momentum=0.5)\n  minimize = optimizer.minimize(\n      loss=loss,\n      prune_every=10,\n      burn_in=100,\n      global_step=tf.train.get_global_step())\n'
 import tensorflow.compat.v1 as tf
-
-from twml.contrib.pruning import computational_cost, prune, update_pruning_signals
-from twml.contrib.pruning import MASK_COLLECTION
-
-
+from twml.contrib.pruning import computational_cost,prune,update_pruning_signals,MASK_COLLECTION
 class PruningOptimizer(tf.train.MomentumOptimizer):
-  """
-  Updates parameters with SGD and pruning masks using Fisher pruning.
-
-  Arguments:
-    learning_rate: float
-      Learning rate of SGD
-
-    momentum: float
-      Momentum used by SGD
-
-    use_locking: bool
-      If `True`, use locks for update operations
-
-    name: str
-      Optional name prefix for the operations created when applying gradients
-
-    use_nesterov: bool
-      If `True`, use Nesterov momentum
-  """
-
-  def __init__(
-      self,
-      learning_rate,
-      momentum=0.9,
-      use_locking=False,
-      name="PruningOptimizer",
-      use_nesterov=False):
-    super(PruningOptimizer, self).__init__(
-        learning_rate=learning_rate,
-        momentum=momentum,
-        use_locking=use_locking,
-        name=name,
-        use_nesterov=use_nesterov)
-
-  def minimize(
-    self,
-    loss,
-    prune_every=100,
-    burn_in=0,
-    decay=.96,
-    flops_weight='AUTO',
-    flops_target=0,
-    update_params=None,
-    method='Fisher',
-    *args,
-    **kwargs):
-    """
-    Create operations to minimize loss and to prune features.
-
-    A pruning signal measures the importance of feature maps. This is weighed against the
-    computational cost of computing a feature map. Features are then iteratively pruned
-    based on a weighted average of feature importance S and computational cost C (in FLOPs):
-
-    $$S + w * C$$
-
-    Setting `flops_weight` to 'AUTO' is the most convenient and recommended option, but not
-    necessarily optimal.
-
-    Arguments:
-      loss: tf.Tensor
-        The value to minimize
-
-      prune_every: int
-        One entry of a mask is set to zero only every few update steps
-
-      burn_in: int
-        Pruning starts only after this many parameter updates
-
-      decay: float
-        Controls exponential moving average of pruning signals
-
-      flops_weight: float or str
-        Controls the targeted trade-off between computational complexity and performance
-
-      flops_target: float
-        Stop pruning when computational complexity is less or this many floating point ops
-
-      update_params: tf.Operation
-        Optional training operation used instead of MomentumOptimizer to update parameters
-
-      method: str
-        Method used to compute pruning signal (currently only supports 'Fisher')
-
-    Returns:
-      A `tf.Operation` updating parameters and pruning masks
-
-    References:
-    * Theis et al., Faster gaze prediction with dense networks and Fisher pruning, 2018
-    """
-
-    # gradient-based updates of parameters
-    if update_params is None:
-      update_params = super(PruningOptimizer, self).minimize(loss, *args, **kwargs)
-
-    masks = tf.get_collection(MASK_COLLECTION)
-
-    with tf.variable_scope('pruning_opt', reuse=True):
-      # estimate computational cost per data point
-      batch_size = tf.cast(tf.shape(masks[0].tensor), loss.dtype)[0]
-      cost = tf.divide(computational_cost(loss), batch_size, name='computational_cost')
-
-      tf.summary.scalar('computational_cost', cost)
-
-      if masks:
-        signals = update_pruning_signals(loss, masks=masks, decay=decay, method=method)
-
-        # estimate computational cost per feature map
-        costs = tf.gradients(cost, masks)
-
-        # trade off computational complexity and performance
-        if flops_weight.upper() == 'AUTO':
-          signals = [s / (c + 1e-6) for s, c in zip(signals, costs)]
-        elif not isinstance(flops_weight, float) or flops_weight != 0.:
-          signals = [s - flops_weight * c for s, c in zip(signals, costs)]
-
-        counter = tf.Variable(0, name='pruning_counter')
-        counter = tf.assign_add(counter, 1, use_locking=True)
-
-        # only prune every so often after a burn-in phase
-        pruning_cond = tf.logical_and(counter > burn_in, tf.equal(counter % prune_every, 0))
-
-        # stop pruning after reaching threshold
-        if flops_target > 0:
-          pruning_cond = tf.logical_and(pruning_cond, tf.greater(cost, flops_target))
-
-        update_masks = tf.cond(
-          pruning_cond,
-          lambda: prune(signals, masks=masks),
-          lambda: tf.group(masks))
-
-        return tf.group([update_params, update_masks])
-
-    # no masks found
-    return update_params
+	'\n  Updates parameters with SGD and pruning masks using Fisher pruning.\n\n  Arguments:\n    learning_rate: float\n      Learning rate of SGD\n\n    momentum: float\n      Momentum used by SGD\n\n    use_locking: bool\n      If `True`, use locks for update operations\n\n    name: str\n      Optional name prefix for the operations created when applying gradients\n\n    use_nesterov: bool\n      If `True`, use Nesterov momentum\n  '
+	def __init__(A,learning_rate,momentum=0.9,use_locking=False,name='PruningOptimizer',use_nesterov=False):super(PruningOptimizer,A).__init__(learning_rate=learning_rate,momentum=momentum,use_locking=use_locking,name=name,use_nesterov=use_nesterov)
+	def minimize(L,loss,prune_every=100,burn_in=0,decay=0.96,flops_weight='AUTO',flops_target=0,update_params=None,method='Fisher',*M,**N):
+		"\n    Create operations to minimize loss and to prune features.\n\n    A pruning signal measures the importance of feature maps. This is weighed against the\n    computational cost of computing a feature map. Features are then iteratively pruned\n    based on a weighted average of feature importance S and computational cost C (in FLOPs):\n\n    $$S + w * C$$\n\n    Setting `flops_weight` to 'AUTO' is the most convenient and recommended option, but not\n    necessarily optimal.\n\n    Arguments:\n      loss: tf.Tensor\n        The value to minimize\n\n      prune_every: int\n        One entry of a mask is set to zero only every few update steps\n\n      burn_in: int\n        Pruning starts only after this many parameter updates\n\n      decay: float\n        Controls exponential moving average of pruning signals\n\n      flops_weight: float or str\n        Controls the targeted trade-off between computational complexity and performance\n\n      flops_target: float\n        Stop pruning when computational complexity is less or this many floating point ops\n\n      update_params: tf.Operation\n        Optional training operation used instead of MomentumOptimizer to update parameters\n\n      method: str\n        Method used to compute pruning signal (currently only supports 'Fisher')\n\n    Returns:\n      A `tf.Operation` updating parameters and pruning masks\n\n    References:\n    * Theis et al., Faster gaze prediction with dense networks and Fisher pruning, 2018\n    ";I='computational_cost';J=flops_target;C=update_params;D=flops_weight;E=loss
+		if C is None:C=super(PruningOptimizer,L).minimize(E,*(M),**N)
+		A=tf.get_collection(MASK_COLLECTION)
+		with tf.variable_scope('pruning_opt',reuse=True):
+			O=tf.cast(tf.shape(A[0].tensor),E.dtype)[0];G=tf.divide(computational_cost(E),O,name=I);tf.summary.scalar(I,G)
+			if A:
+				B=update_pruning_signals(E,masks=A,decay=decay,method=method);K=tf.gradients(G,A)
+				if D.upper()=='AUTO':B=[A/(B+1e-06)for(A,B)in zip(B,K)]
+				elif not isinstance(D,float)or D!=0.0:B=[A-D*B for(A,B)in zip(B,K)]
+				F=tf.Variable(0,name='pruning_counter');F=tf.assign_add(F,1,use_locking=True);H=tf.logical_and(F>burn_in,tf.equal(F%prune_every,0))
+				if J>0:H=tf.logical_and(H,tf.greater(G,J))
+				P=tf.cond(H,lambda:prune(B,masks=A),lambda:tf.group(A));return tf.group([C,P])
+		return C

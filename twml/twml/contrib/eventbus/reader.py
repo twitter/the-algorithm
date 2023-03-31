@@ -1,119 +1,35 @@
-import io
-import logging
-import subprocess
+_A=None
+import io,logging,subprocess
 from threading import Lock
-
-"""
-This module provides a binary data record reader for EventBus data.
-It starts a EventBus subscriber in a separate process to receive EventBus streaming data.
-The subscriber is supposed to outputs received data through PIPE to this module.
-This module parses input and output binary data record to serve as a record reader.
-"""
-
-
-class BinaryRecordReader(object):
-  def initialize(self):
-    pass
-
-  def read(self):
-    """Read raw bytes for one record
-    """
-    raise NotImplementedError
-
-  def close(self):
-    pass
-
-
-class ReadableWrapper(object):
-  def __init__(self, internal):
-    self.internal = internal
-
-  def __getattr__(self, name):
-    return getattr(self.internal, name)
-
-  def readable(self):
-    return True
-
-
+'\nThis module provides a binary data record reader for EventBus data.\nIt starts a EventBus subscriber in a separate process to receive EventBus streaming data.\nThe subscriber is supposed to outputs received data through PIPE to this module.\nThis module parses input and output binary data record to serve as a record reader.\n'
+class BinaryRecordReader:
+	def initialize(A):0
+	def read(A):'Read raw bytes for one record\n    ';raise NotImplementedError
+	def close(A):0
+class ReadableWrapper:
+	def __init__(A,internal):A.internal=internal
+	def __getattr__(A,name):return getattr(A.internal,name)
+	def readable(A):return True
 class EventBusPipedBinaryRecordReader(BinaryRecordReader):
-
-  JAVA = '/usr/lib/jvm/java-11-twitter/bin/java'
-  RECORD_SEPARATOR_HEX = [
-    0x29, 0xd8, 0xd5, 0x06, 0x58, 0xcd, 0x4c, 0x29,
-    0xb2, 0xbc, 0x57, 0x99, 0x21, 0x71, 0xbd, 0xff
-  ]
-  RECORD_SEPARATOR = ''.join([chr(i) for i in RECORD_SEPARATOR_HEX])
-  RECORD_SEPARATOR_LENGTH = len(RECORD_SEPARATOR)
-  CHUNK_SIZE = 8192
-
-  def __init__(self, jar_file, num_eb_threads, subscriber_id,
-               filter_str=None, buffer_size=32768, debug=False):
-    self.jar_file = jar_file
-    self.num_eb_threads = num_eb_threads
-    self.subscriber_id = subscriber_id
-    self.filter_str = filter_str if filter_str else '""'
-    self.buffer_size = buffer_size
-    self.lock = Lock()
-    self._pipe = None
-    self._buffered_reader = None
-    self._bytes_buffer = None
-
-    self.debug = debug
-
-  def initialize(self):
-    if not self._pipe:
-      self._pipe = subprocess.Popen(
-        [
-          self.JAVA, '-jar', self.jar_file,
-          '-subscriberId', self.subscriber_id,
-          '-numThreads', str(self.num_eb_threads),
-          '-dataFilter', self.filter_str,
-          '-debug' if self.debug else ''
-        ],
-        stdout=subprocess.PIPE
-      )
-      self._buffered_reader = io.BufferedReader(
-        ReadableWrapper(self._pipe.stdout), self.buffer_size)
-      self._bytes_buffer = io.BytesIO()
-    else:
-      logging.warning('Already initialized')
-
-  def _find_next_record(self):
-    tail = ['']
-    while True:
-      chunk = tail[0] + self._buffered_reader.read(self.CHUNK_SIZE)
-      index = chunk.find(self.RECORD_SEPARATOR)
-      if index < 0:
-        self._bytes_buffer.write(chunk[:-self.RECORD_SEPARATOR_LENGTH])
-        tail[0] = chunk[-self.RECORD_SEPARATOR_LENGTH:]
-      else:
-        self._bytes_buffer.write(chunk[:index])
-        return chunk[(index + self.RECORD_SEPARATOR_LENGTH):]
-
-  def _read(self):
-    with self.lock:
-      remaining = self._find_next_record()
-      record = self._bytes_buffer.getvalue()
-      # clean up buffer
-      self._bytes_buffer.close()
-      self._bytes_buffer = io.BytesIO()
-      self._bytes_buffer.write(remaining)
-
-      return record
-
-  def read(self):
-    while True:
-      try:
-        return self._read()
-      except Exception as e:
-        logging.error("Error reading bytes for next record: {}".format(e))
-        if self.debug:
-          raise
-
-  def close(self):
-    try:
-      self._bytes_buffer.close()
-      self._buffered_reader.close()
-      self._pipe.terminate()
-    except Exception as e:
-      logging.error("Error closing reader: {}".format(e))
+	JAVA='/usr/lib/jvm/java-11-twitter/bin/java';RECORD_SEPARATOR_HEX=[41,216,213,6,88,205,76,41,178,188,87,153,33,113,189,255];RECORD_SEPARATOR=''.join([chr(A)for A in RECORD_SEPARATOR_HEX]);RECORD_SEPARATOR_LENGTH=len(RECORD_SEPARATOR);CHUNK_SIZE=8192
+	def __init__(A,jar_file,num_eb_threads,subscriber_id,filter_str=_A,buffer_size=32768,debug=False):B=filter_str;A.jar_file=jar_file;A.num_eb_threads=num_eb_threads;A.subscriber_id=subscriber_id;A.filter_str=B if B else'""';A.buffer_size=buffer_size;A.lock=Lock();A._pipe=_A;A._buffered_reader=_A;A._bytes_buffer=_A;A.debug=debug
+	def initialize(A):
+		if not A._pipe:A._pipe=subprocess.Popen([A.JAVA,'-jar',A.jar_file,'-subscriberId',A.subscriber_id,'-numThreads',str(A.num_eb_threads),'-dataFilter',A.filter_str,'-debug'if A.debug else''],stdout=subprocess.PIPE);A._buffered_reader=io.BufferedReader(ReadableWrapper(A._pipe.stdout),A.buffer_size);A._bytes_buffer=io.BytesIO()
+		else:logging.warning('Already initialized')
+	def _find_next_record(A):
+		D=['']
+		while True:
+			B=D[0]+A._buffered_reader.read(A.CHUNK_SIZE);C=B.find(A.RECORD_SEPARATOR)
+			if C<0:A._bytes_buffer.write(B[:-A.RECORD_SEPARATOR_LENGTH]);D[0]=B[-A.RECORD_SEPARATOR_LENGTH:]
+			else:A._bytes_buffer.write(B[:C]);return B[C+A.RECORD_SEPARATOR_LENGTH:]
+	def _read(A):
+		with A.lock:B=A._find_next_record();C=A._bytes_buffer.getvalue();A._bytes_buffer.close();A._bytes_buffer=io.BytesIO();A._bytes_buffer.write(B);return C
+	def read(A):
+		while True:
+			try:return A._read()
+			except Exception as B:
+				logging.error('Error reading bytes for next record: {}'.format(B))
+				if A.debug:raise
+	def close(A):
+		try:A._bytes_buffer.close();A._buffered_reader.close();A._pipe.terminate()
+		except Exception as B:logging.error('Error closing reader: {}'.format(B))

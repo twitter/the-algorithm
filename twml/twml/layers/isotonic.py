@@ -1,76 +1,10 @@
-# pylint: disable=no-member, invalid-name, attribute-defined-outside-init
-"""
-Contains the Isotonic Layer
-"""
-
+'\nContains the Isotonic Layer\n'
+_A=None
 from .layer import Layer
-
-import libtwml
-import numpy as np
-
-
+import libtwml,numpy as np
 class Isotonic(Layer):
-  """
-  This layer is created by the IsotonicCalibrator.
-  Typically it is used intead of sigmoid activation on the output unit.
-
-  Arguments:
-    n_unit:
-      number of input units to the layer (same as number of output units).
-    n_bin:
-      number of bins used for isotonic calibration.
-      More bins means a more precise isotonic function.
-      Less bins means a more regularized isotonic function.
-    xs_input:
-      A tensor containing the boundaries of the bins.
-    ys_input:
-      A tensor containing calibrated values for the corresponding bins.
-
-  Output:
-      output:
-        A layer containing calibrated probabilities with same shape and size as input.
-  Expected Sizes:
-      xs_input, ys_input:
-        [n_unit, n_bin].
-  Expected Types:
-      xs_input, ys_input:
-        same as input.
-  """
-
-  def __init__(self, n_unit, n_bin, xs_input=None, ys_input=None, **kwargs):
-    super(Isotonic, self).__init__(**kwargs)
-
-    self._n_unit = n_unit
-    self._n_bin = n_bin
-
-    self.xs_input = np.empty([n_unit, n_bin], dtype=np.float32) if xs_input is None else xs_input
-    self.ys_input = np.empty([n_unit, n_bin], dtype=np.float32) if ys_input is None else ys_input
-
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
-
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
-
-    Raises NotImplementedError.
-
-    """
-    raise NotImplementedError
-
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the variables of the layer."""
-
-    self.built = True
-
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
-
-    Arguments:
-      inputs: input tensor(s).
-
-    Returns:
-      The output from the layer
-    """
-    calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.xs_input, self.ys_input)
-    return calibrate_op
+	'\n  This layer is created by the IsotonicCalibrator.\n  Typically it is used intead of sigmoid activation on the output unit.\n\n  Arguments:\n    n_unit:\n      number of input units to the layer (same as number of output units).\n    n_bin:\n      number of bins used for isotonic calibration.\n      More bins means a more precise isotonic function.\n      Less bins means a more regularized isotonic function.\n    xs_input:\n      A tensor containing the boundaries of the bins.\n    ys_input:\n      A tensor containing calibrated values for the corresponding bins.\n\n  Output:\n      output:\n        A layer containing calibrated probabilities with same shape and size as input.\n  Expected Sizes:\n      xs_input, ys_input:\n        [n_unit, n_bin].\n  Expected Types:\n      xs_input, ys_input:\n        same as input.\n  '
+	def __init__(A,n_unit,n_bin,xs_input=_A,ys_input=_A,**F):D=ys_input;E=xs_input;B=n_bin;C=n_unit;super(Isotonic,A).__init__(**F);A._n_unit=C;A._n_bin=B;A.xs_input=np.empty([C,B],dtype=np.float32)if E is _A else E;A.ys_input=np.empty([C,B],dtype=np.float32)if D is _A else D
+	def compute_output_shape(A,input_shape):'Computes the output shape of the layer given the input shape.\n\n    Args:\n      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not\n        be fully defined (e.g. the batch size may be unknown).\n\n    Raises NotImplementedError.\n\n    ';raise NotImplementedError
+	def build(A,input_shape):'Creates the variables of the layer.';A.built=True
+	def call(A,inputs,**C):'The logic of the layer lives here.\n\n    Arguments:\n      inputs: input tensor(s).\n\n    Returns:\n      The output from the layer\n    ';B=libtwml.ops.isotonic_calibration(inputs,A.xs_input,A.ys_input);return B

@@ -1,317 +1,72 @@
-# pylint: disable=arguments-differ, unused-argument
-''' Contains Isotonic Calibration'''
-
-from .calibrator import CalibrationFeature, Calibrator
-
+' Contains Isotonic Calibration'
+_E='values'
+_D='targets'
+_C='weights'
+_B=False
+_A=None
+from .calibrator import CalibrationFeature,Calibrator
 from absl import logging
 import numpy as np
 from sklearn.isotonic import isotonic_regression
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
-import twml
-import twml.layers
-
-
-DEFAULT_SAMPLE_WEIGHT = 1
-
-
-def sort_values(inputs, target, weight, ascending=True):
-  '''
-  Sorts arrays based on the first array.
-
-  Arguments:
-    inputs:
-      1D array which will dictate the order which the remainder 2 arrays will be sorted
-    target:
-      1D array
-    weight:
-      1D array
-    ascending:
-      Boolean. If set to True (the default), sorts values in ascending order.
-
-  Returns:
-    sorted inputs:
-      1D array sorted by the order of `ascending`
-    sorted targets:
-      1D array
-    sorted weight:
-      1D array
-  '''
-  # assert that the length of inputs and target are the same
-  if len(inputs) != len(target):
-    raise ValueError('Expecting inputs and target sizes to match')
-   # assert that the length of inputs and weight are the same
-  if len(inputs) != len(weight):
-    raise ValueError('Expecting inputs and weight sizes to match')
-  inds = inputs.argsort()
-  if not ascending:
-    inds = inds[::-1]
-  return inputs[inds], target[inds], weight[inds]
-
-
+import tensorflow.compat.v1 as tf,tensorflow_hub as hub,twml,twml.layers
+DEFAULT_SAMPLE_WEIGHT=1
+def sort_values(inputs,target,weight,ascending=True):
+	'\n  Sorts arrays based on the first array.\n\n  Arguments:\n    inputs:\n      1D array which will dictate the order which the remainder 2 arrays will be sorted\n    target:\n      1D array\n    weight:\n      1D array\n    ascending:\n      Boolean. If set to True (the default), sorts values in ascending order.\n\n  Returns:\n    sorted inputs:\n      1D array sorted by the order of `ascending`\n    sorted targets:\n      1D array\n    sorted weight:\n      1D array\n  ';C=weight;D=target;B=inputs
+	if len(B)!=len(D):raise ValueError('Expecting inputs and target sizes to match')
+	if len(B)!=len(C):raise ValueError('Expecting inputs and weight sizes to match')
+	A=B.argsort()
+	if not ascending:A=A[::-1]
+	return B[A],D[A],C[A]
 class IsotonicFeature(CalibrationFeature):
-  '''
-  IsotonicFeature adds values, weights and targets to each feature and then runs
-  isotonic regression by calling `sklearn.isotonic.isotonic_regression
-  <http://scikit-learn.org/stable/auto_examples/plot_isotonic_regression.html>`_
-  '''
-
-  def _get_bin_boundaries(self, n_samples, bins, similar_bins):
-    """
-    Calculates the sample indices that define bin boundaries
-
-    Arguments:
-      n_samples:
-        (int) number of samples
-      bins:
-        (int) number of bins. Needs to be smaller or equal than n_samples.
-      similar_bins:
-        (bool) If True, samples will be distributed in bins of equal size (up to one sample).
-        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.
-        Note that equal_bins=False can create a last bins with a very large number of samples.
-
-    Returns:
-      (list[int]) List of sample indices defining bin boundaries
-    """
-
-    if bins > n_samples:
-      raise ValueError(
-        "The number of bins needs to be less than or equal to the number of samples. "
-        "Currently bins={0} and n_samples={1}.".format(bins, n_samples)
-      )
-
-    step = n_samples // bins
-
-    if similar_bins:
-      # dtype=int will floor the linspace
-      bin_boundaries = np.linspace(0, n_samples - step, num=bins, dtype=int)
-    else:
-      bin_boundaries = range(0, step * bins, step)
-
-    bin_boundaries = np.append(bin_boundaries, n_samples)
-
-    return bin_boundaries
-
-  def calibrate(self, bins, similar_bins=False, debug=False):
-    '''Calibrates the IsotonicFeature into calibrated weights and bias.
-
-    1. Sorts the values of the feature class, based on the order of values
-    2. Performs isotonic regression using sklearn.isotonic.isotonic_regression
-    3. Performs the binning of the samples, in order to obtain the final weight and bias
-      which will be used for inference
-
-    Note that this method can only be called once.
-
-    Arguments:
-      bins:
-        number of bins.
-      similar_bins:
-        If True, samples will be distributed in bins of equal size (up to one sample).
-        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.
-        Note that equal_bins=False can create a last bins with a very large number of samples.
-      debug:
-        Defaults to False. If debug is set to true, output other parameters useful for debugging.
-
-    Returns:
-      [calibrated weight, calibrated bias]
-    '''
-    if self._calibrated:
-      raise RuntimeError("Can only calibrate once")
-    # parse through the dict to obtain the targets, weights and values
-    self._concat_arrays()
-    feature_targets = self._features_dict['targets']
-    feature_values = self._features_dict['values']
-    feature_weights = self._features_dict['weights']
-    srtd_feature_values, srtd_feature_targets, srtd_feature_weights = sort_values(
-      inputs=feature_values,
-      target=feature_targets,
-      weight=feature_weights
-    )
-    calibrated_feature_values = isotonic_regression(
-      srtd_feature_targets, sample_weight=srtd_feature_weights)
-    # create the final outputs for the prediction of each class
-    bpreds = []
-    btargets = []
-    bweights = []
-    rpreds = []
-
-    # Create bin boundaries
-    bin_boundaries = self._get_bin_boundaries(
-      len(calibrated_feature_values), bins, similar_bins=similar_bins)
-
-    for sidx, eidx in zip(bin_boundaries, bin_boundaries[1:]):
-      # separate each one of the arrays based on their respective bins
-      lpreds = srtd_feature_values[int(sidx):int(eidx)]
-      lrpreds = calibrated_feature_values[int(sidx):int(eidx)]
-      ltargets = srtd_feature_targets[int(sidx):int(eidx)]
-      lweights = srtd_feature_weights[int(sidx):int(eidx)]
-
-      # calculate the outputs (including the bpreds and rpreds)
-      bpreds.append(np.sum(lpreds * lweights) / (np.squeeze(np.sum(lweights))))
-      rpreds.append(np.sum(lrpreds * lweights) / (np.squeeze(np.sum(lweights))))
-      btargets.append(np.sum(ltargets * lweights) / (np.squeeze(np.sum(lweights))))
-      bweights.append(np.squeeze(np.sum(lweights)))
-    # transposing the bpreds and rpreds which will be used as input to the inference step
-    bpreds = np.asarray(bpreds).T
-    rpreds = np.asarray(rpreds).T
-    btargets = np.asarray(btargets).T
-    bweights = np.asarray(bweights).T
-    # setting _calibrated to be True which is necessary in order to prevent it to re-calibrate
-    self._calibrated = True
-    if debug:
-      return bpreds, rpreds, btargets, bweights
-    return bpreds, rpreds
-
-
+	'\n  IsotonicFeature adds values, weights and targets to each feature and then runs\n  isotonic regression by calling `sklearn.isotonic.isotonic_regression\n  <http://scikit-learn.org/stable/auto_examples/plot_isotonic_regression.html>`_\n  '
+	def _get_bin_boundaries(E,n_samples,bins,similar_bins):
+		'\n    Calculates the sample indices that define bin boundaries\n\n    Arguments:\n      n_samples:\n        (int) number of samples\n      bins:\n        (int) number of bins. Needs to be smaller or equal than n_samples.\n      similar_bins:\n        (bool) If True, samples will be distributed in bins of equal size (up to one sample).\n        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.\n        Note that equal_bins=False can create a last bins with a very large number of samples.\n\n    Returns:\n      (list[int]) List of sample indices defining bin boundaries\n    ';A=bins;B=n_samples
+		if A>B:raise ValueError('The number of bins needs to be less than or equal to the number of samples. Currently bins={0} and n_samples={1}.'.format(A,B))
+		D=B//A
+		if similar_bins:C=np.linspace(0,B-D,num=A,dtype=int)
+		else:C=range(0,D*A,D)
+		C=np.append(C,B);return C
+	def calibrate(A,bins,similar_bins=_B,debug=_B):
+		'Calibrates the IsotonicFeature into calibrated weights and bias.\n\n    1. Sorts the values of the feature class, based on the order of values\n    2. Performs isotonic regression using sklearn.isotonic.isotonic_regression\n    3. Performs the binning of the samples, in order to obtain the final weight and bias\n      which will be used for inference\n\n    Note that this method can only be called once.\n\n    Arguments:\n      bins:\n        number of bins.\n      similar_bins:\n        If True, samples will be distributed in bins of equal size (up to one sample).\n        If False bins will be filled with step = N_samples//bins, and last bin will contain all remaining samples.\n        Note that equal_bins=False can create a last bins with a very large number of samples.\n      debug:\n        Defaults to False. If debug is set to true, output other parameters useful for debugging.\n\n    Returns:\n      [calibrated weight, calibrated bias]\n    '
+		if A._calibrated:raise RuntimeError('Can only calibrate once')
+		A._concat_arrays();M=A._features_dict[_D];N=A._features_dict[_E];O=A._features_dict[_C];P,I,J=sort_values(inputs=N,target=M,weight=O);K=isotonic_regression(I,sample_weight=J);C=[];E=[];F=[];D=[];L=A._get_bin_boundaries(len(K),bins,similar_bins=similar_bins)
+		for (G,H) in zip(L,L[1:]):Q=P[int(G):int(H)];R=K[int(G):int(H)];S=I[int(G):int(H)];B=J[int(G):int(H)];C.append(np.sum(Q*B)/np.squeeze(np.sum(B)));D.append(np.sum(R*B)/np.squeeze(np.sum(B)));E.append(np.sum(S*B)/np.squeeze(np.sum(B)));F.append(np.squeeze(np.sum(B)))
+		C=np.asarray(C).T;D=np.asarray(D).T;E=np.asarray(E).T;F=np.asarray(F).T;A._calibrated=True
+		if debug:return C,D,E,F
+		return C,D
 class IsotonicCalibrator(Calibrator):
-  ''' Accumulates features and their respective values for isotonic calibration.
-  Internally, each feature's values is accumulated via its own isotonicFeature object.
-  The steps for calibration are typically as follows:
-
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into Isotonic ``bpreds``, ``rpreds`` by calling ``calibrate()``; and
-   3. convert to a ``twml.layers.Isotonic`` layer by calling ``to_layer()``.
-
-  '''
-
-  def __init__(self, n_bin, similar_bins=False, **kwargs):
-    ''' Constructs an isotonicCalibrator instance.
-
-    Arguments:
-      n_bin:
-        the number of bins per feature to use for isotonic.
-        Note that each feature actually maps to ``n_bin+1`` output IDs.
-    '''
-    super(IsotonicCalibrator, self).__init__(**kwargs)
-    self._n_bin = n_bin
-    self._similar_bins = similar_bins
-    self._ys_input = []
-    self._xs_input = []
-    self._isotonic_feature_dict = {}
-
-  def accumulate_feature(self, output):
-    '''
-    Wrapper around accumulate for trainer API.
-    Arguments:
-      output: output of prediction of build_graph for calibrator
-    '''
-    weights = output['weights'] if 'weights' in output else None
-    return self.accumulate(output['predictions'], output['targets'], weights)
-
-  def accumulate(self, predictions, targets, weights=None):
-    '''
-    Accumulate a single batch of class predictions, class targets and class weights.
-    These are accumulated until calibrate() is called.
-
-    Arguments:
-      predictions:
-        float matrix of class values. Each dimension corresponds to a different class.
-        Shape is ``[n, d]``, where d is the number of classes.
-      targets:
-        float matrix of class targets. Each dimension corresponds to a different class.
-        Shape ``[n, d]``, where d is the number of classes.
-      weights:
-        Defaults to weights of 1.
-        1D array containing the weights of each prediction.
-    '''
-    if predictions.shape != targets.shape:
-      raise ValueError(
-        'Expecting predictions.shape == targets.shape, got %s and %s instead' %
-        (str(predictions.shape), str(targets.shape)))
-    if weights is not None:
-      if weights.ndim != 1:
-        raise ValueError('Expecting 1D weight, got %dD instead' % weights.ndim)
-      elif weights.size != predictions.shape[0]:
-        raise ValueError(
-          'Expecting predictions.shape[0] == weights.size, got %d != %d instead' %
-          (predictions.shape[0], weights.size))
-    # iterate through the rows of predictions and sets one class to each row
-    if weights is None:
-      weights = np.full(predictions.shape[0], fill_value=DEFAULT_SAMPLE_WEIGHT)
-    for class_key in range(predictions.shape[1]):
-      # gets the predictions and targets for that class
-      class_predictions = predictions[:, class_key]
-      class_targets = targets[:, class_key]
-      if class_key not in self._isotonic_feature_dict:
-        isotonic_feature = IsotonicFeature(class_key)
-        self._isotonic_feature_dict[class_key] = isotonic_feature
-      else:
-        isotonic_feature = self._isotonic_feature_dict[class_key]
-      isotonic_feature.add_values({'values': class_predictions, 'weights': weights,
-                                   'targets': class_targets})
-
-  def calibrate(self, debug=False):
-    '''
-    Calibrates each IsotonicFeature after accumulation is complete.
-    Results are stored in ``self._ys_input`` and ``self._xs_input``
-
-    Arguments:
-      debug:
-        Defaults to False. If set to true, returns the ``xs_input`` and ``ys_input``.
-    '''
-    super(IsotonicCalibrator, self).calibrate()
-    bias_temp = []
-    weight_temp = []
-    logging.info("Beginning isotonic calibration.")
-    isotonic_features_dict = self._isotonic_feature_dict
-    for class_id in isotonic_features_dict:
-      bpreds, rpreds = isotonic_features_dict[class_id].calibrate(bins=self._n_bin, similar_bins=self._similar_bins)
-      weight_temp.append(bpreds)
-      bias_temp.append(rpreds)
-    # save isotonic results onto a matrix
-    self._xs_input = np.array(weight_temp, dtype=np.float32)
-    self._ys_input = np.array(bias_temp, dtype=np.float32)
-    logging.info("Isotonic calibration finished.")
-    if debug:
-      return np.array(weight_temp), np.array(bias_temp)
-    return None
-
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory.
-    Arguments:
-      save_dir:
-        name of the saving directory. Default (string): "default".
-    '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
-
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    logging.info("You probably do not need to save the isotonic layer. \
-                  So feel free to set save to False in the Trainer. \
-                  Additionally this only saves the layer not the whole graph.")
-
-    def calibrator_module():
-      '''
-      Way to save Isotonic layer
-      '''
-      # The input to isotonic is a dense layer
-      inputs = tf.placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      output = calibrator_layer(inputs)
-      # creates the signature to the calibrator module
-      hub.add_signature(inputs=inputs, outputs=output, name=name)
-
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
-
-  def to_layer(self):
-    """ Returns a twml.layers.Isotonic Layer that can be used for feature discretization.
-    """
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
-
-    isotonic_layer = twml.layers.Isotonic(
-      n_unit=self._xs_input.shape[0], n_bin=self._xs_input.shape[1],
-      xs_input=self._xs_input, ys_input=self._ys_input,
-      **self._kwargs)
-
-    return isotonic_layer
-
-  def get_layer_args(self, name=None):
-    """ Returns layer args. See ``Calibrator.get_layer_args`` for more detailed documentation """
-    return {'n_unit': self._xs_input.shape[0], 'n_bin': self._xs_input.shape[1]}
+	" Accumulates features and their respective values for isotonic calibration.\n  Internally, each feature's values is accumulated via its own isotonicFeature object.\n  The steps for calibration are typically as follows:\n\n   1. accumulate feature values from batches by calling ``accumulate()``;\n   2. calibrate all feature into Isotonic ``bpreds``, ``rpreds`` by calling ``calibrate()``; and\n   3. convert to a ``twml.layers.Isotonic`` layer by calling ``to_layer()``.\n\n  "
+	def __init__(A,n_bin,similar_bins=_B,**B):' Constructs an isotonicCalibrator instance.\n\n    Arguments:\n      n_bin:\n        the number of bins per feature to use for isotonic.\n        Note that each feature actually maps to ``n_bin+1`` output IDs.\n    ';super(IsotonicCalibrator,A).__init__(**B);A._n_bin=n_bin;A._similar_bins=similar_bins;A._ys_input=[];A._xs_input=[];A._isotonic_feature_dict={}
+	def accumulate_feature(B,output):'\n    Wrapper around accumulate for trainer API.\n    Arguments:\n      output: output of prediction of build_graph for calibrator\n    ';A=output;C=A[_C]if _C in A else _A;return B.accumulate(A['predictions'],A[_D],C)
+	def accumulate(D,predictions,targets,weights=_A):
+		'\n    Accumulate a single batch of class predictions, class targets and class weights.\n    These are accumulated until calibrate() is called.\n\n    Arguments:\n      predictions:\n        float matrix of class values. Each dimension corresponds to a different class.\n        Shape is ``[n, d]``, where d is the number of classes.\n      targets:\n        float matrix of class targets. Each dimension corresponds to a different class.\n        Shape ``[n, d]``, where d is the number of classes.\n      weights:\n        Defaults to weights of 1.\n        1D array containing the weights of each prediction.\n    ';E=targets;B=predictions;A=weights
+		if B.shape!=E.shape:raise ValueError('Expecting predictions.shape == targets.shape, got %s and %s instead'%(str(B.shape),str(E.shape)))
+		if A is not _A:
+			if A.ndim!=1:raise ValueError('Expecting 1D weight, got %dD instead'%A.ndim)
+			elif A.size!=B.shape[0]:raise ValueError('Expecting predictions.shape[0] == weights.size, got %d != %d instead'%(B.shape[0],A.size))
+		if A is _A:A=np.full(B.shape[0],fill_value=DEFAULT_SAMPLE_WEIGHT)
+		for C in range(B.shape[1]):
+			G=B[:,C];H=E[:,C]
+			if C not in D._isotonic_feature_dict:F=IsotonicFeature(C);D._isotonic_feature_dict[C]=F
+			else:F=D._isotonic_feature_dict[C]
+			F.add_values({_E:G,_C:A,_D:H})
+	def calibrate(A,debug=_B):
+		'\n    Calibrates each IsotonicFeature after accumulation is complete.\n    Results are stored in ``self._ys_input`` and ``self._xs_input``\n\n    Arguments:\n      debug:\n        Defaults to False. If set to true, returns the ``xs_input`` and ``ys_input``.\n    ';super(IsotonicCalibrator,A).calibrate();B=[];C=[];logging.info('Beginning isotonic calibration.');D=A._isotonic_feature_dict
+		for E in D:F,G=D[E].calibrate(bins=A._n_bin,similar_bins=A._similar_bins);C.append(F);B.append(G)
+		A._xs_input=np.array(C,dtype=np.float32);A._ys_input=np.array(B,dtype=np.float32);logging.info('Isotonic calibration finished.')
+		if debug:return np.array(C),np.array(B)
+		return _A
+	def save(A,save_dir,name='default',verbose=_B):
+		'Save the calibrator into the given save_directory.\n    Arguments:\n      save_dir:\n        name of the saving directory. Default (string): "default".\n    '
+		if not A._calibrated:raise RuntimeError('Expecting prior call to calibrate().Cannot save() prior to calibrate()')
+		logging.info('You probably do not need to save the isotonic layer.                   So feel free to set save to False in the Trainer.                   Additionally this only saves the layer not the whole graph.')
+		def B():'\n      Way to save Isotonic layer\n      ';B=tf.placeholder(tf.float32);C=A.to_layer();D=C(B);hub.add_signature(inputs=B,outputs=D,name=name)
+		C=hub.create_module_spec(B)
+		with tf.Graph().as_default():
+			D=hub.Module(C)
+			with tf.Session()as E:D.export(save_dir,E)
+	def to_layer(A):
+		' Returns a twml.layers.Isotonic Layer that can be used for feature discretization.\n    '
+		if not A._calibrated:raise RuntimeError('Expecting prior call to calibrate()')
+		B=twml.layers.Isotonic(n_unit=A._xs_input.shape[0],n_bin=A._xs_input.shape[1],xs_input=A._xs_input,ys_input=A._ys_input,**A._kwargs);return B
+	def get_layer_args(A,name=_A):' Returns layer args. See ``Calibrator.get_layer_args`` for more detailed documentation ';return{'n_unit':A._xs_input.shape[0],'n_bin':A._xs_input.shape[1]}
