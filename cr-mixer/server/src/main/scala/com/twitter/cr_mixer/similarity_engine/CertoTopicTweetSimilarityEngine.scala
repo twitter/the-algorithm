@@ -54,7 +54,7 @@ case class CertoTopicTweetSimilarityEngine @Inject() (
         } yield {
           topKTweetsWithScores.map(
             _.filter(
-              _.scores.followerL2NormalizedCosineSimilarity8HrHalfLife >= query.storeQuery.certoScoreTheshold)
+              _.scores.followerL2NormalizedCosineSimilarity8HrHalfLife >= query.storeQuery.certoScoreThreshold)
               .take(query.storeQuery.maxCandidates))
         }
       }
@@ -68,7 +68,7 @@ object CertoTopicTweetSimilarityEngine {
   case class Query(
     topicId: TopicId,
     maxCandidates: Int,
-    certoScoreTheshold: Double)
+    certoScoreThreshold: Double)
 
   def fromParams(
     topicId: TopicId,
@@ -86,7 +86,7 @@ object CertoTopicTweetSimilarityEngine {
       Query(
         topicId = topicId,
         maxCandidates = maxCandidates,
-        certoScoreTheshold = params(TopicTweetParams.CertoScoreThresholdParam)
+        certoScoreThreshold = params(TopicTweetParams.CertoScoreThresholdParam)
       ),
       params
     )

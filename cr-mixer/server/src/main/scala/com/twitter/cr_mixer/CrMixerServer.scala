@@ -40,7 +40,7 @@ import com.twitter.cr_mixer.module.similarity_engine.ProducerBasedUnifiedSimilar
 import com.twitter.cr_mixer.module.similarity_engine.SimClustersANNSimilarityEngineModule
 import com.twitter.cr_mixer.module.similarity_engine.TweetBasedUnifiedSimilarityEngineModule
 import com.twitter.cr_mixer.module.similarity_engine.TweetBasedQigSimilarityEngineModule
-import com.twitter.cr_mixer.module.similarity_engine.TweetBasedTwHINSimlarityEngineModule
+import com.twitter.cr_mixer.module.similarity_engine.TweetBasedTwHINSimilarityEngineModule
 import com.twitter.cr_mixer.module.similarity_engine.TweetBasedUserAdGraphSimilarityEngineModule
 import com.twitter.cr_mixer.module.similarity_engine.TweetBasedUserTweetGraphSimilarityEngineModule
 import com.twitter.cr_mixer.module.similarity_engine.TweetBasedUserVideoGraphSimilarityEngineModule
@@ -180,7 +180,7 @@ class CrMixerServer extends ThriftServer with Mtls with HttpServer with HttpMtls
         TripCandidateStoreModule,
         TwiceClustersMembersStoreModule,
         TweetBasedQigSimilarityEngineModule,
-        TweetBasedTwHINSimlarityEngineModule,
+        TweetBasedTwHINSimilarityEngineModule,
         TweetBasedUnifiedSimilarityEngineModule,
         TweetBasedUserAdGraphSimilarityEngineModule,
         TweetBasedUserTweetGraphSimilarityEngineModule,

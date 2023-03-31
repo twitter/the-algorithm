@@ -107,7 +107,7 @@ object SimilarityEngine extends Logging {
    *
    * @param underlyingStore un-cached store implementation
    * @param keyPrefix       a prefix differentiates 2 stores if they share the same key space.
-   *                        e.x. 2 implementations of ReadableStore[UserId, Seq[Candidiate] ]
+   *                        e.x. 2 implementations of ReadableStore[UserId, Seq[Candidate] ]
    *                        can use prefix "store_v1", "store_v2"
    * @return                A ReadableStore with a MemCache wrapper
    */
