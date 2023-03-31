@@ -48,7 +48,7 @@ struct UserWithScore {
 }(hasPersonalData = 'true')
 
 // Feature Type
-// For example, to compute how many of source user's following's have favorited candidate user,
+// For example, to compute how many of source user's followings have favorited candidate user,
 // we need to compute the intersection between source user's FOLLOWING edges, and candidate user's
 // FAVORITED_BY edge. In this case, we should user FeatureType(FOLLOWING, FAVORITED_BY)
 struct FeatureType {
