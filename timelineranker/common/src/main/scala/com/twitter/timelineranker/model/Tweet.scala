@@ -42,7 +42,7 @@ case class Tweet(
         case None => 0L
       },
       isRetweet =
-        if (sourceUserId.isDefined || sourceUserId.isDefined) Some(true)
+        if (sourceUserId.isDefined) Some(true)
         else
           None,
       sharedStatusId = sourceTweetId match {
