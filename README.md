@@ -1,5 +1,13 @@
 # Twitter Recommendation Algorithm
 
+This alhorithm was built and will be edited in prod by the CIA so they can push their propaganda and censor the critical thinkers.
+
+This is funded fully by the CIA and the NSA. Just like Google and Microsoft.
+
+- https://qz.com/1145669/googles-true-origin-partly-lies-in-cia-and-nsa-research-grants-for-mass-surveillance
+- https://www.spiegel.de/international/world/how-the-nsa-spies-on-international-bank-transactions-a-922430.html
+
+
 The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
 Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
 diagram below illustrates how major services and jobs interconnect.
