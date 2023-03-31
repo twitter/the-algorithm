@@ -1,8 +1,6 @@
 # Twitter Recommendation Algorithm
 
-The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
-Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
-diagram below illustrates how major services and jobs interconnect.
+The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The diagram below illustrates how major services and jobs interconnect.
 
 ![](docs/system-diagram.png)
 
@@ -19,7 +17,7 @@ These are the main components of the Recommendation Algorithm included in this r
 |         | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
 | Candidate Source | [search-index](src/java/com/twitter/search/README.md) | Find and rank In-Network Tweets. ~50% of Tweets come from this candidate source. |
 |                  | [cr-mixer](cr-mixer/README.md) | Coordination layer for fetching Out-of-Network tweet candidates from underlying compute services. |
-|                  | [user-tweet-entity-graph](src/scala/com/twitter/recos/user_tweet_entity_graph/README.md) (UTEG)| Maintains an in memory User to Tweet interaction graph, and finds candidates based on traversals of this graph. This is built on the [GraphJet](https://github.com/twitter/GraphJet) framework. Several other GraphJet based features and candidate sources are located [here](src/scala/com/twitter/recos) |
+|                  | [user-tweet-entity-graph](src/scala/com/twitter/recos/user_tweet_entity_graph/README.md) (UTEG)| Maintains an in-memory User to Tweet interaction graph, and finds candidates based on traversals of this graph. This is built on the [GraphJet](https://github.com/twitter/GraphJet) framework. Several other GraphJet based features and candidate sources are located [here](src/scala/com/twitter/recos) |
 |                  | [follow-recommendation-service](follow-recommendations-service/README.md) (FRS)| Provides Users with recommendations for accounts to follow, and Tweets from those accounts. |
 | Ranking | [light-ranker](src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md) | Light ranker model used by search index (Earlybird) to rank Tweets. |
 |         | [heavy-ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md) | Neural network for ranking candidate tweets. One of the main signals used to select timeline Tweets post candidate sourcing. |
@@ -30,7 +28,7 @@ These are the main components of the Recommendation Algorithm included in this r
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
-We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
+We include Bazel BUILD files for most components, but not a top-level BUILD or WORKSPACE file.
 
 ## Contributing
 
