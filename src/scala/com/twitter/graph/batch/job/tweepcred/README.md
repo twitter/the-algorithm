@@ -56,7 +56,7 @@ It has several options like weighted, flock_edges_only, and input_pagerank to fi
 It also has options for the WeightedPageRank and ExtractTweepcred jobs, like output_pagerank, output_tweepcred, maxiterations, jumpprob, threshold, and post_adjust.
 The PreparePageRankData class has several helper functions like getFlockEdges, getRealGraphEdges, getFlockRealGraphEdges, and getCsvEdges that read the graph data from different sources like DAL, InteractionGraph, or CSV files. It also has the generateInitialPagerank function that generates the initial pagerank from the graph data.
 
-Tweepcred WeightedPageRank class (WeightedPageRank.scala)
+## Tweepcred WeightedPageRank class (WeightedPageRank.scala)
 
 WeightedPageRank is a class that performs the weighted PageRank algorithm on a given graph.
 
