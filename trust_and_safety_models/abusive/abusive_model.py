@@ -18,7 +18,7 @@ cat_names = [
 ...
 ]
 
-category_features = [Feature(name=cat_name, ftype=FeatureType.CONTINUOUS) for cat_name in cat_names]
+category_features = [Feature(name=cat_name, ftype=FeatureType.CATEGORICAL) for cat_name in cat_names]
 features = [
   Feature(name="tweet_text_with_media_annotations", ftype=FeatureType.STRING, encoding=EncodingType.BERT),
   Feature(name="precision_nsfw", ftype=FeatureType.CONTINUOUS),
