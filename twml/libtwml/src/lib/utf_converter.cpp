@@ -1,6 +1,7 @@
 #include "internal/utf_converter.h"
 
 ssize_t utf8_to_utf16(const uint8_t *in, uint64_t in_len, uint16_t *out, uint64_t max_out) {
+  if (in == NULL || out == NULL) return -1;
   uint64_t num_out = 0;
   uint64_t num_in = 0;
   while (num_in < in_len) {
