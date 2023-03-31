@@ -89,7 +89,7 @@ def _get_average_cross_entropy_loss(pairwise_label_scores, pairwise_predicted_sc
 
 
 def get_listmle_loss(labels, predicted_scores):
-  r"""
+  """
   listwise learning-to-rank listMLE loss
   Note: Simplified MLE formula is used in here (omit the proof in here)
   \sum_{s=1}^{n-1} (-predicted_scores + ln(\sum_{i=s}^n exp(predicted_scores)))

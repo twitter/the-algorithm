@@ -138,7 +138,7 @@ def _get_ranking_orders(label_scores, predicted_scores, top_k_int=1):
 
 
 def _get_cg_discount(top_k_int=1):
-  r"""
+  """
   Calculate discounted gain factor for ranking position till top_k_int
   Args:
     top_k_int: An int or an int `Tensor`.
