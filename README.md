@@ -5,7 +5,7 @@ This repository hosts Twitter's drip database.
 Here are some previews of the drip you will find here:
 
 `BLAZINGLY FAST cargo add drip-rs`
-![drip.rs](https://imgur.com/a/YysVcPn)
+![drip.rs](https://i.imgur.com/VvmWfWq.png)
 
 `Elongated Driprat on le funny blue bird app`
 ![Elongated Driprat](https://pbs.twimg.com/media/FskNdX5WYAkmETe?format=jpg&name=medium)
