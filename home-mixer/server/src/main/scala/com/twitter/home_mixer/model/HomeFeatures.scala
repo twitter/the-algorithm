@@ -180,6 +180,10 @@ object HomeFeatures {
   object DDGStatsVitsFeature extends Feature[PipelineQuery, Set[Long]]
   object DDGStatsDemocratsFeature extends Feature[PipelineQuery, Set[Long]]
   object DDGStatsRepublicansFeature extends Feature[PipelineQuery, Set[Long]]
+  object DDGStatsLibertarianFeature extends Feature[PipelineQuery, Set[Long]]
+  object DDGStatsGreenPartyFeature extends Feature[PipelineQuery, Set[Long]]
+  object DDGStatsIndependentFeature extends Feature[PipelineQuery, Set[Long]]
+  object DDGStatsSocialistFeature extends Feature[PipelineQuery, Set[Long]]
   object DeviceLanguageFeature extends Feature[PipelineQuery, Option[String]]
   object DismissInfoFeature
       extends FeatureWithDefaultOnFailure[PipelineQuery, Map[st.SuggestType, Option[DismissInfo]]] {

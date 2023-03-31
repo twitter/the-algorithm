@@ -40,6 +40,10 @@ class RequestQueryFeatureHydrator[
     DDGStatsRepublicansFeature,
     DDGStatsElonFeature,
     DDGStatsVitsFeature,
+    DDGStatsLibertarianFeature,
+    DDGStatsGreenPartyFeature,
+    DDGStatsIndependentFeature,
+    DDGStatsSocialistFeature
     DeviceLanguageFeature,
     GetInitialFeature,
     GetMiddleFeature,
