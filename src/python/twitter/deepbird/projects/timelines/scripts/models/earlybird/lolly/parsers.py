@@ -87,25 +87,28 @@ class LollyModelFeaturesParser(Parser):
       "discretized": {}
     }
     def process_line_fn(line):
-      bias_parser_result = self._bias_parser.parse(line)
-      if bias_parser_result:
-        parsed_features["bias"] = bias_parser_result
+      try:
+        bias_parser_result = self._bias_parser.parse(line)
+        if bias_parser_result:
+          parsed_features["bias"] = bias_parser_result
+          return
+
+        binary_feature_parser_result = self._binary_feature_parser.parse(line)
+        if binary_feature_parser_result:
+          name, value = binary_feature_parser_result
+          parsed_features["binary"][name] = value
+          return
+
+        discretized_feature_parser_result = self._discretized_feature_parser.parse(line)
+        if discretized_feature_parser_result:
+          name, left_bin, right_bin, weight = discretized_feature_parser_result
+          discretized_features = parsed_features["discretized"]
+          if name not in discretized_features:
+            discretized_features[name] = []
+          discretized_features[name].append((left_bin, right_bin, weight))
+      except Exception as e:
+        print("Failed to parse line %s", line)
         return
-
-      binary_feature_parser_result = self._binary_feature_parser.parse(line)
-      if binary_feature_parser_result:
-        name, value = binary_feature_parser_result
-        parsed_features["binary"][name] = value
-        return
-
-      discretized_feature_parser_result = self._discretized_feature_parser.parse(line)
-      if discretized_feature_parser_result:
-        name, left_bin, right_bin, weight = discretized_feature_parser_result
-        discretized_features = parsed_features["discretized"]
-        if name not in discretized_features:
-          discretized_features[name] = []
-        discretized_features[name].append((left_bin, right_bin, weight))
-
     lolly_model_reader.read(process_line_fn)
 
     return parsed_features
@@ -140,6 +143,14 @@ class DBv2DataExampleParser(Parser):
       if feature_id not in self.feature_name_by_dbv2_id:
         print("Missing feature with id: " + str(feature_id))
         continue
-      value_by_feature_name[self.feature_name_by_dbv2_id[feature_id]] = float(feature_values[index])
+      feature_name = self.feature_name_by_dbv2_id[feature_id]
+      feature_value = feature_values[index]
+      if feature_name in value_by_feature_name:
+        print("Duplicate feature name: " + str(feature_name))
+        continue
+      if feature_value == "nan":
+        print("Skipping nan value for feature: " + str(feature_name))
+        continue
+      value_by_feature_name[feature_name] = float(feature_value)
 
     return value_by_feature_name
