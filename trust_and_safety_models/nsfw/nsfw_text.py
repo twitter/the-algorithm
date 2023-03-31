@@ -67,7 +67,7 @@ def clean_tweet(text):
 pd['processed_text'] = pd['text'].astype(str).map(clean_tweet)
 pd.sample(10)
 
-X_train, X_val, y_train, y_val = train_test_split(df[['processed_text']], df['is_nsfw'], test_size=0.1, random_state=1)
+X_train, X_val, y_train, y_val = train_test_split(pd[['processed_text']], pd['is_nsfw'], test_size=0.1, random_state=1)
 
 def df_to_ds(X, y, shuffle=False):
   ds = tf.data.Dataset.from_tensor_slices((
