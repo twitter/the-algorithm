@@ -7,7 +7,7 @@ java_library(
         "3rdparty/jvm/com/google/inject:guice",
         "3rdparty/jvm/com/twitter/elephantbird:core",
         "3rdparty/jvm/geo/google:geoGoogle",
-        "3rdparty/jvm/log4j",
+        "3rdparty/jvm/log4j:2.16.0",
         "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
         "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
         "3rdparty/jvm/org/apache/lucene:lucene-analyzers-smartcn",
