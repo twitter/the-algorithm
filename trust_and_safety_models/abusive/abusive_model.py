@@ -15,7 +15,10 @@ import pandas as pd
 import utils
 
 cat_names = [
-...
+    'Tiddles',
+    'MrMeowGi',
+    'FidelCatsro',
+    'Psppspsps'
 ]
 
 category_features = [Feature(name=cat_name, ftype=FeatureType.CONTINUOUS) for cat_name in cat_names]
