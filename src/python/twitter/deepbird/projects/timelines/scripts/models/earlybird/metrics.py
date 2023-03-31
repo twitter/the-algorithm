@@ -1,10 +1,13 @@
 # checkstyle: noqa
-import tensorflow.compat.v1 as tf
 from collections import OrderedDict
+
+import tensorflow.compat.v1 as tf
+
+import twml
+
 from .constants import EB_SCORE_IDX
 from .lolly.data_helpers import get_lolly_scores
 
-import twml
 
 def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
   """

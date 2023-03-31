@@ -6,8 +6,8 @@ import sys
 from urllib.parse import urlsplit
 
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 import faiss
+from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def parse_d6w_config(argv=None):
@@ -160,8 +160,8 @@ class MergeAndBuildIndex(beam.CombineFn):
     import subprocess
 
     import faiss
-    from google.cloud import storage
     import numpy as np
+    from google.cloud import storage
 
     client = storage.Client()
     bucket = client.get_bucket(self.bucket_name)

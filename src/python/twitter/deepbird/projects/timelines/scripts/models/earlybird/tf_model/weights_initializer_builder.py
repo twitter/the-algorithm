@@ -1,8 +1,9 @@
-from .hashing_utils import make_feature_id, numpy_hashing_uniform
-
 import numpy as np
 import tensorflow.compat.v1 as tf
+
 import twml
+
+from .hashing_utils import make_feature_id, numpy_hashing_uniform
 
 
 class TFModelWeightsInitializerBuilder(object):
