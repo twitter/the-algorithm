@@ -532,7 +532,7 @@ public class HnswIndex<T, Q> {
    * @param numOfNeighbours Number of neighbours to search for.
    * @param ef              This param controls the accuracy of the search.
    *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
+   *                        Keep it at least number of neighbours to find.
    * @return Neighbours
    */
   public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {

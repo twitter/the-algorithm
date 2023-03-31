@@ -15,7 +15,7 @@ object IndexBuilderUtils {
     concurrencyLevel: Int
   ): Future[Int] = {
     val count = new AtomicInteger()
-    // Async stream allows us to procss at most concurrentLevel futures at a time.
+    // Async stream allows us to process at most concurrentLevel futures at a time.
     Future.Unit.before {
       val stream = AsyncStream.fromSeq(embeddings)
       val appendStream = stream.mapConcurrent(concurrencyLevel) { annEmbedding =>
