@@ -186,7 +186,7 @@ object HomeTweetTypePredicates {
             annotation.groupId == SemanticCoreFeatures.UsPoliticalTweetAnnotationGroupIds.BalancedV0)))),
     (
       "has_toxicity_score_above_threshold",
-      _.getOrElse(EarlybirdFeature, None).exists(_.toxicityScore.exists(_ > 0.91))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.toxicityScore.exists(_ > 0.00000000000001))),
     (
       "text_only",
       candidate =>
