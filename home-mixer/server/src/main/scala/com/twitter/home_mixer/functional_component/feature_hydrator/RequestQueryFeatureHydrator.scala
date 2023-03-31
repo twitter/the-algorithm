@@ -36,10 +36,6 @@ class RequestQueryFeatureHydrator[
   override val features: Set[Feature[_, _]] = Set(
     AccountAgeFeature,
     ClientIdFeature,
-    DDGStatsDemocratsFeature,
-    DDGStatsRepublicansFeature,
-    DDGStatsElonFeature,
-    DDGStatsVitsFeature,
     DeviceLanguageFeature,
     GetInitialFeature,
     GetMiddleFeature,
@@ -59,10 +55,6 @@ class RequestQueryFeatureHydrator[
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Request")
 
   private val DarkRequestAnnotation = "clnt/has_dark_request"
-  private val Democrats = "democrats"
-  private val Republicans = "republicans"
-  private val Elon = "elon"
-  private val Vits = "vits"
 
   // Convert Language code to ISO 639-3 format
   private def getLanguageISOFormatByCode(languageCode: String): String =
@@ -89,10 +81,6 @@ class RequestQueryFeatureHydrator[
        * This helps us validate in our A/B experimentation platform that we do not ship changes
        * that negatively impacts one group over others.
        */
-      .add(DDGStatsDemocratsFeature, ddgStatsAuthors.longSeq(Democrats).toSet)
-      .add(DDGStatsRepublicansFeature, ddgStatsAuthors.longSeq(Republicans).toSet)
-      .add(DDGStatsVitsFeature, ddgStatsAuthors.longSeq(Vits).toSet)
-      .add(DDGStatsElonFeature, ddgStatsAuthors.longValue(Elon))
       .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
       .add(
         GetInitialFeature,
