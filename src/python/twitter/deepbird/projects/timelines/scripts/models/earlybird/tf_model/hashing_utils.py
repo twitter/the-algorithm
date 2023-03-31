@@ -1,6 +1,5 @@
-from twitter.deepbird.io.util import _get_feature_id
-
 import numpy as np
+from twitter.deepbird.io.util import _get_feature_id
 
 
 def numpy_hashing_uniform(the_id, bin_idx, output_bits):

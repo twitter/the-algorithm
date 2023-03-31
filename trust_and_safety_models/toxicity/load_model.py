@@ -1,14 +1,13 @@
 import os
 
 from toxicity_ml_pipeline.settings.default_settings_tox import LOCAL_DIR, MAX_SEQ_LENGTH
+
 try:
   from toxicity_ml_pipeline.optim.losses import MaskedBCE
 except ImportError:
   print('No MaskedBCE loss')
-from toxicity_ml_pipeline.utils.helpers import execute_command
-
 import tensorflow as tf
-
+from toxicity_ml_pipeline.utils.helpers import execute_command
 
 try:
   from twitter.cuad.representation.models.text_encoder import TextEncoder
@@ -102,7 +101,7 @@ def get_loss(loss_name, from_logits, **kwargs):
     multitask = kwargs.get("multitask", False)
     if from_logits or multitask:
       raise NotImplementedError
-    print(f'Masked Binary Cross Entropy')
+    print('Masked Binary Cross Entropy')
     return MaskedBCE()
 
   if loss_name == "inv_kl_loss":

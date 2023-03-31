@@ -1,18 +1,44 @@
+import datetime
+import os
+from dataclasses import asdict
+
+import numpy as np
+import pandas as pd
 import tensorflow as tf
+import tensorflow_hub as hub
+import utils
+import wandb
+
+try:
+  wandb_key = ...
+  wandb.login(...)
+  run = wandb.init(project='ptos_with_media',
+             group='new-split-trains',
+             notes='tweet text with only (num_media, precision_nsfw). on full train set, new split.',
+             entity='absv',
+             config=params,
+             name='tweet-text-w-nsfw-1.1',
+             sync_tensorboard=True)
+except FileNotFoundError:
+  print('Wandb key not found')
+  run = wandb.init(mode='disabled')
+
+
+from notebook_eval_utils import EvalConfig, SparseMultilabelEvaluator
+from twitter.cuad.representation.models.optimization import create_optimizer
+from twitter.cuad.representation.models.text_encoder import TextEncoder
+from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
+from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
+from twitter.hmli.nimbus.modeling.model_config import (
+  EncodingType,
+  Feature,
+  FeatureType,
+  Model,
+)
 
 physical_devices = tf.config.list_physical_devices('GPU') 
 for device in physical_devices:
     tf.config.experimental.set_memory_growth(device, True)
-
-from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
-from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
-from twitter.cuad.representation.models.text_encoder import TextEncoder
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
-
-import numpy as np
-import pandas as pd
-import utils
 
 cat_names = [
 ...
@@ -75,7 +101,6 @@ params = {
   'model_type': 'twitter_multilingual_bert_base_cased_mlm', 
   'mixed_precision': True,
 }
-params
 
 def parse_labeled_data(row_dict):
   label = [row_dict.pop(l) for l in labels]
@@ -134,7 +159,9 @@ with mirrored_strategy.scope():
   )
   pr_auc = tf.keras.metrics.AUC(curve="PR", num_thresholds=1000, multi_label=True, from_logits=True)
 
-  custom_loss = lambda y_true, y_pred: utils.multilabel_weighted_loss(y_true, y_pred, weights=pos_weight_tensor)
+  def custom_loss(y_true, y_pred):
+      return utils.multilabel_weighted_loss(y_true, y_pred, weights=pos_weight_tensor)
+
   optimizer = create_optimizer(
     init_lr=params["lr"], 
     num_train_steps=(params["epochs"] * params["steps_per_epoch"]),
@@ -153,25 +180,6 @@ with mirrored_strategy.scope():
 model.weights
 model.summary()
 pr_auc.name
-
-import getpass
-import wandb
-from wandb.keras import WandbCallback
-try:
-  wandb_key = ...
-  wandb.login(...)
-  run = wandb.init(project='ptos_with_media',
-             group='new-split-trains',
-             notes='tweet text with only (num_media, precision_nsfw). on full train set, new split.',
-             entity='absv',
-             config=params,
-             name='tweet-text-w-nsfw-1.1',
-             sync_tensorboard=True)
-except FileNotFoundError:
-  print('Wandb key not found')
-  run = wandb.init(mode='disabled')
-import datetime
-import os
 
 start_train_time = datetime.datetime.now()
 print(start_train_time.strftime("%m-%d-%Y (%H:%M:%S)"))
@@ -194,8 +202,6 @@ early_stopping_callback = tf.keras.callbacks.EarlyStopping(patience=7,
 model.fit(train_ds, epochs=params["epochs"], validation_data=val_ds, callbacks=[cp_callback, early_stopping_callback],
         steps_per_epoch=params["steps_per_epoch"], 
         verbose=2)
-
-import tensorflow_hub as hub
 
 gs_model_path = ...
 reloaded_keras_layer = hub.KerasLayer(gs_model_path)
@@ -232,9 +238,6 @@ test_no_media = test.filter(lambda x, y: tf.equal(x["has_media"], False))
 test_media_not_nsfw = test.filter(lambda x, y: tf.logical_and(tf.equal(x["has_media"], True), tf.less(x["precision_nsfw"], 0.95)))
 for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
   print(d.reduce(0, lambda x, _: x + 1).numpy())
-
-from notebook_eval_utils import SparseMultilabelEvaluator, EvalConfig
-from dataclasses import asdict
 
 def display_metrics(probs, targets, labels=labels):
   eval_config = EvalConfig(prediction_threshold=0.5, precision_k=0.9)

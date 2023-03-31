@@ -1,21 +1,19 @@
+import glob
+import os
+import random
+
 import kerastuner as kt
-import math
 import numpy as np
 import pandas as pd
-import random
 import sklearn.metrics
 import tensorflow as tf
-import os
-import glob
-
-from tqdm import tqdm
-from matplotlib import pyplot as plt
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
 from google.cloud import storage
+from matplotlib import pyplot as plt
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tqdm import tqdm
 
 physical_devices = tf.config.list_physical_devices('GPU')
-physical_devices
 
 tf.config.set_visible_devices([tf.config.PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')], 'GPU')
 tf.config.get_visible_devices('GPU')
@@ -89,7 +87,7 @@ test_ds = test_ds.map(lambda x: preprocess_embedding_example(x, positive_label=p
   
 if use_sens_prev_data:
   test_sens_prev_glob = f"{sens_prev_input_root}/test/tfrecord/*.tfrecord"
-  test_sens_prev_files =  tf.io.gfile.glob(test_sens_prev_glob)
+  test_sens_prev_files = tf.io.gfile.glob(test_sens_prev_glob)
   
   if not len(test_sens_prev_files):
     raise ValueError(f"Did not find any eval files matching {test_sens_prev_glob}")
@@ -109,12 +107,12 @@ train_ds = train_ds.repeat()
 
 if has_validation_data: 
   eval_glob = f"{input_root}/validation/tfrecord/*.tfrecord"
-  eval_files =  tf.io.gfile.glob(eval_glob)
+  eval_files = tf.io.gfile.glob(eval_glob)
     
   if use_sens_prev_data:
     eval_sens_prev_glob = f"{sens_prev_input_root}/validation/tfrecord/*.tfrecord"
     eval_sens_prev_files = tf.io.gfile.glob(eval_sens_prev_glob)
-    eval_files =  eval_files + eval_sens_prev_files
+    eval_files = eval_files + eval_sens_prev_files
     
     
   if not len(eval_files):
@@ -428,7 +426,7 @@ ptAt50fmt = "%.4f" % ptAt50[1]
 ptAt90fmt = "%.4f" % ptAt90[1]
 aucFmt = "%.4f" % auc_precision_recall
 plt.title(
-  f"Keras (nsfw MU test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...}} ({...} pos), N_test={n_test} ({n_test_pos} pos)",
+  f"Keras (nsfw MU test)\nAUC={aucFmt}\np={ptAt50fmt} @ r=0.5\np={ptAt90fmt} @ r=0.9\nN_train={...} ({...} pos), N_test={n_test} ({n_test_pos} pos)",
   size=20
 )
 plt.subplots_adjust(top=0.72)

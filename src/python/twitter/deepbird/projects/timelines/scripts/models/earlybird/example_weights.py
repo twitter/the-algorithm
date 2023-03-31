@@ -1,5 +1,6 @@
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
+
 from .constants import INDEX_BY_LABEL, LABEL_NAMES
 
 # TODO: Read these from command line arguments, since they specify the existing example weights in the input data.
