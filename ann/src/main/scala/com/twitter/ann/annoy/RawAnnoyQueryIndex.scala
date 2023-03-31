@@ -118,9 +118,8 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
     }
   }
 
-  // Annoy java lib do not expose param for numOfNodesToExplore.
-  // Default number is numOfTrees*numOfNeigbours.
-  // Simple hack is to artificially increase the numOfNeighbours to be requested and then just cap it before returning.
+  // The annoy-java lib does not expose the param for numOfNodesToExplore (the default value is numOfTrees*numOfNeighbours).  
+  // As a workaround, we can artificially increase the numOfNeighbours to be requested and then cap it before returning. 
   private[this] def neighboursToRequest(
     numOfNeighbours: Int,
     annoyParams: AnnoyRuntimeParams
