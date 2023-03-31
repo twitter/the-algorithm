@@ -12,11 +12,11 @@ pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
     for line in io::BufReader::new(file).lines() {
         match base64::decode(line.unwrap().trim()) {
             Ok(payload) => result.push(payload),
-            Err(err) => println!("error decoding line {}", err),
+            Err(err) => println!("error decoding line {err}"),
         }
     }
-    println!("reslt len: {}", result.len());
-    return result;
+    println!("result len: {}", result.len());
+    return result
 }
 pub fn save_to_npy<T: npyz::Serialize + AutoSerialize>(data: &[T], save_to: String) {
     let mut writer = WriteOptions::new()
