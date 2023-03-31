@@ -31,4 +31,4 @@ in navi/navi you can run. Note you need to create a models directory and create 
 - scripts/run_onnx.sh
 
 ## Build
-you can adapt the above scripts to build using Cargo
+You can adapt the above scripts to build using Cargo.
