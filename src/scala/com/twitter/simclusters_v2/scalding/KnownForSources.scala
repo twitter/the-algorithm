@@ -102,31 +102,29 @@ object KnownForSources {
     TypedPipe
       .from(TextLine(textFile))
       .flatMap { str =>
-        if (!str.startsWith("#")) {
-          try {
-            val tokens = str.trim.split("\\s+")
-            val res = Array.newBuilder[(Int, Float)]
-            val userId = tokens(0).toLong
-            for (i <- 1 until tokens.length) {
-              val Array(cIdStr, scoreStr) = tokens(i).split(":")
-              val clusterId = cIdStr.toInt
-              val score = scoreStr.toFloat
-              val newEntry = (clusterId, score)
-              res += newEntry
-            }
-            val result = res.result
-            if (result.nonEmpty) {
-              Some((userId, res.result()))
-            } else None
-          } catch {
-            case ex: Throwable =>
-              log.warning(
-                s"Error while loading knownFor from $textFile for line <$str>: " +
-                  ex.getMessage
-              )
-              None
+        if (str.startsWith("#")) {none}
+        try {
+          val tokens = str.trim.split("\\s+")
+          val userId = tokens(0).toLong
+          (1 until tokens.length).foldRight(Array.newBuilder[(Int, Float)])((i, r) => {
+            val Array(cIdStr, scoreStr) = tokens(i).split(":")
+            val clusterId = cIdStr.toInt
+            val score = scoreStr.toFloat
+            val newEntry = (clusterId, score)
+            r += newEntry
+          }).result() match {
+            case (res) if res.nonEmpty =>  Some((userId, res.result()))
+              _ => none
           }
-        } else None
+        }
+        catch {
+          case ex: Throwable =>
+            log.warning(
+              s"Error while loading knownFor from $textFile for line <$str>: " +
+                ex.getMessage
+            )
+            None
+        }
       }
   }
 
