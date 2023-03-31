@@ -1,8 +1,6 @@
 # Twitter Recommendation Algorithm
 
-The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
-Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
-diagram below illustrates how major services and jobs interconnect.
+The Meme-Elon-Twitter Algorithm is a collection of services and tasks dedicated to creating and showcasing the finest Elon Musk and meme-related content on the Home Timeline, with a special emphasis on the legendary numbers 420 and 69. For a detailed explanation of how this algorithm operates, head over to our engineering blog. The diagram provided will help you visualize the connections between major services and tasks involved in this meme-tastic process.
 
 ![](docs/system-diagram.png)
 
