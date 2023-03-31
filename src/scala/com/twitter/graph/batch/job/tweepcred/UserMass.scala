@@ -53,14 +53,16 @@ object UserMass {
 
       val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
       val adjustedMass =
-        if (numFollowings > threshAbsNumFriendsUMass &&
-          friendsToFollowersRatio > threshFriendsToFollowersRatioUMass) {
-          mass / scala.math.exp(
+        if (isVerified) {
+            mass
+        } else if (numFollowings > threshAbsNumFriendsUMass &&
+            friendsToFollowersRatio > threshFriendsToFollowersRatioUMass) {
+            mass / scala.math.exp(
             constantDivisionFactorGt_threshFriendsToFollowersRatioUMass *
-              (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass)
-          )
+                (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass)
+            )
         } else {
-          mass
+            mass
         }
 
       Some(UserMassInfo(userId, adjustedMass))
