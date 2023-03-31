@@ -20,7 +20,7 @@ class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
       12L, //jack
       21447363L, // KATY PERRY
       42562446L, // Stephen Curry
-      813286L // Barack Obama
+      813286L // Barack Obamna
     ).toArray
   }
 
