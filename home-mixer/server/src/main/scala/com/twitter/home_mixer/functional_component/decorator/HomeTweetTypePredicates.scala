@@ -227,20 +227,8 @@ object HomeTweetTypePredicates {
       candidate =>
         candidate
           .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsVitsFeature, Set.empty[Long]).contains)),
-    (
-      "author_is_democrat",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsDemocratsFeature, Set.empty[Long]).contains)),
-    (
-      "author_is_republican",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsRepublicansFeature, Set.empty[Long]).contains)),
+          .exists(candidate.getOrElse(DDGStatsVitsFeature, Set.empty[Long]).contains))
   )
-
+  // no more politics 😭😭😭
   val PredicateMap = CandidatePredicates.toMap
 }
