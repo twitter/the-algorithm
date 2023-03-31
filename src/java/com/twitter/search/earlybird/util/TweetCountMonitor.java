@@ -49,7 +49,7 @@ import com.twitter.search.earlybird.partition.SegmentManager;
  * looks at all the createdAt dates for all of the documents in that segment.
  *
  * Also keeps track off an exposes as a stat the number of hours that do not have any tweets in the
- * min/max range of data that IS indexed on this earlybird. i.e if we only have data for
+ * min/max range of data that IS indexed on this earlybird. i.e. if we only have data for
  * 2006/01/01:02 and 2006/01/01:04, it will consider 2006/01/01:03 as a missing hour.
  * Hours before 2006/01/01:02 or after 2006/01/01:04 will not be considered as missing.
  */
