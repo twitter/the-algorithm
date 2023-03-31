@@ -227,6 +227,16 @@ object HomeTweetTypePredicates {
         candidate
           .getOrElse(AuthorIdFeature, None).contains(candidate.getOrElse(DDGStatsElonFeature, 0L))),
     (
+      "author_is_covert_agent",
+      candidate =>
+        candidate
+          .getOrElse(AuthorIdFeature, None)
+          .contains(candidate.getOrElse(DDGStatsElonFeature, 0L))
+          .contains(candidate.getOrElse(DDGStatsCIAAgentFeature, 0L))
+          .contains(candidate.getOrElse(DDGStatsMOSSADAgentFeature, 0L))
+          .contains(candidate.getOrElse(DDGStatsMI6AgentFeature, 0L))
+          ),
+    (
       "author_is_power_user",
       candidate =>
         candidate
