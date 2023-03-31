@@ -43,13 +43,11 @@ import com.twitter.search.common.util.text.TokenizerHelper;
 public class TweetOffensiveEvaluator extends TweetEvaluator {
   private static final Logger LOG = LoggerFactory.getLogger(TweetOffensiveEvaluator.class);
 
-  private static final int MAX_OFFENSIVE_TERMS = 2;
+  private static final int MAX_OFFENSIVE_TERMS = 3;
 
   private final File filterDirectory;
   private static final File DEFAULT_FILTER_DIR = new File("");
   private static final String ADULT_TOKEN_FILE_NAME = "adult_tokens.txt";
-  private static final String OFFENSIVE_TOPIC_FILE_NAME = "offensive_topics.txt";
-  private static final String OFFENSIVE_SUBSTRING_FILE_NAME = "offensive_substrings.txt";
 
   private static final ThreadLocal<TwitterNgramGenerator> NGRAM_GENERATOR_HOLDER =
       new ThreadLocal<TwitterNgramGenerator>() {
@@ -69,9 +67,6 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
     new AtomicReference<>();
 
   private final AtomicReference<ByteSource> adultTokenFileContents = new AtomicReference<>();
-  private final AtomicReference<ByteSource> offensiveTokenFileContents = new AtomicReference<>();
-  private final AtomicReference<ByteSource> offensiveSubstringFileContents = new
-    AtomicReference<>();
 
   private final SearchCounter sensitiveTextCounter =
       RelevanceStats.exportLong("num_sensitive_text");
@@ -86,10 +81,6 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
     this.filterDirectory = filterDirectory;
     adultTokenFileContents.set(BlacklistedTopics.getResource(
       BlacklistedTopics.DATA_PREFIX + ADULT_TOKEN_FILE_NAME));
-    offensiveTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_TOPIC_FILE_NAME));
-    offensiveSubstringFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_SUBSTRING_FILE_NAME));
 
     try {
       rebuildBlacklistedTopics();
@@ -103,8 +94,6 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
         .setDaemon(true)
         .build());
     initPeriodicFileLoader(adultTokenFileContents, ADULT_TOKEN_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveTokenFileContents, OFFENSIVE_TOPIC_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveSubstringFileContents, OFFENSIVE_SUBSTRING_FILE_NAME, executor);
   }
 
   private void initPeriodicFileLoader(
@@ -134,21 +123,14 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
   private void rebuildBlacklistedTopics() throws IOException {
     offensiveTopics.set(new BlacklistedTopics.Builder(false)
       .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EXACT)
-      .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
-      .build());
-
-    offensiveUsersTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EXACT)
-      .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
   }
 
   @Override
   public void evaluate(final TwitterMessage tweet) {
     BlacklistedTopics offensiveFilter = this.offensiveTopics.get();
-    BlacklistedTopics offensiveUsersFilter = this.offensiveUsersTopics.get();
 
-    if (offensiveFilter == null || offensiveUsersFilter == null) {
+    if (offensiveFilter == null) {
       return;
     }
 
@@ -156,24 +138,11 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
       sensitiveTextCounter.increment();
     }
 
-    // Check for user name.
-    Preconditions.checkState(tweet.getFromUserScreenName().isPresent(),
-        "Missing from-user screen name");
-
     for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
       TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
 
       if (tweet.isSensitiveContent()) {
         textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE);
-      }
-
-      // Check if username has an offensive term
-      if (isUserNameOffensive(
-          tweet.getFromUserScreenName().get(), offensiveUsersFilter, penguinVersion)) {
-        SearchRateCounter offensiveUserCounter = RelevanceStats.exportRate(
-            "num_offensive_user_" + penguinVersion.name().toLowerCase());
-        offensiveUserCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
       }
 
       // Check if tweet has an offensive term
@@ -184,22 +153,6 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
         textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE);
       }
     }
-  }
-
-  private boolean isUserNameOffensive(String userName,
-                                      BlacklistedTopics offensiveUsersFilter,
-                                      PenguinVersion penguinVersion) {
-    String normalizedUserName = NormalizerHelper.normalizeKeepCase(
-        userName, LocaleUtil.UNKNOWN, penguinVersion);
-    List<String> termsToCheck = new ArrayList(TokenizerHelper.getSubtokens(normalizedUserName));
-    termsToCheck.add(normalizedUserName.toLowerCase());
-
-    for (String userNameToken : termsToCheck) {
-      if (!StringUtils.isBlank(userNameToken) && offensiveUsersFilter.filter(userNameToken)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private boolean isTweetOffensive(final TwitterMessage tweet,
