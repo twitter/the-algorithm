@@ -1,0 +1,5 @@
+To reproduce, you need to run
+
+1. SimClustersTweetEmbeddingAdhocApp to generate cluster -> top tweets and tweet -> top clusters data sets
+2. TweetSimilarityEvaluationSamplingAdhocApp to sample a subset of tweets that you want to compute some metrics on
+3. TweetSimilarityEvaluationAdhocApp to perform the evaluation

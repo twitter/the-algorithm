@@ -1,0 +1,22 @@
+scala_library(
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/inject:guice",
+        "escherbird/src/scala/com/twitter/escherbird/util/stitchcache",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/base",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/geoduck",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
+        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
+        "hermit/hermit-core/src/main/scala/com/twitter/hermit/model",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+        "src/thrift/com/twitter/onboarding/relevance/organic_follows_accounts:organic_follows_accounts-scala",
+        "strato/config/columns/onboarding/userrecs:userrecs-strato-client",
+        "strato/src/main/scala/com/twitter/strato/client",
+        "util/util-core/src/main/scala/com/twitter/conversions",
+    ],
+)

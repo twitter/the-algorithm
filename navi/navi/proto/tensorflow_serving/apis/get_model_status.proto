@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+
+import "tensorflow_serving/apis/model.proto";
+import "tensorflow_serving/apis/status.proto";
+
+option cc_enable_arenas = true;
+
+// GetModelStatusRequest contains a ModelSpec indicating the model for which
+// to get status.
+message GetModelStatusRequest {
+  // Model Specification. If version is not specified, information about all
+  // versions of the model will be returned. If a version is specified, the
+  // status of only that version will be returned.
+  ModelSpec model_spec = 1;
+}
+
+// Version number, state, and status for a single version of a model.
+message ModelVersionStatus {
+  // Model version.
+  int64 version = 1;
+
+  // States that map to ManagerState enum in
+  // tensorflow_serving/core/servable_state.h
+  enum State {
+    // Default value.
+    UNKNOWN = 0;
+
+    // The manager is tracking this servable, but has not initiated any action
+    // pertaining to it.
+    START = 10;
+
+    // The manager has decided to load this servable. In particular, checks
+    // around resource availability and other aspects have passed, and the
+    // manager is about to invoke the loader's Load() method.
+    LOADING = 20;
+
+    // The manager has successfully loaded this servable and made it available
+    // for serving (i.e. GetServableHandle(id) will succeed). To avoid races,
+    // this state is not reported until *after* the servable is made
+    // available.
+    AVAILABLE = 30;
+
+    // The manager has decided to make this servable unavailable, and unload
+    // it. To avoid races, this state is reported *before* the servable is
+    // made unavailable.
+    UNLOADING = 40;
+
+    // This servable has reached the end of its journey in the manager. Either
+    // it loaded and ultimately unloaded successfully, or it hit an error at
+    // some point in its lifecycle.
+    END = 50;
+  }
+
+  // Model state.
+  State state = 2;
+
+  // Model status.
+  StatusProto status = 3;
+}
+
+// Response for ModelStatusRequest on successful run.
+message GetModelStatusResponse {
+  // Version number and status information for applicable model version(s).
+  repeated ModelVersionStatus model_version_status = 1
+      [json_name = "model_version_status"];
+}

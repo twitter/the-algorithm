@@ -1,0 +1,30 @@
+jvm_binary(
+    name = "bin",
+    basename = "home-mixer",
+    main = "com.twitter.home_mixer.HomeMixerServerMain",
+    runtime_platform = "java11",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/ch/qos/logback:logback-classic",
+        "finagle/finagle-zipkin-scribe/src/main/scala",
+        "finatra/inject/inject-logback/src/main/scala",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer",
+        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        "twitter-server-internal/src/main/scala",
+        "twitter-server/logback-classic/src/main/scala",
+    ],
+)
+
+#  Aurora Workflows build phase convention requires a jvm_app named with home-mixer-app
+jvm_app(
+    name = "home-mixer-app",
+    archive = "zip",
+    binary = ":bin",
+    bundles = [
+        bundle(
+            fileset = ["config/**/*"],
+            owning_target = "home-mixer/config:files",
+        ),
+    ],
+    tags = ["bazel-compatible"],
+)

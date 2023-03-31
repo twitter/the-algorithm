@@ -1,0 +1,66 @@
+scala_library(
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/bijection:core",
+        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/constdb_util",
+        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/common",
+        "src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_history_aggregated_edge_snapshot-scala",
+        "src/scala/com/twitter/interaction_graph/scio/ml/scores:real_graph_in_scores-scala",
+        "src/scala/com/twitter/pluck/source/user_audits:user_audit_final-scala",
+        "src/scala/com/twitter/scalding_internal/dalv2",
+        "src/scala/com/twitter/scalding_internal/job",
+        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+    ],
+)
+
+scalding_job(
+    name = "graph_feature_service_adhoc_job",
+    main = "com.twitter.graph_feature_service.scalding.GraphFeatureServiceAdhocApp",
+    args = [
+        "--date 2022-10-24",
+    ],
+    config = [
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    contact = "recos-platform-alerts@twitter.com",
+    hadoop_cluster = "atla-proc",
+    hadoop_properties = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":scalding"],
+)
+
+scalding_job(
+    name = "graph_feature_service_daily_job",
+    main = "com.twitter.graph_feature_service.scalding.GraphFeatureServiceScheduledApp",
+    config = [
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    contact = "recos-platform-alerts@twitter.com",
+    cron = "01,31 * * * *",
+    hadoop_cluster = "atla-proc",
+    hadoop_properties = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":scalding"],
+)
