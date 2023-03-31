@@ -300,22 +300,12 @@ class I18nLoader(DataframeLoader):
     return query
 
   def query_keys(self, language, task=2, size="50"):
-    if task == 2:
-      if language == "ar":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "tr":
-        self.query_settings["adhoc_v2"]["table"] = "..."
-      elif language == "es":
-        self.query_settings["adhoc_v2"]["table"] = f"..."
+      if task in [2, 3]:
+          if task == 2:
+              self.query_settings["adhoc_v2"]["table"] = "..." if language in ["ar", "tr"] else f"..."
+          return self.query_settings[f"adhoc_v{task}"]
       else:
-        self.query_settings["adhoc_v2"]["table"] = "..."
-
-      return self.query_settings["adhoc_v2"]
-
-    if task == 3:
-      return self.query_settings["adhoc_v3"]
-
-    raise ValueError(f"There are no other tasks than 2 or 3. {task} does not exist.")
+          raise ValueError(f"There are no other tasks than 2 or 3. {task} does not exist.")
 
   def load_data(self, language, test=False, task=2):
     if language not in self.accepted_languages:
