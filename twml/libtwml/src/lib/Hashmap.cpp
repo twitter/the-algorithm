@@ -42,7 +42,7 @@ namespace twml {
   int8_t HashMap::get(HashVal_t &val, const HashKey_t key) const {
     int8_t result;
     TWML_CHECK(twml_hashmap_get_value(&result, &val, m_hashmap, key),
-           "Failed to insert key,value pair");
+           "Failed to get key,value pair");
     return result;
   }
 
