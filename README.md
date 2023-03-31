@@ -1,39 +1,58 @@
-# Twitter Recommendation Algorithm
+Spicy Chicken Sandwich Recipe
 
-The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
-Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
-diagram below illustrates how major services and jobs interconnect.
+Ingredients:
 
-![](docs/system-diagram.png)
+For the Spicy Chicken Marinade:
 
-These are the main components of the Recommendation Algorithm included in this repository:
+2 boneless, skinless chicken breasts (about 6-8 ounces each)
+1 cup buttermilk
+1 tablespoon hot sauce (e.g., Sriracha, Frank's Red Hot, or your favorite)
+1 teaspoon paprika
+1 teaspoon garlic powder
+1 teaspoon onion powder
+1 teaspoon salt
+1/2 teaspoon black pepper
+For the Breading:
 
-| Type | Component | Description |
-|------------|------------|------------|
-| Feature | [simclusters-ann](simclusters-ann/README.md) | Community detection and sparse embeddings into those communities. |
-|         | [TwHIN](https://github.com/twitter/the-algorithm-ml/blob/main/projects/twhin/README.md) | Dense knowledge graph embeddings for Users and Tweets. |
-|         | [trust-and-safety-models](trust_and_safety_models/README.md) | Models for detecting NSFW or abusive content. |
-|         | [real-graph](src/scala/com/twitter/interaction_graph/README.md) | Model to predict likelihood of a Twitter User interacting with another User. |
-|         | [tweepcred](src/scala/com/twitter/graph/batch/job/tweepcred/README) | Page-Rank algorithm for calculating Twitter User reputation. |
-|         | [recos-injector](recos-injector/README.md) | Streaming event processor for building input streams for [GraphJet](https://github.com/twitter/GraphJet) based services. |
-|         | [graph-feature-service](graph-feature-service/README.md) | Serves graph features for a directed pair of Users (e.g. how many of User A's following liked Tweets from User B). |
-| Candidate Source | [search-index](src/java/com/twitter/search/README.md) | Find and rank In-Network Tweets. ~50% of Tweets come from this candidate source. |
-|                  | [cr-mixer](cr-mixer/README.md) | Coordination layer for fetching Out-of-Network tweet candidates from underlying compute services. |
-|                  | [user-tweet-entity-graph](src/scala/com/twitter/recos/user_tweet_entity_graph/README.md) (UTEG)| Maintains an in memory User to Tweet interaction graph, and finds candidates based on traversals of this graph. This is built on the [GraphJet](https://github.com/twitter/GraphJet) framework. Several other GraphJet based features and candidate sources are located [here](src/scala/com/twitter/recos) |
-|                  | [follow-recommendation-service](follow-recommendations-service/README.md) (FRS)| Provides Users with recommendations for accounts to follow, and Tweets from those accounts. |
-| Ranking | [light-ranker](src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md) | Light ranker model used by search index (Earlybird) to rank Tweets. |
-|         | [heavy-ranker](https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md) | Neural network for ranking candidate tweets. One of the main signals used to select timeline Tweets post candidate sourcing. |
-| Tweet mixing & filtering | [home-mixer](home-mixer/README.md) | Main service used to construct and serve the Home Timeline. Built on [product-mixer](product-mixer/README.md) |
-|                          | [visibility-filters](visibilitylib/README.md) | Responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking. |
-|                          | [timelineranker](timelineranker/README.md) | Legacy service which provides relevance-scored tweets from the Earlybird Search Index and UTEG service. |
-| Software framework | [navi](navi/navi/README.md) | High performance, machine learning model serving written in Rust. |
-|                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
-|                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
+1 cup all-purpose flour
+1/2 cup cornstarch
+1 tablespoon paprika
+1 tablespoon cayenne pepper (adjust to your desired spiciness)
+1 teaspoon garlic powder
+1 teaspoon onion powder
+1 teaspoon salt
+1/2 teaspoon black pepper
+For the Spicy Mayo:
 
-We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
+1/2 cup mayonnaise
+1 tablespoon hot sauce (e.g., Sriracha, Frank's Red Hot, or your favorite)
+1/2 teaspoon garlic powder
+1/2 teaspoon paprika
+Salt and pepper, to taste
+For Frying:
 
-## Contributing
+Vegetable oil, for frying
+For Assembly:
 
-We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
+4 brioche buns, toasted
+Lettuce leaves
+Sliced tomatoes
+Sliced red onion
+Pickles (optional)
+Instructions:
 
-Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+Marinate the chicken: In a large bowl or ziplock bag, combine buttermilk, hot sauce, paprika, garlic powder, onion powder, salt, and black pepper. Add the chicken breasts, ensuring they are fully coated. Cover or seal and refrigerate for at least 1 hour or up to overnight for maximum flavor.
+
+Prepare the breading: In a shallow dish, whisk together the all-purpose flour, cornstarch, paprika, cayenne pepper, garlic powder, onion powder, salt, and black pepper.
+
+Coat the chicken: Remove the chicken from the marinade, letting the excess drip off. Dredge the chicken in the breading mixture, pressing the flour mixture into the chicken to ensure a thick, even coating. Set the breaded chicken on a wire rack or plate.
+
+Heat the oil: In a deep, heavy skillet or Dutch oven, heat about 2 inches of vegetable oil to 350°F (175°C). You can use a deep-fry thermometer to monitor the temperature.
+
+Fry the chicken: Carefully lower the breaded chicken breasts into the hot oil, frying one piece at a time if necessary to avoid overcrowding the pan. Cook for 5-7 minutes per side or until the chicken reaches an internal temperature of 165°F (74°C) and the breading is golden brown and crispy. Use a slotted spoon or tongs to transfer the fried chicken to a wire rack or paper towel-lined plate to drain.
+
+Prepare the spicy mayo: In a small bowl, whisk together mayonnaise, hot sauce, garlic powder, and paprika. Season with salt and pepper to taste.
+
+Assemble the sandwiches: Spread a generous layer of spicy mayo on the bottom half of each toasted brioche bun. Top with lettuce, tomato, and red onion slices. Place a fried chicken breast on top, followed by pickles (if desired). Finish with the top half of the brioche bun.
+
+Serve immediately and enjoy your homemade spicy chicken sandwich!
