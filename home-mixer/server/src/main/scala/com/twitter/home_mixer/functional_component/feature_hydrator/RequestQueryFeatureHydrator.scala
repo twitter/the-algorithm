@@ -38,7 +38,7 @@ class RequestQueryFeatureHydrator[
     ClientIdFeature,
     DDGStatsDemocratsFeature,
     DDGStatsRepublicansFeature,
-    DDGStatsElonFeature,
+    DDGStatsJoeFeature,
     DDGStatsVitsFeature,
     DeviceLanguageFeature,
     GetInitialFeature,
@@ -61,7 +61,7 @@ class RequestQueryFeatureHydrator[
   private val DarkRequestAnnotation = "clnt/has_dark_request"
   private val Democrats = "democrats"
   private val Republicans = "republicans"
-  private val Elon = "elon"
+  private val Joe = "joe"
   private val Vits = "vits"
 
   // Convert Language code to ISO 639-3 format
@@ -92,7 +92,7 @@ class RequestQueryFeatureHydrator[
       .add(DDGStatsDemocratsFeature, ddgStatsAuthors.longSeq(Democrats).toSet)
       .add(DDGStatsRepublicansFeature, ddgStatsAuthors.longSeq(Republicans).toSet)
       .add(DDGStatsVitsFeature, ddgStatsAuthors.longSeq(Vits).toSet)
-      .add(DDGStatsElonFeature, ddgStatsAuthors.longValue(Elon))
+      .add(DDGStatsJoeFeature, ddgStatsAuthors.longValue(Elon))
       .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
       .add(
         GetInitialFeature,
