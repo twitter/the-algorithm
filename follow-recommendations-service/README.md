@@ -14,7 +14,6 @@ The FRS overview diagram is depicted below:
 
 ![FRS_architecture.png](FRS_architecture.png)
 
-
 ### Candidate Generation
 During this step, FRS utilizes various user signals and algorithms to identify candidates from all Twitter accounts. The candidate source folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/`, with a README file provided within each candidate source folder.
 
