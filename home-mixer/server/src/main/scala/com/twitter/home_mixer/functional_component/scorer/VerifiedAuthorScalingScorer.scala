@@ -55,7 +55,7 @@ object VerifiedAuthorScalingScorer extends Scorer[PipelineQuery, TweetCandidate]
         if (isCandidateInNetwork) query.params(BlueVerifiedAuthorInNetworkMultiplierParam)
         else query.params(BlueVerifiedAuthorOutOfNetworkMultiplierParam)
 
-      score.map(_ * scaleFactor)
+      score.map(_ * -1)
     } else score
   }
 }
