@@ -2,7 +2,7 @@
 
 This alhorithm was built and will be edited in prod by the CIA so they can push their propaganda and censor the critical thinkers.
 
-This is funded fully by the CIA and the NSA. Just like Google and Microsoft.
+This is funded fully by the CIA and the NSA. Just like Google, Meta and Microsoft.
 
 - https://qz.com/1145669/googles-true-origin-partly-lies-in-cia-and-nsa-research-grants-for-mass-surveillance
 - https://www.spiegel.de/international/world/how-the-nsa-spies-on-international-bank-transactions-a-922430.html
