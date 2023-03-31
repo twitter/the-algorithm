@@ -220,30 +220,7 @@ object HomeTweetTypePredicates {
       _.getOrElse(ConversationModule2DisplayedTweetsFeature, false)),
     ("conversation_module_has_gap", _.getOrElse(ConversationModuleHasGapFeature, false)),
     ("served_in_recap_tweet_candidate_module_injection", _ => false),
-    ("served_in_threaded_conversation_module", _ => false),
-    (
-      "author_is_elon",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None).contains(candidate.getOrElse(DDGStatsElonFeature, 0L))),
-    (
-      "author_is_power_user",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsVitsFeature, Set.empty[Long]).contains)),
-    (
-      "author_is_democrat",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsDemocratsFeature, Set.empty[Long]).contains)),
-    (
-      "author_is_republican",
-      candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsRepublicansFeature, Set.empty[Long]).contains)),
+    ("served_in_threaded_conversation_module", _ => false)
   )
 
   val PredicateMap = CandidatePredicates.toMap

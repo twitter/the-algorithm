@@ -4,7 +4,6 @@ object HomeMixerInjectionNames {
   final val AuthorFeatureRepository = "AuthorFeatureRepository"
   final val CandidateFeaturesScribeEventPublisher = "CandidateFeaturesScribeEventPublisher"
   final val CommonFeaturesScribeEventPublisher = "CommonFeaturesScribeEventPublisher"
-  final val DDGStatsAuthors = "DDGStatsAuthors"
   final val EarlybirdRepository = "EarlybirdRepository"
   final val EngagementsReceivedByAuthorCache = "EngagementsReceivedByAuthorCache"
   final val GraphTwoHopRepository = "GraphTwoHopRepository"

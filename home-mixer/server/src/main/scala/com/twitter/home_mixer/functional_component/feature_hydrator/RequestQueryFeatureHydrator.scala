@@ -1,12 +1,10 @@
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
-import com.twitter.config.yaml.YamlMap
 import com.twitter.finagle.tracing.Annotation.BinaryAnnotation
 import com.twitter.finagle.tracing.ForwardAnnotation
 import com.twitter.home_mixer.model.HomeFeatures._
 import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
 import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.DDGStatsAuthors
 import com.twitter.joinkey.context.RequestJoinKeyContext
 import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
 import com.twitter.product_mixer.core.feature.Feature
@@ -24,22 +22,16 @@ import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
 import java.util.UUID
 import javax.inject.Inject
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
 class RequestQueryFeatureHydrator[
   Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor] with HasDeviceContext] @Inject() (
-  @Named(DDGStatsAuthors) ddgStatsAuthors: YamlMap)
-    extends QueryFeatureHydrator[Query] {
+) extends QueryFeatureHydrator[Query] {
 
   override val features: Set[Feature[_, _]] = Set(
     AccountAgeFeature,
     ClientIdFeature,
-    DDGStatsDemocratsFeature,
-    DDGStatsRepublicansFeature,
-    DDGStatsElonFeature,
-    DDGStatsVitsFeature,
     DeviceLanguageFeature,
     GetInitialFeature,
     GetMiddleFeature,
@@ -59,10 +51,6 @@ class RequestQueryFeatureHydrator[
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Request")
 
   private val DarkRequestAnnotation = "clnt/has_dark_request"
-  private val Democrats = "democrats"
-  private val Republicans = "republicans"
-  private val Elon = "elon"
-  private val Vits = "vits"
 
   // Convert Language code to ISO 639-3 format
   private def getLanguageISOFormatByCode(languageCode: String): String =
@@ -83,16 +71,6 @@ class RequestQueryFeatureHydrator[
     val featureMap = FeatureMapBuilder()
       .add(AccountAgeFeature, query.getOptionalUserId.flatMap(SnowflakeId.timeFromIdOpt))
       .add(ClientIdFeature, query.clientContext.appId)
-      /**
-       * These author ID lists are used purely for metrics collection. We track how often we are
-       * serving Tweets from these authors and how often their tweets are being impressed by users.
-       * This helps us validate in our A/B experimentation platform that we do not ship changes
-       * that negatively impacts one group over others.
-       */
-      .add(DDGStatsDemocratsFeature, ddgStatsAuthors.longSeq(Democrats).toSet)
-      .add(DDGStatsRepublicansFeature, ddgStatsAuthors.longSeq(Republicans).toSet)
-      .add(DDGStatsVitsFeature, ddgStatsAuthors.longSeq(Vits).toSet)
-      .add(DDGStatsElonFeature, ddgStatsAuthors.longValue(Elon))
       .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
       .add(
         GetInitialFeature,
