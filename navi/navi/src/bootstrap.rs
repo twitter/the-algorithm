@@ -3,8 +3,8 @@ use log::{info, warn};
 use std::collections::HashMap;
 use tokio::time::Instant;
 use tonic::{
-    Request,
-    Response, Status, transport::{Certificate, Identity, Server, ServerTlsConfig},
+    transport::{Certificate, Identity, Server, ServerTlsConfig},
+    Request, Response, Status,
 };
 
 // protobuf related
@@ -13,16 +13,19 @@ use crate::tf_proto::tensorflow_serving::{
     GetModelMetadataResponse, MultiInferenceRequest, MultiInferenceResponse, PredictRequest,
     PredictResponse, RegressionRequest, RegressionResponse,
 };
-use crate::{kf_serving::{
-    grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
-    ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
-    ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
-    ServerReadyRequest, ServerReadyResponse,
-}, ModelFactory, tf_proto::tensorflow_serving::prediction_service_server::{
-    PredictionService, PredictionServiceServer,
-}, VERSION, NAME};
+use crate::{
+    kf_serving::{
+        grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
+        ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
+        ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
+        ServerReadyRequest, ServerReadyResponse,
+    },
+    tf_proto::tensorflow_serving::prediction_service_server::{
+        PredictionService, PredictionServiceServer,
+    },
+    ModelFactory, NAME, VERSION,
+};
 
-use crate::PredictResult;
 use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
 use crate::metrics::{
     NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
@@ -31,6 +34,7 @@ use crate::metrics::{
 use crate::predict_service::{Model, PredictService};
 use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
 use crate::tf_proto::tensorflow_serving::ModelSpec;
+use crate::PredictResult;
 
 #[derive(Debug)]
 pub enum TensorInputEnum {
@@ -85,7 +89,6 @@ impl TensorInputEnum {
             .unwrap() //invariant: we expect there's always rows in input_tensors
     }
 }
-
 
 ///entry point for tfServing gRPC
 #[tonic::async_trait]

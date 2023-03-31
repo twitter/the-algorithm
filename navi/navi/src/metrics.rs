@@ -1,10 +1,10 @@
+use crate::{NAME, VERSION};
 use log::error;
 use prometheus::{
     CounterVec, HistogramOpts, HistogramVec, IntCounter, IntCounterVec, IntGauge, IntGaugeVec,
     Opts, Registry,
 };
 use warp::{Rejection, Reply};
-use crate::{NAME, VERSION};
 
 lazy_static! {
     pub static ref REGISTRY: Registry = Registry::new();

@@ -10,12 +10,15 @@ use tokio::process::Command;
 use tokio::sync::mpsc::error::TryRecvError;
 use tokio::sync::mpsc::{Receiver, Sender};
 use tokio::sync::{mpsc, oneshot};
-use tokio::time::{Instant, sleep};
+use tokio::time::{sleep, Instant};
 use warp::Filter;
 
 use crate::batch::BatchPredictor;
 use crate::bootstrap::TensorInput;
-use crate::{MAX_NUM_MODELS, MAX_VERSIONS_PER_MODEL, META_INFO, metrics, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, utils};
+use crate::{
+    metrics, utils, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, MAX_NUM_MODELS,
+    MAX_VERSIONS_PER_MODEL, META_INFO,
+};
 
 use crate::cli_args::{ARGS, MODEL_SPECS};
 use crate::cores::validator::validatior::cli_validator;

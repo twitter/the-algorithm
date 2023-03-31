@@ -2,14 +2,14 @@
 extern crate lazy_static;
 extern crate core;
 
-use serde_json::Value;
-use tokio::sync::oneshot::Sender;
-use tokio::time::Instant;
-use std::ops::Deref;
-use itertools::Itertools;
 use crate::bootstrap::TensorInput;
 use crate::predict_service::Model;
 use crate::tf_proto::{DataType, TensorProto};
+use itertools::Itertools;
+use serde_json::Value;
+use std::ops::Deref;
+use tokio::sync::oneshot::Sender;
+use tokio::time::Instant;
 
 pub mod batch;
 pub mod bootstrap;

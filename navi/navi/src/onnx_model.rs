@@ -1,13 +1,11 @@
 #[cfg(feature = "onnx")]
 pub mod onnx {
-    use crate::TensorReturnEnum;
     use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::cli_args::{
-        Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS,
-    };
+    use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
     use crate::metrics::{self, CONVERTER_TIME_COLLECTOR};
     use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO, utils};
+    use crate::TensorReturnEnum;
+    use crate::{utils, MAX_NUM_INPUTS, MAX_NUM_OUTPUTS, META_INFO};
     use anyhow::Result;
     use arrayvec::ArrayVec;
     use dr_transform::converter::{BatchPredictionRequestToTorchTensorConverter, Converter};
@@ -248,7 +246,8 @@ pub mod onnx {
                         //only works for batch major
                         //TODO: to_vec() obviously wasteful, especially for large batches(GPU) . Will refactor to
                         //break up output and return Vec<Vec<TensorScore>> here
-                        TensorReturnEnum::FloatTensorReturn(Box::new(output.view().as_slice().unwrap().to_vec(),
+                        TensorReturnEnum::FloatTensorReturn(Box::new(
+                            output.view().as_slice().unwrap().to_vec(),
                         )),
                         tensor_ends,
                     )

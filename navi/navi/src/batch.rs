@@ -7,17 +7,17 @@ use tokio::time::Instant;
 
 use crate::bootstrap::{TensorInput, TensorInputEnum};
 use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::{Callback, MAX_NUM_INPUTS, PredictResult};
 use crate::metrics::{
     BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
-    NUM_BATCH_PREDICTION, NUM_BATCH_PREDICTION_BY_MODEL, NUM_BATCHES_DROPPED,
-    NUM_BATCHES_DROPPED_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
+    NUM_BATCHES_DROPPED, NUM_BATCHES_DROPPED_BY_MODEL, NUM_BATCH_PREDICTION,
+    NUM_BATCH_PREDICTION_BY_MODEL, NUM_PREDICTION_BY_MODEL, NUM_REQUESTS_DROPPED,
     NUM_REQUESTS_DROPPED_BY_MODEL,
 };
 use crate::predict_service::Model;
 use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice;
 use crate::tf_proto::tensorflow_serving::PredictRequest;
 use crate::tf_proto::DataType;
+use crate::{Callback, PredictResult, MAX_NUM_INPUTS};
 
 #[derive(Debug)]
 pub struct BatchPredictor<T: Model> {

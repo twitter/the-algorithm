@@ -4,8 +4,8 @@ use clap::Parser;
 use log::info;
 use once_cell::sync::OnceCell;
 use std::error::Error;
-use time::OffsetDateTime;
 use time::format_description::well_known::Rfc3339;
+use time::OffsetDateTime;
 #[derive(Parser, Debug, Clone)]
 ///Navi is configured through CLI arguments(for now) defined below.
 //TODO: use clap_serde to make it config file driven
@@ -171,7 +171,7 @@ impl Args {
             .parse::<i64>()
             .or_else(|_| {
                 let ts = OffsetDateTime::parse(dt_str, &Rfc3339)
-                    .map(|d| (d.unix_timestamp_nanos()/1_000_000) as i64);
+                    .map(|d| (d.unix_timestamp_nanos() / 1_000_000) as i64);
                 if ts.is_ok() {
                     info!("original version {} -> {}", dt_str, ts.unwrap());
                 }
