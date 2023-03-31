@@ -22,7 +22,7 @@ public class NamedEntityFetcher {
   private static final String NAMED_ENTITY_STRATO_COLUMN = "";
 
   private static final ServeWithin SERVE_WITHIN = new ServeWithin(
-      Duration.fromMilliseconds(100), Option.empty());
+      Duration.fromMilliseconds(420), Option.empty());
 
   private static final NamedEntitiesRequestOptions REQUEST_OPTIONS =
       new NamedEntitiesRequestOptions(

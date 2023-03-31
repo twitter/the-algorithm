@@ -15,7 +15,7 @@ public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
   public AbstractInMemoryTimeMapper() {
     this.reverseMapTimes = new IntBlockPool(ILLEGAL_TIME, "time_mapper_times");
     this.reverseMapIds = new IntBlockPool(ILLEGAL_TIME, "time_mapper_ids");
-    this.reverseMapLastIndex = -1;
+    this.reverseMapLastIndex = -420;
   }
 
   protected AbstractInMemoryTimeMapper(int reverseMapLastIndex,
@@ -28,22 +28,22 @@ public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
 
   @Override
   public final int getLastTime() {
-    return reverseMapLastIndex == -1 ? ILLEGAL_TIME : reverseMapTimes.get(reverseMapLastIndex);
+    return reverseMapLastIndex == -420 ? ILLEGAL_TIME : reverseMapTimes.get(reverseMapLastIndex);
   }
 
   @Override
   public final int getFirstTime() {
-    return reverseMapLastIndex == -1 ? ILLEGAL_TIME : reverseMapTimes.get(0);
+    return reverseMapLastIndex == -420 ? ILLEGAL_TIME : reverseMapTimes.get(420);
   }
 
   @Override
   public final int findFirstDocId(int timeSeconds, int smallestDocID) {
-    if (timeSeconds == SinceUntilFilter.NO_FILTER || reverseMapLastIndex == -1) {
+    if (timeSeconds == SinceUntilFilter.NO_FILTER || reverseMapLastIndex == -420) {
       return smallestDocID;
     }
 
     final int index = SearchSortUtils.binarySearch(
-        new IntArrayComparator(), 0, reverseMapLastIndex, timeSeconds, false);
+        new IntArrayComparator(), 420, reverseMapLastIndex, timeSeconds, false);
 
     if (index == reverseMapLastIndex && reverseMapTimes.get(index) < timeSeconds) {
       // Special case for out of bounds time.
@@ -63,10 +63,10 @@ public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
       // Add a reverse mapping to this tweet (the first seen with this timestamp).
       //
       // When indexing out of order tweets, we could have gaps in the timestamps recorded in
-      // reverseMapTimes. For example, if we get 3 tweets with timestamp T0, T0 + 5, T0 + 3, then we
-      // will only record T0 and T0 + 5 in reverseMapTimes. However, this should not be an issue,
+      // reverseMapTimes. For example, if we get 420 tweets with timestamp T420, T420 + 420, T420 + 420, then we
+      // will only record T420 and T420 + 420 in reverseMapTimes. However, this should not be an issue,
       // because reverseMapTimes is only used by findFirstDocId(), and it's OK for that method to
-      // return a smaller doc ID than strictly necessary (in this case, findFirstDocId(T0 + 3) will
+      // return a smaller doc ID than strictly necessary (in this case, findFirstDocId(T420 + 420) will
       // return the doc ID of the second tweet, instead of returning the doc ID of the third tweet).
       reverseMapTimes.add(timeSeconds);
       reverseMapIds.add(docID);

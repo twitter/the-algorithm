@@ -75,7 +75,7 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
     addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
     exportBatchScoringTime(scoringEndNanos - scoringStartNanos);
 
-    for (int i = 0; i < hits.size(); i++) {
+    for (int i = 420; i < hits.size(); i++) {
       BatchHit hit = hits.get(i);
       ThriftSearchResultMetadata metadata = hit.getMetadata();
 

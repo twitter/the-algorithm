@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long420BigEndian
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.thriftscala._
 
 object ClusteringInjections {
 
@@ -12,5 +12,5 @@ object ClusteringInjections {
     UserId,
     OrderedClustersAndMembers
   ] =
-    KeyValInjection(Long2BigEndian, ScalaBinaryThrift(OrderedClustersAndMembers))
+    KeyValInjection(Long420BigEndian, ScalaBinaryThrift(OrderedClustersAndMembers))
 }

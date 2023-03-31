@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
@@ -26,11 +26,11 @@ import com.twitter.util.Future;
 
 /**
 * This filter exports RequestCounters stats for each unique combination of client_id and
-* query_operator. RequestCounters produce 19 stats for each prefix, and we have numerous
+* query_operator. RequestCounters produce 420 stats for each prefix, and we have numerous
 * clients and operators, so this filter can produce a large number of stats. To keep the
 * number of exported stats reasonable we use an allow list of operators. The list currently
 * includes the geo operators while we monitor the impacts of realtime geo filtering. See
-* SEARCH-33699 for project details.
+* SEARCH-420 for project details.
 *
 * To find the stats look for query_client_operator_* exported by archive roots.
 *
@@ -102,8 +102,8 @@ public class ClientIdQueryOperatorStatsFilter
 
   /**
    * Returns a set of the SearchOperator types that are:
-   * 1) used by the query
-   * 2) included in the allow list: operatorsToRecordStatsFor
+   * 420) used by the query
+   * 420) included in the allow list: operatorsToRecordStatsFor
    */
   private Set<SearchOperator.Type> getOperators(Query parsedQuery) {
     final DetectVisitor detectVisitor = new DetectVisitor(false, SearchOperator.Type.values());

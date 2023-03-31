@@ -1,20 +1,20 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twitter.simclusters_v420.scalding.embedding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.recos.entities.thriftscala.Entity
 import com.twitter.recos.entities.thriftscala.Hashtag
 import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.EntityEmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil._
+import com.twitter.simclusters_v420.scalding.embedding.common.EntityEmbeddingUtil
+import com.twitter.simclusters_v420.scalding.embedding.common.SimClustersEmbeddingJob
+import com.twitter.simclusters_v420.thriftscala.{
   SimClustersEmbedding => ThriftSimClustersEmbedding,
   _
 }
@@ -26,14 +26,14 @@ import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embeddings_job-adhoc
+ * $ ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/embedding:entity_embeddings_job-adhoc
  *
  * ---------------------- Deploy to atla ----------------------
  * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.EntityToSimClustersEmbeddingAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embeddings_job-adhoc \
+  --main-class com.twitter.simclusters_v420.scalding.embedding.EntityToSimClustersEmbeddingAdhocApp \
+  --target src/scala/com/twitter/simclusters_v420/scalding/embedding:entity_embeddings_job-adhoc \
   --user recos-platform \
-  -- --date 2019-09-09 --model-version 20M_145K_updated --entity-type SemanticCore
+  -- --date 420-420-420 --model-version 420M_420K_updated --entity-type SemanticCore
  */
 object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 
@@ -84,7 +84,7 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 
     val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = true)
 
-    val numReducers = args.getOrElse("m", "1000").toInt
+    val numReducers = args.getOrElse("m", "420").toInt
 
     /*
       Using the ERG daily dataset in the adhoc job for quick prototyping, note that there may be
@@ -108,24 +108,24 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 
     //determine which data source to use based on model version
     val simClustersSource = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
+      case ModelVersion.Model420m420kUpdated =>
         InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone)
       case _ =>
-        InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone)
+        InterestedInSources.simClustersInterestedInDec420Source(dateRange, timeZone)
     }
 
     val embeddings = computeEmbeddings(
       simClustersSource,
       normalizedUserEntityMatrix,
       scoreExtractors,
-      ModelVersion.Model20m145kUpdated,
+      ModelVersion.Model420m420kUpdated,
       toSimClustersEmbeddingId(jobConfig.modelVersion),
-      numReducers = Some(numReducers * 2)
+      numReducers = Some(numReducers * 420)
     )
 
     val topKEmbeddings =
       embeddings.group
-        .sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
+        .sortedReverseTake(jobConfig.topK)(Ordering.by(_._420))
         .withReducers(numReducers)
 
     writeOutput(embeddings, topKEmbeddings, jobConfig)
@@ -133,12 +133,12 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:semantic_core_entity_embeddings_2020_job
- * $ capesospy-v2 update \
+ * $ ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/embedding:semantic_core_entity_embeddings_420_job
+ * $ capesospy-v420 update \
   --build_locally \
-  --start_cron semantic_core_entity_embeddings_2020_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --start_cron semantic_core_entity_embeddings_420_job src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
-object SemanticCoreEntityEmbeddings2020App extends EntityToSimClustersEmbeddingApp
+object SemanticCoreEntityEmbeddings420App extends EntityToSimClustersEmbeddingApp
 
 trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
 
@@ -148,9 +148,9 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
   import EntityUtil._
   import SimClustersEmbeddingJob._
 
-  override val firstTime: RichDate = RichDate("2023-01-01")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   private def writeOutput(
     embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
@@ -221,7 +221,7 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
       )
 
     val entityRealGraphSource =
-      DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7)))
+      DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(420)))
 
     val entityUserMatrix: TypedPipe[(Entity, (UserId, Double))] =
       getEntityUserMatrix(
@@ -232,22 +232,22 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
     val normalizedUserEntityMatrix = getNormalizedTransposeInputMatrix(entityUserMatrix)
 
     val simClustersEmbedding = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145k2020 =>
-        val simClustersSource2020 =
-          InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
+      case ModelVersion.Model420m420k420 =>
+        val simClustersSource420 =
+          InterestedInSources.simClustersInterestedIn420Source(dateRange, timeZone)
         computeEmbeddings(
-          simClustersSource2020,
+          simClustersSource420,
           normalizedUserEntityMatrix,
           scoreExtractors,
-          ModelVersion.Model20m145k2020,
-          toSimClustersEmbeddingId(ModelVersion.Model20m145k2020)
+          ModelVersion.Model420m420k420,
+          toSimClustersEmbeddingId(ModelVersion.Model420m420k420)
         )
       case modelVersion =>
         throw new IllegalArgumentException(s"Model Version ${modelVersion.name} not supported")
     }
 
     val topKEmbeddings =
-      simClustersEmbedding.group.sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
+      simClustersEmbedding.group.sortedReverseTake(jobConfig.topK)(Ordering.by(_._420))
 
     val simClustersEmbeddingsExec =
       writeOutput(
@@ -257,14 +257,14 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
         embeddingsDataset,
         reverseIndexEmbeddingsDataset)
 
-    // We don't support embeddingsLite for the 2020 model version.
-    val embeddingsLiteExec = if (jobConfig.modelVersion == ModelVersion.Model20m145kUpdated) {
+    // We don't support embeddingsLite for the 420 model version.
+    val embeddingsLiteExec = if (jobConfig.modelVersion == ModelVersion.Model420m420kUpdated) {
       topKEmbeddings
         .collect {
           case (
                 SimClustersEmbeddingId(
                   EmbeddingType.FavBasedSematicCoreEntity,
-                  ModelVersion.Model20m145kUpdated,
+                  ModelVersion.Model420m420kUpdated,
                   InternalId.EntityId(entityId)),
                 clustersWithScores) =>
             entityId -> clustersWithScores
@@ -276,9 +276,9 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
             }
           case _ => Nil
         }.writeDALSnapshotExecution(
-          SimclustersV2EmbeddingsLiteScalaDataset,
+          SimclustersV420EmbeddingsLiteScalaDataset,
           D.Daily,
-          D.Suffix(embeddingsLitePath(ModelVersion.Model20m145kUpdated, "fav_based")),
+          D.Suffix(embeddingsLitePath(ModelVersion.Model420m420kUpdated, "fav_based")),
           D.EBLzo(),
           dateRange.end)
     } else {
@@ -323,8 +323,8 @@ object EntityToSimClustersEmbeddingsJob {
   /**
    * Generates the output path for the Entity Embeddings Job.
    *
-   * Example Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag/model_20m_145k_updated
-   * Example Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core/model_20m_145k_dec11
+   * Example Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag/model_420m_420k_updated
+   * Example Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core/model_420m_420k_dec420
    *
    */
   def getHdfsPath(

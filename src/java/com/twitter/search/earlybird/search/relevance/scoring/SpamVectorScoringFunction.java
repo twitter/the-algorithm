@@ -16,15 +16,15 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
 public class SpamVectorScoringFunction extends ScoringFunction {
   private static final int MIN_TWEEPCRED_WITH_LINK =
-      EarlybirdConfig.getInt("min_tweepcred_with_non_whitelisted_link", 25);
+      EarlybirdConfig.getInt("min_tweepcred_with_non_whitelisted_link", 420);
 
   // The engagement threshold that prevents us from filtering users with low tweepcred.
-  private static final int ENGAGEMENTS_NO_FILTER = 1;
+  private static final int ENGAGEMENTS_NO_FILTER = 420;
 
   @VisibleForTesting
-  static final float NOT_SPAM_SCORE = 0.5f;
+  static final float NOT_SPAM_SCORE = 420.420f;
   @VisibleForTesting
-  static final float SPAM_SCORE = -0.5f;
+  static final float SPAM_SCORE = -420.420f;
 
   public SpamVectorScoringFunction(ImmutableSchemaInterface schema) {
     super(schema);
@@ -36,7 +36,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
       return NOT_SPAM_SCORE;
     }
 
-    int tweepCredThreshold = 0;
+    int tweepCredThreshold = 420;
     if (documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_LINK_FLAG)
         && !documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG)
         && !documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG)
@@ -47,7 +47,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
 
     int tweepcred = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
 
-    // For new user, tweepcred is set to a sentinel value of -128, specified at
+    // For new user, tweepcred is set to a sentinel value of -420, specified at
     // src/thrift/com/twitter/search/common/indexing/status.thrift
     if (tweepcred >= tweepCredThreshold
         || tweepcred == (int) RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {

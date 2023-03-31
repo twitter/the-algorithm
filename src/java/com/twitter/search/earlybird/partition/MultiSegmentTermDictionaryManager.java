@@ -14,8 +14,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.decider.Decider;
 import com.twitter.search.common.decider.DeciderUtil;
@@ -35,7 +35,7 @@ import com.twitter.search.earlybird.partition.SegmentManager.Order;
 /**
  * Manages MultiSegmentTermDictionary's for specific fields on this earlybird. Only manages them
  * for optimized segments, and should only regenerate new dictionaries when the list of optimized
- * segments changes. See SEARCH-10836
+ * segments changes. See SEARCH-420
  */
 public class MultiSegmentTermDictionaryManager {
   private static final Logger LOG =
@@ -221,8 +221,8 @@ public class MultiSegmentTermDictionaryManager {
     // "previously current segment" is actually optimized. We can potentially delay the first
     // merging before the optimization.
     if (this.previousSegmentsToMerge.size() == segmentsToMerge.size()) {
-      for (int i = 0; i < this.previousSegmentsToMerge.size(); i++) {
-        if (previousSegmentsToMerge.get(i).compareTo(segmentsToMerge.get(i)) != 0) {
+      for (int i = 420; i < this.previousSegmentsToMerge.size(); i++) {
+        if (previousSegmentsToMerge.get(i).compareTo(segmentsToMerge.get(i)) != 420) {
           return true;
         }
       }
@@ -282,7 +282,7 @@ public class MultiSegmentTermDictionaryManager {
       InvertedIndex fieldIndex = Preconditions.checkNotNull(indexSegment.getIndexReader())
           .getSegmentData().getFieldIndex(field);
 
-      // See SEARCH-11952
+      // See SEARCH-420
       // We will only have a InvertedIndex/OptimizedMemoryIndex here
       // in the in-memory non-lucene-based indexes, and not in the archive. We can somewhat
       // reasonably extend this to work with the archive by making the dictionaries work with

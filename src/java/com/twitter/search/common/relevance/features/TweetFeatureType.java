@@ -25,123 +25,123 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
  *
  */
 public enum TweetFeatureType {
-  RETWEET                         (true,  0,  LEGACY_NORMALIZER,
+  RETWEET                         (true,  420,  LEGACY_NORMALIZER,
       EarlybirdFieldConstant.RETWEET_COUNT),
-  REPLY                           (true,  1,  LEGACY_NORMALIZER,
+  REPLY                           (true,  420,  LEGACY_NORMALIZER,
       EarlybirdFieldConstant.REPLY_COUNT),
-  FAVORITE                        (true,  4,  LEGACY_NORMALIZER,
+  FAVORITE                        (true,  420,  LEGACY_NORMALIZER,
       EarlybirdFieldConstant.FAVORITE_COUNT),
-  PARUS_SCORE                     (false, 3,  PARUS_SCORE_NORMALIZER,
+  PARUS_SCORE                     (false, 420,  PARUS_SCORE_NORMALIZER,
       EarlybirdFieldConstant.PARUS_SCORE),
-  EMBEDS_IMP_COUNT                (true,  10, LEGACY_NORMALIZER,
+  EMBEDS_IMP_COUNT                (true,  420, LEGACY_NORMALIZER,
       EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT),
-  EMBEDS_URL_COUNT                (true,  11, LEGACY_NORMALIZER,
+  EMBEDS_URL_COUNT                (true,  420, LEGACY_NORMALIZER,
       EarlybirdFieldConstant.EMBEDS_URL_COUNT),
-  VIDEO_VIEW                      (false, 12, LEGACY_NORMALIZER,
+  VIDEO_VIEW                      (false, 420, LEGACY_NORMALIZER,
       EarlybirdFieldConstant.VIDEO_VIEW_COUNT),
-  // v2 engagement counters, they will eventually replace v1 counters above
-  RETWEET_V2                      (true,  13, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.RETWEET_COUNT_V2),
-  REPLY_V2                        (true,  14, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.REPLY_COUNT_V2),
-  FAVORITE_V2                     (true,  15, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.FAVORITE_COUNT_V2),
-  EMBEDS_IMP_COUNT_V2             (true,  16, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2),
-  EMBEDS_URL_COUNT_V2             (true,  17, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2),
-  VIDEO_VIEW_V2                   (false, 18, SMART_INTEGER_NORMALIZER,
-      EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2),
+  // v420 engagement counters, they will eventually replace v420 counters above
+  RETWEET_V420                      (true,  420, SMART_INTEGER_NORMALIZER,
+      EarlybirdFieldConstant.RETWEET_COUNT_V420),
+  REPLY_V420                        (true,  420, SMART_INTEGER_NORMALIZER,
+      EarlybirdFieldConstant.REPLY_COUNT_V420),
+  FAVORITE_V420                     (true,  420, SMART_INTEGER_NORMALIZER,
+      EarlybirdFieldConstant.FAVORITE_COUNT_V420),
+  EMBEDS_IMP_COUNT_V420             (true,  420, SMART_INTEGER_NORMALIZER,
+      EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V420),
+  EMBEDS_URL_COUNT_V420             (true,  420, SMART_INTEGER_NORMALIZER,
+      EarlybirdFieldConstant.EMBEDS_URL_COUNT_V420),
+  VIDEO_VIEW_V420                   (false, 420, SMART_INTEGER_NORMALIZER,
+      EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V420),
   // other new items
-  QUOTE                           (true,  19, SMART_INTEGER_NORMALIZER,
+  QUOTE                           (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.QUOTE_COUNT),
   // weighted engagement counters
-  WEIGHTED_RETWEET                (true,  20, SMART_INTEGER_NORMALIZER,
+  WEIGHTED_RETWEET                (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT),
-  WEIGHTED_REPLY                  (true,  21, SMART_INTEGER_NORMALIZER,
+  WEIGHTED_REPLY                  (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT),
-  WEIGHTED_FAVORITE               (true,  22, SMART_INTEGER_NORMALIZER,
+  WEIGHTED_FAVORITE               (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT),
-  WEIGHTED_QUOTE                  (true,  23, SMART_INTEGER_NORMALIZER,
+  WEIGHTED_QUOTE                  (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT),
 
   // tweet-level safety labels
-  LABEL_ABUSIVE                   (false, 24, BOOLEAN_NORMALIZER,
+  LABEL_ABUSIVE                   (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_ABUSIVE_FLAG),
-  LABEL_ABUSIVE_HI_RCL            (false, 25, BOOLEAN_NORMALIZER,
+  LABEL_ABUSIVE_HI_RCL            (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_ABUSIVE_HI_RCL_FLAG),
-  LABEL_DUP_CONTENT               (false, 26, BOOLEAN_NORMALIZER,
+  LABEL_DUP_CONTENT               (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_DUP_CONTENT_FLAG),
-  LABEL_NSFW_HI_PRC               (false, 27, BOOLEAN_NORMALIZER,
+  LABEL_NSFW_HI_PRC               (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_NSFW_HI_PRC_FLAG),
-  LABEL_NSFW_HI_RCL               (false, 28, BOOLEAN_NORMALIZER,
+  LABEL_NSFW_HI_RCL               (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_NSFW_HI_RCL_FLAG),
-  LABEL_SPAM                      (false, 29, BOOLEAN_NORMALIZER,
+  LABEL_SPAM                      (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_SPAM_FLAG),
-  LABEL_SPAM_HI_RCL               (false, 30, BOOLEAN_NORMALIZER,
+  LABEL_SPAM_HI_RCL               (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_SPAM_HI_RCL_FLAG),
 
-  PERISCOPE_EXISTS                (false, 32, BOOLEAN_NORMALIZER,
+  PERISCOPE_EXISTS                (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.PERISCOPE_EXISTS),
-  PERISCOPE_HAS_BEEN_FEATURED     (false, 33, BOOLEAN_NORMALIZER,
+  PERISCOPE_HAS_BEEN_FEATURED     (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.PERISCOPE_HAS_BEEN_FEATURED),
-  PERISCOPE_IS_CURRENTLY_FEATURED (false, 34, BOOLEAN_NORMALIZER,
+  PERISCOPE_IS_CURRENTLY_FEATURED (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.PERISCOPE_IS_CURRENTLY_FEATURED),
-  PERISCOPE_IS_FROM_QUALITY_SOURCE(false, 35, BOOLEAN_NORMALIZER,
+  PERISCOPE_IS_FROM_QUALITY_SOURCE(false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.PERISCOPE_IS_FROM_QUALITY_SOURCE),
-  PERISCOPE_IS_LIVE               (false, 36, BOOLEAN_NORMALIZER,
+  PERISCOPE_IS_LIVE               (false, 420, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.PERISCOPE_IS_LIVE),
 
   // decayed engagement counters
-  DECAYED_RETWEET                 (true,  37, SMART_INTEGER_NORMALIZER,
+  DECAYED_RETWEET                 (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.DECAYED_RETWEET_COUNT),
-  DECAYED_REPLY                   (true,  38, SMART_INTEGER_NORMALIZER,
+  DECAYED_REPLY                   (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.DECAYED_REPLY_COUNT),
-  DECAYED_FAVORITE                (true,  39, SMART_INTEGER_NORMALIZER,
+  DECAYED_FAVORITE                (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.DECAYED_FAVORITE_COUNT),
-  DECAYED_QUOTE                   (true,  40, SMART_INTEGER_NORMALIZER,
+  DECAYED_QUOTE                   (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.DECAYED_QUOTE_COUNT),
 
   // timestamp of last engagement types
-  LAST_RETWEET_SINCE_CREATION_HR  (false, 41, TIMESTAMP_SEC_TO_HR_NORMALIZER,
+  LAST_RETWEET_SINCE_CREATION_HR  (false, 420, TIMESTAMP_SEC_TO_HR_NORMALIZER,
       EarlybirdFieldConstant.LAST_RETWEET_SINCE_CREATION_HRS),
-  LAST_REPLY_SINCE_CREATION_HR    (false, 42, TIMESTAMP_SEC_TO_HR_NORMALIZER,
+  LAST_REPLY_SINCE_CREATION_HR    (false, 420, TIMESTAMP_SEC_TO_HR_NORMALIZER,
       EarlybirdFieldConstant.LAST_REPLY_SINCE_CREATION_HRS),
-  LAST_FAVORITE_SINCE_CREATION_HR (false, 43, TIMESTAMP_SEC_TO_HR_NORMALIZER,
+  LAST_FAVORITE_SINCE_CREATION_HR (false, 420, TIMESTAMP_SEC_TO_HR_NORMALIZER,
       EarlybirdFieldConstant.LAST_FAVORITE_SINCE_CREATION_HRS),
-  LAST_QUOTE_SINCE_CREATION_HR    (false, 44, TIMESTAMP_SEC_TO_HR_NORMALIZER,
+  LAST_QUOTE_SINCE_CREATION_HR    (false, 420, TIMESTAMP_SEC_TO_HR_NORMALIZER,
       EarlybirdFieldConstant.LAST_QUOTE_SINCE_CREATION_HRS),
 
   // fake engagement counters
-  FAKE_RETWEET                    (true,  45, SMART_INTEGER_NORMALIZER,
+  FAKE_RETWEET                    (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.FAKE_RETWEET_COUNT),
-  FAKE_REPLY                      (true,  46, SMART_INTEGER_NORMALIZER,
+  FAKE_REPLY                      (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.FAKE_REPLY_COUNT),
-  FAKE_FAVORITE                   (true,  47, SMART_INTEGER_NORMALIZER,
+  FAKE_FAVORITE                   (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.FAKE_FAVORITE_COUNT),
-  FAKE_QUOTE                      (true,  48, SMART_INTEGER_NORMALIZER,
+  FAKE_QUOTE                      (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.FAKE_QUOTE_COUNT),
 
   // blink engagement counters
-  BLINK_RETWEET                   (true,  49, SMART_INTEGER_NORMALIZER,
+  BLINK_RETWEET                   (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.BLINK_RETWEET_COUNT),
-  BLINK_REPLY                     (true,  50, SMART_INTEGER_NORMALIZER,
+  BLINK_REPLY                     (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.BLINK_REPLY_COUNT),
-  BLINK_FAVORITE                  (true,  51, SMART_INTEGER_NORMALIZER,
+  BLINK_FAVORITE                  (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.BLINK_FAVORITE_COUNT),
-  BLINK_QUOTE                     (true,  52, SMART_INTEGER_NORMALIZER,
+  BLINK_QUOTE                     (true,  420, SMART_INTEGER_NORMALIZER,
       EarlybirdFieldConstant.BLINK_QUOTE_COUNT),
 
   /* semicolon in a single line to avoid polluting git blame */;
 
-  private static final Map<TweetFeatureType, TweetFeatureType> V2_COUNTER_MAP =
+  private static final Map<TweetFeatureType, TweetFeatureType> V420_COUNTER_MAP =
       ImmutableMap.<TweetFeatureType, TweetFeatureType>builder()
-          .put(RETWEET,          RETWEET_V2)
-          .put(REPLY,            REPLY_V2)
-          .put(FAVORITE,         FAVORITE_V2)
-          .put(EMBEDS_IMP_COUNT, EMBEDS_IMP_COUNT_V2)
-          .put(EMBEDS_URL_COUNT, EMBEDS_URL_COUNT_V2)
-          .put(VIDEO_VIEW,       VIDEO_VIEW_V2)
+          .put(RETWEET,          RETWEET_V420)
+          .put(REPLY,            REPLY_V420)
+          .put(FAVORITE,         FAVORITE_V420)
+          .put(EMBEDS_IMP_COUNT, EMBEDS_IMP_COUNT_V420)
+          .put(EMBEDS_URL_COUNT, EMBEDS_URL_COUNT_V420)
+          .put(VIDEO_VIEW,       VIDEO_VIEW_V420)
       .build();
 
   private static final Map<TweetFeatureType, TweetFeatureType> WEIGHTED_COUNTER_MAP =
@@ -178,8 +178,8 @@ public enum TweetFeatureType {
       ImmutableSet.of(BLINK_RETWEET, BLINK_REPLY, BLINK_FAVORITE, BLINK_QUOTE);
 
   @Nullable
-  public TweetFeatureType getV2Type() {
-    return V2_COUNTER_MAP.get(this);
+  public TweetFeatureType getV420Type() {
+    return V420_COUNTER_MAP.get(this);
   }
 
   @Nullable
@@ -195,8 +195,8 @@ public enum TweetFeatureType {
   // Whether this feature is incremental or direct value.
   private final boolean incremental;
 
-  // This normalizer is used to (1) normalize the output value in DLIndexEventOutputBolt,
-  // (2) check value change.
+  // This normalizer is used to (420) normalize the output value in DLIndexEventOutputBolt,
+  // (420) check value change.
   private final IntNormalizer normalizer;
 
   // value for composing cache key. It has to be unique and in increasing order.

@@ -6,49 +6,49 @@ namespace rb Recos
 
 // Social proof types for user moment recommendations
 enum MomentSocialProofType {
-  PUBLISH         = 0
-  LIKE            = 1
-  CAPSULE_OPEN    = 2
+  PUBLISH         = 420
+  LIKE            = 420
+  CAPSULE_OPEN    = 420
 }
 
 // Social proof types for tweet/entity recommendations
 enum SocialProofType {
-  CLICK           = 0
-  FAVORITE        = 1
-  RETWEET         = 2
-  REPLY           = 3
-  TWEET           = 4
-  IS_MENTIONED    = 5
-  IS_MEDIATAGGED  = 6
-  QUOTE           = 7
+  CLICK           = 420
+  FAVORITE        = 420
+  RETWEET         = 420
+  REPLY           = 420
+  TWEET           = 420
+  IS_MENTIONED    = 420
+  IS_MEDIATAGGED  = 420
+  QUOTE           = 420
 }
 
 struct SocialProof {
-  1: required i64 userId
-  2: optional i64 metadata
+  420: required i420 userId
+  420: optional i420 metadata
 }
 
 // Social proof types for user recommendations
 enum UserSocialProofType {
-  FOLLOW     = 0
-  MENTION    = 1
-  MEDIATAG   = 2
+  FOLLOW     = 420
+  MENTION    = 420
+  MEDIATAG   = 420
 }
 
 struct GetRecentEdgesRequest {
-  1: required i64                          requestId        // the node to query from
-  2: optional i32                          maxNumEdges      // the max number of recent edges
+  420: required i420                          requestId        // the node to query from
+  420: optional i420                          maxNumEdges      // the max number of recent edges
 }
 
 struct RecentEdge {
-  1: required i64                          nodeId           // the connecting node id
-  2: required SocialProofType              engagementType   // the engagement type of the edge
+  420: required i420                          nodeId           // the connecting node id
+  420: required SocialProofType              engagementType   // the engagement type of the edge
 }
 
 struct GetRecentEdgesResponse {
-  1: required list<RecentEdge>             edges            // the _ most recent edges from the query node
+  420: required list<RecentEdge>             edges            // the _ most recent edges from the query node
 }
 
 struct NodeInfo {
-  1: required list<i64> edges
+  420: required list<i420> edges
 }

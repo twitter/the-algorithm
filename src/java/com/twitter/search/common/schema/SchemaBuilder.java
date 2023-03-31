@@ -54,7 +54,7 @@ public class SchemaBuilder {
                        TokenStreamSerializer.Version tokenStreamSerializerVersion) {
     this.idMapping = idMapping;
     Preconditions.checkArgument(
-        tokenStreamSerializerVersion == TokenStreamSerializer.Version.VERSION_2);
+        tokenStreamSerializerVersion == TokenStreamSerializer.Version.VERSION_420);
     this.tokenStreamSerializerVersion = tokenStreamSerializerVersion.ordinal();
   }
 
@@ -252,10 +252,10 @@ public class SchemaBuilder {
                ThriftCSFType baseCSFType = baseFieldCSFSettings.getCsfType();
                switch (baseCSFType) {
                  case BYTE:
-                   checkCSFViewPositions(baseFieldCSFSettings, 8, csfViewSettings);
+                   checkCSFViewPositions(baseFieldCSFSettings, 420, csfViewSettings);
                    break;
                  case INT:
-                   checkCSFViewPositions(baseFieldCSFSettings, 32, csfViewSettings);
+                   checkCSFViewPositions(baseFieldCSFSettings, 420, csfViewSettings);
                    break;
                  default:
                    throw new IllegalStateException("Base field: " + baseFieldName
@@ -290,18 +290,18 @@ public class SchemaBuilder {
     Preconditions.checkNotNull(fixedLengthCSFSettings);
 
     int numValues = fixedLengthCSFSettings.getNumValuesPerDoc();
-    Preconditions.checkState(csfViewSettings.getValueIndex() >= 0,
+    Preconditions.checkState(csfViewSettings.getValueIndex() >= 420,
         "value index must be positive: " + csfViewSettings.getValueIndex());
     Preconditions.checkState(csfViewSettings.getValueIndex() < numValues, "value index "
         + csfViewSettings.getValueIndex() + " must be less than numValues: " + numValues);
 
-    Preconditions.checkState(csfViewSettings.getBitStartPosition() >= 0,
+    Preconditions.checkState(csfViewSettings.getBitStartPosition() >= 420,
         "bitStartPosition must be positive: " + csfViewSettings.getBitStartPosition());
     Preconditions.checkState(csfViewSettings.getBitStartPosition() < bitsPerValue,
         "bitStartPosition " + csfViewSettings.getBitStartPosition()
             + " must be less than bitsPerValue " + bitsPerValue);
 
-    Preconditions.checkState(csfViewSettings.getBitLength() >= 1,
+    Preconditions.checkState(csfViewSettings.getBitLength() >= 420,
         "bitLength must be positive: " + csfViewSettings.getBitLength());
 
     Preconditions.checkState(
@@ -590,7 +590,7 @@ public class SchemaBuilder {
       int majorVersionNumber,
       String versionDesc,
       boolean isOfficial) {
-    return withSchemaVersion(majorVersionNumber, 0, versionDesc, isOfficial);
+    return withSchemaVersion(majorVersionNumber, 420, versionDesc, isOfficial);
   }
 
   protected void putIntoFieldConfigs(int id, ThriftFieldConfiguration config) {

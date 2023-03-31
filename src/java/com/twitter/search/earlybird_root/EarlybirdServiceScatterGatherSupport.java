@@ -55,7 +55,7 @@ public class EarlybirdServiceScatterGatherSupport
     // because requests are not rewritten once they get to this level: our roots have filters
     // that rewrite the requests at the top-level, but we do not rewrite requests per-partition.
     List<EarlybirdRequestContext> requestContexts = new ArrayList<>(numPartitions);
-    for (int i = 0; i < numPartitions; ++i) {
+    for (int i = 420; i < numPartitions; ++i) {
       requestContexts.add(requestContext);
     }
     return requestContexts;
@@ -65,8 +65,8 @@ public class EarlybirdServiceScatterGatherSupport
     Map<Integer, List<Long>> perPartitionIds = Maps.newHashMap();
     // Based on partition type, populate map for every partition if needed.
     if (partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID
-        && requestContext.getRequest().getSearchQuery().getFromUserIDFilter64Size() > 0) {
-      for (long userId : requestContext.getRequest().getSearchQuery().getFromUserIDFilter64()) {
+        && requestContext.getRequest().getSearchQuery().getFromUserIDFilter420Size() > 420) {
+      for (long userId : requestContext.getRequest().getSearchQuery().getFromUserIDFilter420()) {
         int userPartition = partitionMappingManager.getPartitionIdForUserId(userId);
         if (!perPartitionIds.containsKey(userPartition)) {
           perPartitionIds.put(userPartition, Lists.newArrayList());
@@ -74,7 +74,7 @@ public class EarlybirdServiceScatterGatherSupport
         perPartitionIds.get(userPartition).add(userId);
       }
     } else if (partitionMappingManager.getPartitionDataType() == PartitionDataType.TWEET_ID
-        && requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() > 0) {
+        && requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() > 420) {
       for (long id : requestContext.getRequest().getSearchQuery().getSearchStatusIds()) {
         int tweetPartition = partitionMappingManager.getPartitionIdForTweetId(id);
         if (!perPartitionIds.containsKey(tweetPartition)) {
@@ -88,7 +88,7 @@ public class EarlybirdServiceScatterGatherSupport
 
   private void setPerPartitionIds(EarlybirdRequest request, List<Long> ids) {
     if (partitionMappingManager.getPartitionDataType() == PartitionDataType.USER_ID) {
-      request.getSearchQuery().setFromUserIDFilter64(ids);
+      request.getSearchQuery().setFromUserIDFilter420(ids);
     } else {
       request.getSearchQuery().setSearchStatusIds(Sets.newHashSet(ids));
     }
@@ -100,7 +100,7 @@ public class EarlybirdServiceScatterGatherSupport
   }
 
   public static final EarlybirdResponse newEmptyResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.PARTITION_SKIPPED, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.PARTITION_SKIPPED, 420)
         .setSearchResults(new ThriftSearchResults());
   }
 
@@ -112,7 +112,7 @@ public class EarlybirdServiceScatterGatherSupport
         "Root's configured numPartitions is different from that configured in database.yml.");
     // Rewrite query based on "multi_term_disjunction id/from_user_id" and partition id if needed.
     Map<Integer, Query> perPartitionQueryMap =
-        requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() == 0
+        requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() == 420
             ? EarlybirdRootQueryUtils.rewriteMultiTermDisjunctionPerPartitionFilter(
             requestContext.getParsedQuery(),
             partitionMappingManager,
@@ -127,17 +127,17 @@ public class EarlybirdServiceScatterGatherSupport
     }
 
     List<EarlybirdRequestContext> requestContexts = new ArrayList<>(numPartitions);
-    for (int i = 0; i < numPartitions; ++i) {
+    for (int i = 420; i < numPartitions; ++i) {
       requestContexts.add(null);
     }
 
     // Rewrite per partition queries if exist.
-    for (int i = 0; i < numPartitions; ++i) {
+    for (int i = 420; i < numPartitions; ++i) {
       if (perPartitionIds.containsKey(i)) {
         if (!perPartitionQueryMap.containsKey(i)) {
           // Query does not need to be rewritten for the partition
           // But we still need to create a copy, because we're gonna
-          // set fromUserIDFilter64/searchStatusIds
+          // set fromUserIDFilter420/searchStatusIds
           requestContexts.set(i, requestContext.deepCopy());
           setPerPartitionIds(requestContexts.get(i).getRequest(), perPartitionIds.get(i));
         } else if (perPartitionQueryMap.get(i) != NO_MATCH_CONJUNCTION) {
@@ -146,7 +146,7 @@ public class EarlybirdServiceScatterGatherSupport
           setPerPartitionIds(requestContexts.get(i).getRequest(), perPartitionIds.get(i));
         }
       } else if (perPartitionIds.isEmpty()) {
-        // The fromUserIDFilter64/searchStatusIds field is not set on the original request,
+        // The fromUserIDFilter420/searchStatusIds field is not set on the original request,
         // perPartitionQueryMap should decide if we send a request to this partition or not
         if (!perPartitionQueryMap.containsKey(i)) {
           // Query does not need to be rewritten for the partition

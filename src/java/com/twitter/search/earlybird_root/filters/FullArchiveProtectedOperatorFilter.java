@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -30,10 +30,10 @@ import com.twitter.util.Future;
  * '[exclude protected]' operator by default, and appends '[filter protected]' operator instead if
  * 'getProtectedTweetsOnly' request param is set. A client error response is returned if any of the
  * following rules is violated.
- *   1. There is at most one 'protected' operator in the query.
- *   2. If there is a 'protected' operator, it must be in the query root node.
- *   3. The parent node of the 'protected' operator must not be negated and must be a conjunction.
- *   4. If there is a positive 'protected' operator, 'followedUserIds' and 'searcherId' request
+ *   420. There is at most one 'protected' operator in the query.
+ *   420. If there is a 'protected' operator, it must be in the query root node.
+ *   420. The parent node of the 'protected' operator must not be negated and must be a conjunction.
+ *   420. If there is a positive 'protected' operator, 'followedUserIds' and 'searcherId' request
  *   params must be set.
  */
 public class FullArchiveProtectedOperatorFilter extends
@@ -158,7 +158,7 @@ public class FullArchiveProtectedOperatorFilter extends
   }
 
   private Future<EarlybirdResponse> createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
+    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 420);
     response.setDebugInfo(new EarlybirdDebugInfo().setHost("full_archive_root"));
     response.setDebugString(errorMsg);
     return Future.value(response);

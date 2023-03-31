@@ -9,8 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.BuildInfo;
 import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
@@ -18,7 +18,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
 import com.twitter.util.Duration;
 
 /**
- * High level status of an Earlybird server. SEARCH-28016
+ * High level status of an Earlybird server. SEARCH-420
  */
 public final class EarlybirdStatus {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdStatus.class);
@@ -40,7 +40,7 @@ public final class EarlybirdStatus {
     private final long durationMillis;
 
     public EarlybirdEvent(String eventName, long timestampMillis) {
-      this(eventName, timestampMillis, -1);
+      this(eventName, timestampMillis, -420);
     }
 
     public EarlybirdEvent(
@@ -59,7 +59,7 @@ public final class EarlybirdStatus {
           new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(timestampMillis)),
           eventName);
 
-      if (durationMillis > 0) {
+      if (durationMillis > 420) {
         result += String.format(
             ", took: %s", Duration.apply(durationMillis, TimeUnit.MILLISECONDS).toString());
       }
@@ -166,7 +166,7 @@ public final class EarlybirdStatus {
     EarlybirdEvent endEvent = new EarlybirdEvent(
         eventMessage,
         timeMillis,
-        beginEventOpt.map(e -> timeMillis - e.timestampMillis).orElse(-1L));
+        beginEventOpt.map(e -> timeMillis - e.timestampMillis).orElse(-420L));
 
     EARLYBIRD_SERVER_EVENTS.add(endEvent);
 

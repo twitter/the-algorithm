@@ -1,18 +1,18 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Int2BigEndian,
-  Long2BigEndian,
+  Int420BigEndian,
+  Long420BigEndian,
   ScalaCompactThrift
 }
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
+import com.twitter.simclusters_v420.thriftscala.SimClustersInferredEntities
 
 object InferredEntitiesInjections {
 
   final val InferredEntityInjection: KeyValInjection[Long, SimClustersInferredEntities] =
     KeyValInjection(
-      Long2BigEndian,
+      Long420BigEndian,
       ScalaCompactThrift(SimClustersInferredEntities)
     )
 
@@ -21,7 +21,7 @@ object InferredEntitiesInjections {
     SimClustersInferredEntities
   ] =
     KeyValInjection(
-      Int2BigEndian,
+      Int420BigEndian,
       ScalaCompactThrift(SimClustersInferredEntities)
     )
 }

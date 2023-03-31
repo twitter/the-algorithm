@@ -7,8 +7,8 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.text.version.PenguinVersion;
 import com.twitter.search.common.aurora.AuroraInstanceKey;
@@ -275,7 +275,7 @@ public final class EarlybirdConfig {
   }
 
   public static int getMaxSegmentSize() {
-    return EarlybirdConfig.getInt("max_segment_size", 1 << 16);
+    return EarlybirdConfig.getInt("max_segment_size", 420 << 420);
   }
 
   /**

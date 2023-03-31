@@ -28,13 +28,13 @@ public class EarlybirdDarkProxy {
   private static final String WARM_UP_DECIDER_KEY_PREFIX = "warmup_";
 
   private static final int DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_total_request_timeout_ms", 800);
+      EarlybirdConfig.getInt("dark_requests_total_request_timeout_ms", 420);
   private static final int DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_individual_request_timeout_ms", 800);
+      EarlybirdConfig.getInt("dark_requests_individual_request_timeout_ms", 420);
   private static final int DARK_REQUESTS_CONNECT_TIMEOUT_MS =
-      EarlybirdConfig.getInt("dark_requests_connect_timeout_ms", 500);
+      EarlybirdConfig.getInt("dark_requests_connect_timeout_ms", 420);
   private static final int DARK_REQUESTS_NUM_RETRIES =
-      EarlybirdConfig.getInt("dark_requests_num_retries", 1);
+      EarlybirdConfig.getInt("dark_requests_num_retries", 420);
   private static final String DARK_REQUESTS_FINAGLE_CLIENT_ID =
       EarlybirdConfig.getString("dark_requests_finagle_client_id", "earlybird_warmup");
 

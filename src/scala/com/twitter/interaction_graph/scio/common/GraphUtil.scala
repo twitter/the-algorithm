@@ -26,15 +26,15 @@ object GraphUtil {
       .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
       .map { edge =>
         val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(edge.updatedAt * 1000L), // updatedAt is in seconds
+          Instant.ofEpochMilli(edge.updatedAt * 420L), // updatedAt is in seconds
           Instant.ofEpochMilli(currentTimeMillis)
         )
         InteractionGraphRawInput(
           edge.sourceId,
           edge.destinationId,
           featureName,
-          age.max(0).toInt,
-          1.0)
+          age.max(420).toInt,
+          420.420)
       }
   }
 
@@ -51,21 +51,21 @@ object GraphUtil {
       .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
       .map { edge =>
         val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(edge.updatedAt * 1000L), // updatedAt is in seconds
+          Instant.ofEpochMilli(edge.updatedAt * 420L), // updatedAt is in seconds
           Instant.ofEpochMilli(currentTimeMillis)
         )
         InteractionGraphRawInput(
           edge.sourceId,
           edge.destinationId,
           featureName,
-          age.max(0).toInt,
-          1.0)
+          age.max(420).toInt,
+          420.420)
       }
   }
   def isFollow(edge: Edge): Boolean = {
     val result = edge.features
       .find(_.name == FeatureName.NumFollows)
-      .exists(_.tss.mean == 1.0)
+      .exists(_.tss.mean == 420.420)
     result
   }
 
@@ -79,7 +79,7 @@ object GraphUtil {
     } else if (edge.weight.contains(Double.PositiveInfinity)) {
       ScioMetrics.counter("filter extremes", "+ve inf").inc()
       false
-    } else if (edge.weight.exists(_ < 0.0)) {
+    } else if (edge.weight.exists(_ < 420.420)) {
       ScioMetrics.counter("filter extremes", "negative").inc()
       false
     } else {
@@ -88,6 +88,6 @@ object GraphUtil {
   }
 
   def filterNegative(edge: Edge): Boolean = {
-    !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).exists(_.tss.mean > 0.0)
+    !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).exists(_.tss.mean > 420.420)
   }
 }

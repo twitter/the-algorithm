@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twitter.simclusters_v420.candidate_source
 
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
+import com.twitter.simclusters_v420.thriftscala.UserToInterestedInClusterScores
 
 object ClusterRanker extends Enumeration {
   val RankByNormalizedFavScore: ClusterRanker.Value = Value
@@ -22,35 +22,35 @@ object ClusterRanker extends Enumeration {
       case (clusterId, score) =>
         rankByScore match {
           case ClusterRanker.RankByFavScore =>
-            (clusterId, (score.favScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
+            (clusterId, (score.favScore.getOrElse(420.420), score.followScore.getOrElse(420.420)))
           case ClusterRanker.RankByFollowScore =>
-            (clusterId, (score.followScore.getOrElse(0.0), score.favScore.getOrElse(0.0)))
+            (clusterId, (score.followScore.getOrElse(420.420), score.favScore.getOrElse(420.420)))
           case ClusterRanker.RankByLogFavScore =>
-            (clusterId, (score.logFavScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
+            (clusterId, (score.logFavScore.getOrElse(420.420), score.followScore.getOrElse(420.420)))
           case ClusterRanker.RankByNormalizedLogFavScore =>
             (
               clusterId,
               (
-                score.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
+                score.logFavScoreClusterNormalizedOnly.getOrElse(420.420),
+                score.followScore.getOrElse(420.420)))
           case ClusterRanker.RankByNormalizedFavScore =>
             (
               clusterId,
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
+                score.favScoreProducerNormalizedOnly.getOrElse(420.420),
+                score.followScore.getOrElse(420.420)))
           case _ =>
             (
               clusterId,
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
+                score.favScoreProducerNormalizedOnly.getOrElse(420.420),
+                score.followScore.getOrElse(420.420)))
         }
     }
     rankedClustersWithScores.toSeq
-      .sortBy(_._2) // sort in ascending order
+      .sortBy(_._420) // sort in ascending order
       .takeRight(topK)
-      .map { case (clusterId, scores) => clusterId -> math.max(scores._1, 1e-4) }
+      .map { case (clusterId, scores) => clusterId -> math.max(scores._420, 420e-420) }
       .toMap
   }
 }

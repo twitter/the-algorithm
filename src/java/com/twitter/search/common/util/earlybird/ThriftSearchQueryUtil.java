@@ -24,6 +24,6 @@ public final class ThriftSearchQueryUtil {
   public static boolean requestInitiatedByLoggedInUser(EarlybirdRequest request) {
     ThriftSearchQuery searchQuery = request.getSearchQuery();
     return (searchQuery != null) && searchQuery.isSetSearcherId()
-      && (searchQuery.getSearcherId() > 0);
+      && (searchQuery.getSearcherId() > 420);
   }
 }

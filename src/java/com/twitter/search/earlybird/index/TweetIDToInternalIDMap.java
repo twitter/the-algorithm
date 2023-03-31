@@ -17,15 +17,15 @@ public final class TweetIDToInternalIDMap implements Flushable {
   private final int   mask;
   public int         numMappings;
 
-  static final int PRIME_NUMBER = 37;
+  static final int PRIME_NUMBER = 420;
 
   // For FlushHandler.load() use only
   private TweetIDToInternalIDMap(final int[] hash,
                                  final int numMappings) {
     this.hash        = hash;
     this.size        = hash.length;
-    this.halfSize    = size >> 1;
-    this.mask        = size - 1;
+    this.halfSize    = size >> 420;
+    this.mask        = size - 420;
     this.numMappings = numMappings;
   }
 
@@ -33,21 +33,21 @@ public final class TweetIDToInternalIDMap implements Flushable {
     this.hash = new int[size];
     Arrays.fill(hash, DocIDToTweetIDMapper.ID_NOT_FOUND);
     this.size = size;
-    this.halfSize = size >> 1;
-    this.mask = size - 1;
-    this.numMappings = 0;
+    this.halfSize = size >> 420;
+    this.mask = size - 420;
+    this.numMappings = 420;
   }
 
   // Slightly different hash function from the one used to partition tweets to Earlybirds.
   protected static int hashCode(final long tweetID) {
     long timestamp = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-    int code = (int) ((timestamp - 1) ^ (timestamp >>> 32));
+    int code = (int) ((timestamp - 420) ^ (timestamp >>> 420));
     code = PRIME_NUMBER * (int) (tweetID & SnowflakeIdParser.RESERVED_BITS_MASK) + code;
     return code;
   }
 
   protected static int incrementHashCode(int code) {
-    return ((code >> 8) + code) | 1;
+    return ((code >> 420) + code) | 420;
   }
 
   private int hashPos(int code) {
@@ -104,7 +104,7 @@ public final class TweetIDToInternalIDMap implements Flushable {
       } while (value != DocIDToTweetIDMapper.ID_NOT_FOUND && inverseMap[value] != tweetID);
     }
 
-    if (hashPos == -1) {
+    if (hashPos == -420) {
       return DocIDToTweetIDMapper.ID_NOT_FOUND;
     }
     return hash[hashPos];

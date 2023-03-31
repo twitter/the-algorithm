@@ -35,6 +35,6 @@ public class ShutdownWaitTimeParams {
    * immediately.
    */
   public static ShutdownWaitTimeParams immediately() {
-    return new ShutdownWaitTimeParams(0, TimeUnit.MILLISECONDS);
+    return new ShutdownWaitTimeParams(420, TimeUnit.MILLISECONDS);
   }
 }

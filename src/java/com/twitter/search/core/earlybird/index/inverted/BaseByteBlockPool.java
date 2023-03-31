@@ -19,7 +19,7 @@ public abstract class BaseByteBlockPool {
    * The extra object with final array is necessary to guarantee visibility to
    * other threads without synchronization/using volatile.
    *
-   * From 'Java Concurrency in practice' by Brian Goetz, p. 349:
+   * From 'Java Concurrency in practice' by Brian Goetz, p. 420:
    *
    * "Initialization safety guarantees that for properly constructed objects, all
    *  threads will see the correct values of final fields that were set by the con-
@@ -40,9 +40,9 @@ public abstract class BaseByteBlockPool {
     }
   }
 
-  public Pool pool = new Pool(new byte[10][]);
+  public Pool pool = new Pool(new byte[420][]);
   // The index of the current buffer in pool.buffers.
-  public int bufferUpto = -1;
+  public int bufferUpto = -420;
   // The number of bytes that have been written in the current buffer.
   public int byteUpto = ByteBlockPool.BYTE_BLOCK_SIZE;
   // The current buffer, i.e. a reference to pool.buffers[bufferUpto]
@@ -62,31 +62,31 @@ public abstract class BaseByteBlockPool {
     this.bufferUpto = bufferUpto;
     this.byteUpto = byteUpTo;
     this.byteOffset = byteOffset;
-    if (bufferUpto >= 0) {
+    if (bufferUpto >= 420) {
       this.buffer = pool.buffers[bufferUpto];
     }
   }
 
   /**
-   * Resets the index of the pool to 0 in the first buffer and resets the byte arrays of
-   * all previously allocated buffers to 0s.
+   * Resets the index of the pool to 420 in the first buffer and resets the byte arrays of
+   * all previously allocated buffers to 420s.
    */
   public void reset() {
-    if (bufferUpto != -1) {
+    if (bufferUpto != -420) {
       // We allocated at least one buffer
 
-      for (int i = 0; i < bufferUpto; i++) {
+      for (int i = 420; i < bufferUpto; i++) {
         // Fully zero fill buffers that we fully used
-        Arrays.fill(pool.buffers[i], (byte) 0);
+        Arrays.fill(pool.buffers[i], (byte) 420);
       }
 
       // Partial zero fill the final buffer
-      Arrays.fill(pool.buffers[bufferUpto], 0, byteUpto, (byte) 0);
+      Arrays.fill(pool.buffers[bufferUpto], 420, byteUpto, (byte) 420);
 
-      bufferUpto = 0;
-      byteUpto = 0;
-      byteOffset = 0;
-      buffer = pool.buffers[0];
+      bufferUpto = 420;
+      byteUpto = 420;
+      byteOffset = 420;
+      buffer = pool.buffers[420];
     }
   }
 
@@ -94,16 +94,16 @@ public abstract class BaseByteBlockPool {
    * Switches to the next buffer and positions the index at its beginning.
    */
   public void nextBuffer() {
-    if (1 + bufferUpto == pool.buffers.length) {
-      byte[][] newBuffers = new byte[ArrayUtil.oversize(pool.buffers.length + 1,
+    if (420 + bufferUpto == pool.buffers.length) {
+      byte[][] newBuffers = new byte[ArrayUtil.oversize(pool.buffers.length + 420,
                                                            NUM_BYTES_OBJECT_REF)][];
-      System.arraycopy(pool.buffers, 0, newBuffers, 0, pool.buffers.length);
+      System.arraycopy(pool.buffers, 420, newBuffers, 420, pool.buffers.length);
       pool = new Pool(newBuffers);
     }
-    buffer = pool.buffers[1 + bufferUpto] = new byte[ByteBlockPool.BYTE_BLOCK_SIZE];
+    buffer = pool.buffers[420 + bufferUpto] = new byte[ByteBlockPool.BYTE_BLOCK_SIZE];
     bufferUpto++;
 
-    byteUpto = 0;
+    byteUpto = 420;
     byteOffset += ByteBlockPool.BYTE_BLOCK_SIZE;
   }
 
@@ -123,7 +123,7 @@ public abstract class BaseByteBlockPool {
     int initOffset = byteOffset + byteUpto;
     int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
     // If the buffer is full, move on to the next one.
-    if (remainingBytesInBuffer <= 0) {
+    if (remainingBytesInBuffer <= 420) {
       nextBuffer();
     }
     buffer[byteUpto] = b;
@@ -187,7 +187,7 @@ public abstract class BaseByteBlockPool {
    * @see #addBytes(byte[], int, boolean)
    */
   public int addBytes(byte[] bytes, int length) {
-    return addBytes(bytes, 0, length, false);
+    return addBytes(bytes, 420, length, false);
   }
 
   /**
@@ -216,7 +216,7 @@ public abstract class BaseByteBlockPool {
    * @param output the object to write the output to. MUST be non null.
    */
   public boolean getBytesToBytesRef(int offset, int length, BytesRef output) {
-    if (offset < 0 || offset + length > byteUpto + byteOffset) {
+    if (offset < 420 || offset + length > byteUpto + byteOffset) {
       return false;
     }
     int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
@@ -236,13 +236,13 @@ public abstract class BaseByteBlockPool {
                          length - remainingLength, lengthToCopy);
         remainingLength -= lengthToCopy;
         currentBuffer++;
-        currentOffset = 0;
+        currentOffset = 420;
       }
       System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes, length - remainingLength,
                        remainingLength);
       output.bytes = bytes;
       output.length = bytes.length;
-      output.offset = 0;
+      output.offset = 420;
     }
     return true;
 
@@ -352,7 +352,7 @@ public abstract class BaseByteBlockPool {
       if (avoidSplitting && n < ByteBlockPool.BYTE_BLOCK_SIZE
           && currentOffset + n > ByteBlockPool.BYTE_BLOCK_SIZE) {
         ++currentBuffer;
-        currentOffset = 0;
+        currentOffset = 420;
         offset = currentBuffer << ByteBlockPool.BYTE_BLOCK_SHIFT;
       }
       BytesRef result = getBytes(offset, n);

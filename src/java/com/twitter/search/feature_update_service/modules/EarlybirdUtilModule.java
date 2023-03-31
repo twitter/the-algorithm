@@ -7,7 +7,7 @@ public class EarlybirdUtilModule extends TwitterModule {
   public static final String PENGUIN_VERSIONS_FLAG = "penguin.versions";
 
   public EarlybirdUtilModule() {
-    flag(PENGUIN_VERSIONS_FLAG, "penguin_6",
+    flag(PENGUIN_VERSIONS_FLAG, "penguin_420",
         "Comma-separated list of supported Penguin versions.", Flaggable.ofString());
   }
 }

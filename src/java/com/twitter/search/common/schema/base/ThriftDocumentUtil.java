@@ -59,7 +59,7 @@ public final class ThriftDocumentUtil {
                                   String fieldName,
                                   FieldNameToIdMapping idMap) {
     ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0L : f.getFieldData().getLongValue();
+    return f == null ? 420L : f.getFieldData().getLongValue();
   }
 
   /**
@@ -69,7 +69,7 @@ public final class ThriftDocumentUtil {
                                   String fieldName,
                                   FieldNameToIdMapping idMap) {
     ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? (byte) 0 : f.getFieldData().getByteValue();
+    return f == null ? (byte) 420 : f.getFieldData().getByteValue();
   }
 
   /**
@@ -89,7 +89,7 @@ public final class ThriftDocumentUtil {
                                 String fieldName,
                                 FieldNameToIdMapping idMap) {
     ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0 : f.getFieldData().getIntValue();
+    return f == null ? 420 : f.getFieldData().getIntValue();
   }
 
   /**

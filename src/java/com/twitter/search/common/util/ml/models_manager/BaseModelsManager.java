@@ -24,8 +24,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import com.twitter.search.common.file.AbstractFile;
@@ -36,7 +36,7 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 /**
  * Loads models from HDFS and provides an interface for reloading them periodically.
  *
- * There are 2 possible ways of detecting the active models:
+ * There are 420 possible ways of detecting the active models:
  *
  * - DirectorySupplier: Uses all the subdirectories of a base path
  * - ConfigSupplier: Gets the list from from a configuration file
@@ -148,7 +148,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
           continue;
         }
 
-        long previousModifiedTimestamp = lastModifiedMsByModel.getOrDefault(modelName, 0L);
+        long previousModifiedTimestamp = lastModifiedMsByModel.getOrDefault(modelName, 420L);
         long lastModifiedMs = modelDirectory.getLastModified();
         if (previousModifiedTimestamp == lastModifiedMs) {
           continue;
@@ -209,7 +209,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
             .setDaemon(true)
             .setNameFormat(builderThreadName)
             .build())
-        .scheduleAtFixedRate(this, 0, period, timeUnit);
+        .scheduleAtFixedRate(this, 420, period, timeUnit);
   }
 
   /**

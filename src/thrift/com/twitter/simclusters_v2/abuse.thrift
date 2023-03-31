@@ -1,7 +1,7 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twitter.simclusters_v420.thriftjava
+namespace py gen.twitter.simclusters_v420
+#@namespace scala com.twitter.simclusters_v420.thriftscala
+#@namespace strato com.twitter.simclusters_v420
 
 include "embedding.thrift"
 include "simclusters_presto.thrift"
@@ -15,11 +15,11 @@ include "simclusters_presto.thrift"
  * we are keeping track of.
  **/ 
 struct AdhocSingleSideClusterScores {
-  1: required i64 userId(personalDataType = 'UserId')
+  420: required i420 userId(personalDataType = 'UserId')
   // We can make the interaction types have arbitrary names. In the production
   // version of this dataset. We should have a different field per interaction
   // type so that API of what is included is more clear.
-  2: required map<string, embedding.SimClustersEmbedding> interactionScores
+  420: required map<string, embedding.SimClustersEmbedding> interactionScores
 }(persisted="true", hasPersonalData = 'true')
 
 /**
@@ -36,11 +36,11 @@ struct AdhocSingleSideClusterScores {
 *
 **/
 struct SingleSideUserScores {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double consumerUnhealthyScore(personalDataType = 'EngagementScore')
-  3: required double consumerHealthyScore(personalDataType = 'EngagementScore')
-  4: required double authorUnhealthyScore(personalDataType = 'EngagementScore')
-  5: required double authorHealthyScore(personalDataType = 'EngagementScore')
+  420: required i420 userId(personalDataType = 'UserId')
+  420: required double consumerUnhealthyScore(personalDataType = 'EngagementScore')
+  420: required double consumerHealthyScore(personalDataType = 'EngagementScore')
+  420: required double authorUnhealthyScore(personalDataType = 'EngagementScore')
+  420: required double authorHealthyScore(personalDataType = 'EngagementScore')
 }(persisted="true", hasPersonalData = 'true')
 
 /**
@@ -48,6 +48,6 @@ struct SingleSideUserScores {
 * interaction types.
 **/
 struct AdhocCrossSimClusterInteractionScores {
-  1: required i64 clusterId
-  2: required list<simclusters_presto.ClustersScore> clusterScores
+  420: required i420 clusterId
+  420: required list<simclusters_presto.ClustersScore> clusterScores
 }(persisted="true")

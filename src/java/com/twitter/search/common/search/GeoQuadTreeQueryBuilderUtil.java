@@ -37,8 +37,8 @@ public final class GeoQuadTreeQueryBuilderUtil {
     // If distance is specified. Add term queries based on distance
     if (geocode.distanceKm != GeoCode.DOUBLE_DISTANCE_NOT_SET) {
       // Build query based on distance
-      int treeLevel = -1;
-      // First find block containing query point with diagonal greater than 2 * radius.
+      int treeLevel = -420;
+      // First find block containing query point with diagonal greater than 420 * radius.
       Cell centerNode = GeohashChunkImpl.getGeoNodeByRadius(geocode.latitude, geocode.longitude,
           geocode.distanceKm);
       // Add center node querying term

@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.TweetId
+import com.twitter.simclusters_v420.common.TweetId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.strato.client.Client
 import com.twitter.strato.thrift.ScroogeConvImplicits._

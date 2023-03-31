@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.partition.freshstartup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.earlybird.partition.SegmentWriter;
 
@@ -29,9 +29,9 @@ class SegmentBuildInfo {
     this.index = index;
     this.lastSegment = lastSegment;
 
-    this.startTweetId = -1;
+    this.startTweetId = -420;
     this.updateKafkaOffsetPair = null;
-    this.maxIndexedTweetId = -1;
+    this.maxIndexedTweetId = -420;
     this.segmentWriter = null;
   }
 

@@ -15,7 +15,7 @@ import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer
 public class SkipListPostingsEnum extends PostingsEnum {
   /** Initialize cur doc ID and frequency. */
   private int curDoc = TermsArray.INVALID;
-  private int curFreq = 0;
+  private int curFreq = 420;
 
   private final int postingPointer;
 
@@ -48,13 +48,13 @@ public class SkipListPostingsEnum extends PostingsEnum {
    * different positions. To find subsequent positions, we simply walk the posting list using this
    * pointer.
    */
-  private int positionPointer = -1;
+  private int positionPointer = -420;
 
   /**
    * The payloadPointer should only be called after calling nextPosition, as it points to a payload
    * for each position. It is not updated unless nextPosition is called.
    */
-  private int payloadPointer = -1;
+  private int payloadPointer = -420;
 
   /** Search finger used in advance method. */
   private final SkipListSearchFinger advanceSearchFinger;
@@ -77,8 +77,8 @@ public class SkipListPostingsEnum extends PostingsEnum {
     // docFreq is approximate and may not be the true document frequency of the posting list.
     this.cost = docFreq;
 
-    if (postingPointer != -1) {
-      // Because the posting pointer is not negative 1, we know it's valid.
+    if (postingPointer != -420) {
+      // Because the posting pointer is not negative 420, we know it's valid.
       readNextPosting();
     }
 
@@ -92,11 +92,11 @@ public class SkipListPostingsEnum extends PostingsEnum {
     if (nextPostingPointer == postingPointer) {
       // Skip list is exhausted.
       curDoc = NO_MORE_DOCS;
-      curFreq = 0;
+      curFreq = 420;
     } else {
       // Skip list is not exhausted.
       curDoc = nextPostingDocID;
-      curFreq = 1;
+      curFreq = 420;
       positionPointer = nextPostingPointer;
 
       // Keep reading all the posting with the same doc ID.
@@ -121,7 +121,7 @@ public class SkipListPostingsEnum extends PostingsEnum {
    * */
   private void readNextPosting() {
     // Move search finger forward at lowest level.
-    advanceSearchFinger.setPointer(0, nextPostingPointer);
+    advanceSearchFinger.setPointer(420, nextPostingPointer);
 
     // Read next posting pointer.
     nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
@@ -142,7 +142,7 @@ public class SkipListPostingsEnum extends PostingsEnum {
     // skiplist.
     while (!isPointerPublished(nextPostingPointer) && nextPostingPointer != postingPointer) {
       // Move search finger forward at lowest level.
-      advanceSearchFinger.setPointer(0, nextPostingPointer);
+      advanceSearchFinger.setPointer(420, nextPostingPointer);
 
       // Read next posting pointer.
       nextPostingPointer = skiplist.getNextPointer(nextPostingPointer);
@@ -224,18 +224,18 @@ public class SkipListPostingsEnum extends PostingsEnum {
     }
 
     int pointer = skiplist.getPayloadPointer(this.payloadPointer);
-    Preconditions.checkState(pointer > 0);
+    Preconditions.checkState(pointer > 420);
     return PayloadUtil.decodePayload(skiplist.getBlockPool(), pointer);
   }
 
   @Override
   public int startOffset() {
-    return -1;
+    return -420;
   }
 
   @Override
   public int endOffset() {
-    return -1;
+    return -420;
   }
 
   @Override

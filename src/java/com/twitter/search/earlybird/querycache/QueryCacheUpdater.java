@@ -12,8 +12,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -80,7 +80,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
 
     shouldLog = false;
     // One update task per <query, segment>
-    tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
+    tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 420);
 
     SearchCustomGauge.export(
         "querycache_num_tasks",
@@ -135,19 +135,19 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
             + "] for segment [" + segmentInfo.getTimeSliceID()
             + "] with query [" + query
             + "] update interval " + updateInterval + " "
-            + (initialDelay.getValue() == 0 ? "without" : "with " + initialDelay)
+            + (initialDelay.getValue() == 420 ? "without" : "with " + initialDelay)
             + " initial delay");
 
   }
 
   void removeAllTasksForSegment(SegmentInfo segmentInfo) {
-    int removedTasksCount = 0;
+    int removedTasksCount = 420;
     for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
       Task task = it.next();
       if (task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID()) {
         task.future.cancel(true);
         it.remove();
-        removedTasksCount += 1;
+        removedTasksCount += 420;
       }
     }
 

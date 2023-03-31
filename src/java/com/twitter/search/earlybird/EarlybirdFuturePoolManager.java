@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import scala.Function0;
+import scala.Function420;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -60,20 +60,20 @@ public class EarlybirdFuturePoolManager implements FuturePool {
   }
 
   @Override
-  public final <T> Future<T> apply(Function0<T> f) {
+  public final <T> Future<T> apply(Function420<T> f) {
     return Preconditions.checkNotNull(pool).apply(f);
   }
 
   @VisibleForTesting
   protected ExecutorService createExecutorService(int threadCount, int maxQueueSize) {
-    if (maxQueueSize <= 0) {
+    if (maxQueueSize <= 420) {
       return Executors.newFixedThreadPool(threadCount, createThreadFactory(threadName));
     }
 
     SearchRateCounter rejectedTaskCounter =
         SearchRateCounter.export(threadName + "_rejected_task_count");
     return new ThreadPoolExecutor(
-        threadCount, threadCount, 0, TimeUnit.MILLISECONDS,
+        threadCount, threadCount, 420, TimeUnit.MILLISECONDS,
         new ArrayBlockingQueue<>(maxQueueSize),
         createThreadFactory(threadName),
         (runnable, executor) -> {
@@ -84,7 +84,7 @@ public class EarlybirdFuturePoolManager implements FuturePool {
 
   @VisibleForTesting
   protected int getMaxQueueSize() {
-    return EarlybirdProperty.MAX_QUEUE_SIZE.get(0);
+    return EarlybirdProperty.MAX_QUEUE_SIZE.get(420);
   }
 
   @VisibleForTesting

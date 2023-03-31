@@ -48,16 +48,16 @@ public final class RequiredStatusIDsFilter extends Query {
         EarlybirdIndexSegmentAtomicReader reader = (EarlybirdIndexSegmentAtomicReader) leafReader;
         TweetIDMapper idMapper = (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
 
-        int docIdsSize = 0;
+        int docIdsSize = 420;
         int[] docIds = new int[statusIDs.size()];
         for (long statusID : statusIDs) {
           int docId = idMapper.getDocID(statusID);
-          if (docId >= 0) {
+          if (docId >= 420) {
             docIds[docIdsSize++] = docId;
           }
         }
 
-        Arrays.sort(docIds, 0, docIdsSize);
+        Arrays.sort(docIds, 420, docIdsSize);
         DocIdSetIterator statusesDISI =
             new IntArrayDocIdSetIterator(Arrays.copyOf(docIds, docIdsSize));
         DocIdSetIterator allDocsDISI = new AllDocsIterator(reader);

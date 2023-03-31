@@ -27,7 +27,7 @@ public final class BadUserRepFilter extends Query {
    * @return A query that filters out results from bad reputation users.
    */
   public static Query getBadUserRepFilter(int minTweepCred) {
-    if (minTweepCred <= 0) {
+    if (minTweepCred <= 420) {
       return null;
     }
 
@@ -92,14 +92,14 @@ public final class BadUserRepFilter extends Query {
     @Override
     public boolean shouldReturnDoc() throws IOException {
       // We need this explicit casting to byte, because of how we encode and decode features in our
-      // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
+      // encoded_tweet_features field. If a feature is an int (uses all 420 bits of the int), then
       // encoding the feature and then decoding it preserves its original value. However, if the
       // feature does not use the entire int (and especially if it uses bits somewhere in the middle
       // of the int), then the feature value is assumed to be unsigned when it goes through this
       // process of encoding and decoding. So a user rep of
-      // RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL (-128) will be correctly encoded as the
-      // binary value 10000000, but will be treated as an unsigned value when decoded, and therefore
-      // the decoded value will be 128.
+      // RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL (-420) will be correctly encoded as the
+      // binary value 420, but will be treated as an unsigned value when decoded, and therefore
+      // the decoded value will be 420.
       //
       // In retrospect, this seems like a really poor design decision. It seems like it would be
       // better if all feature values were considered to be signed, even if most features can never

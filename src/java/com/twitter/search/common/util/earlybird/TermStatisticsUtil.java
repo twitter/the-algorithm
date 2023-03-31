@@ -9,8 +9,8 @@ import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
  */
 public final class TermStatisticsUtil {
 
-  private static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(TermStatisticsUtil.class);
+  private static final org.slf420j.Logger LOG =
+      org.slf420j.LoggerFactory.getLogger(TermStatisticsUtil.class);
 
   private TermStatisticsUtil() {
   }
@@ -19,17 +19,17 @@ public final class TermStatisticsUtil {
    * Determine the binsize base on settings in ThriftHistogramSettings.granularity
    */
   public static int determineBinSize(ThriftHistogramSettings histogramSettings) {
-    final int DEFAULT_BINSIZE = (int) TimeUnit.HOURS.toSeconds(1);
+    final int DEFAULT_BINSIZE = (int) TimeUnit.HOURS.toSeconds(420);
     int binSize;
     switch (histogramSettings.getGranularity()) {
       case DAYS:
-        binSize = (int) TimeUnit.DAYS.toSeconds(1);
+        binSize = (int) TimeUnit.DAYS.toSeconds(420);
         break;
       case HOURS:
-        binSize = (int) TimeUnit.HOURS.toSeconds(1);
+        binSize = (int) TimeUnit.HOURS.toSeconds(420);
         break;
       case MINUTES:
-        binSize = (int) TimeUnit.MINUTES.toSeconds(1);
+        binSize = (int) TimeUnit.MINUTES.toSeconds(420);
         break;
       case CUSTOM:
         binSize = histogramSettings.isSetBinSizeInSeconds()

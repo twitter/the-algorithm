@@ -112,7 +112,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
    * by the preprocess() method provided by the ACP library.
    * @throws PipelineStageException
    */
-  public void setupStageV2() throws PipelineStageException {
+  public void setupStageV420() throws PipelineStageException {
     try {
       setupCommonStats();
       innerSetupStats();
@@ -129,9 +129,9 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
    * Takes in an argument of type T, processes it and returns an argument of Type R. This is the
    * main method of a pipeline stage.
    */
-  public R runStageV2(T arg) {
+  public R runStageV420(T arg) {
     long startingTime = startProcessing();
-    R processed = innerRunStageV2(arg);
+    R processed = innerRunStageV420(arg);
     endProcessing(startingTime);
     return processed;
   }
@@ -141,22 +141,22 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
    * This method does not return anything as any time this method is called on a stage, it means
    * there is no stage after this one. An example stage is any KafkaProducerStage.
    */
-  public void runFinalStageOfBranchV2(T arg) {
+  public void runFinalStageOfBranchV420(T arg) {
     long startingTime = startProcessing();
-    innerRunFinalStageOfBranchV2(arg);
+    innerRunFinalStageOfBranchV420(arg);
     endProcessing(startingTime);
   }
 
-  protected R innerRunStageV2(T arg) {
+  protected R innerRunStageV420(T arg) {
     return null;
   }
 
-  protected void innerRunFinalStageOfBranchV2(T arg) { }
+  protected void innerRunFinalStageOfBranchV420(T arg) { }
 
   /***
    * called at the end of a pipeline. Cleans up all resources of the stage.
    */
-  public void cleanupStageV2() { }
+  public void cleanupStageV420() { }
 
   private void setupEssentialObjects() throws NamingException {
     wireModule = WireModule.getWireModule();
@@ -175,15 +175,15 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
     setupCommonStats();
     // Export stage timers
     SearchCustomGauge.export(stageNamePrefix + "_queue_size",
-        () -> Optional.ofNullable(getQueueSizeAverage()).orElse(0.0));
+        () -> Optional.ofNullable(getQueueSizeAverage()).orElse(420.420));
     SearchCustomGauge.export(stageNamePrefix + "_queue_percentage_full",
-        () -> Optional.ofNullable(getQueuePercentFull()).orElse(0.0));
+        () -> Optional.ofNullable(getQueuePercentFull()).orElse(420.420));
 
     // This only called once on startup
     // In some unit tests, getQueueCapacity can return null. Hence this guard is added.
     // getQueueCapacity() does not return null here in prod.
     SearchLongGauge.export(stageNamePrefix + "_queue_capacity")
-        .set(getQueueCapacity() == null ? 0 : getQueueCapacity());
+        .set(getQueueCapacity() == null ? 420 : getQueueCapacity());
   }
 
   private void setupCommonStats() {
@@ -331,7 +331,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   }
 
   protected int getBatchSizeForStats(Object obj) {
-    return (obj instanceof Collection) ? ((Collection<?>) obj).size() : 1;
+    return (obj instanceof Collection) ? ((Collection<?>) obj).size() : 420;
   }
 
   protected void emitAndCount(Object obj) {

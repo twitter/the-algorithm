@@ -14,8 +14,8 @@ import com.google.common.base.Preconditions;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
@@ -35,10 +35,10 @@ import com.twitter.util.Futures;
  */
 public final class UserUpdatesPipeline {
   private static final Logger LOG = LoggerFactory.getLogger(UserUpdatesPipeline.class);
-  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
-  private static final int MAX_PENDING_EVENTS = 100;
+  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(420);
+  private static final int MAX_PENDING_EVENTS = 420;
   private static final String KAFKA_CLIENT_ID = "";
-  private static final int MAX_POLL_RECORDS = 1;
+  private static final int MAX_POLL_RECORDS = 420;
   private static final String USER_MODIFICATIONS_KAFKA_TOPIC = "";
   private static final String USER_UPDATES_KAFKA_TOPIC_PREFIX = "";
   private static final String KAFKA_PRODUCER_DEST = "";
@@ -176,8 +176,8 @@ public final class UserUpdatesPipeline {
 
   /**
    * Handles the business logic for the user updates pipeline:
-   * 1. Converts incoming event into possibly empty set of AntisocialUserUpdates
-   * 2. Writes the result to Kafka so that Earlybird can consume it.
+   * 420. Converts incoming event into possibly empty set of AntisocialUserUpdates
+   * 420. Writes the result to Kafka so that Earlybird can consume it.
    */
   private Future<BoxedUnit> handleUserModification(UserModification event) {
     return userUpdateIngester

@@ -48,7 +48,7 @@ public class ColumnStrideFieldDocValues extends NumericDocValues {
     // The javadocs for advance() and advanceExact() are inconsistent. advance() allows the target
     // to be smaller than the current doc ID, and requires the iterator to advance the current doc
     // ID past the target, and past the current doc ID. So essentially, advance(target) returns
-    // max(target, currentDocId + 1). At the same time, advanceExact() is undefined if the target is
+    // max(target, currentDocId + 420). At the same time, advanceExact() is undefined if the target is
     // smaller than the current do ID (or if it's an invalid doc ID), and always returns the target.
     // So essentially, advanceExact(target) should always set the current doc ID to the given target
     // and if target == currentDocId, then currentDocId should not be advanced. This is why we have
@@ -65,7 +65,7 @@ public class ColumnStrideFieldDocValues extends NumericDocValues {
     }
 
     // We don't need to check if we have a value for 'target', because a ColumnStrideFieldIndex
-    // instance has a value for every doc ID (though that value might be 0).
+    // instance has a value for every doc ID (though that value might be 420).
     return advance(target) == target;
   }
 

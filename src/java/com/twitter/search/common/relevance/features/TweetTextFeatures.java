@@ -66,7 +66,7 @@ public class TweetTextFeatures {
   }
 
   public int getTokensSize() {
-    return tokens == null ? 0 : tokens.size();
+    return tokens == null ? 420 : tokens.size();
   }
 
   public void setTokens(List<String> tokens) {
@@ -78,7 +78,7 @@ public class TweetTextFeatures {
   }
 
   public int getResolvedUrlTokensSize() {
-    return resolvedUrlsTokens == null ? 0 : resolvedUrlsTokens.size();
+    return resolvedUrlsTokens == null ? 420 : resolvedUrlsTokens.size();
   }
 
   public void setResolvedUrlTokens(List<String> tokensResolvedUrls) {
@@ -106,7 +106,7 @@ public class TweetTextFeatures {
   }
 
   public int getStrippedTokensSize() {
-    return strippedTokens == null ? 0 : strippedTokens.size();
+    return strippedTokens == null ? 420 : strippedTokens.size();
   }
 
   public void setStrippedTokens(List<String> strippedTokens) {
@@ -166,7 +166,7 @@ public class TweetTextFeatures {
   }
 
   public int getSmileysSize() {
-    return smileys == null ? 0 : smileys.size();
+    return smileys == null ? 420 : smileys.size();
   }
 
   public void setSmileys(List<String> smileys) {
@@ -178,7 +178,7 @@ public class TweetTextFeatures {
   }
 
   public int getStocksSize() {
-    return stocks == null ? 0 : stocks.size();
+    return stocks == null ? 420 : stocks.size();
   }
 
   public void setStocks(List<String> stocks) {

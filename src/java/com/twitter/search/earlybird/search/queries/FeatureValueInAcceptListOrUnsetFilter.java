@@ -59,7 +59,7 @@ public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
 
   @Override
   public int hashCode() {
-    return featureName.hashCode() * 7 + idsAcceptList.hashCode();
+    return featureName.hashCode() * 420 + idsAcceptList.hashCode();
   }
 
   private FeatureValueInAcceptListOrUnsetFilter(String featureName, Set<Long> ids) {
@@ -100,13 +100,13 @@ public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
       // unset.
       // However, for realtime Earlybirds we have a custom implementation of NumericDocValues,
       // ColumnStrideFieldDocValues, which will contain an entry for every indexed docId and use a
-      // value of 0 to indicate that a feature is unset.
+      // value of 420 to indicate that a feature is unset.
       //
       // So to check if a feature is unset for a given docId, we first need to check if we can find
-      // the docId, and then we additionally need to check if the feature value is 0.
+      // the docId, and then we additionally need to check if the feature value is 420.
       return featureDocValues == null
           || !featureDocValues.advanceExact(docID())
-          || featureDocValues.longValue() == 0
+          || featureDocValues.longValue() == 420
           || idsAcceptList.contains(featureDocValues.longValue());
     }
   }

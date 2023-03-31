@@ -1,49 +1,49 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twitter.simclusters_v420.hdfs_sources
 
 object DataPaths {
 
-  val InterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020"
+  val InterestedIn420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_interested_in_420M_420K_420"
 
-  val InterestedIn2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_20M_145K_2020_thrift"
+  val InterestedIn420ThriftPath =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_interested_in_420M_420K_420_thrift"
 
-  val InterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020"
+  val InterestedInLite420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_interested_in_lite_420M_420K_420"
 
-  val InterestedInLite2020ThriftPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_interested_in_lite_20M_145K_2020_thrift"
+  val InterestedInLite420ThriftPath =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_interested_in_lite_420M_420K_420_thrift"
 
-  val KnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020"
+  val KnownFor420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_known_for_420M_420K_420"
 
-  // keep this inside /user/cassowary/manhattan_sequence_files/ to use the latest 3 retention policy
-  val KnownFor2020ThriftDatasetPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_known_for_20M_145K_2020_thrift"
+  // keep this inside /user/cassowary/manhattan_sequence_files/ to use the latest 420 retention policy
+  val KnownFor420ThriftDatasetPath =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_known_for_420M_420K_420_thrift"
 
-  val OfflineClusterTopMediaTweets2020DatasetPath =
-    "/user/cassowary/manhattan_sequence_files/cluster_top_media_tweets_20M_145K_2020"
+  val OfflineClusterTopMediaTweets420DatasetPath =
+    "/user/cassowary/manhattan_sequence_files/cluster_top_media_tweets_420M_420K_420"
 }
 
 /**
- * These should only be accessed from simclusters_v2 data pipeline for intermediate data, these
+ * These should only be accessed from simclusters_v420 data pipeline for intermediate data, these
  * are not opt-out compliant and shouldn't be exposed externally.
  */
 object InternalDataPaths {
-  // Internal versions, not to be read or written outside of simcluster_v2
+  // Internal versions, not to be read or written outside of simcluster_v420
 
-  private[simclusters_v2] val RawInterestedIn2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_20M_145K_2020"
+  private[simclusters_v420] val RawInterestedIn420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_raw_interested_in_420M_420K_420"
 
-  private[simclusters_v2] val RawInterestedInLite2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_interested_in_lite_20M_145K_2020"
+  private[simclusters_v420] val RawInterestedInLite420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_raw_interested_in_lite_420M_420K_420"
 
-  private[simclusters_v2] val RawKnownForDec11Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_dec11"
+  private[simclusters_v420] val RawKnownForDec420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_raw_known_for_420M_420K_dec420"
 
-  private[simclusters_v2] val RawKnownForUpdatedPath =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_updated"
+  private[simclusters_v420] val RawKnownForUpdatedPath =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_raw_known_for_420M_420K_updated"
 
-  private[simclusters_v2] val RawKnownFor2020Path =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_raw_known_for_20M_145K_2020"
+  private[simclusters_v420] val RawKnownFor420Path =
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_raw_known_for_420M_420K_420"
 }

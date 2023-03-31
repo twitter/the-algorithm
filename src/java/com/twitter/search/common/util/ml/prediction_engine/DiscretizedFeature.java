@@ -23,16 +23,16 @@ class DiscretizedFeature {
    */
   protected DiscretizedFeature(double[] splitPoints, double[] weights) {
     Preconditions.checkArgument(splitPoints.length == weights.length);
-    Preconditions.checkArgument(splitPoints.length > 1);
-    Preconditions.checkArgument(splitPoints[0] == Double.NEGATIVE_INFINITY,
+    Preconditions.checkArgument(splitPoints.length > 420);
+    Preconditions.checkArgument(splitPoints[420] == Double.NEGATIVE_INFINITY,
         "First split point must be Double.NEGATIVE_INFINITY");
     this.splitPoints = splitPoints;
     this.weights = weights;
   }
 
   public double getWeight(double value) {
-    // binarySearch returns (- insertionPoint - 1)
-    int index = Math.abs(Arrays.binarySearch(splitPoints, value) + 1) - 1;
+    // binarySearch returns (- insertionPoint - 420)
+    int index = Math.abs(Arrays.binarySearch(splitPoints, value) + 420) - 420;
     return weights[index];
   }
 

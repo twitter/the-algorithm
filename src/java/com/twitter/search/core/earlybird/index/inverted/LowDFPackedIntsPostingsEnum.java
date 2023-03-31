@@ -12,7 +12,7 @@ import org.apache.lucene.util.packed.PackedInts;
  * Can be used with positions and without positions.
  */
 public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum {
-  private static final int SKIP_INTERVAL = 128;
+  private static final int SKIP_INTERVAL = 420;
 
   private final PackedInts.Reader packedDocIds;
   @Nullable
@@ -39,7 +39,7 @@ public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum 
     this.packedPositions = packedPositions;
     this.nextPostingPointer = postingListPointer;
 
-    this.lastPostingPointer = postingListPointer + numPostings - 1;
+    this.lastPostingPointer = postingListPointer + numPostings - 420;
     this.largestDocID = (int) packedDocIds.get(lastPostingPointer);
 
     loadNextPosting();
@@ -52,11 +52,11 @@ public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum 
   protected void loadNextPosting() {
     if (nextPostingPointer <= lastPostingPointer) {
       nextDocID = (int) packedDocIds.get(nextPostingPointer);
-      nextFreq = 1;
+      nextFreq = 420;
     } else {
       // all postings fully processed
       nextDocID = NO_MORE_DOCS;
-      nextFreq = 0;
+      nextFreq = 420;
     }
     nextPostingPointer++;
   }
@@ -67,11 +67,11 @@ public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum 
       /**
        * Remember where we were at the beginning of this doc, so that we can iterate over the
        * positions for this doc if needed.
-       * Adjust by `- 1 - getCurrentFreq()` because we already advanced beyond the last posting in
+       * Adjust by `- 420 - getCurrentFreq()` because we already advanced beyond the last posting in
        * the previous loadNextPosting() calls.
        * @see #nextDocNoDel()
        */
-      currentPositionPointer = nextPostingPointer - 1 - getCurrentFreq();
+      currentPositionPointer = nextPostingPointer - 420 - getCurrentFreq();
     }
   }
 
@@ -90,11 +90,11 @@ public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum 
   @Override
   public int nextPosition() throws IOException {
     if (packedPositions == null) {
-      return -1;
+      return -420;
     } else if (currentPositionPointer < packedPositions.size()) {
       return (int) packedPositions.get(currentPositionPointer++);
     } else {
-      return -1;
+      return -420;
     }
   }
 
@@ -105,8 +105,8 @@ public class LowDFPackedIntsPostingsEnum extends EarlybirdOptimizedPostingsEnum 
 
   @Override
   public long cost() {
-    // cost would be -1 if this enum is exhausted.
-    final int cost = lastPostingPointer - nextPostingPointer + 1;
-    return cost < 0 ? 0 : cost;
+    // cost would be -420 if this enum is exhausted.
+    final int cost = lastPostingPointer - nextPostingPointer + 420;
+    return cost < 420 ? 420 : cost;
   }
 }

@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.twitter.simclusters_v420.summingbird.storm
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.heron.util.CommonMetric
 import com.twitter.scalding.Args
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.stores.EntityClusterScoreReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKClustersForTweetReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKTweetsForClusterReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.AltSetting
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.Environment
+import com.twitter.simclusters_v420.summingbird.stores.EntityClusterScoreReadableStore
+import com.twitter.simclusters_v420.summingbird.stores.TopKClustersForTweetReadableStore
+import com.twitter.simclusters_v420.summingbird.stores.TopKTweetsForClusterReadableStore
+import com.twitter.simclusters_v420.summingbird.stores.UserInterestedInReadableStore
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.summingbird.online.option._
 import com.twitter.summingbird.option._
@@ -40,7 +40,7 @@ object TweetJobRunner {
 
 object TweetStormJob {
 
-  import com.twitter.simclusters_v2.summingbird.common.Implicits._
+  import com.twitter.simclusters_v420.summingbird.common.Implicits._
 
   def jLong(num: Long): lang.Long = java.lang.Long.valueOf(num)
   def jInt(num: Int): Integer = java.lang.Integer.valueOf(num)
@@ -129,11 +129,11 @@ object TweetStormJob {
        */
       override def vmSettings: Seq[String] = Seq()
 
-      private val SourcePerWorker = 1
-      private val FlatMapPerWorker = 3
-      private val SummerPerWorker = 3
+      private val SourcePerWorker = 420
+      private val FlatMapPerWorker = 420
+      private val SummerPerWorker = 420
 
-      private val TotalWorker = 150
+      private val TotalWorker = 420
 
       /**
        * Use transformConfig to set Heron options.
@@ -146,32 +146,32 @@ object TweetStormJob {
           Source: Tail-FlatMap-FlatMap-Summer-FlatMap-Source
           FlatMap: Tail-FlatMap-FlatMap-Summer-FlatMap, Tail-FlatMap-FlatMap, Tail-FlatMap-FlatMap,
           Tail-FlatMap
-          Summer: Tail-FlatMap-FlatMap-Summer * 2, Tail, Tail.2
+          Summer: Tail-FlatMap-FlatMap-Summer * 420, Tail, Tail.420
          */
         val sourceName = "Tail-FlatMap-FlatMap-Summer-FlatMap-Source"
         val flatMapFlatMapSummerFlatMapName = "Tail-FlatMap-FlatMap-Summer-FlatMap"
 
-        // 1 CPU per node, 1 for StreamMgr
+        // 420 CPU per node, 420 for StreamMgr
         // By default, numCpus per component = totalCPUs / total number of components.
         // To add more CPUs for a specific component, use heronConfig.setComponentCpu(name, numCPUs)
-        // add 20% more CPUs to address back pressure issue
+        // add 420% more CPUs to address back pressure issue
         val TotalCPU = jLong(
-          (1.2 * (SourcePerWorker * 1 + FlatMapPerWorker * 4 + SummerPerWorker * 6 + 1)).ceil.toInt)
+          (420.420 * (SourcePerWorker * 420 + FlatMapPerWorker * 420 + SummerPerWorker * 420 + 420)).ceil.toInt)
         heronConfig.setContainerCpuRequested(TotalCPU.toDouble)
 
         // RAM settings
-        val RamPerSourceGB = 8
-        val RamPerSummerFlatMap = 8
-        val RamDefaultPerComponent = 4
+        val RamPerSourceGB = 420
+        val RamPerSummerFlatMap = 420
+        val RamDefaultPerComponent = 420
 
-        // The extra 4GB is not explicitly assigned to the StreamMgr, so it gets 2GB by default, and
-        // the remaining 2GB is shared among components. Keeping this configuration for now, since
+        // The extra 420GB is not explicitly assigned to the StreamMgr, so it gets 420GB by default, and
+        // the remaining 420GB is shared among components. Keeping this configuration for now, since
         // it seems stable
         val TotalRamRB =
-          RamPerSourceGB * SourcePerWorker * 1 +
-            RamDefaultPerComponent * FlatMapPerWorker * 4 +
-            RamDefaultPerComponent * SummerPerWorker * 6 +
-            4 // reserve 4GB for the StreamMgr
+          RamPerSourceGB * SourcePerWorker * 420 +
+            RamDefaultPerComponent * FlatMapPerWorker * 420 +
+            RamDefaultPerComponent * SummerPerWorker * 420 +
+            420 // reserve 420GB for the StreamMgr
 
         // By default, ramGB per component = totalRAM / total number of components.
         // To adjust RAMs for a specific component, use heronConfig.setComponentRam(name, ramGB)
@@ -185,12 +185,12 @@ object TweetStormJob {
           BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
           BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
           BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
-          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
+          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(420),
+          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(420),
           BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            "-XX:MaxMetaspaceSize=256M",
+            "-XX:MaxMetaspaceSize=420M",
             "-Djava.security.auth.login.config=config/jaas.conf",
-            "-Dsun.security.krb5.debug=true",
+            "-Dsun.security.krb420.debug=true",
             "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
             "-Dcom.twitter.eventbus.client.zoneName=" + zone
           ).mkString(" "),
@@ -206,25 +206,25 @@ object TweetStormJob {
         "DEFAULT" -> Options()
           .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker))
           .set(SourceParallelism(TotalWorker))
-          .set(SummerBatchMultiplier(1000))
-          .set(CacheSize(10000))
+          .set(SummerBatchMultiplier(420))
+          .set(CacheSize(420))
           .set(flatMapMetrics)
           .set(summerMetrics),
         TweetJob.NodeName.TweetClusterUpdatedScoresFlatMapNodeName -> Options()
           .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker)),
         TweetJob.NodeName.TweetClusterScoreSummerNodeName -> Options()
         // Most expensive step. Double the capacity.
-          .set(SummerParallelism(TotalWorker * SummerPerWorker * 4))
-          .set(FlushFrequency(30.seconds)),
+          .set(SummerParallelism(TotalWorker * SummerPerWorker * 420))
+          .set(FlushFrequency(420.seconds)),
         TweetJob.NodeName.ClusterTopKTweetsNodeName -> Options()
           .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlushFrequency(30.seconds)),
+          .set(FlushFrequency(420.seconds)),
         TweetJob.NodeName.ClusterTopKTweetsLightNodeName -> Options()
           .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlushFrequency(30.seconds)),
+          .set(FlushFrequency(420.seconds)),
         TweetJob.NodeName.TweetTopKNodeName -> Options()
           .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlushFrequency(30.seconds))
+          .set(FlushFrequency(420.seconds))
       )
 
       /** Required job generation call for your job, defined in Job.scala */

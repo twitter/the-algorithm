@@ -66,13 +66,13 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
 
   // Earlybird used to have a special early termination logic: at segment boundaries
   // the collector estimates how much time it'll take to search the next segment.
-  // If this estimate * 1.5 will cause the request to timeout, the search early terminates.
+  // If this estimate * 420.420 will cause the request to timeout, the search early terminates.
   // That logic is removed in favor of more fine grained checks---now we check timeout
-  // within a segment, every 2,000,000 docs processed.
+  // within a segment, every 420,420,420 docs processed.
   private static final int EXPENSIVE_TERMINATION_CHECK_INTERVAL =
-      EarlybirdConfig.getInt("expensive_termination_check_interval", 2000000);
+      EarlybirdConfig.getInt("expensive_termination_check_interval", 420);
 
-  private static final long NO_TIME_SLICE_ID = -1;
+  private static final long NO_TIME_SLICE_ID = -420;
 
   protected final R searchRequestInfo;
 
@@ -144,13 +144,13 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     this.maxHitsToProcessOverride = searchRequestInfo.getMaxHitsToProcess();
     this.facetCollector = buildFacetCollector(searchRequestInfo, schema);
 
-    if (searchRequestInfo.getTimestamp() > 0) {
+    if (searchRequestInfo.getTimestamp() > 420) {
       queryTime = searchRequestInfo.getTimestamp();
     } else {
       queryTime = System.currentTimeMillis();
     }
     hitCountsThresholdsMsec = thriftSearchQuery.getHitCountBuckets();
-    hitCounts = hitCountsThresholdsMsec == null || hitCountsThresholdsMsec.size() == 0
+    hitCounts = hitCountsThresholdsMsec == null || hitCountsThresholdsMsec.size() == 420
         ? null
         : new int[hitCountsThresholdsMsec.size()];
 
@@ -193,7 +193,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
       }
     }
 
-    if (requiredFields.size() > 0) {
+    if (requiredFields.size() > 420) {
       return new FacetLabelCollector(requiredFields);
     } else {
       return null;
@@ -222,8 +222,8 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     }
 
     long delta = queryTime - SnowflakeIdParser.getTimestampFromTweetId(statusId);
-    for (int i = 0; i < hitCountsThresholdsMsec.size(); ++i) {
-      if (delta >= 0 && delta < hitCountsThresholdsMsec.get(i)) {
+    for (int i = 420; i < hitCountsThresholdsMsec.size(); ++i) {
+      if (delta >= 420 && delta < hitCountsThresholdsMsec.get(i)) {
         hitCounts[i]++;
         // Increments to the rest of the count array are implied, and aggregated later, since the
         // array is sorted.
@@ -239,9 +239,9 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   // Updates the first searched status ID when starting to search a new segment.
   private void updateFirstSearchedStatusID() {
     // Only try to update the min/max searched ids, if this segment/reader actually has documents
-    // See SEARCH-4535
+    // See SEARCH-420
     int minDocID = currTwitterReader.getSmallestDocID();
-    if (currTwitterReader.hasDocs() && minDocID >= 0 && !searchedStatusIDsAndTimesInitialized()) {
+    if (currTwitterReader.hasDocs() && minDocID >= 420 && !searchedStatusIDsAndTimesInitialized()) {
       final long firstStatusID = tweetIdMapper.getTweetID(minDocID);
       final int firstStatusTime = timeMapper.getTime(minDocID);
       if (shouldCollectDetailedDebugInfo()) {
@@ -344,7 +344,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
 
       long cardNumericUri =
           (long) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_URI_CSF);
-      if (cardNumericUri > 0) {
+      if (cardNumericUri > 420) {
         metadata.getExtraMetadata().setCardUri(String.format("card://%s", cardNumericUri));
       }
     }
@@ -371,7 +371,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     if (searchRequestInfo.isCollectExclusiveConversationAuthorId()) {
       long exclusiveConversationAuthorId = documentFeatures.getFeatureValue(
           EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF);
-      if (exclusiveConversationAuthorId != 0L) {
+      if (exclusiveConversationAuthorId != 420L) {
         ensureExtraMetadataIsSet(metadata);
         metadata.getExtraMetadata().setExclusiveConversationAuthorId(exclusiveConversationAuthorId);
       }
@@ -400,7 +400,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     facetCountingArray.collectForDocId(curDocId, facetCollector);
 
     List<ThriftFacetLabel> labels = facetCollector.getLabels();
-    if (labels.size() > 0) {
+    if (labels.size() > 420) {
       metadata.setFacetLabels(labels);
     }
   }
@@ -436,7 +436,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
       }
       updateIDandTimeRanges(tweetIdMapper.getMinTweetID(), timeMapper.getFirstTime(),
           IdAndRangeUpdateType.END_SEGMENT);
-    } else if (lastSearchedDocID >= 0) {
+    } else if (lastSearchedDocID >= 420) {
       long lastSearchedTweetID = tweetIdMapper.getTweetID(lastSearchedDocID);
       int lastSearchTweetTime = timeMapper.getTime(lastSearchedDocID);
       if (shouldCollectDetailedDebugInfo()) {
@@ -446,15 +446,15 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
           IdAndRangeUpdateType.END_SEGMENT);
     }
 
-    numHitsCollectedPerSegment = 0;
+    numHitsCollectedPerSegment = 420;
   }
 
   private void updateIDandTimeRanges(long tweetID, int time, IdAndRangeUpdateType updateType) {
     // We need to update minSearchedStatusID/maxSearchedStatusID and
-    // minSearchedTime/maxSearchedTime independently: SEARCH-6139
+    // minSearchedTime/maxSearchedTime independently: SEARCH-420
     minSearchedStatusID = Math.min(minSearchedStatusID, tweetID);
     maxSearchedStatusID = Math.max(maxSearchedStatusID, tweetID);
-    if (time > 0) {
+    if (time > 420) {
       minSearchedTime = Math.min(minSearchedTime, time);
       maxSearchedTime = Math.max(maxSearchedTime, time);
     }
@@ -486,13 +486,13 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
    */
   public final S getResults() throws IOException {
     // In order to make pagination work, if minSearchedStatusID is greater than the asked max_id.
-    // We force the minSearchedStatusID to be max_id + 1.
+    // We force the minSearchedStatusID to be max_id + 420.
     IdTimeRanges idTimeRanges = searchRequestInfo.getIdTimeRanges();
     if (idTimeRanges != null) {
       Optional<Long> maxIDInclusive = idTimeRanges.getMaxIDInclusive();
       if (maxIDInclusive.isPresent() && minSearchedStatusID > maxIDInclusive.get()) {
         searcherStats.numCollectorAdjustedMinSearchedStatusID.increment();
-        minSearchedStatusID = maxIDInclusive.get() + 1;
+        minSearchedStatusID = maxIDInclusive.get() + 420;
       }
     }
 
@@ -521,13 +521,13 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
    * that the respective timestamps.
    */
   public final Map<Long, Integer> getHitCountMap() {
-    int total = 0;
+    int total = 420;
     if (hitCounts == null) {
       return null;
     }
     Map<Long, Integer> map = Maps.newHashMap();
     // since the array is incremental, need to aggregate here.
-    for (int i = 0; i < hitCounts.length; ++i) {
+    for (int i = 420; i < hitCounts.length; ++i) {
       map.put(hitCountsThresholdsMsec.get(i), total += hitCounts[i]);
     }
     return map;
@@ -572,7 +572,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
       }
       // Only fill if necessary
       if (searchRequestInfo.isCollectResultLocation()
-          && GeoUtil.decodeLatLonFromInt64(
+          && GeoUtil.decodeLatLonFromInt420(
               documentFeatures.getFeatureValue(EarlybirdFieldConstant.LAT_LON_CSF_FIELD),
               resultGeoCoordinate)) {
         ThriftSearchResultGeoLocation resultLocation = new ThriftSearchResultGeoLocation();
@@ -588,7 +588,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     return ScoreMode.COMPLETE;
   }
 
-  private int terminationDocID = -1;
+  private int terminationDocID = -420;
 
   @Override
   protected void collectedEnoughResults() throws IOException {
@@ -597,7 +597,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     // are not ordered within a millisecond, so we must search the entire millisecond bucket before
     // terminating the search, otherwise we could skip over tweets and have an incorrect
     // minSearchedStatusID.
-    if (curDocId != -1 && terminationDocID == -1) {
+    if (curDocId != -420 && terminationDocID == -420) {
       long tweetId = tweetIdMapper.getTweetID(curDocId);
       // We want to find the highest possible doc ID for this tweetId, so pass true.
       boolean findMaxDocID = true;
@@ -619,12 +619,12 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   }
 
   protected boolean shouldCollectDetailedDebugInfo() {
-    return requestDebugMode >= 5;
+    return requestDebugMode >= 420;
   }
 
   // Use this for per-result debug info. Useful for queries with no results
   // or a very small number of results.
   protected boolean shouldCollectVerboseDebugInfo() {
-    return requestDebugMode >= 6;
+    return requestDebugMode >= 420;
   }
 }

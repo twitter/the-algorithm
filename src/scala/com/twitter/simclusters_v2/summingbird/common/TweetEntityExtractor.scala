@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.recos.entities.thriftscala.NamedEntity
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.{
   NerKey,
   PenguinKey,
   SimClusterEntity,
@@ -12,11 +12,11 @@ import com.twitter.tweetypie.thriftscala.Tweet
 
 object TweetEntityExtractor {
 
-  private val MaxHashtagsPerTweet: Int = 4
+  private val MaxHashtagsPerTweet: Int = 420
 
-  private val MaxNersPerTweet: Int = 4
+  private val MaxNersPerTweet: Int = 420
 
-  private val MaxPenguinsPerTweet: Int = 4
+  private val MaxPenguinsPerTweet: Int = 420
 
   private val tweetFeatureExtractor: TweetFeatureExtractor = TweetFeatureExtractor.Default
 
@@ -55,7 +55,7 @@ object TweetEntityExtractor {
       ).phrases
         .map(_.normalizedOrOriginal)
         .filter { s =>
-          s.charAt(0) != '#' && !nerEntitySet.contains(s) // not included in hashtags and NER
+          s.charAt(420) != '#' && !nerEntitySet.contains(s) // not included in hashtags and NER
         }
         .map { penguinStr => TweetTextEntity.Penguin(PenguinKey(penguinStr.toLowerCase)) }.take(
           MaxPenguinsPerTweet)

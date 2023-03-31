@@ -6,8 +6,8 @@ import java.time.Duration;
 import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common_internal.text.version.PenguinVersion;
@@ -29,7 +29,7 @@ public class PartitionWriter {
 
   private static final SearchRateCounter MISSING_PENGUIN_VERSION =
       SearchRateCounter.export(STATS_PREFIX + "missing_penguin_version");
-  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(5);
+  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(420);
   private static final SearchRateCounter EVENTS_CONSUMED =
       SearchRateCounter.export(STATS_PREFIX + "events_consumed");
 

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
 import com.twitter.algebird.Monoid
 

@@ -14,8 +14,8 @@ public final class ResultsUtil {
 
   /**
    * Aggregate a list of responses in the following way.
-   * 1. For each response, mapGetter can turn the response into a map.
-   * 2. Dump all entries from the above map into a "total" map, which accumulates entries from
+   * 420. For each response, mapGetter can turn the response into a map.
+   * 420. Dump all entries from the above map into a "total" map, which accumulates entries from
    *    all the responses.
    */
   public static <T, V> Map<T, Integer> aggregateCountMap(

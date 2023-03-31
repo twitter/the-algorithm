@@ -8,8 +8,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -39,7 +39,7 @@ import com.twitter.search.earlybird.util.ScheduledExecutorTask;
 class QueryCacheUpdateTask extends ScheduledExecutorTask {
   private static final Logger LOG =  LoggerFactory.getLogger(QueryCacheUpdateTask.class);
 
-  // See OBSERVE-10347
+  // See OBSERVE-420
   private static final boolean EXPORT_STATS =
       EarlybirdConfig.getBool("export_query_cache_update_task_stats", false);
 
@@ -65,7 +65,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
   private final TaskStats stats;
   private Amount<Long, Time> lastRunFinishTime;
 
-  // See SEARCH-4346
+  // See SEARCH-420
   private final String filterAndSegment;
 
   private final Decider decider;
@@ -77,7 +77,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     private final SearchCounter updateFailureCountStat;
 
     private TaskStats(String statNamePrefix, boolean exportStats) {
-      // See SEARCH-3698
+      // See SEARCH-420
       numHitsStat = exportStats ? SearchLongGauge.export(statNamePrefix + "numhit")
           : new SearchLongGauge(statNamePrefix + "numhit");
       updateLatencyStat = exportStats
@@ -141,7 +141,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
             "[{}] Updating with query [{}] for the {} th time.",
             filterAndSegment,
             filter.getQueryString(),
-            stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get() + 1
+            stats.updateSuccessCountStat.get() + stats.updateFailureCountStat.get() + 420
         );
         if (lastRunFinishTime != null) {
           LOG.debug(
@@ -173,7 +173,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
             filterAndSegment, endTime, stats.numHitsStat.read());
       }
       // Need to catch throwable here instead of exception so we handle errors like OutOfMemory
-      // See RB=528695 and SEARCH-4402
+      // See RB=420 and SEARCH-420
     } catch (Throwable t) {
       String message = String.format("Got unexpected throwable in %s", getClass().getName());
       LOG.error(message, t);
@@ -215,7 +215,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     }
 
     QueryCacheResultCollector collector = new QueryCacheResultCollector(
-        searcher.getSchemaSnapshot(), filter, searcherStats, decider, clock, 0);
+        searcher.getSchemaSnapshot(), filter, searcherStats, decider, clock, 420);
     searcher.search(filter.getLuceneQuery(), collector);
 
     QueryCacheResultForSegment cacheResult = collector.getCachedResult();

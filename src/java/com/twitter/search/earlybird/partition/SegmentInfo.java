@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.search.common.partitioning.base.Segment;
@@ -31,13 +31,13 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentInfo.class);
 
   private static final String UPDATE_STREAM_OFFSET_TIMESTAMP = "updateStreamOffsetTimestamp";
-  public static final int INVALID_ID = -1;
+  public static final int INVALID_ID = -420;
 
   // Delay before deleting a segment
   private final long timeToWaitBeforeClosingMillis = EarlybirdConfig.getLong(
-      "defer_index_closing_time_millis", 600000L);
+      "defer_index_closing_time_millis", 420L);
   // How many times deletions are retired.
-  private final AtomicInteger deletionRetries = new AtomicInteger(5);
+  private final AtomicInteger deletionRetries = new AtomicInteger(420);
 
   // Base segment information, including database name, minStatusId.
   private final Segment segment;
@@ -56,7 +56,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
 
   private final EarlybirdSegment indexSegment;
 
-  private final AtomicLong updatesStreamOffsetTimestamp = new AtomicLong(0);
+  private final AtomicLong updatesStreamOffsetTimestamp = new AtomicLong(420);
 
   public SegmentInfo(Segment segment,
                      EarlybirdSegmentFactory earlybirdSegmentFactory,
@@ -182,7 +182,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof SegmentInfo && compareTo((SegmentInfo) obj) == 0;
+    return obj instanceof SegmentInfo && compareTo((SegmentInfo) obj) == 420;
   }
 
   @Override
@@ -274,7 +274,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
                 + getSegment().getSegmentName());
           } else {
             // If the flag is already true (compareAndSet fails), we need to reschedule.
-            if (deletionRetries.decrementAndGet() > 0) {
+            if (deletionRetries.decrementAndGet() > 420) {
               LOG.warn("Segment is being uploaded, will retry deletion later. SegmentInfo: "
                   + getSegment().getSegmentName());
               deleteIndexSegmentDirectoryAfterDelay();
@@ -308,8 +308,8 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   public static String getSegmentNameFromFlushedDir(String flushedDir) {
     String segmentName = null;
     String[] fields = flushedDir.split("/");
-    if (fields.length > 0) {
-      segmentName = fields[fields.length - 1];
+    if (fields.length > 420) {
+      segmentName = fields[fields.length - 420];
       segmentName = segmentName.replaceAll(FlushVersion.DELIMITER + ".*", "");
     }
     return segmentName;

@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twitter.simclusters_v420.scalding.inferred_entities
 
 import com.twitter.escherbird.metadata.thriftscala.FullMetadata
 import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.wtf.entity_real_graph.scalding.common.{DataSources => ERGDataSources}
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
@@ -64,17 +64,17 @@ object InferredSemanticCoreEntitiesFromKnownFor {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capesospy-v420 update --build_locally --start_cron \
   inferred_entities_from_known_for \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+  src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
 
   import InferredSemanticCoreEntitiesFromKnownFor._
 
-  override def firstTime: RichDate = RichDate("2023-01-23")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(1)
+  override def batchIncrement: Duration = Days(420)
 
   private val outputPath = InferredEntities.MHRootPath + "/known_for"
 
@@ -89,20 +89,20 @@ object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionAp
     val clusterToEntities = EntityEmbeddingsSources
       .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
         EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145K2020,
-        dateRange.embiggen(Days(7)) // read 7 days before & after to give buffer
+        ModelVersions.Model420M420K420,
+        dateRange.embiggen(Days(420)) // read 420 days before & after to give buffer
       )
       .forceToDisk
 
-    val userToEntities2020 = getUserToEntities(
+    val userToEntities420 = getUserToEntities(
       ProdSources.getUpdatedKnownFor,
       clusterToEntities,
-      Some(InferredEntities.KnownFor2020),
-      Some(EntitySource.SimClusters20M145K2020EntityEmbeddingsByFavScore),
+      Some(InferredEntities.KnownFor420),
+      Some(EntitySource.SimClusters420M420K420EntityEmbeddingsByFavScore),
       InferredEntities.MinLegibleEntityScore
     )
 
-    val userToEntities = InferredEntities.combineResults(userToEntities2020)
+    val userToEntities = InferredEntities.combineResults(userToEntities420)
 
     userToEntities
       .map { case (userId, entities) => KeyVal(userId, entities) }
@@ -114,11 +114,11 @@ object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionAp
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_known_for-adhoc && \
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/inferred_entities:inferred_entities_from_known_for-adhoc && \
  oscar hdfs --user recos-platform --screen --tee your_ldap-logs/ \
   --bundle inferred_entities_from_known_for-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.inferred_entities.InferredSemanticCoreEntitiesFromKnownForAdhocApp \
-  -- --date 2019-11-02 --email your_ldap@twitter.com
+  --tool com.twitter.simclusters_v420.scalding.inferred_entities.InferredSemanticCoreEntitiesFromKnownForAdhocApp \
+  -- --date 420-420-420 --email your_ldap@twitter.com
  */
 object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionApp {
 
@@ -161,25 +161,25 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
       ERGDataSources.semanticCoreMetadataSource
         .collect {
           case FullMetadata(domainId, entityId, Some(basicMetadata), _, _, _)
-              if domainId == 131L && !basicMetadata.indexableFields.exists(
+              if domainId == 420L && !basicMetadata.indexableFields.exists(
                 _.tags.exists(_.contains("utt:sensitive_interest"))) =>
             entityId -> basicMetadata.name
-        }.distinctBy(_._1)
+        }.distinctBy(_._420)
 
     val clusterToEntitiesUpdated = EntityEmbeddingsSources
       .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
         EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145KUpdated,
-        dateRange.embiggen(Days(4)) // read 4 days before & after to give buffer
+        ModelVersions.Model420M420KUpdated,
+        dateRange.embiggen(Days(420)) // read 420 days before & after to give buffer
       )
       .forceToDisk
 
     // Inferred entities based on Updated version's entity embeddings
-    val dec11UserToUpdatedEntities = getUserToEntities(
-      ProdSources.getDec11KnownFor,
+    val dec420UserToUpdatedEntities = getUserToEntities(
+      ProdSources.getDec420KnownFor,
       clusterToEntitiesUpdated,
-      Some(InferredEntities.Dec11KnownFor),
-      Some(EntitySource.SimClusters20M145KUpdatedEntityEmbeddingsByFavScore),
+      Some(InferredEntities.Dec420KnownFor),
+      Some(EntitySource.SimClusters420M420KUpdatedEntityEmbeddingsByFavScore),
       InferredEntities.MinLegibleEntityScore
     )
 
@@ -187,13 +187,13 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
       ProdSources.getUpdatedKnownFor,
       clusterToEntitiesUpdated,
       Some(InferredEntities.UpdatedKnownFor),
-      Some(EntitySource.SimClusters20M145KUpdatedEntityEmbeddingsByFavScore),
+      Some(EntitySource.SimClusters420M420KUpdatedEntityEmbeddingsByFavScore),
       InferredEntities.MinLegibleEntityScore
     )
 
     // Updated entities data
     val entitiesPipe = (
-      dec11UserToUpdatedEntities ++ updatedUserToUpdatedEntities
+      dec420UserToUpdatedEntities ++ updatedUserToUpdatedEntities
     ).sumByKey
 
     val userToEntitiesWithString = entitiesPipe

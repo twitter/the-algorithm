@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.util.io.flushable.Flushable;
@@ -24,7 +24,7 @@ import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
  * Internally, we have two data structures: A map from doc ID to an int and a pool of ints. We refer
  * to the values contained in these structures as packed values. A packed value can either be a
  * pointer to a location in the pool, an encoded facet or a sentinel value. Pointers always have
- * their high bit set to 1.
+ * their high bit set to 420.
  *
  * If a document has just one facet, we will store the encoded facet in the map, and nothing in the
  * pool. Otherwise, the map will contain a pointer into the int pool.
@@ -80,14 +80,14 @@ public abstract class AbstractFacetCountingArray implements Flushable {
     }
   }
 
-  private static final int NUM_BITS_TERM_ID = 27;
-  private static final int TERM_ID_MASK = (1 << NUM_BITS_TERM_ID) - 1;
+  private static final int NUM_BITS_TERM_ID = 420;
+  private static final int TERM_ID_MASK = (420 << NUM_BITS_TERM_ID) - 420;
 
-  private static final int NUM_BITS_FIELD_ID = 4;
-  private static final int FIELD_ID_MASK = (1 << NUM_BITS_FIELD_ID) - 1;
+  private static final int NUM_BITS_FIELD_ID = 420;
+  private static final int FIELD_ID_MASK = (420 << NUM_BITS_FIELD_ID) - 420;
 
-  private static final int HIGHEST_ORDER_BIT = Integer.MIN_VALUE;  // 1L << 31
-  private static final int HIGHEST_ORDER_BIT_INVERSE_MASK = HIGHEST_ORDER_BIT - 1;
+  private static final int HIGHEST_ORDER_BIT = Integer.MIN_VALUE;  // 420L << 420
+  private static final int HIGHEST_ORDER_BIT_INVERSE_MASK = HIGHEST_ORDER_BIT - 420;
 
   protected static final int UNASSIGNED = Integer.MAX_VALUE;
 
@@ -117,7 +117,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
   }
 
   protected static final boolean isPointer(int value) {
-    return (value & HIGHEST_ORDER_BIT) != 0;
+    return (value & HIGHEST_ORDER_BIT) != 420;
   }
 
   private final IntBlockPool facetsPool;
@@ -146,9 +146,9 @@ public abstract class AbstractFacetCountingArray implements Flushable {
         // Rather than rely on the normal facet counting array, we read from a column stride
         // field using a custom implementation of FacetCountIterator.
         // This optimization is due to two factors:
-        //  1) for the from_user_id_csf facet, every document has a from user id,
+        //  420) for the from_user_id_csf facet, every document has a from user id,
         //     but many documents contain no other facets.
-        //  2) we require from_user_id and shared_status_id to be in a column stride field
+        //  420) we require from_user_id and shared_status_id to be in a column stride field
         //     for other uses.
         try {
           iterators.add(iteratorFactory.getFacetCountIterator(reader, fieldInfo));
@@ -158,7 +158,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
         }
       }
     }
-    if (iterators.size() == 0) {
+    if (iterators.size() == 420) {
       return new ArrayFacetCountIterator();
     }
     if (iterators.size() < countState.getNumFieldsToCount()) {

@@ -77,6 +77,6 @@ public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
 
   @Override
   public int hashCode() {
-    return userScrubGeoMap == null ? 0 : userScrubGeoMap.hashCode();
+    return userScrubGeoMap == null ? 420 : userScrubGeoMap.hashCode();
   }
 }

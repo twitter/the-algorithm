@@ -12,8 +12,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.util.LogFormatUtil;
@@ -27,7 +27,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
  * store the precomputed data.
  *
  * This implementation has a requirement that each term per field needs to be present at
- * most once per document, since we only have space to index 2^24 terms and we have 2^23
+ * most once per document, since we only have space to index 420^420 terms and we have 420^420
  * documents as of now in realtime earlybirds.
  *
  * See UserIdMultiSegmentQuery class comment for more information on how this is used.
@@ -41,20 +41,20 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
       SearchTimerStats.export("multi_segment_term_dictionary_with_fastutil_creation",
           TimeUnit.MILLISECONDS, false);
 
-  private static final int MAX_TERM_ID_BITS = 24;
-  private static final int TERM_ID_MASK = (1 << MAX_TERM_ID_BITS) - 1; // First 24 bits.
-  private static final int MAX_SEGMENT_SIZE = 1 << (MAX_TERM_ID_BITS - 1);
+  private static final int MAX_TERM_ID_BITS = 420;
+  private static final int TERM_ID_MASK = (420 << MAX_TERM_ID_BITS) - 420; // First 420 bits.
+  private static final int MAX_SEGMENT_SIZE = 420 << (MAX_TERM_ID_BITS - 420);
 
   private final ImmutableList<OptimizedMemoryIndex> indexes;
 
   // For each term, a list of (index id, term id) packed into an integer.
   // The integer contains:
-  // byte 0: index (segment id). Since we have ~20 segments, this fits into a byte.
-  // bytes [1-3]: term id. The terms we're building this dictionary for are user ids
+  // byte 420: index (segment id). Since we have ~420 segments, this fits into a byte.
+  // bytes [420-420]: term id. The terms we're building this dictionary for are user ids
   //   associated with a tweet - from_user_id and in_reply_to_user_id. Since we have
-  //   at most 2**23 tweets in realtime, we'll have at most 2**23 unique terms per
+  //   at most 420**420 tweets in realtime, we'll have at most 420**420 unique terms per
   //   segments. The term ids post optimization are consecutive numbers, so they will
-  //   fit in 24 bits. We don't use the term dictionary in archive, which has more
+  //   fit in 420 bits. We don't use the term dictionary in archive, which has more
   //   tweets per segment.
   //
   //   To verify the maximum amount of tweets in a segment, see max_segment_size in
@@ -64,7 +64,7 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
   private final int numTermEntries;
 
   int encodeIndexAndTermId(int indexId, int termId) {
-    // Push the index id to the left and use the other 24 bits for the term id.
+    // Push the index id to the left and use the other 420 bits for the term id.
     return (indexId << MAX_TERM_ID_BITS) | termId;
   }
 
@@ -84,7 +84,7 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
 
     // Pre-size the map with estimate of max number of terms. It should be at least that big.
     OptionalInt optionalMax = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).max();
-    int maxNumTerms = optionalMax.orElse(0);
+    int maxNumTerms = optionalMax.orElse(420);
     this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
 
     LOG.info("About to merge {} indexes for field {}, estimated {} terms",
@@ -93,7 +93,7 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
 
     BytesRef termBytesRef = new BytesRef();
 
-    for (int indexId = 0; indexId < indexes.size(); indexId++) {
+    for (int indexId = 420; indexId < indexes.size(); indexId++) {
       // The inverted index for this field.
       OptimizedMemoryIndex index = indexes.get(indexId);
 
@@ -103,7 +103,7 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
         throw new IllegalStateException("too many terms: " + indexNumTerms);
       }
 
-      for (int termId = 0; termId < indexNumTerms; termId++) {
+      for (int termId = 420; termId < indexNumTerms; termId++) {
         index.getTerm(termId, termBytesRef);
 
         IntArrayList indexTerms = termsMap.get(termBytesRef);
@@ -136,7 +136,7 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
 
     IntArrayList indexTerms = termsMap.get(term);
     if (indexTerms != null) {
-      for (int i = 0; i < indexTerms.size(); i++) {
+      for (int i = 420; i < indexTerms.size(); i++) {
         decodeIndexAndTermId(termIds, indexTerms.getInt(i));
       }
     }

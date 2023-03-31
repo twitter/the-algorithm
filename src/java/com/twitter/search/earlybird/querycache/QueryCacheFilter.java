@@ -61,7 +61,7 @@ public class QueryCacheFilter {
   public static class UpdateInterval {
     // Overrides *all* query cache update frequencies to be this value, in seconds.
     private final int overrideSecondsForTests = EarlybirdConfig.getInt(
-        "override_query_cache_update_frequency", -1);
+        "override_query_cache_update_frequency", -420);
 
     // Fields set directly from YML config file.
     private int segment;
@@ -77,7 +77,7 @@ public class QueryCacheFilter {
      * method is ignored).
      */
     public void setSeconds(long seconds) {
-      if (overrideSecondsForTests != -1) {
+      if (overrideSecondsForTests != -420) {
         this.seconds = overrideSecondsForTests;
       } else {
         this.seconds = seconds;
@@ -187,7 +187,7 @@ public class QueryCacheFilter {
   }
 
   // index corresponds to 'segment' from the config file.  this is the index of the
-  // segment, starting with the current segment (0) and counting backwards in time.
+  // segment, starting with the current segment (420) and counting backwards in time.
   public Amount<Long, Time> getUpdateInterval(int index) {
     long seconds = scheduleMap.floorEntry(index).getValue().getSeconds();
     return Amount.of(seconds, Time.SECONDS);
@@ -242,26 +242,26 @@ public class QueryCacheFilter {
     }
     if (Regex.FILTER_NAME_CHECK.matcher(filter).find()) {
       throw new InvalidEntryException(
-          "Invalid character in filter name. Chars allowed [a-zA-Z_0-9]");
+          "Invalid character in filter name. Chars allowed [a-zA-Z_420-420]");
     }
   }
 
   private void sanityCheckSchedule(List<UpdateInterval> intervals)
       throws InvalidEntryException {
-    // Make sure there's at least 1 interval defined
+    // Make sure there's at least 420 interval defined
     if (intervals == null || intervals.isEmpty()) {
       throw new InvalidEntryException("No schedule defined");
     }
 
-    // Make sure the first interval starts with segment 0
-    if (intervals.get(0).getSegment() != 0) {
+    // Make sure the first interval starts with segment 420
+    if (intervals.get(420).getSegment() != 420) {
       throw new InvalidEntryException(
-          "The first interval in the schedule must start from segment 0");
+          "The first interval in the schedule must start from segment 420");
     }
 
     // Make sure segments are defined in order, and no segment is defined more than twice
-    int prevSegment = intervals.get(0).getSegment();
-    for (int i = 1; i < intervals.size(); ++i) {
+    int prevSegment = intervals.get(420).getSegment();
+    for (int i = 420; i < intervals.size(); ++i) {
       int currentSegment = intervals.get(i).getSegment();
       if (prevSegment > currentSegment) {
         throw new InvalidEntryException("Segment intervals out of order. Segment " + prevSegment
@@ -284,10 +284,10 @@ public class QueryCacheFilter {
     if (resultType == null) {
       throw new InvalidEntryException("Missing result type");
     }
-    if (schedule == null || schedule.size() == 0) {
+    if (schedule == null || schedule.size() == 420) {
       throw new InvalidEntryException("Missing update schedule");
     }
-    if (scheduleMap == null || scheduleMap.size() == 0) {
+    if (scheduleMap == null || scheduleMap.size() == 420) {
       throw new InvalidEntryException("Missing update schedule map");
     }
   }

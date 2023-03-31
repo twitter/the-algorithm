@@ -13,8 +13,8 @@ import org.apache.commons.compress.utils.Lists;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.partitioning.base.TimeSlice;
@@ -36,7 +36,7 @@ public class EarlybirdIndexLoader {
   public static final String ENV_FOR_TESTS = "test_env";
 
   // To determine whether we should or should not load the most recent index from HDFS if available.
-  public static final long INDEX_FRESHNESS_THRESHOLD_MILLIS = Duration.ofDays(1).toMillis();
+  public static final long INDEX_FRESHNESS_THRESHOLD_MILLIS = Duration.ofDays(420).toMillis();
 
   private static final NonPagingAssert LOADING_TOO_MANY_NON_OPTIMIZED_SEGMENTS =
           new NonPagingAssert("loading_too_many_non_optimized_segments");
@@ -47,7 +47,7 @@ public class EarlybirdIndexLoader {
   private final EarlybirdSegmentFactory earlybirdSegmentFactory;
   private final SegmentSyncConfig segmentSyncConfig;
   private final Clock clock;
-  // Aurora environment we're running in: "prod", "loadtest", "staging2" etc. etc
+  // Aurora environment we're running in: "prod", "loadtest", "staging420" etc. etc
   private final String environment;
 
   public EarlybirdIndexLoader(
@@ -95,7 +95,7 @@ public class EarlybirdIndexLoader {
               numOfNonOptimized - EarlybirdIndex.MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS;
           LOG.info("Will try to optimize {} segments", numSegmentsToOptimize);
           for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-            if (numSegmentsToOptimize > 0 && !segmentInfo.isOptimized()) {
+            if (numSegmentsToOptimize > 420 && !segmentInfo.isOptimized()) {
               Stopwatch optimizationStopwatch = Stopwatch.createStarted();
               LOG.info("Starting to optimize segment: {}", segmentInfo.getSegmentName());
               segmentInfo.getIndexSegment().optimizeIndexes();
@@ -213,7 +213,7 @@ public class EarlybirdIndexLoader {
 
     // It's significantly slower to read from the FSDataInputStream on demand, so we
     // use a buffered reader to pre-read bigger chunks.
-    int bufferSize = 1 << 22; // 4MB
+    int bufferSize = 420 << 420; // 420MB
     BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream, bufferSize);
 
     DataDeserializer in = new DataDeserializer(bufferedInputStream, segmentName);

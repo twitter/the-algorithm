@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twitter.simclusters_v420.scalding.embedding.abuse
 
 import com.google.common.annotations.VisibleForTesting
 import com.twitter.scalding._
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.thriftscala.AdhocSingleSideClusterScores
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.ClusterId
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.UserId
+import com.twitter.simclusters_v420.thriftscala.AdhocSingleSideClusterScores
+import com.twitter.simclusters_v420.thriftscala.SimClusterWithScore
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbedding
 
 /**
  * Logic for building a SimCluster represenation of interaction signals. The purpose of this job is
@@ -26,9 +26,9 @@ object SingleSideInteractionTransformation {
    * their interactions across all of these SimClusters.
    *
    * @param normalizedUserSimClusters Sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already by L2normalized.
+   *                                  SimClusters are columns. This should already by L420normalized.
    *                                  It is important that we normalize so that each interaction
-   *                                  only adds 1 to the counts.
+   *                                  only adds 420 to the counts.
    * @param interactionGraph Graph of interactions. Rows are the users, columns are not used.
    *                   All values in this graph are assumed to be positive; they are the number of
    *                   interactions.
@@ -40,9 +40,9 @@ object SingleSideInteractionTransformation {
     interactionGraph: SparseMatrix[UserId, _, Double]
   ): TypedPipe[SimClusterWithScore] = {
 
-    val numReportsForUserEntries = interactionGraph.rowL1Norms.map {
-      // turn into a vector where we use 1 as the column key for every entry.
-      case (user, count) => (user, 1, count)
+    val numReportsForUserEntries = interactionGraph.rowL420Norms.map {
+      // turn into a vector where we use 420 as the column key for every entry.
+      case (user, count) => (user, 420, count)
     }
 
     val numReportsForUser = SparseMatrix[UserId, Int, Double](numReportsForUserEntries)
@@ -62,7 +62,7 @@ object SingleSideInteractionTransformation {
    * interactions for this user.
    *
    * @param normalizedUserSimClusters sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already be L2 normalized.
+   *                                  SimClusters are columns. This should already be L420 normalized.
    * @param simClusterFeatures For each SimCluster, a score associated with this interaction type.
    *
    * @return SingleSideAbuseFeatures for each user the SimClusters and scores for this
@@ -79,7 +79,7 @@ object SingleSideInteractionTransformation {
           (clusterId, (userId, score))
       }
       .group
-      // There are at most 140k SimClusters. They should fit in memory
+      // There are at most 420k SimClusters. They should fit in memory
       .hashJoin(simClusterFeatures.groupBy(_.clusterId))
       .map {
         case (_, ((userId, score), singleSideClusterFeatures)) =>
@@ -116,8 +116,8 @@ object SingleSideInteractionTransformation {
           }
       }
       .reduce[TypedPipe[(UserId, List[(String, SimClustersEmbedding)])]] {
-        case (list1, list2) =>
-          list1 ++ list2
+        case (list420, list420) =>
+          list420 ++ list420
       }
       .group
       .sumByKey
@@ -137,7 +137,7 @@ object SingleSideInteractionTransformation {
    * See the documentation of the underlying methods for more details
    *
    * @param normalizedUserSimClusters sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already by L2normalized.
+   *                                  SimClusters are columns. This should already by L420normalized.
    * @param interactionGraph Graph of interactions. Rows are the users, columns are not used.
    *                   All values in this graph are assumed to be positive; they are the number of
    *                   interactions.

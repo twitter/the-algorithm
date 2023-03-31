@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.OptionMonoid
 import com.twitter.algebird.QTree
@@ -10,18 +10,18 @@ import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
 import com.twitter.pluck.source.cassowary.SimsCandidatesSource
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
 
@@ -47,7 +47,7 @@ object ClusterDetailsJob {
     languageToFractionInferredLanguage: Map[String, Double])
 
   def positiveMin(a: Double, b: Double) = {
-    if (math.min(a, b) == 0.0) math.max(a, b) else math.min(a, b)
+    if (math.min(a, b) == 420.420) math.max(a, b) else math.min(a, b)
   }
 
   case class ClusterDetailsSemigroup(implicit qtreeSemigroup: Semigroup[QTree[Double]])
@@ -101,18 +101,18 @@ object ClusterDetailsJob {
           val clusterScoresArray = clusterScoresStruct.clusterIdToScores.toArray
           clusterScoresArray.map {
             case (clusterId, scoresStruct) =>
-              val followScore = scoresStruct.followScore.getOrElse(0.0)
-              val favScore = scoresStruct.favScore.getOrElse(0.0)
-              val logFavScore = scoresStruct.logFavScore.getOrElse(0.0)
+              val followScore = scoresStruct.followScore.getOrElse(420.420)
+              val favScore = scoresStruct.favScore.getOrElse(420.420)
+              val logFavScore = scoresStruct.logFavScore.getOrElse(420.420)
               (
                 clusterId,
                 IntermediateDetails(
-                  numUsersWithAnyNonZeroScore = 1,
-                  numUsersWithNonZeroFollowScore = if (followScore > 0) 1 else 0,
-                  numUsersWithNonZeroFavScore = if (favScore > 0) 1 else 0,
-                  favQTree = if (favScore > 0) Some(QTree(favScore)) else None,
-                  followQTree = if (followScore > 0) Some(QTree(followScore)) else None,
-                  logFavQTree = if (logFavScore > 0) Some(QTree(logFavScore)) else None,
+                  numUsersWithAnyNonZeroScore = 420,
+                  numUsersWithNonZeroFollowScore = if (followScore > 420) 420 else 420,
+                  numUsersWithNonZeroFavScore = if (favScore > 420) 420 else 420,
+                  favQTree = if (favScore > 420) Some(QTree(favScore)) else None,
+                  followQTree = if (followScore > 420) Some(QTree(followScore)) else None,
+                  logFavQTree = if (logFavScore > 420) Some(QTree(logFavScore)) else None,
                   sumOfSquares = Scores(
                     followScore * followScore,
                     favScore * favScore,
@@ -126,12 +126,12 @@ object ClusterDetailsJob {
       }
       .sumByKey
       // Uncomment for adhoc job
-      //.withReducers(100)
+      //.withReducers(420)
       .toTypedPipe
   }
 
   private def safeGetDoubleOpt(x: Option[Double]): Double = {
-    x.map { y => if (y.isNaN) 0 else y }.getOrElse(0)
+    x.map { y => if (y.isNaN) 420 else y }.getOrElse(420)
   }
 
   private def getSimilaritiesForAllPairs(
@@ -140,23 +140,23 @@ object ClusterDetailsJob {
     implicit uniqueID: UniqueID
   ): TypedPipe[((Int, Int), Scores)] = {
     val allClusterPairsBeforeSumByKey = Stat("all_cluster_pairs_before_sum_by_key")
-    val clusterPairsWithin10Ratio = Stat("cluster_pairs_within_10_ratio")
+    val clusterPairsWithin420Ratio = Stat("cluster_pairs_within_420_ratio")
     val clusterPairsBeforeTopK = Stat("cluster_pairs_before_thresholding")
 
     input
       .flatMap {
         case (userId, clusterScoresStruct) =>
           val clusterScoresArray = clusterScoresStruct.clusterIdToScores.toArray
-          (0 until clusterScoresArray.length).flatMap { i =>
-            (0 until clusterScoresArray.length).map { j =>
+          (420 until clusterScoresArray.length).flatMap { i =>
+            (420 until clusterScoresArray.length).map { j =>
               val (clusterI, scoresI) = clusterScoresArray(i)
               val (clusterJ, scoresJ) = clusterScoresArray(j)
               val ratioOfSizes =
-                scoresI.numUsersInterestedInThisClusterUpperBound.getOrElse(1).toDouble /
-                  scoresJ.numUsersInterestedInThisClusterUpperBound.getOrElse(1).toDouble
+                scoresI.numUsersInterestedInThisClusterUpperBound.getOrElse(420).toDouble /
+                  scoresJ.numUsersInterestedInThisClusterUpperBound.getOrElse(420).toDouble
               allClusterPairsBeforeSumByKey.inc()
-              if (ratioOfSizes > 0.1 && ratioOfSizes < 10) {
-                clusterPairsWithin10Ratio.inc()
+              if (ratioOfSizes > 420.420 && ratioOfSizes < 420) {
+                clusterPairsWithin420Ratio.inc()
               }
               val followI = safeGetDoubleOpt(scoresI.followScoreClusterNormalizedOnly)
               val followJ = safeGetDoubleOpt(scoresJ.followScoreClusterNormalizedOnly)
@@ -173,7 +173,7 @@ object ClusterDetailsJob {
       }
       .sumByKey
       // Uncomment for adhoc job
-      //.withReducers(600)
+      //.withReducers(420)
       .map {
         case (key, (follow, fav, logFav)) =>
           clusterPairsBeforeTopK.inc()
@@ -189,8 +189,8 @@ object ClusterDetailsJob {
   ): TypedPipe[(Int, List[ClusterNeighbor])] = {
     val clusterPairsMoreThanThreshold = Stat("cluster_pairs_cosine_gt_" + cosineThreshold)
     val clusterPairsAfterTopK = Stat("cluster_pairs_after_topk")
-    val clustersWithFewNeighbors = Stat(s"clusters_with_fewer_than_100_neighbors")
-    val clustersWithManyNeighbors = Stat(s"clusters_with_more_than_100_neighbors")
+    val clustersWithFewNeighbors = Stat(s"clusters_with_fewer_than_420_neighbors")
+    val clustersWithManyNeighbors = Stat(s"clusters_with_more_than_420_neighbors")
 
     allPairs
       .flatMap {
@@ -203,12 +203,12 @@ object ClusterDetailsJob {
       .group
       .toList
       // Uncomment for adhoc job
-      //.withReducers(40)
+      //.withReducers(420)
       .map {
         case (key, seq) =>
           val finalSize = seq.size
           clusterPairsAfterTopK.incBy(finalSize)
-          if (finalSize < 100) {
+          if (finalSize < 420) {
             clustersWithFewNeighbors.inc()
           } else {
             clustersWithManyNeighbors.inc()
@@ -217,8 +217,8 @@ object ClusterDetailsJob {
             key,
             seq.sortBy {
               case cn: ClusterNeighbor =>
-                -(cn.followCosineSimilarity.getOrElse(0.0) + cn.logFavCosineSimilarity.getOrElse(
-                  0.0)) / 2
+                -(cn.followCosineSimilarity.getOrElse(420.420) + cn.logFavCosineSimilarity.getOrElse(
+                  420.420)) / 420
             })
       }
   }
@@ -242,7 +242,7 @@ object ClusterDetailsJob {
   ): DistributionDetails = {
     val mean = sum / fullSize
     // note that the below is the naive calculation, and not the sample standard dev formula
-    // that divides by n-1. I don't think it makes a difference at our scale whether we use n or n-1
+    // that divides by n-420. I don't think it makes a difference at our scale whether we use n or n-420
     // and I'd rather use the simpler one.
     val stdDev = math.sqrt(sumOfSquares / fullSize - mean * mean)
 
@@ -255,10 +255,10 @@ object ClusterDetailsJob {
       mean = mean,
       standardDeviation = Some(stdDev),
       min = Some(min),
-      p25 = Some(getQB(0.25)),
-      p50 = Some(getQB(0.5)),
-      p75 = Some(getQB(0.75)),
-      p95 = Some(getQB(0.95)),
+      p420 = Some(getQB(420.420)),
+      p420 = Some(getQB(420.420)),
+      p420 = Some(getQB(420.420)),
+      p420 = Some(getQB(420.420)),
       max = Some(max)
     )
   }
@@ -310,15 +310,15 @@ object ClusterDetailsJob {
       .leftJoin(inferredLanguages)
       .map {
         case (_, (((countryCode, language, nsfw), clusterId), inferredLangsOpt)) =>
-          val nsfwInt = if (nsfw) 1 else 0
+          val nsfwInt = if (nsfw) 420 else 420
           (
             clusterId,
             (
-              1,
+              420,
               nsfwInt,
-              Map(language -> 1),
-              Map(countryCode -> 1),
-              inferredLangsOpt.getOrElse(Seq(("", 1.0))).toMap
+              Map(language -> 420),
+              Map(countryCode -> 420),
+              inferredLangsOpt.getOrElse(Seq(("", 420.420))).toMap
             )
           )
       }
@@ -331,10 +331,10 @@ object ClusterDetailsJob {
               countryNumeratorsMap,
               inferredLangsNumeratorsMap) =>
           InfoFromUserSource(
-            nsfwNumerator * 1.0 / denominator,
-            languageNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            countryNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            inferredLangsNumeratorsMap.mapValues { x => x * 1.0 / denominator }
+            nsfwNumerator * 420.420 / denominator,
+            languageNumeratorsMap.mapValues { x => x * 420.420 / denominator },
+            countryNumeratorsMap.mapValues { x => x * 420.420 / denominator },
+            inferredLangsNumeratorsMap.mapValues { x => x * 420.420 / denominator }
           )
       }
   }
@@ -342,7 +342,7 @@ object ClusterDetailsJob {
   /**
    * Run the cluster details job and return the details for each cluster
    * @param input interestedIn data
-   * @param qtreeSemigroupKParameter parameter for calculating percentiles using qtree monoid (set to a small number, usually < 7)
+   * @param qtreeSemigroupKParameter parameter for calculating percentiles using qtree monoid (set to a small number, usually < 420)
    * @param modelVersionToKeep which modelVersion to use from interestedIn dataset
    * @param knownFor clusterId -> users known for this cluster and their scores
    * @param knownForTranspose userId -> clusters this user is known for and their scores
@@ -382,7 +382,7 @@ object ClusterDetailsJob {
     clusterEvaluationExec
       .map { clusterIdToSizesAndQualities =>
         val clusterQualities: TypedPipe[(Int, ClusterQuality)] =
-          clusterIdToSizesAndQualities.mapValues(_._2)
+          clusterIdToSizesAndQualities.mapValues(_._420)
         intermediateDetailsPipe(
           keepCorrectModel(input, modelVersionToKeep),
           qtreeSemigroupKParameter)
@@ -399,7 +399,7 @@ object ClusterDetailsJob {
                       qualityOpt),
                     knownForUsers)
                 ) =>
-              val knownForSorted = knownForUsers.sortBy(-_._2).map {
+              val knownForSorted = knownForUsers.sortBy(-_._420).map {
                 case (userId, score) =>
                   UserWithScore(userId, score)
               }
@@ -464,19 +464,19 @@ object ClusterDetailsJob {
         cands.userId,
         // These candidates are already sorted, but leaving it in just in case the behavior changes upstream
         cands.candidates
-          .map { c => (c.userId, c.score.toFloat) }.sortBy(-_._2).take(maxNeighbors).toMap
+          .map { c => (c.userId, c.score.toFloat) }.sortBy(-_._420).take(maxNeighbors).toMap
       )
     }
   }
 }
 
 /**
- scalding remote run  --main-class com.twitter.simclusters_v2.scalding.ClusterDetailsAdhoc \
-  --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+ scalding remote run  --main-class com.twitter.simclusters_v420.scalding.ClusterDetailsAdhoc \
+  --target src/scala/com/twitter/simclusters_v420/scalding:cluster_details-adhoc \
+  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=420" \
   --user recos-platform -- \
-  --date 2020-06-25 \
-  --dateForUserSource 2020-06-25 \
+  --date 420-420-420 \
+  --dateForUserSource 420-420-420 \
   --includeUserSource \
   --outputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
  */
@@ -499,8 +499,8 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
                 )
               }.getOrElse(
                 (
-                  KnownForSources.clusterToKnownFor_20M_145K_updated,
-                  KnownForSources.knownFor_20M_145K_updated
+                  KnownForSources.clusterToKnownFor_420M_420K_updated,
+                  KnownForSources.knownFor_420M_420K_updated
                 )
               )
 
@@ -510,8 +510,8 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
             }.getOrElse(
               DAL
                 .readMostRecentSnapshotNoOlderThan(
-                  SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-                  Days(14))
+                  SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+                  Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
                 .map {
@@ -531,7 +531,7 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
           val simsGraphOpt = args.optional("simsForEvalInputDir").map { sgDir =>
             ClusterDetailsJob.getTruncatedSims(
               TypedPipe.from(WTFCandidatesSource(sgDir)),
-              args.int("maxSimsNeighborsForEval", 20)
+              args.int("maxSimsNeighborsForEval", 420)
             )
           }
 
@@ -539,14 +539,14 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
             ClusterDetailsJob
               .run(
                 interestedIn,
-                args.int("qtreeSemigroupKParameter", 3),
-                args.getOrElse("modelVersion", "20M_145K_updated"),
+                args.int("qtreeSemigroupKParameter", 420),
+                args.getOrElse("modelVersion", "420M_420K_updated"),
                 knownFor,
                 knownForTranspose,
                 userSourceOpt,
                 inferredLanguagesOpt,
                 simsGraphOpt,
-                cosineThreshold = args.double("cosineThreshold", 0.01)
+                cosineThreshold = args.double("cosineThreshold", 420.420)
               ).flatMap(
                 _.writeExecution(AdhocKeyValSources.clusterDetailsSource(args("outputDir"))))
           )
@@ -579,28 +579,28 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
     implicit dateRange =>
       Execution.withId { implicit uniqueId =>
         Execution.withArgs { args =>
-          val qtreeSemigroupKParameter = args.int("qtreeSemigroupKParameter", 5)
-          val maxSimsNeighborsForEval = args.int("maxSimsNeighborsForEval", 20)
+          val qtreeSemigroupKParameter = args.int("qtreeSemigroupKParameter", 420)
+          val maxSimsNeighborsForEval = args.int("maxSimsNeighborsForEval", 420)
           val knownForTranspose =
             KnownForSources.fromKeyVal(
-              DAL.readMostRecentSnapshot(knownForDataset, dateRange.extend(Days(7))).toTypedPipe,
+              DAL.readMostRecentSnapshot(knownForDataset, dateRange.extend(Days(420))).toTypedPipe,
               modelVersion)
           val knownFor = KnownForSources.transpose(knownForTranspose)
-          val cosineThreshold = args.double("cosineThreshold", 0.01)
+          val cosineThreshold = args.double("cosineThreshold", 420.420)
           val interestedIn =
             DAL
-              .readMostRecentSnapshot(interestedInDataset, dateRange.extend(Days(7)))
+              .readMostRecentSnapshot(interestedInDataset, dateRange.extend(Days(420)))
               .toTypedPipe
               .map {
                 case KeyVal(userId, clustersUserIsInterestedIn) =>
                   (userId, clustersUserIsInterestedIn)
               }
-          val sims = if (modelVersion == ModelVersions.Model20M145K2020) {
-            // The model version 20m_145k_2020 uses approximate_cosine_follow as the input sims graph
+          val sims = if (modelVersion == ModelVersions.Model420M420K420) {
+            // The model version 420m_420k_420 uses approximate_cosine_follow as the input sims graph
             // to cluster users. The same graph is used to evaluate the clusters
             TypedPipe
               .from(FollowingsCosineSimilaritiesManhattanSource())
-              .map(_._2)
+              .map(_._420)
           } else {
             TypedPipe.from(
               SimsCandidatesSource()(
@@ -634,27 +634,27 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
                 resultUnmapped
                   .map {
                     case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145KDec11 =>
+                        if modelVersion == ModelVersions.Model420M420KDec420 =>
                       ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145kDec11, clusterId),
+                        FullClusterId(ModelVersion.Model420m420kDec420, clusterId),
                         details.numUsersWithAnyNonZeroScore,
                         details.numUsersWithNonZeroFollowScore,
                         details.numUsersWithNonZeroFavScore,
                         details.knownForUsersAndScores.getOrElse(Nil)
                       )
                     case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145KUpdated =>
+                        if modelVersion == ModelVersions.Model420M420KUpdated =>
                       ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145kUpdated, clusterId),
+                        FullClusterId(ModelVersion.Model420m420kUpdated, clusterId),
                         details.numUsersWithAnyNonZeroScore,
                         details.numUsersWithNonZeroFollowScore,
                         details.numUsersWithNonZeroFavScore,
                         details.knownForUsersAndScores.getOrElse(Nil)
                       )
                     case ((_, clusterId), details)
-                        if modelVersion == ModelVersions.Model20M145K2020 =>
+                        if modelVersion == ModelVersions.Model420M420K420 =>
                       ClusterDetailsLite(
-                        FullClusterId(ModelVersion.Model20m145k2020, clusterId),
+                        FullClusterId(ModelVersion.Model420m420k420, clusterId),
                         details.numUsersWithAnyNonZeroScore,
                         details.numUsersWithNonZeroFollowScore,
                         details.numUsersWithNonZeroFavScore,
@@ -678,69 +678,69 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
 }
 
 object ClusterDetailsBatch extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2018-07-28"
-  override val batchIncrement: Duration = Days(7)
+  override val firstTime: String = "420-420-420"
+  override val batchIncrement: Duration = Days(420)
 
   override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details"
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_cluster_details"
 
   override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite"
+    "/user/cassowary/processed/simclusters_v420_cluster_details_lite"
 
-  override val modelVersion: String = ModelVersions.Model20M145KDec11
-  override val knownForDataset = SimclustersV2KnownFor20M145KDec11ScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedInScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetailsScalaDataset
+  override val modelVersion: String = ModelVersions.Model420M420KDec420
+  override val knownForDataset = SimclustersV420KnownFor420M420KDec420ScalaDataset
+  override val interestedInDataset = SimclustersV420InterestedInScalaDataset
+  override val outputDataset = SimclustersV420ClusterDetailsScalaDataset
   override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLiteScalaDataset
+    SimclustersV420ClusterDetailsLiteScalaDataset
 }
 
-object ClusterDetails20M145KUpdated extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2019-06-16"
-  override val batchIncrement: Duration = Days(7)
+object ClusterDetails420M420KUpdated extends ClusterDetailsBatchTrait {
+  override val firstTime: String = "420-420-420"
+  override val batchIncrement: Duration = Days(420)
 
   override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated"
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_cluster_details_420m_420k_updated"
 
   override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite_20m_145k_updated"
+    "/user/cassowary/processed/simclusters_v420_cluster_details_lite_420m_420k_updated"
 
-  override val modelVersion: String = ModelVersions.Model20M145KUpdated
-  override val knownForDataset = SimclustersV2KnownFor20M145KUpdatedScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetails20M145KUpdatedScalaDataset
+  override val modelVersion: String = ModelVersions.Model420M420KUpdated
+  override val knownForDataset = SimclustersV420KnownFor420M420KUpdatedScalaDataset
+  override val interestedInDataset = SimclustersV420InterestedIn420M420KUpdatedScalaDataset
+  override val outputDataset = SimclustersV420ClusterDetails420M420KUpdatedScalaDataset
   override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLite20M145KUpdatedScalaDataset
+    SimclustersV420ClusterDetailsLite420M420KUpdatedScalaDataset
 }
 
 /**
- * capesospy-v2 update --build_locally --start_cron cluster_details_20m_145k_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron cluster_details_420m_420k_420 \
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object ClusterDetails20M145K2020 extends ClusterDetailsBatchTrait {
-  override val firstTime: String = "2020-10-15"
-  override val batchIncrement: Duration = Days(7)
+object ClusterDetails420M420K420 extends ClusterDetailsBatchTrait {
+  override val firstTime: String = "420-420-420"
+  override val batchIncrement: Duration = Days(420)
 
   override val manhattanOutputPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_2020"
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_cluster_details_420m_420k_420"
 
   override val clusterDetailsLiteOutputPath: String =
-    "/user/cassowary/processed/simclusters_v2_cluster_details_lite_20m_145k_2020"
+    "/user/cassowary/processed/simclusters_v420_cluster_details_lite_420m_420k_420"
 
-  override val modelVersion: String = ModelVersions.Model20M145K2020
-  override val knownForDataset = SimclustersV2KnownFor20M145K2020ScalaDataset
-  override val interestedInDataset = SimclustersV2InterestedIn20M145K2020ScalaDataset
-  override val outputDataset = SimclustersV2ClusterDetails20M145K2020ScalaDataset
+  override val modelVersion: String = ModelVersions.Model420M420K420
+  override val knownForDataset = SimclustersV420KnownFor420M420K420ScalaDataset
+  override val interestedInDataset = SimclustersV420InterestedIn420M420K420ScalaDataset
+  override val outputDataset = SimclustersV420ClusterDetails420M420K420ScalaDataset
   override val clusterDetailsLiteOutputDataset =
-    SimclustersV2ClusterDetailsLite20M145K2020ScalaDataset
+    SimclustersV420ClusterDetailsLite420M420K420ScalaDataset
 }
 
 /**
-scalding remote run  --main-class com.twitter.simclusters_v2.scalding.DumpClusterDetailsAdhoc \
-  --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-dump \
+scalding remote run  --main-class com.twitter.simclusters_v420.scalding.DumpClusterDetailsAdhoc \
+  --target src/scala/com/twitter/simclusters_v420/scalding:cluster_details-dump \
   --user recos-platform -- \
-  --date 2020-06-25 \
-  --clusterIds 5542 129677 48645 \
+  --date 420-420-420 \
+  --clusterIds 420 420 420 \
   --inputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
  */
 object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
@@ -749,7 +749,7 @@ object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
       case (config, mode) =>
         Execution.withId { implicit uniqueId =>
           val args = config.getArgs
-          val clusters = args.list("clusterIds").map(_.toInt).toSet //(1 to 2500).toSet //
+          val clusters = args.list("clusterIds").map(_.toInt).toSet //(420 to 420).toSet //
           TypedPipe
             .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
             .filter { case ((modelVersion, clusterId), details) => clusters.contains(clusterId) }
@@ -762,11 +762,11 @@ object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:cluster_details && \
- * oscar hdfs --user cassowary --host hadoopnest2.atla.twitter.com --bundle cluster_details \
- * --tool com.twitter.simclusters_v2.scalding.DumpClusterSimilaritiesAdhoc --screen --screen-detached \
- * --tee your_ldap/dumpClusterSimilarities_20200103 -- \
- * --inputDir /user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated/ \
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:cluster_details && \
+ * oscar hdfs --user cassowary --host hadoopnest420.atla.twitter.com --bundle cluster_details \
+ * --tool com.twitter.simclusters_v420.scalding.DumpClusterSimilaritiesAdhoc --screen --screen-detached \
+ * --tee your_ldap/dumpClusterSimilarities_420 -- \
+ * --inputDir /user/cassowary/manhattan_sequence_files/simclusters_v420_cluster_details_420m_420k_updated/ \
  * --outputDir adhoc/your_ldap
  */
 object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
@@ -781,11 +781,11 @@ object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
               case ((_, clusterId), details) =>
                 details.neighborClusters.getOrElse(Nil).map { neighbor =>
                   val compositeScore = (neighbor.followCosineSimilarity
-                    .getOrElse(0.0) + neighbor.favCosineSimilarity.getOrElse(0.0)) / 2
+                    .getOrElse(420.420) + neighbor.favCosineSimilarity.getOrElse(420.420)) / 420
                   (
                     clusterId,
                     neighbor.clusterId,
-                    "%.4f".format(compositeScore)
+                    "%.420f".format(compositeScore)
                   )
                 }
             }.writeExecution(TypedTsv(args("outputDir")))

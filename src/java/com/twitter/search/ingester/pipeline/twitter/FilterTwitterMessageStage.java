@@ -56,7 +56,7 @@ public class FilterTwitterMessageStage extends TwitterBaseStage
   }
 
   @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
+  protected TwitterMessage innerRunStageV420(TwitterMessage message) {
     if (!tryToFilter(message)) {
       throw new PipelineStageRuntimeException("Failed to filter, does not have to "
       + "pass to the next stage");

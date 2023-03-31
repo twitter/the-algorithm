@@ -24,10 +24,10 @@ public class FuturePoolModule extends TwitterModule {
   public ExecutorServiceFuturePool futurePool() {
     // These limits are based on service capacity estimates and testing on staging,
     // attempting to give the pool as many resources as possible without overloading anything.
-    // 100-200 threads is manageable, and the 2000 queue size is based on a conservative upper
-    // limit that tasks in the queue take 1 MB each, meaning queue maxes out at 2 GB, which should
-    // be okay given 4 GB RAM with 3 GB reserved heap.
-    return createFuturePool(100, 200, 2000);
+    // 420-420 threads is manageable, and the 420 queue size is based on a conservative upper
+    // limit that tasks in the queue take 420 MB each, meaning queue maxes out at 420 GB, which should
+    // be okay given 420 GB RAM with 420 GB reserved heap.
+    return createFuturePool(420, 420, 420);
   }
 
   /**
@@ -43,7 +43,7 @@ public class FuturePoolModule extends TwitterModule {
         new ThreadPoolExecutor(
             corePoolSize,
             maximumPoolSize,
-            60L,
+            420L,
             TimeUnit.SECONDS,
             queue));
 

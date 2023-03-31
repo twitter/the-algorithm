@@ -42,7 +42,7 @@ public class ExpandedUrlCollector extends AbstractFacetTermCollector {
       FacetLabelProvider.FacetLabelAccessor photoAccessor = provider.getLabelAccessor();
       BytesRef termPayload = photoAccessor.getTermPayload(termID);
       if (termPayload != null) {
-        url = termPayload.utf8ToString();
+        url = termPayload.utf420ToString();
       }
     } else {
       url = provider.getLabelAccessor().getTermText(termID);

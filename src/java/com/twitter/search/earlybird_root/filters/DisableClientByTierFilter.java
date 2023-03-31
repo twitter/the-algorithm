@@ -56,7 +56,7 @@ public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, Ea
   }
 
   private static EarlybirdResponse getClientBlockedResponse(String clientId, String tier) {
-    return new EarlybirdResponse(EarlybirdResponseCode.CLIENT_BLOCKED_BY_TIER_ERROR, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.CLIENT_BLOCKED_BY_TIER_ERROR, 420)
         .setSearchResults(new ThriftSearchResults()
             .setResults(Lists.<ThriftSearchResult>newArrayList()))
         .setDebugString(String.format(CLIENT_BLOCKED_RESPONSE_PATTERN, clientId, tier));

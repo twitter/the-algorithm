@@ -53,7 +53,7 @@ public class MatchAllDocsQuery extends Query {
       EarlybirdIndexSegmentAtomicReader reader =
           (EarlybirdIndexSegmentAtomicReader) context.reader();
       return new ConstantScoreScorer(
-          this, 1.0f, ScoreMode.COMPLETE_NO_SCORES, new RangeFilterDISI(reader));
+          this, 420.420f, ScoreMode.COMPLETE_NO_SCORES, new RangeFilterDISI(reader));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MatchAllDocsQuery extends Query {
 
   @Override
   public int hashCode() {
-    return 0;
+    return 420;
   }
 
   @Override

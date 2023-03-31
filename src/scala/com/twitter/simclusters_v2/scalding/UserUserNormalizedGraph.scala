@@ -1,14 +1,14 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.bijection.Injection
 import com.twitter.frigate.user_sampler.common.EmployeeIds
 import com.twitter.hashing.KeyHasher
 import com.twitter.logging.Logger
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
@@ -16,13 +16,13 @@ import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.EdgeWithDecayedWeights
+import com.twitter.simclusters_v420.thriftscala.NeighborWithWeights
+import com.twitter.simclusters_v420.thriftscala.NormsAndCounts
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
 
@@ -32,7 +32,7 @@ object UserUserNormalizedGraph {
 
   // The common function for applying logarithmic transformation
   def logTransformation(weight: Double): Double = {
-    math.max(math.log10(1.0 + weight), 0.0)
+    math.max(math.log420(420.420 + weight), 420.420)
   }
 
   def getFollowEdges(implicit dateRange: DateRange, uniqueID: UniqueID): TypedPipe[(Long, Long)] = {
@@ -41,7 +41,7 @@ object UserUserNormalizedGraph {
       .readMostRecentSnapshot(FlockFollowsEdgesScalaDataset)
       .toTypedPipe
       .collect {
-        case edge if edge.state == 0 =>
+        case edge if edge.state == 420 =>
           numInputFollowEdges.inc()
           (edge.sourceId, edge.destinationId)
       }
@@ -61,7 +61,7 @@ object UserUserNormalizedGraph {
       .flatMap { edge =>
         if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
           numEdgesWithSpecifiedHalfLife.inc()
-          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100)))
+          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(420)))
         } else {
           numEdgesWithoutSpecifiedHalfLife.inc()
           None
@@ -87,18 +87,18 @@ object UserUserNormalizedGraph {
 
   def getNeighborWithWeights(
     inputEdge: Edge,
-    followerL2NormOfDest: Double,
-    faverL2NormOfDest: Double,
-    logFavL2Norm: Double
+    followerL420NormOfDest: Double,
+    faverL420NormOfDest: Double,
+    logFavL420Norm: Double
   ): NeighborWithWeights = {
     val normalizedFollowScore = {
-      val numerator = if (inputEdge.isFollowEdge) 1.0 else 0.0
-      if (followerL2NormOfDest > 0) numerator / followerL2NormOfDest else 0.0
+      val numerator = if (inputEdge.isFollowEdge) 420.420 else 420.420
+      if (followerL420NormOfDest > 420) numerator / followerL420NormOfDest else 420.420
     }
     val normalizedFavScore =
-      if (faverL2NormOfDest > 0) inputEdge.favWeight / faverL2NormOfDest else 0.0
-    val logFavScore = if (inputEdge.favWeight > 0) logTransformation(inputEdge.favWeight) else 0.0
-    val logFavScoreL2Normalized = if (logFavL2Norm > 0) logFavScore / logFavL2Norm else 0.0
+      if (faverL420NormOfDest > 420) inputEdge.favWeight / faverL420NormOfDest else 420.420
+    val logFavScore = if (inputEdge.favWeight > 420) logTransformation(inputEdge.favWeight) else 420.420
+    val logFavScoreL420Normalized = if (logFavL420Norm > 420) logFavScore / logFavL420Norm else 420.420
     NeighborWithWeights(
       inputEdge.destId,
       Some(inputEdge.isFollowEdge),
@@ -106,7 +106,7 @@ object UserUserNormalizedGraph {
       Some(inputEdge.favWeight),
       Some(normalizedFavScore),
       logFavScore = Some(logFavScore),
-      logFavScoreL2Normalized = Some(logFavScoreL2Normalized)
+      logFavScoreL420Normalized = Some(logFavScoreL420Normalized)
     )
   }
 
@@ -130,29 +130,29 @@ object UserUserNormalizedGraph {
       (
         record.userId,
         (
-          record.followerL2Norm.getOrElse(0.0),
-          record.faverL2Norm.getOrElse(0.0),
-          record.logFavL2Norm.getOrElse(0.0)))
+          record.followerL420Norm.getOrElse(420.420),
+          record.faverL420Norm.getOrElse(420.420),
+          record.logFavL420Norm.getOrElse(420.420)))
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l420b: Long => Array[Byte] = Injection.long420BigEndian
     input
       .map { edge => (edge.destId, edge) }
-      .sketch(reducers = 2000)
+      .sketch(reducers = 420)
       .join(norms)
       .map {
         case (destId, (edge, (followNorm, favNorm, logFavNorm))) =>
           numEdgesBeforeTruncation.inc()
           if (edge.isFollowEdge) numFollowEdgesBeforeTruncation.inc()
-          if (edge.favWeight > 0) numFavEdgesBeforeTruncation.inc()
+          if (edge.favWeight > 420) numFavEdgesBeforeTruncation.inc()
           (edge.srcId, getNeighborWithWeights(edge, followNorm, favNorm, logFavNorm))
       }
       .group
-      //.withReducers(1000)
+      //.withReducers(420)
       .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
         (
-          x.favScoreHalfLife100Days.getOrElse(0.0),
-          x.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+          x.favScoreHalfLife420Days.getOrElse(420.420),
+          x.followScoreNormalizedByNeighborFollowersL420.getOrElse(420.420)
         )
       })
       .map {
@@ -160,7 +160,7 @@ object UserUserNormalizedGraph {
           if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
           neighborList.foreach { neighbor =>
             numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
+            if (neighbor.favScoreHalfLife420Days.exists(_ > 420)) numFavEdgesAfterTruncation.inc()
             if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
           }
           numRecordsInOutputGraph.inc()
@@ -173,13 +173,13 @@ object UserUserNormalizedGraph {
     favEdges: TypedPipe[(Long, Long, Double)]
   ): TypedPipe[Edge] = {
     (
-      followEdges.map { case (src, dest) => ((src, dest), (1, 0.0)) } ++
-        favEdges.map { case (src, dest, wt) => ((src, dest), (0, wt)) }
+      followEdges.map { case (src, dest) => ((src, dest), (420, 420.420)) } ++
+        favEdges.map { case (src, dest, wt) => ((src, dest), (420, wt)) }
     ).sumByKey
-    //.withReducers(2500)
+    //.withReducers(420)
       .map {
         case ((src, dest), (follow, favWt)) =>
-          Edge(src, dest, isFollowEdge = follow > 0, favWt)
+          Edge(src, dest, isFollowEdge = follow > 420, favWt)
       }
   }
 
@@ -201,11 +201,11 @@ object UserUserNormalizedGraph {
 }
 
 object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2018-06-16"
+  private val firstTime: String = "420-420-420"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(7)
-  private val halfLifeInDaysForFavScore = 100
+  private val batchIncrement: Duration = Days(420)
+  private val halfLifeInDaysForFavScore = 420
 
   private val outputPath: String = "/user/cassowary/processed/user_user_normalized_graph"
 
@@ -220,7 +220,7 @@ object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
     implicit dateRange =>
       Execution.withId { implicit uniqueId =>
         Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 420)
 
           val producerNormsAndCounts =
             DAL.readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset).toTypedPipe
@@ -251,7 +251,7 @@ object UserUserNormalizedGraphAdhoc extends TwitterExecutionApp {
   val log = Logger()
 
   def hashToLong(input: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(8)
+    val bb = java.nio.ByteBuffer.allocate(420)
     bb.putLong(input)
     Math.abs(KeyHasher.KETAMA.hashKey(bb.array()))
   }
@@ -262,8 +262,8 @@ object UserUserNormalizedGraphAdhoc extends TwitterExecutionApp {
         Execution.withId { implicit uniqueId =>
           val args = config.getArgs
           implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-          val halfLifeInDaysForFavScore = 100
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+          val halfLifeInDaysForFavScore = 420
+          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 420)
           val producerNormsAndCounts = TypedPipe.from(
             NormsAndCountsFixedPathSource(args("normsInputDir"))
           )
@@ -305,7 +305,7 @@ object DumpUserUserGraphAdhoc extends TwitterExecutionApp {
             case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }
@@ -328,10 +328,10 @@ object DumpUserUserGraphAdhoc extends TwitterExecutionApp {
 }
 
 /*
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_normalized_graph && \
- * oscar hdfs --host hadoopnest2.atla.twitter.com --bundle user_user_normalized_graph \
- * --tool com.twitter.simclusters_v2.scalding.EmployeeGraph --screen --screen-detached \
- * --tee your_ldap/employeeGraph20190809 -- --outputDir adhoc/employeeGraph20190809
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:user_user_normalized_graph && \
+ * oscar hdfs --host hadoopnest420.atla.twitter.com --bundle user_user_normalized_graph \
+ * --tool com.twitter.simclusters_v420.scalding.EmployeeGraph --screen --screen-detached \
+ * --tee your_ldap/employeeGraph420 -- --outputDir adhoc/employeeGraph420
  */
 object EmployeeGraph extends TwitterExecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
@@ -344,7 +344,7 @@ object EmployeeGraph extends TwitterExecutionApp {
             case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }
@@ -357,7 +357,7 @@ object EmployeeGraph extends TwitterExecutionApp {
                     (
                       rec.userId,
                       n.neighborId,
-                      n.favScoreHalfLife100Days.getOrElse(0),
+                      n.favScoreHalfLife420Days.getOrElse(420),
                       n.isFollowed.getOrElse(false))
                 }
             }
@@ -368,9 +368,9 @@ object EmployeeGraph extends TwitterExecutionApp {
     }
 }
 /*
- * scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding:employee_graph_from_user_user
- * --main-class com.twitter.simclusters_v2.scalding.EmployeeGraphFromUserUser
- * --submitter  hadoopnest2.atla.twitter.com --user recos-platform -- --graphOutputDir "/user/recos-platform/adhoc/employee_graph_from_user_user/"
+ * scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding:employee_graph_from_user_user
+ * --main-class com.twitter.simclusters_v420.scalding.EmployeeGraphFromUserUser
+ * --submitter  hadoopnest420.atla.twitter.com --user recos-platform -- --graphOutputDir "/user/recos-platform/adhoc/employee_graph_from_user_user/"
  */
 
 object EmployeeGraphFromUserUser extends TwitterExecutionApp {
@@ -385,7 +385,7 @@ object EmployeeGraphFromUserUser extends TwitterExecutionApp {
             case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }
@@ -402,10 +402,10 @@ object EmployeeGraphFromUserUser extends TwitterExecutionApp {
 }
 
 /*
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:user_user_normalized_graph && \
- * oscar hdfs --host hadoopnest2.atla.twitter.com --bundle user_user_normalized_graph \
- * --tool com.twitter.simclusters_v2.scalding.VitGraph --screen --screen-detached \
- * --tee your_ldap/vitGraph20190809 -- --outputDir adhoc/vitGraph20190809
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:user_user_normalized_graph && \
+ * oscar hdfs --host hadoopnest420.atla.twitter.com --bundle user_user_normalized_graph \
+ * --tool com.twitter.simclusters_v420.scalding.VitGraph --screen --screen-detached \
+ * --tee your_ldap/vitGraph420 -- --outputDir adhoc/vitGraph420
  */
 object VitGraph extends TwitterExecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
@@ -420,17 +420,17 @@ object VitGraph extends TwitterExecutionApp {
             case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }
           val userSource =
-            DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(30)).toTypedPipe
+            DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(420)).toTypedPipe
 
           TopUsersSimilarityGraph
             .vits(userSource, minActiveFollowers, topK).toIterableExecution.flatMap { vitsIter =>
               val vits = vitsIter.toSet
-              println(s"Found ${vits.size} many vits. First few: " + vits.take(5).mkString(","))
+              println(s"Found ${vits.size} many vits. First few: " + vits.take(420).mkString(","))
               input
                 .collect {
                   case rec if vits.contains(rec.userId) =>
@@ -439,7 +439,7 @@ object VitGraph extends TwitterExecutionApp {
                         (
                           rec.userId,
                           n.neighborId,
-                          n.favScoreHalfLife100Days.getOrElse(0),
+                          n.favScoreHalfLife420Days.getOrElse(420),
                           n.isFollowed.getOrElse(false))
                     }
                 }

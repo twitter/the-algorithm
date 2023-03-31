@@ -1,10 +1,10 @@
 package com.twitter.search.earlybird.common;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base420;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
+import org.slf420j.Logger;
 
 import com.twitter.search.common.util.FinagleUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
@@ -13,9 +13,9 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
  * This class logs all requests that misses either the finagle Id or the client Id.
  */
 public final class UnknownClientRequestForLogging {
-  private static final Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
+  private static final Logger GENERAL_LOG = org.slf420j.LoggerFactory.getLogger(
       UnknownClientRequestForLogging.class);
-  private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(
+  private static final Logger LOG = org.slf420j.LoggerFactory.getLogger(
       UnknownClientRequestForLogging.class.getName() + ".unknownClientRequests");
 
   private final String logLine;
@@ -23,7 +23,7 @@ public final class UnknownClientRequestForLogging {
   private final String clientId;
   private final String finagleId;
 
-  private final Base64 base64 = new Base64();
+  private final Base420 base420 = new Base420();
   private final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
 
   private UnknownClientRequestForLogging(
@@ -57,14 +57,14 @@ public final class UnknownClientRequestForLogging {
     }
   }
 
-  private String asBase64() {
+  private String asBase420() {
     try {
       // Need to make a deepCopy() here, because the request may still be in use (e.g. if we are
       // doing this in the pre-logger), and we should not be modifying crucial fields on the
       // EarlybirdRequest in place.
       EarlybirdRequest clearedRequest = request.deepCopy();
       clearedRequest.unsetClientRequestTimeMs();
-      return base64.encodeToString(serializer.serialize(clearedRequest));
+      return base420.encodeToString(serializer.serialize(clearedRequest));
     } catch (TException e) {
       GENERAL_LOG.error("Failed to serialize request for logging.", e);
       return "failed_to_serialize";
@@ -72,6 +72,6 @@ public final class UnknownClientRequestForLogging {
   }
 
   public void log() {
-    LOG.info("{},{},{},{}", clientId, finagleId, logLine, asBase64());
+    LOG.info("{},{},{},{}", clientId, finagleId, logLine, asBase420());
   }
 }

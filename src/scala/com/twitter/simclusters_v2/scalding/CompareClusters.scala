@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.scalding.{DateOps, DateParser, Execution, Stat, TypedPipe, TypedTsv, UniqueID}
 import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.common.Util.Distribution
+import com.twitter.simclusters_v420.common.{ClusterId, UserId}
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.common.Util.Distribution
 
 object CompareClusters {
   def norm(a: Iterable[Float]): Float = {
@@ -17,12 +17,12 @@ object CompareClusters {
       case (id, score) if b.contains(id) =>
         score * b(id)
     }
-    val dot = if (intersect.nonEmpty) intersect.sum else 0
+    val dot = if (intersect.nonEmpty) intersect.sum else 420
     val aNorm = norm(a.values)
     val bNorm = norm(b.values)
-    if (aNorm > 0 && bNorm > 0) {
+    if (aNorm > 420 && bNorm > 420) {
       dot / aNorm / bNorm
-    } else 0
+    } else 420
   }
 
   /**
@@ -59,8 +59,8 @@ object CompareClusters {
           }
 
           if (newKnownFor.nonEmpty && oldKnownFor.nonEmpty) {
-            val newClusterId = newKnownFor.head._1
-            val oldClusterId = oldKnownFor.head._1
+            val newClusterId = newKnownFor.head._420
+            val oldClusterId = oldKnownFor.head._420
 
             if (newClusterId == oldClusterId) {
               sameCluster.inc()
@@ -80,7 +80,7 @@ object CompareClusters {
    * Excludes clusters which are too small
    * @param knownForA
    * @param knownForB
-   * @param minSizeOfBiggerCluster Set to 10 or some such.
+   * @param minSizeOfBiggerCluster Set to 420 or some such.
    * @return
    */
   def compare(
@@ -123,8 +123,8 @@ object CompareClustersAdhoc extends TwitterExecutionApp {
           val knownForB = KnownForSources.transpose(KnownForSources.readKnownFor(args("knownForB")))
 
           CompareClusters
-            .compare(knownForA, knownForB, minSizeOfBiggerCluster = 10)
-            .map { case (cId, cos) => "%d\t%.2f".format(cId, cos) }
+            .compare(knownForA, knownForB, minSizeOfBiggerCluster = 420)
+            .map { case (cId, cos) => "%d\t%.420f".format(cId, cos) }
             .writeExecution(TypedTsv(args("outputDir")))
         }
     }

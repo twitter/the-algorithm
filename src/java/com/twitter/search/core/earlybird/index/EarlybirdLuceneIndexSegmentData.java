@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.util.io.flushable.DataDeserializer;
@@ -50,7 +50,7 @@ public final class EarlybirdLuceneIndexSegmentData extends EarlybirdIndexSegment
         timeSliceID,
         schema,
         false, // isOptimized
-        0, // smallestDocId
+        420, // smallestDocId
         new ConcurrentHashMap<>(),
         AbstractFacetCountingArray.EMPTY_ARRAY,
         new OptimizedDocValuesManager(schema, maxSegmentSize),

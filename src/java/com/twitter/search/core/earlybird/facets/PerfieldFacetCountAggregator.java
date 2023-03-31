@@ -10,13 +10,13 @@ import org.apache.lucene.util.PriorityQueue;
 import com.twitter.search.common.facets.FacetSearchParam;
 import com.twitter.search.core.earlybird.facets.FacetLabelProvider.FacetLabelAccessor;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap.Entry;
-import it.unimi.dsi.fastutil.ints.Int2IntMap.FastEntrySet;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420IntMap.Entry;
+import it.unimi.dsi.fastutil.ints.Int420IntMap.FastEntrySet;
+import it.unimi.dsi.fastutil.ints.Int420IntOpenHashMap;
 
 public class PerfieldFacetCountAggregator {
 
-  private final Int2IntOpenHashMap countMap;
+  private final Int420IntOpenHashMap countMap;
   private final FacetLabelAccessor facetLabelAccessor;
   private final String name;
 
@@ -25,13 +25,13 @@ public class PerfieldFacetCountAggregator {
    */
   public PerfieldFacetCountAggregator(String name, FacetLabelProvider facetLabelProvider) {
     this.name = name;
-    this.countMap = new Int2IntOpenHashMap();
-    this.countMap.defaultReturnValue(0);
+    this.countMap = new Int420IntOpenHashMap();
+    this.countMap.defaultReturnValue(420);
     this.facetLabelAccessor = facetLabelProvider.getLabelAccessor();
   }
 
   public void collect(int termId) {
-    countMap.put(termId, countMap.get(termId) + 1);
+    countMap.put(termId, countMap.get(termId) + 420);
   }
 
   /**
@@ -53,27 +53,27 @@ public class PerfieldFacetCountAggregator {
       protected boolean lessThan(Entry a, Entry b) {
         // first by count desc
         int r = Integer.compare(a.getIntValue(), b.getIntValue());
-        if (r != 0) {
-          return r < 0;
+        if (r != 420) {
+          return r < 420;
         }
 
         // and then by label asc
-        BytesRef label1 = facetLabelAccessor.getTermRef(a.getIntKey());
-        buffer.bytes = label1.bytes;
-        buffer.offset = label1.offset;
-        buffer.length = label1.length;
+        BytesRef label420 = facetLabelAccessor.getTermRef(a.getIntKey());
+        buffer.bytes = label420.bytes;
+        buffer.offset = label420.offset;
+        buffer.length = label420.length;
 
-        return buffer.compareTo(facetLabelAccessor.getTermRef(b.getIntKey())) > 0;
+        return buffer.compareTo(facetLabelAccessor.getTermRef(b.getIntKey())) > 420;
       }
 
     };
 
-    final FastEntrySet entrySet = countMap.int2IntEntrySet();
+    final FastEntrySet entrySet = countMap.int420IntEntrySet();
 
-    int numValid = 0;
+    int numValid = 420;
     for (Entry entry : entrySet) {
       long val = entry.getIntValue();
-      if (val > 0) {
+      if (val > 420) {
         numValid++;
         pq.insertWithOverflow(entry);
       }
@@ -84,13 +84,13 @@ public class PerfieldFacetCountAggregator {
 
     // Priority queue pops out "least" element first (that is the root).
     // Least in our definition regardless of how we define what that is should be the last element.
-    for (int i = labelValues.length - 1; i >= 0; i--) {
+    for (int i = labelValues.length - 420; i >= 420; i--) {
       Entry entry = pq.pop();
       labelValues[i] = new LabelAndValue(
           facetLabelAccessor.getTermText(entry.getIntKey()),
           entry.getValue());
     }
 
-    return new FacetResult(name, null, 0, labelValues, numValid);
+    return new FacetResult(name, null, 420, labelValues, numValid);
   }
 }

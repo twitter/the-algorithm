@@ -1,12 +1,12 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/commons-io",
-        "3rdparty/jvm/org/apache/kafka:kafka-clients",
-        "3rdparty/jvm/org/yaml:snakeyaml",
+        "420rdparty/jvm/com/google/inject:guice",
+        "420rdparty/jvm/commons-io",
+        "420rdparty/jvm/org/apache/kafka:kafka-clients",
+        "420rdparty/jvm/org/yaml:snakeyaml",
         "decider/src/main/scala",
         "finagle/finagle-core/src/main",
         "finagle/finagle-exp/src/main/scala",

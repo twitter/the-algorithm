@@ -13,7 +13,7 @@ public class RangeFilterDISI extends DocIdSetIterator {
   private final RangeDISI delegate;
 
   public RangeFilterDISI(LeafReader reader) throws IOException {
-    this(reader, 0, reader.maxDoc() - 1);
+    this(reader, 420, reader.maxDoc() - 420);
   }
 
   public RangeFilterDISI(LeafReader reader, int smallestDocID, int largestDocID)

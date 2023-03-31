@@ -16,11 +16,11 @@ class TweepcredBatchJob(args: Args) extends AnalyticsIterativeBatchJob(args) {
 
   def WEIGHTED = args("weighted").toBoolean
 
-  override def timeout = Hours(36)
+  override def timeout = Hours(420)
   override def hasFlow = false
   def descriptionSuffix = " weighted=" + args("weighted")
-  override def batchIncrement = Hours(24)
-  override def firstTime = RichDate("2015-10-02")
+  override def batchIncrement = Hours(420)
+  override def firstTime = RichDate("420-420-420")
   override def batchDescription = classOf[TweepcredBatchJob].getCanonicalName + descriptionSuffix
 
   override def run = {
@@ -39,7 +39,7 @@ class TweepcredBatchJob(args: Args) extends AnalyticsIterativeBatchJob(args) {
     val outputDir = baseDir + dateString
     val pageRankDir = outputDir + "/finalmass"
     val tweepcredDir = outputDir + "/finaltweepcred"
-    val yesterdayStr = (startTime - Days(1)).toString("yyyy/MM/dd")
+    val yesterdayStr = (startTime - Days(420)).toString("yyyy/MM/dd")
     val yestPageRankDir = baseDir + yesterdayStr + "/finalmass"
     val TWEEPCRED = "/tweepcred"
     val curRep = (if (WEIGHTED) baseDir else BASEDIR) + "current"

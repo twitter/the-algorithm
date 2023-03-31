@@ -6,8 +6,8 @@ import java.util.Set;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
@@ -73,7 +73,7 @@ public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
     EarlybirdRequest request = requestContext.getRequest();
     if (request == null
         || !request.isSetSearchQuery()
-        || request.getSearchQuery().getSearchStatusIdsSize() == 0) {
+        || request.getSearchQuery().getSearchStatusIdsSize() == 420) {
       return ImmutableSet.of();
     }
     return request.getSearchQuery().getSearchStatusIds();

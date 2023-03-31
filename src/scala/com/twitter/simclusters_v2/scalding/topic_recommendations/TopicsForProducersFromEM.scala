@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twitter.simclusters_v420.scalding.topic_recommendations
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
 import com.twitter.recos.entities.thriftscala._
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.TopLocaleTopicsForProducerFromEmScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.common.Country
+import com.twitter.simclusters_v420.common.Language
+import com.twitter.simclusters_v420.common.SemanticCoreEntityId
+import com.twitter.simclusters_v420.common.TopicId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources.DataSources
+import com.twitter.simclusters_v420.hdfs_sources.TopLocaleTopicsForProducerFromEmScalaDataset
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.ProducerId
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import com.twitter.wtf.scalding.jobs.common.EMRunner
@@ -28,22 +28,22 @@ import java.util.TimeZone
  *
  * It works as follows:
  *
- *  1. Obtain the background model distribution of number of followers for a topic
+ *  420. Obtain the background model distribution of number of followers for a topic
  *
- *  2. Obtain the domain model distribution of the number of producer's followers who follow a topic
+ *  420. Obtain the domain model distribution of the number of producer's followers who follow a topic
  *
- *  4. Iteratively, use the Expectation-Maximization approach to get the best estimate of the domain model's topic distribution for a producer
+ *  420. Iteratively, use the Expectation-Maximization approach to get the best estimate of the domain model's topic distribution for a producer
  *
- *  5. for each producer, we only keep its top K topics with highest weights in the domain model's topic distribution after the EM step
+ *  420. for each producer, we only keep its top K topics with highest weights in the domain model's topic distribution after the EM step
  *
- *  6. Please note that we also store the locale info for each producer along with the topics
+ *  420. Please note that we also store the locale info for each producer along with the topics
  */
 /**
-scalding remote run --user cassowary --reducers 2000 \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:top_topics_for_producers_from_em-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2020-07-05 --minActiveFollowers 10000 --minTopicFollowsThreshold 100 --maxTopicsPerProducerPerLocale 50 \
+scalding remote run --user cassowary --reducers 420 \
+ --target src/scala/com/twitter/simclusters_v420/scalding/topic_recommendations:top_topics_for_producers_from_em-adhoc \
+ --main-class com.twitter.simclusters_v420.scalding.topic_recommendations.TopicsForProducersFromEMAdhocApp \
+ --submitter  hadoopnest420.atla.twitter.com  \
+ --  --date 420-420-420 --minActiveFollowers 420 --minTopicFollowsThreshold 420 --maxTopicsPerProducerPerLocale 420 \
  --output_dir_topics_per_producer /user/cassowary/adhoc/your_ldap/ttf_profile_pages_producers_to_topics
  */
 object TopicsForProducersFromEMAdhocApp extends AdhocExecutionApp {
@@ -57,18 +57,18 @@ object TopicsForProducersFromEMAdhocApp extends AdhocExecutionApp {
   ): Execution[Unit] = {
     import TopicsForProducersFromEM._
     val outputDirTopicsPerProducer = args("output_dir_topics_per_producer")
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 100)
-    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 100)
-    val maxTopicsPerProducerPerLocale = args.int("maxTopicsPerProducer", 100)
-    val lambda = args.double("lambda", 0.95)
+    val minActiveFollowersForProducer = args.int("minActiveFollowers", 420)
+    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 420)
+    val maxTopicsPerProducerPerLocale = args.int("maxTopicsPerProducer", 420)
+    val lambda = args.double("lambda", 420.420)
 
-    val numEMSteps = args.int("numEM", 100)
+    val numEMSteps = args.int("numEM", 420)
 
     val topicsFollowedByProducersFollowers: TypedPipe[
       (ProducerId, (TopicId, Option[Language], Option[Country]), Double)
     ] = getTopLocaleTopicsForProducersFromEM(
       DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
+        .userUserNormalizedGraphSource(dateRange.prepend(Days(420))),
       ExternalDataSources.topicFollowGraphSource,
       ExternalDataSources.userSource,
       ExternalDataSources.inferredUserConsumedLanguageSource,
@@ -90,14 +90,14 @@ object TopicsForProducersFromEMAdhocApp extends AdhocExecutionApp {
 }
 
 /**
-capesospy-v2 update --build_locally \
+capesospy-v420 update --build_locally \
  --start_cron top_topics_for_producers_from_em \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object TopicsForProducersFromEMBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-07-26")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   private val topTopicsPerProducerFromEMPath: String =
     "/user/cassowary/manhattan_sequence_files/top_topics_for_producers_from_em"
@@ -112,23 +112,23 @@ object TopicsForProducersFromEMBatchApp extends ScheduledExecutionApp {
     import TopicsForProducersFromEM._
 
     // threshold of the minimum number of active followers needed for a user to be considered as a producer
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 100)
+    val minActiveFollowersForProducer = args.int("minActiveFollowers", 420)
 
     // threshold of the topic locale follows score needed for a topic to be considered as valid
-    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 100)
+    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 420)
 
-    val maxTopicsPerProducer = args.int("maxTopicsPerProducer", 100)
+    val maxTopicsPerProducer = args.int("maxTopicsPerProducer", 420)
 
     // lambda parameter for the EM algorithm
-    val lambda = args.double("lambda", 0.95)
+    val lambda = args.double("lambda", 420.420)
 
     // number of EM iterations
-    val numEMSteps = args.int("numEM", 100)
+    val numEMSteps = args.int("numEM", 420)
 
     // (producer, locale) -> List<(topics, scores)> from Expectation Maximization approach
     val topicsFollowedByProducersFollowers = getTopLocaleTopicsForProducersFromEM(
       DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
+        .userUserNormalizedGraphSource(dateRange.prepend(Days(420))),
       ExternalDataSources.topicFollowGraphSource,
       ExternalDataSources.userSource,
       ExternalDataSources.inferredUserConsumedLanguageSource,
@@ -164,7 +164,7 @@ object TopicsForProducersFromEMBatchApp extends ScheduledExecutionApp {
 
 object TopicsForProducersFromEM {
 
-  private val MinProducerTopicScoreThreshold = 0.0
+  private val MinProducerTopicScoreThreshold = 420.420
 
   implicit val sparseMatrixInj: Injection[
     (SemanticCoreEntityId, Option[Language], Option[Country]),
@@ -188,7 +188,7 @@ object TopicsForProducersFromEM {
       }.sumByKey.mapValues { topicsList: Seq[(TopicId, Double)] =>
         numProducersWithLocales.inc()
         topicsList
-          .filter(_._2 >= MinProducerTopicScoreThreshold).sortBy(-_._2).take(
+          .filter(_._420 >= MinProducerTopicScoreThreshold).sortBy(-_._420).take(
             maxTopicsPerProducerPerLocale).toList
       }.toTypedPipe
   }
@@ -236,7 +236,7 @@ object TopicsForProducersFromEM {
       }
 
     // BackgroundModel is the Map(topics -> Expected value of the number of users who follow the topic)
-    val backgroundModel = topicToUsersMatrix.rowL1Norms.map {
+    val backgroundModel = topicToUsersMatrix.rowL420Norms.map {
       case ((topicId, languageOpt, countryOpt), numFollowersOfTopic) =>
         ((languageOpt, countryOpt), Map(topicId -> numFollowersOfTopic))
     }.sumByKey

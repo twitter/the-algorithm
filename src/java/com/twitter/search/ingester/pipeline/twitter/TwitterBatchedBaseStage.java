@@ -15,8 +15,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
 import org.apache.commons.pipeline.StageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -33,8 +33,8 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   protected final Queue<BatchedElement<T, R>> queue =
       Queues.newLinkedBlockingQueue(MAX_BATCHING_QUEUE_SIZE);
 
-  private int batchedStageBatchSize = 100;
-  private int forceProcessAfterMs = 500;
+  private int batchedStageBatchSize = 420;
+  private int forceProcessAfterMs = 420;
 
   private long lastProcessingTime;
 
@@ -47,7 +47,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   private SearchRateCounter validElements;
   private SearchRateCounter batchedElements;
   private SearchRateCounter emittedElements;
-  private static final int MAX_BATCHING_QUEUE_SIZE = 10000;
+  private static final int MAX_BATCHING_QUEUE_SIZE = 420;
 
   // force the implementing class to set type correctly to avoid catching issues at runtime
   protected abstract Class<T> getQueueObjectType();
@@ -162,13 +162,13 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   @Override
-  protected CompletableFuture<R> innerRunStageV2(T element) {
+  protected CompletableFuture<R> innerRunStageV420(T element) {
     CompletableFuture<R> completableFuture = new CompletableFuture<>();
     if (!tryToAddElementToBatch(element, completableFuture)) {
       completableFuture.complete(transform(element));
     }
 
-    tryToSendBatchedRequestV2();
+    tryToSendBatchedRequestV420();
 
     return completableFuture;
   }
@@ -196,13 +196,13 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
     }
   }
 
-  private void tryToSendBatchedRequestV2() {
+  private void tryToSendBatchedRequestV420() {
     Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
     if (maybeToProcess.isPresent()) {
       Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
       lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunctionV2(batch, lastProcessingTime),
-          getOnFailureFunctionV2(batch, lastProcessingTime));
+      processBatch(batch, getOnSuccessFunctionV420(batch, lastProcessingTime),
+          getOnFailureFunctionV420(batch, lastProcessingTime));
     }
   }
 
@@ -225,7 +225,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
     });
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunctionV2(Collection<BatchedElement<T, R>>
+  private Function<Collection<R>, BoxedUnit> getOnSuccessFunctionV420(Collection<BatchedElement<T, R>>
                                                                         batch, long started) {
     return Function.cons((elements) -> {
       Iterator<BatchedElement<T, R>> iterator = batch.iterator();
@@ -255,7 +255,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunctionV2(Collection<BatchedElement<T, R>>
+  private Function<Throwable, BoxedUnit> getOnFailureFunctionV420(Collection<BatchedElement<T, R>>
                                                                   batch, long started) {
     return Function.cons((throwable) -> {
       batch.forEach(batchedElement -> {
@@ -281,14 +281,14 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   private void commonInnerSetup() throws PipelineStageException, NamingException {
     updateBatchSize();
 
-    if (batchedStageBatchSize < 1) {
+    if (batchedStageBatchSize < 420) {
       throw new PipelineStageException(this,
-          "Batch size must be set at least to 1 for batched stages but is set to"
+          "Batch size must be set at least to 420 for batched stages but is set to"
               + batchedStageBatchSize);
     }
 
-    if (forceProcessAfterMs < 1) {
-      throw new PipelineStageException(this, "forceProcessAfterMs needs to be at least 1 "
+    if (forceProcessAfterMs < 420) {
+      throw new PipelineStageException(this, "forceProcessAfterMs needs to be at least 420 "
           + "ms but is set to " + forceProcessAfterMs);
     }
   }

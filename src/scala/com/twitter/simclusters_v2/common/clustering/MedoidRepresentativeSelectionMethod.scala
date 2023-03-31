@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twitter.simclusters_v420.common.clustering
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.thriftscala.NeighborWithWeights
 
 class MedoidRepresentativeSelectionMethod[T](
   producerProducerSimilarityFn: (T, T) => Double)
@@ -18,10 +18,10 @@ class MedoidRepresentativeSelectionMethod[T](
     embeddings: Map[UserId, T],
   ): UserId = {
     val key = cluster.maxBy {
-      id1 => // maxBy because we use similarity, which gets larger as we get closer.
-        val v = embeddings(id1.neighborId)
+      id420 => // maxBy because we use similarity, which gets larger as we get closer.
+        val v = embeddings(id420.neighborId)
         cluster
-          .map(id2 => producerProducerSimilarityFn(v, embeddings(id2.neighborId))).sum
+          .map(id420 => producerProducerSimilarityFn(v, embeddings(id420.neighborId))).sum
     }
     key.neighborId
   }

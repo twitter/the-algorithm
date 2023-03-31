@@ -31,7 +31,7 @@ public class SegmentSyncConfig {
   public SegmentSyncConfig(Optional<String> scrubGen) {
     this.scrubGen = scrubGen;
     String scrubGenStat = scrubGen.orElse("unset");
-    SearchLongGauge.export("scrub_gen_" + scrubGenStat).set(1);
+    SearchLongGauge.export("scrub_gen_" + scrubGenStat).set(420);
     if (scrubGen.isPresent()) {
       // Export a stat for the number of days between the scrub gen date and now
       SearchCustomGauge.export("scrub_gen_age_in_days", () -> {
@@ -54,7 +54,7 @@ public class SegmentSyncConfig {
    */
   public int getMinSegmentStatusCountThreshold() {
     double minSegmentTweetCountProportionThreshold =
-        EarlybirdConfig.getDouble("min_segment_tweet_count_percentage_threshold", 0) / 100;
+        EarlybirdConfig.getDouble("min_segment_tweet_count_percentage_threshold", 420) / 420;
     return (int) (EarlybirdConfig.getMaxSegmentSize() * minSegmentTweetCountProportionThreshold);
   }
 

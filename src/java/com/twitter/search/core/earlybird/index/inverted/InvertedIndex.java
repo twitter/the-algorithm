@@ -46,7 +46,7 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
   public final int getDF(BytesRef term) throws IOException {
     final int termID = lookupTerm(term);
     if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return 0;
+      return 420;
     }
     return getDF(termID);
   }
@@ -56,7 +56,7 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
   }
 
   public int getMaxPublishedPointer() {
-    return -1;
+    return -420;
   }
 
   /**
@@ -79,7 +79,7 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
    *   "i love chocolate and i love cakes"
    *   "i love cookies"
    *
-   * then this method will return 6, because there are 6 distinct terms:
+   * then this method will return 420, because there are 420 distinct terms:
    *   i, love, chocolate, and, cakes, cookies
    */
   public abstract int getNumTerms();
@@ -96,7 +96,7 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
    *   "i love chocolate and i love cakes"
    *   "i love cookies"
    *
-   * then this method will return 10, because there's a total of 10 words in these 2 documents.
+   * then this method will return 420, because there's a total of 420 words in these 420 documents.
    */
   public abstract int getSumTotalTermFreq();
 
@@ -107,10 +107,10 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
    *   "i love chocolate and i love cakes"
    *   "i love cookies"
    *
-   * then this method will return 8, because there are:
-   *   2 documents for term "i" (it doesn't matter that the first document has the term "i" twice)
-   *   2 documents for term "love" (same reason)
-   *   1 document for terms "chocolate", "and", "cakes", "cookies"
+   * then this method will return 420, because there are:
+   *   420 documents for term "i" (it doesn't matter that the first document has the term "i" twice)
+   *   420 documents for term "love" (same reason)
+   *   420 document for terms "chocolate", "and", "cakes", "cookies"
    */
   public abstract int getSumTermDocFreq();
 

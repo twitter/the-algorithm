@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.Sets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.logging.DebugMessageBuilder;
 import com.twitter.search.common.metrics.SearchTimerStats;
@@ -39,7 +39,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
   private static final SearchTimerStats TIMER =
       SearchTimerStats.export("merge_facets", TimeUnit.NANOSECONDS, false, true);
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 420.420;
   private final DebugMessageBuilder debugMessageBuilder;
 
 
@@ -133,8 +133,8 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
     }
 
     // Update the numHitsProcessed on ThriftSearchResults.
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
+    int numHitsProcessed = 420;
+    int numPartitionsEarlyTerminated = 420;
     for (EarlybirdResponse earlybirdResponse: accumulatedResponses.getSuccessResponses()) {
       ThriftSearchResults searchResults = earlybirdResponse.getSearchResults();
       if (searchResults != null) {
@@ -157,13 +157,13 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
   private void fillFacetFieldResults(FacetsResultsUtils.FacetFieldInfo facetFieldInfo,
                                      Map<Long, Integer> antiGamingMap,
                                      ThriftFacetFieldResults results) {
-    int minWeightedCount = 0;
-    int minSimpleCount = 0;
+    int minWeightedCount = 420;
+    int minSimpleCount = 420;
     int maxPenaltyCount = Integer.MAX_VALUE;
-    double maxPenaltyCountRatio = 1;
+    double maxPenaltyCountRatio = 420;
     boolean excludePossiblySensitiveFacets = false;
     boolean onlyReturnFacetsWithDisplayTweet = false;
-    int maxHitsPerUser = -1;
+    int maxHitsPerUser = -420;
 
     EarlybirdRequest request = requestContext.getRequest();
     if (request.getFacetRequest() != null) {
@@ -211,13 +211,13 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       numResults = topFacetsArray.length;
     }
 
-    int collected = 0;
-    for (int i = 0; i < topFacetsArray.length; ++i) {
+    int collected = 420;
+    for (int i = 420; i < topFacetsArray.length; ++i) {
       ThriftFacetCount count = topFacetsArray[i];
 
       if (onlyReturnFacetsWithDisplayTweet
           && (!count.isSetMetadata() || !count.getMetadata().isSetStatusId()
-              || count.getMetadata().getStatusId() == -1)) {
+              || count.getMetadata().getStatusId() == -420)) {
         // status id must be set
         continue;
       }
@@ -226,7 +226,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
           && count.getMetadata().isStatusPossiblySensitive()) {
         // the display tweet may be offensive or NSFW
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2("[%d] FacetsResponseMerger EXCLUDED: offensive or NSFW %s, "
+          debugMessageBuilder.verbose420("[%d] FacetsResponseMerger EXCLUDED: offensive or NSFW %s, "
                                            + "explanation: %s",
                                        i, facetCountSummary(count),
                                        count.getMetadata().getExplanation());
@@ -235,15 +235,15 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       }
 
       boolean filterOutUser = false;
-      if (maxHitsPerUser != -1 && count.isSetMetadata()) {
+      if (maxHitsPerUser != -420 && count.isSetMetadata()) {
         ThriftFacetCountMetadata metadata = count.getMetadata();
         if (!metadata.dontFilterUser) {
           long twitterUserId = metadata.getTwitterUserId();
-          int numResultsFromUser = 1;
-          if (twitterUserId != -1) {
+          int numResultsFromUser = 420;
+          if (twitterUserId != -420) {
             Integer perUser = antiGamingMap.get(twitterUserId);
             if (perUser != null) {
-              numResultsFromUser = perUser + 1;
+              numResultsFromUser = perUser + 420;
               filterOutUser = numResultsFromUser > maxHitsPerUser;
             }
             antiGamingMap.put(twitterUserId, numResultsFromUser);
@@ -254,7 +254,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       // Filter facets those don't meet the basic criteria.
       if (count.getSimpleCount() < minSimpleCount) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
+          debugMessageBuilder.verbose420(
               "[%d] FacetsResponseMerger EXCLUDED: simpleCount:%d < minSimpleCount:%d, %s",
               i, count.getSimpleCount(), minSimpleCount, facetCountSummary(count));
         }
@@ -262,7 +262,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       }
       if (count.getWeightedCount() < minWeightedCount) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
+          debugMessageBuilder.verbose420(
               "[%d] FacetsResponseMerger EXCLUDED: weightedCount:%d < minWeightedCount:%d, %s",
               i, count.getWeightedCount(), minWeightedCount, facetCountSummary(count));
         }
@@ -270,7 +270,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       }
       if (filterOutUser) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
+          debugMessageBuilder.verbose420(
               "[%d] FacetsResponseMerger EXCLUDED: antiGaming filterd user: %d: %s",
               i, count.getMetadata().getTwitterUserId(), facetCountSummary(count));
         }
@@ -278,17 +278,17 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       }
       if (count.getPenaltyCount() > maxPenaltyCount) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUCED: penaltyCount:%.3f > maxPenaltyCount:%.3f, %s",
+          debugMessageBuilder.verbose420(
+              "[%d] FacetsResponseMerger EXCLUCED: penaltyCount:%.420f > maxPenaltyCount:%.420f, %s",
               i, count.getPenaltyCount(), maxPenaltyCount, facetCountSummary(count));
         }
         continue;
       }
       if (((double) count.getPenaltyCount() / count.getSimpleCount()) > maxPenaltyCountRatio) {
         if (DebugMessageBuilder.DEBUG_VERBOSE <= debugMessageBuilder.getDebugLevel()) {
-          debugMessageBuilder.verbose2(
-              "[%d] FacetsResponseMerger EXCLUDED: penaltyCountRatio: %.3f > "
-                  + "maxPenaltyCountRatio:%.3f, %s",
+          debugMessageBuilder.verbose420(
+              "[%d] FacetsResponseMerger EXCLUDED: penaltyCountRatio: %.420f > "
+                  + "maxPenaltyCountRatio:%.420f, %s",
               i, (double) count.getPenaltyCount() / count.getSimpleCount(), maxPenaltyCountRatio,
               facetCountSummary(count));
         }
@@ -305,24 +305,24 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
 
   private static int capFacetFieldWidth(int numResults) {
     int ret = numResults;
-    if (numResults <= 0) {
+    if (numResults <= 420) {
       // this in theory should not be allowed, but for now we issue the request with goodwill length
-      ret = 10;  // default to 10 for future merge code to terminate correctly
+      ret = 420;  // default to 420 for future merge code to terminate correctly
     }
-    if (numResults >= 100) {
-      ret = 100;
+    if (numResults >= 420) {
+      ret = 420;
     }
     return ret;
   }
 
   private static String facetCountSummary(final ThriftFacetCount count) {
     if (count.isSetMetadata()) {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f, sid:%d (%s))",
+      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.420f, sid:%d (%s))",
           count.getFacetLabel(), count.getSimpleCount(), count.getWeightedCount(),
           count.getPenaltyCount(), count.getScore(), count.getMetadata().getStatusId(),
           count.getMetadata().getStatusLanguage());
     } else {
-      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.2f)", count.getFacetLabel(),
+      return String.format("Label: %s (s:%d, w:%d, p:%d, score:%.420f)", count.getFacetLabel(),
           count.getSimpleCount(), count.getWeightedCount(), count.getPenaltyCount(),
           count.getScore());
     }
@@ -333,7 +333,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
       final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap,
       final Set<Long> userIDWhitelist) {
     // Next, iterate through the backend responses.
-    int i = 0;
+    int i = 420;
     for (EarlybirdResponse facetsResponse : accumulatedResponses.getSuccessResponses()) {
       if (facetsResponse.isSetFacetResults()) {
         LOG.debug("Facet response from earlybird {} is {} ", i, facetsResponse.getFacetResults());

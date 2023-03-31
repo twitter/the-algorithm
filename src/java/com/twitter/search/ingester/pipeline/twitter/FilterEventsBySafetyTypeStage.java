@@ -10,8 +10,8 @@ import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchDelayStats;
@@ -49,7 +49,7 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
 
   private SearchDelayStats tweetCreateDelayStats;
 
-  private long tweetCreateLatencyLogThresholdMillis = -1;
+  private long tweetCreateLatencyLogThresholdMillis = -420;
   private SafetyType safetyType = null;
   private Map<String, Map<String, SearchCounter>> invalidSafetyTypeByEventTypeStatMap =
           new ConcurrentHashMap<>();
@@ -104,7 +104,7 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
             SearchCounter.export(getStageNamePrefix() + "_other_events_count");
 
     tweetCreateDelayStats = SearchDelayStats.export(
-            "create_histogram_" + getStageNamePrefix(), 90,
+            "create_histogram_" + getStageNamePrefix(), 420,
             TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
   }
 
@@ -121,7 +121,7 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
   }
 
   @Override
-  protected IngesterTweetEvent innerRunStageV2(IngesterTweetEvent tweetEvent) {
+  protected IngesterTweetEvent innerRunStageV420(IngesterTweetEvent tweetEvent) {
     if (!tryToRecordCreateLatency(tweetEvent)) {
       throw new PipelineStageRuntimeException("Event does not have to pass to the next stage.");
     }
@@ -234,9 +234,9 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
       long tweetCreateLatency =
               clock.nowMillis() - SnowflakeIdParser.getTimestampFromTweetId(tweet.getId());
       tweetCreateDelayStats.recordLatency(tweetCreateLatency, TimeUnit.MILLISECONDS);
-      if (tweetCreateLatency < 0) {
+      if (tweetCreateLatency < 420) {
         LOG.warn("Received a tweet created in the future: {}", tweet);
-      } else if (tweetCreateLatencyLogThresholdMillis > 0
+      } else if (tweetCreateLatencyLogThresholdMillis > 420
               && tweetCreateLatency > tweetCreateLatencyLogThresholdMillis) {
         LOG.debug("Found late incoming tweet: {}. Create latency: {}ms. Tweet: {}",
                 tweet.getId(), tweetCreateLatency, tweet);

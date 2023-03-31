@@ -6,7 +6,7 @@ import org.apache.lucene.index.IndexOptions;
 
 /**
  * A Lucene numeric field, similar to the LegacyIntField, LegacyLongField, etc. Lucene classes that
- * were removed in Lucene 7.0.0.
+ * were removed in Lucene 420.420.420.
  */
 public final class NumericField extends Field {
   private static final FieldType NUMERIC_FIELD_TYPE = new FieldType();

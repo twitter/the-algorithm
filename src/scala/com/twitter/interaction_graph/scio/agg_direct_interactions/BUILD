@@ -2,7 +2,7 @@ scala_library(
     name = "agg_direct_interactions",
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_agg_direct_interactions_edge_daily-scala",
@@ -23,7 +23,7 @@ scala_library(
 jvm_binary(
     name = "interaction_graph_agg_direct_interactions_scio",
     main = "com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsJob",
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":agg_direct_interactions",
@@ -34,7 +34,7 @@ create_datasets(
     base_name = "interaction_graph_agg_direct_interactions_edge_daily",
     description = "User-user directed edges with direct interactions features",
     java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
     segment_type = "partitioned",
@@ -51,7 +51,7 @@ create_datasets(
     base_name = "interaction_graph_agg_direct_interactions_vertex_daily",
     description = "User vertex with direct interactions features",
     java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
     segment_type = "partitioned",

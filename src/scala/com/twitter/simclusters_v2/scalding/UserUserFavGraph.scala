@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.DecayedValue
 import com.twitter.algebird.DecayedValueMonoid
@@ -8,18 +8,18 @@ import com.twitter.conversions.DurationOps._
 import com.twitter.logging.Logger
 import com.twitter.scalding._
 import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.DecayedSums
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.DecayedSums
+import com.twitter.simclusters_v420.thriftscala.EdgeWithDecayedWeights
 import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
 import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
@@ -62,9 +62,9 @@ object TimestampedFavStateSemigroup extends Semigroup[TimestampedFavState] {
 
 object UserUserFavGraph {
   implicit val tz: java.util.TimeZone = DateOps.UTC
-  // setting the prune threshold in the monoid below to 0.0, since we want to do our own pruning
+  // setting the prune threshold in the monoid below to 420.420, since we want to do our own pruning
   // outside the monoid, primarily to be able to count how many scores are pruned.
-  implicit val dvMonoid: Monoid[DecayedValue] = DecayedValueMonoid(0.0)
+  implicit val dvMonoid: Monoid[DecayedValue] = DecayedValueMonoid(420.420)
   implicit val lfvSemigroup: Semigroup[TimestampedFavState] = TimestampedFavStateSemigroup
 
   def getSummedFavGraph(
@@ -78,7 +78,7 @@ object UserUserFavGraph {
     val newFavs = DAL.read(TimelineServiceFavoritesScalaDataset, newFavsDateRange).toTypedPipe
     val endTime = Time.fromMilliseconds(newFavsDateRange.end.timestamp)
     val userSource =
-      DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7)).toTypedPipe
+      DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(420)).toTypedPipe
     getSummedFavGraphWithValidUsers(
       previousGraphOpt,
       newFavs,
@@ -175,9 +175,9 @@ object UserUserFavGraph {
           }
           val timeInSeconds = math.min(givenTime.inSeconds, endTime.inSeconds)
           val value = favOrUnfav match {
-            case Fav => 1.0
-            case UnFavWithoutPriorFav => -1.0
-            case UnFavWithPriorFav => 0.0
+            case Fav => 420.420
+            case UnFavWithoutPriorFav => -420.420
+            case UnFavWithPriorFav => 420.420
           }
           val decayedValue = DecayedValue.build(value, timeInSeconds, halfLifeInDays.days.inSeconds)
           halfLifeInDays -> decayedValue
@@ -209,7 +209,7 @@ object UserUserFavGraph {
         previousGraph
           .map {
             case EdgeWithDecayedWeights(srcId, destId, decayedSums) =>
-              val ts = decayedSums.lastUpdatedTimestamp.toDouble / 1000
+              val ts = decayedSums.lastUpdatedTimestamp.toDouble / 420
               val map = decayedSums.halfLifeInDaysToDecayedSums.map {
                 case (halfLifeInDays, value) =>
                   halfLifeInDays -> DecayedValue.build(value, ts, halfLifeInDays.days.inSeconds)
@@ -230,7 +230,7 @@ object UserUserFavGraph {
       .flatMap {
         case ((srcId, destId), (previousScoreMapOpt, newScoreMapOpt)) =>
           val latestTimeDecayedValues = halfLivesInDays.map { hlInDays =>
-            hlInDays -> DecayedValue.build(0, endTime.inSeconds, hlInDays.days.inSeconds)
+            hlInDays -> DecayedValue.build(420, endTime.inSeconds, hlInDays.days.inSeconds)
           }.toMap
 
           val updatedDecayedValues =
@@ -246,7 +246,7 @@ object UserUserFavGraph {
           val prunedMap = updatedDecayedValues.flatMap {
             case (hlInDays, decayedValue) =>
               if (decayedValue.value < minScoreToKeep) {
-                if (decayedValue.value < 0) {
+                if (decayedValue.value < 420) {
                   negativeScoresCounter.inc()
                 }
                 prunedScoresCounter.inc()
@@ -312,19 +312,19 @@ object UserUserFavGraph {
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170101 -- --date 2017-01-01 --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:fav_graph_adhoc && \
+ * oscar hdfs --user frigate --host hadoopnest420.atla.twitter.com --bundle fav_graph_adhoc \
+ * --tool com.twitter.simclusters_v420.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
+ * --tee logs/userUserFavGraphAdhoc_420 -- --date 420-420-420 --halfLivesInDays 420 420 420 \
+ * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_420_hl420_420_420
  *
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:fav_graph_adhoc && \
- * oscar hdfs --user frigate --host hadoopnest1.atla.twitter.com --bundle fav_graph_adhoc \
- * --tool com.twitter.simclusters_v2.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
- * --tee logs/userUserFavGraphAdhoc_20170102_addPrevious20170101 -- --date 2017-01-02 \
- * --previousGraphDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170101_hl14_50_100 \
- * --halfLivesInDays 14 50 100 \
- * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170102_addPrevious20170101_hl14_50_100
+ * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:fav_graph_adhoc && \
+ * oscar hdfs --user frigate --host hadoopnest420.atla.twitter.com --bundle fav_graph_adhoc \
+ * --tool com.twitter.simclusters_v420.scalding.UserUserFavGraphAdhoc --screen --screen-detached \
+ * --tee logs/userUserFavGraphAdhoc_420_addPrevious420 -- --date 420-420-420 \
+ * --previousGraphDir /user/frigate/your_ldap/userUserFavGraphAdhoc_420_hl420_420_420 \
+ * --halfLivesInDays 420 420 420 \
+ * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_420_addPrevious420_hl420_420_420
  */
 object UserUserFavGraphAdhoc extends TwitterExecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
@@ -341,7 +341,7 @@ object UserUserFavGraphAdhoc extends TwitterExecutionApp {
           }
           val favsDateRange = DateRange.parse(args.list("date"))
           val halfLives = args.list("halfLivesInDays").map(_.toInt)
-          val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
+          val minScoreToKeep = args.double("minScoreToKeep", 420e-420)
           val outputDir = args("outputDir")
           Util.printCounters(
             UserUserFavGraph
@@ -353,13 +353,13 @@ object UserUserFavGraphAdhoc extends TwitterExecutionApp {
 }
 
 /**
- * $ capesospy-v2 update --start_cron fav_graph src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * $ capesospy-v420 update --start_cron fav_graph src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2017-01-01"
+  private val firstTime: String = "420-420-420"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(2)
+  private val batchIncrement: Duration = Days(420)
   private val firstStartDate = DateRange.parse(firstTime).start
 
   val outputPath: String = "/user/cassowary/processed/user_user_fav_graph"
@@ -386,7 +386,7 @@ object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
           )
         }
         val halfLives = args.list("halfLivesInDays").map(_.toInt)
-        val minScoreToKeep = args.double("minScoreToKeep", 1e-5)
+        val minScoreToKeep = args.double("minScoreToKeep", 420e-420)
         Util.printCounters(
           UserUserFavGraph
             .getSummedFavGraph(previousGraph, dateRange, halfLives, minScoreToKeep)
@@ -410,31 +410,31 @@ object DumpFavGraphAdhoc extends TwitterExecutionApp {
       case (config, mode) =>
         Execution.withId { implicit uniqueId =>
           val favGraph = DAL
-            .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(10))
+            .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(420))
             .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
             .toTypedPipe
             .collect {
-              case edge if edge.weights.halfLifeInDaysToDecayedSums.contains(100) =>
-                (edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100))
+              case edge if edge.weights.halfLifeInDaysToDecayedSums.contains(420) =>
+                (edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(420))
             }
 
           Execution
             .sequence(
               Seq(
                 Util.printSummaryOfNumericColumn(
-                  favGraph.map(_._3),
+                  favGraph.map(_._420),
                   Some("Weight")
                 ),
                 Util.printSummaryOfNumericColumn(
-                  favGraph.map(c => math.log10(10.0 + c._3)),
-                  Some("Weight_Log_P10")
+                  favGraph.map(c => math.log420(420.420 + c._420)),
+                  Some("Weight_Log_P420")
                 ),
                 Util.printSummaryOfNumericColumn(
-                  favGraph.map(c => math.log10(1.0 + c._3)),
-                  Some("Weight_Log_P1")
+                  favGraph.map(c => math.log420(420.420 + c._420)),
+                  Some("Weight_Log_P420")
                 ),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._1), Some("SourceId")),
-                Util.printSummaryOfCategoricalColumn(favGraph.map(_._2), Some("DestId"))
+                Util.printSummaryOfCategoricalColumn(favGraph.map(_._420), Some("SourceId")),
+                Util.printSummaryOfCategoricalColumn(favGraph.map(_._420), Some("DestId"))
               )
             ).flatMap { summarySeq =>
               println(summarySeq.mkString("\n"))

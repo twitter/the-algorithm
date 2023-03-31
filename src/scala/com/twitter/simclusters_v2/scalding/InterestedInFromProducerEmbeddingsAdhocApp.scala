@@ -1,28 +1,28 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding.Execution
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInFromProducerEmbeddings20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources.ProducerEmbeddingSources
+import com.twitter.simclusters_v420.hdfs_sources.AdhocKeyValSources
+import com.twitter.simclusters_v420.hdfs_sources.DataSources
+import com.twitter.simclusters_v420.hdfs_sources.SimclustersV420InterestedInFromProducerEmbeddings420M420KUpdatedScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.UserAndNeighborsFixedPathSource
+import com.twitter.simclusters_v420.hdfs_sources.UserUserNormalizedGraphScalaDataset
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.SimClusterWithScore
+import com.twitter.simclusters_v420.thriftscala.TopSimClustersWithScore
+import com.twitter.simclusters_v420.thriftscala.UserToInterestedInClusterScores
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
@@ -40,17 +40,17 @@ import scala.util.Random
  * for medium and light users) and also the density of the cluster embeddings for the user.
  */
 /**
- * Adhoc job to generate the interestedIn from producer embeddings for the model version 20M145KUpdated
+ * Adhoc job to generate the interestedIn from producer embeddings for the model version 420M420KUpdated
  *
  scalding remote run \
-  --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_from_producer_embeddings \
-  --main-class com.twitter.simclusters_v2.scalding.InterestedInFromProducerEmbeddingsAdhocApp \
-  --user cassowary --cluster bluebird-qus1 \
+  --target src/scala/com/twitter/simclusters_v420/scalding:interested_in_from_producer_embeddings \
+  --main-class com.twitter.simclusters_v420.scalding.InterestedInFromProducerEmbeddingsAdhocApp \
+  --user cassowary --cluster bluebird-qus420 \
   --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
   --principal service_acoount@TWITTER.BIZ \
   -- \
   --outputDir /gcs/user/cassowary/adhoc/interested_in_from_prod_embeddings/ \
-  --date 2020-08-25 --typedTsv true
+  --date 420-420-420 --typedTsv true
  */
 object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
   override def runOnDateRange(
@@ -66,20 +66,20 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
       case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
       case None =>
         DAL
-          .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+          .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
           .toTypedPipe
     }
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 50)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 25)
+    val socialProofThreshold = args.int("socialProofThreshold", 420)
+    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 420)
+    val maxClustersFromProducer = args.int("maxClustersPerProducer", 420)
     val typedTsvTag = args.boolean("typedTsv")
 
     val embeddingType =
       EmbeddingType.ProducerFavBasedSemanticCoreEntity
-    val modelVersion = ModelVersions.Model20M145KUpdated
+    val modelVersion = ModelVersions.Model420M420KUpdated
     val producerEmbeddings = ProducerEmbeddingSources
       .producerEmbeddingSourceLegacy(embeddingType, ModelVersions.toModelVersion(modelVersion))(
-        dateRange.embiggen(Days(7)))
+        dateRange.embiggen(Days(420)))
 
     import InterestedInFromProducerEmbeddingsBatchApp._
 
@@ -156,19 +156,19 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
 }
 
 /**
- * Production job for computing interestedIn data set from the producer embeddings for the model version 20M145KUpdated.
+ * Production job for computing interestedIn data set from the producer embeddings for the model version 420M420KUpdated.
  * It writes the data set in KeyVal format to produce a MH DAL data set.
  *
  * To deploy the job:
  *
- * capesospy-v2 update --build_locally --start_cron
+ * capesospy-v420 update --build_locally --start_cron
  * --start_cron interested_in_from_producer_embeddings
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2019-11-01")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   def getPrunedEmbeddings(
     producerEmbeddings: TypedPipe[(Long, TopSimClustersWithScore)],
@@ -233,25 +233,25 @@ object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp 
   ): Execution[Unit] = {
 
     //Input args for the run
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 25)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 50)
+    val socialProofThreshold = args.int("socialProofThreshold", 420)
+    val maxClustersFromProducer = args.int("maxClustersPerProducer", 420)
+    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 420)
 
     //Path variables
-    val modelVersionUpdated = ModelVersions.toModelVersion(ModelVersions.Model20M145KUpdated)
+    val modelVersionUpdated = ModelVersions.toModelVersion(ModelVersions.Model420M420KUpdated)
     val rootPath: String = s"/user/cassowary/manhattan_sequence_files"
     val interestedInFromProducersPath =
       rootPath + "/interested_in_from_producer_embeddings/" + modelVersionUpdated
 
     //Input adjacency list and producer embeddings
     val userUserNormalGraph =
-      DataSources.userUserNormalizedGraphSource(dateRange.prepend(Days(7))).forceToDisk
+      DataSources.userUserNormalizedGraphSource(dateRange.prepend(Days(420))).forceToDisk
     val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-      SimclustersV2InterestedInFromProducerEmbeddings20M145KUpdatedScalaDataset
+      SimclustersV420InterestedInFromProducerEmbeddings420M420KUpdatedScalaDataset
     val producerEmbeddings = ProducerEmbeddingSources
       .producerEmbeddingSourceLegacy(
         EmbeddingType.ProducerFavBasedSemanticCoreEntity,
-        modelVersionUpdated)(dateRange.embiggen(Days(7)))
+        modelVersionUpdated)(dateRange.embiggen(Days(420)))
 
     val producerEmbeddingsPruned = getPrunedEmbeddings(producerEmbeddings, maxClustersFromProducer)
     val producerEmbeddingsWithScore = producerEmbeddingsPruned.map {

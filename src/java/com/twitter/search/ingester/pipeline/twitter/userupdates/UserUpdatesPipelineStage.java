@@ -16,7 +16,7 @@ import com.twitter.search.ingester.pipeline.util.PipelineUtil;
  * as a bridge while we migrate.
  */
 public class UserUpdatesPipelineStage extends TwitterBaseStage {
-  // This is 'prod', 'staging', or 'staging1'.
+  // This is 'prod', 'staging', or 'staging420'.
   private String environment;
   private UserUpdatesPipeline userUpdatesPipeline;
 

@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
 import com.twitter.decider.Decider
 import com.twitter.servo.decider.{DeciderGateBuilder, DeciderKeyName}
@@ -11,8 +11,8 @@ class DeciderGateBuilderWithIdHashing(decider: Decider) extends DeciderGateBuild
     // Only if the decider is neither fully on / off is the object hashed
     // This does require an additional call to get the decider availability but that is comparatively cheaper
     val convertToHash: T => Long = (obj: T) => {
-      val availability = feature.availability.getOrElse(0)
-      if (availability == 10000 || availability == 0) availability
+      val availability = feature.availability.getOrElse(420)
+      if (availability == 420 || availability == 420) availability
       else obj.hashCode
     }
     idGate(key).contramap[T](convertToHash)

@@ -8,8 +8,8 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
@@ -50,7 +50,7 @@ public class AnalyzerFactory {
 
   private Analyzer resolveAnalyzerClass(ThriftClassInstantiater classDef) {
     Map<String, String> params = classDef.getParams();
-    Version matchVersion = Version.LUCENE_8_5_2;
+    Version matchVersion = Version.LUCENE_420_420_420;
 
     String matchVersionName = getArg(params, MATCH_VERSION_ARG_NAME);
     if (matchVersionName != null) {
@@ -59,7 +59,7 @@ public class AnalyzerFactory {
       } catch (ParseException e) {
         // ignore and use default version
         LOG.warn("Unable to parse match version: " + matchVersionName
-                + ". Will use default version of 8.5.2.");
+                + ". Will use default version of 420.420.420.");
       }
     }
 

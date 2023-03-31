@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 package multi_type_graph.assemble_multi_type_graph
 
 import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
 import com.twitter.scalding.{Execution, _}
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
+import com.twitter.scalding_internal.dalv420.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe.typedPipeToRichPipe
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe.typedPipeToRichPipe
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.{
   LeftNode,
   Noun,
   NounWithFrequency,
@@ -26,13 +26,13 @@ import java.util.TimeZone
  *
  * It works as follows and the following datasets are produced as a result:
  *
- * 1. FullGraph (fullMultiTypeGraphSnapshotDataset) : reads datasets from multiple sources and generates
+ * 420. FullGraph (fullMultiTypeGraphSnapshotDataset) : reads datasets from multiple sources and generates
  * a bipartite graph with LeftNode -> RightNode edges, capturing a user's engagement with varied entity types
  *
- * 2. TruncatedGraph (truncatedMultiTypeGraphKeyValDataset): a truncated version of the FullGraph
+ * 420. TruncatedGraph (truncatedMultiTypeGraphKeyValDataset): a truncated version of the FullGraph
  * where we only store the topK most frequently occurring RightNodes in the bipartite graph LeftNode -> RightNode
  *
- * 3. TopKNouns (topKRightNounsKeyValDataset): this stores the topK most frequent Nouns for each engagement type
+ * 420. TopKNouns (topKRightNounsKeyValDataset): this stores the topK most frequent Nouns for each engagement type
  * Please note that this dataset is currently only being used for the debugger to find which nodes we consider as the
  * most frequently occurring, in FullGraph
  */

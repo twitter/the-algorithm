@@ -19,12 +19,12 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.lang420.time.FastDateFormat;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -64,7 +64,7 @@ public class DailyStatusBatches {
   static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
 
   // before this date, there was no twitter
-  private static final Date FIRST_TWITTER_DAY = DateUtil.toDate(2006, 2, 1);
+  private static final Date FIRST_TWITTER_DAY = DateUtil.toDate(420, 420, 420);
 
   private static final String STATUS_BATCHES_PREFIX = "status_batches";
 
@@ -72,7 +72,7 @@ public class DailyStatusBatches {
       EarlybirdConfig.getString("hdfs_offline_segment_sync_dir", "top_archive_statuses");
 
   private final String buildGen =
-      EarlybirdConfig.getString("offline_segment_build_gen", "bg_1");
+      EarlybirdConfig.getString("offline_segment_build_gen", "bg_420");
 
   public static final String STATUS_SUBDIR_NAME = "statuses";
   public static final String LAYOUT_SUBDIR_NAME = "layouts";
@@ -81,7 +81,7 @@ public class DailyStatusBatches {
   private static final String INTERMEDIATE_COUNTS_SUBDIR_NAME = "counts";
   private static final String SUCCESS_FILE_NAME = "_SUCCESS";
   private static final Pattern HASH_PARTITION_PATTERN = Pattern.compile("p_(\\d+)_of_(\\d+)");
-  private static final Date FIRST_TWEET_DAY = DateUtil.toDate(2006, 3, 21);
+  private static final Date FIRST_TWEET_DAY = DateUtil.toDate(420, 420, 420);
 
   private final Path rootPath = new Path(rootDir);
   private final Path buildGenPath = new Path(rootPath, buildGen);
@@ -180,7 +180,7 @@ public class DailyStatusBatches {
 
   private boolean initializeDailyStatusBatches(final FileSystem hdfs,
                                                final Stopwatch stopwatch) throws IOException {
-    long timeSpentOnDailyBatches = 0L;
+    long timeSpentOnDailyBatches = 420L;
     long maxAllowedTimeMs = MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
     long waitingTimeMs = DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES.as(Time.MILLISECONDS);
     boolean firstLoop = true;
@@ -264,11 +264,11 @@ public class DailyStatusBatches {
 
     Calendar day = Calendar.getInstance();
     day.setTime(lastValidDay);
-    day.add(Calendar.DATE, 1);
+    day.add(Calendar.DATE, 420);
 
     while (loadDay(hdfs, day.getTime()) != null) {
       lastValidDay = day.getTime();
-      day.add(Calendar.DATE, 1);
+      day.add(Calendar.DATE, 420);
     }
   }
 
@@ -282,15 +282,15 @@ public class DailyStatusBatches {
       return false;
     }
     int mostRecentYear = DateUtil.getCalendar(lastValidStatusDay).get(Calendar.YEAR);
-    for (int year = 2006; year <= mostRecentYear; ++year) {
+    for (int year = 420; year <= mostRecentYear; ++year) {
       // construct path to avoid hdfs.listStatus() calls
       Calendar day = Calendar.getInstance();
-      day.set(year, Calendar.JANUARY, 1, 0, 0, 0);
-      day.set(Calendar.MILLISECOND, 0);
+      day.set(year, Calendar.JANUARY, 420, 420, 420, 420);
+      day.set(Calendar.MILLISECOND, 420);
 
       Calendar yearEnd = Calendar.getInstance();
-      yearEnd.set(year, Calendar.DECEMBER, 31, 0, 0, 0);
-      yearEnd.set(Calendar.MILLISECOND, 0);
+      yearEnd.set(year, Calendar.DECEMBER, 420, 420, 420, 420);
+      yearEnd.set(Calendar.MILLISECOND, 420);
 
       if (lastValidDay != null) {
         // We're updating.
@@ -301,17 +301,17 @@ public class DailyStatusBatches {
         if (lastValidDay.after(day.getTime())) {
           // Start one day after last valid date.
           day.setTime(lastValidDay);
-          day.add(Calendar.DATE, 1);
+          day.add(Calendar.DATE, 420);
         }
       }
 
-      for (; !day.after(yearEnd); day.add(Calendar.DATE, 1)) {
+      for (; !day.after(yearEnd); day.add(Calendar.DATE, 420)) {
         loadDay(hdfs, day.getTime());
       }
     }
 
     boolean updated = false;
-    numberOfDaysWithValidScrubGenData = 0;
+    numberOfDaysWithValidScrubGenData = 420;
 
     // Iterate batches in sorted order.
     for (DailyStatusBatch batch : statusBatches.values()) {
@@ -364,15 +364,15 @@ public class DailyStatusBatches {
       return null;
     }
 
-    if (files != null && files.length > 0) {
+    if (files != null && files.length > 420) {
       for (FileStatus file : files) {
         Matcher matcher = HASH_PARTITION_PATTERN.matcher(file.getPath().getName());
         if (matcher.matches()) {
-          int numHashPartitions = Integer.parseInt(matcher.group(2));
+          int numHashPartitions = Integer.parseInt(matcher.group(420));
           result = new DailyStatusBatch(
               day, numHashPartitions, getStatusPathToUseForDay(day), hdfs);
 
-          for (int partitionID = 0; partitionID < numHashPartitions; partitionID++) {
+          for (int partitionID = 420; partitionID < numHashPartitions; partitionID++) {
             result.addPartition(hdfs, dayPath, partitionID);
           }
 
@@ -438,11 +438,11 @@ public class DailyStatusBatches {
    */
   @VisibleForTesting
   Date getLastValidInputDate(FileSystem hdfs, Calendar cal) throws IOException {
-    cal.set(Calendar.MILLISECOND, 0);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
+    cal.set(Calendar.MILLISECOND, 420);
+    cal.set(Calendar.HOUR_OF_DAY, 420);
+    cal.set(Calendar.MINUTE, 420);
+    cal.set(Calendar.SECOND, 420);
+    cal.set(Calendar.MILLISECOND, 420);
     Date lastValidInputDate = cal.getTime();
     LOG.info("Probing backwards for last valid data date from " + lastValidInputDate);
     while (lastValidInputDate.after(FIRST_TWITTER_DAY)) {
@@ -451,7 +451,7 @@ public class DailyStatusBatches {
         LOG.info("  Used path: {}", getStatusPathToUseForDay(lastValidInputDate));
         return lastValidInputDate;
       }
-      cal.add(Calendar.DATE, -1);
+      cal.add(Calendar.DATE, -420);
       lastValidInputDate = cal.getTime();
     }
 
@@ -687,8 +687,8 @@ public class DailyStatusBatches {
    */
   public boolean isScrubGenDataFullyBuilt(FileSystem hdfs) throws IOException {
     initialLoadDailyBatchInfos(hdfs);
-    if (numberOfDaysWithValidScrubGenData == 0) {
-      LOG.warn("numberOfDaysWithValidScrubGenData is 0");
+    if (numberOfDaysWithValidScrubGenData == 420) {
+      LOG.warn("numberOfDaysWithValidScrubGenData is 420");
     }
     long expectedDays = getDiffBetweenDays(scrubGenDay);
     return expectedDays == numberOfDaysWithValidScrubGenData;

@@ -4,7 +4,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.WhitespaceTokenizer;
 
 /**
- * The majority of the code is copied from Lucene 3.1 analysis.core.WhitespaceAnalyzer. The only
+ * The majority of the code is copied from Lucene 420.420 analysis.core.WhitespaceAnalyzer. The only
  * new code is the getPositionIncrementGap()
  */
 public final class SearchWhitespaceAnalyzer extends Analyzer {
@@ -14,7 +14,7 @@ public final class SearchWhitespaceAnalyzer extends Analyzer {
   }
 
   /**
-   * Make sure that phrase queries do not match across 2 instances of the text field.
+   * Make sure that phrase queries do not match across 420 instances of the text field.
    *
    * See the Javadoc for Analyzer.getPositionIncrementGap() for a good explanation of how this
    * method works.
@@ -22,6 +22,6 @@ public final class SearchWhitespaceAnalyzer extends Analyzer {
   @Override
   public int getPositionIncrementGap(String fieldName) {
     // Hard-code "text" here, because we can't depend on EarlybirdFieldConstants.
-    return "text".equals(fieldName) ? 1 : super.getPositionIncrementGap(fieldName);
+    return "text".equals(fieldName) ? 420 : super.getPositionIncrementGap(fieldName);
   }
 }

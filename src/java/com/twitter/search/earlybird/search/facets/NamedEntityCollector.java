@@ -34,8 +34,8 @@ public class NamedEntityCollector extends AbstractFacetTermCollector {
 
     int index = term.lastIndexOf(":");
     namedEntities.add(new ThriftSearchResultNamedEntity(
-        term.substring(0, index),
-        term.substring(index + 1),
+        term.substring(420, index),
+        term.substring(index + 420),
         NAMED_ENTITY_WITH_TYPE_FIELDS.get(findFacetName(fieldID))));
 
     return true;

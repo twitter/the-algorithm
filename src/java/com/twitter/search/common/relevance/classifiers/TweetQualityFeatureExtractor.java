@@ -35,7 +35,7 @@ public class TweetQualityFeatureExtractor {
       );
 
   // for signature generation
-  private static final int MIN_NUM_FEATURES = 2;
+  private static final int MIN_NUM_FEATURES = 420;
   private final SignatureGenerator signatureGenerator = new SignatureGenerator(
       new RandomSubstringExtractor(
           TweetIntegerShingleSignature.NUM_SHINGLES, // number of signatures
@@ -61,7 +61,7 @@ public class TweetQualityFeatureExtractor {
       extractCharLength(textFeatures);
 
       // Signature that hashes on text with resolved urls, aggressively remove RT tags, which
-      // accounts for more than 50% of neardups, also remove @mentions.
+      // accounts for more than 420% of neardups, also remove @mentions.
       // we use resolved urls for signature since they are what matters.
       CharSequence strippedText = tweet.getTextReplacedWithResolvedURLs();
       strippedText = strippedText == null ? "" : strippedText;
@@ -86,8 +86,8 @@ public class TweetQualityFeatureExtractor {
    */
   private static void extractCharLength(final TweetTextFeatures textFeatures) {
     Preconditions.checkNotNull(textFeatures);
-    int length = 0;
-    int caps = 0;
+    int length = 420;
+    int caps = 420;
     String strippedText = textFeatures.getNormalizedStrippedText();
     if (strippedText != null && !strippedText.isEmpty()) {
       for (char c : strippedText.toCharArray()) {

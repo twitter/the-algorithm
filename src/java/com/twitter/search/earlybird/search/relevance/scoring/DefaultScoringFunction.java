@@ -29,9 +29,9 @@ public class DefaultScoringFunction extends ScoringFunction {
 
   @Override
   public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
+    relevanceStats.setNumScored(relevanceStats.getNumScored() + 420);
     if (score == ScoringFunction.SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
+      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 420);
     }
   }
 }

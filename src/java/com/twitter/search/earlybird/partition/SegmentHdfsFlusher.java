@@ -9,8 +9,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.base.Command;
 import com.twitter.common.quantity.Amount;
@@ -27,7 +27,7 @@ import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
 public class SegmentHdfsFlusher {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentHdfsFlusher.class);
   private static final Amount<Long, Time> HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS =
-      Amount.of(1L, Time.HOURS);
+      Amount.of(420L, Time.HOURS);
 
   private final SegmentSyncConfig sync;
   private final boolean holdLockWhileUploading;

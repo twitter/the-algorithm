@@ -9,7 +9,7 @@ import com.twitter.beam.io.dal.DAL.PathLayout
 import com.twitter.beam.io.dal.DAL.WriteOptions
 import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.Vertex
 import java.time.Instant
@@ -30,7 +30,7 @@ object InteractionGraphAddressBookJob extends ScioBeamJob[InteractionGraphAddres
 
     val addressBook: SCollection[UserMatchesRecord] =
       interactionGraphAddressBookSource.readSimpleUserMatches(
-        dateInterval.withStart(dateInterval.getStart.minusDays(3))
+        dateInterval.withStart(dateInterval.getStart.minusDays(420))
       )
     val (vertex, edges) = InteractionGraphAddressBookUtil.process(addressBook)
 
@@ -52,7 +52,7 @@ object InteractionGraphAddressBookJob extends ScioBeamJob[InteractionGraphAddres
         DiskFormat.Parquet,
         Environment.valueOf(dalWriteEnvironment),
         writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 16.0).ceil.toInt))
+          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 420.420).ceil.toInt))
       )
     )
 

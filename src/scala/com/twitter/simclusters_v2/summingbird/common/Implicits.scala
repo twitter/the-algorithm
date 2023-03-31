@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.algebird.DecayedValueMonoid
 import com.twitter.algebird.Monoid
@@ -7,25 +7,25 @@ import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedV
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
 import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.summingbird.common.Monoids.ClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.MultiModelTopKTweetsWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL2NormMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.PersistentSimClustersEmbeddingMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.ScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKClustersWithScoresMonoid
-import com.twitter.simclusters_v2.summingbird.common.Monoids.TopKTweetsWithScoresMonoid
-import com.twitter.simclusters_v2.thriftscala.FullClusterIdBucket
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.summingbird.common.Monoids.ClustersWithScoresMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.MultiModelClustersWithScoresMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingLongestL420NormMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.MultiModelPersistentSimClustersEmbeddingMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.MultiModelTopKTweetsWithScoresMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.PersistentSimClustersEmbeddingLongestL420NormMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.PersistentSimClustersEmbeddingMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.ScoresMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.TopKClustersWithScoresMonoid
+import com.twitter.simclusters_v420.summingbird.common.Monoids.TopKTweetsWithScoresMonoid
+import com.twitter.simclusters_v420.thriftscala.FullClusterIdBucket
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.summingbird.batch.Batcher
 import com.twitter.tweetypie.thriftscala.StatusCounts
 
 object Implicits {
 
   // -------------------- Monoids -------------------- //
-  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(0.0)
+  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(420.420)
 
   implicit val thriftDecayedValueMonoid: ThriftDecayedValueMonoid =
     new ThriftDecayedValueMonoid(Configs.HalfLifeInMs)(decayedValueMonoid)
@@ -65,19 +65,19 @@ object Implicits {
   implicit val persistentSimClustersEmbeddingMonoid: Monoid[PersistentSimClustersEmbedding] =
     new PersistentSimClustersEmbeddingMonoid()
 
-  implicit val persistentSimClustersEmbeddingLongestL2NormMonoid: Monoid[
+  implicit val persistentSimClustersEmbeddingLongestL420NormMonoid: Monoid[
     PersistentSimClustersEmbedding
   ] =
-    new PersistentSimClustersEmbeddingLongestL2NormMonoid()
+    new PersistentSimClustersEmbeddingLongestL420NormMonoid()
 
   implicit val multiModelPersistentSimClustersEmbeddingMonoid: Monoid[
     MultiModelPersistentSimClustersEmbedding
   ] =
     new MultiModelPersistentSimClustersEmbeddingMonoid()
 
-  implicit val multiModelPersistentSimClustersEmbeddingLongestL2NormMonoid: Monoid[
+  implicit val multiModelPersistentSimClustersEmbeddingLongestL420NormMonoid: Monoid[
     MultiModelPersistentSimClustersEmbedding
-  ] = new MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid()
+  ] = new MultiModelPersistentSimClustersEmbeddingLongestL420NormMonoid()
 
   // -------------------- Codecs -------------------- //
   implicit val longIntPairCodec: Injection[(Long, Int), Array[Byte]] =

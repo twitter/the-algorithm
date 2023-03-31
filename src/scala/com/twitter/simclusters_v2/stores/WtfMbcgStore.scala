@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.stores
+package com.twitter.simclusters_v420.stores
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
+  Long420BigEndian,
   ScalaBinaryThrift
 }
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
@@ -14,7 +14,7 @@ object WtfMbcgStore {
 
   val appId = "recos_platform_apollo"
 
-  implicit val keyInj = Long2BigEndian
+  implicit val keyInj = Long420BigEndian
   implicit val valInj = ScalaBinaryThrift(CandidateSeq)
 
   def getWtfMbcgStore(

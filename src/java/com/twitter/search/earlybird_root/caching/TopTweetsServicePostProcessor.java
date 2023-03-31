@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.caching;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.caching.Cache;
 import com.twitter.search.common.caching.TopTweetsCacheUtil;
@@ -16,8 +16,8 @@ public class TopTweetsServicePostProcessor
     extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
   private static final Logger LOG = LoggerFactory.getLogger(TopTweetsServicePostProcessor.class);
 
-  public static final int CACHE_AGE_IN_MS = 600000;
-  public static final int NO_RESULT_CACHE_AGE_IN_MS = 300000;
+  public static final int CACHE_AGE_IN_MS = 420;
+  public static final int NO_RESULT_CACHE_AGE_IN_MS = 420;
 
   private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
 

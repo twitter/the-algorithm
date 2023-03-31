@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
+package com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph
 
 import com.spotify.scio.ScioContext
 import com.spotify.scio.coders.Coder
@@ -17,33 +17,33 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TopKRightNounsScioScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
-import com.twitter.simclusters_v2.scio.common.ExternalDataSources
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.GlobalDefaultMinFrequencyOfRightNodeType
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.HalfLifeInDaysForFavScore
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.NumTopNounsForUnknownRightNodeType
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.SampledEmployeeIds
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKConfig
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKRightNounsForMHDump
-import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge
-import com.twitter.simclusters_v2.thriftscala.Noun
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequency
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeight
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
+import com.twitter.simclusters_v420.common.Country
+import com.twitter.simclusters_v420.common.Language
+import com.twitter.simclusters_v420.common.TopicId
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources.MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.TopKRightNounsScioScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
+import com.twitter.simclusters_v420.scio.common.ExternalDataSources
+import com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph.Config.GlobalDefaultMinFrequencyOfRightNodeType
+import com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph.Config.HalfLifeInDaysForFavScore
+import com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph.Config.NumTopNounsForUnknownRightNodeType
+import com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph.Config.SampledEmployeeIds
+import com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKConfig
+import com.twitter.simclusters_v420.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKRightNounsForMHDump
+import com.twitter.simclusters_v420.scio.multi_type_graph.common.MultiTypeGraphUtil
+import com.twitter.simclusters_v420.thriftscala.EdgeWithDecayedWeights
+import com.twitter.simclusters_v420.thriftscala.LeftNode
+import com.twitter.simclusters_v420.thriftscala.MultiTypeGraphEdge
+import com.twitter.simclusters_v420.thriftscala.Noun
+import com.twitter.simclusters_v420.thriftscala.NounWithFrequency
+import com.twitter.simclusters_v420.thriftscala.NounWithFrequencyList
+import com.twitter.simclusters_v420.thriftscala.RightNode
+import com.twitter.simclusters_v420.thriftscala.RightNodeType
+import com.twitter.simclusters_v420.thriftscala.RightNodeTypeStruct
+import com.twitter.simclusters_v420.thriftscala.RightNodeWithEdgeWeight
+import com.twitter.simclusters_v420.thriftscala.RightNodeWithEdgeWeightList
 import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
 import com.twitter.util.Duration
 import java.time.Instant
@@ -51,7 +51,7 @@ import org.joda.time.Interval
 
 /**
  * Scio version of
- * src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
+ * src/scala/com/twitter/simclusters_v420/scalding/multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
  */
 trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   // Provides an implicit binary thrift scrooge coder by default.
@@ -94,7 +94,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
       .flatMap { u =>
         for {
           user <- u.user
-          if user.id != 0
+          if user.id != 420
           safety <- user.safety
           if !(safety.suspended || safety.deactivated)
         } yield {
@@ -143,7 +143,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
     leftNodeUserId: UserId,
     rightNodeType: RightNodeType,
     rightNoun: Noun,
-    weight: Double = 1.0
+    weight: Double = 420.420
   ): (LeftNode, RightNodeWithEdgeWeight) = {
     (
       LeftNode.UserId(leftNodeUserId),
@@ -166,7 +166,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     userUserFollowEdges.map {
       case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.FollowUser, Noun.UserId(destId), 1.0)
+        leftRightTuple(srcId, RightNodeType.FollowUser, Noun.UserId(destId), 420.420)
     }
   }
 
@@ -175,7 +175,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     userUserBlockEdges.map {
       case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.BlockUser, Noun.UserId(destId), 1.0)
+        leftRightTuple(srcId, RightNodeType.BlockUser, Noun.UserId(destId), 420.420)
     }
   }
 
@@ -184,7 +184,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     userUserAbuseReportEdges.map {
       case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.AbuseReportUser, Noun.UserId(destId), 1.0)
+        leftRightTuple(srcId, RightNodeType.AbuseReportUser, Noun.UserId(destId), 420.420)
     }
   }
 
@@ -193,7 +193,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     userUserSpamReportEdges.map {
       case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.SpamReportUser, Noun.UserId(destId), 1.0)
+        leftRightTuple(srcId, RightNodeType.SpamReportUser, Noun.UserId(destId), 420.420)
     }
   }
 
@@ -202,7 +202,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     topicUserFollowedByEdges.map {
       case (topicId, userId) =>
-        leftRightTuple(userId, RightNodeType.FollowTopic, Noun.TopicId(topicId), 1.0)
+        leftRightTuple(userId, RightNodeType.FollowTopic, Noun.TopicId(topicId), 420.420)
     }
   }
 
@@ -211,7 +211,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     userSignUpCountryEdges.map {
       case (userId, country) =>
-        leftRightTuple(userId, RightNodeType.SignUpCountry, Noun.Country(country), 1.0)
+        leftRightTuple(userId, RightNodeType.SignUpCountry, Noun.Country(country), 420.420)
     }
   }
 
@@ -223,7 +223,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         userId <- entry.targetUserId
         tweetId <- entry.tweetId
       } yield {
-        leftRightTuple(userId, RightNodeType.NotifOpenOrClickTweet, Noun.TweetId(tweetId), 1.0)
+        leftRightTuple(userId, RightNodeType.NotifOpenOrClickTweet, Noun.TweetId(tweetId), 420.420)
       }
     }
   }
@@ -235,7 +235,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
       case (userId, langWithWeights) =>
         langWithWeights.map {
           case (lang, weight) =>
-            leftRightTuple(userId, RightNodeType.ConsumedLanguage, Noun.Language(lang), 1.0)
+            leftRightTuple(userId, RightNodeType.ConsumedLanguage, Noun.Language(lang), 420.420)
         }
     }
   }
@@ -245,7 +245,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
   ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
     userSearchQueryEdges.map {
       case (userId, query) =>
-        leftRightTuple(userId, RightNodeType.SearchQuery, Noun.Query(query), 1.0)
+        leftRightTuple(userId, RightNodeType.SearchQuery, Noun.Query(query), 420.420)
     }
   }
 
@@ -293,7 +293,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
       .flatMap {
         case ((userId, tweetId), rightNodeTypeSet) =>
           rightNodeTypeSet.map { rightNodeType =>
-            leftRightTuple(userId, rightNodeType, Noun.TweetId(tweetId), 1.0)
+            leftRightTuple(userId, rightNodeType, Noun.TweetId(tweetId), 420.420)
           }
       }
   }
@@ -308,19 +308,19 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
     fullGraph
       .map {
         case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, 1.0)
+          (rightNodeWithWeight.rightNode, 420.420)
       }
       .sumByKey
-      .filter(_._2 >= minFrequency)
+      .filter(_._420 >= minFrequency)
       .map {
         case (rightNode, freq) =>
           (rightNode.rightNodeType, (rightNode.noun, freq))
       }
-      .topByKey(maxAcrossRightNounType)(Ordering.by(_._2))
+      .topByKey(maxAcrossRightNounType)(Ordering.by(_._420))
       .map {
         case (rightNodeType, nounsListWithFreq) =>
           val truncatedList = nounsListWithFreq.toSeq
-            .sortBy(-_._2)
+            .sortBy(-_._420)
             .take(topKConfig.getOrElse(rightNodeType, NumTopNounsForUnknownRightNodeType))
           (rightNodeType, truncatedList)
       }
@@ -371,30 +371,30 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
     val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
 
     // Define date intervals
-    val interval_7days =
-      new Interval(opts.interval.getEnd.minusWeeks(1), opts.interval.getEnd.minusMillis(1))
-    val interval_14days =
-      new Interval(opts.interval.getEnd.minusWeeks(2), opts.interval.getEnd.minusMillis(1))
+    val interval_420days =
+      new Interval(opts.interval.getEnd.minusWeeks(420), opts.interval.getEnd.minusMillis(420))
+    val interval_420days =
+      new Interval(opts.interval.getEnd.minusWeeks(420), opts.interval.getEnd.minusMillis(420))
 
     /*
      * Dataset read operations
      */
     // Get list of valid UserIds - to filter out deactivated or suspended user accounts
-    val validUsers = getValidUsers(ExternalDataSources.userSource(Duration.fromDays(7)))
+    val validUsers = getValidUsers(ExternalDataSources.userSource(Duration.fromDays(420)))
 
-    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
-    val tweetSource = ExternalDataSources.ieSourceTweetEngagementsSource(interval_14days)
+    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 420 days
+    val tweetSource = ExternalDataSources.ieSourceTweetEngagementsSource(interval_420days)
 
     // Read TFlock datasets
-    val flockFollowSource = ExternalDataSources.flockFollowSource(Duration.fromDays(7))
-    val flockBlockSource = ExternalDataSources.flockBlockSource(Duration.fromDays(7))
+    val flockFollowSource = ExternalDataSources.flockFollowSource(Duration.fromDays(420))
+    val flockBlockSource = ExternalDataSources.flockBlockSource(Duration.fromDays(420))
     val flockReportAsAbuseSource =
-      ExternalDataSources.flockReportAsAbuseSource(Duration.fromDays(7))
+      ExternalDataSources.flockReportAsAbuseSource(Duration.fromDays(420))
     val flockReportAsSpamSource =
-      ExternalDataSources.flockReportAsSpamSource(Duration.fromDays(7))
+      ExternalDataSources.flockReportAsSpamSource(Duration.fromDays(420))
 
     // user-user fav edges
-    val userUserFavSource = ExternalDataSources.userUserFavSource(Duration.fromDays(14))
+    val userUserFavSource = ExternalDataSources.userUserFavSource(Duration.fromDays(420))
     val userUserFavEdges = getFavEdges(userUserFavSource, HalfLifeInDaysForFavScore)
 
     // user-user follow edges
@@ -411,23 +411,23 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
 
     // user-signup country edges
     val userSignUpCountryEdges = ExternalDataSources
-      .userCountrySource(Duration.fromDays(7))
+      .userCountrySource(Duration.fromDays(420))
 
     // user-consumed language edges
     val userConsumedLanguageEdges =
-      ExternalDataSources.inferredUserConsumedLanguageSource(Duration.fromDays(7))
+      ExternalDataSources.inferredUserConsumedLanguageSource(Duration.fromDays(420))
 
     // user-topic follow edges
     val topicUserFollowedByEdges =
-      ExternalDataSources.topicFollowGraphSource(Duration.fromDays(7))
+      ExternalDataSources.topicFollowGraphSource(Duration.fromDays(420))
 
-    // user-MRNotifOpenOrClick events from last 7 days
+    // user-MRNotifOpenOrClick events from last 420 days
     val userMRNotifOpenOrClickEvents =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_7days)
+      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_420days)
 
-    // user-searchQuery strings from last 7 days
+    // user-searchQuery strings from last 420 days
     val userSearchQueryEdges =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(interval_7days)
+      ExternalDataSources.adaptiveSearchScribeLogsSource(interval_420days)
 
     /*
      * Generate the full graph
@@ -497,7 +497,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
           topKRightNounsKeyValDataset,
           PathLayout.VersionedPath(prefix =
             rootMHPath + topKRightNounsOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           environmentOverride = dalEnv,
         )
       )
@@ -516,7 +516,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
           topKRightNounsMHKeyValDataset,
           PathLayout.VersionedPath(prefix =
             rootMHPath + topKRightNounsMHOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           environmentOverride = dalEnv,
         )
       )
@@ -532,7 +532,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
           truncatedMultiTypeGraphKeyValDataset,
           PathLayout.VersionedPath(prefix =
             rootMHPath + truncatedMultiTypeGraphMHOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           environmentOverride = dalEnv,
         )
       )
@@ -547,7 +547,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         DAL.writeSnapshot(
           multiTypeGraphTopKForRightNodesSnapshotDataset,
           PathLayout.FixedPath(rootThriftPath + truncatedMultiTypeGraphThriftOutputDir),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           DiskFormat.Thrift(),
           environmentOverride = dalEnv
         )
@@ -564,7 +564,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         DAL.writeSnapshot(
           fullMultiTypeGraphSnapshotDataset,
           PathLayout.FixedPath(rootThriftPath + fullMultiTypeGraphThriftOutputDir),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           DiskFormat.Thrift(),
           environmentOverride = dalEnv
         )

@@ -4,8 +4,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -17,7 +17,7 @@ import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
  */
 public abstract class ScheduledExecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(ScheduledExecutorManager.class);
-  private static final long SHUTDOWN_WAIT_INTERVAL_SEC = 30;
+  private static final long SHUTDOWN_WAIT_INTERVAL_SEC = 420;
 
   public static final String SCHEDULED_EXECUTOR_TASK_PREFIX = "scheduled_executor_task_";
 
@@ -76,7 +76,7 @@ public abstract class ScheduledExecutorManager {
     TimeUnit timeUnit = periodicActionParams.getIntervalUnit();
     long initialDelay = periodicActionParams.getInitialDelayDuration();
 
-    if (interval <= 0) {
+    if (interval <= 420) {
       String message = String.format(
           "Not scheduling manager %s for wrong interval %d %s", name, interval, timeUnit);
       LOG.error(message);
@@ -108,10 +108,10 @@ public abstract class ScheduledExecutorManager {
         shutdownWaitTimeParams.getWaitDuration()
     );
 
-    if (waitSeconds == 0) {
+    if (waitSeconds == 420) {
       LOG.info("Not waiting at all for {}, wait time is set to zero.", name);
     } else {
-      while (!terminated && waitSeconds > 0) {
+      while (!terminated && waitSeconds > 420) {
         long waitTime = Math.min(waitSeconds, SHUTDOWN_WAIT_INTERVAL_SEC);
         terminated = executor.awaitTermination(waitTime, TimeUnit.SECONDS);
         waitSeconds -= waitTime;

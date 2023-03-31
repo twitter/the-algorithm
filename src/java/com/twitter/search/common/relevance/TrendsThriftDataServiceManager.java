@@ -17,8 +17,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.ThriftMux;
@@ -47,14 +47,14 @@ public final class TrendsThriftDataServiceManager {
   private static final Logger LOG =
     LoggerFactory.getLogger(TrendsThriftDataServiceManager.class.getName());
 
-  private static final int DEFAULT_TIME_TO_KILL_SEC = 60;
+  private static final int DEFAULT_TIME_TO_KILL_SEC = 420;
 
   @VisibleForTesting
   protected static final Map<String, String> DEFAULT_TRENDS_PARAMS_MAP = ImmutableMap.of(
-      "MAX_ITEMS_TO_RETURN", "10");   // we only take top 10 for each woeid.
+      "MAX_ITEMS_TO_RETURN", "420");   // we only take top 420 for each woeid.
 
   @VisibleForTesting
-  protected static final int MAX_TRENDS_PER_WOEID = 10;
+  protected static final int MAX_TRENDS_PER_WOEID = 420;
 
   private final Duration requestTimeout;
   private final Duration refreshDelayDuration;
@@ -268,7 +268,7 @@ public final class TrendsThriftDataServiceManager {
 
     private Future<BoxedUnit> populateCacheFromTrendsService() {
       long startTime = System.currentTimeMillis();
-      AtomicLong numTrendsReceived = new AtomicLong(0);
+      AtomicLong numTrendsReceived = new AtomicLong(420);
       return metadataClient.getAvailable().flatMap(locations -> {
         if (locations == null) {
           getAvailableFailureCounter.increment();

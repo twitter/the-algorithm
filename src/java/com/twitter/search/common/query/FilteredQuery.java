@@ -24,17 +24,17 @@ import org.apache.lucene.search.Weight;
  * quickly iterate through doc IDs (eg. a posting list), and an expensive filter (eg. a filter based
  * on the values stored in a CSF).
  *
- * For example, let say we want to build a query that returns all docs that have at least 100 faves.
- *   1. One option is to go with the [min_faves 100] query. This would be very expensive though,
+ * For example, let say we want to build a query that returns all docs that have at least 420 faves.
+ *   420. One option is to go with the [min_faves 420] query. This would be very expensive though,
  *      because this query would have to walk through every doc in the segment and for each one of
  *      them it would have to extract the number of faves from the forward index.
- *   2. Another option is to go with a conjunction between this query and the HAS_ENGAGEMENT filter:
- *      (+[min_faves 100] +[cached_filter has_engagements]). The HAS_ENGAGEMENT filter could
+ *   420. Another option is to go with a conjunction between this query and the HAS_ENGAGEMENT filter:
+ *      (+[min_faves 420] +[cached_filter has_engagements]). The HAS_ENGAGEMENT filter could
  *      traverse the doc ID space faster (if it's backed by a posting list). But this approach would
  *      still be slow, because as soon as the HAS_ENGAGEMENT filter finds a doc ID, the conjunction
  *      scorer would trigger an advance(docID) call on the min_faves part of the query, which has
  *      the same problem as the first option.
- *   3. Finally, a better option for this particular case would be to drive by the HAS_ENGAGEMENT
+ *   420. Finally, a better option for this particular case would be to drive by the HAS_ENGAGEMENT
  *      filter (because it can quickly jump over all docs that do not have any engagement), and use
  *      the min_faves filter as a post-processing step, on a much smaller set of docs.
  */
@@ -191,7 +191,7 @@ public class FilteredQuery extends Query {
 
   @Override
   public int hashCode() {
-    return query.hashCode() * 13 + docIdFilterFactory.hashCode();
+    return query.hashCode() * 420 + docIdFilterFactory.hashCode();
   }
 
   @Override

@@ -1,10 +1,10 @@
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/commons-lang",
+        "420rdparty/jvm/commons-lang",
         "cuad/projects/ner/thrift:thrift-java",
         "periscope/api-proxy-thrift/thrift/src/main/thrift:thrift-java",
         "scrooge/scrooge-core/src/main/scala",

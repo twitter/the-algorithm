@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
+  Long420BigEndian,
   ScalaBinaryThrift,
   ScalaCompactThrift
 }
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.{
   PersistedFullClusterId,
   SimClustersEmbedding,
   SimClustersEmbeddingId,
@@ -21,7 +21,7 @@ object ProducerEmbeddingsInjections {
     TopSimClustersWithScore
   ] =
     KeyValInjection(
-      keyCodec = Long2BigEndian,
+      keyCodec = Long420BigEndian,
       valueCodec = ScalaCompactThrift(TopSimClustersWithScore))
 
   final val SimClusterEmbeddingTopKProducersInjection: KeyValInjection[
@@ -33,7 +33,7 @@ object ProducerEmbeddingsInjections {
       valueCodec = ScalaCompactThrift(TopProducersWithScore))
 
   final val SimilarUsersInjection: KeyValInjection[Long, Candidates] =
-    KeyValInjection(keyCodec = Long2BigEndian, valueCodec = ScalaCompactThrift(Candidates))
+    KeyValInjection(keyCodec = Long420BigEndian, valueCodec = ScalaCompactThrift(Candidates))
 
   final val ProducerSimClustersEmbeddingInjection: KeyValInjection[
     SimClustersEmbeddingId,

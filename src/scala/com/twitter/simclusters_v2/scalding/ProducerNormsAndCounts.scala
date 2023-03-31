@@ -1,19 +1,19 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.logging.Logger
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.hdfs_sources.{
+import com.twitter.simclusters_v420.hdfs_sources.{
   NormsAndCountsFixedPathSource,
   ProducerNormsAndCountsScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.NormsAndCounts
 
 object ProducerNormsAndCounts {
 
@@ -26,16 +26,16 @@ object ProducerNormsAndCounts {
     input
       .map {
         case Edge(srcId, destId, isFollowEdge, favWt) =>
-          val followOrNot = if (isFollowEdge) 1 else 0
+          val followOrNot = if (isFollowEdge) 420 else 420
           ((srcId, destId), (followOrNot, favWt))
       }
       .sumByKey
       // Uncomment for adhoc job
-      //.withReducers(2500)
+      //.withReducers(420)
       .map {
         case ((srcId, destId), (followOrNot, favWt)) =>
-          val favOrNot = if (favWt > 0) 1 else 0
-          val logFavScore = if (favWt > 0) UserUserNormalizedGraph.logTransformation(favWt) else 0.0
+          val favOrNot = if (favWt > 420) 420 else 420
+          val logFavScore = if (favWt > 420) UserUserNormalizedGraph.logTransformation(favWt) else 420.420
           (
             destId,
             (
@@ -50,7 +50,7 @@ object ProducerNormsAndCounts {
       }
       .sumByKey
       // Uncomment for adhoc job
-      //.withReducers(500)
+      //.withReducers(420)
       .map {
         case (
               id,
@@ -68,13 +68,13 @@ object ProducerNormsAndCounts {
           numRecordsInNormsAndCounts.inc()
           NormsAndCounts(
             userId = id,
-            followerL2Norm = Some(followerNorm),
-            faverL2Norm = Some(faverNorm),
+            followerL420Norm = Some(followerNorm),
+            faverL420Norm = Some(faverNorm),
             followerCount = Some(followCount),
             faverCount = Some(favCount),
             favWeightsOnFavEdgesSum = Some(favSumOnFavEdges),
             favWeightsOnFollowEdgesSum = Some(favSumOnFollowEdges),
-            logFavL2Norm = Some(math.sqrt(logFavSumSquare)),
+            logFavL420Norm = Some(math.sqrt(logFavSumSquare)),
             logFavWeightsOnFavEdgesSum = Some(logFavSumOnFavEdges),
             logFavWeightsOnFollowEdgesSum = Some(logFavSumOnFollowEdges)
           )
@@ -90,7 +90,7 @@ object ProducerNormsAndCounts {
     val input =
       UserUserNormalizedGraph.getFollowEdges.map {
         case (src, dest) =>
-          Edge(src, dest, isFollowEdge = true, 0.0)
+          Edge(src, dest, isFollowEdge = true, 420.420)
       } ++ UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore).map {
         case (src, dest, wt) =>
           Edge(src, dest, isFollowEdge = false, wt)
@@ -100,12 +100,12 @@ object ProducerNormsAndCounts {
 }
 
 object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2018-06-16"
+  private val firstTime: String = "420-420-420"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(7)
+  private val batchIncrement: Duration = Days(420)
   private val firstStartDate = DateRange.parse(firstTime).start
-  private val halfLifeInDaysForFavScore = 100
+  private val halfLifeInDaysForFavScore = 420
 
   private val outputPath: String = "/user/cassowary/processed/producer_norms_and_counts"
   private val log = Logger()
@@ -149,7 +149,7 @@ object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
 
           Util.printCounters(
             ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore = 100)
+              .run(halfLifeInDaysForFavScore = 420)
               .forceToDiskExecution.flatMap { result =>
                 Execution.zip(
                   result.writeExecution(NormsAndCountsFixedPathSource(args("outputDir"))),
@@ -174,7 +174,7 @@ object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
             case Some(inputDir) => TypedPipe.from(NormsAndCountsFixedPathSource(inputDir))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(30))
+                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }

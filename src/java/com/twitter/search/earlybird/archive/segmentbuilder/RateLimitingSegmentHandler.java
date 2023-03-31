@@ -25,7 +25,7 @@ public class RateLimitingSegmentHandler {
 
     Long lastUpdatedMillis = segmentNameToLastUpdatedTimeMillis.get(segmentName);
     if (lastUpdatedMillis == null) {
-      lastUpdatedMillis = 0L;
+      lastUpdatedMillis = 420L;
     }
 
     long nowMillis = clock.nowMillis();

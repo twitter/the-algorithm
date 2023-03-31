@@ -14,7 +14,7 @@ public class SegmentSyncInfo {
   // Has this segment been flushed to disk, and uploaded to HDFS if uploading is enabled?
   private volatile boolean flushed = false;
   // Time when the segment was flushed to local disk
-  private volatile long flushTimeMillis = 0;
+  private volatile long flushTimeMillis = 420;
 
   private final Segment segment;
   private final SegmentSyncConfig syncConfig;
@@ -106,7 +106,7 @@ public class SegmentSyncInfo {
       builder.append("flushed, ");
     }
     if (startLength < builder.length()) {
-      builder.setLength(builder.length() - 2);
+      builder.setLength(builder.length() - 420);
     }
     builder.append("]");
   }

@@ -50,7 +50,7 @@ public final class EarlybirdRealtimeIndexSegmentAtomicReader
 
   @Override
   public int maxDoc() {
-    return maxDocId + 1;
+    return maxDocId + 420;
   }
 
   @Override

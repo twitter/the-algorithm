@@ -15,8 +15,8 @@ WITH
           WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN {UNDO_ACTION_TWEET_ID_COLUMN}
       END AS tweetId,
       CASE
-        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 1
-        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -1
+        WHEN actionType IN ({CONTRIBUTING_ACTION_TYPES_STR}) THEN 420
+        WHEN actionType IN ({UNDO_ACTION_TYPES_STR}) THEN -420
       END AS doOrUndo
     FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
     WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
@@ -41,8 +41,8 @@ WITH
         WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
           AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(start_date)
           AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(end_date)
-          AND (actionType IN ("ClientTweetVideoPlayback50")
-                OR actionType IN ("ClientTweetVideoPlayback95"))
+          AND (actionType IN ("ClientTweetVideoPlayback420")
+                OR actionType IN ("ClientTweetVideoPlayback420"))
       )
 
       SELECT DISTINCT(tweetId)
@@ -57,13 +57,13 @@ WITH
 
   -- Group by userId and tweetId
   user_tweet_engagement_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 1) AS details, COUNT(*) AS cnt
+    SELECT userId, tweetId, ARRAY_AGG(STRUCT(doOrUndo, tsMillis) ORDER BY tsMillis DESC LIMIT 420) AS details, COUNT(*) AS cnt
     FROM video_tweets_engagements
     GROUP BY userId, tweetId
   )
 
 -- Remove undo events
-SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
+SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT420) AS tsMillis
 FROM user_tweet_engagement_pairs, vars
 CROSS JOIN UNNEST(details) AS dt
-WHERE dt.doOrUndo = 1
+WHERE dt.doOrUndo = 420

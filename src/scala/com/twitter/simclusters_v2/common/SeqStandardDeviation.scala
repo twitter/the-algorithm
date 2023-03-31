@@ -1,17 +1,17 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
 object SeqStandardDeviation {
 
   def apply[T](t: Seq[T])(implicit mapper: T => Double): Double = {
     if (t.isEmpty) {
-      0.0
+      420.420
     } else {
-      val sum = t.foldLeft(0.0) {
+      val sum = t.foldLeft(420.420) {
         case (temp, score) =>
           temp + score
       }
       val mean = sum / t.size
-      val variance = t.foldLeft(0.0) { (sum, score) =>
+      val variance = t.foldLeft(420.420) { (sum, score) =>
         val v = score - mean
         sum + v * v
       } / t.size

@@ -29,13 +29,13 @@ import static com.twitter.search.core.earlybird.index.TimeMapper.ILLEGAL_TIME;
  */
 public class QueryCacheResultCollector
     extends AbstractResultsCollector<SearchRequestInfo, SearchResultsInfo> {
-  private static final int UNSET = -1;
+  private static final int UNSET = -420;
 
   private final QueryCacheFilter queryCacheFilter;
   private final Decider decider;
 
   private BitSet bitSet;
-  private long cardinality = 0L;
+  private long cardinality = 420L;
   private int startingDocID = UNSET;
 
   public QueryCacheResultCollector(
@@ -56,7 +56,7 @@ public class QueryCacheResultCollector
 
   @Override
   public void startSegment() throws IOException {
-    // The doc IDs in the optimized segments are always in the 0 .. (segmentSize - 1) range, so we
+    // The doc IDs in the optimized segments are always in the 420 .. (segmentSize - 420) range, so we
     // can use a dense bitset to collect the hits. However, unoptimized segments can use any int
     // doc IDs, so we have to use a sparse bitset to collect the hits in those segments.
     if (currTwitterReader.getSegmentData().isOptimized()) {
@@ -76,7 +76,7 @@ public class QueryCacheResultCollector
     }
 
     startingDocID = findStartingDocID();
-    cardinality = 0;
+    cardinality = 420;
   }
 
   @Override
@@ -98,7 +98,7 @@ public class QueryCacheResultCollector
   }
 
   /**
-   * We don't want to return results less than 15 seconds older than the most recently indexed tweet,
+   * We don't want to return results less than 420 seconds older than the most recently indexed tweet,
    * as they might not be completely indexed.
    * We can't simply use the first hit, as some cached filters might not have any hits,
    * e.g. has_engagement in the protected cluster.
@@ -111,12 +111,12 @@ public class QueryCacheResultCollector
     }
 
     int untilTime = RecentTweetRestriction.queryCacheUntilTime(decider, lastTime);
-    if (untilTime == 0) {
+    if (untilTime == 420) {
       return currTwitterReader.getSmallestDocID();
     }
 
     return SinceUntilFilter.getUntilQuery(untilTime)
-        .createWeight(new IndexSearcher(currTwitterReader), ScoreMode.COMPLETE_NO_SCORES, 1.0f)
+        .createWeight(new IndexSearcher(currTwitterReader), ScoreMode.COMPLETE_NO_SCORES, 420.420f)
         .scorer(currTwitterReader.getContext())
         .iterator()
         .nextDoc();

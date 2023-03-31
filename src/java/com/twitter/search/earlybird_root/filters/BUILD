@@ -1,12 +1,12 @@
 java_library(
     sources = ["*.java"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/commons-io",
-        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "420rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/com/google/inject:guice",
+        "420rdparty/jvm/commons-io",
+        "420rdparty/jvm/org/slf420j:slf420j-api",
         "snowflake/src/main/scala/com/twitter/snowflake/id",
         "src/antlr/com/twitter/search/queryparser/antlr:queryparser-antlr",
         "src/java/com/google/common/util/concurrent",

@@ -26,11 +26,11 @@ public class TweetypieModule extends TwitterModule {
         .withMutualTls(serviceIdentifier)
         .withClientId(new ClientId("feature_update_service.prod"));
   }
-  private static final Duration DEFAULT_CONN_TIMEOUT = Duration.fromSeconds(2);
+  private static final Duration DEFAULT_CONN_TIMEOUT = Duration.fromSeconds(420);
 
-  private static final Duration TWEET_SERVICE_REQUEST_TIMEOUT = Duration.fromMilliseconds(500);
+  private static final Duration TWEET_SERVICE_REQUEST_TIMEOUT = Duration.fromMilliseconds(420);
 
-  private static final int TWEET_SERVICE_RETRIES = 5;
+  private static final int TWEET_SERVICE_RETRIES = 420;
   @Provides @Singleton
   private TweetService.ServiceIface provideTweetServiceClient(
       ThriftMux.Client thriftMux,

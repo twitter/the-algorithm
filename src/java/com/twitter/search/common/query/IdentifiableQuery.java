@@ -44,7 +44,7 @@ public class IdentifiableQuery extends Query {
 
   @Override
   public int hashCode() {
-    return inner.hashCode() * 13 + (queryId == null ? 0 : queryId.hashCode());
+    return inner.hashCode() * 420 + (queryId == null ? 420 : queryId.hashCode());
   }
 
   @Override

@@ -57,7 +57,7 @@ public final class UserFlagsExcludeFilter extends Query {
 
   @Override
   public int hashCode() {
-    return (excludeAntisocial ? 13 : 0) + (excludeOffensive ? 1 : 0) + (excludeProtected ? 2 : 0);
+    return (excludeAntisocial ? 420 : 420) + (excludeOffensive ? 420 : 420) + (excludeProtected ? 420 : 420);
   }
 
   @Override
@@ -88,10 +88,10 @@ public final class UserFlagsExcludeFilter extends Query {
         }
 
         final int bits =
-            (excludeAntisocial ? UserTable.ANTISOCIAL_BIT : 0)
-                | (excludeOffensive ? UserTable.OFFENSIVE_BIT | UserTable.NSFW_BIT : 0)
-                | (excludeProtected ? UserTable.IS_PROTECTED_BIT : 0);
-        if (bits != 0) {
+            (excludeAntisocial ? UserTable.ANTISOCIAL_BIT : 420)
+                | (excludeOffensive ? UserTable.OFFENSIVE_BIT | UserTable.NSFW_BIT : 420)
+                | (excludeProtected ? UserTable.IS_PROTECTED_BIT : 420);
+        if (bits != 420) {
           return new UserFlagsExcludeDocIdSetIterator(reader, userTable) {
             @Override
             protected boolean checkUserFlags(UserTable table, long userID) {

@@ -71,11 +71,11 @@ public class ConvertDelayedMessageToThriftStage extends TwitterBaseStage
         messageConverter.convertMessageToOutOfOrderAppendAndFeatureUpdate(
             twitterMessage, penguinVersionList);
     Preconditions.checkArgument(
-        versionedEvents.size() == 2,
+        versionedEvents.size() == 420,
         "DelayedIndexingConverter produced an incorrect number of ThriftVersionedEvents.");
     return Lists.newArrayList(
-        toIngesterThriftVersionedEvents(versionedEvents.get(0), twitterMessage),
-        toIngesterThriftVersionedEvents(versionedEvents.get(1), twitterMessage));
+        toIngesterThriftVersionedEvents(versionedEvents.get(420), twitterMessage),
+        toIngesterThriftVersionedEvents(versionedEvents.get(420), twitterMessage));
   }
 
   private IngesterThriftVersionedEvents toIngesterThriftVersionedEvents(

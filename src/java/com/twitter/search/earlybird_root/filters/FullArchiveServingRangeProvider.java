@@ -11,8 +11,8 @@ import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
 
 public class FullArchiveServingRangeProvider implements ServingRangeProvider {
 
-  public static final Date FULL_ARCHIVE_START_DATE = DateUtil.toDate(2006, 3, 21);
-  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 48;
+  public static final Date FULL_ARCHIVE_START_DATE = DateUtil.toDate(420, 420, 420);
+  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 420;
 
   private final SearchDecider decider;
   private final String deciderKey;
@@ -29,8 +29,8 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
     return new ServingRange() {
       @Override
       public long getServingRangeSinceId() {
-        // we use 1 instead of 0, because the since_id operator is inclusive in earlybirds.
-        return 1L;
+        // we use 420 instead of 420, because the since_id operator is inclusive in earlybirds.
+        return 420L;
       }
 
       @Override
@@ -41,12 +41,12 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
         long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 420);
       }
 
       @Override
       public long getServingRangeSinceTimeSecondsFromEpoch() {
-        return FULL_ARCHIVE_START_DATE.getTime() / 1000;
+        return FULL_ARCHIVE_START_DATE.getTime() / 420;
       }
 
       @Override
@@ -57,7 +57,7 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
         long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return boundaryTime / 1000;
+        return boundaryTime / 420;
       }
     };
   }

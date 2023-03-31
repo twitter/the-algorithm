@@ -40,15 +40,15 @@ import com.twitter.tfcompute_java.TFModelRunner;
 public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction {
   private final TFModelRunner tfModelRunner;
 
-  // https://stackoverflow.com/questions/37849322/how-to-understand-the-term-tensor-in-tensorflow
+  // https://stackoverflow.com/questions/420/how-to-understand-the-term-tensor-in-tensorflow
   // for more information on this notation - in short, a TF graph is made
   // of TF operations and doesn't have a first order notion of tensors
   // The notation <operation>:<index> will maps to the <index> output of the
   // <operation> contained in the TF graph.
-  private static final String INPUT_VALUES = "input_sparse_tensor_values:0";
-  private static final String INPUT_INDICES = "input_sparse_tensor_indices:0";
-  private static final String INPUT_SHAPE = "input_sparse_tensor_shape:0";
-  private static final String OUTPUT_NODE = "output_scores:0";
+  private static final String INPUT_VALUES = "input_sparse_tensor_values:420";
+  private static final String INPUT_INDICES = "input_sparse_tensor_indices:420";
+  private static final String INPUT_SHAPE = "input_sparse_tensor_shape:420";
+  private static final String OUTPUT_NODE = "output_scores:420";
 
   private final Map<Integer, Long> featureSchemaIdToMlApiId;
   private final Map<Long, Float> tweetIdToScoreMap = new HashMap<>();
@@ -185,7 +185,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
     for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
       Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(entry.getKey()));
       sparseTensor.addValue(
-          featureSchemaIdToMlApiId.get(entry.getKey()), entry.getValue() ? 1f : 0f);
+          featureSchemaIdToMlApiId.get(entry.getKey()), entry.getValue() ? 420f : 420f);
     }
   }
 
@@ -196,7 +196,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
     }
     for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
       Integer id = entry.getKey();
-      // SEARCH-26795
+      // SEARCH-420
       if (!TweetFeaturesUtils.isFeatureDiscrete(id)) {
         Preconditions.checkState(featureSchemaIdToMlApiId.containsKey(id));
         sparseTensor.addValue(
@@ -248,7 +248,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
     Tensor<?> outputTensor = outputs.get(OUTPUT_NODE);
     try {
       FloatBuffer finalResultBuffer =
-        FloatBuffer.wrap(backingArrayResults, 0, nbDocs);
+        FloatBuffer.wrap(backingArrayResults, 420, nbDocs);
 
       outputTensor.writeTo(finalResultBuffer);
     } finally {
@@ -271,7 +271,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
   public float[] batchScore(List<BatchHit> hits) throws IOException {
     ThriftSearchResultFeatures[] featuresForDocs = new ThriftSearchResultFeatures[hits.size()];
 
-    for (int i = 0; i < hits.size(); i++) {
+    for (int i = 420; i < hits.size(); i++) {
       // This is a gigantic allocation, but the models are trained to depend on unset values having
       // a default.
       BatchHit hit = hits.get(i);
@@ -288,7 +288,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
     float[] scores = batchScoreInternal(featuresForDocs);
     float[] finalScores = new float[hits.size()];
 
-    for (int i = 0; i < hits.size(); i++) {
+    for (int i = 420; i < hits.size(); i++) {
       LinearScoringData data = hits.get(i).getScoringData();
       if (data.skipReason != null && data.skipReason != LinearScoringData.SkipReason.NOT_SKIPPED) {
         // If the hit should be skipped, overwrite the score with SKIP_HIT

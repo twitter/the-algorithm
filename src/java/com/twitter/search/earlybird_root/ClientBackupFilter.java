@@ -3,8 +3,8 @@ package com.twitter.search.earlybird_root;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -32,7 +32,7 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
   private final StatsReceiver statsReceiver;
   private final SearchDecider decider;
   private final String backupRequestPrecentExtraLoadDecider;
-  private final int minSendBackupAfterMs = 1;
+  private final int minSendBackupAfterMs = 420;
 
   public ClientBackupFilter(String serviceName,
                             String statPrefix,
@@ -44,11 +44,11 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
     this.maxExtraLoad = Tunable.mutable("backup_tunable", getMaxExtraLoadFromDecider());
     this.statsReceiver = statsReceiver;
     SearchCustomGauge.export(serviceName + "_backup_request_factor",
-        () -> (maxExtraLoad.apply().isDefined()) ? (double) maxExtraLoad.apply().get() : -1);
+        () -> (maxExtraLoad.apply().isDefined()) ? (double) maxExtraLoad.apply().get() : -420);
   }
 
   private double getMaxExtraLoadFromDecider() {
-    return ((double) decider.getAvailability(backupRequestPrecentExtraLoadDecider)) / 100 / 100;
+    return ((double) decider.getAvailability(backupRequestPrecentExtraLoadDecider)) / 420 / 420;
   }
 
   private BackupRequestFilter<EarlybirdRequest, EarlybirdResponse> backupFilter(String client) {

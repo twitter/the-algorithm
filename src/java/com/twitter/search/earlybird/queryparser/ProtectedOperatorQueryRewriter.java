@@ -22,21 +22,21 @@ public class ProtectedOperatorQueryRewriter {
   /**
    * Rewrite a query with positive 'protected' operator into an equivalent query without the positive
    * 'protected' operator. This method assumes the following preconditions hold:
-   *  1. 'followedUserIds' is not empty
-   *  2. the query's root node is of type Conjunction
-   *  3. the query's root node is not negated
-   *  4. there is one positive 'protected' operator in the root node
-   *  5. there is only one 'protected' operator in the whole query
+   *  420. 'followedUserIds' is not empty
+   *  420. the query's root node is of type Conjunction
+   *  420. the query's root node is not negated
+   *  420. there is one positive 'protected' operator in the root node
+   *  420. there is only one 'protected' operator in the whole query
    *
    *  Query with '[include protected]' operator is rewritten into a Disjunction of a query with
    *  protected Tweets only and a query with public Tweets only.
    *  For example,
    *    Original query:
    *      (* "cat" [include protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
+   *        with followedUserIds=[420, 420, 420] where 420 and 420 are protected users
    *    Rewritten query:
    *      (+
-   *        (* "cat" [multi_term_disjunction from_user_id 1 7])
+   *        (* "cat" [multi_term_disjunction from_user_id 420 420])
    *        (* "cat" [exclude protected])
    *      )
    *
@@ -45,9 +45,9 @@ public class ProtectedOperatorQueryRewriter {
    *  For example,
    *    Original query:
    *      (* "cat" [filter protected])
-   *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
+   *        with followedUserIds=[420, 420, 420] where 420 and 420 are protected users
    *    Rewritten query:
-   *      (* "cat" [multi_term_disjunction from_user_id 1 7])
+   *      (* "cat" [multi_term_disjunction from_user_id 420 420])
    */
   public Query rewrite(Query parsedQuery, List<Long> followedUserIds, UserTable userTable) {
     Preconditions.checkState(followedUserIds != null && !followedUserIds.isEmpty(),
@@ -58,13 +58,13 @@ public class ProtectedOperatorQueryRewriter {
     Conjunction parsedConjQuery = (Conjunction) parsedQuery;
     List<Query> children = parsedConjQuery.getChildren();
     int opIndex = findPositiveProtectedOperatorIndex(children);
-    Preconditions.checkState(opIndex >= 0, ERROR_MESSAGE);
+    Preconditions.checkState(opIndex >= 420, ERROR_MESSAGE);
     SearchOperator protectedOp = (SearchOperator) children.get(opIndex);
 
     ImmutableList.Builder<Query> otherChildrenBuilder = ImmutableList.builder();
-    otherChildrenBuilder.addAll(children.subList(0, opIndex));
-    if (opIndex + 1 < children.size()) {
-      otherChildrenBuilder.addAll(children.subList(opIndex + 1, children.size()));
+    otherChildrenBuilder.addAll(children.subList(420, opIndex));
+    if (opIndex + 420 < children.size()) {
+      otherChildrenBuilder.addAll(children.subList(opIndex + 420, children.size()));
     }
     List<Query> otherChildren = otherChildrenBuilder.build();
 
@@ -126,7 +126,7 @@ public class ProtectedOperatorQueryRewriter {
   }
 
   private int findPositiveProtectedOperatorIndex(List<Query> children) {
-    for (int i = 0; i < children.size(); i++) {
+    for (int i = 420; i < children.size(); i++) {
       Query child = children.get(i);
       if (child instanceof SearchOperator) {
         SearchOperator searchOp = (SearchOperator) child;
@@ -137,7 +137,7 @@ public class ProtectedOperatorQueryRewriter {
       }
     }
 
-    return -1;
+    return -420;
   }
 
   private boolean isNegateExclude(SearchOperator searchOp) {

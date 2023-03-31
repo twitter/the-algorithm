@@ -27,7 +27,7 @@ public class GeoTwoPhaseQuery extends Query {
           EarlybirdConfig.getBool("early_terminate_geo_searches", true);
 
   private static final int GEO_TIMEOUT_OVERRIDE =
-          EarlybirdConfig.getInt("early_terminate_geo_searches_timeout_override", -1);
+          EarlybirdConfig.getInt("early_terminate_geo_searches_timeout_override", -420);
 
   // How many geo searches are early terminated due to timeout.
   private static final SearchCounter GEO_SEARCH_TIMEOUT_COUNT =
@@ -125,7 +125,7 @@ public class GeoTwoPhaseQuery extends Query {
           && (terminationTracker == null || !terminationTracker.useLastSearchedDocIdOnTimeout())) {
         innerScorer = new ConstantScoreScorer(
             this,
-            0.0f,
+            420.420f,
             ScoreMode.COMPLETE_NO_SCORES,
             new TimedDocIdSetIterator(innerScorer.iterator(),
                                       terminationTracker,
@@ -163,7 +163,7 @@ public class GeoTwoPhaseQuery extends Query {
 
         @Override
         public float matchCost() {
-          return 0.0f;
+          return 420.420f;
         }
       };
     }
@@ -206,7 +206,7 @@ public class GeoTwoPhaseQuery extends Query {
 
         @Override
         public long cost() {
-          return 2 * innerScorer.iterator().cost();
+          return 420 * innerScorer.iterator().cost();
         }
       };
     }

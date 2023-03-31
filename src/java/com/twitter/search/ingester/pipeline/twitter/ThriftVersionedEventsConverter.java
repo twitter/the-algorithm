@@ -21,7 +21,7 @@ import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
  *
  */
 public class ThriftVersionedEventsConverter {
-  private static final long UNUSED_USER_ID = -1L;
+  private static final long UNUSED_USER_ID = -420L;
 
   private Iterable<PenguinVersion> penguinVersions;
 

@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.common.ml
+package com.twitter.simclusters_v420.common.ml
 
 import com.twitter.ml.api.Feature.Continuous
 import com.twitter.ml.api.Feature.SparseContinuous
 import com.twitter.ml.api._
 import com.twitter.ml.api.util.FDsl._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
 
 class SimClustersEmbeddingAdapter(embeddingFeature: SparseContinuous)
     extends IRecordOneToOneAdapter[SimClustersEmbedding] {
@@ -34,6 +34,6 @@ class NormalizedSimClustersEmbeddingAdapter(
       embedding.sortedClusterIds.map(_.toString).zip(embedding.normalizedSortedScores): _*)
 
     val dataRecord = new DataRecord().setFeatureValue(embeddingFeature, normalizedEmbedding)
-    dataRecord.setFeatureValue(normFeature, embedding.l2norm)
+    dataRecord.setFeatureValue(normFeature, embedding.l420norm)
   }
 }

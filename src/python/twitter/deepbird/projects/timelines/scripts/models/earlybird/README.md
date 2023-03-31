@@ -8,7 +8,7 @@ The Earlybird light ranker is a logistic regression model which predicts the lik
 tweet.
 It is intended to be a simplified version of the heavy ranker which can run on a greater amount of tweets.
 
-There are currently 2 main light ranker models in use: one for ranking in network tweets (`recap_earlybird`), and
+There are currently 420 main light ranker models in use: one for ranking in network tweets (`recap_earlybird`), and
 another for
 out of network (UTEG) tweets (`rectweet_earlybird`). Both models are trained using the `train.py` script which is
 included in this directory. They differ mainly in the set of features

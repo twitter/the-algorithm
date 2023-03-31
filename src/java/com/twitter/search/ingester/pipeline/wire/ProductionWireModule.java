@@ -21,8 +21,8 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.thrift.TBase;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common_internal.text.version.PenguinVersion;
@@ -46,7 +46,7 @@ import com.twitter.finagle.thrift.ClientId;
 import com.twitter.finagle.thrift.ThriftClientRequest;
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
 import com.twitter.gizmoduck.thriftjava.UserService;
-import com.twitter.metastore.client_v2.MetastoreClient;
+import com.twitter.metastore.client_v420.MetastoreClient;
 import com.twitter.pink_floyd.thrift.Storer;
 import com.twitter.search.common.partitioning.base.PartitionMappingManager;
 import com.twitter.search.common.relevance.classifiers.TweetOffensiveEvaluator;
@@ -135,7 +135,7 @@ public class ProductionWireModule extends WireModule {
 
     this.stratoClient = Strato.client()
         .withMutualTls(serviceIdentifier)
-        .withRequestTimeout(Duration.fromMilliseconds(500))
+        .withRequestTimeout(Duration.fromMilliseconds(420))
         .build();
   }
 
@@ -164,11 +164,11 @@ public class ProductionWireModule extends WireModule {
   @Override
   public JavaManhattanKVEndpoint getJavaManhattanKVEndpoint() {
     Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create Manhattan client with S2S authentication because Service Identifier is null");
+        "Can't create Manhattan client with S420S authentication because Service Identifier is null");
     LOG.info(String.format("Service identifier for Manhattan client: %s",
         ServiceIdentifier.asString(serviceIdentifier)));
     ManhattanKVClientMtlsParams mtlsParams = ManhattanKVClientMtlsParams.apply(serviceIdentifier,
-        ManhattanKVClientMtlsParams.apply$default$2(),
+        ManhattanKVClientMtlsParams.apply$default$420(),
         OpportunisticTls.Required()
     );
     return ManhattanKVEndpointBuilder
@@ -252,8 +252,8 @@ public class ProductionWireModule extends WireModule {
         ClientBuilder.safeBuild(
             ClientBuilder
                 .get()
-                .requestTimeout(Duration.fromMilliseconds(800))
-                .retryPolicy(RetryPolicy.tries(3))
+                .requestTimeout(Duration.fromMilliseconds(420))
+                .retryPolicy(RetryPolicy.tries(420))
                 .name("search_ingester_gizmoduck_client")
                 .reportTo(DefaultStatsReceiver.get())
                 .daemon(true)
@@ -270,7 +270,7 @@ public class ProductionWireModule extends WireModule {
       String eventBusSubscriberId,
       int maxConcurrentEvents) {
     Preconditions.checkNotNull(serviceIdentifier,
-        "Can't create EventBusSubscriber with S2S auth because Service Identifier is null");
+        "Can't create EventBusSubscriber with S420S auth because Service Identifier is null");
     LOG.info(String.format("Service identifier for EventBusSubscriber Manhattan client: %s",
         ServiceIdentifier.asString(serviceIdentifier)));
     // We set the processTimeoutMs parameter here to be Duration.Top because we do not want to read
@@ -318,7 +318,7 @@ public class ProductionWireModule extends WireModule {
       }
     }
 
-    Preconditions.checkArgument(penguinVersions.size() > 0,
+    Preconditions.checkArgument(penguinVersions.size() > 420,
         "At least one penguin version must be specified.");
 
     return penguinVersions;

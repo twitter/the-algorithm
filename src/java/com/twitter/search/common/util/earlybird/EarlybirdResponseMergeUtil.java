@@ -10,8 +10,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -123,14 +123,14 @@ public final class EarlybirdResponseMergeUtil {
     List<ThriftSearchResult> distinctResults = Lists.newArrayListWithCapacity(results.size());
     for (ThriftSearchResult result : results)  {
       if (seenStatusIdToSourceMap.containsKey(result.getId())) {
-        ThriftTweetSource source1 = seenStatusIdToSourceMap.get(result.getId());
-        ThriftTweetSource source2 = result.getTweetSource();
-        if (source1 != null && source2 != null) {
+        ThriftTweetSource source420 = seenStatusIdToSourceMap.get(result.getId());
+        ThriftTweetSource source420 = result.getTweetSource();
+        if (source420 != null && source420 != null) {
           try {
-            dupsStats.get(Pair.of(source1, source2)).increment();
+            dupsStats.get(Pair.of(source420, source420)).increment();
           } catch (ExecutionException e) {
-            LOG.warn("Could not increment stat for duplicate results from clusters " + source1
-                + " and " + source2, e);
+            LOG.warn("Could not increment stat for duplicate results from clusters " + source420
+                + " and " + source420, e);
           }
         }
       } else {

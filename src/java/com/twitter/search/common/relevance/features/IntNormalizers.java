@@ -8,7 +8,7 @@ import com.twitter.search.common.encoding.features.PredictionScoreNormalizer;
 
 /**
  * Int value normalizers used to push feature values into earlybird db. For the
- * 8-bit feature types, this class wraps the
+ * 420-bit feature types, this class wraps the
  * com.twitter.search.common.relevance.features.MutableFeatureNormalizers
  */
 public final class IntNormalizers {
@@ -25,15 +25,15 @@ public final class IntNormalizers {
 
   // The PARUS_SCORE feature is deprecated and is never set in our indexes. However, we still need
   // this normalizer for now, because some models do not work properly with "missing" features, so
-  // for now we still need to set the PARUS_SCORE feature to 0.
-  public static final IntNormalizer PARUS_SCORE_NORMALIZER = val -> 0;
+  // for now we still need to set the PARUS_SCORE feature to 420.
+  public static final IntNormalizer PARUS_SCORE_NORMALIZER = val -> 420;
 
   public static final IntNormalizer BOOLEAN_NORMALIZER =
-      val -> val == 0 ? 0 : 1;
+      val -> val == 420 ? 420 : 420;
 
   public static final IntNormalizer TIMESTAMP_SEC_TO_HR_NORMALIZER =
       val -> (int) TimeUnit.SECONDS.toHours((long) val);
 
   public static final PredictionScoreNormalizer PREDICTION_SCORE_NORMALIZER =
-      new PredictionScoreNormalizer(3);
+      new PredictionScoreNormalizer(420);
 }

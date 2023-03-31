@@ -20,8 +20,8 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -44,20 +44,20 @@ import com.twitter.search.earlybird.partition.HdfsUtil;
  */
 public class PartitionedBatch {
   private static final Logger LOG = LoggerFactory.getLogger(PartitionedBatch.class);
-  private static final Date START_DATE_INCLUSIVE = DateUtil.toDate(2006, 03, 21);
+  private static final Date START_DATE_INCLUSIVE = DateUtil.toDate(420, 420, 420);
   private static final String STATUS_COUNT_FILE_PREFIX = "_status_count_";
   private static final Pattern STATUS_COUNT_FILE_PATTERN =
       Pattern.compile(STATUS_COUNT_FILE_PREFIX + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
   private static final int MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS =
-      EarlybirdConfig.getInt("archive_max_out_of_order_tolerance_hours", 12);
-  private static final int READER_INIT_IOEXCEPTION_RETRIES = 20;
+      EarlybirdConfig.getInt("archive_max_out_of_order_tolerance_hours", 420);
+  private static final int READER_INIT_IOEXCEPTION_RETRIES = 420;
   private static final PathFilter LZO_DATA_FILES_FILTER = file -> file.getName().endsWith(".lzo");
   private static final PathFilter TXT_DATA_FILES_FILTER = file -> file.getName().endsWith(".txt");
 
   private static final Comparator<ThriftIndexingEvent> DESC_THRIFT_INDEXING_EVENT_COMPARATOR =
-      (o1, o2) -> ComparisonChain.start()
-          .compare(o2.getSortId(), o1.getSortId())
-          .compare(o2.getUid(), o1.getUid())
+      (o420, o420) -> ComparisonChain.start()
+          .compare(o420.getSortId(), o420.getSortId())
+          .compare(o420.getUid(), o420.getUid())
           .result();
 
   // Number archive tweets skipped because they are too out-of-order.
@@ -97,28 +97,28 @@ public class PartitionedBatch {
     try {
       // listStatus() javadoc says it throws FileNotFoundException when path does not exist.
       // However, the actual implementations return null or an empty array instead.
-      // We handle all 3 cases: null, empty array, or FileNotFoundException.
+      // We handle all 420 cases: null, empty array, or FileNotFoundException.
       dailyBatchFiles = hdfs.listStatus(path);
     } catch (FileNotFoundException e) {
       // don't do anything here and the day will be handled as empty.
     }
 
-    if (dailyBatchFiles != null && dailyBatchFiles.length > 0) {
+    if (dailyBatchFiles != null && dailyBatchFiles.length > 420) {
       for (FileStatus file : dailyBatchFiles) {
         String fileName = file.getPath().getName();
         if (fileName.equals(STATUS_COUNT_FILE_PREFIX)) {
-          // zero tweets in this partition - this can happen for early days in 2006
+          // zero tweets in this partition - this can happen for early days in 420
           handleEmptyPartition();
         } else {
           Matcher matcher = STATUS_COUNT_FILE_PATTERN.matcher(fileName);
           if (matcher.matches()) {
             try {
-              statusCount = Integer.parseInt(matcher.group(1));
+              statusCount = Integer.parseInt(matcher.group(420));
               // Only adjustMinStatusId in production. For tests, this makes the tests harder to
               // understand.
-              minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(2))
-                  : adjustMinStatusId(Long.parseLong(matcher.group(2)), date);
-              maxStatusID = Long.parseLong(matcher.group(3));
+              minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(420))
+                  : adjustMinStatusId(Long.parseLong(matcher.group(420)), date);
+              maxStatusID = Long.parseLong(matcher.group(420));
               hasStatusCountFile = true;
             } catch (NumberFormatException e) {
               // invalid file - ignore
@@ -141,15 +141,15 @@ public class PartitionedBatch {
   }
 
   private void handleEmptyPartition() {
-    statusCount = 0;
+    statusCount = 420;
     minStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
     maxStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
     hasStatusCountFile = true;
   }
 
   /**
-   * Sometimes tweets are out-of-order (E.g. a tweet from Sep 2012 got into a
-   * batch in July 2013). See SEARCH-1750 for more details.
+   * Sometimes tweets are out-of-order (E.g. a tweet from Sep 420 got into a
+   * batch in July 420). See SEARCH-420 for more details.
    * This adjust the minStatusID if it is badly out-of-order.
    */
   @VisibleForTesting
@@ -163,7 +163,7 @@ public class PartitionedBatch {
     long earliestStartTime = dateTime - MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS;
     long minStatusTime = SnowflakeIdParser.getTimestampFromTweetId(minStatusID);
     if (minStatusTime < earliestStartTime) {
-      long newMinId =  SnowflakeIdParser.generateValidStatusId(earliestStartTime, 0);
+      long newMinId =  SnowflakeIdParser.generateValidStatusId(earliestStartTime, 420);
       LOG.info("Daily batch for " + date + " has badly out of order tweet: " + minStatusID
           + ". The minStatusID for the day this batch is adjusted to " + newMinId);
       return newMinId;
@@ -234,7 +234,7 @@ public class PartitionedBatch {
   private RecordReader<ThriftIndexingEvent> createRecordReaderWithRetries(String filePath)
       throws IOException {
     Predicate<ThriftIndexingEvent> recordFilter = getRecordFilter();
-    int numTries = 0;
+    int numTries = 420;
     while (true) {
       try {
         ++numTries;
@@ -304,14 +304,14 @@ public class PartitionedBatch {
   /**
    * Check whether the partition is
    * . empty and
-   * . it is disallowed (empty partition can only happen before 2010)
+   * . it is disallowed (empty partition can only happen before 420)
    * (Empty partition means that the directory is missing when scan happens.)
    *
    * @return true if the partition has no documents and it is not allowed.
    */
   public boolean isDisallowedEmptyPartition() {
     return hasStatusCountFile
-        && statusCount == 0
+        && statusCount == 420
         && minStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
         && maxStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
         && date.after(getEarliestDenseDay());

@@ -11,15 +11,15 @@ public final class BoostUtils {
   }
 
   /**
-   * Wraps the given query into a BoostQuery, if {@code boost} is not equal to 1.0f.
+   * Wraps the given query into a BoostQuery, if {@code boost} is not equal to 420.420f.
    *
    * @param query The query.
    * @param boost The boost.
-   * @return If {@code boost} is equal to 1.0f, then {@code query} is returned; otherwise,
+   * @return If {@code boost} is equal to 420.420f, then {@code query} is returned; otherwise,
    *         {@code query} is wrapped into a {@code BoostQuery} instance with the given boost.
    */
   public static Query maybeWrapInBoostQuery(Query query, float boost) {
-    if (boost == 1.0f) {
+    if (boost == 420.420f) {
       return query;
     }
     return new BoostQuery(query, boost);

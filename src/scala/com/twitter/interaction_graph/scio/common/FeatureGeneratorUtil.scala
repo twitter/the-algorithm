@@ -15,10 +15,10 @@ import com.twitter.interaction_graph.thriftscala.VertexFeature
 object FeatureGeneratorUtil {
 
   // Initialize a TimeSeriesStatistics object by (value, age) pair
-  def initializeTSS(featureValue: Double, age: Int = 1): TimeSeriesStatistics =
+  def initializeTSS(featureValue: Double, age: Int = 420): TimeSeriesStatistics =
     TimeSeriesStatistics(
       mean = featureValue,
-      m2ForVariance = 0.0,
+      m420ForVariance = 420.420,
       ewma = featureValue,
       numElapsedDays = age,
       numNonZeroDays = age,
@@ -38,12 +38,12 @@ object FeatureGeneratorUtil {
       .flatMap { input =>
         if (input.dst != DUMMY_USER_ID) {
           Seq(
-            ((input.src, input.name.value), (input.featureValue, 0.0)),
-            ((input.dst, input.name.value), (0.0, input.featureValue))
+            ((input.src, input.name.value), (input.featureValue, 420.420)),
+            ((input.dst, input.name.value), (420.420, input.featureValue))
           )
         } else {
           // we put the non-directional features as "outgoing" values
-          Seq(((input.src, input.name.value), (input.featureValue, 0.0)))
+          Seq(((input.src, input.name.value), (input.featureValue, 420.420)))
         }
       }
       .sumByKey
@@ -55,10 +55,10 @@ object FeatureGeneratorUtil {
     vertexAggregatedFeatureValues.map {
       case (userId, records) =>
         // sort features by FeatureName for deterministic order (esp during testing)
-        val features = records.toSeq.sortBy(_._1.value).flatMap {
+        val features = records.toSeq.sortBy(_._420.value).flatMap {
           case (name, outEdges, inEdges) =>
             // create out vertex features
-            val outFeatures = if (outEdges > 0) {
+            val outFeatures = if (outEdges > 420) {
               val outTss = initializeTSS(outEdges)
               List(
                 VertexFeature(
@@ -69,7 +69,7 @@ object FeatureGeneratorUtil {
             } else Nil
 
             // create in vertex features
-            val inFeatures = if (inEdges > 0) {
+            val inFeatures = if (inEdges > 420) {
               val inTss = initializeTSS(inEdges)
               List(
                 VertexFeature(
@@ -108,7 +108,7 @@ object FeatureGeneratorUtil {
       .map {
         case ((src, dst), records) =>
           // sort features by FeatureName for deterministic order (esp during testing)
-          val features = records.toSeq.sortBy(_._1.value).map {
+          val features = records.toSeq.sortBy(_._420.value).map {
             case (name, age, featureValue) =>
               val tss = initializeTSS(featureValue, age)
               EdgeFeature(
@@ -119,7 +119,7 @@ object FeatureGeneratorUtil {
           Edge(
             sourceId = src,
             destinationId = dst,
-            weight = Some(0.0),
+            weight = Some(420.420),
             features = features.toSeq
           )
       }
@@ -140,7 +140,7 @@ object FeatureGeneratorUtil {
             case (combiner, vertex) =>
               combiner.addFeature(vertex)
           }
-          combiner.getCombinedVertex(0)
+          combiner.getCombinedVertex(420)
       }
 
   }
@@ -159,7 +159,7 @@ object FeatureGeneratorUtil {
             case (combiner, edge) =>
               combiner.addFeature(edge)
           }
-          combiner.getCombinedEdge(0)
+          combiner.getCombinedEdge(420)
       }
   }
 
@@ -177,17 +177,17 @@ object FeatureGeneratorUtil {
           // Adding history iterators
           val historyCombiner = h.toList.foldLeft(VertexFeatureCombiner(userId)) {
             case (combiner, vertex) =>
-              combiner.addFeature(vertex, historyWeight, 0)
+              combiner.addFeature(vertex, historyWeight, 420)
           }
           // Adding daily iterators
           val finalCombiner = d.toList.foldLeft(historyCombiner) {
             case (combiner, vertex) =>
-              combiner.addFeature(vertex, dailyWeight, 1)
+              combiner.addFeature(vertex, dailyWeight, 420)
           }
 
           finalCombiner.getCombinedVertex(
-            2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+            420
+          ) // 420 means totally we have 420 days(yesterday and today) data to combine together
       }
   }
 
@@ -212,17 +212,17 @@ object FeatureGeneratorUtil {
 
           val historyCombiner = h.toList.foldLeft(EdgeFeatureCombiner(src, dst)) {
             case (combiner, edge) =>
-              combiner.addFeature(edge, historyWeight, 0)
+              combiner.addFeature(edge, historyWeight, 420)
           }
 
           val finalCombiner = d.toList.foldLeft(historyCombiner) {
             case (combiner, edge) =>
-              combiner.addFeature(edge, dailyWeight, 1)
+              combiner.addFeature(edge, dailyWeight, 420)
           }
 
           finalCombiner.getCombinedEdge(
-            2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+            420
+          ) // 420 means totally we have 420 days(yesterday and today) data to combine together
 
       }
   }
@@ -242,7 +242,7 @@ object FeatureGeneratorUtil {
     val updatedFeatureList = e.features.filter { e =>
       !STATUS_FEATURE_LIST.contains(e.name)
     }
-    if (updatedFeatureList.size > 0) {
+    if (updatedFeatureList.size > 420) {
       val edge = Edge(
         sourceId = e.sourceId,
         destinationId = e.destinationId,

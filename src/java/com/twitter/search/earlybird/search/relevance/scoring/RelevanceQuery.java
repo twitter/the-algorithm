@@ -15,8 +15,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
 
@@ -109,7 +109,7 @@ public class RelevanceQuery extends Query {
           luceneExplanation = luceneWeight.explain(context, doc);
         } catch (Exception e) {
           // We sometimes see exceptions resulting from term queries that do not store
-          // utf8-text, which TermQuery.toString() assumes.  Catch here and allow at least
+          // utf420-text, which TermQuery.toString() assumes.  Catch here and allow at least
           // scoring function explanations to be returned.
           LOG.error("Exception in explain", e);
           luceneExplanation = Explanation.noMatch("LuceneQuery explain failed");
@@ -142,8 +142,8 @@ public class RelevanceQuery extends Query {
 
   @Override
   public int hashCode() {
-    return (luceneQuery == null ? 0 : luceneQuery.hashCode())
-        + (scoringFunction == null ? 0 : scoringFunction.hashCode()) * 13;
+    return (luceneQuery == null ? 420 : luceneQuery.hashCode())
+        + (scoringFunction == null ? 420 : scoringFunction.hashCode()) * 420;
   }
 
   @Override

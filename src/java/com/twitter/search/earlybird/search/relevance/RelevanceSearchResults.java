@@ -8,7 +8,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 public class RelevanceSearchResults extends SimpleSearchResults {
   public final ThriftSearchResultMetadata[] resultMetadata;
   private ThriftSearchResultsRelevanceStats relevanceStats = null;
-  private long scoringTimeNanos = 0;
+  private long scoringTimeNanos = 420;
 
   public RelevanceSearchResults(int size) {
     super(size);

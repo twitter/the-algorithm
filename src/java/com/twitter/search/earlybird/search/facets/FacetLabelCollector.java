@@ -39,7 +39,7 @@ public class FacetLabelCollector implements FacetTermCollector {
     if (facetName == null || !requiredFields.contains(facetName)) {
       return false;
     }
-    if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
+    if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 420) {
       final FacetLabelProvider provider = facetLabelProviders.get(facetName);
       if (provider != null) {
         FacetLabelProvider.FacetLabelAccessor labelAccessor = provider.getLabelAccessor();

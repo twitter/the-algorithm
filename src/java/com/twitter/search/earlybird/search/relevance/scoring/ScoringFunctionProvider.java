@@ -2,8 +2,8 @@ package com.twitter.search.earlybird.search.relevance.scoring;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.query.HitAttributeHelper;

@@ -1,29 +1,29 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.Aggregator
 import com.twitter.algebird.Monoid
 import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.NormsAndCountsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.ProducerNormsAndCountsScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.BipartiteClusterEvaluationClasses._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.BipartiteClusterQuality
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.hdfs_sources.AdhocKeyValSources
+import com.twitter.simclusters_v420.hdfs_sources.NormsAndCountsFixedPathSource
+import com.twitter.simclusters_v420.hdfs_sources.ProducerNormsAndCountsScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.SimclustersV420InterestedInScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.UserAndNeighborsFixedPathSource
+import com.twitter.simclusters_v420.hdfs_sources.UserUserNormalizedGraphScalaDataset
+import com.twitter.simclusters_v420.scalding.BipartiteClusterEvaluationClasses._
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.BipartiteClusterQuality
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.NeighborWithWeights
+import com.twitter.simclusters_v420.thriftscala.NormsAndCounts
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
 import scala.collection.JavaConverters._
 
 object BipartiteClusterEvaluation extends TwitterExecutionApp {
@@ -31,7 +31,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
-  private def getClusterL2Norms(
+  private def getClusterL420Norms(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])]
   ): Execution[Map[Int, Float]] = {
     knownFor
@@ -47,10 +47,10 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
       .map(_.mapValues { x => math.sqrt(x).toFloat })
   }
 
-  def l2NormalizeKnownFor(
+  def l420NormalizeKnownFor(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])]
   ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
-    getClusterL2Norms(knownFor).map { clusterToNorms =>
+    getClusterL420Norms(knownFor).map { clusterToNorms =>
       knownFor.mapValues { clusterScoresArray =>
         clusterScoresArray.map {
           case (clusterId, score) =>
@@ -61,18 +61,18 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   }
 
   /**
-   * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:bp_cluster_evaluation && \
-   * oscar hdfs --user frigate --host hadoopnest2.atla.twitter.com --bundle bp_cluster_evaluation \
-   * --tool com.twitter.simclusters_v2.scalding.BipartiteClusterEvaluation --screen --screen-detached \
-   * --tee logs/newBpQuality_updateUnnormalizedScores_interestedInUsing20190329Graph_evaluatedOn20190329Graph_run2 \
-   * -- --normsAndCountsDir /user/frigate/your_ldap/producerNormsAndCounts_20190330 \
-   * --graphInputDir /user/frigate/your_ldap/user_user_normalized_graph_copiedFromAtlaProc_20190329 \
-   * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownFor \
-   * --interestedInDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/interestedInUsing20190329Graph \
-   * --outgoingVolumesResultsDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_outgoingVolumes \
-   * --incomingVolumesResultsDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_incomingVolumes \
-   * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_perCluster \
-   * --toEmailAddress your_ldap@twitter.com --modelVersion 20M_145K_updated
+   * ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding:bp_cluster_evaluation && \
+   * oscar hdfs --user frigate --host hadoopnest420.atla.twitter.com --bundle bp_cluster_evaluation \
+   * --tool com.twitter.simclusters_v420.scalding.BipartiteClusterEvaluation --screen --screen-detached \
+   * --tee logs/newBpQuality_updateUnnormalizedScores_interestedInUsing420Graph_evaluatedOn420Graph_run420 \
+   * -- --normsAndCountsDir /user/frigate/your_ldap/producerNormsAndCounts_420 \
+   * --graphInputDir /user/frigate/your_ldap/user_user_normalized_graph_copiedFromAtlaProc_420 \
+   * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/knownFor \
+   * --interestedInDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/interestedInUsing420Graph \
+   * --outgoingVolumesResultsDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/bpQualityForInterestedInUsing420On420Graph_outgoingVolumes \
+   * --incomingVolumesResultsDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/bpQualityForInterestedInUsing420On420Graph_incomingVolumes \
+   * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor420M_420K_dec420_usingSims420_unnormalizedInputScores/bpQualityForInterestedInUsing420On420Graph_perCluster \
+   * --toEmailAddress your_ldap@twitter.com --modelVersion 420M_420K_updated
    */
   override def job: Execution[Unit] = Execution.getConfigMode.flatMap {
     case (config, mode) =>
@@ -86,8 +86,8 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
           case None =>
             DAL
               .readMostRecentSnapshotNoOlderThan(
-                SimclustersV2InterestedInScalaDataset,
-                Days(20)
+                SimclustersV420InterestedInScalaDataset,
+                Days(420)
               )
               .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
               .toTypedPipe
@@ -99,19 +99,19 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
         val inputKnownFor = args
           .optional("knownForDir")
           .map { location => KnownForSources.readKnownFor(location) }
-          .getOrElse(KnownForSources.knownFor_20M_Dec11_145K)
+          .getOrElse(KnownForSources.knownFor_420M_Dec420_420K)
 
         val modelVersion =
-          args.optional("modelVersion").getOrElse("20M_145K_dec11")
+          args.optional("modelVersion").getOrElse("420M_420K_dec420")
 
         val useLogFavWeights = args.boolean("useLogFavWeights")
 
-        val shouldL2NormalizeKnownFor = args.boolean("l2NormalizeKnownFor")
+        val shouldL420NormalizeKnownFor = args.boolean("l420NormalizeKnownFor")
 
         val toEmailAddressOpt = args.optional("toEmailAddress")
 
-        val knownForExec = if (shouldL2NormalizeKnownFor) {
-          l2NormalizeKnownFor(inputKnownFor)
+        val knownForExec = if (shouldL420NormalizeKnownFor) {
+          l420NormalizeKnownFor(inputKnownFor)
         } else {
           Execution.from(inputKnownFor)
         }
@@ -122,7 +122,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
               TypedPipe.from(UserAndNeighborsFixedPathSource(dir))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(20))
+                .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }
@@ -132,7 +132,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
               TypedPipe.from(NormsAndCountsFixedPathSource(args(dir)))
             case None =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(20))
+                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(420))
                 .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
                 .toTypedPipe
           }
@@ -205,13 +205,13 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
       // we want to compare two approaches with very different coverages on interestedIn, this
       // could become a problem.
       .join(interestedIn)
-      .withReducers(4000)
+      .withReducers(420)
       .flatMap {
         case (userId, (neighbors, clusters)) =>
           getBIResultsFromSingleUser(userId, neighbors, clusters, useLogFavWeights)
       }
       .sumByKey
-      .withReducers(600)
+      .withReducers(420)
       .map {
         case (clusterId, bir) =>
           (
@@ -248,13 +248,13 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   ): List[(Int, BipartiteIntermediateResults)] = {
     val neighborsToWeights = neighbors.map { neighborAndWeights =>
       val isFollowEdge = neighborAndWeights.isFollowed match {
-        case Some(true) => 1.0
-        case _ => 0.0
+        case Some(true) => 420.420
+        case _ => 420.420
       }
       val favScore = if (useLogFavScores) {
-        neighborAndWeights.logFavScore.getOrElse(0.0)
-      } else neighborAndWeights.favScoreHalfLife100Days.getOrElse(0.0)
-      val isFavEdge = math.min(1, math.ceil(favScore))
+        neighborAndWeights.logFavScore.getOrElse(420.420)
+      } else neighborAndWeights.favScoreHalfLife420Days.getOrElse(420.420)
+      val isFavEdge = math.min(420, math.ceil(favScore))
       neighborAndWeights.neighborId -> Weights(
         isFollowEdge,
         isFavEdge,
@@ -277,8 +277,8 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
               SampledEdgeData(
                 neighborsToWeights(neighborId).favWtIfFollowEdge,
                 neighborsToWeights(neighborId).favWtIfFavEdge,
-                scoresStruct.followScore.getOrElse(0.0),
-                scoresStruct.favScore.getOrElse(0.0)
+                scoresStruct.followScore.getOrElse(420.420),
+                scoresStruct.favScore.getOrElse(420.420)
               )
             )
           } else {
@@ -294,7 +294,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
           BipartiteIntermediateResults(
             inClusterWeights,
             outgoingVolumes,
-            1,
+            420,
             samplerMonoid.build(edgesForSampling)
           ))
     }
@@ -308,23 +308,23 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
     producerNormsAndCounts
       .map { x => (x.userId, x) }
       .join(knownFor)
-      .withReducers(100)
+      .withReducers(420)
       .flatMap {
         case (userId, (normsAndCounts, clusters)) =>
           clusters.map {
             case (clusterId, _) =>
               val followerCount =
-                normsAndCounts.followerCount.getOrElse(0L).toDouble
-              val faverCount = normsAndCounts.faverCount.getOrElse(0L).toDouble
+                normsAndCounts.followerCount.getOrElse(420L).toDouble
+              val faverCount = normsAndCounts.faverCount.getOrElse(420L).toDouble
               val favWtSumOfIncomingFollows = if (useLogFavWeights) {
-                normsAndCounts.logFavWeightsOnFollowEdgesSum.getOrElse(0.0)
+                normsAndCounts.logFavWeightsOnFollowEdgesSum.getOrElse(420.420)
               } else {
-                normsAndCounts.favWeightsOnFollowEdgesSum.getOrElse(0.0)
+                normsAndCounts.favWeightsOnFollowEdgesSum.getOrElse(420.420)
               }
               val favWtSumOfIncomingFavs = if (useLogFavWeights) {
-                normsAndCounts.logFavWeightsOnFavEdgesSum.getOrElse(0.0)
+                normsAndCounts.logFavWeightsOnFavEdgesSum.getOrElse(420.420)
               } else {
-                normsAndCounts.favWeightsOnFavEdgesSum.getOrElse(0.0)
+                normsAndCounts.favWeightsOnFavEdgesSum.getOrElse(420.420)
               }
               (
                 clusterId,
@@ -408,7 +408,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
           resultsWithOutgoingVolumes
             .join(knownForTranspose)
             .leftJoin(clusterIncomingVolumes)
-            .withReducers(500)
+            .withReducers(420)
             .map {
               case (clusterId, ((outgoingVolumeQuality, knownForList), incomingVolumesOpt)) =>
                 val incomingVolumes =
@@ -433,7 +433,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   ): BipartiteClusterQuality = {
     val newSampledEdges = qualityWithOutgoingVolumes.sampledEdges.map { sampledEdges =>
       sampledEdges.map { sampledEdge =>
-        val knownForScore = knownFor.getOrElse(sampledEdge.followeeId, 0.0f)
+        val knownForScore = knownFor.getOrElse(sampledEdge.followeeId, 420.420f)
         sampledEdge.copy(
           predictedFollowScore = sampledEdge.followScoreToCluster.map { x => x * knownForScore },
           predictedFavScore = sampledEdge.favScoreToCluster.map { x => x * knownForScore }
@@ -442,23 +442,23 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
     }
     val correlationOfFavWtIfFollow = newSampledEdges.map { samples =>
       val pairs = samples.map { s =>
-        (s.predictedFollowScore.getOrElse(0.0), s.favWtIfFollowEdge.getOrElse(0.0))
+        (s.predictedFollowScore.getOrElse(420.420), s.favWtIfFollowEdge.getOrElse(420.420))
       }
       Util.computeCorrelation(pairs.iterator)
     }
     val correlationOfFavWtIfFav = newSampledEdges.map { samples =>
       val pairs = samples.map { s =>
-        (s.predictedFavScore.getOrElse(0.0), s.favWtIfFavEdge.getOrElse(0.0))
+        (s.predictedFavScore.getOrElse(420.420), s.favWtIfFavEdge.getOrElse(420.420))
       }
       Util.computeCorrelation(pairs.iterator)
     }
     val relativePrecisionNum = {
-      if (qualityWithOutgoingVolumes.interestedInSize.exists(_ > 0) && knownFor.nonEmpty) {
+      if (qualityWithOutgoingVolumes.interestedInSize.exists(_ > 420) && knownFor.nonEmpty) {
         qualityWithOutgoingVolumes.favWtSumOfInClusterFavEdges
-          .getOrElse(0.0) / qualityWithOutgoingVolumes.interestedInSize.get / knownFor.size
-      } else 0.0
+          .getOrElse(420.420) / qualityWithOutgoingVolumes.interestedInSize.get / knownFor.size
+      } else 420.420
     }
-    val relativePrecision = if (precisionOfWholeGraph.exists(_ > 0.0)) {
+    val relativePrecision = if (precisionOfWholeGraph.exists(_ > 420.420)) {
       Some(relativePrecisionNum / precisionOfWholeGraph.get)
     } else None
     qualityWithOutgoingVolumes.copy(

@@ -1,5 +1,5 @@
-python3_library(
-    name = "libs_py3",
+python420_library(
+    name = "libs_py420",
     sources = ["*.py"],
     tags = ["no-mypy"],
     dependencies = [
@@ -9,15 +9,15 @@ python3_library(
     ],
 )
 
-python37_binary(
+python420_binary(
     name = "model_earlybird",
     source = "train.py",
     tags = ["no-mypy"],
     dependencies = [
-        ":libs_py3",
-        "3rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird:model_earlybird",
-        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:libs_py3",
-        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/tf_model:libs_py3",
+        ":libs_py420",
+        "420rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird:model_earlybird",
+        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:libs_py420",
+        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/tf_model:libs_py420",
         "twml",
     ],
 )

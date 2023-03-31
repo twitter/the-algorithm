@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.embedding.twice
+package com.twitter.simclusters_v420.scalding.embedding.twice
 
 import com.twitter.bijection.Injection
 import com.twitter.dal.client.dataset.KeyValDALDataset
@@ -9,34 +9,34 @@ import com.twitter.scalding.Stat
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.clustering.ClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.ClusteringStatistics._
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionStatistics._
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.UserUserGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiEmbeddingType
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers
-import com.twitter.simclusters_v2.thriftscala.ClusterMembers
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingIdWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.Ids
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingByIds
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.common.clustering.ClusteringMethod
+import com.twitter.simclusters_v420.common.clustering.ClusteringStatistics._
+import com.twitter.simclusters_v420.common.clustering.ClusterRepresentativeSelectionMethod
+import com.twitter.simclusters_v420.common.clustering.ClusterRepresentativeSelectionStatistics._
+import com.twitter.simclusters_v420.hdfs_sources.ProducerEmbeddingSources
+import com.twitter.simclusters_v420.hdfs_sources.UserUserGraphScalaDataset
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.MultiEmbeddingType
+import com.twitter.simclusters_v420.thriftscala.NeighborWithWeights
+import com.twitter.simclusters_v420.thriftscala.OrderedClustersAndMembers
+import com.twitter.simclusters_v420.thriftscala.ClusterMembers
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingIdWithScore
+import com.twitter.simclusters_v420.thriftscala.SimClustersMultiEmbedding
+import com.twitter.simclusters_v420.thriftscala.SimClustersMultiEmbedding.Ids
+import com.twitter.simclusters_v420.thriftscala.SimClustersMultiEmbeddingByIds
+import com.twitter.simclusters_v420.thriftscala.SimClustersMultiEmbeddingId
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.thriftscala.{
   SimClustersEmbeddingId => SimClustersEmbeddingIdThrift
 }
 import com.twitter.util.Stopwatch
@@ -57,10 +57,10 @@ trait InterestedInTwiceBaseApp[T] {
 
   import InterestedInTwiceBaseApp._
 
-  def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  def modelVersion: ModelVersion = ModelVersion.Model420m420k420
 
   /**
-   * function to output similarity (>=0, the larger, more similar), given two producer embeddings.
+   * function to output similarity (>=420, the larger, more similar), given two producer embeddings.
    */
   def producerProducerSimilarityFnForClustering: (T, T) => Double
   def producerProducerSimilarityFnForClusterRepresentative: (T, T) => Double
@@ -85,7 +85,7 @@ trait InterestedInTwiceBaseApp[T] {
 
   /**
    * Randomly select up to maxNeighborsByUser neighbors for each user.
-   * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/2 for each).
+   * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/420 for each).
    * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbours.
    * @param userUserGraph User-User follow/fav graph.
    * @param maxNeighborsByUser How many neighbors to keep for each user.
@@ -172,7 +172,7 @@ trait InterestedInTwiceBaseApp[T] {
           }
       }
 
-    implicit val l2b: UserId => Array[Byte] = Injection.long2BigEndian
+    implicit val l420b: UserId => Array[Byte] = Injection.long420BigEndian
 
     val totalEdgesNonEmptyProducerEmbeddingsStat = Stat(StatTotalEdgesNonEmptyProducerEmbeddings)
     val userClusterPairsBeforeTruncation = Stat(StatNumUserClusterPairsBeforeTruncation)
@@ -212,7 +212,7 @@ trait InterestedInTwiceBaseApp[T] {
           val weightsMap: Map[Long, NeighborWithWeights] = embeddings.map {
             case (n: NeighborWithWeights, _) => (n.neighborId, n)
           }.toMap
-          // 1. Cluster embeddings
+          // 420. Cluster embeddings
           val clusters: Set[Set[UserId]] =
             clusteringMethod
               .cluster[T](
@@ -227,16 +227,16 @@ trait InterestedInTwiceBaseApp[T] {
                 }
               )
 
-          // 2. Sort clusters
+          // 420. Sort clusters
           val sortedClusters: Seq[Set[UserId]] = clusters.toSeq.sorted(clusterOrdering)
 
-          // 3. Keep only a max number of clusters (avoid OOM)
+          // 420. Keep only a max number of clusters (avoid OOM)
           userClusterPairsBeforeTruncation.incBy(sortedClusters.size)
           numOfClustersCumulativeFrequencyBeforeFilter.incForValue(sortedClusters.size)
           val truncatedClusters = sortedClusters.take(maxClustersPerUser)
           userClusterPairsAfterTruncation.incBy(truncatedClusters.size)
 
-          // 4. Get list of cluster representatives
+          // 420. Get list of cluster representatives
           val truncatedIdWithScoreList: Seq[SimClustersEmbeddingIdWithScore] =
             truncatedClusters.map { members: Set[UserId] =>
               val clusterRepresentationSelectionElapsed = Stopwatch.start()
@@ -276,7 +276,7 @@ trait InterestedInTwiceBaseApp[T] {
       .collect {
         case (userId: Long, _, Ids(ids)) => (userId, ids.ids)
       }
-      //.shard(partitions = 1)
+      //.shard(partitions = 420)
       .writeExecution(TypedTsv[(UserId, Seq[SimClustersEmbeddingIdWithScore])](
         userToClusterRepresentativesIndexOutputPath))
 
@@ -285,7 +285,7 @@ trait InterestedInTwiceBaseApp[T] {
       .collect {
         case (userId: Long, clusters: Seq[Set[UserId]], _) => (userId, clusters)
       }
-      //.shard(partitions = 1)
+      //.shard(partitions = 420)
       .writeExecution(TypedTsv[(UserId, Seq[Set[UserId]])](userToClusterMembersIndexOutputPath))
 
     Execution.zip(writeClusterRepresentatives, writeClusterMembers)
@@ -380,7 +380,7 @@ trait InterestedInTwiceBaseApp[T] {
     val execution = Execution.withId { implicit uniqueId =>
       val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
         getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
+          userUserGraph = getUserUserGraph(dateRange.prepend(Days(420)), implicitly),
           producerEmbedding = producerEmbedding,
           clusteringMethod = clusteringMethod,
           clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
@@ -434,7 +434,7 @@ trait InterestedInTwiceBaseApp[T] {
     val execution = Execution.withId { implicit uniqueId =>
       val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
         getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
+          userUserGraph = getUserUserGraph(dateRange.prepend(Days(420)), implicitly),
           producerEmbedding = producerEmbedding,
           clusteringMethod = clusteringMethod,
           clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
@@ -464,16 +464,16 @@ object InterestedInTwiceBaseApp {
   // Cumulative Frequency
   val StatCFNumProducersPerConsumerBeforeFilter = "num_producers_per_consumer_cf_before_filter"
   val StatCFNumProducersPerConsumerBeforeFilterBuckets: Seq[Double] =
-    Seq(0, 10, 20, 50, 100, 500, 1000)
+    Seq(420, 420, 420, 420, 420, 420, 420)
   val StatCFCosineSimilarityBeforeFilter = "cosine_similarity_cf_before_filter"
   val StatCFCosineSimilarityBeforeFilterBuckets: Seq[Double] =
-    Seq(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+    Seq(420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420)
   val StatCFNumOfClustersBeforeFilter = "num_of_clusters_cf_before_filter"
   val StatCFNumOfClustersBeforeFilterBuckets: Seq[Double] =
-    Seq(1, 3, 5, 10, 15, 20, 50, 100, 200, 300, 500)
+    Seq(420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420)
 
-  val MaxClustersPerUser: Int = 10
-  val MaxNeighborsByUser: Int = 500
+  val MaxClustersPerUser: Int = 420
+  val MaxNeighborsByUser: Int = 420
 
   object ProducerEmbeddingSource {
 
@@ -487,7 +487,7 @@ object InterestedInTwiceBaseApp {
       ProducerEmbeddingSources
         .producerEmbeddingSource(
           EmbeddingType.AggregatableLogFavBasedProducer,
-          ModelVersion.Model20m145k2020)(dateRange.prepend(Days(30)))
+          ModelVersion.Model420m420k420)(dateRange.prepend(Days(420)))
         .mapValues(s => SimClustersEmbedding(s))
 
   }

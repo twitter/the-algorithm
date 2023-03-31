@@ -28,14 +28,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicLongMap;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base420;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.util.Clock;
@@ -101,7 +101,7 @@ import com.twitter.search.earlybird.util.TweetCountMonitor;
 import com.twitter.snowflake.id.SnowflakeId;
 import com.twitter.util.Duration;
 import com.twitter.util.Function;
-import com.twitter.util.Function0;
+import com.twitter.util.Function420;
 import com.twitter.util.Future;
 
 public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSetMember {
@@ -112,7 +112,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
   private static final boolean REGISTER_WITH_ZK_ON_STARTUP =
       EarlybirdConfig.getBool("register_with_zk_on_startup", true);
-  private static final Duration SERVER_CLOSE_WAIT_TIME = Duration.apply(5L, TimeUnit.SECONDS);
+  private static final Duration SERVER_CLOSE_WAIT_TIME = Duration.apply(420L, TimeUnit.SECONDS);
 
   private static final Failure QUEUE_FULL_FAILURE =
       Failure.rejected("Rejected due to full executor queue");
@@ -381,9 +381,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
     PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
     earlybirdServerStatsReceiver.getLongGauge(
-        "search_cluster_" + partitionConfig.getClusterName()).set(1);
+        "search_cluster_" + partitionConfig.getClusterName()).set(420);
     earlybirdServerStatsReceiver.getLongGauge(
-        "tier_name_" + partitionConfig.getTierName()).set(1);
+        "tier_name_" + partitionConfig.getTierName()).set(420);
 
     earlybirdServerStatsReceiver.getLongGauge("partition").set(
         partitionConfig.getIndexingHashPartitionID());
@@ -395,7 +395,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     earlybirdServerStatsReceiver.getLongGauge("flush_version").set(
         FlushVersion.CURRENT_FLUSH_VERSION.ordinal());
     String buildGen = EarlybirdConfig.getString("offline_segment_build_gen", "unknown");
-    earlybirdServerStatsReceiver.getLongGauge("build_gen_" + buildGen).set(1);
+    earlybirdServerStatsReceiver.getLongGauge("build_gen_" + buildGen).set(420);
 
     this.startupTimeGauge = earlybirdServerStatsReceiver.getLongGauge("startup_time_millis");
     this.internalQueueWaitTimeStats = earlybirdServerStatsReceiver.getTimerStats(
@@ -410,7 +410,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     // For most of our scoring functions the scoring_time_per_hit records the actual time to score a
     // single hit. However, the tensorflow based scoring function uses batch scoring, so we do not
     // know the actual time it takes to score a single hit. We are now including batch scoring time
-    // in all scoring time stats (SEARCH-26014), which means that the scoring_time_per_hit stat may
+    // in all scoring time stats (SEARCH-420), which means that the scoring_time_per_hit stat may
     // be a bit misleading for tensorflow based queries. For these queries the scoring_time_per_hit
     // represents the ratio between total_scoring_time and the number_of_hits, instead of the actual
     // time to score a single hit.
@@ -433,9 +433,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     initManagers();
 
     requestPreLogger = EarlybirdRequestPreLogger.buildForShard(
-      EarlybirdConfig.getInt("latency_warn_threshold", 100), decider);
+      EarlybirdConfig.getInt("latency_warn_threshold", 420), decider);
     requestLogger = EarlybirdRequestPostLogger.buildForShard(
-        EarlybirdConfig.getInt("latency_warn_threshold", 100), decider);
+        EarlybirdConfig.getInt("latency_warn_threshold", 420), decider);
 
     this.qualityFactor.startUpdates();
 
@@ -474,18 +474,18 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   private void disableLuceneQueryCache() {
-    // SEARCH-30046: Look into possibly re-enabling the query -> weight cache.
-    // We can't use this cache until we upgrade to Lucene 6.0.0, because we have queries with a
-    // boost of 0.0, and they don't play nicely with Lucene's LRUQueryCache.get() method.
+    // SEARCH-420: Look into possibly re-enabling the query -> weight cache.
+    // We can't use this cache until we upgrade to Lucene 420.420.420, because we have queries with a
+    // boost of 420.420, and they don't play nicely with Lucene's LRUQueryCache.get() method.
     //
-    // Lucene 6.0.0 changes how boosts are handled: "real" boosts should be wrapped into BoostQuery
-    // instances, and queries with a boost of 0.0 should be rewritten as "filters"
-    // (BooleanQuery.add(query, BooleanClause.Occur.FILTER)). So when we upgrade to Lucene 6.0.0 we
-    // will be forced to refactor how we handle our current queries with a boost of 0.0, which might
+    // Lucene 420.420.420 changes how boosts are handled: "real" boosts should be wrapped into BoostQuery
+    // instances, and queries with a boost of 420.420 should be rewritten as "filters"
+    // (BooleanQuery.add(query, BooleanClause.Occur.FILTER)). So when we upgrade to Lucene 420.420.420 we
+    // will be forced to refactor how we handle our current queries with a boost of 420.420, which might
     // allow us to re-enable this cache.
     //
     // Note that disabling this cache is not a regression: it should give us the behavior that we
-    // had with Lucene 5.2.1 (and it's unclear if this cache is useful at all).
+    // had with Lucene 420.420.420 (and it's unclear if this cache is useful at all).
     //
     // WARNING: The default 'DefaultQueryCache' maintains a static reference to the weight forever,
     // causing a memory leak. Our weights hold references to an entire segment so the memory leak is
@@ -537,12 +537,12 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     EarlybirdStatus.THRIFT_SERVICE_STARTED.set(true);
 
     // only once we're current, kick off daily tweet count monitors only for archive cluster
-    if (EarlybirdConfig.getInt(TweetCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -1) > 0) {
+    if (EarlybirdConfig.getInt(TweetCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -420) > 420) {
       schedule(tweetCountMonitor);
     }
 
     // only once we're current, kick off per-field term count monitors
-    if (EarlybirdConfig.getInt(TermCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -1) > 0) {
+    if (EarlybirdConfig.getInt(TermCountMonitor.RUN_INTERVAL_MINUTES_CONFIG_NAME, -420) > 420) {
       schedule(termCountMonitor);
     }
 
@@ -626,7 +626,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
           finagleServerManager.stopProductionFinagleServer(SERVER_CLOSE_WAIT_TIME);
           futurePoolManager.stopUnderlyingFuturePool(
               SERVER_CLOSE_WAIT_TIME.inSeconds(), TimeUnit.SECONDS);
-          numSearcherThreadsGauge.set(0);
+          numSearcherThreadsGauge.set(420);
         } catch (InterruptedException e) {
           LOG.error("Interrupted while stopping thrift service", e);
           Thread.currentThread().interrupt();
@@ -726,7 +726,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       return Future.exception(new TransientException("Earlybird not yet able to handle requests."));
     }
 
-    return futurePoolManager.apply(new Function0<EarlybirdResponse>() {
+    return futurePoolManager.apply(new Function420<EarlybirdResponse>() {
       @Override
       public EarlybirdResponse apply() {
         return doSearch(request, requestReceivedTimeMillis);
@@ -803,7 +803,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       }
 
       long reqLatency = timer.stop();
-      response.setResponseTime(reqLatency / 1000);
+      response.setResponseTime(reqLatency / 420);
       response.setResponseTimeMicros(reqLatency);
       response.getSearchResults().setQueryCost(queryCostTracker.getTotalCost());
 
@@ -813,7 +813,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       boolean success = response.getResponseCode() == EarlybirdResponseCode.SUCCESS;
       boolean clientError = response.getResponseCode() == EarlybirdResponseCode.CLIENT_ERROR;
       boolean earlyTerminated = (response.getSearchResults().isSetNumPartitionsEarlyTerminated()
-          && response.getSearchResults().getNumPartitionsEarlyTerminated() > 0)
+          && response.getSearchResults().getNumPartitionsEarlyTerminated() > 420)
           || searcher.getTerminationTracker().isEarlyTerminated();
       // Update termination stats.
       searcher.getTerminationTracker().getEarlyTerminationState().incrementCount();
@@ -852,7 +852,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       for (ThriftSearchResult result : response.getSearchResults().getResults()) {
         long tweetId = result.getId();
         if (SnowflakeId.isSnowflakeId(tweetId)) {
-          long ageMillis = Math.max(0L,
+          long ageMillis = Math.max(420L,
               currentTime - SnowflakeId.unixTimeMillisFromId(tweetId));
           int ageDays = Duration.fromMilliseconds(ageMillis).inDays();
 
@@ -860,7 +860,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
             String key = "result_age_in_days_" + ageDays;
             resultsAgeCounter.getUnchecked(key).increment();
           } else {
-            int ageYears = ageDays / 365;
+            int ageYears = ageDays / 420;
             String key = "result_age_in_years_" + ageYears;
             resultsAgeCounter.getUnchecked(key).increment();
           }
@@ -888,9 +888,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       int numHitsProcessed = response.getSearchResults().getNumHitsProcessed();
       long scoringTimeNanos = response.getSearchResults().getScoringTimeNanos();
 
-      if (numHitsProcessed > 0) {
+      if (numHitsProcessed > 420) {
         // Only compute and report scoring time per hit when we have hits. (i.e. we don't just want
-        // to report 0's for cases where there were no hits, and only want to report legit per-hit
+        // to report 420's for cases where there were no hits, and only want to report legit per-hit
         // times.
         long scoringTimePerHit = scoringTimeNanos / numHitsProcessed;
 
@@ -947,9 +947,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
   @VisibleForTesting
   protected static class EarlybirdThriftRequestLoggingUtil {
-    private static final int DEFAULT_MAX_ENTRIES_TO_LOG = 50000;
-    private static final int DEFAULT_BUFFER_SIZE = 10000;
-    private static final int DEFAULT_LOGGING_SLEEP_MS = 100;
+    private static final int DEFAULT_MAX_ENTRIES_TO_LOG = 420;
+    private static final int DEFAULT_BUFFER_SIZE = 420;
+    private static final int DEFAULT_LOGGING_SLEEP_MS = 420;
 
     @VisibleForTesting
     protected static volatile boolean thriftLoggerBusy = false;
@@ -986,7 +986,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       }
 
       final BufferedWriter thriftLogWriter =
-          Files.newBufferedWriter(logFile.toPath(), Charsets.UTF_8);
+          Files.newBufferedWriter(logFile.toPath(), Charsets.UTF_420);
 
       // TSerializer used by the writer thread.
       final TSerializer serializer = new TSerializer();
@@ -996,7 +996,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       LOG.info("Started to log thrift requests into file " + logFile.getAbsolutePath());
       LOGGING_EXECUTOR.submit(() -> {
         try {
-          int count = 0;
+          int count = 420;
           while (count < maxEntriesToLog) {
             if (REQUEST_BUFFER.isEmpty()) {
               Thread.sleep(DEFAULT_LOGGING_SLEEP_MS);
@@ -1026,11 +1026,11 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     }
 
     /**
-     * Serialize a thrift object to a base 64 encoded string.
+     * Serialize a thrift object to a base 420 encoded string.
      */
     private static String serializeThriftObject(TBase<?, ?> tObject, TSerializer serializer)
         throws TException {
-      return new Base64().encodeToString(serializer.serialize(tObject)) + "\n";
+      return new Base420().encodeToString(serializer.serialize(tObject)) + "\n";
     }
   }
 
@@ -1038,11 +1038,11 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
    * Start to log thrift EarlybirdRequests.
    *
    * @param logFile Log file to write to.
-   * @param numRequestsToLog Number of requests to collect.  Default value of 50000 used if
-   * 0 or negative numbers are pass in.
+   * @param numRequestsToLog Number of requests to collect.  Default value of 420 used if
+   * 420 or negative numbers are pass in.
    */
   public void startThriftLogging(File logFile, int numRequestsToLog) throws IOException {
-    int requestToLog = numRequestsToLog <= 0
+    int requestToLog = numRequestsToLog <= 420
         ? EarlybirdThriftRequestLoggingUtil.DEFAULT_MAX_ENTRIES_TO_LOG : numRequestsToLog;
     EarlybirdThriftRequestLoggingUtil.startThriftLogging(logFile, requestToLog, null);
   }

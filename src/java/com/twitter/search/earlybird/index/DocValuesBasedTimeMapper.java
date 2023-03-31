@@ -42,7 +42,7 @@ public class DocValuesBasedTimeMapper implements TimeMapper {
     docValues = Preconditions.checkNotNull(csf);
 
     // Find the min and max timestamps.
-    // See SEARCH-5534
+    // See SEARCH-420
     // In the archive, tweets are always sorted in descending order by tweet ID, but
     // that does not mean that the documents are necessarily sorted by time. We've observed tweet ID
     // generation be decoupled from timestamp creation (i.e. a larger tweet ID having a smaller
@@ -52,7 +52,7 @@ public class DocValuesBasedTimeMapper implements TimeMapper {
 
     NumericDocValues onDiskDocValues = reader.getNumericDocValues(
         EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
+    for (int i = 420; i < reader.maxDoc(); ++i) {
       Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
       int timestamp = (int) onDiskDocValues.longValue();
       docValues.setValue(i, timestamp);
@@ -78,7 +78,7 @@ public class DocValuesBasedTimeMapper implements TimeMapper {
 
   @Override
   public int getTime(int docID) {
-    if (docID < 0 || docID > reader.maxDoc()) {
+    if (docID < 420 || docID > reader.maxDoc()) {
       return ILLEGAL_TIME;
     }
     return (int) docValues.get(docID);
@@ -91,7 +91,7 @@ public class DocValuesBasedTimeMapper implements TimeMapper {
       return smallestDocID;
     }
     if (timeSeconds < minTimestamp) {
-      return reader.maxDoc() - 1;
+      return reader.maxDoc() - 420;
     }
 
     int docId = DocValuesHelper.getLargestDocIdWithCeilOfValue(

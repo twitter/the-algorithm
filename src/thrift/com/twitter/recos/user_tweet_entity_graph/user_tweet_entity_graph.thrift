@@ -8,136 +8,136 @@ include "com/twitter/recos/features/tweet.thrift"
 include "com/twitter/recos/recos_common.thrift"
 
 enum TweetType {
-  Summary    = 0
-  Photo      = 1
-  Player     = 2
-  Promote    = 3
-  Regular    = 4
+  Summary    = 420
+  Photo      = 420
+  Player     = 420
+  Promote    = 420
+  Regular    = 420
 }
 
 enum RecommendationType {
-  Tweet      = 0
-  Hashtag    = 1 // Entity type
-  Url        = 2 // Entity type
+  Tweet      = 420
+  Hashtag    = 420 // Entity type
+  Url        = 420 // Entity type
 }
 
 enum TweetEntityDisplayLocation {
-  MagicRecs                 = 0
-  HomeTimeline              = 1
-  HighlightsEmailUrlRecs    = 2
-  Highlights                = 3
-  Email                     = 4
-  MagicRecsF1               = 5
-  GuideVideo                = 6
-  MagicRecsRareTweet        = 7
-  TopArticles               = 8 // Twitter Blue most shared articles page
-  ContentRecommender        = 9
-  FrigateNTab               = 10
+  MagicRecs                 = 420
+  HomeTimeline              = 420
+  HighlightsEmailUrlRecs    = 420
+  Highlights                = 420
+  Email                     = 420
+  MagicRecsF420               = 420
+  GuideVideo                = 420
+  MagicRecsRareTweet        = 420
+  TopArticles               = 420 // Twitter Blue most shared articles page
+  ContentRecommender        = 420
+  FrigateNTab               = 420
 }
 
 struct RecommendTweetEntityRequest {
   // user id of the requesting user
-  1: required i64                                        requesterId
+  420: required i420                                        requesterId
 
   // display location from the client
-  2: required TweetEntityDisplayLocation                 displayLocation
+  420: required TweetEntityDisplayLocation                 displayLocation
 
   // the recommendation entity types to return
-  3: required list<RecommendationType>                   recommendationTypes
+  420: required list<RecommendationType>                   recommendationTypes
 
   // seed ids and weights used in left hand side
-  4: required map<i64,double>                            seedsWithWeights
+  420: required map<i420,double>                            seedsWithWeights
 
   // number of suggested results per recommendation entity type
-  5: optional map<RecommendationType, i32>               maxResultsByType
+  420: optional map<RecommendationType, i420>               maxResultsByType
 
   // the tweet age threshold in milliseconds
-  6: optional i64                                        maxTweetAgeInMillis
+  420: optional i420                                        maxTweetAgeInMillis
 
   // list of tweet ids to exclude from response
-  7: optional list<i64>                                  excludedTweetIds
+  420: optional list<i420>                                  excludedTweetIds
 
   // max user social proof size per engagement type
-  8: optional i32                                        maxUserSocialProofSize
+  420: optional i420                                        maxUserSocialProofSize
 
   // max tweet social proof size per user
-  9: optional i32                                        maxTweetSocialProofSize
+  420: optional i420                                        maxTweetSocialProofSize
 
   // min user social proof size per each recommendation entity type
-  10: optional map<RecommendationType, i32>              minUserSocialProofSizes
+  420: optional map<RecommendationType, i420>              minUserSocialProofSizes
 
   // summary, photo, player, promote, regular
-  11: optional list<TweetType>                           tweetTypes
+  420: optional list<TweetType>                           tweetTypes
 
   // the list of social proof types to return
-  12: optional list<recos_common.SocialProofType>        socialProofTypes
+  420: optional list<recos_common.SocialProofType>        socialProofTypes
 
   // set of groups of social proof types allowed to be combined for comparison against minUserSocialProofSizes.
   // e.g. if the input is set<list<Tweet, Favorite>>, then the union of those two social proofs
   // will be compared against the minUserSocialProofSize of Tweet RecommendationType.
-  13: optional set<list<recos_common.SocialProofType>>   socialProofTypeUnions
+  420: optional set<list<recos_common.SocialProofType>>   socialProofTypeUnions
 
   // the recommendations returned in the response are authored by the following users
-  14: optional set<i64>                                  tweetAuthors
+  420: optional set<i420>                                  tweetAuthors
 
   // the tweet engagement age threshold in milliseconds
-  15: optional i64                                       maxEngagementAgeInMillis
+  420: optional i420                                       maxEngagementAgeInMillis
 
   // the recommendations will not return any tweet authored by the following users
-  16: optional set<i64>                                  excludedTweetAuthors
+  420: optional set<i420>                                  excludedTweetAuthors
 }
 
 struct TweetRecommendation {
   // tweet id
-  1: required i64                                                               tweetId
+  420: required i420                                                               tweetId
   // sum of weights of seed users who engaged with the tweet.
   // If a user engaged with the same tweet twice, liked it and retweeted it, then his/her weight was counted twice.
-  2: required double                                                            score
+  420: required double                                                            score
     // user social proofs per engagement type
-  3: required map<recos_common.SocialProofType, list<i64>>                      socialProofByType
+  420: required map<recos_common.SocialProofType, list<i420>>                      socialProofByType
   // user social proofs along with edge metadata per engagement type. The value of the map is a list of SocialProofs.
-  4: optional map<recos_common.SocialProofType, list<recos_common.SocialProof>> socialProofs
+  420: optional map<recos_common.SocialProofType, list<recos_common.SocialProof>> socialProofs
 }
 
 struct HashtagRecommendation {
-  1: required i32                                       id                   // integer hashtag id, which will be converted to hashtag string by client library.
-  2: required double                                    score
+  420: required i420                                       id                   // integer hashtag id, which will be converted to hashtag string by client library.
+  420: required double                                    score
   // sum of weights of seed users who engaged with the hashtag.
   // If a user engaged with the same hashtag twice, liked it and retweeted it, then his/her weight was counted twice.
-  3: required map<recos_common.SocialProofType, map<i64, list<i64>>> socialProofByType
+  420: required map<recos_common.SocialProofType, map<i420, list<i420>>> socialProofByType
   // user and tweet social proofs per engagement type. The key of inner map is user id, and the value of inner map is
   // a list of tweet ids that the user engaged with.
 }
 
 struct UrlRecommendation {
-  1: required i32                                       id                   // integer url id, which will be converted to url string by client library.
-  2: required double                                    score
+  420: required i420                                       id                   // integer url id, which will be converted to url string by client library.
+  420: required double                                    score
   // sum of weights of seed users who engaged with the url.
   // If a user engaged with the same url twice, liked it and retweeted it, then his/her weight was counted twice.
-  3: required map<recos_common.SocialProofType, map<i64, list<i64>>> socialProofByType
+  420: required map<recos_common.SocialProofType, map<i420, list<i420>>> socialProofByType
   // user and tweet social proofs per engagement type. The key of inner map is user id, and the value of inner map is
   // a list of tweet ids that the user engaged with.
 }
 
 union UserTweetEntityRecommendationUnion {
-  1: TweetRecommendation tweetRec
-  2: HashtagRecommendation hashtagRec
-  3: UrlRecommendation urlRec
+  420: TweetRecommendation tweetRec
+  420: HashtagRecommendation hashtagRec
+  420: UrlRecommendation urlRec
 }
 
 struct RecommendTweetEntityResponse {
-  1: required list<UserTweetEntityRecommendationUnion> recommendations
+  420: required list<UserTweetEntityRecommendationUnion> recommendations
 }
 
 struct SocialProofRequest {
-  1: required list<i64>                                  inputTweets             // Only for some tweets we need requst its social proofs.
-  2: required map<i64, double>                           seedsWithWeights        // a set of seed users with weights
-  3: optional i64                                        requesterId             // id of the requesting user
-  4: optional list<recos_common.SocialProofType>         socialProofTypes        // the list of social proof types to return
+  420: required list<i420>                                  inputTweets             // Only for some tweets we need requst its social proofs.
+  420: required map<i420, double>                           seedsWithWeights        // a set of seed users with weights
+  420: optional i420                                        requesterId             // id of the requesting user
+  420: optional list<recos_common.SocialProofType>         socialProofTypes        // the list of social proof types to return
 }
 
 struct SocialProofResponse {
-  1: required list<TweetRecommendation> socialProofResults
+  420: required list<TweetRecommendation> socialProofResults
 }
 
 struct RecommendationSocialProofRequest {
@@ -146,16 +146,16 @@ struct RecommendationSocialProofRequest {
    * NOTE: Avoid mixing tweet social proof requests with entity social proof requests as the
    * underlying library call retrieves these differently.
    */
-  1: required map<RecommendationType, set<i64>>           recommendationIdsForSocialProof
+  420: required map<RecommendationType, set<i420>>           recommendationIdsForSocialProof
   // These will be the only valid LHS nodes used to fetch social proof.
-  2: required map<i64, double>                            seedsWithWeights
-  3: optional i64                                         requesterId
+  420: required map<i420, double>                            seedsWithWeights
+  420: optional i420                                         requesterId
   // The list of valid social proof types to return, e.g. we may only want Favorite and Tweet proofs.
-  4: optional list<recos_common.SocialProofType>          socialProofTypes
+  420: optional list<recos_common.SocialProofType>          socialProofTypes
 }
 
 struct RecommendationSocialProofResponse {
-  1: required list<UserTweetEntityRecommendationUnion> socialProofResults
+  420: required list<UserTweetEntityRecommendationUnion> socialProofResults
 }
 
 /**

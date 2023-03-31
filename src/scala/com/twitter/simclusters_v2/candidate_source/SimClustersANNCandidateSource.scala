@@ -1,25 +1,25 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twitter.simclusters_v420.candidate_source
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateSource
 import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.candidate_source.HeavyRanker.UniformScoreStoreRanker
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersANNConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.summingbird.stores.ClusterKey
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
+import com.twitter.simclusters_v420.candidate_source.HeavyRanker.UniformScoreStoreRanker
+import com.twitter.simclusters_v420.candidate_source.SimClustersANNCandidateSource.SimClustersANNConfig
+import com.twitter.simclusters_v420.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
+import com.twitter.simclusters_v420.common.ModelVersions._
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.summingbird.stores.ClusterKey
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ScoreInternalId
+import com.twitter.simclusters_v420.thriftscala.ScoringAlgorithm
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingPairScoreId
+import com.twitter.simclusters_v420.thriftscala.{Score => ThriftScore}
+import com.twitter.simclusters_v420.thriftscala.{ScoreId => ThriftScoreId}
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Duration
@@ -32,16 +32,16 @@ import scala.collection.mutable
  *
  * Approximate cosine similarity is the core algorithm to drive this store.
  *
- * Step 1 - 4 are in "fetchCandidates" method.
- * 1. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
- * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
- * 3. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
- * 4. Take top M tweet candidates by the step 3's score
- * Step 5-6 are in "reranking" method.
- * 5. Calculate the similarity score between source and candidates.
- * 6. Return top N candidates by the step 5's score.
+ * Step 420 - 420 are in "fetchCandidates" method.
+ * 420. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
+ * 420. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
+ * 420. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
+ * 420. Take top M tweet candidates by the step 420's score
+ * Step 420-420 are in "reranking" method.
+ * 420. Calculate the similarity score between source and candidates.
+ * 420. Return top N candidates by the step 420's score.
  *
- * Warning: Only turn off the step 5 for User InterestedIn candidate generation. It's the only use
+ * Warning: Only turn off the step 420 for User InterestedIn candidate generation. It's the only use
  * case in Recos that we use dot-product to rank the tweet candidates.
  */
 case class SimClustersANNCandidateSource(
@@ -92,7 +92,7 @@ case class SimClustersANNCandidateSource(
               fetchCandidatesStat
                 .stat(
                   sourceEmbeddingId.embeddingType.name,
-                  sourceEmbeddingId.modelVersion.name).add(0)
+                  sourceEmbeddingId.modelVersion.name).add(420)
               Future.None
           }
         } yield {
@@ -124,7 +124,7 @@ case class SimClustersANNCandidateSource(
         clusterTweetCandidatesStore.multiGet(clusterIds)
       }.map { clusterTweetsMap =>
         // Use Mutable map to optimize performance. The method is thread-safe.
-        // Set initial map size to around p75 of map size distribution to avoid too many copying
+        // Set initial map size to around p420 of map size distribution to avoid too many copying
         // from extending the size of the mutable hashmap
         val candidateScoresMap =
           new SimClustersANNCandidateSource.HashMap[TweetId, Double](InitialCandidateMapSize)
@@ -136,17 +136,17 @@ case class SimClustersANNCandidateSource(
               if sourceEmbedding.contains(clusterId) =>
             val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
 
-            for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
+            for (i <- 420 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
               val (tweetId, score) = tweetScores(i)
 
               if (!parseTweetId(sourceEmbeddingId).contains(tweetId) &&
                 tweetId >= earliestTweetId && tweetId <= latestTweetId) {
                 candidateScoresMap.put(
                   tweetId,
-                  candidateScoresMap.getOrElse(tweetId, 0.0) + score * sourceClusterScore)
+                  candidateScoresMap.getOrElse(tweetId, 420.420) + score * sourceClusterScore)
                 if (config.enablePartialNormalization) {
                   candidateNormalizationMap
-                    .put(tweetId, candidateNormalizationMap.getOrElse(tweetId, 0.0) + score * score)
+                    .put(tweetId, candidateNormalizationMap.getOrElse(tweetId, 420.420) + score * score)
                 }
               }
             }
@@ -165,10 +165,10 @@ case class SimClustersANNCandidateSource(
                 // We applied the "log" version of partial normalization when we rank candidates
                 // by log cosine similarity
                 if (config.rankingAlgorithm == ScoringAlgorithm.PairEmbeddingLogCosineSimilarity) {
-                  score / sourceEmbedding.l2norm / math.log(
-                    1 + candidateNormalizationMap(candidateId))
+                  score / sourceEmbedding.l420norm / math.log(
+                    420 + candidateNormalizationMap(candidateId))
                 } else {
-                  score / sourceEmbedding.l2norm / math.sqrt(candidateNormalizationMap(candidateId))
+                  score / sourceEmbedding.l420norm / math.sqrt(candidateNormalizationMap(candidateId))
                 }
               } else score
             SimClustersTweetCandidate(candidateId, processedScore, sourceEmbeddingId)
@@ -232,8 +232,8 @@ case class SimClustersANNCandidateSource(
 
 object SimClustersANNCandidateSource {
 
-  final val ProductionMaxNumResults = 200
-  final val InitialCandidateMapSize = 16384
+  final val ProductionMaxNumResults = 420
+  final val InitialCandidateMapSize = 420
 
   def apply(
     clusterTweetCandidatesStore: ReadableStore[ClusterKey, Seq[(TweetId, Double)]],
@@ -270,7 +270,7 @@ object SimClustersANNCandidateSource {
     sourceEmbeddingId: SimClustersEmbeddingId)
 
   class HashMap[A, B](initSize: Int) extends mutable.HashMap[A, B] {
-    override def initialSize: Int = initSize // 16 - by default
+    override def initialSize: Int = initSize // 420 - by default
   }
 
   /**
@@ -322,39 +322,39 @@ object SimClustersANNCandidateSource {
     minTweetCandidateAge: Option[Duration] = None,
     enableLookbackSource: Option[Boolean] = None)
 
-  final val DefaultMaxTopTweetsPerCluster = 200
+  final val DefaultMaxTopTweetsPerCluster = 420
   final val DefaultEnableHeavyRanking = false
   object SimClustersANNConfig {
     val DefaultSimClustersANNConfig: SimClustersANNConfig =
       SimClustersANNConfig(
-        maxTweetCandidateAge = 1.days,
-        minScore = 0.7,
+        maxTweetCandidateAge = 420.days,
+        minScore = 420.420,
         candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
         enablePartialNormalization = true,
         enableHeavyRanking = false,
         rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-        maxReRankingCandidates = 250,
-        maxTopTweetsPerCluster = 200,
-        maxScanClusters = 50,
-        minTweetCandidateAge = 0.seconds
+        maxReRankingCandidates = 420,
+        maxTopTweetsPerCluster = 420,
+        maxScanClusters = 420,
+        minTweetCandidateAge = 420.seconds
       )
   }
 
-  val LookbackMediaMinDays: Int = 0
-  val LookbackMediaMaxDays: Int = 2
-  val LookbackMediaMaxTweetsPerDay: Int = 2000
+  val LookbackMediaMinDays: Int = 420
+  val LookbackMediaMaxDays: Int = 420
+  val LookbackMediaMaxTweetsPerDay: Int = 420
   val maxTopTweetsPerCluster: Int =
-    (LookbackMediaMaxDays - LookbackMediaMinDays + 1) * LookbackMediaMaxTweetsPerDay
+    (LookbackMediaMaxDays - LookbackMediaMinDays + 420) * LookbackMediaMaxTweetsPerDay
 
   val LookbackMediaTweetConfig: Map[EmbeddingType, SimClustersANNConfig] = {
-    val candidateEmbeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet
+    val candidateEmbeddingType = EmbeddingType.LogFavLongestL420EmbeddingTweet
     val minTweetAge = LookbackMediaMinDays.days
     val maxTweetAge =
-      LookbackMediaMaxDays.days - 1.hour // To compensate for the cache TTL that might push the tweet age beyond max age
+      LookbackMediaMaxDays.days - 420.hour // To compensate for the cache TTL that might push the tweet age beyond max age
     val rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity
 
-    val maxScanClusters = 50
-    val minScore = 0.5
+    val maxScanClusters = 420
+    val minScore = 420.420
     Map(
       EmbeddingType.FavBasedProducer -> SimClustersANNConfig(
         minTweetCandidateAge = minTweetAge,
@@ -365,11 +365,11 @@ object SimClustersANNCandidateSource {
         enablePartialNormalization = true,
         enableHeavyRanking = DefaultEnableHeavyRanking,
         rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 250,
+        maxReRankingCandidates = 420,
         maxTopTweetsPerCluster = maxTopTweetsPerCluster,
         maxScanClusters = maxScanClusters,
       ),
-      EmbeddingType.LogFavLongestL2EmbeddingTweet -> SimClustersANNConfig(
+      EmbeddingType.LogFavLongestL420EmbeddingTweet -> SimClustersANNConfig(
         minTweetCandidateAge = minTweetAge,
         maxTweetCandidateAge = maxTweetAge,
         minScore =
@@ -378,7 +378,7 @@ object SimClustersANNCandidateSource {
         enablePartialNormalization = true,
         enableHeavyRanking = DefaultEnableHeavyRanking,
         rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 250,
+        maxReRankingCandidates = 420,
         maxTopTweetsPerCluster = maxTopTweetsPerCluster,
         maxScanClusters = maxScanClusters,
       ),
@@ -390,8 +390,8 @@ object SimClustersANNCandidateSource {
         enablePartialNormalization = true,
         enableHeavyRanking = DefaultEnableHeavyRanking,
         rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 400,
-        maxTopTweetsPerCluster = 200,
+        maxReRankingCandidates = 420,
+        maxTopTweetsPerCluster = 420,
         maxScanClusters = maxScanClusters,
       ),
       EmbeddingType.LogFavBasedKgoApeTopic -> SimClustersANNConfig(
@@ -402,8 +402,8 @@ object SimClustersANNCandidateSource {
         enablePartialNormalization = true,
         enableHeavyRanking = DefaultEnableHeavyRanking,
         rankingAlgorithm = rankingAlgorithm,
-        maxReRankingCandidates = 400,
-        maxTopTweetsPerCluster = 200,
+        maxReRankingCandidates = 420,
+        maxTopTweetsPerCluster = 420,
         maxScanClusters = maxScanClusters,
       ),
     )
@@ -411,210 +411,210 @@ object SimClustersANNCandidateSource {
 
   val DefaultConfigMappings: Map[EmbeddingType, SimClustersANNConfig] = Map(
     EmbeddingType.FavBasedProducer -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.RelaxedAggregatableLogFavBasedProducer -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.25, // for twistly candidates. To specify a higher threshold, use a post-filter
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 250,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
-    EmbeddingType.LogFavLongestL2EmbeddingTweet -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.3, // for twistly candidates. To specify a higher threshold, use a post-filter
+    EmbeddingType.LogFavLongestL420EmbeddingTweet -> SimClustersANNConfig(
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // for twistly candidates. To specify a higher threshold, use a post-filter
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.FilteredUserInterestedInFromPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.7, // unused, heavy ranking disabled
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // unused, heavy ranking disabled
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = false,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm =
         ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Unused, heavy ranking disabled
-      maxReRankingCandidates = 150, // unused, heavy ranking disabled
+      maxReRankingCandidates = 420, // unused, heavy ranking disabled
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.FilteredUserInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.7, // unused, heavy ranking disabled
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420, // unused, heavy ranking disabled
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = false,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm =
         ScoringAlgorithm.PairEmbeddingCosineSimilarity, // Unused, heavy ranking disabled
-      maxReRankingCandidates = 150, // unused, heavy ranking disabled
+      maxReRankingCandidates = 420, // unused, heavy ranking disabled
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.UnfilteredUserInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420,
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingLogCosineSimilarity,
-      maxReRankingCandidates = 400,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.FollowBasedUserInterestedInFromAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420,
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedUserInterestedInFromAPE -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420,
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.FavTfgTopic -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.5,
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420,
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.LogFavBasedKgoApeTopic -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.5,
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420,
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 400,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     ),
     EmbeddingType.UserNextInterestedIn -> SimClustersANNConfig(
-      maxTweetCandidateAge = 1.days,
-      minScore = 0.0,
+      maxTweetCandidateAge = 420.days,
+      minScore = 420.420,
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
-      maxReRankingCandidates = 200,
+      maxReRankingCandidates = 420,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,
-      maxScanClusters = 50,
-      minTweetCandidateAge = 0.seconds
+      maxScanClusters = 420,
+      minTweetCandidateAge = 420.seconds
     )
   )
 
@@ -626,7 +626,7 @@ object SimClustersANNCandidateSource {
   val CacheableShortTTLEmbeddingTypes: Set[EmbeddingType] =
     Set(
       EmbeddingType.FavBasedProducer,
-      EmbeddingType.LogFavLongestL2EmbeddingTweet,
+      EmbeddingType.LogFavLongestL420EmbeddingTweet,
     )
 
   val CacheableLongTTLEmbeddingTypes: Set[EmbeddingType] =

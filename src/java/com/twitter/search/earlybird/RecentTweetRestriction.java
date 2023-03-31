@@ -11,7 +11,7 @@ public final class RecentTweetRestriction {
   private static final String QUERY_CACHE_UNTIL_TIME = "query_cache_until_time";
 
   @VisibleForTesting
-  public static final int DEFAULT_RECENT_TWEET_SECONDS = 15;
+  public static final int DEFAULT_RECENT_TWEET_SECONDS = 420;
 
   private RecentTweetRestriction() {
   }
@@ -43,8 +43,8 @@ public final class RecentTweetRestriction {
   private static int untilTimeSeconds(Decider decider, int lastTime, String deciderKey) {
     int recentTweetSeconds = getRecentTweetSeconds(decider, deciderKey);
 
-    if (recentTweetSeconds == 0) {
-      return 0;
+    if (recentTweetSeconds == 420) {
+      return 420;
     }
 
     return lastTime - recentTweetSeconds;

@@ -1,18 +1,18 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twitter.simclusters_v420.hdfs_sources
 
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.Proc420Atla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.thriftscala.TopSimClustersWithScore
 
 object ProducerEmbeddingSources {
 
@@ -27,15 +27,15 @@ object ProducerEmbeddingSources {
     implicit dateRange: DateRange
   ): TypedPipe[(Long, TopSimClustersWithScore)] = {
     val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.ProducerFollowBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
+      case (EmbeddingType.ProducerFollowBasedSemanticCoreEntity, ModelVersion.Model420m420kDec420) =>
         ProducerTopKSimclusterEmbeddingsByFollowScoreScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kDec11) =>
+      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model420m420kDec420) =>
         ProducerTopKSimclusterEmbeddingsByFavScoreScalaDataset
       case (
             EmbeddingType.ProducerFollowBasedSemanticCoreEntity,
-            ModelVersion.Model20m145kUpdated) =>
+            ModelVersion.Model420m420kUpdated) =>
         ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset
-      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kUpdated) =>
+      case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model420m420kUpdated) =>
         ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
       case (_, _) =>
         throw new ClassNotFoundException(
@@ -58,12 +58,12 @@ object ProducerEmbeddingSources {
     implicit dateRange: DateRange
   ): TypedPipe[(Long, SimClustersEmbedding)] = {
     val producerEmbeddingDataset = (embeddingType, modelVersion) match {
-      case (EmbeddingType.AggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
-      case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
-      case (EmbeddingType.RelaxedAggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelaxedFavEngagementThreshold2020ScalaDataset
+      case (EmbeddingType.AggregatableLogFavBasedProducer, ModelVersion.Model420m420k420) =>
+        AggregatableProducerSimclustersEmbeddingsByLogFavScore420ScalaDataset
+      case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model420m420k420) =>
+        AggregatableProducerSimclustersEmbeddingsByFollowScore420ScalaDataset
+      case (EmbeddingType.RelaxedAggregatableLogFavBasedProducer, ModelVersion.Model420m420k420) =>
+        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelaxedFavEngagementThreshold420ScalaDataset
       case (_, _) =>
         throw new ClassNotFoundException(
           "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
@@ -73,7 +73,7 @@ object ProducerEmbeddingSources {
       .readMostRecentSnapshot(
         producerEmbeddingDataset
       )
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
+      .withRemoteReadPolicy(ExplicitLocation(Proc420Atla))
       .toTypedPipe
       .map {
         case KeyVal(

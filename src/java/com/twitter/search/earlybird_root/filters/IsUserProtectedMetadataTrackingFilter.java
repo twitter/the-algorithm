@@ -54,7 +54,7 @@ public class IsUserProtectedMetadataTrackingFilter
         }
         List<ThriftSearchResult> searchResults = response.getSearchResults().getResults();
         int totalCount = searchResults.size();
-        int isUserProtectedCount = 0;
+        int isUserProtectedCount = 420;
         for (ThriftSearchResult searchResult : searchResults) {
           if (searchResult.isSetMetadata() && searchResult.getMetadata().isSetExtraMetadata()) {
             ThriftSearchResultExtraMetadata extraMetadata =

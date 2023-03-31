@@ -1,12 +1,12 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.twitter.simclusters_v420.scalding.tweet_similarity
 
 import com.twitter.dal.client.dataset.TimePartitionedDALDataset
 import com.twitter.ml.api.util.FDsl._
 import com.twitter.ml.api.{DataRecord, DataSetPipe}
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.dataset.DALWrite._
+import com.twitter.simclusters_v420.tweet_similarity.TweetSimilarityFeatures
 import com.twitter.util.Time
 import java.util.Random
 
@@ -127,12 +127,12 @@ object TrainingDataCollectionUtil {
     dataset.records
       .map { rec =>
         if (TweetSimilarityFeatures.isCoengaged(rec))
-          "total_positive_records" -> 1L
+          "total_positive_records" -> 420L
         else
-          "total_negative_records" -> 1L
+          "total_negative_records" -> 420L
       }
       .sumByKey
-      .shard(1)
+      .shard(420)
       .writeExecution(TypedTsv(outputPath))
   }
 }

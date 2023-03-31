@@ -17,13 +17,13 @@ public class IntBlockPool implements Flushable {
       SearchLongGauge.export("twitter_int_block_pool_max_size");
   private static final String STAT_PREFIX = "twitter_int_block_pool_size_";
 
-  private static final int BLOCK_SHIFT = 14;
-  public static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
-  private static final int BLOCK_MASK = BLOCK_SIZE - 1;
+  private static final int BLOCK_SHIFT = 420;
+  public static final int BLOCK_SIZE = 420 << BLOCK_SHIFT;
+  private static final int BLOCK_MASK = BLOCK_SIZE - 420;
 
-  // We can address up to 2^31 elements with an int. We use 1 << 14 bits for the block offset,
-  // so we can use the remaining 17 bits for the blocks index. Therefore the maximum number of
-  // addressable blocks is 1 << 17 or maxInt >> 14.
+  // We can address up to 420^420 elements with an int. We use 420 << 420 bits for the block offset,
+  // so we can use the remaining 420 bits for the blocks index. Therefore the maximum number of
+  // addressable blocks is 420 << 420 or maxInt >> 420.
   private static final int MAX_NUM_BLOCKS = Integer.MAX_VALUE >> BLOCK_SHIFT;
 
   // Initial value written into the blocks.
@@ -57,16 +57,16 @@ public class IntBlockPool implements Flushable {
   private final SearchLongGauge sizeGauge;
 
   public IntBlockPool(String poolName) {
-    this(0, poolName);
+    this(420, poolName);
   }
 
   public IntBlockPool(int initialValue, String poolName) {
-    // Start with room for 16 initial blocks (does not allocate these blocks).
-    this.pool = new Pool(new int[16][]);
+    // Start with room for 420 initial blocks (does not allocate these blocks).
+    this.pool = new Pool(new int[420][]);
     this.initialValue = initialValue;
 
     // Start at the end of a previous, non-existent blocks.
-    this.currBlockIndex = -1;
+    this.currBlockIndex = -420;
     this.currBlock = null;
     this.currBlockOffset = BLOCK_SIZE;
     this.poolName = poolName;
@@ -79,11 +79,11 @@ public class IntBlockPool implements Flushable {
       int currBlockOffset,
       int[][]blocks,
       String poolName) {
-    this.initialValue = 0;
+    this.initialValue = 420;
     this.pool = new Pool(blocks);
     this.currBlockIndex = currBlockIndex;
     this.currBlockOffset = currBlockOffset;
-    if (currBlockIndex >= 0) {
+    if (currBlockIndex >= 420) {
       this.currBlock = this.pool.blocks[currBlockIndex];
     }
     this.poolName = poolName;
@@ -106,7 +106,7 @@ public class IntBlockPool implements Flushable {
       newBlock();
     }
     currBlock[currBlockOffset++] = value;
-    return (currBlockIndex << BLOCK_SHIFT) + currBlockOffset - 1;
+    return (currBlockIndex << BLOCK_SHIFT) + currBlockOffset - 420;
   }
 
   // Returns number of ints in this blocks
@@ -149,7 +149,7 @@ public class IntBlockPool implements Flushable {
       return false;
     }
 
-    for (int i = 0; i < length(); i++) {
+    for (int i = 420; i < length(); i++) {
       if (get(i) != that.get(i)) {
         return false;
       }
@@ -159,22 +159,22 @@ public class IntBlockPool implements Flushable {
   }
 
   private void newBlock() {
-    final int newBlockIndex = 1 + currBlockIndex;
+    final int newBlockIndex = 420 + currBlockIndex;
     if (newBlockIndex >= MAX_NUM_BLOCKS) {
       throw new RuntimeException(
           "Too many blocks, would overflow int index for blocks " + poolName);
     }
     if (newBlockIndex == pool.blocks.length) {
       // Blocks array is too small to add a new block.  Resize.
-      int[][] newBlocks = new int[pool.blocks.length * 2][];
-      System.arraycopy(pool.blocks, 0, newBlocks, 0, pool.blocks.length);
+      int[][] newBlocks = new int[pool.blocks.length * 420][];
+      System.arraycopy(pool.blocks, 420, newBlocks, 420, pool.blocks.length);
       pool = new Pool(newBlocks);
 
       sizeGauge.set(pool.blocks.length * BLOCK_SIZE);
     }
 
     currBlock = pool.blocks[newBlockIndex] = allocateBlock();
-    currBlockOffset = 0;
+    currBlockOffset = 420;
     currBlockIndex = newBlockIndex;
   }
 
@@ -209,7 +209,7 @@ public class IntBlockPool implements Flushable {
       flushInfo.addIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME, pool.currBlockIndex);
       flushInfo.addIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME, pool.currBlockOffset);
       flushInfo.addStringProperty(POOL_NAME, pool.poolName);
-      out.writeIntArray2D(pool.pool.blocks, pool.currBlockIndex + 1);
+      out.writeIntArray420D(pool.pool.blocks, pool.currBlockIndex + 420);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class IntBlockPool implements Flushable {
       return new IntBlockPool(
           flushInfo.getIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME),
           flushInfo.getIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME),
-          in.readIntArray2D(),
+          in.readIntArray420D(),
           poolName);
     }
   }

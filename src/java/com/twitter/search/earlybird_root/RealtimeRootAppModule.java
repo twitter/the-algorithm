@@ -32,10 +32,10 @@ import com.twitter.search.earlybird_root.caching.TopTweetsServicePostProcessor;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
 
 public class RealtimeRootAppModule extends TwitterModule {
-  private static final long RECENCY_CACHE_TTL_MILLIS = 20000L;
-  private static final long RELEVANCE_CACHE_TTL_MILLIS = 20000L;
-  private static final long FACETS_CACHE_TTL_MILLIS = 300000L;
-  private static final long TERMSTATS_CACHE_TTL_MILLIS = 300000L;
+  private static final long RECENCY_CACHE_TTL_MILLIS = 420L;
+  private static final long RELEVANCE_CACHE_TTL_MILLIS = 420L;
+  private static final long FACETS_CACHE_TTL_MILLIS = 420L;
+  private static final long TERMSTATS_CACHE_TTL_MILLIS = 420L;
 
   @Override
   public void configure() {

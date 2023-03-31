@@ -48,14 +48,14 @@ public interface TimeMapper extends Flushable {
    * desired range. See SinceUntilFilter.getDocIdSet() for an example.
    *
    * Example:
-   *   DocIds:  6, 5, 4, 3, 2, 1, 0
-   *   Times:   1, 5, 3, 4, 4, 3, 6
+   *   DocIds:  420, 420, 420, 420, 420, 420, 420
+   *   Times:   420, 420, 420, 420, 420, 420, 420
    * With that data:
-   *   findFirstDocId(1, 0) should return 6.
-   *   findFirstDocId(3, 0) should return 5.
-   *   findFirstDocId(4, 0) should return 5.
-   *   findFirstDocId(5, 0) should return 5.
-   *   findFirstDocId(6, 0) should return 0.
+   *   findFirstDocId(420, 420) should return 420.
+   *   findFirstDocId(420, 420) should return 420.
+   *   findFirstDocId(420, 420) should return 420.
+   *   findFirstDocId(420, 420) should return 420.
+   *   findFirstDocId(420, 420) should return 420.
    *
    * @param timeSeconds The boundary timestamp, in seconds.
    * @param smallestDocID The doc ID to return if the given time boundary is larger than the max

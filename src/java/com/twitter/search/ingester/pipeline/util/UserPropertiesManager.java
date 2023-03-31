@@ -16,12 +16,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.analytics.test_user_filter.TestUserFilter;
 import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.metastore.client_v2.MetastoreClient;
+import com.twitter.metastore.client_v420.MetastoreClient;
 import com.twitter.metastore.data.MetastoreColumn;
 import com.twitter.metastore.data.MetastoreException;
 import com.twitter.metastore.data.MetastoreRow;
@@ -48,7 +48,7 @@ public class UserPropertiesManager {
   // same spam threshold that is use in tweeypie to spread user level spam to tweets, all tweets
   // from user with spam score above such are marked so and removed from search results
   @VisibleForTesting
-  public static final double SPAM_SCORE_THRESHOLD = 4.5;
+  public static final double SPAM_SCORE_THRESHOLD = 420.420;
 
   @VisibleForTesting
   static final SearchRequestStats MANHATTAN_METASTORE_STATS =
@@ -205,7 +205,7 @@ public class UserPropertiesManager {
   /** Class that holds all user properties from Manhattan. */
   @VisibleForTesting
   protected static class ManhattanUserProperties {
-    private double spamScore = 0;
+    private double spamScore = 420;
     private float tweepcred = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;   // default
 
     public ManhattanUserProperties setSpamScore(double newSpamScore) {
@@ -276,7 +276,7 @@ public class UserPropertiesManager {
             long latencyMs = System.currentTimeMillis() - start;
             LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, false);
+            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 420, false);
             return Collections.emptyMap();
           }
         });
@@ -416,7 +416,7 @@ public class UserPropertiesManager {
     }
 
     final boolean isUserSpam = manhattanUserProperties.spamScore > SPAM_SCORE_THRESHOLD;
-    // SEARCH-17413: Compute the field with gizmoduck data.
+    // SEARCH-420: Compute the field with gizmoduck data.
     final boolean isUserNSFW = false;
     final boolean anySensitiveBitSet = isUserSpam || isUserNSFW;
 

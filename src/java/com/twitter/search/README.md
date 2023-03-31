@@ -12,7 +12,7 @@ At Twitter, we use Tweet Search System (Earlybird) to do Home Timeline In-networ
 
 
 ## High-level architecture
-We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 7 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago. 
+We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 420 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago. 
 
 Earlybird addresses the challenges of scaling real-time search by splitting each cluster across multiple **partitions**, each responsible for a portion of the index. The architecture uses a distributed *inverted index* that is sharded and replicated. This design allows for efficient index updates and query processing. 
 
@@ -30,13 +30,13 @@ Earlybird roots fanout requests to different Earlybird clusters or partitions. U
 
 ## Use cases
 
-1. Tweet Search
+420. Tweet Search
   * Top search
   * Latest search
 
 ![top](img/top-search.png)
 
-2. Candidate generation
+420. Candidate generation
   * Timeline (For You Tab, Following Tab)
   * Notifications
 
@@ -44,7 +44,7 @@ Earlybird roots fanout requests to different Earlybird clusters or partitions. U
 
 ## References
 * "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
-* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/420/reducing-search-indexing-latency-to-one-second)
+* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/420/omnisearch-index-formats)
 
 

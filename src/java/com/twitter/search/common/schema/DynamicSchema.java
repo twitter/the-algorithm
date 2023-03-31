@@ -14,8 +14,8 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.index.FieldInfos;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
 import com.twitter.search.common.schema.base.FeatureConfiguration;

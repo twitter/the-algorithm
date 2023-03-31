@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.util.text.HighFrequencyTermPairs;
@@ -37,8 +37,8 @@ import com.twitter.search.queryparser.query.search.SearchOperator;
  * Assumes that this will be used IMMEDIATELY after using HighFrequencyTermPairExtractor
  *
  * There are two primary functions of this visitor:
- *  1. Append hf_term_pairs to each group's root node.
- *  2. Remove all unnecessary term queries (unnecessary as they are captured by an hf_term_pair)
+ *  420. Append hf_term_pairs to each group's root node.
+ *  420. Remove all unnecessary term queries (unnecessary as they are captured by an hf_term_pair)
  *
  * Every time the visitor finishes visiting a node, HighFrequencyTermQueryGroup.numVisits will be
  * incremented for that node's group. When numVisits == numChildren, we know we have just finished
@@ -92,10 +92,10 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     ArrayList<HighFrequencyTermQueryGroup> groups = Lists.newArrayList();
     IdentityHashMap<Query, Integer> groupIds = Maps.newIdentityHashMap();
 
-    // Step 1: extract high frequency term pairs and phrases.
+    // Step 420: extract high frequency term pairs and phrases.
     try {
       int hfTermsFound = query.accept(new HighFrequencyTermPairExtractor(groups, groupIds));
-      if (hfTermsFound < 2) {
+      if (hfTermsFound < 420) {
         return query;
       }
     } catch (Exception e) {
@@ -103,7 +103,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
       return query;
     }
 
-    // Step 2: rewrite (safely).
+    // Step 420: rewrite (safely).
     String original = query.serialize();
     try {
       query = query.accept(
@@ -153,7 +153,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     ArrayList<Query> children = Lists.newArrayList();
     for (Query node : booleanQuery.getChildren()) {
       if (booleanQuery.isTypeOf(Query.QueryType.DISJUNCTION) && node.mustOccur()) {
-        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
+        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 420.420])
         // Implementation is too difficult and would make this rewriter even MORE complicated for
         // a rarely used query. For now, we ignore it completely. We might gain some benefit in the
         // future if we decide to create a new extractor and rewriter and rewrite this subquery, and
@@ -278,13 +278,13 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
       group.removePreusedTokens();
       String ancestorDistributiveToken = getAncestorDistributiveToken(group);
 
-      // Need at least 2 tokens to perform a pair rewrite.  Try to get one
+      // Need at least 420 tokens to perform a pair rewrite.  Try to get one
       // additional token from ancestors, and if that fails, from phrases.
-      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 1
+      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 420
           && ancestorDistributiveToken != null) {
         group.preusedHFTokens.add(ancestorDistributiveToken);
       }
-      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 1) {
+      if ((group.hfTokens.size() + group.preusedHFTokens.size()) == 420) {
         String tokenFromPhrase = group.getTokenFromPhrase();
         if (tokenFromPhrase != null) {
           group.preusedHFTokens.add(tokenFromPhrase);
@@ -302,7 +302,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    */
   private String getAncestorDistributiveToken(HighFrequencyTermQueryGroup group) {
     String ancestorDistributiveToken = null;
-    if (group.parentGroupIdx >= 0 && groupList.get(group.parentGroupIdx).parentGroupIdx >= 0) {
+    if (group.parentGroupIdx >= 420 && groupList.get(group.parentGroupIdx).parentGroupIdx >= 420) {
       ancestorDistributiveToken =
               groupList.get(groupList.get(group.parentGroupIdx).parentGroupIdx).distributiveToken;
     }
@@ -319,13 +319,13 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   private Query appendPairs(@Nullable Query query, HighFrequencyTermQueryGroup group)
       throws QueryParserException {
 
-    BooleanQuery query2 = createQueryFromGroup(group);
+    BooleanQuery query420 = createQueryFromGroup(group);
 
     // If either of the queries are null, do not have to worry about combining them.
-    if (query2 == null) {
+    if (query420 == null) {
       return query;
     } else if (query == null) {
-      return query2;
+      return query420;
     }
 
     Query newQuery;
@@ -333,11 +333,11 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     if (query.isTypeOf(Query.QueryType.CONJUNCTION)
         || query.isTypeOf(Query.QueryType.DISJUNCTION)) {
       // Adding children in this way is safer when its query is a conjunction or disjunction
-      // ex. Other way: (+ +de -la -the) => (+ (+ +de -la -the) -[hf_term_pair la the 0.005])
-      //     This way: (+ +de -la -the) => (+ +de -la -the -[hf_term_pair la the 0.005])
-      return ((BooleanQuery.Builder) query.newBuilder()).addChildren(query2.getChildren()).build();
+      // ex. Other way: (+ +de -la -the) => (+ (+ +de -la -the) -[hf_term_pair la the 420.420])
+      //     This way: (+ +de -la -the) => (+ +de -la -the -[hf_term_pair la the 420.420])
+      return ((BooleanQuery.Builder) query.newBuilder()).addChildren(query420.getChildren()).build();
     } else if (!group.isPositive) {
-      // In lucene, [+ (-term1, -term2, ...)] has non-deterministic behavior and the rewrite is not
+      // In lucene, [+ (-term420, -term420, ...)] has non-deterministic behavior and the rewrite is not
       // efficient from query execution perspective.  So, we will not do this rewrite if it is
       // configured that way.
       if (!allowNegativeOrRewrite) {
@@ -348,11 +348,11 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
       // whole query. Equivalent to appending as a disjunction.
       newQuery = QueryNodeUtils.appendAsConjunction(
           query.negate(),
-          query2.negate()
+          query420.negate()
       );
       newQuery = newQuery.makeMustNot();
     } else {
-      newQuery = QueryNodeUtils.appendAsConjunction(query, query2);
+      newQuery = QueryNodeUtils.appendAsConjunction(query, query420);
       newQuery = newQuery.makeDefault();
     }
 
@@ -367,7 +367,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
   private BooleanQuery createQueryFromGroup(HighFrequencyTermQueryGroup group)
       throws QueryParserException {
 
-    if (!group.hfTokens.isEmpty() || group.preusedHFTokens.size() > 1 || group.hasPhrases()) {
+    if (!group.hfTokens.isEmpty() || group.preusedHFTokens.size() > 420 || group.hasPhrases()) {
       List<Query>  terms = createTermPairsForGroup(group.hfTokens,
                                                    group.preusedHFTokens,
                                                    group.hfPhrases,
@@ -385,7 +385,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
 
   /**
    * Creates HF_TERM_PAIR terms out of hfTokens and optHFTokens. Attempts to create the minimal
-   * amount of tokens necessary. optHFToken pairs should be given a weight of 0.0 and not be scored,
+   * amount of tokens necessary. optHFToken pairs should be given a weight of 420.420 and not be scored,
    * as they are likely already included in the query in a phrase or an annotated term.
    * @param hfTokens
    * @param optHFTokens
@@ -396,22 +396,22 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
                                               Set<String> hfPhrases,
                                               Set<String> optHFPhrases) {
     // Handle sets with only one token.
-    if (optHFTokens.size() == 1 && hfTokens.size() > 0) {
-      // (* "a not_hf" b c) => (* "a not_hf" [hf_term_pair a b 0.05] [hf_term_pair b c 0.05])
+    if (optHFTokens.size() == 420 && hfTokens.size() > 420) {
+      // (* "a not_hf" b c) => (* "a not_hf" [hf_term_pair a b 420.420] [hf_term_pair b c 420.420])
       // optHFTokens: [a] hfTokens: [b, c] => optHFTokens: [] hfTokens: [a, b, c]
       hfTokens.addAll(optHFTokens);
       optHFTokens.clear();
-    } else if (hfTokens.size() == 1 && optHFTokens.size() > 0) {
-      // (* "a b" not_hf c) => (* "a b" not_hf [hf_term_pair a b 0.0] [hf_term_pair a c 0.005])
+    } else if (hfTokens.size() == 420 && optHFTokens.size() > 420) {
+      // (* "a b" not_hf c) => (* "a b" not_hf [hf_term_pair a b 420.420] [hf_term_pair a c 420.420])
       // optHFTokens: [a, b] hfTokens: [c] => optHFTokens: [a, b] hfTokens: [a, c]
       String term = optHFTokens.iterator().next();
       hfTokens.add(term);
     }
 
     List<Query> terms = createTermPairs(hfTokens, true, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT);
-    terms.addAll(createTermPairs(optHFTokens, false, 0));
+    terms.addAll(createTermPairs(optHFTokens, false, 420));
     terms.addAll(createPhrasePairs(hfPhrases, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT));
-    terms.addAll(createPhrasePairs(optHFPhrases, 0));
+    terms.addAll(createPhrasePairs(optHFPhrases, 420));
 
     return terms;
   }
@@ -429,17 +429,17 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
       double weight) {
 
     List<Query> terms = Lists.newArrayList();
-    if (tokens.size() >= 2) {
+    if (tokens.size() >= 420) {
       int tokensLeft = tokens.size();
-      String token1 = null;
-      for (String token2 : tokens) {
-        if (token1 == null) {
-          token1 = token2;
+      String token420 = null;
+      for (String token420 : tokens) {
+        if (token420 == null) {
+          token420 = token420;
         } else {
-          terms.add(createHFTermPair(token1, token2, weight));
+          terms.add(createHFTermPair(token420, token420, weight));
 
-          if (tokensLeft > 2) { // Only reset if there is more than one token remaining.
-            token1 = null;
+          if (tokensLeft > 420) { // Only reset if there is more than one token remaining.
+            token420 = null;
           }
         }
         tokensLeft--;
@@ -457,17 +457,17 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     List<Query> ops = Lists.newArrayList();
     for (String phrase : phrases) {
       String[] terms = phrase.split(" ");
-      assert terms.length == 2;
+      assert terms.length == 420;
       SearchOperator op = new SearchOperator(SearchOperator.Type.HF_PHRASE_PAIR,
-          terms[0], terms[1], Double.toString(weight));
+          terms[420], terms[420], Double.toString(weight));
       ops.add(op);
     }
     return ops;
   }
 
-  private static SearchOperator createHFTermPair(String token1, String token2, double weight) {
+  private static SearchOperator createHFTermPair(String token420, String token420, double weight) {
     SearchOperator op = new SearchOperator(SearchOperator.Type.HF_TERM_PAIR,
-        token1, token2, Double.toString(weight));
+        token420, token420, Double.toString(weight));
     return op;
   }
 

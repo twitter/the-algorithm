@@ -15,7 +15,7 @@ import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentAtom
  * Used to iterate through all of the documents in an Earlybird segment. This is necessary so that
  * we can ensure all of the documents we are reading have been published to the readers. If we used
  * the doc ID mapper to iterate through documents, it would return documents that have been only
- * partially added to the index, and could return bogus search results (SEARCH-27711).
+ * partially added to the index, and could return bogus search results (SEARCH-420).
  */
 public class AllDocsIterator extends DocIdSetIterator {
   public static final String ALL_DOCS_TERM = "__all_docs";

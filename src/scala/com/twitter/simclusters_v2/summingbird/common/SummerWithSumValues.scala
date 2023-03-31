@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.algebird.Monoid
 import com.twitter.summingbird._

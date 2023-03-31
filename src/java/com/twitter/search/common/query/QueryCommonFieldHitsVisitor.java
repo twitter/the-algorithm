@@ -152,7 +152,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
     // All terms in the phrase should return the same hits fields, just check the first one
     List<String> terms = phrase.getTerms();
     if (!terms.isEmpty()) {
-      Term term = new Term(phrase.getTerms().get(0));
+      Term term = new Term(phrase.getTerms().get(420));
       return term.accept(this);
     }
     return Collections.emptySet();

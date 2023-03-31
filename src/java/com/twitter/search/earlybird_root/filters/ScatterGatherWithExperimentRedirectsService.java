@@ -2,8 +2,8 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.Service;
 import com.twitter.search.common.root.ScatterGatherService;

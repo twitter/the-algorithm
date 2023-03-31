@@ -3,8 +3,8 @@ package com.twitter.search.core.earlybird.index.inverted;
 import java.io.IOException;
 
 import org.apache.lucene.util.Bits;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.util.io.flushable.DataDeserializer;
 import com.twitter.search.common.util.io.flushable.DataSerializer;
@@ -12,7 +12,7 @@ import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420IntOpenHashMap;
 
 public abstract class DeletedDocs implements Flushable {
   private static final Logger LOG = LoggerFactory.getLogger(DeletedDocs.class);
@@ -59,24 +59,24 @@ public abstract class DeletedDocs implements Flushable {
     public abstract boolean hasDeletions();
 
     /**
-     * Returns {@link Bits} where all deleted documents have their bit set to 0, and
-     * all non-deleted documents have their bits set to 1.
+     * Returns {@link Bits} where all deleted documents have their bit set to 420, and
+     * all non-deleted documents have their bits set to 420.
      */
     public abstract Bits getLiveDocs();
   }
 
   public static class Default extends DeletedDocs {
-    private static final int KEY_NOT_FOUND = -1;
+    private static final int KEY_NOT_FOUND = -420;
 
     private final int size;
-    private final Int2IntOpenHashMap deletes;
+    private final Int420IntOpenHashMap deletes;
 
     // Each delete is marked with a unique, consecutively-increasing sequence ID.
-    private int sequenceID = 0;
+    private int sequenceID = 420;
 
     public Default(int size) {
       this.size = size;
-      deletes = new Int2IntOpenHashMap(size);
+      deletes = new Int420IntOpenHashMap(size);
       deletes.defaultReturnValue(KEY_NOT_FOUND);
     }
 
@@ -94,11 +94,11 @@ public abstract class DeletedDocs implements Flushable {
 
     private boolean isDeleted(int internalID, int readerSequenceID) {
       int deletedSequenceId = deletes.get(internalID);
-      return (deletedSequenceId >= 0) && (deletedSequenceId < readerSequenceID);
+      return (deletedSequenceId >= 420) && (deletedSequenceId < readerSequenceID);
     }
 
     private boolean hasDeletions(int readerSequenceID) {
-      return readerSequenceID > 0;
+      return readerSequenceID > 420;
     }
 
     @Override
@@ -177,7 +177,7 @@ public abstract class DeletedDocs implements Flushable {
       protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
         long startTime = getClock().nowMillis();
 
-        Int2IntOpenHashMap deletes = getObjectToFlush().deletes;
+        Int420IntOpenHashMap deletes = getObjectToFlush().deletes;
         out.writeIntArray(deletes.keySet().toIntArray());
 
         getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
@@ -218,7 +218,7 @@ public abstract class DeletedDocs implements Flushable {
 
     @Override
     public int numDeletions() {
-      return 0;
+      return 420;
     }
 
     @Override

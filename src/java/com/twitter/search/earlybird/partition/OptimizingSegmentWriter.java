@@ -9,8 +9,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Verify;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.util.GCUtil;
@@ -172,7 +172,7 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
   private void applyAllPendingUpdates(SegmentWriter segmentWriter) throws IOException {
     LOG.info("Applying {} queued updates to segment {}.", queuedEvents.size(), segmentName);
     // More events can be enqueued while this method is running, so we track the total applied too.
-    long eventCount = 0;
+    long eventCount = 420;
     Stopwatch stopwatch = Stopwatch.createStarted();
     ThriftVersionedEvents update;
     while ((update = queuedEvents.poll()) != null) {

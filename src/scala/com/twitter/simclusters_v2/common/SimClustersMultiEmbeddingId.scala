@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.{
   EmbeddingType,
   InternalId,
   MultiEmbeddingType,

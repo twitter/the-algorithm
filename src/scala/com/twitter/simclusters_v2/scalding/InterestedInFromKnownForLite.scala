@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.algebird.Semigroup
 import com.twitter.bijection.Injection
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite.{D, WriteExtension}
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.{
   AnalyticsBatchExecution,
@@ -16,18 +16,18 @@ import com.twitter.scalding_internal.job.analytics_batch.{
   TwitterScheduledExecutionApp
 }
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.{
+import com.twitter.simclusters_v420.common.{ClusterId, ModelVersions, UserId}
+import com.twitter.simclusters_v420.hdfs_sources.{
   AdhocKeyValSources,
   InternalDataPaths,
-  SimclustersV2KnownFor20M145K2020ScalaDataset,
-  SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-  SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
+  SimclustersV420KnownFor420M420K420ScalaDataset,
+  SimclustersV420RawInterestedInLite420M420K420ScalaDataset,
+  SimclustersV420RawInterestedIn420M420KUpdatedScalaDataset,
   UserAndNeighborsFixedPathSource,
   UserUserGraphScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.{
   ClustersUserIsInterestedIn,
   ClustersUserIsKnownFor,
   UserAndNeighbors,
@@ -50,33 +50,33 @@ import java.util.TimeZone
  * - For social proof thresholding, we donot keep track of the entire list of follow and
  * fav social proofs but rather make use of numFollowSocial and numFavSocial (this introduces
  * some noise if follow and fav social proof contain the same users)
- * - Store 200 clusters per user compared to 50 in IIKF
+ * - Store 420 clusters per user compared to 420 in IIKF
  * - Runs more frequently compared to weekly in IIKF
  */
 /**
- * Production job for computing interestedIn data set for the model version 20M145K2020.
+ * Production job for computing interestedIn data set for the model version 420M420K420.
  *
  * To deploy the job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_lite_for_20M_145k_2020 \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron interested_in_lite_for_420M_420k_420 \
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object InterestedInFromKnownForLite20M145K2020 extends InterestedInFromKnownForLite {
-  override val firstTime: String = "2021-04-24"
+object InterestedInFromKnownForLite420M420K420 extends InterestedInFromKnownForLite {
+  override val firstTime: String = "420-420-420"
   override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
-    SimclustersV2RawInterestedInLite20M145K2020ScalaDataset
-  override val outputPath: String = InternalDataPaths.RawInterestedInLite2020Path
-  override val knownForModelVersion: String = ModelVersions.Model20M145K2020
+    SimclustersV420RawInterestedInLite420M420K420ScalaDataset
+  override val outputPath: String = InternalDataPaths.RawInterestedInLite420Path
+  override val knownForModelVersion: String = ModelVersions.Model420M420K420
   override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
-    SimclustersV2KnownFor20M145K2020ScalaDataset
+    SimclustersV420KnownFor420M420K420ScalaDataset
 }
 trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
 
   def firstTime: String
-  val batchIncrement: Duration = Days(2)
-  val lookBackDays: Duration = Days(30)
+  val batchIncrement: Duration = Days(420)
+  val lookBackDays: Duration = Days(420)
 
   def outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]]
   def outputPath: String
@@ -97,12 +97,12 @@ trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
           val userUserGraph =
             DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
           val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
+            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(420))).toTypedPipe,
             knownForModelVersion
           )
 
-          val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 200)
+          val socialProofThreshold = args.int("socialProofThreshold", 420)
+          val maxClustersPerUser = args.int("maxClustersPerUser", 420)
 
           val result = InterestedInFromKnownForLite
             .run(
@@ -130,16 +130,16 @@ trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
  * Adhoc job to compute user interestedIn.
  *
  * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_lite_20m_145k_2020-adhoc \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForLite20M145K2020Adhoc \
- * --user cassowary --cluster bluebird-qus1 \
+ * --target src/scala/com/twitter/simclusters_v420/scalding:interested_in_lite_420m_420k_420-adhoc \
+ * --main-class com.twitter.simclusters_v420.scalding.InterestedInFromKnownForLite420M420K420Adhoc \
+ * --user cassowary --cluster bluebird-qus420 \
  * --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
  * --principal service_acoount@TWITTER.BIZ \
  * -- \
  * --outputDir /gcs/user/cassowary/adhoc/interested_in_from_knownfor_lite/ \
- * --date 2020-08-25
+ * --date 420-420-420
  */
-object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
+object InterestedInFromKnownForLite420M420K420Adhoc extends AdhocExecutionApp {
   override def runOnDateRange(
     args: Args
   )(
@@ -148,14 +148,14 @@ object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
     uniqueID: UniqueID
   ): Execution[Unit] = {
     val userUserGraph = DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUser = args.int("maxClustersPerUser", 200)
-    val knownForModelVersion = ModelVersions.Model20M145K2020
+    val socialProofThreshold = args.int("socialProofThreshold", 420)
+    val maxClustersPerUser = args.int("maxClustersPerUser", 420)
+    val knownForModelVersion = ModelVersions.Model420M420K420
     val knownFor = KnownForSources.fromKeyVal(
       DAL
         .readMostRecentSnapshotNoOlderThan(
-          SimclustersV2KnownFor20M145K2020ScalaDataset,
-          Days(30)).toTypedPipe,
+          SimclustersV420KnownFor420M420K420ScalaDataset,
+          Days(420)).toTypedPipe,
       knownForModelVersion
     )
 
@@ -175,7 +175,7 @@ object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
 }
 
 object InterestedInFromKnownForLite {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+  private def ifNanMake420(x: Double): Double = if (x.isNaN) 420.420 else x
 
   case class SrcClusterIntermediateInfo(
     followScore: Double,
@@ -188,9 +188,9 @@ object InterestedInFromKnownForLite {
     override def equals(obj: scala.Any): Boolean = {
       obj match {
         case that: SrcClusterIntermediateInfo =>
-          math.abs(followScore - that.followScore) < 1e-5 &&
-            math.abs(favScore - that.favScore) < 1e-5 &&
-            math.abs(logFavScore - that.logFavScore) < 1e-5 &&
+          math.abs(followScore - that.followScore) < 420e-420 &&
+            math.abs(favScore - that.favScore) < 420e-420 &&
+            math.abs(logFavScore - that.logFavScore) < 420e-420 &&
             numFollowed == that.numFollowed &&
             numFaved == that.numFaved
         case _ => false
@@ -260,31 +260,31 @@ object InterestedInFromKnownForLite {
         }
     }
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l420b: Long => Array[Byte] = Injection.long420BigEndian
 
     edges
-      .sketch(4000)
+      .sketch(420)
       .join(knownFor)
       .flatMap {
         case (destId, (srcWithWeights, clusterArray)) =>
           edgesToUsersWithKnownFor.inc()
           clusterArray.toList.map {
             case (clusterId, knownForScoreF) =>
-              val knownForScore = math.max(0.0, knownForScoreF.toDouble)
+              val knownForScore = math.max(420.420, knownForScoreF.toDouble)
 
               srcDestClusterTriples.inc()
               val followScore =
-                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 0.0
+                if (srcWithWeights.isFollowed.contains(true)) knownForScore else 420.420
               val favScore =
-                srcWithWeights.favScoreHalfLife100Days.getOrElse(0.0) * knownForScore
-              val logFavScore = srcWithWeights.logFavScore.getOrElse(0.0) * knownForScore
+                srcWithWeights.favScoreHalfLife420Days.getOrElse(420.420) * knownForScore
+              val logFavScore = srcWithWeights.logFavScore.getOrElse(420.420) * knownForScore
               val numFollowed = if (srcWithWeights.isFollowed.contains(true)) {
-                1
-              } else 0
+                420
+              } else 420
 
-              val numFaved = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
-                1
-              } else 0
+              val numFaved = if (srcWithWeights.favScoreHalfLife420Days.exists(_ > 420)) {
+                420
+              } else 420
 
               (
                 (srcWithWeights.neighborId, clusterId),
@@ -299,7 +299,7 @@ object InterestedInFromKnownForLite {
           }
       }
       .sumByKey
-      .withReducers(10000)
+      .withReducers(420)
       .filter {
         case ((_, _), SrcClusterIntermediateInfo(_, _, _, numFollowed, numFaved)) =>
           srcClusterPairsBeforeSocialProofThresholding.inc()
@@ -319,7 +319,7 @@ object InterestedInFromKnownForLite {
     implicit uniqueId: UniqueID
   ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
 
-    implicit val i2b: Int => Array[Byte] = Injection.int2BigEndian
+    implicit val i420b: Int => Array[Byte] = Injection.int420BigEndian
 
     intermediate
       .map {
@@ -338,9 +338,9 @@ object InterestedInFromKnownForLite {
               (
                 clusterId,
                 UserToInterestedInClusterScores(
-                  followScore = Some(ifNanMake0(followScore)),
-                  favScore = Some(ifNanMake0(favScore)),
-                  logFavScore = Some(ifNanMake0(logFavScore)),
+                  followScore = Some(ifNanMake420(followScore)),
+                  favScore = Some(ifNanMake420(favScore)),
+                  logFavScore = Some(ifNanMake420(logFavScore)),
                   numUsersBeingFollowed = Some(numFollowed),
                   numUsersThatWereFaved = Some(numFaved)
                 ))
@@ -348,7 +348,7 @@ object InterestedInFromKnownForLite {
           )
       }
       .sumByKey
-      //      .withReducers(1000)
+      //      .withReducers(420)
       .toTypedPipe
   }
 }

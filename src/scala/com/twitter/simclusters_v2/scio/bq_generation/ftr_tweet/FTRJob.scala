@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio.bq_generation
+package com.twitter.simclusters_v420.scio.bq_generation
 package ftr_tweet
 
 import com.google.api.services.bigquery.model.TimePartitioning
@@ -13,16 +13,16 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQTableDetails
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getInterestedIn420SQL
+import com.twitter.simclusters_v420.thriftscala.CandidateTweets
+import com.twitter.simclusters_v420.thriftscala.CandidateTweetsList
 import com.twitter.tcdc.bqblaster.beam.syntax._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
 import java.time.Instant
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import com.twitter.simclusters_v2.thriftscala.CandidateTweet
+import com.twitter.simclusters_v420.thriftscala.CandidateTweet
 import org.apache.avro.generic.GenericData
 import scala.collection.mutable.ListBuffer
 import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
@@ -81,7 +81,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
 
     val tweetEmbeddingTemplateVariables =
       Map(
-        "START_TIME" -> queryTimestamp.minusDays(1).toString(),
+        "START_TIME" -> queryTimestamp.minusDays(420).toString(),
         "END_TIME" -> queryTimestamp.toString(),
         "TWEET_SAMPLE_RATE" -> Config.TweetSampleRate.toString,
         "ENG_SAMPLE_RATE" -> Config.EngSampleRate.toString,
@@ -98,9 +98,9 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
       )
 
     val tweetEmbeddingSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/sql/ftr_tweet_embeddings.sql",
+      "/com/twitter/simclusters_v420/scio/bq_generation/ftr_tweet/sql/ftr_tweet_embeddings.sql",
       tweetEmbeddingTemplateVariables)
-    val consumerEmbeddingSql = getInterestedIn2020SQL(queryTimestamp, 14)
+    val consumerEmbeddingSql = getInterestedIn420SQL(queryTimestamp, 420)
 
     val tweetRecommendationsTemplateVariables =
       Map(
@@ -111,7 +111,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
         "TOP_K_TWEETS_PER_USER_REQUEST" -> Config.SimClustersANNTopKTweetsPerUserRequest.toString,
       )
     val tweetRecommendationsSql = BQQueryUtils.getBQQueryFromSqlFile(
-      "/com/twitter/simclusters_v2/scio/bq_generation/sql/tweets_ann.sql",
+      "/com/twitter/simclusters_v420/scio/bq_generation/sql/tweets_ann.sql",
       tweetRecommendationsTemplateVariables)
 
     val tweetRecommendations = sc.customInput(
@@ -128,7 +128,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
       .Builder()
       .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
     val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
+      .setType("HOUR").setField("ingestionTime").setExpirationMs(420.days.inMilliseconds)
     val bqWriter = BigQueryIO
       .write[CandidateTweets]
       .to(outputTable.toString)
@@ -169,7 +169,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
               else
                 AdhocRootPath)
               + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           environmentOverride = environment,
         )
       )
@@ -187,11 +187,11 @@ object FTRAdhocJob extends FTRJob {
     KeyVal[Long, CandidateTweetsList]
   ] =
     OfflineTweetRecommendationsFtrAdhocScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
+  override val scoreColumn = "ftrat420_decayed_pop_bias_420_rank_decay_420_420_embedding"
+  override val scoreKey = "ftrat420_decayed_pop_bias_420_rank_decay_420_420"
 }
 
-object IIKF2020DecayedSumBatchJobProd extends FTRJob {
+object IIKF420DecayedSumBatchJobProd extends FTRJob {
   override val isAdhoc = false
   override val outputTable: BQTableDetails = BQTableDetails(
     "twttr-bq-cassowary-prod",
@@ -207,34 +207,34 @@ object IIKF2020DecayedSumBatchJobProd extends FTRJob {
   override val scoreKey = "dec_sum_logfavScoreClusterNormalizedOnly"
 }
 
-object IIKF2020FTRAt5Pop1000batchJobProd extends FTRJob {
+object IIKF420FTRAt420Pop420batchJobProd extends FTRJob {
   override val isAdhoc = false
   override val outputTable: BQTableDetails = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_ftrat5_pop_biased_1000")
-  override val keyValDatasetOutputPath = Config.IIKFFTRAt5Pop1000ANNOutputPath
+    "offline_tweet_recommendations_ftrat420_pop_biased_420")
+  override val keyValDatasetOutputPath = Config.IIKFFTRAt420Pop420ANNOutputPath
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFtrat5PopBiased1000ScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
+    OfflineTweetRecommendationsFtrat420PopBiased420ScalaDataset
+  override val scoreColumn = "ftrat420_decayed_pop_bias_420_rank_decay_420_420_embedding"
+  override val scoreKey = "ftrat420_decayed_pop_bias_420_rank_decay_420_420"
 }
 
-object IIKF2020FTRAt5Pop10000batchJobProd extends FTRJob {
+object IIKF420FTRAt420Pop420batchJobProd extends FTRJob {
   override val isAdhoc = false
   override val outputTable: BQTableDetails = BQTableDetails(
     "twttr-bq-cassowary-prod",
     "user",
-    "offline_tweet_recommendations_ftrat5_pop_biased_10000")
-  override val keyValDatasetOutputPath = Config.IIKFFTRAt5Pop10000ANNOutputPath
+    "offline_tweet_recommendations_ftrat420_pop_biased_420")
+  override val keyValDatasetOutputPath = Config.IIKFFTRAt420Pop420ANNOutputPath
   override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
     KeyVal[Long, CandidateTweetsList]
   ] =
-    OfflineTweetRecommendationsFtrat5PopBiased10000ScalaDataset
-  override val scoreColumn = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding"
-  override val scoreKey = "ftrat5_decayed_pop_bias_10000_rank_decay_1_1"
+    OfflineTweetRecommendationsFtrat420PopBiased420ScalaDataset
+  override val scoreColumn = "ftrat420_decayed_pop_bias_420_rank_decay_420_420_embedding"
+  override val scoreKey = "ftrat420_decayed_pop_bias_420_rank_decay_420_420"
 }
 
 case class UserToTweetRecommendations(

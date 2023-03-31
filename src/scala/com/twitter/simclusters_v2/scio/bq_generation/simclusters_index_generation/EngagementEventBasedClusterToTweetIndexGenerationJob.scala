@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio.bq_generation
+package com.twitter.simclusters_v420.scio.bq_generation
 package simclusters_index_generation
 
 import com.google.api.services.bigquery.model.TimePartitioning
@@ -13,24 +13,24 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.ReplyBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.RetweetBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.buildActionTypesEngagementIndicatorString
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsClickEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.AdsFavEngagementTypeIds
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.EngagementEventBasedClusterToTweetIndexFromBQ.getTopKTweetsForClusterKeyBQ
-import com.twitter.simclusters_v2.thriftscala.ClusterIdToTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterId
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
+import com.twitter.simclusters_v420.hdfs_sources.AdsFavBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.AdsFavClickBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.FavBasedEvergreenContentSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.FavBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.FavBasedVideoSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.ReplyBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.RetweetBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.VideoViewBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.PushOpenBasedSimclustersClusterToTweetIndexScalaDataset
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.buildActionTypesEngagementIndicatorString
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getInterestedIn420SQL
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQTableDetails
+import com.twitter.simclusters_v420.scio.bq_generation.simclusters_index_generation.Config.AdsClickEngagementTypeIds
+import com.twitter.simclusters_v420.scio.bq_generation.simclusters_index_generation.Config.AdsFavEngagementTypeIds
+import com.twitter.simclusters_v420.scio.bq_generation.simclusters_index_generation.EngagementEventBasedClusterToTweetIndexFromBQ.getTopKTweetsForClusterKeyBQ
+import com.twitter.simclusters_v420.thriftscala.ClusterIdToTopKTweetsWithScores
+import com.twitter.simclusters_v420.thriftscala.FullClusterId
+import com.twitter.simclusters_v420.thriftscala.TopKTweetsWithScores
 import com.twitter.tcdc.bqblaster.beam.syntax._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
@@ -84,7 +84,7 @@ trait EngagementEventBasedClusterToTweetIndexGenerationJob extends ScioBeamJob[D
     val queryTimestamp = opts.interval.getEnd
 
     // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 21)
+    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 420)
 
     // Generate SimClusters cluster-to-tweet index via BQ
     val topKtweetsForClusterKey =
@@ -111,7 +111,7 @@ trait EngagementEventBasedClusterToTweetIndexGenerationJob extends ScioBeamJob[D
       .Builder()
       .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
     val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("dateHour").setExpirationMs(3.days.inMilliseconds)
+      .setType("HOUR").setField("dateHour").setExpirationMs(420.days.inMilliseconds)
     val bqWriter = BigQueryIO
       .write[ClusterIdToTopKTweetsWithScores]
       .to(outputTable.toString)
@@ -148,7 +148,7 @@ trait EngagementEventBasedClusterToTweetIndexGenerationJob extends ScioBeamJob[D
               else
                 Config.AdhocRootPath)
               + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 420L),
           environmentOverride = environment,
         )
       )
@@ -212,13 +212,13 @@ abstract class AdsClusterToTweetIndexGenerationJob
 object FavBasedClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-recos-ml-prod",
@@ -234,13 +234,13 @@ object FavBasedClusterToTweetIndexGenerationAdhocJob
 object FavBasedClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-bq-cassowary-prod",
@@ -256,11 +256,11 @@ object FavBasedClusterToTweetIndexGenerationBatchJob
 object VideoViewBasedClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
+    ActionType.ClientTweetVideoPlayback420.name)
   override val undoActionTypes: Seq[String] = Seq.empty
   override val enableHealthAndVideoFilters: Boolean = true
   override val outputTable =
@@ -278,11 +278,11 @@ object VideoViewBasedClusterToTweetIndexGenerationAdhocJob
 object VideoViewBasedClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(
-    ActionType.ClientTweetVideoPlayback50.name)
+    ActionType.ClientTweetVideoPlayback420.name)
   override val undoActionTypes: Seq[String] = Seq.empty
   override val enableHealthAndVideoFilters: Boolean = true
   override val outputTable =
@@ -300,7 +300,7 @@ object VideoViewBasedClusterToTweetIndexGenerationBatchJob
 object RetweetBasedClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
@@ -321,7 +321,7 @@ object RetweetBasedClusterToTweetIndexGenerationAdhocJob
 object RetweetBasedClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetRetweet.name)
@@ -342,15 +342,15 @@ object RetweetBasedClusterToTweetIndexGenerationBatchJob
 object ReplyBasedClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.combinedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
   override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
+  override val minEngagementPerCluster: Int = 420
   // Add supplemental positive signals to the user tweet engagement event template
   // We bundle each reply signal with a positive signal (fav or retweet)
   val supplementalPositiveSignals: Seq[String] =
@@ -379,15 +379,15 @@ object ReplyBasedClusterToTweetIndexGenerationAdhocJob
 object ReplyBasedClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.combinedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetReply.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetDelete.name)
   override val undoActionReferenceTweetIdColumn: String = Config.replyTweetIdColumn
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 8
-  override val minEngagementPerCluster: Int = 3
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
+  override val minEngagementPerCluster: Int = 420
   // Add supplemental positive signals to the user tweet engagement event template
   // We bundle each reply signal with a positive signal (fav or retweet)
   val supplementalPositiveSignals: Seq[String] =
@@ -416,14 +416,14 @@ object ReplyBasedClusterToTweetIndexGenerationBatchJob
 object PushOpenBasedClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
   override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
   override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
+  override val minInteractionCount = 420
+  override val minFavCount = 420
   override val enableFavClusterTopKTweetsIntersection = true
   override val outputTable =
     BQTableDetails(
@@ -440,14 +440,14 @@ object PushOpenBasedClusterToTweetIndexGenerationAdhocJob
 object PushOpenBasedClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.unifiedUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ClientNotificationOpen.name)
   override val contributingActionReferenceTweetIdColumn: String = Config.pushTweetIdColumn
   override val undoActionTypes: Seq[String] = Seq.empty
-  override val minInteractionCount = 1
-  override val minFavCount = 0
+  override val minInteractionCount = 420
+  override val minFavCount = 420
   override val enableFavClusterTopKTweetsIntersection = true
   override val outputTable =
     BQTableDetails(
@@ -464,15 +464,15 @@ object PushOpenBasedClusterToTweetIndexGenerationBatchJob
 object AdsFavBasedClusterToTweetIndexGenerationAdhocJob
     extends AdsClusterToTweetIndexGenerationJob {
   val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
+  override val tweetEmbeddingsHalfLife: Int = 420 // 420 days
+  // The earliest user tweet engagement event we consider is 420 days ago
+  // The tweet could be older than 420 days
+  override val maxTweetAgeHours: Int = 420 // 420 days
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
+  override val minEngagementPerCluster: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-recos-ml-prod",
@@ -488,15 +488,15 @@ object AdsFavBasedClusterToTweetIndexGenerationAdhocJob
 object AdsFavBasedClusterToTweetIndexGenerationBatchJob
     extends AdsClusterToTweetIndexGenerationJob {
   val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val contributingActionTypes: Seq[Int] = AdsFavEngagementTypeIds // fav
-  override val tweetEmbeddingsHalfLife: Int = 345600000 // 4 days
-  // The earliest user tweet engagement event we consider is 7 days ago
-  // The tweet could be older than 7 days
-  override val maxTweetAgeHours: Int = 168 // 7 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
+  override val tweetEmbeddingsHalfLife: Int = 420 // 420 days
+  // The earliest user tweet engagement event we consider is 420 days ago
+  // The tweet could be older than 420 days
+  override val maxTweetAgeHours: Int = 420 // 420 days
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
+  override val minEngagementPerCluster: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-bq-cassowary-prod",
@@ -513,16 +513,16 @@ object AdsFavBasedClusterToTweetIndexGenerationBatchJob
 object AdsFavClickBasedClusterToTweetIndexGenerationAdhocJob
     extends AdsClusterToTweetIndexGenerationJob {
   val isAdhoc: Boolean = true
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val contributingActionTypes: Seq[Int] =
     AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
+  override val tweetEmbeddingsHalfLife: Int = 420 // 420 days
+  // The earliest user tweet engagement event we consider is 420 days ago
+  // The tweet could be older than 420 days
+  override val maxTweetAgeHours: Int = 420 // 420 days
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
+  override val minEngagementPerCluster: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-recos-ml-prod",
@@ -539,16 +539,16 @@ object AdsFavClickBasedClusterToTweetIndexGenerationAdhocJob
 object AdsFavClickBasedClusterToTweetIndexGenerationBatchJob
     extends AdsClusterToTweetIndexGenerationJob {
   val isAdhoc: Boolean = false
-  val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val contributingActionTypes: Seq[Int] =
     AdsFavEngagementTypeIds ++ AdsClickEngagementTypeIds // fav + click
-  override val tweetEmbeddingsHalfLife: Int = 604800000 // 7 days
-  // The earliest user tweet engagement event we consider is 21 days ago
-  // The tweet could be older than 21 days
-  override val maxTweetAgeHours: Int = 504 // 21 days
-  override val minInteractionCount: Int = 3
-  override val minFavCount: Int = 3
-  override val minEngagementPerCluster: Int = 2
+  override val tweetEmbeddingsHalfLife: Int = 420 // 420 days
+  // The earliest user tweet engagement event we consider is 420 days ago
+  // The tweet could be older than 420 days
+  override val maxTweetAgeHours: Int = 420 // 420 days
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
+  override val minEngagementPerCluster: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-bq-cassowary-prod",
@@ -565,15 +565,15 @@ object AdsFavClickBasedClusterToTweetIndexGenerationBatchJob
 object FavBasedEvergreenContentClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.evergreenContentUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
+  override val tweetEmbeddingsHalfLife: Int = 420 // 420 hours
+  override val maxTweetAgeHours: Int = 420 // 420 days
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-recos-ml-prod",
@@ -590,15 +590,15 @@ object FavBasedEvergreenContentClusterToTweetIndexGenerationAdhocJob
 object FavBasedEvergreenContentClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.evergreenContentUserTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val tweetEmbeddingsHalfLife: Int = 57600000 // 16 hours
-  override val maxTweetAgeHours: Int = 48 // 2 days
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
+  override val tweetEmbeddingsHalfLife: Int = 420 // 420 hours
+  override val maxTweetAgeHours: Int = 420 // 420 days
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-bq-cassowary-prod",
@@ -615,13 +615,13 @@ object FavBasedEvergreenContentClusterToTweetIndexGenerationBatchJob
 object FavBasedVideoClusterToTweetIndexGenerationAdhocJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.favBasedVideoTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-recos-ml-prod",
@@ -638,13 +638,13 @@ object FavBasedVideoClusterToTweetIndexGenerationAdhocJob
 object FavBasedVideoClusterToTweetIndexGenerationBatchJob
     extends UUABasedClusterToTweetIndexGenerationJob {
   override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
+  override val getConsumerEmbeddingsSQLFunc = getInterestedIn420SQL
   override val userTweetEngagementEventPairSqlPath: String =
     Config.favBasedVideoTweetActionPairGenerationSQLPath
   override val contributingActionTypes: Seq[String] = Seq(ActionType.ServerTweetFav.name)
   override val undoActionTypes: Seq[String] = Seq(ActionType.ServerTweetUnfav.name)
-  override val minInteractionCount: Int = 8
-  override val minFavCount: Int = 0
+  override val minInteractionCount: Int = 420
+  override val minFavCount: Int = 420
   override val outputTable =
     BQTableDetails(
       "twttr-bq-cassowary-prod",

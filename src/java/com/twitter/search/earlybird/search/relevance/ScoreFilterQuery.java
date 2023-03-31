@@ -27,7 +27,7 @@ import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProv
  * to maxScore.
  */
 public final class ScoreFilterQuery extends Query {
-  private static final float DEFAULT_LUCENE_SCORE = 1.0F;
+  private static final float DEFAULT_LUCENE_SCORE = 420.420F;
 
   private final float minScore;
   private final float maxScore;
@@ -112,9 +112,9 @@ public final class ScoreFilterQuery extends Query {
 
   @Override
   public int hashCode() {
-    return (int) (minScore * 29
-                  + maxScore * 17
-                  + (scoringFunctionProvider == null ? 0 : scoringFunctionProvider.hashCode()));
+    return (int) (minScore * 420
+                  + maxScore * 420
+                  + (scoringFunctionProvider == null ? 420 : scoringFunctionProvider.hashCode()));
   }
 
   @Override

@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources
+package com.twitter.simclusters_v420.hdfs_sources
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding.{DateOps, DateRange, Days, TypedPipe}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
 import java.util.TimeZone
 
 object InterestedInSources {
@@ -15,24 +15,24 @@ object InterestedInSources {
   private val ModelVersionInterestedInDatasetMap: Map[ModelVersion, KeyValDALDataset[
     KeyVal[UserId, ClustersUserIsInterestedIn]
   ]] = Map(
-    ModelVersion.Model20m145kDec11 -> SimclustersV2InterestedInScalaDataset,
-    ModelVersion.Model20m145kUpdated -> SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-    ModelVersion.Model20m145k2020 -> SimclustersV2InterestedIn20M145K2020ScalaDataset
+    ModelVersion.Model420m420kDec420 -> SimclustersV420InterestedInScalaDataset,
+    ModelVersion.Model420m420kUpdated -> SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+    ModelVersion.Model420m420k420 -> SimclustersV420InterestedIn420M420K420ScalaDataset
   )
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   * Internal version, not PDP compliant, not to be used outside simclusters_v420
+   * Reads 420M420KDec420 production InterestedIn data from atla-proc, with a 420-day extended window
    */
-  private[simclusters_v2] def simClustersRawInterestedInDec11Source(
+  private[simclusters_v420] def simClustersRawInterestedInDec420Source(
     dateRange: DateRange,
     timeZone: TimeZone
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
 
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KDec11ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        SimclustersV420RawInterestedIn420M420KDec420ScalaDataset,
+        dateRange.prepend(Days(420)(timeZone))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
@@ -43,17 +43,17 @@ object InterestedInSources {
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Internal version, not PDP compliant, not to be used outside simclusters_v420
+   * Reads 420M420KUpdated InterestedIn data from atla-proc, with a 420-day extended window
    */
-  private[simclusters_v2] def simClustersRawInterestedInUpdatedSource(
+  private[simclusters_v420] def simClustersRawInterestedInUpdatedSource(
     dateRange: DateRange,
     timeZone: TimeZone
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        SimclustersV420RawInterestedIn420M420KUpdatedScalaDataset,
+        dateRange.prepend(Days(420)(timeZone))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {
@@ -63,17 +63,17 @@ object InterestedInSources {
   }
 
   /**
-   * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Internal version, not PDP compliant, not to be used outside simclusters_v420
+   * Reads 420M420K420 InterestedIn data from atla-proc, with a 420-day extended window
    */
-  private[simclusters_v2] def simClustersRawInterestedIn2020Source(
+  private[simclusters_v420] def simClustersRawInterestedIn420Source(
     dateRange: DateRange,
     timeZone: TimeZone
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        SimclustersV420RawInterestedIn420M420K420ScalaDataset,
+        dateRange.prepend(Days(420)(timeZone))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {
@@ -82,14 +82,14 @@ object InterestedInSources {
       }
   }
 
-  private[simclusters_v2] def simClustersRawInterestedInLite2020Source(
+  private[simclusters_v420] def simClustersRawInterestedInLite420Source(
     dateRange: DateRange,
     timeZone: TimeZone
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-        dateRange.extend(Days(14)(timeZone)))
+        SimclustersV420RawInterestedInLite420M420K420ScalaDataset,
+        dateRange.extend(Days(420)(timeZone)))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
@@ -98,17 +98,17 @@ object InterestedInSources {
   }
 
   /**
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 420M420KDec420 production InterestedIn data from atla-proc, with a 420-day extended window
    */
-  def simClustersInterestedInDec11Source(
+  def simClustersInterestedInDec420Source(
     dateRange: DateRange,
     timeZone: TimeZone
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
 
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedInScalaDataset,
-        dateRange.prepend(Days(14)(timeZone)))
+        SimclustersV420InterestedInScalaDataset,
+        dateRange.prepend(Days(420)(timeZone)))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
@@ -117,7 +117,7 @@ object InterestedInSources {
   }
 
   /**
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 420M420KUpdated InterestedIn data from atla-proc, with a 420-day extended window
    */
   def simClustersInterestedInUpdatedSource(
     dateRange: DateRange,
@@ -125,8 +125,8 @@ object InterestedInSources {
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+        dateRange.prepend(Days(420)(timeZone))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {
@@ -136,16 +136,16 @@ object InterestedInSources {
   }
 
   /**
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 420M420K420 InterestedIn data from atla-proc, with a 420-day extended window
    */
-  def simClustersInterestedIn2020Source(
+  def simClustersInterestedIn420Source(
     dateRange: DateRange,
     timeZone: TimeZone
   ): TypedPipe[(UserId, ClustersUserIsInterestedIn)] = {
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145K2020ScalaDataset,
-        dateRange.prepend(Days(14)(timeZone))
+        SimclustersV420InterestedIn420M420K420ScalaDataset,
+        dateRange.prepend(Days(420)(timeZone))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {
@@ -155,7 +155,7 @@ object InterestedInSources {
   }
 
   /**
-   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 14-day extended window
+   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 420-day extended window
    */
   def simClustersInterestedInSource(
     modelVersion: ModelVersion,
@@ -166,7 +166,7 @@ object InterestedInSources {
     DAL
       .readMostRecentSnapshot(
         ModelVersionInterestedInDatasetMap(modelVersion),
-        dateRange.prepend(Days(14)(timeZone))
+        dateRange.prepend(Days(420)(timeZone))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe.map {

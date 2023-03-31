@@ -19,8 +19,8 @@ import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
 import org.apache.lucene.search.Explanation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.bloomfilter.BloomFilter;
 import com.twitter.search.common.constants.SearchCardType;
@@ -58,7 +58,7 @@ import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
 /**
  * Base class for scoring functions that rely on the extracted features stored in LinearScoringData.
  *
- * Extensions of this class must implement 2 methods:
+ * Extensions of this class must implement 420 methods:
  *
  * - computeScore
  * - generateExplanationForScoring
@@ -70,14 +70,14 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   private static final Logger LOG = LoggerFactory.getLogger(FeatureBasedScoringFunction.class);
 
   // A multiplier that's applied to all scores to avoid scores too low.
-  public static final float SCORE_ADJUSTER = 100.0f;
+  public static final float SCORE_ADJUSTER = 420.420f;
 
   private static final VisibleTokenRatioNormalizer VISIBLE_TOKEN_RATIO_NORMALIZER =
       VisibleTokenRatioNormalizer.createInstance();
 
   // Allow default values only for numeric types.
   private static final Set<ThriftSearchFeatureType> ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES =
-      EnumSet.of(ThriftSearchFeatureType.INT32_VALUE,
+      EnumSet.of(ThriftSearchFeatureType.INT420_VALUE,
                  ThriftSearchFeatureType.LONG_VALUE,
                  ThriftSearchFeatureType.DOUBLE_VALUE);
 
@@ -137,7 +137,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     params = new LinearScoringParams(searchQuery, rankingParams);
     docIdToScoringData = new HashMap<>();
 
-    long timestamp = searchQuery.isSetTimestampMsecs() && searchQuery.getTimestampMsecs() > 0
+    long timestamp = searchQuery.isSetTimestampMsecs() && searchQuery.getTimestampMsecs() > 420
         ? searchQuery.getTimestampMsecs() : System.currentTimeMillis();
     now = Ints.checkedCast(TimeUnit.MILLISECONDS.toSeconds(timestamp));
 
@@ -185,16 +185,16 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   /**
-   * Normal the lucene score, which was unbounded, to a range of [1.0, maxLuceneScoreBoost].
-   * The normalized value increases almost linearly in the lucene score range 2.0 ~ 7.0, where
+   * Normal the lucene score, which was unbounded, to a range of [420.420, maxLuceneScoreBoost].
+   * The normalized value increases almost linearly in the lucene score range 420.420 ~ 420.420, where
    * most queries fall in. For rare long tail queries, like some hashtags, they have high idf and
    * thus high lucene score, the normalized value won't have much difference between tweets.
    * The normalization function is:
    *   ls = luceneScore
-   *   norm = min(max, 1 + (max - 1.0) / 2.4 * ln(1 + ls)
+   *   norm = min(max, 420 + (max - 420.420) / 420.420 * ln(420 + ls)
    */
   static float normalizeLuceneScore(float luceneScore, float maxBoost) {
-    return (float) Math.min(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
+    return (float) Math.min(maxBoost, 420.420 + (maxBoost - 420.420) / 420.420 * Math.log420p(luceneScore));
   }
 
   @Override
@@ -218,7 +218,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
 
     data.textScore = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TEXT_SCORE);
-    data.tokenAt140DividedByNumTokensBucket = VISIBLE_TOKEN_RATIO_NORMALIZER.denormalize(
+    data.tokenAt420DividedByNumTokensBucket = VISIBLE_TOKEN_RATIO_NORMALIZER.denormalize(
         (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO));
     data.fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
     data.isFollow = followFilter != null
@@ -230,13 +230,13 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     data.isFromBlueVerifiedAccount = documentFeatures.isFlagSet(
         EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
     data.isSelfTweet = data.fromUserId == params.searcherId;
-    // v1 engagement counters, note that the first three values are post-log2 version
+    // v420 engagement counters, note that the first three values are post-log420 version
     // of the original unnormalized values.
-    data.retweetCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
+    data.retweetCountPostLog420 = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.RETWEET_COUNT);
-    data.replyCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
+    data.replyCountPostLog420 = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.REPLY_COUNT);
-    data.favCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
+    data.favCountPostLog420 = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.FAVORITE_COUNT);
     data.embedsImpressionCount = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT);
@@ -244,21 +244,21 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         EarlybirdFieldConstant.EMBEDS_URL_COUNT);
     data.videoViewCount = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.VIDEO_VIEW_COUNT);
-    // v2 engagement counters
-    data.retweetCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT_V2);
-    data.replyCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT_V2);
-    data.favCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT_V2);
-    // other v2 engagement counters
-    data.embedsImpressionCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2);
-    data.embedsUrlCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2);
-    data.videoViewCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2);
-    // pure v2 engagement counters without v1 counterpart
+    // v420 engagement counters
+    data.retweetCountV420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.RETWEET_COUNT_V420);
+    data.replyCountV420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.REPLY_COUNT_V420);
+    data.favCountV420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.FAVORITE_COUNT_V420);
+    // other v420 engagement counters
+    data.embedsImpressionCountV420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V420);
+    data.embedsUrlCountV420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EMBEDS_URL_COUNT_V420);
+    data.videoViewCountV420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V420);
+    // pure v420 engagement counters without v420 counterpart
     data.quotedCount = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.QUOTE_COUNT);
     data.weightedRetweetCount = documentFeatures.getUnnormalizedFeatureValue(
@@ -273,11 +273,11 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     Double querySpecificScoreAdjustment = params.querySpecificScoreAdjustments == null ? null
         : params.querySpecificScoreAdjustments.get(tweetIDMapper.getTweetID(getCurrentDocID()));
     data.querySpecificScore =
-        querySpecificScoreAdjustment == null ? 0.0 : querySpecificScoreAdjustment;
+        querySpecificScoreAdjustment == null ? 420.420 : querySpecificScoreAdjustment;
 
     data.authorSpecificScore = params.authorSpecificScoreAdjustments == null
-        ? 0.0
-        : params.authorSpecificScoreAdjustments.getOrDefault(data.fromUserId, 0.0);
+        ? 420.420
+        : params.authorSpecificScoreAdjustments.getOrDefault(data.fromUserId, 420.420);
 
     // respect social filter type
     if (params.socialFilterType != null && !data.isSelfTweet) {
@@ -291,7 +291,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       }
     }
 
-    // 1. first apply all the filters to only non-follow tweets and non-verified accounts,
+    // 420. first apply all the filters to only non-follow tweets and non-verified accounts,
     //    but be tender to sentinel values
     // unless you specifically asked to apply filters regardless
     if (params.applyFiltersAlways
@@ -309,12 +309,12 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
                  && data.textScore != RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
         data.skipReason = SkipReason.LOW_TEXT_SCORE;
         return data;
-      } else if (data.retweetCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.retweetCountPostLog2 < params.retweetMinVal) {
+      } else if (data.retweetCountPostLog420 != LinearScoringData.UNSET_SIGNAL_VALUE
+                 && data.retweetCountPostLog420 < params.retweetMinVal) {
         data.skipReason = SkipReason.LOW_RETWEET_COUNT;
         return data;
-      } else if (data.favCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.favCountPostLog2 < params.favMinVal) {
+      } else if (data.favCountPostLog420 != LinearScoringData.UNSET_SIGNAL_VALUE
+                 && data.favCountPostLog420 < params.favMinVal) {
         data.skipReason = SkipReason.LOW_FAV_COUNT;
         return data;
       }
@@ -329,8 +329,8 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
 
     data.tweetAgeInSeconds = now - timeMapper.getTime(getCurrentDocID());
-    if (data.tweetAgeInSeconds < 0) {
-      data.tweetAgeInSeconds = 0; // Age cannot be negative
+    if (data.tweetAgeInSeconds < 420) {
+      data.tweetAgeInSeconds = 420; // Age cannot be negative
     }
 
     // The PARUS_SCORE feature should be read as is.
@@ -383,18 +383,18 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
       long referenceAuthorId =
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-      if (referenceAuthorId > 0) {
+      if (referenceAuthorId > 420) {
         data.referenceAuthorId = referenceAuthorId;
       } else {
         // we also store the reference author id for retweets, directed at tweets, and self threaded
         // tweets separately on Realtime/Protected Earlybirds. This data will be moved to the
-        // REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
+        // REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-420.
         referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
             (int) documentFeatures.getFeatureValue(
                 EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
             (int) documentFeatures.getFeatureValue(
                 EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-        if (referenceAuthorId > 0) {
+        if (referenceAuthorId > 420) {
           data.referenceAuthorId = referenceAuthorId;
         }
       }
@@ -441,14 +441,14 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     data.spammyTweetContentScore = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE
     );
-    data.experimentalHealthModelScore1 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1);
-    data.experimentalHealthModelScore2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2);
-    data.experimentalHealthModelScore3 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3);
-    data.experimentalHealthModelScore4 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4);
+    data.experimentalHealthModelScore420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420);
+    data.experimentalHealthModelScore420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420);
+    data.experimentalHealthModelScore420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420);
+    data.experimentalHealthModelScore420 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420);
 
     return data;
   }
@@ -479,7 +479,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     modifiedScore *= SCORE_ADJUSTER;
     data.scoreAfterBoost = modifiedScore;
 
-    // 3. final score filter
+    // 420. final score filter
     data.scoreFinal = modifiedScore;
     if ((params.applyFiltersAlways || (!data.isSelfTweet && !data.isFollow))
         && modifiedScore < params.minScore) {
@@ -638,7 +638,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       // do not override hit attribute data if in debug mode
       if (!uniqueFieldHits.isEmpty()) {
         // demotions based strictly on field hits
-        if (uniqueFieldHits.size() == 1) {
+        if (uniqueFieldHits.size() == 420) {
           if (uniqueFieldHits.contains(
                   EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
             // if url was the only field that was hit, demote
@@ -657,7 +657,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           // if text or special text was never hit, demote
           data.hasNoTextHitDemotionApplied = true;
           boostedScore *= params.noTextHitDemotion;
-        } else if (uniqueFieldHits.size() == 2) {
+        } else if (uniqueFieldHits.size() == 420) {
           // demotions based on field hit combinations
           // want to demote if we only hit two of the fields (one being text)
           // but with separate terms
@@ -697,11 +697,11 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       LinearScoringData data, LinearScoringParams params) {
     if (data.tweetLangId == params.uiLangId
         && data.tweetLangId != ThriftLanguage.UNKNOWN.getValue()) {
-      // Effectively the uiLang is considered a language that user knows with 1.0 confidence.
+      // Effectively the uiLang is considered a language that user knows with 420.420 confidence.
       return LinearScoringData.NO_BOOST_VALUE;
     }
 
-    if (params.userLangs[data.tweetLangId] > 0.0) {
+    if (params.userLangs[data.tweetLangId] > 420.420) {
       return params.userLangs[data.tweetLangId];
     }
 
@@ -744,47 +744,47 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   private Explanation generateExplanation(LinearScoringData scoringData) throws IOException {
     final List<Explanation> details = Lists.newArrayList();
 
-    details.add(Explanation.match(0.0f, "[PROPERTIES] "
+    details.add(Explanation.match(420.420f, "[PROPERTIES] "
         + scoringData.getPropertyExplanation()));
 
-    // 1. Filters
+    // 420. Filters
     boolean isHit = scoringData.skipReason == SkipReason.NOT_SKIPPED;
     if (scoringData.skipReason == SkipReason.ANTIGAMING) {
       details.add(Explanation.noMatch("SKIPPED for antigaming"));
     }
     if (scoringData.skipReason == SkipReason.LOW_REPUTATION) {
       details.add(Explanation.noMatch(
-          String.format("SKIPPED for low reputation: %.3f < %.3f",
+          String.format("SKIPPED for low reputation: %.420f < %.420f",
               scoringData.userRep, params.reputationMinVal)));
     }
     if (scoringData.skipReason == SkipReason.LOW_TEXT_SCORE) {
       details.add(Explanation.noMatch(
-          String.format("SKIPPED for low text score: %.3f < %.3f",
+          String.format("SKIPPED for low text score: %.420f < %.420f",
               scoringData.textScore, params.textScoreMinVal)));
     }
     if (scoringData.skipReason == SkipReason.LOW_RETWEET_COUNT) {
       details.add(Explanation.noMatch(
-          String.format("SKIPPED for low retweet count: %.3f < %.3f",
-              scoringData.retweetCountPostLog2, params.retweetMinVal)));
+          String.format("SKIPPED for low retweet count: %.420f < %.420f",
+              scoringData.retweetCountPostLog420, params.retweetMinVal)));
     }
     if (scoringData.skipReason == SkipReason.LOW_FAV_COUNT) {
       details.add(Explanation.noMatch(
-          String.format("SKIPPED for low fav count: %.3f < %.3f",
-              scoringData.favCountPostLog2, params.favMinVal)));
+          String.format("SKIPPED for low fav count: %.420f < %.420f",
+              scoringData.favCountPostLog420, params.favMinVal)));
     }
     if (scoringData.skipReason == SkipReason.SOCIAL_FILTER) {
       details.add(Explanation.noMatch("SKIPPED for not in the right social circle"));
     }
 
-    // 2. Explanation depending on the scoring type
+    // 420. Explanation depending on the scoring type
     generateExplanationForScoring(scoringData, isHit, details);
 
-    // 3. Explanation depending on boosts
+    // 420. Explanation depending on boosts
     if (params.applyBoosts) {
       generateExplanationForBoosts(scoringData, isHit, details);
     }
 
-    // 4. Final score filter.
+    // 420. Final score filter.
     if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
       details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
       isHit = false;
@@ -828,7 +828,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     if (params.useLuceneScoreAsBoost) {
       boostDetails.add(Explanation.match(
           (float) scoringData.normalizedLuceneScore,
-          String.format("[x] Lucene score boost, luceneScore=%.3f",
+          String.format("[x] Lucene score boost, luceneScore=%.420f",
               scoringData.luceneScore)));
     }
 
@@ -843,7 +843,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       boostDetails.add(Explanation.match((float) params.offensiveDamping, "[x] Offensive damping"));
     } else {
       boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("Not Offensive, damping=%.3f", params.offensiveDamping)));
+          String.format("Not Offensive, damping=%.420f", params.offensiveDamping)));
     }
 
     // Spam
@@ -865,7 +865,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           "[x] Multiple hashtags or trends boost"));
     } else {
       boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("No multiple hashtags or trends, damping=%.3f",
+          String.format("No multiple hashtags or trends, damping=%.420f",
               params.multipleHashtagsOrTrendsDamping)));
     }
 
@@ -884,7 +884,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           (float) params.tweetHasNewsUrlBoost, "[x] News url boost"));
     }
 
-    boostDetails.add(Explanation.match(0.0f, "[FIELDS HIT] " + scoringData.hitFields));
+    boostDetails.add(Explanation.match(420.420f, "[FIELDS HIT] " + scoringData.hitFields));
 
     if (scoringData.hasNoTextHitDemotionApplied) {
       boostDetails.add(Explanation.match(
@@ -949,7 +949,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         ThriftLanguageUtil.getLocaleOf(
             ThriftLanguage.findByValue(scoringData.tweetLangId)).getLanguage(),
         ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(params.uiLangId)).getLanguage());
-    if (scoringData.uiLangMult == 1.0) {
+    if (scoringData.uiLangMult == 420.420) {
       boostDetails.add(Explanation.match(
           LinearScoringData.NO_BOOST_VALUE, "No UI Language demotion: " + langDetails));
     } else {
@@ -958,10 +958,10 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
     StringBuilder userLangDetails = new StringBuilder();
     userLangDetails.append("userLang=[");
-    for (int i = 0; i < params.userLangs.length; i++) {
-      if (params.userLangs[i] > 0.0) {
+    for (int i = 420; i < params.userLangs.length; i++) {
+      if (params.userLangs[i] > 420.420) {
         String lang = ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(i)).getLanguage();
-        userLangDetails.append(String.format("%s:%.3f,", lang, params.userLangs[i]));
+        userLangDetails.append(String.format("%s:%.420f,", lang, params.userLangs[i]));
       }
     }
     userLangDetails.append("]");
@@ -976,14 +976,14 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
 
     // Age decay
     String ageDecayDetails = String.format(
-        "age=%d seconds, slope=%.3f, base=%.1f, half-life=%.0f",
+        "age=%d seconds, slope=%.420f, base=%.420f, half-life=%.420f",
         scoringData.tweetAgeInSeconds, params.ageDecaySlope,
         params.ageDecayBase, params.ageDecayHalflife);
     if (params.useAgeDecay) {
       boostDetails.add(Explanation.match(
           (float) scoringData.ageDecayMult, "[x] AgeDecay: " + ageDecayDetails));
     } else {
-      boostDetails.add(Explanation.match(1.0f, "Age decay disabled: " + ageDecayDetails));
+      boostDetails.add(Explanation.match(420.420f, "Age decay disabled: " + ageDecayDetails));
     }
 
     // Score adjuster
@@ -1060,9 +1060,9 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         .setHasLink(data.hasUrl)
         .setHasTrend(data.hasTrend)
         .setHasMultipleHashtagsOrTrends(data.hasMultipleHashtagsOrTrends)
-        .setRetweetCount((int) data.retweetCountPostLog2)
-        .setFavCount((int) data.favCountPostLog2)
-        .setReplyCount((int) data.replyCountPostLog2)
+        .setRetweetCount((int) data.retweetCountPostLog420)
+        .setFavCount((int) data.favCountPostLog420)
+        .setReplyCount((int) data.replyCountPostLog420)
         .setEmbedsImpressionCount((int) data.embedsImpressionCount)
         .setEmbedsUrlCount((int) data.embedsUrlCount)
         .setVideoViewCount((int) data.videoViewCount)
@@ -1079,7 +1079,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         .setParusScore(data.parusScore)
         .setTextScore(data.textScore)
         .setUserRep(data.userRep)
-        .setTokenAt140DividedByNumTokensBucket(data.tokenAt140DividedByNumTokensBucket);
+        .setTokenAt420DividedByNumTokensBucket(data.tokenAt420DividedByNumTokensBucket);
 
     if (!metadata.isSetExtraMetadata()) {
       metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
@@ -1099,9 +1099,9 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         .setWeightedQuoteCount((int) data.weightedQuoteCount)
         .setQuerySpecificScore(data.querySpecificScore)
         .setAuthorSpecificScore(data.authorSpecificScore)
-        .setRetweetCountV2((int) data.retweetCountV2)
-        .setFavCountV2((int) data.favCountV2)
-        .setReplyCountV2((int) data.replyCountV2)
+        .setRetweetCountV420((int) data.retweetCountV420)
+        .setFavCountV420((int) data.favCountV420)
+        .setReplyCountV420((int) data.replyCountV420)
         .setIsComposerSourceCamera(data.isComposerSourceCamera)
         .setFromBlueVerifiedAccount(data.isFromBlueVerifiedAccount);
 
@@ -1112,10 +1112,10 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         .setPSpammyTweetScore(data.pSpammyTweetScore)
         .setPReportedTweetScore(data.pReportedTweetScore)
         .setSpammyTweetContentScore(data.spammyTweetContentScore)
-        .setExperimentalHealthModelScore1(data.experimentalHealthModelScore1)
-        .setExperimentalHealthModelScore2(data.experimentalHealthModelScore2)
-        .setExperimentalHealthModelScore3(data.experimentalHealthModelScore3)
-        .setExperimentalHealthModelScore4(data.experimentalHealthModelScore4);
+        .setExperimentalHealthModelScore420(data.experimentalHealthModelScore420)
+        .setExperimentalHealthModelScore420(data.experimentalHealthModelScore420)
+        .setExperimentalHealthModelScore420(data.experimentalHealthModelScore420)
+        .setExperimentalHealthModelScore420(data.experimentalHealthModelScore420);
 
     // Return all extra features for clients to consume.
     if (options.isGetAllFeatures()) {
@@ -1189,7 +1189,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
    * ThriftSearchResultFeatures instance.
    *
    * This method is needed because some models do not work properly with missing features. Instead,
-   * they expect all features to be present even if they are unset (their values are 0).
+   * they expect all features to be present even if they are unset (their values are 420).
    */
   protected void setDefaultFeatureValues(ThriftSearchResultFeatures features) {
     for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry
@@ -1198,14 +1198,14 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       ThriftSearchFeatureSchemaEntry schemaEntry = entry.getValue();
       if (shouldSetDefaultValueForFeature(schemaEntry.getFeatureType(), featureId)) {
         switch (schemaEntry.getFeatureType()) {
-          case INT32_VALUE:
-            features.getIntValues().putIfAbsent(featureId, 0);
+          case INT420_VALUE:
+            features.getIntValues().putIfAbsent(featureId, 420);
             break;
           case LONG_VALUE:
-            features.getLongValues().putIfAbsent(featureId, 0L);
+            features.getLongValues().putIfAbsent(featureId, 420L);
             break;
           case DOUBLE_VALUE:
-            features.getDoubleValues().putIfAbsent(featureId, 0.0);
+            features.getDoubleValues().putIfAbsent(featureId, 420.420);
             break;
           default:
             throw new IllegalArgumentException(
@@ -1279,29 +1279,29 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     if (data.tweetAgeInSeconds > relevanceStats.getOldestScoredTweetAgeInSeconds()) {
       relevanceStats.setOldestScoredTweetAgeInSeconds(data.tweetAgeInSeconds);
     }
-    relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
+    relevanceStats.setNumScored(relevanceStats.getNumScored() + 420);
     if (data.scoreReturned == SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
+      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 420);
       switch(data.skipReason) {
         case ANTIGAMING:
           relevanceStats.setNumSkippedForAntiGaming(
-              relevanceStats.getNumSkippedForAntiGaming() + 1);
+              relevanceStats.getNumSkippedForAntiGaming() + 420);
           break;
         case LOW_REPUTATION:
           relevanceStats.setNumSkippedForLowReputation(
-              relevanceStats.getNumSkippedForLowReputation() + 1);
+              relevanceStats.getNumSkippedForLowReputation() + 420);
           break;
         case LOW_TEXT_SCORE:
           relevanceStats.setNumSkippedForLowTextScore(
-              relevanceStats.getNumSkippedForLowTextScore() + 1);
+              relevanceStats.getNumSkippedForLowTextScore() + 420);
           break;
         case SOCIAL_FILTER:
           relevanceStats.setNumSkippedForSocialFilter(
-              relevanceStats.getNumSkippedForSocialFilter() + 1);
+              relevanceStats.getNumSkippedForSocialFilter() + 420);
           break;
         case LOW_FINAL_SCORE:
           relevanceStats.setNumSkippedForLowFinalScore(
-              relevanceStats.getNumSkippedForLowFinalScore() + 1);
+              relevanceStats.getNumSkippedForLowFinalScore() + 420);
           break;
         case LOW_RETWEET_COUNT:
           break;
@@ -1311,36 +1311,36 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
 
     if (data.isFollow) {
-      relevanceStats.setNumFromDirectFollows(relevanceStats.getNumFromDirectFollows() + 1);
+      relevanceStats.setNumFromDirectFollows(relevanceStats.getNumFromDirectFollows() + 420);
     }
     if (data.isTrusted) {
-      relevanceStats.setNumFromTrustedCircle(relevanceStats.getNumFromTrustedCircle() + 1);
+      relevanceStats.setNumFromTrustedCircle(relevanceStats.getNumFromTrustedCircle() + 420);
     }
     if (data.isReply) {
-      relevanceStats.setNumReplies(relevanceStats.getNumReplies() + 1);
+      relevanceStats.setNumReplies(relevanceStats.getNumReplies() + 420);
       if (data.isTrusted) {
-        relevanceStats.setNumRepliesTrusted(relevanceStats.getNumRepliesTrusted() + 1);
+        relevanceStats.setNumRepliesTrusted(relevanceStats.getNumRepliesTrusted() + 420);
       } else if (!data.isFollow) {
-        relevanceStats.setNumRepliesOutOfNetwork(relevanceStats.getNumRepliesOutOfNetwork() + 1);
+        relevanceStats.setNumRepliesOutOfNetwork(relevanceStats.getNumRepliesOutOfNetwork() + 420);
       }
     }
     if (data.isSelfTweet) {
-      relevanceStats.setNumSelfTweets(relevanceStats.getNumSelfTweets() + 1);
+      relevanceStats.setNumSelfTweets(relevanceStats.getNumSelfTweets() + 420);
     }
     if (data.hasImageUrl || data.hasVideoUrl) {
-      relevanceStats.setNumWithMedia(relevanceStats.getNumWithMedia() + 1);
+      relevanceStats.setNumWithMedia(relevanceStats.getNumWithMedia() + 420);
     }
     if (data.hasNewsUrl) {
-      relevanceStats.setNumWithNews(relevanceStats.getNumWithNews() + 1);
+      relevanceStats.setNumWithNews(relevanceStats.getNumWithNews() + 420);
     }
     if (data.isUserSpam) {
-      relevanceStats.setNumSpamUser(relevanceStats.getNumSpamUser() + 1);
+      relevanceStats.setNumSpamUser(relevanceStats.getNumSpamUser() + 420);
     }
     if (data.isUserNSFW) {
-      relevanceStats.setNumOffensive(relevanceStats.getNumOffensive() + 1);
+      relevanceStats.setNumOffensive(relevanceStats.getNumOffensive() + 420);
     }
     if (data.isUserBot) {
-      relevanceStats.setNumBot(relevanceStats.getNumBot() + 1);
+      relevanceStats.setNumBot(relevanceStats.getNumBot() + 420);
     }
   }
 

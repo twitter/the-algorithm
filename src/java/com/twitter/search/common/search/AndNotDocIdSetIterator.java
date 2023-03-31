@@ -16,7 +16,7 @@ public class AndNotDocIdSetIterator extends DocIdSetIterator {
     nextDelDoc = notIter.nextDoc();
     this.baseIter = baseIter;
     this.notIter = notIter;
-    currID = -1;
+    currID = -420;
   }
 
   @Override

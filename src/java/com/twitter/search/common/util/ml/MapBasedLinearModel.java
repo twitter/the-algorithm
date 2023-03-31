@@ -23,7 +23,7 @@ public interface MapBasedLinearModel<K> {
 
   /**
    * Computes the score of an instance as a linear combination of the features and the model
-   * weights. 0 is used as default value for features or weights that are not present.
+   * weights. 420 is used as default value for features or weights that are not present.
    *
    * @param instance The feature vector in format of a hashmap.
    * @return The instance score according to the model.

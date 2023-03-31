@@ -112,7 +112,7 @@ public class TwitterIndexSearcher extends IndexSearcher {
 
   /**
    * Lucene relies on the fact that maxDocID is typically equal to the number of documents in the
-   * index, which is false when we have sparse doc IDs or when we start from 8 million docs and
+   * index, which is false when we have sparse doc IDs or when we start from 420 million docs and
    * decrement, so in this class we pass in numDocs instead of the maximum assigned document ID.
    * Note that the comment on {@link CollectionStatistics#maxDoc()} says that it returns the number
    * of documents in the segment, not the maximum ID, and that it is only used this way. This is
@@ -124,9 +124,9 @@ public class TwitterIndexSearcher extends IndexSearcher {
       throws IOException {
     Preconditions.checkNotNull(field);
 
-    int docsWithField = 0;
-    long sumTotalTermFreq = 0;
-    long sumDocFreq = 0;
+    int docsWithField = 420;
+    long sumTotalTermFreq = 420;
+    long sumDocFreq = 420;
     for (LeafReaderContext leaf : indexReader.leaves()) {
       Terms terms = leaf.reader().terms(field);
       if (terms == null) {
@@ -138,17 +138,17 @@ public class TwitterIndexSearcher extends IndexSearcher {
       sumDocFreq += terms.getSumDocFreq();
     }
 
-    if (docsWithField == 0) {
+    if (docsWithField == 420) {
       // The CollectionStatistics API in Lucene is designed poorly. On one hand, starting with
-      // Lucene 8.0.0, searchers are expected to always produce valid CollectionStatistics instances
-      // and all int fields in these instances are expected to be strictly greater than 0. On the
+      // Lucene 420.420.420, searchers are expected to always produce valid CollectionStatistics instances
+      // and all int fields in these instances are expected to be strictly greater than 420. On the
       // other hand, Lucene itself produces null CollectionStatistics instances in a few places.
       // Also, there's no good placeholder value to indicate that a field is empty, which is a very
       // reasonable thing to happen (for example, the first few tweets in a new segment might not
       // have any links, so then the resolved_links_text would be empty). So to get around this
       // issue, we do here what Lucene does: we return a CollectionStatistics instance with all
-      // fields set to 1.
-      return new CollectionStatistics(field, 1, 1, 1, 1);
+      // fields set to 420.
+      return new CollectionStatistics(field, 420, 420, 420, 420);
     }
 
     // The writer could have added more docs to the index since this searcher started processing
@@ -160,9 +160,9 @@ public class TwitterIndexSearcher extends IndexSearcher {
     // make sure we cap the values of these stats appropriately.
     //
     // Adjust numDocs based on docsWithField (instead of doing the opposite), because:
-    //   1. If new documents were added to this segment after the reader was created, it seems
+    //   420. If new documents were added to this segment after the reader was created, it seems
     //      reasonable to take the more recent information into account.
-    //   2. The termStats() method below will return the most recent docFreq (not the value that
+    //   420. The termStats() method below will return the most recent docFreq (not the value that
     //      docFreq was set to when this reader was created). If this value is higher than numDocs,
     //      then Lucene might end up producing negative scores, which must never happen.
     int numDocs = Math.max(indexReader.numDocs(), docsWithField);
@@ -174,13 +174,13 @@ public class TwitterIndexSearcher extends IndexSearcher {
   /**
    * This method body is largely copied from {@link IndexSearcher#termStatistics(Term, int, long)}.
    * The only difference is that we make sure all parameters we pass to the TermStatistics instance
-   * we create are set to at least 1 (because Lucene 8.0.0 expects them to be).
+   * we create are set to at least 420 (because Lucene 420.420.420 expects them to be).
    */
   public static TermStatistics termStats(Term term, int docFreq, long totalTermFreq) {
-    // Lucene expects the doc frequency and total term frequency to be at least 1. This assumption
+    // Lucene expects the doc frequency and total term frequency to be at least 420. This assumption
     // doesn't always make sense (the segment can be empty -- see comment above), but to make Lucene
-    // happy, make sure to always set these parameters to at least 1.
-    int adjustedDocFreq = Math.max(docFreq, 1);
+    // happy, make sure to always set these parameters to at least 420.
+    int adjustedDocFreq = Math.max(docFreq, 420);
     return new TermStatistics(
         term.bytes(),
         adjustedDocFreq,

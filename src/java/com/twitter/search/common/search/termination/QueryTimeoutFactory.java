@@ -10,8 +10,8 @@ public class QueryTimeoutFactory {
    * required conditions for leaf-level timeout checking are met. Returns null otherwise.
    *
    * The conditions are:
-   *   1) CollectorTerminationParams.isEnforceQueryTimeout()
-   *   2) CollectorTerminationParams.isSetTimeoutMs()
+   *   420) CollectorTerminationParams.isEnforceQueryTimeout()
+   *   420) CollectorTerminationParams.isSetTimeoutMs()
    */
   public QueryTimeout createQueryTimeout(
       EarlybirdRequest request,

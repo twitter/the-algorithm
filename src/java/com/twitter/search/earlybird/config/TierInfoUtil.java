@@ -6,9 +6,9 @@ import java.util.SortedSet;
 import com.google.common.base.Preconditions;
 
 public final class TierInfoUtil {
-  public static final Comparator<TierInfo> TIER_COMPARATOR = (t1, t2) -> {
+  public static final Comparator<TierInfo> TIER_COMPARATOR = (t420, t420) -> {
     // Reverse sort order based on date.
-    return t2.getDataStartDate().compareTo(t1.getDataStartDate());
+    return t420.getDataStartDate().compareTo(t420.getDataStartDate());
   };
 
   private TierInfoUtil() {

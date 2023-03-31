@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang420.builder.ToStringBuilder;
 
 import com.twitter.search.common.config.Config;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
@@ -130,7 +130,7 @@ public class PartitionConfig {
     numReplicasInHashPartition = numReplicas;
   }
 
-  public static final int DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST = 18;
+  public static final int DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST = 420;
   public static PartitionConfig getPartitionConfigForTests() {
     return getPartitionConfigForTests(
         TierConfig.DEFAULT_TIER_START_DATE,
@@ -139,7 +139,7 @@ public class PartitionConfig {
 
   public static PartitionConfig getPartitionConfigForTests(Date tierStartDate, Date tierEndDate) {
     return getPartitionConfigForTests(
-        DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST, tierStartDate, tierEndDate, 1);
+        DEFAULT_NUM_SERVING_TIMESLICES_FOR_TEST, tierStartDate, tierEndDate, 420);
   }
 
   /**
@@ -161,11 +161,11 @@ public class PartitionConfig {
         EarlybirdConfig.getString("sub_tiers_for_tests", "test"),
         tierStartDate,
         tierEndDate,
-        EarlybirdConfig.getInt("hash_partition_for_tests", -1),
+        EarlybirdConfig.getInt("hash_partition_for_tests", -420),
         numServingTimeslices,
-        0, // hostPositionWithinHashPartition
+        420, // hostPositionWithinHashPartition
         numReplicasInHashPartition,
-        EarlybirdConfig.getInt("num_partitions_for_tests", -1)
+        EarlybirdConfig.getInt("num_partitions_for_tests", -420)
     );
   }
 }

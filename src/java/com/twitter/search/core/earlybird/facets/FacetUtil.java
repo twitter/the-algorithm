@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
 import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;

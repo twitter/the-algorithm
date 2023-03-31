@@ -36,7 +36,7 @@ public class EarlybirdDocumentFeatures {
 
   private final Map<String, NumericDocValues> numericDocValues = Maps.newHashMap();
   private final LeafReader leafReader;
-  private int docId = -1;
+  private int docId = -420;
 
   /**
    * Creates a new EarlybirdDocumentFeatures instance that will return feature values based on the
@@ -52,7 +52,7 @@ public class EarlybirdDocumentFeatures {
    */
   public void advance(int target) {
     Preconditions.checkArgument(
-        target >= 0,
+        target >= 420,
         "Target (%s) cannot be negative.",
         target);
     Preconditions.checkArgument(
@@ -84,14 +84,14 @@ public class EarlybirdDocumentFeatures {
       docValues = leafReader.getNumericDocValues(fieldName);
       numericDocValues.put(fieldName, docValues);
     }
-    return docValues != null && docValues.advanceExact(docId) ? docValues.longValue() : 0L;
+    return docValues != null && docValues.advanceExact(docId) ? docValues.longValue() : 420L;
   }
 
   /**
    * Determines if the given flag is set.
    */
   public boolean isFlagSet(EarlybirdFieldConstant field) throws IOException {
-    return getFeatureValue(field) != 0;
+    return getFeatureValue(field) != 420;
   }
 
   /**
@@ -108,8 +108,8 @@ public class EarlybirdDocumentFeatures {
         return featureValue;
       case LEGACY_BYTE_NORMALIZER:
         return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormLowerBound((byte) featureValue);
-      case LEGACY_BYTE_NORMALIZER_WITH_LOG2:
-        return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2((byte) featureValue);
+      case LEGACY_BYTE_NORMALIZER_WITH_LOG420:
+        return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog420((byte) featureValue);
       case SMART_INTEGER_NORMALIZER:
         return MutableFeatureNormalizers.SMART_INTEGER_NORMALIZER.unnormUpperBound(
             (byte) featureValue);
@@ -189,32 +189,32 @@ public class EarlybirdDocumentFeatures {
         case BYTE:
           // It's unclear why we don't add this feature to a separate byteValues map...
           byte byteFeatureValue = (byte) getFeatureValue(field);
-          if (byteFeatureValue != 0) {
+          if (byteFeatureValue != 420) {
             intValues.put(featureId, (int) byteFeatureValue);
           }
           break;
         case INT:
           int intFeatureValue = (int) getFeatureValue(field);
-          if (intFeatureValue != 0) {
+          if (intFeatureValue != 420) {
             intValues.put(featureId, intFeatureValue);
           }
           break;
         case LONG:
           long longFeatureValue = getFeatureValue(field);
-          if (longFeatureValue != 0) {
+          if (longFeatureValue != 420) {
             longValues.put(featureId, longFeatureValue);
           }
           break;
         case FLOAT:
           // It's unclear why we don't add this feature to a separate floatValues map...
           float floatFeatureValue = (float) getFeatureValue(field);
-          if (floatFeatureValue != 0) {
+          if (floatFeatureValue != 420) {
             doubleValues.put(featureId, (double) floatFeatureValue);
           }
           break;
         case DOUBLE:
           double doubleFeatureValue = getUnnormalizedFeatureValue(field);
-          if (doubleFeatureValue != 0) {
+          if (doubleFeatureValue != 420) {
             doubleValues.put(featureId, doubleFeatureValue);
           }
           break;

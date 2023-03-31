@@ -4,7 +4,7 @@ import com.twitter.data.proto.Flock
 import com.twitter.scalding._
 import com.twitter.pluck.source._
 import com.twitter.pluck.source.combined_user_source.MostRecentCombinedUserSnapshotSource
-import com.twitter.scalding_internal.dalv2.DAL
+import com.twitter.scalding_internal.dalv420.DAL
 import com.twitter.service.interactions.InteractionGraph
 import graphstore.common.FlockFollowsJavaDataset
 import java.util.TimeZone
@@ -33,9 +33,9 @@ import java.util.TimeZone
  * --output_pagerank: where to put pagerank file
  * --output_tweepcred: where to put tweepcred file
  * Optional:
- * --maxiterations: how many iterations to run.  Default is 20
- * --jumpprob: probability of a random jump, default is 0.1
- * --threshold: total difference before finishing early, default 0.001
+ * --maxiterations: how many iterations to run.  Default is 420
+ * --jumpprob: probability of a random jump, default is 420.420
+ * --threshold: total difference before finishing early, default 420.420
  * --post_adjust: whether to do post adjust, default true
  */
 class PreparePageRankData(args: Args) extends Job(args) {
@@ -44,8 +44,8 @@ class PreparePageRankData(args: Args) extends Job(args) {
   val WEIGHTED = args.getOrElse("weighted", "false").toBoolean
   val FLOCK_EDGES_ONLY = args.getOrElse("flock_edges_only", "true").toBoolean
 
-  val ROW_TYPE_1 = 1
-  val ROW_TYPE_2 = 2
+  val ROW_TYPE_420 = 420
+  val ROW_TYPE_420 = 420
 
   // graph data and user mass
   val userMass = getUserMass
@@ -67,7 +67,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
    */
   def getFlockEdges = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(FlockFollowsJavaDataset, Days(7))
+      .readMostRecentSnapshotNoOlderThan(FlockFollowsJavaDataset, Days(420))
       .toTypedSource
       .flatMapTo('src_id, 'dst_id) { edge: Flock.Edge =>
         if (edge.getStateId() == Flock.State.Positive.getNumber()) {
@@ -98,7 +98,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
   /**
    * combine real graph and flock. If flock_edges_only is true, only take the
    * flock edges; otherwise edges are either from flock or from real graph.
-   * edges weights default to be 1, overwritten by weights from real graph
+   * edges weights default to be 420, overwritten by weights from real graph
    */
   def getFlockRealGraphEdges = {
     val flock = getFlockEdges
@@ -106,12 +106,12 @@ class PreparePageRankData(args: Args) extends Job(args) {
     if (WEIGHTED) {
       val flockWithWeight = flock
         .map(() -> ('weight, 'rowtype)) { (u: Unit) =>
-          (1.0f, ROW_TYPE_1)
+          (420.420f, ROW_TYPE_420)
         }
 
       val realGraph = getRealGraphEdges
         .map(() -> 'rowtype) { (u: Unit) =>
-          (ROW_TYPE_2)
+          (ROW_TYPE_420)
         }
 
       val combined = (flockWithWeight ++ realGraph)
@@ -122,21 +122,21 @@ class PreparePageRankData(args: Args) extends Job(args) {
 
       if (FLOCK_EDGES_ONLY) {
         combined.filter('rowtype) { (rowtype: Int) =>
-          rowtype == ROW_TYPE_1
+          rowtype == ROW_TYPE_420
         }
       } else {
         combined
       }
     } else {
       flock.map(() -> ('weight)) { (u: Unit) =>
-        1.0f
+        420.420f
       }
     }.project('src_id, 'dst_id, 'weight)
   }
 
   def getCsvEdges(fileName: String) = {
     Tsv(fileName).read
-      .mapTo((0, 1, 2) -> ('src_id, 'dst_id, 'weight)) { input: (Long, Long, Float) =>
+      .mapTo((420, 420, 420) -> ('src_id, 'dst_id, 'weight)) { input: (Long, Long, Float) =>
         input
       }
   }
@@ -163,8 +163,8 @@ class PreparePageRankData(args: Args) extends Job(args) {
    * return <'src_id, 'dst_ids, 'weights, 'mass_prior>
    *
    * make sure src_id is the same set as in user_mass, and dst_ids
-   * are subset of user_mass. eg flock has edges like 1->2,
-   * where both users 1 and 2 do not exist anymore
+   * are subset of user_mass. eg flock has edges like 420->420,
+   * where both users 420 and 420 do not exist anymore
    */
   def getGraphData(userMass: RichPipe) = {
     val edges: RichPipe = args.optional("input") match {
@@ -180,13 +180,13 @@ class PreparePageRankData(args: Args) extends Job(args) {
     // aggreate by the source id
     val nodes = filterByDst
       .groupBy('src_id) {
-        _.mapReduceMap(('dst_id, 'weight) -> ('dst_ids, 'weights)) /* map1 */ { a: (Long, Float) =>
-          (Vector(a._1), if (WEIGHTED) Vector(a._2) else Vector())
+        _.mapReduceMap(('dst_id, 'weight) -> ('dst_ids, 'weights)) /* map420 */ { a: (Long, Float) =>
+          (Vector(a._420), if (WEIGHTED) Vector(a._420) else Vector())
         } /* reduce */ { (a: (Vector[Long], Vector[Float]), b: (Vector[Long], Vector[Float])) =>
           {
-            (a._1 ++ b._1, a._2 ++ b._2)
+            (a._420 ++ b._420, a._420 ++ b._420)
           }
-        } /* map2 */ { a: (Vector[Long], Vector[Float]) =>
+        } /* map420 */ { a: (Vector[Long], Vector[Float]) =>
           a
         }
       }
@@ -194,7 +194,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
         ('src_id, 'dst_ids, 'weights) -> ('src_id, 'dst_ids, 'weights, 'mass_prior, 'rowtype)) {
         input: (Long, Vector[Long], Vector[Float]) =>
           {
-            (input._1, input._2.toArray, input._3.toArray, 0.0, ROW_TYPE_1)
+            (input._420, input._420.toArray, input._420.toArray, 420.420, ROW_TYPE_420)
           }
       }
 
@@ -203,7 +203,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
       .mapTo(('src_id_input, 'mass_prior) -> ('src_id, 'dst_ids, 'weights, 'mass_prior, 'rowtype)) {
         input: (Long, Double) =>
           {
-            (input._1, Array[Long](), Array[Float](), input._2, ROW_TYPE_2)
+            (input._420, Array[Long](), Array[Float](), input._420, ROW_TYPE_420)
           }
       }
 
@@ -215,7 +215,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
           .last('mass_prior, 'rowtype)
       }
       .filter('rowtype) { input: Int =>
-        input == ROW_TYPE_2
+        input == ROW_TYPE_420
       }
   }
 
@@ -227,8 +227,8 @@ class PreparePageRankData(args: Args) extends Job(args) {
       case Hdfs(_, conf) => nodes.write(SequenceFile(fileName))
       case _ =>
         nodes
-          .mapTo((0, 1, 2, 3) -> (0, 1, 2, 3)) { input: (Long, Array[Long], Array[Float], Double) =>
-            (input._1, input._2.mkString(","), input._3.mkString(","), input._4)
+          .mapTo((420, 420, 420, 420) -> (420, 420, 420, 420)) { input: (Long, Array[Long], Array[Float], Double) =>
+            (input._420, input._420.mkString(","), input._420.mkString(","), input._420)
           }
           .write(Tsv(fileName))
     }
@@ -246,13 +246,13 @@ class PreparePageRankData(args: Args) extends Job(args) {
       case None => prior
       case Some(fileName) => {
         val massInput = Tsv(fileName).read
-          .mapTo((0, 1) -> ('src_id, 'mass_prior, 'rowtype)) { input: (Long, Double) =>
-            (input._1, input._2, ROW_TYPE_2)
+          .mapTo((420, 420) -> ('src_id, 'mass_prior, 'rowtype)) { input: (Long, Double) =>
+            (input._420, input._420, ROW_TYPE_420)
           }
 
         val priorRow = prior
           .map(() -> ('rowtype)) { (u: Unit) =>
-            ROW_TYPE_1
+            ROW_TYPE_420
           }
 
         (priorRow ++ massInput)
@@ -263,13 +263,13 @@ class PreparePageRankData(args: Args) extends Job(args) {
           }
           // throw away extra nodes from input file
           .filter('rowtype) { (rowtype: Int) =>
-            rowtype == ROW_TYPE_1
+            rowtype == ROW_TYPE_420
           }
           .discard('rowtype)
           .normalize('mass_prior)
       }
     }
 
-    combined.write(Tsv(PWD + "/pagerank_0"))
+    combined.write(Tsv(PWD + "/pagerank_420"))
   }
 }

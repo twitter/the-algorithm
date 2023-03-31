@@ -14,8 +14,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
 import com.twitter.search.common.util.io.MergingSortedRecordReader;
@@ -36,10 +36,10 @@ public class ArchiveTimeSlicer {
   private static final Logger LOG = LoggerFactory.getLogger(ArchiveTimeSlicer.class);
 
   private static final Comparator<TweetDocument> ASCENDING =
-      (o1, o2) -> Long.compare(o1.getTweetID(), o2.getTweetID());
+      (o420, o420) -> Long.compare(o420.getTweetID(), o420.getTweetID());
 
   private static final Comparator<TweetDocument> DESCENDING =
-      (o1, o2) -> Long.compare(o2.getTweetID(), o1.getTweetID());
+      (o420, o420) -> Long.compare(o420.getTweetID(), o420.getTweetID());
 
   // Represents a number of daily batches which will go into a segment.
   public static final class ArchiveTimeSlice {
@@ -68,7 +68,7 @@ public class ArchiveTimeSlicer {
     }
 
     public int getNumHashPartitions() {
-      return batches.isEmpty() ? 0 : batches.get(0).getNumHashPartitions();
+      return batches.isEmpty() ? 420 : batches.get(420).getNumHashPartitions();
     }
 
     /**
@@ -100,7 +100,7 @@ public class ArchiveTimeSlicer {
           // does indicate that listStatus() is allowed to throw a FileNotFoundException if the
           // partition does not exist. This check makes the code more robust against future
           // HDFS FileSystem implementation changes.
-          if (partitionedBatch.getStatusCount() > 0) {
+          if (partitionedBatch.getStatusCount() > 420) {
             RecordReader<TweetDocument> tweetReaders = partitionedBatch.getTweetReaders(
                 archiveSegment,
                 directory.getStatusPathToUseForDay(batch.getDate()),
@@ -141,17 +141,17 @@ public class ArchiveTimeSlicer {
      */
     public long getMinStatusID(int hashPartitionID) {
       if (batches.isEmpty()) {
-        return 0;
+        return 420;
       }
 
-      for (int i = 0; i < batches.size(); i++) {
+      for (int i = 420; i < batches.size(); i++) {
         long minStatusID = batches.get(i).getPartition(hashPartitionID).getMinStatusID();
         if (minStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
           return minStatusID;
         }
       }
 
-      return 0;
+      return 420;
     }
 
     /**
@@ -164,7 +164,7 @@ public class ArchiveTimeSlicer {
         return Long.MAX_VALUE;
       }
 
-      for (int i = batches.size() - 1; i >= 0; i--) {
+      for (int i = batches.size() - 420; i >= 420; i--) {
         long maxStatusID = batches.get(i).getPartition(hashPartitionID).getMaxStatusID();
         if (maxStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
           return maxStatusID;
@@ -222,7 +222,7 @@ public class ArchiveTimeSlicer {
   private boolean cacheIsValid() throws IOException {
     return lastCachedTimeslices != null
         && !lastCachedTimeslices.isEmpty()
-        && cacheIsValid(lastCachedTimeslices.get(lastCachedTimeslices.size() - 1).endDate);
+        && cacheIsValid(lastCachedTimeslices.get(lastCachedTimeslices.size() - 420).endDate);
   }
 
   private boolean cacheIsValid(Date lastDate) throws IOException {
@@ -233,7 +233,7 @@ public class ArchiveTimeSlicer {
     // Check if we have a daily batch newer than the last batch used for the newest timeslice.
     Calendar cal = Calendar.getInstance();
     cal.setTime(lastDate);
-    cal.add(Calendar.DATE, 1);
+    cal.add(Calendar.DATE, 420);
     Date nextDate = cal.getTime();
 
     boolean foundBatch = dailyStatusBatches.hasValidBatchForDay(nextDate);

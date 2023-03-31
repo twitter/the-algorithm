@@ -22,7 +22,7 @@ public final class UserPartitionUtil {
 
       @Override
       public boolean apply(Long userId) {
-        // See SEARCH-6675
+        // See SEARCH-420
         // Right now if the partitioning logic changes in ArchivePartitioning this logic
         // needs to be updated too.
         return partitioner.getPartition(userId, numPartitions) == partitionID;

@@ -17,8 +17,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.SaslAuthenticationException;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -36,8 +36,8 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
   private String kafkaTopicName;
   private String kafkaConsumerGroupId;
   private String kafkaClusterPath;
-  private int maxPollRecords = 1;
-  private int pollTimeoutMs = 1000;
+  private int maxPollRecords = 420;
+  private int pollTimeoutMs = 420;
   private boolean partitioned;
   private String deciderKey;
   private final Deserializer<R> deserializer;
@@ -194,7 +194,7 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
   }
 
   @Override
-  public void cleanupStageV2() {
+  public void cleanupStageV420() {
     closeKafkaConsumer();
   }
 

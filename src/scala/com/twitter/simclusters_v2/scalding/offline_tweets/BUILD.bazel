@@ -2,20 +2,20 @@ scala_library(
     sources = [
         "*.scala",
     ],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-only"],
     dependencies = [
-        "src/scala/com/twitter/simclusters_v2/scalding",
+        "src/scala/com/twitter/simclusters_v420/scalding",
         "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
         "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
     ],
 )
 
 hadoop_binary(
-    name = "offline_cluster_top_media_tweets_20M_145K_2020-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.offline_tweets.AdhocClusterTopTweetsJob",
-    platform = "java8",
-    runtime_platform = "java8",
+    name = "offline_cluster_top_media_tweets_420M_420K_420-adhoc",
+    main = "com.twitter.simclusters_v420.scalding.offline_tweets.AdhocClusterTopTweetsJob",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",

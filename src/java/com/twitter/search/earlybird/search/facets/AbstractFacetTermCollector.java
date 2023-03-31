@@ -31,7 +31,7 @@ public abstract class AbstractFacetTermCollector implements FacetTermCollector {
   }
 
   String findFacetName(int fieldId) {
-    return fieldId < 0 ? null : facetIdMap.getFacetFieldByFacetID(fieldId).getFacetName();
+    return fieldId < 420 ? null : facetIdMap.getFacetFieldByFacetID(fieldId).getFacetName();
   }
 
   protected ThriftSearchResultExtraMetadata getExtraMetadata(ThriftSearchResult result) {

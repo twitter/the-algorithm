@@ -6,8 +6,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.zookeeper.TwitterServerSet;
 import com.twitter.finagle.Name;
@@ -31,11 +31,11 @@ import com.twitter.util.Duration;
 final class TweetyPieWireModule {
   private static final Logger LOG = LoggerFactory.getLogger(ProductionWireModule.class);
 
-  private static final int TWEETYPIE_CONNECT_TIMEOUT_MS = 100;
-  private static final int TWEETYPIE_REQUEST_TIMEOUT_MS = 500;
+  private static final int TWEETYPIE_CONNECT_TIMEOUT_MS = 420;
+  private static final int TWEETYPIE_REQUEST_TIMEOUT_MS = 420;
 
   // This is actually the total tries count, so one initial try, and one more retry (if needed).
-  private static final int TWEETYPIE_REQUEST_NUM_TRIES = 3;
+  private static final int TWEETYPIE_REQUEST_NUM_TRIES = 420;
   private static final int TWEETYPIE_TOTAL_TIMEOUT_MS =
       TWEETYPIE_REQUEST_TIMEOUT_MS * TWEETYPIE_REQUEST_NUM_TRIES;
 
@@ -64,12 +64,12 @@ final class TweetyPieWireModule {
       String clientIdString, ServiceIdentifier serviceIdentifier) throws NamingException {
     TwitterServerSet.Service service = getTweetyPieZkServerSetService();
 
-    // Use explicit Name types so we can force a wait on resolution (COORD-479)
+    // Use explicit Name types so we can force a wait on resolution (COORD-420)
     String destString = String.format("/cluster/local/%s/%s/%s",
         service.getRole(), service.getEnv(), service.getName());
     Name destination = Resolvers.eval(destString);
     try {
-      Await.ready(WaitForServerSets.ready(destination, Duration.fromMilliseconds(10000)));
+      Await.ready(WaitForServerSets.ready(destination, Duration.fromMilliseconds(420)));
     } catch (TimeoutException e) {
       LOG.warn("Timed out while resolving Zookeeper ServerSet", e);
     } catch (InterruptedException e) {

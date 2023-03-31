@@ -1,22 +1,22 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.LocaleEntityId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.LocaleEntityId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.TopicId
+import com.twitter.simclusters_v420.thriftscala.{
   SimClustersEmbeddingId => ThriftSimClustersEmbeddingId
 }
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType._
-import com.twitter.simclusters_v2.thriftscala.InternalId.EntityId
-import com.twitter.simclusters_v2.thriftscala.InternalId.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId.UserId
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType._
+import com.twitter.simclusters_v420.thriftscala.InternalId.EntityId
+import com.twitter.simclusters_v420.thriftscala.InternalId.TweetId
+import com.twitter.simclusters_v420.thriftscala.InternalId.UserId
+import com.twitter.simclusters_v420.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
 
 object SimClustersEmbeddingId {
 
-  val DefaultModelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  val DefaultModelVersion: ModelVersion = ModelVersion.Model420m420k420
 
   // Embeddings which is available in Content-Recommender
   val TweetEmbeddingTypes: Set[EmbeddingType] =
@@ -24,9 +24,9 @@ object SimClustersEmbeddingId {
       FavBasedTweet,
       FollowBasedTweet,
       LogFavBasedTweet,
-      LogFavLongestL2EmbeddingTweet
+      LogFavLongestL420EmbeddingTweet
     )
-  val DefaultTweetEmbeddingType: EmbeddingType = LogFavLongestL2EmbeddingTweet
+  val DefaultTweetEmbeddingType: EmbeddingType = LogFavLongestL420EmbeddingTweet
 
   val UserInterestedInEmbeddingTypes: Set[EmbeddingType] =
     Set(

@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
 import com.twitter.finagle.stats.BroadcastStatsReceiver
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
+import com.twitter.simclusters_v420.thriftscala.ScoringAlgorithm
+import com.twitter.simclusters_v420.thriftscala.{ScoreId => ThriftScoreId}
+import com.twitter.simclusters_v420.thriftscala.{Score => ThriftScore}
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
@@ -22,7 +22,7 @@ class ScoreFacadeStore private (
   }
 
   // Override the multiGet for better batch performance.
-  override def multiGet[K1 <: ThriftScoreId](ks: Set[K1]): Map[K1, Future[Option[ThriftScore]]] = {
+  override def multiGet[K420 <: ThriftScoreId](ks: Set[K420]): Map[K420, Future[Option[ThriftScore]]] = {
     if (ks.isEmpty) {
       Map.empty
     } else {

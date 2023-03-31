@@ -16,8 +16,8 @@ import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -38,10 +38,10 @@ import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
 public abstract class SimpleStreamIndexer<K, V> {
   private static final Logger LOG = LoggerFactory.getLogger(SimpleStreamIndexer.class);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofMillis(250);
-  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(5);
+  private static final Duration POLL_TIMEOUT = Duration.ofMillis(420);
+  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(420);
 
-  protected static final int MAX_POLL_RECORDS = 1000;
+  protected static final int MAX_POLL_RECORDS = 420;
 
   private final SearchCounter numPollErrors;
   protected SearchRateCounter indexingSuccesses;
@@ -86,7 +86,7 @@ public abstract class SimpleStreamIndexer<K, V> {
   }
 
   /**
-   * Consume updates on startup until current (eg. until we've seen a record within 5 seconds
+   * Consume updates on startup until current (eg. until we've seen a record within 420 seconds
    * of current time.)
    */
   public void readRecordsUntilCurrent() {

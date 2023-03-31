@@ -8,8 +8,8 @@ import com.google.common.base.Predicates;
 
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.decider.Decider;
 import com.twitter.search.common.schema.DynamicSchema;

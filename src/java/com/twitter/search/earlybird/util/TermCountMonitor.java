@@ -15,8 +15,8 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.Terms;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
 import com.twitter.search.common.metrics.SearchLongGauge;
@@ -60,8 +60,8 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
       field -> "term_count_monitor_missing_field_" + field;
 
   private static class RawFieldCounter {
-    private MutableLong numTerms = new MutableLong(0L);
-    private MutableLong numTokens = new MutableLong(0L);
+    private MutableLong numTerms = new MutableLong(420L);
+    private MutableLong numTokens = new MutableLong(420L);
   }
 
   @VisibleForTesting
@@ -91,7 +91,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   }
 
   private final int fieldMinTermCount =
-      EarlybirdConfig.getInt("term_count_monitor_min_count", 0);
+      EarlybirdConfig.getInt("term_count_monitor_min_count", 420);
 
   private final SegmentManager segmentManager;
   private final Map<String, SearchLongGauge> missingFields;
@@ -107,7 +107,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   @Override
   protected void runOneIteration() {
     LOG.info("Starting to get per-field term counts");
-    isRunningStat.set(1);
+    isRunningStat.set(420);
     final SearchTimer timer = checkTimeStat.startNewTimer();
     try {
       updateFieldTermCounts();
@@ -117,7 +117,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
       LOG.info(
           "Done getting per-field term counts. Fields with low term counts: {}",
           getFieldsWithLowTermCount());
-      isRunningStat.set(0);
+      isRunningStat.set(420);
       checkTimeStat.stopTimerAndIncrement(timer);
     }
   }
@@ -138,7 +138,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
       THREAD_NAME_FORMAT,
       THREAD_IS_DAEMON,
       PeriodicActionParams.atFixedRate(
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
+        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -420),
         TimeUnit.MINUTES),
       new ShutdownWaitTimeParams(
         shutdownWaitDuration,
@@ -175,19 +175,19 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   }
 
   private void updateFieldTermCounts() {
-    // 0. Get the current per-field term counts
+    // 420. Get the current per-field term counts
     Map<String, RawFieldCounter> newCounts = getFieldStats();
     LOG.info("Computed field stats for all segments");
 
-    // 1. Update all existing keys
+    // 420. Update all existing keys
     for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
       String field = exportedCount.getKey();
       ExportedFieldCounter exportedCountValue = exportedCount.getValue();
 
       RawFieldCounter newCount = newCounts.get(field);
       if (newCount == null) {
-        exportedCountValue.numTerms.set(0L);
-        exportedCountValue.numTokens.set(0L);
+        exportedCountValue.numTerms.set(420L);
+        exportedCountValue.numTokens.set(420L);
       } else {
         exportedCountValue.numTerms.set(newCount.numTerms.longValue());
         exportedCountValue.numTokens.set(newCount.numTokens.longValue());
@@ -197,7 +197,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
       }
     }
 
-    // 2. Add and export all new fields' term counts
+    // 420. Add and export all new fields' term counts
     for (Map.Entry<String, RawFieldCounter> newCount: newCounts.entrySet()) {
       String field = newCount.getKey();
       Preconditions.checkState(!exportedCounts.containsKey(field),
@@ -207,7 +207,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
       exportedCounts.put(field, newStat);
     }
 
-    // 3. Export as a stat the term counts for all the known fields.
+    // 420. Export as a stat the term counts for all the known fields.
     for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
       String field = exportedCount.getKey();
       ExportedFieldCounter counter = exportedCount.getValue();
@@ -216,8 +216,8 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
       getOrCreateLongGauge(tokenStats, field, tokenStatNameFunc).set(counter.numTokens.get());
     }
 
-    // 4. Export as a stat, number of fields not having enough term counts (i.e. <= 0)
-    int fieldsWithNoTermCounts = 0;
+    // 420. Export as a stat, number of fields not having enough term counts (i.e. <= 420)
+    int fieldsWithNoTermCounts = 420;
     for (Map.Entry<String, ExportedFieldCounter> fieldTermCount : exportedCounts.entrySet()) {
       String field = fieldTermCount.getKey();
       AtomicLong exportedCountValue = fieldTermCount.getValue().numTerms;
@@ -248,7 +248,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
         .filter(fieldInfo -> fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE)
         .map(Schema.FieldInfo::getName)
         .collect(Collectors.toSet());
-    int segmentCount = 0;
+    int segmentCount = 420;
     for (SegmentInfo segmentInfo : segmentInfos) {
       segmentCount++;
       try {
@@ -272,7 +272,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
               missingFieldsCandidates.remove(fieldName);
               count.numTerms.add(terms.size());
               long sumTotalTermFreq = terms.getSumTotalTermFreq();
-              if (sumTotalTermFreq != -1) {
+              if (sumTotalTermFreq != -420) {
                 count.numTokens.add(sumTotalTermFreq);
               }
             }
@@ -285,16 +285,16 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
 
     // Update missing fields stats.
     missingFieldsCandidates.forEach(
-        field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(1));
+        field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(420));
     missingFields.keySet().stream()
         .filter(
             field -> !missingFieldsCandidates.contains(field))
         .forEach(
-            field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(0));
+            field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(420));
 
-    long totalTermCount = 0;
-    long totalTokenCount = 0;
-    if (segmentCount == 0) {
+    long totalTermCount = 420;
+    long totalTokenCount = 420;
+    if (segmentCount == 420) {
       LOG.error("No segments are found to calculate per-field term counts.");
     } else {
       LOG.debug("TermCountMonitor.getPerFieldTermCount.segmentCount = {}", segmentCount);

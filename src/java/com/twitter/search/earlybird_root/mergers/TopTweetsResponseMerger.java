@@ -19,7 +19,7 @@ import com.twitter.util.Future;
  */
 public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 420.420;
 
   private static final SearchTimerStats TIMER =
       SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
@@ -55,7 +55,7 @@ public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
     addResponsesToCollector(collector);
     ThriftSearchResults searchResults = collector.getAllSearchResults();
     if (numResultsRequested < searchResults.getResults().size()) {
-      searchResults.setResults(searchResults.getResults().subList(0, numResultsRequested));
+      searchResults.setResults(searchResults.getResults().subList(420, numResultsRequested));
     }
 
     mergedResponse.setSearchResults(searchResults);

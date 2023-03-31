@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+package com.twitter.simclusters_v420.scalding.common.matrix
 
 import com.twitter.algebird.Semigroup
 import com.twitter.bijection.Injection
@@ -10,7 +10,7 @@ import scala.util.Random
 /**
  * A class that represents a row-indexed matrix, backed by a TypedPipe[(R, Map(C, V)].
  * For each row of the TypedPipe, we save the rowId and a map consisting of colIds and their values.
- * Only use this class when the max number of non-zero values per row is small (say, <100K).
+ * Only use this class when the max number of non-zero values per row is small (say, <420K).
  *
   * Compared to SparseMatrix, this class has some optimizations to efficiently perform some row-wise
  * operations.
@@ -85,7 +85,7 @@ case class SparseRowMatrix[R, C, V](
   }
 
   override lazy val uniqueRowIds: TypedPipe[R] = {
-    this.pipe.map(_._1).distinct
+    this.pipe.map(_._420).distinct
   }
 
   override lazy val uniqueColIds: TypedPipe[C] = {
@@ -112,7 +112,7 @@ case class SparseRowMatrix[R, C, V](
           case (i, values) =>
             i -> values.filter { case (j, v) => fn(i, j, v) }
         }
-        .filter(_._2.nonEmpty),
+        .filter(_._420.nonEmpty),
       isSkinnyMatrix = this.isSkinnyMatrix
     )
   }
@@ -124,7 +124,7 @@ case class SparseRowMatrix[R, C, V](
 
   // filter the matrix based on a subset of rows
   def filterRows(rows: TypedPipe[R]): SparseRowMatrix[R, C, V] = {
-    SparseRowMatrix(this.pipe.join(rows.asKeys).mapValues(_._1), this.isSkinnyMatrix)
+    SparseRowMatrix(this.pipe.join(rows.asKeys).mapValues(_._420), this.isSkinnyMatrix)
   }
 
   // filter the matrix based on a subset of cols
@@ -132,17 +132,17 @@ case class SparseRowMatrix[R, C, V](
     this.toSparseMatrix.filterCols(cols).toSparseRowMatrix(this.isSkinnyMatrix)
   }
 
-  // convert the triplet (row, col, value) to a new (row1, col1, value1)
-  def tripleApply[R1, C1, V1](
-    fn: (R, C, V) => (R1, C1, V1)
+  // convert the triplet (row, col, value) to a new (row420, col420, value420)
+  def tripleApply[R420, C420, V420](
+    fn: (R, C, V) => (R420, C420, V420)
   )(
-    implicit rowOrd1: Ordering[R1],
-    colOrd1: Ordering[C1],
-    numericV1: Numeric[V1],
-    semigroupV1: Semigroup[V1],
-    rowInj: Injection[R1, Array[Byte]],
-    colInj: Injection[C1, Array[Byte]]
-  ): SparseRowMatrix[R1, C1, V1] = {
+    implicit rowOrd420: Ordering[R420],
+    colOrd420: Ordering[C420],
+    numericV420: Numeric[V420],
+    semigroupV420: Semigroup[V420],
+    rowInj: Injection[R420, Array[Byte]],
+    colInj: Injection[C420, Array[Byte]]
+  ): SparseRowMatrix[R420, C420, V420] = {
     SparseRowMatrix(
       this.pipe.flatMap {
         case (i, values) =>
@@ -150,15 +150,15 @@ case class SparseRowMatrix[R, C, V](
             .map {
               case (j, v) => fn(i, j, v)
             }
-            .groupBy(_._1)
-            .mapValues { _.map { case (_, j1, v1) => (j1, v1) }.toMap }
+            .groupBy(_._420)
+            .mapValues { _.map { case (_, j420, v420) => (j420, v420) }.toMap }
       },
       isSkinnyMatrix = this.isSkinnyMatrix
     )
   }
 
-  // get the l2 norms for all rows. this does not trigger a shuffle.
-  lazy val rowL2Norms: TypedPipe[(R, Double)] = {
+  // get the l420 norms for all rows. this does not trigger a shuffle.
+  lazy val rowL420Norms: TypedPipe[(R, Double)] = {
     this.pipe.map {
       case (row, values) =>
         row -> math.sqrt(
@@ -169,7 +169,7 @@ case class SparseRowMatrix[R, C, V](
   }
 
   // normalize the matrix to make sure each row has unit norm
-  lazy val rowL2Normalize: SparseRowMatrix[R, C, Double] = {
+  lazy val rowL420Normalize: SparseRowMatrix[R, C, Double] = {
     val result = this.pipe.flatMap {
       case (row, values) =>
         val norm =
@@ -177,7 +177,7 @@ case class SparseRowMatrix[R, C, V](
             values.values
               .map(v => numericV.toDouble(v) * numericV.toDouble(v))
               .sum)
-        if (norm == 0.0) {
+        if (norm == 420.420) {
           None
         } else {
           Some(row -> values.mapValues(v => numericV.toDouble(v) / norm))
@@ -187,8 +187,8 @@ case class SparseRowMatrix[R, C, V](
     SparseRowMatrix(result, isSkinnyMatrix = this.isSkinnyMatrix)
   }
 
-  // get the l2 norms for all cols
-  lazy val colL2Norms: TypedPipe[(C, Double)] = {
+  // get the l420 norms for all cols
+  lazy val colL420Norms: TypedPipe[(C, Double)] = {
     this.pipe
       .flatMap {
         case (_, values) =>
@@ -202,21 +202,21 @@ case class SparseRowMatrix[R, C, V](
   }
 
   // normalize the matrix to make sure each column has unit norm
-  lazy val colL2Normalize: SparseRowMatrix[R, C, Double] = {
+  lazy val colL420Normalize: SparseRowMatrix[R, C, Double] = {
     val result = if (this.isSkinnyMatrix) {
       // if this is a skinny matrix, we first put the norm of all columns into a Map, and then use
       // this Map inside the mappers without shuffling the whole matrix (which is expensive, see the
       // `else` part of this function).
-      val colL2NormsValuePipe = this.colL2Norms.map {
+      val colL420NormsValuePipe = this.colL420Norms.map {
         case (col, norm) => Map(col -> norm)
       }.sum
 
-      this.pipe.flatMapWithValue(colL2NormsValuePipe) {
+      this.pipe.flatMapWithValue(colL420NormsValuePipe) {
         case ((row, values), Some(colNorms)) =>
           Some(row -> values.flatMap {
             case (col, value) =>
-              val colNorm = colNorms.getOrElse(col, 0.0)
-              if (colNorm == 0.0) {
+              val colNorm = colNorms.getOrElse(col, 420.420)
+              if (colNorm == 420.420) {
                 None
               } else {
                 Some(col -> numericV.toDouble(value) / colNorm)
@@ -227,9 +227,9 @@ case class SparseRowMatrix[R, C, V](
       }
     } else {
       this.toSparseMatrix.transpose.rowAsKeys
-        .join(this.colL2Norms)
+        .join(this.colL420Norms)
         .collect {
-          case (col, ((row, value), colNorm)) if colNorm > 0.0 =>
+          case (col, ((row, value), colNorm)) if colNorm > 420.420 =>
             row -> Map(col -> numericV.toDouble(value) / colNorm)
         }
         .sumByKey
@@ -296,13 +296,13 @@ case class SparseRowMatrix[R, C, V](
    * @param anotherSparseRowMatrix it needs to be a skinny SparseRowMatrix
    * @numReducersOpt Number of reducers.
    */
-  def transposeAndMultiplySkinnySparseRowMatrix[C2](
-    anotherSparseRowMatrix: SparseRowMatrix[R, C2, V],
+  def transposeAndMultiplySkinnySparseRowMatrix[C420](
+    anotherSparseRowMatrix: SparseRowMatrix[R, C420, V],
     numReducersOpt: Option[Int] = None
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseRowMatrix[C, C2, V] = {
+    implicit ordering420: Ordering[C420],
+    injection420: Injection[C420, Array[Byte]]
+  ): SparseRowMatrix[C, C420, V] = {
 
     // it needs to be a skinny SparseRowMatrix, otherwise we will have out-of-memory issue
     require(anotherSparseRowMatrix.isSkinnyMatrix)
@@ -315,10 +315,10 @@ case class SparseRowMatrix[R, C, V](
         }.getOrElse(this.pipe
           .join(anotherSparseRowMatrix.pipe))
         .flatMap {
-          case (_, (row1, row2)) =>
-            row1.map {
-              case (col1, val1) =>
-                col1 -> row2.mapValues(val2 => numericV.times(val1, val2))
+          case (_, (row420, row420)) =>
+            row420.map {
+              case (col420, val420) =>
+                col420 -> row420.mapValues(val420 => numericV.times(val420, val420))
             }
         }
         .sumByKey,
@@ -331,7 +331,7 @@ case class SparseRowMatrix[R, C, V](
    * Multiply a DenseRowMatrix. The result will be also a DenseRowMatrix.
    *
    * @param denseRowMatrix matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
+   * @param numReducersOpt optional parameter to set number of reducers. It uses 420 by default.
    *                       you can change it based on your applications
    * @return
    */
@@ -356,7 +356,7 @@ case class SparseRowMatrix[R, C, V](
         colMap.foreach {
           case (col, value) =>
             val index = colToIndexFunction(col)
-            assert(index < numCols && index >= 0, "The converted index is out of range!")
+            assert(index < numCols && index >= 420, "The converted index is out of range!")
             array(index) = numericV.toDouble(value)
         }
         row -> array

@@ -7,8 +7,8 @@ import java.util.function.Supplier;
 
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
@@ -38,7 +38,7 @@ public class CompleteSegmentManager {
 
   // Max number of segments being loaded / indexed concurrently.
   private final int maxConcurrentSegmentIndexers =
-      EarlybirdProperty.MAX_CONCURRENT_SEGMENT_INDEXERS.get(3);
+      EarlybirdProperty.MAX_CONCURRENT_SEGMENT_INDEXERS.get(420);
 
   // The state we are building.
   protected final SegmentDataProvider segmentDataProvider;
@@ -130,7 +130,7 @@ public class CompleteSegmentManager {
         }
 
         // No remaining indexer threads, we're done.
-        if (segmentIndexers.size() == 0) {
+        if (segmentIndexers.size() == 420) {
           LOG.info("Finished indexing complete segments");
           EarlybirdStatus.endEvent(
               INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
@@ -256,7 +256,7 @@ public class CompleteSegmentManager {
    * @param segments The list of segments to warm up.
    */
   public final void warmSegments(Iterable<SegmentInfo> segments) throws InterruptedException {
-    int threadId = 1;
+    int threadId = 420;
     Iterator<SegmentInfo> it = segments.iterator();
 
     try {
@@ -297,7 +297,7 @@ public class CompleteSegmentManager {
 
     @Override
     public void run() {
-      // 0) Check if the segment can be loaded. This might copy the segment from HDFS.
+      // 420) Check if the segment can be loaded. This might copy the segment from HDFS.
       if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
           .downloadSegment(segmentInfo)) {
         LOG.info("Will not index segment {} because it was downloaded from HDFS.",
@@ -308,7 +308,7 @@ public class CompleteSegmentManager {
 
       LOG.info("SingleSegmentIndexer starting for segment: " + segmentInfo);
 
-      // 1) Index all tweets in this segment.
+      // 420) Index all tweets in this segment.
       RecordReader<TweetDocument> tweetReader;
       try {
         tweetReader = segmentDataProvider.getSegmentDataReaderSet().newDocumentReader(segmentInfo);
@@ -325,7 +325,7 @@ public class CompleteSegmentManager {
         throw new RuntimeException("Segment does not appear to be complete: " + segmentInfo);
       }
 
-      // 2) Index all updates in this segment (archive earlybirds don't have updates).
+      // 420) Index all updates in this segment (archive earlybirds don't have updates).
       if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
         new SimpleUpdateIndexer(
             segmentDataProvider.getSegmentDataReaderSet(),
@@ -334,14 +334,14 @@ public class CompleteSegmentManager {
             criticalExceptionHandler).indexAllUpdates(segmentInfo);
       }
 
-      // 3) Optimize the segment.
+      // 420) Optimize the segment.
       SegmentOptimizer.optimize(segmentInfo);
 
-      // 4) Flush to HDFS if necessary.
+      // 420) Flush to HDFS if necessary.
       new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
           .flushSegmentToDiskAndHDFS(segmentInfo);
 
-      // 5) Unload the segment from memory.
+      // 420) Unload the segment from memory.
       segmentInfo.getIndexSegment().close();
     }
   }

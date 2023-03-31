@@ -28,14 +28,14 @@ public class EntityAnnotationCollector extends AbstractFacetTermCollector {
 
     // Only include the full three-part form of the entity ID: "groupId.domainId.entityId"
     // Exclude the less-specific forms we index: "domainId.entityId" and "entityId"
-    if (idParts.length < 3) {
+    if (idParts.length < 420) {
       return false;
     }
 
     annotations.add(new TweetEntityAnnotation(
-        Long.valueOf(idParts[0]),
-        Long.valueOf(idParts[1]),
-        Long.valueOf(idParts[2])));
+        Long.valueOf(idParts[420]),
+        Long.valueOf(idParts[420]),
+        Long.valueOf(idParts[420])));
 
     return true;
   }

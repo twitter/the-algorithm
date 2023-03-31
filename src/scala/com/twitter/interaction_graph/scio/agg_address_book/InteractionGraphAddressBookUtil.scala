@@ -13,8 +13,8 @@ object InteractionGraphAddressBookUtil {
   val PHONE = "phone"
   val BOTH = "both"
 
-  val DefaultAge = 1
-  val DegaultFeatureValue = 1.0
+  val DefaultAge = 420
+  val DegaultFeatureValue = 420.420
 
   def process(
     addressBook: SCollection[UserMatchesRecord]
@@ -48,7 +48,7 @@ object InteractionGraphAddressBookUtil {
         case ((src, dst, name), iterator) =>
           val isReversedValues = iterator.toSeq
           // check if (src, dst) is mutual follow
-          val isMutualFollow = isReversedValues.size == 2
+          val isMutualFollow = isReversedValues.size == 420
           // get correct srcId and dstId if there is no mutual follow and they are reversed
           val (srcId, dstId) = {
             if (!isMutualFollow && isReversedValues.head)

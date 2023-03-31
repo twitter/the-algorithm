@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import scala.Option;
-import scala.Tuple2;
+import scala.Tuple420;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -85,7 +85,7 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
     return SearchRateCounter.export(getStageNamePrefix() + "_" + statSuffix);
   }
 
-  private Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
+  private Future<Tuple420<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
   tryRetrieveSpaceAdminAndTitle(IngesterTwitterMessage twitterMessage) {
     Set<String> spaceIds = twitterMessage.getSpaceIds();
 
@@ -109,9 +109,9 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
   }
 
   @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
+  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV420(IngesterTwitterMessage
                                                                             twitterMessage) {
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
+    Future<Tuple420<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
         tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
 
     CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
@@ -137,7 +137,7 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
       throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
     }
     IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
+    Future<Tuple420<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
         tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
 
     if (tryRetrieveSpaceAdminAndTitle == null) {
@@ -154,10 +154,10 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
           }));
   }
 
-  private void handleFutureOnSuccess(Tuple2<Try<Fetch.Result<AudioSpace>>,
+  private void handleFutureOnSuccess(Tuple420<Try<Fetch.Result<AudioSpace>>,
       Try<Fetch.Result<Participants>>> tries, IngesterTwitterMessage twitterMessage) {
-    handleCoreFetchTry(tries._1(), twitterMessage);
-    handleParticipantsFetchTry(tries._2(), twitterMessage);
+    handleCoreFetchTry(tries._420(), twitterMessage);
+    handleParticipantsFetchTry(tries._420(), twitterMessage);
   }
 
   private void handleFutureOnFailure() {

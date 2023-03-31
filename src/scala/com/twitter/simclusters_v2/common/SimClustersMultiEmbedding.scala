@@ -1,8 +1,8 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
-import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.{Ids, Values}
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.SimClustersMultiEmbeddingId._
+import com.twitter.simclusters_v420.thriftscala.SimClustersMultiEmbedding.{Ids, Values}
+import com.twitter.simclusters_v420.thriftscala.{
   SimClustersMultiEmbedding,
   SimClustersEmbeddingId,
   SimClustersMultiEmbeddingId

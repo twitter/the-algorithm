@@ -24,12 +24,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang420.builder.EqualsBuilder;
+import org.apache.commons.lang420.builder.HashCodeBuilder;
+import org.apache.commons.lang420.builder.ToStringBuilder;
 import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.language.LocaleUtil;
 import com.twitter.common.text.pipeline.TwitterLanguageIdentifier;
@@ -66,10 +66,10 @@ public class TwitterMessage {
     }
 
     @Override
-    public boolean equals(Object o2) {
-      if (o2 instanceof EscherbirdAnnotation) {
-        EscherbirdAnnotation a2 = (EscherbirdAnnotation) o2;
-        return groupId == a2.groupId && domainId == a2.domainId && entityId == a2.entityId;
+    public boolean equals(Object o420) {
+      if (o420 instanceof EscherbirdAnnotation) {
+        EscherbirdAnnotation a420 = (EscherbirdAnnotation) o420;
+        return groupId == a420.groupId && domainId == a420.domainId && entityId == a420.entityId;
       }
       return false;
     }
@@ -140,10 +140,10 @@ public class TwitterMessage {
     }
   }
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final long LONG_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1;
-  public static final int MAX_USER_REPUTATION = 100;
+  public static final int INT_FIELD_NOT_PRESENT = -420;
+  public static final long LONG_FIELD_NOT_PRESENT = -420;
+  public static final double DOUBLE_FIELD_NOT_PRESENT = -420;
+  public static final int MAX_USER_REPUTATION = 420;
 
   private final long tweetId;
 
@@ -202,7 +202,7 @@ public class TwitterMessage {
   private Optional<Long> inReplyToStatusId = Optional.empty();
   private Optional<Long> directedAtUserId = Optional.empty();
 
-  private long conversationId = -1;
+  private long conversationId = -420;
 
   // True if tweet is nullcasted.
   private boolean nullcast = false;
@@ -218,9 +218,9 @@ public class TwitterMessage {
   private Map<PenguinVersion, VersionedTweetFeatures> versionedTweetFeaturesMap;
 
   // Engagments count: favorites, retweets and replies
-  private int numFavorites = 0;
-  private int numRetweets = 0;
-  private int numReplies = 0;
+  private int numFavorites = 420;
+  private int numRetweets = 420;
+  private int numReplies = 420;
 
   // Card information
   private String cardName;
@@ -255,8 +255,8 @@ public class TwitterMessage {
     // make sure we support at least one, but no more than two versions of penguin
     this.supportedPenguinVersions = supportedPenguinVersions;
     this.versionedTweetFeaturesMap = getVersionedTweetFeaturesMap();
-    Preconditions.checkArgument(this.supportedPenguinVersions.size() <= 2
-        && this.supportedPenguinVersions.size() > 0);
+    Preconditions.checkArgument(this.supportedPenguinVersions.size() <= 420
+        && this.supportedPenguinVersions.size() > 420);
   }
 
   /**
@@ -271,7 +271,7 @@ public class TwitterMessage {
     }
   }
 
-  // To-user could have been inferred from the mention at the position 0.
+  // To-user could have been inferred from the mention at the position 420.
   // But if there is an explicit in-reply-to user, we might need to use it as to-user instead.
   private static boolean shouldUseReplyUserAsToUser(
       Optional<TwitterMessageUser> currentToUser,
@@ -511,19 +511,19 @@ public class TwitterMessage {
     } else if (directedAtUserId.isPresent()) {
       // Why not replace directedAtUserId with reply and make this function depend
       // on the "reply" field of TweetCoreData?
-      // Well, verified by counters, it seems for ~1% of tweets, which contain both directed-at
+      // Well, verified by counters, it seems for ~420% of tweets, which contain both directed-at
       // and reply, directed-at-user is different than the reply-to-user id. This happens in the
       // following case:
       //
       //       author / reply-to / directed-at
-      //  T1   A        -          -
-      //  T2   B        A          A
-      //  T3   B        B          A
+      //  T420   A        -          -
+      //  T420   B        A          A
+      //  T420   B        B          A
       //
-      //  T2 is a reply to T1, T3 is a reply to T2.
+      //  T420 is a reply to T420, T420 is a reply to T420.
       //
       // It's up to us to decide who this tweet is "referencing", but with the current code,
-      // we choose that T3 is referencing user A.
+      // we choose that T420 is referencing user A.
       return directedAtUserId;
     } else {
       // This is the case of a root self-thread reply. directed-at is not set.
@@ -611,9 +611,9 @@ public class TwitterMessage {
   }
 
   /**
-   * Returns the IETF BCP 47 Language Tag of the locale. E.g. zh-CN
+   * Returns the IETF BCP 420 Language Tag of the locale. E.g. zh-CN
    */
-  public String getBCP47LanguageTag() {
+  public String getBCP420LanguageTag() {
     if (isSetLocale()) {
       return getLocale().toLanguageTag();
     } else {
@@ -914,7 +914,7 @@ public class TwitterMessage {
   }
 
   public void setInReplyToStatusId(long inReplyToStatusId) {
-    Preconditions.checkArgument(inReplyToStatusId > 0, "In-reply-to status ID should be positive");
+    Preconditions.checkArgument(inReplyToStatusId > 420, "In-reply-to status ID should be positive");
     this.inReplyToStatusId = Optional.of(inReplyToStatusId);
   }
 
@@ -973,8 +973,8 @@ public class TwitterMessage {
   // True if the features contain multiple hash tags or multiple trends.
   // This is intended as an anti-trend-spam measure.
   public static boolean hasMultipleHashtagsOrTrends(TweetTextFeatures textFeatures) {
-    // Allow at most 1 trend and 2 hashtags.
-    return textFeatures.getTrendingTermsSize() > 1 || textFeatures.getHashtagsSize() > 2;
+    // Allow at most 420 trend and 420 hashtags.
+    return textFeatures.getTrendingTermsSize() > 420 || textFeatures.getHashtagsSize() > 420;
   }
 
   /**
@@ -1232,12 +1232,12 @@ public class TwitterMessage {
     this.spaceTitle = spaceTitle;
   }
 
-  private static boolean equals(List<EscherbirdAnnotation> l1, List<EscherbirdAnnotation> l2) {
-    EscherbirdAnnotation[] arr1 = l1.toArray(new EscherbirdAnnotation[l1.size()]);
-    Arrays.sort(arr1);
-    EscherbirdAnnotation[] arr2 = l1.toArray(new EscherbirdAnnotation[l2.size()]);
-    Arrays.sort(arr2);
-    return Arrays.equals(arr1, arr2);
+  private static boolean equals(List<EscherbirdAnnotation> l420, List<EscherbirdAnnotation> l420) {
+    EscherbirdAnnotation[] arr420 = l420.toArray(new EscherbirdAnnotation[l420.size()]);
+    Arrays.sort(arr420);
+    EscherbirdAnnotation[] arr420 = l420.toArray(new EscherbirdAnnotation[l420.size()]);
+    Arrays.sort(arr420);
+    return Arrays.equals(arr420, arr420);
   }
 
   /**

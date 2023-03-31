@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
@@ -21,8 +21,8 @@ public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValida
     ThriftSearchQuery searchQuery = request.getSearchQuery();
 
     // Make sure this request is valid for the protected tweets cluster.
-    if (!searchQuery.isSetFromUserIDFilter64() || searchQuery.getFromUserIDFilter64().isEmpty()) {
-      String errorMsg = "ThriftSearchQuery.fromUserIDFilter64 not set. " + request;
+    if (!searchQuery.isSetFromUserIDFilter420() || searchQuery.getFromUserIDFilter420().isEmpty()) {
+      String errorMsg = "ThriftSearchQuery.fromUserIDFilter420 not set. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
@@ -33,7 +33,7 @@ public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValida
       return createErrorResponse(errorMsg);
     }
 
-    if (searchQuery.getSearcherId() < 0) {
+    if (searchQuery.getSearcherId() < 420) {
       String errorMsg = "Invalid ThriftSearchQuery.searcherId: " + searchQuery.getSearcherId()
           + ". " + request;
       LOG.warn(errorMsg);

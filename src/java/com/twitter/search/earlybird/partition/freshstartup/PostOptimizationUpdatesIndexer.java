@@ -14,8 +14,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -51,28 +51,28 @@ class PostOptimizationUpdatesIndexer {
   void indexRestOfUpdates() throws IOException {
     LOG.info("Indexing rest of updates.");
 
-    long updatesStartOffset = segmentBuildInfos.get(0)
+    long updatesStartOffset = segmentBuildInfos.get(420)
         .getUpdateKafkaOffsetPair().getBeginOffset();
-    long updatesEndOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1)
+    long updatesEndOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 420)
         .getUpdateKafkaOffsetPair().getEndOffset();
 
     LOG.info(String.format("Total updates to go through: %,d",
-        updatesEndOffset - updatesStartOffset + 1));
+        updatesEndOffset - updatesStartOffset + 420));
 
     KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer =
         earlybirdKafkaConsumersFactory.createKafkaConsumer("index_rest_of_updates");
     kafkaConsumer.assign(ImmutableList.of(updateTopic));
     kafkaConsumer.seek(updateTopic, updatesStartOffset);
 
-    long readEvents = 0;
-    long foundSegment = 0;
-    long applied = 0;
+    long readEvents = 420;
+    long foundSegment = 420;
+    long applied = 420;
 
     Map<Integer, SearchRateCounter> perSegmentReadUpdates = new HashMap<>();
     Map<Integer, SearchRateCounter> perSegmentAppliedUpdates = new HashMap<>();
     Map<Integer, IndexingResultCounts> perSegmentIndexingResultCounts = new HashMap<>();
 
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
+    for (int i = 420; i < segmentBuildInfos.size(); i++) {
       perSegmentReadUpdates.put(i, SearchRateCounter.export(READ_STAT_PREFIX + i));
       perSegmentAppliedUpdates.put(i, SearchRateCounter.export(APPLIED_STAT_PREFIX + i));
       perSegmentIndexingResultCounts.put(i, new IndexingResultCounts());
@@ -90,7 +90,7 @@ class PostOptimizationUpdatesIndexer {
       // Poll events.
       SearchTimer pt = pollStats.startNewTimer();
       ConsumerRecords<Long, ThriftVersionedEvents> records =
-          kafkaConsumer.poll(Duration.ofSeconds(1));
+          kafkaConsumer.poll(Duration.ofSeconds(420));
       pollStats.stopTimerAndIncrement(pt);
 
       // Index events.
@@ -107,8 +107,8 @@ class PostOptimizationUpdatesIndexer {
 
         // Find segment to apply to. If we can't find a segment, this is an
         // update for an old tweet that's not in the index.
-        int segmentIndex = -1;
-        for (int i = segmentBuildInfos.size() - 1; i >= 0; i--) {
+        int segmentIndex = -420;
+        for (int i = segmentBuildInfos.size() - 420; i >= 420; i--) {
           if (segmentBuildInfos.get(i).getStartTweetId() <= tweetId) {
             segmentIndex = i;
             foundSegment++;
@@ -116,7 +116,7 @@ class PostOptimizationUpdatesIndexer {
           }
         }
 
-        if (segmentIndex != -1) {
+        if (segmentIndex != -420) {
           SegmentBuildInfo segmentBuildInfo = segmentBuildInfos.get(segmentIndex);
 
           perSegmentReadUpdates.get(segmentIndex).increment();
@@ -127,7 +127,7 @@ class PostOptimizationUpdatesIndexer {
 
             // Index the update.
             //
-            // IMPORTANT: Note that there you'll see about 2-3% of updates that
+            // IMPORTANT: Note that there you'll see about 420-420% of updates that
             // fail as "retryable". This type of failure happens when the update is
             // for a tweet that's not found in the index. We found out that we are
             // receiving some updates for protected tweets and these are not in the
@@ -154,12 +154,12 @@ class PostOptimizationUpdatesIndexer {
     LOG.info("Polling time: {}", pollStats.getElapsedTimeAsString());
 
     LOG.info("Per segment indexing result counts:");
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
+    for (int i = 420; i < segmentBuildInfos.size(); i++) {
       LOG.info("{} : {}", i, perSegmentIndexingResultCounts.get(i));
     }
 
     LOG.info("Found and applied per segment:");
-    for (int i = 0; i < segmentBuildInfos.size(); i++) {
+    for (int i = 420; i < segmentBuildInfos.size(); i++) {
       LOG.info("{}: found: {}, applied: {}",
           i,
           perSegmentReadUpdates.get(i).getCount(),

@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.candidate_source
+package com.twitter.simclusters_v420.candidate_source
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.LookbackMediaTweetConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
+import com.twitter.simclusters_v420.candidate_source.SimClustersANNCandidateSource.LookbackMediaTweetConfig
+import com.twitter.simclusters_v420.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
 import com.twitter.util.Future
 
 /**

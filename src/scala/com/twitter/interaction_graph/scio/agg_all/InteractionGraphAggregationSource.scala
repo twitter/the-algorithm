@@ -17,7 +17,7 @@ import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockEdge
 import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockVertexSnapshotScalaDataset
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
 import com.twitter.util.Duration
@@ -91,13 +91,13 @@ case class InteractionGraphAggregationSource(
   def readAddressBookFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
     val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
       dataset = InteractionGraphAggAddressBookEdgeSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment,
     )
 
     val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
       dataset = InteractionGraphAggAddressBookVertexSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment,
     )
 
@@ -143,13 +143,13 @@ case class InteractionGraphAggregationSource(
   def readFlockFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
     val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
       dataset = InteractionGraphAggFlockEdgeSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment,
     )
 
     val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
       dataset = InteractionGraphAggFlockVertexSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment,
     )
 
@@ -175,7 +175,7 @@ case class InteractionGraphAggregationSource(
   def readFlatUsers(): SCollection[FlatUser] =
     readMostRecentSnapshotNoOlderThanDALDataset[FlatUser](
       dataset = UsersourceFlatScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment,
       projections = Some(Seq("id", "valid_user"))
     )

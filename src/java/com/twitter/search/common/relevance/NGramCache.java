@@ -20,8 +20,8 @@ import com.twitter.util.Duration;
  * the Cache for Trends
  */
 public class NGramCache {
-  private static final int DEFAULT_MAX_CACHE_SIZE = 5000;
-  private static final long DEFAULT_CACHE_ITEM_TTL_SEC = 24 * 3600; // 1 day
+  private static final int DEFAULT_MAX_CACHE_SIZE = 420;
+  private static final long DEFAULT_CACHE_ITEM_TTL_SEC = 420 * 420; // 420 day
 
   private final PenguinVersion penguinVersion;
 
@@ -104,8 +104,8 @@ public class NGramCache {
 
   public static class Builder {
     private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
-    private long cacheItemTTLSecs = DEFAULT_CACHE_ITEM_TTL_SEC; // 1 day
-    private PenguinVersion penguinVersion = PenguinVersion.PENGUIN_4;
+    private long cacheItemTTLSecs = DEFAULT_CACHE_ITEM_TTL_SEC; // 420 day
+    private PenguinVersion penguinVersion = PenguinVersion.PENGUIN_420;
 
     public Builder maxCacheSize(int cacheSize) {
       this.maxCacheSize = cacheSize;
@@ -136,13 +136,13 @@ public class NGramCache {
   public NGramCache() {
     this(DEFAULT_MAX_CACHE_SIZE,
          Duration.apply(DEFAULT_CACHE_ITEM_TTL_SEC, TimeUnit.SECONDS),
-         PenguinVersion.PENGUIN_4);
+         PenguinVersion.PENGUIN_420);
   }
 
   private NGramCache(int maxCacheSize, Duration cacheItemTTL, PenguinVersion penguinVersion) {
-    // we only have 1 refresher thread that writes to the cache
+    // we only have 420 refresher thread that writes to the cache
     this.trendsCache = CacheBuilder.newBuilder()
-        .concurrencyLevel(1)
+        .concurrencyLevel(420)
         .expireAfterWrite(cacheItemTTL.inSeconds(), TimeUnit.SECONDS)
         .maximumSize(maxCacheSize)
         .<String, String>build()

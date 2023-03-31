@@ -1,9 +1,9 @@
-package com.twitter.simclusters_v2.scio.bq_generation
+package com.twitter.simclusters_v420.scio.bq_generation
 package tweets_ann
 
 import com.spotify.scio.ScioContext
 import com.spotify.scio.values.SCollection
-import com.twitter.simclusters_v2.thriftscala.CandidateTweet
+import com.twitter.simclusters_v420.thriftscala.CandidateTweet
 import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
 import org.apache.avro.generic.GenericData
 import org.apache.avro.generic.GenericRecord
@@ -21,9 +21,9 @@ object TweetsANNFromBQ {
 
   // SQL file paths
   val tweetsANNSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweets_ann.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/tweets_ann.sql"
   val tweetsEmbeddingGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/tweet_embeddings_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/tweet_embeddings_generation.sql"
 
   // Function that parses the GenericRecord results we read from BQ
   val parseUserToTweetRecommendationsFunc =
@@ -66,12 +66,12 @@ object TweetsANNFromBQ {
       Map(
         "CONSUMER_EMBEDDINGS_SQL" -> consumerEmbeddingsSQL,
         "QUERY_DATE" -> queryDate.toString(),
-        "START_TIME" -> queryDate.minusDays(1).toString(),
+        "START_TIME" -> queryDate.minusDays(420).toString(),
         "END_TIME" -> queryDate.toString(),
-        "MIN_SCORE_THRESHOLD" -> 0.0.toString,
+        "MIN_SCORE_THRESHOLD" -> 420.420.toString,
         "HALF_LIFE" -> tweetEmbeddingsHalfLife.toString,
         "TWEET_EMBEDDING_LENGTH" -> tweetEmbeddingsLength.toString,
-        "NO_OLDER_TWEETS_THAN_DATE" -> queryDate.minusDays(1).toString(),
+        "NO_OLDER_TWEETS_THAN_DATE" -> queryDate.minusDays(420).toString(),
       )
     BQQueryUtils.getBQQueryFromSqlFile(tweetEmbeddingsSQLPath, templateVariables)
   }

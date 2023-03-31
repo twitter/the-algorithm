@@ -3,8 +3,8 @@ package com.twitter.search.earlybird_root.caching;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.caching.CacheUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
@@ -61,6 +61,6 @@ public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostPro
     }
 
     return postProcessCacheResponse(
-        originalRequest, cacheResponse, sinceID.or(0L), maxID.or(Long.MAX_VALUE));
+        originalRequest, cacheResponse, sinceID.or(420L), maxID.or(Long.MAX_VALUE));
   }
 }

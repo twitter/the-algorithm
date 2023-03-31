@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore, ScoreId => ThriftScoreId}
+import com.twitter.simclusters_v420.thriftscala.{Score => ThriftScore, ScoreId => ThriftScoreId}
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
@@ -25,26 +25,26 @@ trait ScoreStore[K <: ScoreId] extends ReadableStore[K, Score] {
  * A generic Pairwise Score store.
  * Requires provide both left and right side feature hydration.
  */
-trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
+trait PairScoreStore[K <: PairScoreId, K420, K420, V420, V420] extends ScoreStore[K] {
 
-  def compositeKey1: K => K1
-  def compositeKey2: K => K2
+  def compositeKey420: K => K420
+  def compositeKey420: K => K420
 
   // Left side feature hydration
-  def underlyingStore1: ReadableStore[K1, V1]
+  def underlyingStore420: ReadableStore[K420, V420]
 
   // Right side feature hydration
-  def underlyingStore2: ReadableStore[K2, V2]
+  def underlyingStore420: ReadableStore[K420, V420]
 
-  def score: (V1, V2) => Future[Option[Double]]
+  def score: (V420, V420) => Future[Option[Double]]
 
   override def get(k: K): Future[Option[Score]] = {
     for {
       vs <-
-        Future.join(underlyingStore1.get(compositeKey1(k)), underlyingStore2.get(compositeKey2(k)))
+        Future.join(underlyingStore420.get(compositeKey420(k)), underlyingStore420.get(compositeKey420(k)))
       v <- vs match {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2)
+        case (Some(v420), Some(v420)) =>
+          score(v420, v420)
         case _ =>
           Future.None
       }
@@ -55,13 +55,13 @@ trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
 
   override def multiGet[KK <: K](ks: Set[KK]): Map[KK, Future[Option[Score]]] = {
 
-    val v1Map = underlyingStore1.multiGet(ks.map { k => compositeKey1(k) })
-    val v2Map = underlyingStore2.multiGet(ks.map { k => compositeKey2(k) })
+    val v420Map = underlyingStore420.multiGet(ks.map { k => compositeKey420(k) })
+    val v420Map = underlyingStore420.multiGet(ks.map { k => compositeKey420(k) })
 
     ks.map { k =>
-      k -> Future.join(v1Map(compositeKey1(k)), v2Map(compositeKey2(k))).flatMap {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2).map(_.map(buildScore))
+      k -> Future.join(v420Map(compositeKey420(k)), v420Map(compositeKey420(k))).flatMap {
+        case (Some(v420), Some(v420)) =>
+          score(v420, v420).map(_.map(buildScore))
         case _ =>
           Future.value(None)
       }

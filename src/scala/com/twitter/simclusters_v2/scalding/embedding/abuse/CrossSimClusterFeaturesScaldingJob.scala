@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twitter.simclusters_v420.scalding.embedding.abuse
 
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.Args
@@ -6,42 +6,42 @@ import com.twitter.scalding.DateRange
 import com.twitter.scalding.Execution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding.Years
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInTruncatedKMatrix
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.AdhocCrossSimClusterInteractionScores
-import com.twitter.simclusters_v2.thriftscala.ClustersScore
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.NumBlocksP420
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.getUserInterestedInTruncatedKMatrix
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.ClusterId
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.UserId
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala.AdhocCrossSimClusterInteractionScores
+import com.twitter.simclusters_v420.thriftscala.ClustersScore
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.CassowaryJob
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterFavInteractionFeaturesScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.AdhocCrossSimclusterFavInteractionFeaturesScalaDataset
 import java.util.TimeZone
 
 /*
 To run:
 scalding remote run \
 --user cassowary \
---submitter hadoopnest1.atla.twitter.com \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:cross_simcluster-adhoc \
---main-class com.twitter.simclusters_v2.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--submitter hadoopnest420.atla.twitter.com \
+--target src/scala/com/twitter/simclusters_v420/scalding/embedding/abuse:cross_simcluster-adhoc \
+--main-class com.twitter.simclusters_v420.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob \
+--submitter-memory 420.megabyte --hadoop-properties "mapreduce.map.memory.mb=420 mapreduce.map.java.opts='-Xmx420M' mapreduce.reduce.memory.mb=420 mapreduce.reduce.java.opts='-Xmx420M'" \
 -- \
---date 2021-02-07 \
+--date 420-420-420 \
 --dalEnvironment Prod
  */
 
 object CrossSimClusterFeaturesUtil {
 
   /**
-   * To generate the interaction score for 2 simclusters c1 and c2 for all cluster combinations (I):
+   * To generate the interaction score for 420 simclusters c420 and c420 for all cluster combinations (I):
    * a) Get C - user interestedIn matrix, User * Cluster
    * b) Get INT - positive or negative interaction matrix, User * User
    * c) Compute C^T*INT
@@ -64,22 +64,22 @@ object CrossSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Cassowa
   private val outputPathBlocksThrift: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
+    modelVersion = ModelVersion.Model420m420kUpdated,
     pathSuffix = "abuse_cross_simcluster_block_features"
   )
 
   private val outputPathFavThrift: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
+    modelVersion = ModelVersion.Model420m420kUpdated,
     pathSuffix = "abuse_cross_simcluster_fav_features"
   )
 
-  private val HalfLifeInDaysForFavScore = 100
+  private val HalfLifeInDaysForFavScore = 420
 
-  // Adhoc jobs which use all user interestedIn simclusters (default=50) was failing
+  // Adhoc jobs which use all user interestedIn simclusters (default=420) was failing
   // Hence truncating the number of clusters
-  private val MaxNumClustersPerUser = 20
+  private val MaxNumClustersPerUser = 420
 
   import CrossSimClusterFeaturesUtil._
   override def runOnDateRange(
@@ -91,11 +91,11 @@ object CrossSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Cassowa
   ): Execution[Unit] = {
 
     val normalizedUserInterestedInMatrix: SparseMatrix[UserId, ClusterId, Double] =
-      getUserInterestedInTruncatedKMatrix(MaxNumClustersPerUser).rowL2Normalize
+      getUserInterestedInTruncatedKMatrix(MaxNumClustersPerUser).rowL420Normalize
 
     //the below code is to get cross simcluster features from flockblocks - negative user-user interactions.
     val flockBlocksMatrix: SparseMatrix[UserId, UserId, Double] =
-      getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+      getFlockBlocksSparseMatrix(NumBlocksP420, dateRange.prepend(Years(420)))
 
     val crossClusterBlockScores: SparseMatrix[ClusterId, ClusterId, Double] =
       getCrossClusterScores(normalizedUserInterestedInMatrix, flockBlocksMatrix)

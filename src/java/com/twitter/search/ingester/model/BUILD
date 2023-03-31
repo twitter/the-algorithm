@@ -1,12 +1,12 @@
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "420rdparty/jvm/com/google/code/findbugs:jsr420",
+        "420rdparty/jvm/com/google/guava",
+        "420rdparty/jvm/org/apache/thrift:libthrift",
         "cuad/projects/ner/thrift/src/main/thrift:thrift-java",
         "src/java/com/twitter/common/text/token",
         "src/java/com/twitter/common_internal/text/version",

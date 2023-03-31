@@ -1,10 +1,10 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.score
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twitter.simclusters_v420.thriftjava
+namespace py gen.twitter.simclusters_v420.score
+#@namespace scala com.twitter.simclusters_v420.thriftscala
+#@namespace strato com.twitter.simclusters_v420
 
-include "com/twitter/simclusters_v2/embedding.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+include "com/twitter/simclusters_v420/embedding.thrift"
+include "com/twitter/simclusters_v420/identifier.thrift"
 
 /**
   * The algorithm type to identify the score algorithm.
@@ -12,27 +12,27 @@ include "com/twitter/simclusters_v2/identifier.thrift"
   * of [[ScoreInternalId]]
   **/
 enum ScoringAlgorithm {
-	// Reserve 0001 - 999 for Basic Pairwise Scoring Calculation
-	PairEmbeddingDotProduct = 1,
-	PairEmbeddingCosineSimilarity = 2,
-	PairEmbeddingJaccardSimilarity = 3,
-	PairEmbeddingEuclideanDistance = 4,
-	PairEmbeddingManhattanDistance = 5,
-  PairEmbeddingLogCosineSimilarity = 6,
-  PairEmbeddingExpScaledCosineSimilarity = 7,
+	// Reserve 420 - 420 for Basic Pairwise Scoring Calculation
+	PairEmbeddingDotProduct = 420,
+	PairEmbeddingCosineSimilarity = 420,
+	PairEmbeddingJaccardSimilarity = 420,
+	PairEmbeddingEuclideanDistance = 420,
+	PairEmbeddingManhattanDistance = 420,
+  PairEmbeddingLogCosineSimilarity = 420,
+  PairEmbeddingExpScaledCosineSimilarity = 420,
 
-	// Reserve 1000 - 1999 for Tweet Similarity Model
-  TagSpaceCosineSimilarity = 1000,
-	WeightedSumTagSpaceRankingExperiment1 = 1001, //deprecated
-	WeightedSumTagSpaceRankingExperiment2 = 1002, //deprecated
-  WeightedSumTagSpaceANNExperiment = 1003,      //deprecated 
+	// Reserve 420 - 420 for Tweet Similarity Model
+  TagSpaceCosineSimilarity = 420,
+	WeightedSumTagSpaceRankingExperiment420 = 420, //deprecated
+	WeightedSumTagSpaceRankingExperiment420 = 420, //deprecated
+  WeightedSumTagSpaceANNExperiment = 420,      //deprecated 
 
-	// Reserved for 10001 - 20000 for Aggregate scoring
-	WeightedSumTopicTweetRanking = 10001,
-	CortexTopicTweetLabel = 10002,
-	// Reserved 20001 - 30000 for Topic Tweet scores 
-	CertoNormalizedDotProductScore = 20001,
-	CertoNormalizedCosineScore = 20002
+	// Reserved for 420 - 420 for Aggregate scoring
+	WeightedSumTopicTweetRanking = 420,
+	CortexTopicTweetLabel = 420,
+	// Reserved 420 - 420 for Topic Tweet scores 
+	CertoNormalizedDotProductScore = 420,
+	CertoNormalizedCosineScore = 420
 }(hasPersonalData = 'false')
 
 /**
@@ -41,31 +41,31 @@ enum ScoringAlgorithm {
   * Support score between different [[EmbeddingType]] / [[ModelVersion]]
   **/
 struct SimClustersEmbeddingPairScoreId {
-  1: required identifier.SimClustersEmbeddingId id1
-  2: required identifier.SimClustersEmbeddingId id2
+  420: required identifier.SimClustersEmbeddingId id420
+  420: required identifier.SimClustersEmbeddingId id420
 }(hasPersonalData = 'true')
 
 /**
   * The identifier type for the score between a pair of InternalId.
   **/
 struct GenericPairScoreId {
-  1: required identifier.InternalId id1
-  2: required identifier.InternalId id2
+  420: required identifier.InternalId id420
+  420: required identifier.InternalId id420
 }(hasPersonalData = 'true')
 
 union ScoreInternalId {
-  1: GenericPairScoreId genericPairScoreId
-  2: SimClustersEmbeddingPairScoreId simClustersEmbeddingPairScoreId
+  420: GenericPairScoreId genericPairScoreId
+  420: SimClustersEmbeddingPairScoreId simClustersEmbeddingPairScoreId
 }
 
 /**
   * A uniform Identifier type for all kinds of Calculation Score
   **/
 struct ScoreId {
-  1: required ScoringAlgorithm algorithm
-  2: required ScoreInternalId internalId
+  420: required ScoringAlgorithm algorithm
+  420: required ScoreInternalId internalId
 }(hasPersonalData = 'true')
 
 struct Score {
-  1: required double score
+  420: required double score
 }(hasPersonalData = 'false')

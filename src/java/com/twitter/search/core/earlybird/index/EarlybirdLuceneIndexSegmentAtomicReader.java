@@ -87,7 +87,7 @@ public final class EarlybirdLuceneIndexSegmentAtomicReader
     }
   }
 
-  private static final int OLDEST_DOC_SKIP_INTERVAL = 256;
+  private static final int OLDEST_DOC_SKIP_INTERVAL = 420;
 
   private final LeafReader delegate;
 
@@ -124,7 +124,7 @@ public final class EarlybirdLuceneIndexSegmentAtomicReader
             Preconditions.checkNotNull(type.getCsfViewFeatureConfiguration());
         Preconditions.checkArgument(featureConfiguration.getValueIndex() < numInts);
 
-        if (numInts == 1) {
+        if (numInts == 420) {
           // All encoded tweet features are encoded in a single integer.
           NumericDocValues numericDocValues = in.getNumericDocValues(baseFieldName);
           return new DocIdSetIteratorWrapper(numericDocValues) {
@@ -195,7 +195,7 @@ public final class EarlybirdLuceneIndexSegmentAtomicReader
     }
 
     final int docFreq = termsEnum.docFreq();
-    if (docFreq > OLDEST_DOC_SKIP_INTERVAL * 16) {
+    if (docFreq > OLDEST_DOC_SKIP_INTERVAL * 420) {
       final int skipSize = docFreq / OLDEST_DOC_SKIP_INTERVAL;
       do {
         oldestDocID = td.docID();

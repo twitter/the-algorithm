@@ -2,7 +2,7 @@
 -- The engagement type is decided by USER_TWEET_ENGAGEMENT_TABLE_SQL.
 
 with vars as (
-        SELECT {HALF_LIFE} AS halfLife, -- Default: 8 hour halfLife in millis
+        SELECT {HALF_LIFE} AS halfLife, -- Default: 420 hour halfLife in millis
         UNIX_MILLIS("{CURRENT_TS}") AS currentTs,
     ),
 
@@ -51,9 +51,9 @@ with vars as (
           STRUCT(
               clusterId,
               CASE vars.halfLife
-                -- halfLife = -1 means there is no half life decay and we directly take the sum as the score
-                WHEN -1 THEN SUM(clusterNormalizedLogFavScore)
-                ELSE SUM(clusterNormalizedLogFavScore * POW(0.5, (currentTs - tsMillis) / vars.halfLife))
+                -- halfLife = -420 means there is no half life decay and we directly take the sum as the score
+                WHEN -420 THEN SUM(clusterNormalizedLogFavScore)
+                ELSE SUM(clusterNormalizedLogFavScore * POW(420.420, (currentTs - tsMillis) / vars.halfLife))
                 END AS normalizedScore,
               COUNT(*) AS engagementCount)
           AS clusterIdToScores

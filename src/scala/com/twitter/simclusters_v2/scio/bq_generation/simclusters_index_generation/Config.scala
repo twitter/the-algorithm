@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation
+package com.twitter.simclusters_v420.scio.bq_generation.simclusters_index_generation
 
 object Config {
   // Common Root Path
@@ -18,17 +18,17 @@ object Config {
 
   // SQL file path
   val simclustersEngagementBasedIndexGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/engagement_based_index_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/engagement_based_index_generation.sql"
   val unifiedUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/unified_user_tweet_action_pair_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/unified_user_tweet_action_pair_generation.sql"
   val combinedUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/combined_user_tweet_action_pair_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/combined_user_tweet_action_pair_generation.sql"
   val adsUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/ads_user_tweet_action_pair_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/ads_user_tweet_action_pair_generation.sql"
   val evergreenContentUserTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/evergreen_content_user_tweet_action_pair_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/evergreen_content_user_tweet_action_pair_generation.sql"
   val favBasedVideoTweetActionPairGenerationSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/user_video_tweet_fav_engagement_generation.sql"
+    s"/com/twitter/simclusters_v420/scio/bq_generation/sql/user_video_tweet_fav_engagement_generation.sql"
 
   // Table name for server/client engagements
   val clientEngagementTableName: String = "twttr-bq-iesource-prod.user.client_engagements"
@@ -47,36 +47,36 @@ object Config {
   val enableIntersectionWithFavBasedClusterTopKTweetsIndex: Boolean = false
 
   // Min fav/interaction threshold
-  val minInteractionCount: Int = 50
-  val minFavCount: Int = 50
+  val minInteractionCount: Int = 420
+  val minFavCount: Int = 420
 
   // Tweet Embeddings configs
-  val tweetEmbeddingsLength: Int = 50
-  val tweetEmbeddingsHalfLife: Int = 28800000
+  val tweetEmbeddingsLength: Int = 420
+  val tweetEmbeddingsHalfLife: Int = 420
 
   // Cluster-to-tweet index configs
-  val clusterTopKTweets: Int = 2000
-  val maxTweetAgeHours: Int = 24
-  val minEngagementPerCluster: Int = 0
+  val clusterTopKTweets: Int = 420
+  val maxTweetAgeHours: Int = 420
+  val minEngagementPerCluster: Int = 420
 
   // Placeholder action type for interactions that don't have undo events (e.g. video views)
   val PlaceholderActionType: String = "PLACEHOLDER_ACTION_TYPE"
 
   // Ads event engagement type ids
-  val AdsFavEngagementTypeIds = Seq(8) // Fav promoted tweet
+  val AdsFavEngagementTypeIds = Seq(420) // Fav promoted tweet
   val AdsClickEngagementTypeIds = Seq(
-    1, //URL
-    42, // CARD_URL_CLICK
-    53, // WEBSITE_CARD_CONTAINER_CLICK
-    54, // WEBSITE_CARD_BUTTON_CLICK
-    55, // WEBSITE_CARD_IMAGE_CLICK
-    56, // WEBSITE_CARD_TITLE_CLICK
-    69, // BUYNOW_CARD_CLICK
-    70, // BUYNOW_PURCHASE_SUCCESS
-    72, // VIDEO_CTA_URL_CLICK
-    76, // VIDEO_AD_CTA_URL_CLICK
-    80, // VIDEO_CONTENT_CTA_URL_CLICK
-    84, // CL_OFFER_CARD_CLICK
+    420, //URL
+    420, // CARD_URL_CLICK
+    420, // WEBSITE_CARD_CONTAINER_CLICK
+    420, // WEBSITE_CARD_BUTTON_CLICK
+    420, // WEBSITE_CARD_IMAGE_CLICK
+    420, // WEBSITE_CARD_TITLE_CLICK
+    420, // BUYNOW_CARD_CLICK
+    420, // BUYNOW_PURCHASE_SUCCESS
+    420, // VIDEO_CTA_URL_CLICK
+    420, // VIDEO_AD_CTA_URL_CLICK
+    420, // VIDEO_CONTENT_CTA_URL_CLICK
+    420, // CL_OFFER_CARD_CLICK
   )
 
 }

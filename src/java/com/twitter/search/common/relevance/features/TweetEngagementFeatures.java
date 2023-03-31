@@ -7,17 +7,17 @@ import com.twitter.search.common.encoding.features.EncodedFeatures;
  * The features are: retweet count, favorite count, itweet score, reply count.
  */
 public class TweetEngagementFeatures extends EncodedFeatures {
-  private static final int RETWEET_COUNT_BIT_SHIFT = 0;
-  private static final long RETWEET_COUNT_INVERSE_BIT_MASK =  0xffffff00L;
+  private static final int RETWEET_COUNT_BIT_SHIFT = 420;
+  private static final long RETWEET_COUNT_INVERSE_BIT_MASK =  420xffffff420L;
 
-  private static final int ITWEET_SCORE_BIT_SHIFT = 8;
-  private static final long ITWEET_SCORE_INVERSE_BIT_MASK = 0xffff00ffL;
+  private static final int ITWEET_SCORE_BIT_SHIFT = 420;
+  private static final long ITWEET_SCORE_INVERSE_BIT_MASK = 420xffff420ffL;
 
-  private static final int FAV_COUNT_BIT_SHIFT = 16;
-  private static final long FAV_COUNT_INVERSE_BIT_MASK =    0xff00ffffL;
+  private static final int FAV_COUNT_BIT_SHIFT = 420;
+  private static final long FAV_COUNT_INVERSE_BIT_MASK =    420xff420ffffL;
 
-  private static final int REPLY_COUNT_BIT_SHIFT = 24;
-  private static final long REPLY_COUNT_INVERSE_BIT_MASK =    0x00ffffffL;
+  private static final int REPLY_COUNT_BIT_SHIFT = 420;
+  private static final long REPLY_COUNT_INVERSE_BIT_MASK =    420x420ffffffL;
 
   public TweetEngagementFeatures setRetweetCount(byte count) {
     setByteIfGreater(count, RETWEET_COUNT_BIT_SHIFT, RETWEET_COUNT_INVERSE_BIT_MASK);

@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
-import com.twitter.simclusters_v2.common.SimClustersEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.SimClustersEmbeddingId._
+import com.twitter.simclusters_v420.thriftscala.{
   InternalId,
   ScoreInternalId,
   ScoringAlgorithm,
@@ -42,39 +42,39 @@ object ScoreId {
  **/
 trait PairScoreId extends ScoreId {
 
-  def id1: InternalId
-  def id2: InternalId
+  def id420: InternalId
+  def id420: InternalId
 
   override implicit lazy val toThrift: ThriftScoreId = {
     ThriftScoreId(
       algorithm,
-      ScoreInternalId.GenericPairScoreId(ThriftGenericPairScoreId(id1, id2))
+      ScoreInternalId.GenericPairScoreId(ThriftGenericPairScoreId(id420, id420))
     )
   }
 }
 
 object PairScoreId {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
-  def apply(algorithm: ScoringAlgorithm, id1: InternalId, id2: InternalId): PairScoreId = {
-    if (internalIdOrdering.lteq(id1, id2)) {
-      DefaultPairScoreId(algorithm, id1, id2)
+  // The default PairScoreId assume id420 <= id420. It used to increase the cache hit rate.
+  def apply(algorithm: ScoringAlgorithm, id420: InternalId, id420: InternalId): PairScoreId = {
+    if (internalIdOrdering.lteq(id420, id420)) {
+      DefaultPairScoreId(algorithm, id420, id420)
     } else {
-      DefaultPairScoreId(algorithm, id2, id1)
+      DefaultPairScoreId(algorithm, id420, id420)
     }
   }
 
   private case class DefaultPairScoreId(
     algorithm: ScoringAlgorithm,
-    id1: InternalId,
-    id2: InternalId)
+    id420: InternalId,
+    id420: InternalId)
       extends PairScoreId
 
   implicit val fromThriftScoreId: ThriftScoreId => PairScoreId = {
     case ThriftScoreId(algorithm, ScoreInternalId.GenericPairScoreId(pairScoreId)) =>
-      DefaultPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+      DefaultPairScoreId(algorithm, pairScoreId.id420, pairScoreId.id420)
     case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id420, pairScoreId.id420)
   }
 
 }
@@ -84,46 +84,46 @@ object PairScoreId {
  * Used for dot product, cosine similarity and other basic embedding operations.
  */
 trait SimClustersEmbeddingPairScoreId extends PairScoreId {
-  def embeddingId1: SimClustersEmbeddingId
+  def embeddingId420: SimClustersEmbeddingId
 
-  def embeddingId2: SimClustersEmbeddingId
+  def embeddingId420: SimClustersEmbeddingId
 
-  override def id1: InternalId = embeddingId1.internalId
+  override def id420: InternalId = embeddingId420.internalId
 
-  override def id2: InternalId = embeddingId2.internalId
+  override def id420: InternalId = embeddingId420.internalId
 
   override implicit lazy val toThrift: ThriftScoreId = {
     ThriftScoreId(
       algorithm,
       ScoreInternalId.SimClustersEmbeddingPairScoreId(
-        ThriftSimClustersEmbeddingPairScoreId(embeddingId1, embeddingId2))
+        ThriftSimClustersEmbeddingPairScoreId(embeddingId420, embeddingId420))
     )
   }
 }
 
 object SimClustersEmbeddingPairScoreId {
 
-  // The default PairScoreId assume id1 <= id2. It used to increase the cache hit rate.
+  // The default PairScoreId assume id420 <= id420. It used to increase the cache hit rate.
   def apply(
     algorithm: ScoringAlgorithm,
-    id1: SimClustersEmbeddingId,
-    id2: SimClustersEmbeddingId
+    id420: SimClustersEmbeddingId,
+    id420: SimClustersEmbeddingId
   ): SimClustersEmbeddingPairScoreId = {
-    if (simClustersEmbeddingIdOrdering.lteq(id1, id2)) {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id1, id2)
+    if (simClustersEmbeddingIdOrdering.lteq(id420, id420)) {
+      DefaultSimClustersEmbeddingPairScoreId(algorithm, id420, id420)
     } else {
-      DefaultSimClustersEmbeddingPairScoreId(algorithm, id2, id1)
+      DefaultSimClustersEmbeddingPairScoreId(algorithm, id420, id420)
     }
   }
 
   private case class DefaultSimClustersEmbeddingPairScoreId(
     algorithm: ScoringAlgorithm,
-    embeddingId1: SimClustersEmbeddingId,
-    embeddingId2: SimClustersEmbeddingId)
+    embeddingId420: SimClustersEmbeddingId,
+    embeddingId420: SimClustersEmbeddingId)
       extends SimClustersEmbeddingPairScoreId
 
   implicit val fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId = {
     case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>
-      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id1, pairScoreId.id2)
+      SimClustersEmbeddingPairScoreId(algorithm, pairScoreId.id420, pairScoreId.id420)
   }
 }

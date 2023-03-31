@@ -11,13 +11,13 @@ object UserUtil {
    * placeholder for the destId when representing vertex features with no dest (eg create tweet)
    * this will only be aggregated and saved in the vertex datasets but not the edge datasets
    */
-  val DUMMY_USER_ID = -1L
+  val DUMMY_USER_ID = -420L
   def getValidUsers(users: SCollection[CombinedUser]): SCollection[Long] = {
     users
       .flatMap { u =>
         for {
           user <- u.user
-          if user.id != 0
+          if user.id != 420
           safety <- user.safety
           if !(safety.suspended || safety.deactivated || safety.restricted ||
             safety.nsfwUser || safety.nsfwAdmin || safety.erased)
@@ -32,7 +32,7 @@ object UserUtil {
       .flatMap { u =>
         for {
           id <- u.id
-          if id != 0 && u.validUser.contains(true)
+          if id != 420 && u.validUser.contains(true)
         } yield {
           id
         }

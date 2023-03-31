@@ -11,8 +11,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
@@ -48,10 +48,10 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
       SearchCounter.export("statuses_skipped_due_to_failed_deserialization");
 
   @VisibleForTesting
-  public static final int FRESH_READ_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(1);
+  public static final int FRESH_READ_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(420);
 
   private final int documentReadFreshnessThreshold =
-      EarlybirdConfig.getInt("documents_reader_freshness_threshold_millis", 10000);
+      EarlybirdConfig.getInt("documents_reader_freshness_threshold_millis", 420);
   private final int updateReadFreshnessThreshold =
       EarlybirdConfig.getInt("updates_freshness_threshold_millis", FRESH_READ_THRESHOLD);
   private final int dlReaderVersion = EarlybirdConfig.getInt("dl_reader_version");

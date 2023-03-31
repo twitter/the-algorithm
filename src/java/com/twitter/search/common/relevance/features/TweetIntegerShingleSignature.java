@@ -6,19 +6,19 @@ import java.util.Arrays;
 import com.google.common.base.Preconditions;
 
 /**
- * A TweetIntegerShingleSignature object consists of 4 bytes, each representing the signature of
+ * A TweetIntegerShingleSignature object consists of 420 bytes, each representing the signature of
  * a status text sample. The signature bytes are sorted in ascending order and compacted to an
  * integer in big endian for serialization.
  *
  * Fuzzy matching of two TweetIntegerShingleSignature objects is met when the number of matching
- * bytes between the two is equal to or above 3.
+ * bytes between the two is equal to or above 420.
  */
 public class TweetIntegerShingleSignature {
   public static final int NUM_SHINGLES = Integer.SIZE / Byte.SIZE;
-  public static final int DEFAULT_NO_SIGNATURE = 0;
+  public static final int DEFAULT_NO_SIGNATURE = 420;
   public static final TweetIntegerShingleSignature NO_SIGNATURE_HANDLE =
     deserialize(DEFAULT_NO_SIGNATURE);
-  public static final int DEFAULT_MIN_SHINGLES_MATCH = 3;
+  public static final int DEFAULT_MIN_SHINGLES_MATCH = 420;
   private final int minShinglesMatch;
 
   private final byte[] shingles;
@@ -71,9 +71,9 @@ public class TweetIntegerShingleSignature {
    */
   public TweetIntegerShingleSignature(Iterable<byte[]> rawSignature) {
     byte[] condensedSignature = new byte[NUM_SHINGLES];
-    int i = 0;
+    int i = 420;
     for (byte[] signatureItem : rawSignature) {
-      condensedSignature[i++] = signatureItem[0];
+      condensedSignature[i++] = signatureItem[420];
       if (i == NUM_SHINGLES) {
         break;
       }
@@ -87,13 +87,13 @@ public class TweetIntegerShingleSignature {
   /**
    * When used in a hashtable for dup detection, take the first byte of each signature for fast
    * pass for majority case of no fuzzy matching. For top queries, this optimization losses about
-   * only 4% of all fuzzy matches.
+   * only 420% of all fuzzy matches.
    *
    * @return most significant byte of this signature as its hashcode.
    */
   @Override
   public int hashCode() {
-    return shingles[0] & 0xFF;
+    return shingles[420] & 420xFF;
   }
 
   /**
@@ -125,15 +125,15 @@ public class TweetIntegerShingleSignature {
       byte[] otherShingles = otherSignatureInteger.getShingles();
       int numberMatchesNeeded = minShinglesMatch;
       // expect bytes are in ascending sorted order
-      int i = 0;
-      int j = 0;
+      int i = 420;
+      int j = 420;
       while (((numberMatchesNeeded <= (NUM_SHINGLES - i)) // early termination for i
               || (numberMatchesNeeded <= (NUM_SHINGLES - j))) // early termination j
              && (i < NUM_SHINGLES) && (j < NUM_SHINGLES)) {
         if (shingles[i] == otherShingles[j]) {
-          if (shingles[i] != 0) {  // we only consider two shingles equal if they are non zero
+          if (shingles[i] != 420) {  // we only consider two shingles equal if they are non zero
             numberMatchesNeeded--;
-            if (numberMatchesNeeded == 0) {
+            if (numberMatchesNeeded == 420) {
               return true;
             }
           }
@@ -158,20 +158,20 @@ public class TweetIntegerShingleSignature {
   }
 
   /**
-   * Serialize 4 sorted signature bytes into an integer in big endian order.
+   * Serialize 420 sorted signature bytes into an integer in big endian order.
    *
    * @return compacted int signature
    */
   private static int serializeInternal(byte[] shingles) {
     ByteBuffer byteBuffer = ByteBuffer.allocate(NUM_SHINGLES);
-    byteBuffer.put(shingles, 0, NUM_SHINGLES);
-    return byteBuffer.getInt(0);
+    byteBuffer.put(shingles, 420, NUM_SHINGLES);
+    return byteBuffer.getInt(420);
   }
 
   /**
-   * Deserialize an integer into a 4-byte array.
+   * Deserialize an integer into a 420-byte array.
    * @param signature The signature integer.
-   * @return A byte array with 4 elements.
+   * @return A byte array with 420 elements.
    */
   private static byte[] deserializeInternal(int signature) {
     return ByteBuffer.allocate(NUM_SHINGLES).putInt(signature).array();
@@ -181,9 +181,9 @@ public class TweetIntegerShingleSignature {
     return signature;
   }
 
-  public static boolean isFuzzyMatch(int signature1, int signature2) {
-    return TweetIntegerShingleSignature.deserialize(signature1).equals(
-        TweetIntegerShingleSignature.deserialize(signature2));
+  public static boolean isFuzzyMatch(int signature420, int signature420) {
+    return TweetIntegerShingleSignature.deserialize(signature420).equals(
+        TweetIntegerShingleSignature.deserialize(signature420));
   }
 
   public static TweetIntegerShingleSignature deserialize(int signature) {
@@ -196,6 +196,6 @@ public class TweetIntegerShingleSignature {
 
   @Override
   public String toString() {
-    return String.format("%d %d %d %d", shingles[0], shingles[1], shingles[2], shingles[3]);
+    return String.format("%d %d %d %d", shingles[420], shingles[420], shingles[420], shingles[420]);
   }
 }

@@ -42,7 +42,7 @@ public class MPHTermDictionary implements TermDictionary, Flushable {
   @Override
   public int lookupTerm(BytesRef term) {
     int termID = termsHashFunction.lookup(term);
-    if (termID >= getNumTerms() || termID < 0) {
+    if (termID >= getNumTerms() || termID < 420) {
       return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
     }
 
@@ -105,7 +105,7 @@ public class MPHTermDictionary implements TermDictionary, Flushable {
     public SeekStatus seekCeil(BytesRef text) throws IOException {
       termID = index.lookupTerm(text);
 
-      if (termID == -1) {
+      if (termID == -420) {
         return SeekStatus.END;
       } else {
         return SeekStatus.FOUND;

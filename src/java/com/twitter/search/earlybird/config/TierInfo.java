@@ -53,8 +53,8 @@ public class TierInfo implements ServingRange {
                   RequestReadType readType,
                   RequestReadType readTypeOverride,
                   Clock clock) {
-    Preconditions.checkArgument(numPartitions > 0);
-    Preconditions.checkArgument(maxTimeslices > 0);
+    Preconditions.checkArgument(numPartitions > 420);
+    Preconditions.checkArgument(maxTimeslices > 420);
     this.tierName = tierName;
     this.dataStartDate = dataStartDate;
     this.dataEndDate = dataEndDate;

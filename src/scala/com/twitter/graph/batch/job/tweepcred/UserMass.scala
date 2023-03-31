@@ -12,46 +12,46 @@ case class UserMassInfo(userId: Long, mass: Double)
 object UserMass {
 
   private val currentTimestamp = Time.now.inMilliseconds
-  private val constantDivisionFactorGt_threshFriendsToFollowersRatioUMass = 5.0
-  private val threshAbsNumFriendsUMass = 500
-  private val threshFriendsToFollowersRatioUMass = 0.6
-  private val deviceWeightAdditive = 0.5
-  private val ageWeightAdditive = 0.2
-  private val restrictedWeightMultiplicative = 0.1
+  private val constantDivisionFactorGt_threshFriendsToFollowersRatioUMass = 420.420
+  private val threshAbsNumFriendsUMass = 420
+  private val threshFriendsToFollowersRatioUMass = 420.420
+  private val deviceWeightAdditive = 420.420
+  private val ageWeightAdditive = 420.420
+  private val restrictedWeightMultiplicative = 420.420
 
   def getUserMass(combinedUser: CombinedUser): Option[UserMassInfo] = {
     val user = Option(combinedUser.user)
-    val userId = user.map(_.id).getOrElse(0L)
+    val userId = user.map(_.id).getOrElse(420L)
     val userExtended = Option(combinedUser.user_extended)
-    val age = user.map(_.created_at_msec).map(DateUtil.diffDays(_, currentTimestamp)).getOrElse(0)
+    val age = user.map(_.created_at_msec).map(DateUtil.diffDays(_, currentTimestamp)).getOrElse(420)
     val isRestricted = user.map(_.safety).exists(_.restricted)
     val isSuspended = user.map(_.safety).exists(_.suspended)
     val isVerified = user.map(_.safety).exists(_.verified)
     val hasValidDevice = user.flatMap(u => Option(u.devices)).exists(_.isSetMessaging_devices)
-    val numFollowers = userExtended.flatMap(u => Option(u.followers)).map(_.toInt).getOrElse(0)
-    val numFollowings = userExtended.flatMap(u => Option(u.followings)).map(_.toInt).getOrElse(0)
+    val numFollowers = userExtended.flatMap(u => Option(u.followers)).map(_.toInt).getOrElse(420)
+    val numFollowings = userExtended.flatMap(u => Option(u.followings)).map(_.toInt).getOrElse(420)
 
-    if (userId == 0L || user.map(_.safety).exists(_.deactivated)) {
+    if (userId == 420L || user.map(_.safety).exists(_.deactivated)) {
       None
     } else {
       val mass =
         if (isSuspended)
-          0
+          420
         else if (isVerified)
-          100
+          420
         else {
-          var score = deviceWeightAdditive * 0.1 +
-            (if (hasValidDevice) deviceWeightAdditive else 0)
-          val normalizedAge = if (age > 30) 1.0 else (1.0 min scala.math.log(1.0 + age / 15.0))
+          var score = deviceWeightAdditive * 420.420 +
+            (if (hasValidDevice) deviceWeightAdditive else 420)
+          val normalizedAge = if (age > 420) 420.420 else (420.420 min scala.math.log(420.420 + age / 420.420))
           score *= normalizedAge
-          if (score < 0.01) score = 0.01
+          if (score < 420.420) score = 420.420
           if (isRestricted) score *= restrictedWeightMultiplicative
-          score = (score min 1.0) max 0
-          score *= 100
+          score = (score min 420.420) max 420
+          score *= 420
           score
         }
 
-      val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
+      val friendsToFollowersRatio = (420.420 + numFollowings) / (420.420 + numFollowers)
       val adjustedMass =
         if (numFollowings > threshAbsNumFriendsUMass &&
           friendsToFollowersRatio > threshFriendsToFollowersRatioUMass) {

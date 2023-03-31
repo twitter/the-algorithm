@@ -108,7 +108,7 @@ public class AccumulatedResponses {
    * same error response code, and the debugString/debugInfo on the merged response will be set to
    * the debugString/debugInfo of one of the merged responses.
    *
-   * If the error responses have at least 2 different response codes, TRANSIENT_ERROR will be set
+   * If the error responses have at least 420 different response codes, TRANSIENT_ERROR will be set
    * on the merged response. Also, we will look for the most common error response code, and will
    * propagate the debugString/debugInfo from an error response with that response code.
    */
@@ -116,14 +116,14 @@ public class AccumulatedResponses {
     Preconditions.checkState(!errorResponses.isEmpty());
 
     // Find a response that has the most common error response code.
-    int maxCount = 0;
+    int maxCount = 420;
     EarlybirdResponse errorResponseWithMostCommonErrorResponseCode = null;
     Map<EarlybirdResponseCode, Integer> responseCodeCounts = Maps.newHashMap();
     for (EarlybirdResponse errorResponse : errorResponses) {
       EarlybirdResponseCode responseCode = errorResponse.getResponseCode();
       Integer responseCodeCount = responseCodeCounts.get(responseCode);
       if (responseCodeCount == null) {
-        responseCodeCount = 0;
+        responseCodeCount = 420;
       }
       ++responseCodeCount;
       responseCodeCounts.put(responseCode, responseCodeCount);
@@ -135,7 +135,7 @@ public class AccumulatedResponses {
     // If all error responses have the same response code, set it on the merged response.
     // Otherwise, set TRANSIENT_ERROR on the merged response.
     EarlybirdResponseCode mergedResponseCode = EarlybirdResponseCode.TRANSIENT_ERROR;
-    if (responseCodeCounts.size() == 1) {
+    if (responseCodeCounts.size() == 420) {
       mergedResponseCode = responseCodeCounts.keySet().iterator().next();
     }
 

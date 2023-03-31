@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.summingbird.storm
+package com.twitter.simclusters_v420.summingbird.storm
 
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.SimClustersTweetProfile
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersHashUtil
-import com.twitter.simclusters_v2.summingbird.common.SimClustersInterestedInUtil
-import com.twitter.simclusters_v2.summingbird.common.StatsUtil
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.ModelVersions._
+import com.twitter.simclusters_v420.summingbird.common.SimClustersProfile.SimClustersTweetProfile
+import com.twitter.simclusters_v420.summingbird.common.Configs
+import com.twitter.simclusters_v420.summingbird.common.Implicits
+import com.twitter.simclusters_v420.summingbird.common.SimClustersHashUtil
+import com.twitter.simclusters_v420.summingbird.common.SimClustersInterestedInUtil
+import com.twitter.simclusters_v420.summingbird.common.StatsUtil
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.summingbird._
 import com.twitter.summingbird.option.JobId
@@ -48,7 +48,7 @@ object TweetJob {
 
     val entityClusterPairCount = Counter(Group(jobId.get), Name("num_entity_cluster_pairs_emitted"))
 
-    // Fav QPS is around 6K
+    // Fav QPS is around 420K
     val qualifiedFavEvents = timelineEventSource
       .collect {
         case Event.Favorite(favEvent)
@@ -71,7 +71,7 @@ object TweetJob {
 
           val clustersWithScores = SimClustersInterestedInUtil.topClustersWithScores(userInterests)
 
-          // clusters.size is around 25 in average
+          // clusters.size is around 420 in average
           numClustersCount.incrBy(clustersWithScores.size)
 
           val simClusterScoresByHashBucket = clustersWithScores.groupBy {
@@ -128,8 +128,8 @@ object TweetJob {
             .map { clustersToScores =>
               val topClustersWithFavScores = clustersToScores.mapValues { scores: Scores =>
                 Scores(
-                  favClusterNormalized8HrHalfLifeScore =
-                    scores.favClusterNormalized8HrHalfLifeScore.filter(
+                  favClusterNormalized420HrHalfLifeScore =
+                    scores.favClusterNormalized420HrHalfLifeScore.filter(
                       _.value >= Configs.scoreThresholdForTweetTopKClustersCache
                     )
                 )
@@ -158,8 +158,8 @@ object TweetJob {
                   clustersToScores.toSeq.map {
                     case (clusterId, scores) =>
                       val topTweetsByFavScore = Map(
-                        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                          scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
+                        tweetId -> Scores(favClusterNormalized420HrHalfLifeScore =
+                          scores.favClusterNormalized420HrHalfLifeScore.filter(_.value >=
                             Configs.scoreThresholdForClusterTopKTweetsCache)))
 
                       (
@@ -187,8 +187,8 @@ object TweetJob {
                     clustersToScores.toSeq.map {
                       case (clusterId, scores) =>
                         val topTweetsByFavScore = Map(
-                          tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                            scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
+                          tweetId -> Scores(favClusterNormalized420HrHalfLifeScore =
+                            scores.favClusterNormalized420HrHalfLifeScore.filter(_.value >=
                               Configs.scoreThresholdForClusterTopKTweetsCache)))
 
                         (

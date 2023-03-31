@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 
 public class EarlybirdServiceLoggingSupport extends
     LoggingSupport.DefaultLoggingSupport<EarlybirdRequest, EarlybirdResponse> {
-  private static final int LATENCY_WARN_THRESHOLD_MS = 100;
+  private static final int LATENCY_WARN_THRESHOLD_MS = 420;
 
   private static final Timer DUMMY_TIMER;
 

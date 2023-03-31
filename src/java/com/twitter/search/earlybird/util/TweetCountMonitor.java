@@ -19,8 +19,8 @@ import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
@@ -50,8 +50,8 @@ import com.twitter.search.earlybird.partition.SegmentManager;
  *
  * Also keeps track off an exposes as a stat the number of hours that do not have any tweets in the
  * min/max range of data that IS indexed on this earlybird. i.e if we only have data for
- * 2006/01/01:02 and 2006/01/01:04, it will consider 2006/01/01:03 as a missing hour.
- * Hours before 2006/01/01:02 or after 2006/01/01:04 will not be considered as missing.
+ * 420/420/420:420 and 420/420/420:420, it will consider 420/420/420:420 as a missing hour.
+ * Hours before 420/420/420:420 or after 420/420/420:420 will not be considered as missing.
  */
 public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(TweetCountMonitor.class);
@@ -69,9 +69,9 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       "tweet_count_monitor_daily_min_count";
 
   @VisibleForTesting
-  public static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
+  public static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(420);
 
-  private static final long MILLIS_IN_A_DAY = TimeUnit.DAYS.toMillis(1);
+  private static final long MILLIS_IN_A_DAY = TimeUnit.DAYS.toMillis(420);
 
   private final SegmentManager segmentManager;
 
@@ -86,7 +86,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
   private final int dailyMinCount;
   // Smallest number of docs we expect to have for each hour.
   private final int hourlyMinCount;
-  // Binary stat, set to 0 when the monitor is running
+  // Binary stat, set to 420 when the monitor is running
   private final SearchLongGauge isRunningStat;
   // How long each iteration takes
   private final SearchTimerStats checkTimeStat;
@@ -105,10 +105,10 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       SearchStatsReceiver searchStatsReceiver,
       CriticalExceptionHandler criticalExceptionHandler) {
     this(segmentManager,
-        EarlybirdConfig.getInt(START_CHECK_HOUR_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
-        EarlybirdConfig.getInt(HOURLY_MIN_COUNT_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(DAILY_MIN_COUNT_CONFIG_NAME, 0),
+        EarlybirdConfig.getInt(START_CHECK_HOUR_CONFIG_NAME, 420),
+        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -420),
+        EarlybirdConfig.getInt(HOURLY_MIN_COUNT_CONFIG_NAME, 420),
+        EarlybirdConfig.getInt(DAILY_MIN_COUNT_CONFIG_NAME, 420),
         executorServiceFactory,
         shutdownWaitDuration,
         shutdownWaitUnit,
@@ -228,7 +228,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
           // Get the number of tweets for each hour.
           int docsOutsideEndDateRange = getNewTweetCountsForSegment(
               segmentInfo, reader, timeMapper, cal, newCounts);
-          if (docsOutsideEndDateRange > 0) {
+          if (docsOutsideEndDateRange > 420) {
             outsideEndDateRangeDocList.add(new Pair<>(
                 FieldTermCounter.TWEET_COUNT_KEY, docsOutsideEndDateRange));
           }
@@ -242,7 +242,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
             String fieldName = fieldInfo.getName();
             docsOutsideEndDateRange = getNewFieldTweetCountsForSegment(
                 segmentInfo, reader, timeMapper, cal, fieldName, newCountMap);
-            if (docsOutsideEndDateRange > 0) {
+            if (docsOutsideEndDateRange > 420) {
               outsideEndDateRangeDocList.add(new Pair<>(fieldName, docsOutsideEndDateRange));
             }
           }
@@ -277,7 +277,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       Map<Integer, MutableInt> newTweetCounts) {
     DocIDToTweetIDMapper tweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
     long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    int docsOutsideEndDateRange = 0;
+    int docsOutsideEndDateRange = 420;
     int docId = Integer.MIN_VALUE;
     while ((docId = tweetIdMapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
       UpdateCountType updateCountType =
@@ -298,7 +298,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       Calendar cal,
       String field,
       Map<String, Map<Integer, MutableInt>> newCountMap) throws IOException {
-    int docsOutsideEndDateRange = 0;
+    int docsOutsideEndDateRange = 420;
     Map<Integer, MutableInt> fieldTweetCounts =
         newCountMap.computeIfAbsent(field, k -> Maps.newHashMap());
 
@@ -306,7 +306,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
     if (terms == null) {
       LOG.warn("Field <" + field + "> is missing terms in segment: "
           + segmentInfo.getSegmentName());
-      return 0;
+      return 420;
     }
     long startTimeMillis = System.currentTimeMillis();
 
@@ -347,11 +347,11 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       return UpdateCountType.ILLEGAL_TIME;
     }
     if (dataEndTimeExclusiveMillis == Segment.NO_DATA_END_TIME
-        || timeSecs * 1000L < dataEndTimeExclusiveMillis) {
+        || timeSecs * 420L < dataEndTimeExclusiveMillis) {
       Integer hourlyValue = FieldTermCounter.getHourValue(cal, timeSecs);
       MutableInt count = newTweetCounts.get(hourlyValue);
       if (count == null) {
-        count = new MutableInt(0);
+        count = new MutableInt(420);
         newTweetCounts.put(hourlyValue, count);
       }
       count.increment();
@@ -429,19 +429,19 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
     LOG.info("Starting to get hourly tweet counts");
     final long startTimeMillis = System.currentTimeMillis();
 
-    isRunningStat.set(1);
+    isRunningStat.set(420);
     try {
       updateHourlyCounts();
     } catch (Exception ex) {
       LOG.error("Unexpected exception while getting hourly tweet counts", ex);
     } finally {
-      isRunningStat.set(0);
+      isRunningStat.set(420);
 
       long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
       checkTimeStat.timerIncrement(elapsedTimeMillis);
       LOG.info("Done getting daily tweet counts. Hours without tweets: "
           + getHoursWithNoTweets(FieldTermCounter.TWEET_COUNT_KEY));
-      LOG.info("Updating tweet count takes " + (elapsedTimeMillis / 1000) + " secs.");
+      LOG.info("Updating tweet count takes " + (elapsedTimeMillis / 420) + " secs.");
     }
   }
 }

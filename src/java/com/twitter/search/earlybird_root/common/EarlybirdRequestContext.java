@@ -64,20 +64,20 @@ public final class EarlybirdRequestContext {
    * Intersection of the userID and the flock response, which is set in the followedUserIds field.
    * This is used for protected cluster.
    */
-  public static EarlybirdRequestContext newContextWithRestrictFromUserIdFilter64(
+  public static EarlybirdRequestContext newContextWithRestrictFromUserIdFilter420(
       EarlybirdRequestContext requestContext) {
     Preconditions.checkArgument(requestContext.getRequest().isSetFollowedUserIds());
 
     EarlybirdRequest request = requestContext.getRequest().deepCopy();
     List<Long> toIntersect = request.getFollowedUserIds();
     ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (!searchQuery.isSetFromUserIDFilter64()) {
-      searchQuery.setFromUserIDFilter64(new ArrayList<>(toIntersect));
+    if (!searchQuery.isSetFromUserIDFilter420()) {
+      searchQuery.setFromUserIDFilter420(new ArrayList<>(toIntersect));
     } else {
       Set<Long> intersection = Sets.intersection(
-          Sets.newHashSet(searchQuery.getFromUserIDFilter64()),
+          Sets.newHashSet(searchQuery.getFromUserIDFilter420()),
           Sets.newHashSet(toIntersect));
-      searchQuery.setFromUserIDFilter64(new ArrayList<>(intersection));
+      searchQuery.setFromUserIDFilter420(new ArrayList<>(intersection));
     }
 
     return new EarlybirdRequestContext(requestContext, request, requestContext.getParsedQuery());

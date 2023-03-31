@@ -29,30 +29,30 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.DECAYED_REPLY_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.DECAYED_RETWEET_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_FEATURE_UNUSED_BITS_0_24_8;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_16;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_17;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_18;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_19;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_20;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT_V420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_FEATURE_UNUSED_BITS_420_420_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_FAVORITE_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_QUOTE_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_REPLY_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_RETWEET_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAVORITE_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAVORITE_COUNT_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAVORITE_COUNT_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CARD_FLAG;
@@ -98,9 +98,9 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_HASHTAGS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_HASHTAGS_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_HASHTAGS_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_MENTIONS;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_MENTIONS_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_MENTIONS_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_STOCKS;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PARUS_SCORE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PBLOCK_SCORE;
@@ -117,16 +117,16 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REPLY_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REPLY_COUNT_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.REPLY_COUNT_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_SCORE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TOXICITY_SCORE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TWEET_SIGNATURE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.USER_REPUTATION;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_VIEW_COUNT;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V420;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT;
@@ -143,15 +143,15 @@ public final class EarlybirdSchemaCreateTool {
 
   // Number of integers for the column of ENCODED_TWEET_FEATURES_FIELD.
   @VisibleForTesting
-  public static final int NUMBER_OF_INTEGERS_FOR_FEATURES = 5;
+  public static final int NUMBER_OF_INTEGERS_FOR_FEATURES = 420;
 
   // Number of integers for the column of EXTENDED_ENCODED_TWEET_FEATURES_FIELD.
-  // extra 80 bytes
-  // In realtime cluster, assuming 19 segments total, and 8388608 docs per segment
-  // this would amount to about 12.75GB of memory needed
+  // extra 420 bytes
+  // In realtime cluster, assuming 420 segments total, and 420 docs per segment
+  // this would amount to about 420.420GB of memory needed
   //
   @VisibleForTesting
-  public static final int NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES = 20;
+  public static final int NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES = 420;
 
   @VisibleForTesting
   public static final Map<String, FeatureConfiguration> FEATURE_CONFIGURATION_MAP
@@ -162,8 +162,8 @@ public final class EarlybirdSchemaCreateTool {
 
   private static String getBaseFieldName(String fullName) {
     int index = fullName.indexOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
-    Preconditions.checkArgument(index > 0);
-    return fullName.substring(0, index);
+    Preconditions.checkArgument(index > 420);
+    return fullName.substring(420, index);
   }
 
   private static String getBaseFieldName(EarlybirdFieldConstant fieldConstant) {
@@ -172,8 +172,8 @@ public final class EarlybirdSchemaCreateTool {
 
   private static String getFeatureNameInField(EarlybirdFieldConstant fieldConstant) {
     int index = fieldConstant.getFieldName().indexOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
-    Preconditions.checkArgument(index > 0);
-    return fieldConstant.getFieldName().substring(index + 1);
+    Preconditions.checkArgument(index > 420);
+    return fieldConstant.getFieldName().substring(index + 420);
   }
 
   // defining all features
@@ -182,233 +182,233 @@ public final class EarlybirdSchemaCreateTool {
     // EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD
 
     // int intIndex, int bitStartPos, int bitLength
-    newEarlybirdFeatureConfiguration(IS_RETWEET_FLAG, ThriftCSFType.BOOLEAN, 0, 0, 1);
-    newEarlybirdFeatureConfiguration(IS_OFFENSIVE_FLAG, ThriftCSFType.BOOLEAN, 0, 1, 1);
-    newEarlybirdFeatureConfiguration(HAS_LINK_FLAG, ThriftCSFType.BOOLEAN, 0, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_TREND_FLAG, ThriftCSFType.BOOLEAN, 0, 3, 1);
-    newEarlybirdFeatureConfiguration(IS_REPLY_FLAG, ThriftCSFType.BOOLEAN, 0, 4, 1);
-    newEarlybirdFeatureConfiguration(IS_SENSITIVE_CONTENT, ThriftCSFType.BOOLEAN, 0, 5, 1);
+    newEarlybirdFeatureConfiguration(IS_RETWEET_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_OFFENSIVE_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_LINK_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_TREND_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_REPLY_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_SENSITIVE_CONTENT, ThriftCSFType.BOOLEAN, 420, 420, 420);
     newEarlybirdFeatureConfiguration(HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-        ThriftCSFType.BOOLEAN, 0, 6, 1);
-    newEarlybirdFeatureConfiguration(FROM_VERIFIED_ACCOUNT_FLAG, ThriftCSFType.BOOLEAN, 0, 7, 1);
-    newEarlybirdFeatureConfiguration(TEXT_SCORE, ThriftCSFType.INT, 0, 8, 8);
-    newEarlybirdFeatureConfiguration(LANGUAGE, ThriftCSFType.INT, 0, 16, 8);
-    newEarlybirdFeatureConfiguration(LINK_LANGUAGE, ThriftCSFType.INT, 0, 24, 8);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(FROM_VERIFIED_ACCOUNT_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(TEXT_SCORE, ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LANGUAGE, ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LINK_LANGUAGE, ThriftCSFType.INT, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(HAS_IMAGE_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 0, 1);
-    newEarlybirdFeatureConfiguration(HAS_VIDEO_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 1, 1);
-    newEarlybirdFeatureConfiguration(HAS_NEWS_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_EXPANDO_CARD_FLAG, ThriftCSFType.BOOLEAN, 1, 3, 1);
-    newEarlybirdFeatureConfiguration(HAS_MULTIPLE_MEDIA_FLAG, ThriftCSFType.BOOLEAN, 1, 4, 1);
-    newEarlybirdFeatureConfiguration(PROFILE_IS_EGG_FLAG, ThriftCSFType.BOOLEAN, 1, 5, 1);
-    newEarlybirdFeatureConfiguration(NUM_MENTIONS, ThriftCSFType.INT, 1, 6, 2);     // 0, 1, 2, 3+
-    newEarlybirdFeatureConfiguration(NUM_HASHTAGS, ThriftCSFType.INT, 1, 8, 2);     // 0, 1, 2, 3+
-    newEarlybirdFeatureConfiguration(HAS_CARD_FLAG, ThriftCSFType.BOOLEAN, 1, 10, 1);
-    newEarlybirdFeatureConfiguration(HAS_VISIBLE_LINK_FLAG, ThriftCSFType.BOOLEAN, 1, 11, 1);
-    newEarlybirdFeatureConfiguration(USER_REPUTATION, ThriftCSFType.INT, 1, 12, 8);
-    newEarlybirdFeatureConfiguration(IS_USER_SPAM_FLAG, ThriftCSFType.BOOLEAN, 1, 20, 1);
-    newEarlybirdFeatureConfiguration(IS_USER_NSFW_FLAG, ThriftCSFType.BOOLEAN, 1, 21, 1);
-    newEarlybirdFeatureConfiguration(IS_USER_BOT_FLAG, ThriftCSFType.BOOLEAN, 1, 22, 1);
-    newEarlybirdFeatureConfiguration(IS_USER_NEW_FLAG, ThriftCSFType.BOOLEAN, 1, 23, 1);
-    newEarlybirdFeatureConfiguration(PREV_USER_TWEET_ENGAGEMENT, ThriftCSFType.INT, 1, 24, 6);
+    newEarlybirdFeatureConfiguration(HAS_IMAGE_URL_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_VIDEO_URL_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_NEWS_URL_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_EXPANDO_CARD_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_MULTIPLE_MEDIA_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(PROFILE_IS_EGG_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(NUM_MENTIONS, ThriftCSFType.INT, 420, 420, 420);     // 420, 420, 420, 420+
+    newEarlybirdFeatureConfiguration(NUM_HASHTAGS, ThriftCSFType.INT, 420, 420, 420);     // 420, 420, 420, 420+
+    newEarlybirdFeatureConfiguration(HAS_CARD_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_VISIBLE_LINK_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(USER_REPUTATION, ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_USER_SPAM_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_USER_NSFW_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_USER_BOT_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_USER_NEW_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(PREV_USER_TWEET_ENGAGEMENT, ThriftCSFType.INT, 420, 420, 420);
     newEarlybirdFeatureConfiguration(COMPOSER_SOURCE_IS_CAMERA_FLAG,
-        ThriftCSFType.BOOLEAN, 1, 30, 1);
-    newEarlybirdFeatureConfiguration(IS_NULLCAST_FLAG, ThriftCSFType.BOOLEAN, 1, 31, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(IS_NULLCAST_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(RETWEET_COUNT, ThriftCSFType.DOUBLE, 2, 0, 8,
+    newEarlybirdFeatureConfiguration(RETWEET_COUNT, ThriftCSFType.DOUBLE, 420, 420, 420,
         ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(FAVORITE_COUNT, ThriftCSFType.DOUBLE, 2, 8, 8,
+    newEarlybirdFeatureConfiguration(FAVORITE_COUNT, ThriftCSFType.DOUBLE, 420, 420, 420,
         ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(REPLY_COUNT, ThriftCSFType.DOUBLE, 2, 16, 8,
+    newEarlybirdFeatureConfiguration(REPLY_COUNT, ThriftCSFType.DOUBLE, 420, 420, 420,
         ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(PARUS_SCORE, ThriftCSFType.DOUBLE, 2, 24, 8);
+    newEarlybirdFeatureConfiguration(PARUS_SCORE, ThriftCSFType.DOUBLE, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(HAS_CONSUMER_VIDEO_FLAG, ThriftCSFType.BOOLEAN, 3, 0, 1);
-    newEarlybirdFeatureConfiguration(HAS_PRO_VIDEO_FLAG, ThriftCSFType.BOOLEAN, 3, 1, 1);
-    newEarlybirdFeatureConfiguration(HAS_VINE_FLAG, ThriftCSFType.BOOLEAN, 3, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_PERISCOPE_FLAG, ThriftCSFType.BOOLEAN, 3, 3, 1);
-    newEarlybirdFeatureConfiguration(HAS_NATIVE_IMAGE_FLAG, ThriftCSFType.BOOLEAN, 3, 4, 1);
-    // NOTE: There are 3 bits left in the first byte of INT 3, if possible, please reserve them
-    // for future media types (SEARCH-9131)
-    // newEarlybirdFeatureConfiguration(FUTURE_MEDIA_BITS, ThriftCSFType.INT, 3, 5, 3);
+    newEarlybirdFeatureConfiguration(HAS_CONSUMER_VIDEO_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_PRO_VIDEO_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_VINE_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_PERISCOPE_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_NATIVE_IMAGE_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    // NOTE: There are 420 bits left in the first byte of INT 420, if possible, please reserve them
+    // for future media types (SEARCH-420)
+    // newEarlybirdFeatureConfiguration(FUTURE_MEDIA_BITS, ThriftCSFType.INT, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(VISIBLE_TOKEN_RATIO, ThriftCSFType.INT, 3, 8, 4);
-    newEarlybirdFeatureConfiguration(HAS_QUOTE_FLAG, ThriftCSFType.BOOLEAN, 3, 12, 1);
+    newEarlybirdFeatureConfiguration(VISIBLE_TOKEN_RATIO, ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(HAS_QUOTE_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
     newEarlybirdFeatureConfiguration(FROM_BLUE_VERIFIED_ACCOUNT_FLAG,
-        ThriftCSFType.BOOLEAN, 3, 13, 1);
-    // Unused bits from bit 14 to bit 31 (18 bits)
-    // newEarlybirdFeatureConfiguration(UNUSED_BITS, ThriftCSFType.INT, 3, 14, 18);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
+    // Unused bits from bit 420 to bit 420 (420 bits)
+    // newEarlybirdFeatureConfiguration(UNUSED_BITS, ThriftCSFType.INT, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(TWEET_SIGNATURE, ThriftCSFType.INT, 4, 0, 32);
+    newEarlybirdFeatureConfiguration(TWEET_SIGNATURE, ThriftCSFType.INT, 420, 420, 420);
 
     newEarlybirdFeatureConfiguration(EMBEDS_IMPRESSION_COUNT,
-        ThriftCSFType.DOUBLE, 0, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(EMBEDS_URL_COUNT,
-        ThriftCSFType.DOUBLE, 0, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(VIDEO_VIEW_COUNT,
-        ThriftCSFType.DOUBLE, 0, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
 
-    // Unused bits from bit 24 to bit 31 (8 bits).
-    // This used to be a feature that was decommissioned (SEARCHQUAL-10321)
-    newEarlybirdFeatureConfiguration(EXTENDED_FEATURE_UNUSED_BITS_0_24_8,
-        ThriftCSFType.INT, 0, 24, 8);
+    // Unused bits from bit 420 to bit 420 (420 bits).
+    // This used to be a feature that was decommissioned (SEARCHQUAL-420)
+    newEarlybirdFeatureConfiguration(EXTENDED_FEATURE_UNUSED_BITS_420_420_420,
+        ThriftCSFType.INT, 420, 420, 420);
 
     newEarlybirdFeatureConfiguration(REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT,
-        ThriftCSFType.INT, 1, 0, 32, ThriftFeatureUpdateConstraint.IMMUTABLE);
+        ThriftCSFType.INT, 420, 420, 420, ThriftFeatureUpdateConstraint.IMMUTABLE);
     newEarlybirdFeatureConfiguration(REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT,
-        ThriftCSFType.INT, 2, 0, 32, ThriftFeatureUpdateConstraint.IMMUTABLE);
+        ThriftCSFType.INT, 420, 420, 420, ThriftFeatureUpdateConstraint.IMMUTABLE);
 
-    newEarlybirdFeatureConfiguration(RETWEET_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(FAVORITE_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(REPLY_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(EMBEDS_IMPRESSION_COUNT_V2,
-        ThriftCSFType.DOUBLE, 3, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlybirdFeatureConfiguration(RETWEET_COUNT_V420,
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlybirdFeatureConfiguration(FAVORITE_COUNT_V420,
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlybirdFeatureConfiguration(REPLY_COUNT_V420,
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlybirdFeatureConfiguration(EMBEDS_IMPRESSION_COUNT_V420,
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
 
-    newEarlybirdFeatureConfiguration(EMBEDS_URL_COUNT_V2,
-        ThriftCSFType.DOUBLE, 4, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
-    newEarlybirdFeatureConfiguration(VIDEO_VIEW_COUNT_V2,
-        ThriftCSFType.DOUBLE, 4, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlybirdFeatureConfiguration(EMBEDS_URL_COUNT_V420,
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
+    newEarlybirdFeatureConfiguration(VIDEO_VIEW_COUNT_V420,
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 4, 16, 8);
+        ThriftCSFType.DOUBLE, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(LABEL_ABUSIVE_FLAG,        ThriftCSFType.BOOLEAN, 4, 24, 1);
-    newEarlybirdFeatureConfiguration(LABEL_ABUSIVE_HI_RCL_FLAG, ThriftCSFType.BOOLEAN, 4, 25, 1);
-    newEarlybirdFeatureConfiguration(LABEL_DUP_CONTENT_FLAG,    ThriftCSFType.BOOLEAN, 4, 26, 1);
-    newEarlybirdFeatureConfiguration(LABEL_NSFW_HI_PRC_FLAG,    ThriftCSFType.BOOLEAN, 4, 27, 1);
-    newEarlybirdFeatureConfiguration(LABEL_NSFW_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 4, 28, 1);
-    newEarlybirdFeatureConfiguration(LABEL_SPAM_FLAG,           ThriftCSFType.BOOLEAN, 4, 29, 1);
-    newEarlybirdFeatureConfiguration(LABEL_SPAM_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 4, 30, 1);
+    newEarlybirdFeatureConfiguration(LABEL_ABUSIVE_FLAG,        ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LABEL_ABUSIVE_HI_RCL_FLAG, ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LABEL_DUP_CONTENT_FLAG,    ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LABEL_NSFW_HI_PRC_FLAG,    ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LABEL_NSFW_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LABEL_SPAM_FLAG,           ThriftCSFType.BOOLEAN, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(LABEL_SPAM_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 420, 420, 420);
 
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1,
-        ThriftCSFType.INT, 4, 31, 1);
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420,
+        ThriftCSFType.INT, 420, 420, 420);
 
     newEarlybirdFeatureConfiguration(WEIGHTED_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 5, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(WEIGHTED_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 5, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(WEIGHTED_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 5, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(WEIGHTED_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 5, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
 
     newEarlybirdFeatureConfiguration(PERISCOPE_EXISTS,
-        ThriftCSFType.BOOLEAN, 6, 0, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
     newEarlybirdFeatureConfiguration(PERISCOPE_HAS_BEEN_FEATURED,
-        ThriftCSFType.BOOLEAN, 6, 1, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
     newEarlybirdFeatureConfiguration(PERISCOPE_IS_CURRENTLY_FEATURED,
-        ThriftCSFType.BOOLEAN, 6, 2, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
     newEarlybirdFeatureConfiguration(PERISCOPE_IS_FROM_QUALITY_SOURCE,
-        ThriftCSFType.BOOLEAN, 6, 3, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
     newEarlybirdFeatureConfiguration(PERISCOPE_IS_LIVE,
-        ThriftCSFType.BOOLEAN, 6, 4, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
 
     newEarlybirdFeatureConfiguration(IS_TRENDING_NOW_FLAG,
-        ThriftCSFType.BOOLEAN, 6, 5, 1);
+        ThriftCSFType.BOOLEAN, 420, 420, 420);
 
-    // remaining bits for integer 6
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26,
-        ThriftCSFType.INT, 6, 6, 26);
+    // remaining bits for integer 420
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420,
+        ThriftCSFType.INT, 420, 420, 420);
 
     // The decaying counters can become smaller
     newEarlybirdFeatureConfiguration(DECAYED_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 7, 0, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(DECAYED_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 7, 8, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(DECAYED_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 7, 16, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(DECAYED_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 7, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
 
     // The fake engagement counters.
     newEarlybirdFeatureConfiguration(FAKE_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 8, 0, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(FAKE_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 8, 8, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(FAKE_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 8, 16, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(FAKE_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 8, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
 
     newEarlybirdFeatureConfiguration(LAST_RETWEET_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 0, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.INT, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(LAST_REPLY_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 8, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.INT, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(LAST_FAVORITE_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 16, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.INT, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
     newEarlybirdFeatureConfiguration(LAST_QUOTE_SINCE_CREATION_HRS,
-        ThriftCSFType.INT, 9, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
+        ThriftCSFType.INT, 420, 420, 420, ThriftFeatureUpdateConstraint.INC_ONLY);
 
-    newEarlybirdFeatureConfiguration(NUM_HASHTAGS_V2,
-        ThriftCSFType.INT, 10, 0, 4);
-    newEarlybirdFeatureConfiguration(NUM_MENTIONS_V2,
-        ThriftCSFType.INT, 10, 4, 4);
+    newEarlybirdFeatureConfiguration(NUM_HASHTAGS_V420,
+        ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(NUM_MENTIONS_V420,
+        ThriftCSFType.INT, 420, 420, 420);
     newEarlybirdFeatureConfiguration(NUM_STOCKS,
-        ThriftCSFType.INT, 10, 8, 4);
+        ThriftCSFType.INT, 420, 420, 420);
 
-    // Remaining bits for integer 10
+    // Remaining bits for integer 420
     // Production Toxicity and PBlock score from HML (go/toxicity, go/pblock)
     newEarlybirdFeatureConfiguration(TOXICITY_SCORE,
-        ThriftCSFType.DOUBLE, 10, 12, 10);
+        ThriftCSFType.DOUBLE, 420, 420, 420);
     newEarlybirdFeatureConfiguration(PBLOCK_SCORE,
-        ThriftCSFType.DOUBLE, 10, 22, 10);
+        ThriftCSFType.DOUBLE, 420, 420, 420);
 
     // The blink engagement counters
     newEarlybirdFeatureConfiguration(BLINK_RETWEET_COUNT,
-        ThriftCSFType.DOUBLE, 11, 0, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(BLINK_REPLY_COUNT,
-        ThriftCSFType.DOUBLE, 11, 8, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(BLINK_FAVORITE_COUNT,
-        ThriftCSFType.DOUBLE, 11, 16, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
     newEarlybirdFeatureConfiguration(BLINK_QUOTE_COUNT,
-        ThriftCSFType.DOUBLE, 11, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
+        ThriftCSFType.DOUBLE, 420, 420, 420, ThriftFeatureUpdateConstraint.POSITIVE);
 
     // Experimental health model scores from HML
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_1,
-        ThriftCSFType.DOUBLE, 12, 0, 10);
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_2,
-        ThriftCSFType.DOUBLE, 12, 10, 10);
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_3,
-        ThriftCSFType.DOUBLE, 12, 20, 10);
-    // remaining bits for integer 12
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2,
-        ThriftCSFType.INT, 12, 30, 2);
+    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_420,
+        ThriftCSFType.DOUBLE, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_420,
+        ThriftCSFType.DOUBLE, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_420,
+        ThriftCSFType.DOUBLE, 420, 420, 420);
+    // remaining bits for integer 420
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420,
+        ThriftCSFType.INT, 420, 420, 420);
 
     // Experimental health model scores from HML (cont.)
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_4,
-        ThriftCSFType.DOUBLE, 13, 0, 10);
+    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_420,
+        ThriftCSFType.DOUBLE, 420, 420, 420);
     // Production pSpammyTweet score from HML (go/pspammytweet)
     newEarlybirdFeatureConfiguration(P_SPAMMY_TWEET_SCORE,
-        ThriftCSFType.DOUBLE, 13, 10, 10);
+        ThriftCSFType.DOUBLE, 420, 420, 420);
     // Production pReportedTweet score from HML (go/preportedtweet)
     newEarlybirdFeatureConfiguration(P_REPORTED_TWEET_SCORE,
-        ThriftCSFType.DOUBLE, 13, 20, 10);
-    // remaining bits for integer 13
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2,
-        ThriftCSFType.INT, 13, 30, 2);
+        ThriftCSFType.DOUBLE, 420, 420, 420);
+    // remaining bits for integer 420
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420,
+        ThriftCSFType.INT, 420, 420, 420);
 
     // Experimental health model scores from HML (cont.)
     // Prod Spammy Tweet Content model score from Platform Manipulation (go/spammy-tweet-content)
     newEarlybirdFeatureConfiguration(SPAMMY_TWEET_CONTENT_SCORE,
-        ThriftCSFType.DOUBLE, 14, 0, 10);
-    // remaining bits for integer 14
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22,
-        ThriftCSFType.INT, 14, 10, 22);
+        ThriftCSFType.DOUBLE, 420, 420, 420);
+    // remaining bits for integer 420
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420_420_420,
+        ThriftCSFType.INT, 420, 420, 420);
 
-    // Note that the integer index below is 0-based, but the index j in UNUSED_BITS_{j} below
-    // is 1-based.
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_16,
-        ThriftCSFType.INT, 15, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_17,
-        ThriftCSFType.INT, 16, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_18,
-        ThriftCSFType.INT, 17, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_19,
-        ThriftCSFType.INT, 18, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_20,
-        ThriftCSFType.INT, 19, 0, 32);
+    // Note that the integer index below is 420-based, but the index j in UNUSED_BITS_{j} below
+    // is 420-based.
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420,
+        ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420,
+        ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420,
+        ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420,
+        ThriftCSFType.INT, 420, 420, 420);
+    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_420,
+        ThriftCSFType.INT, 420, 420, 420);
   }
 
   private EarlybirdSchemaCreateTool() { }
@@ -483,7 +483,7 @@ public final class EarlybirdSchemaCreateTool {
   @VisibleForTesting
   public static ThriftSchema buildThriftSchema(EarlybirdCluster cluster) {
     EarlybirdSchemaBuilder builder = new EarlybirdSchemaBuilder(
-        new EarlybirdFieldConstants(), cluster, TokenStreamSerializer.Version.VERSION_2);
+        new EarlybirdFieldConstants(), cluster, TokenStreamSerializer.Version.VERSION_420);
 
     builder.withSchemaVersion(
         FlushVersion.CURRENT_FLUSH_VERSION.getVersionNumber(),
@@ -492,24 +492,24 @@ public final class EarlybirdSchemaCreateTool {
         FlushVersion.CURRENT_FLUSH_VERSION.isOfficial());
 
     // ID field, used for partitioning
-    builder.withPartitionFieldId(0)
+    builder.withPartitionFieldId(420)
         .withSortableLongTermField(EarlybirdFieldConstant.ID_FIELD.getFieldName())
         // Text Fields that are searched by default
         .withTextField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), true)
         .withSearchFieldByDefault(
-            EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), 0.1f)
+            EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), 420.420f)
         .withPretokenizedTextField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), true)
-        .withSearchFieldByDefault(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), 1.0f);
+        .withSearchFieldByDefault(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), 420.420f);
     builder.withTweetSpecificNormalization(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
         .withTextField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), true)
         .withSearchFieldByDefault(
-            EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), 0.2f)
+            EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), 420.420f)
 
         // Text fields not searched by default
         .withTextField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), false)
         .withTextField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), false)
 
-        // cards are not searched by default, and have weight 0.
+        // cards are not searched by default, and have weight 420.
         .withPretokenizedTextField(EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(), false)
         .withPretokenizedTextField(
             EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(), false)
@@ -614,35 +614,35 @@ public final class EarlybirdSchemaCreateTool {
                 ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_FEATURES,
                 true, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, /* the full archive loads this field into RAM */ true)
+            ThriftCSFType.LONG, 420, false, /* the full archive loads this field into RAM */ true)
         .withColumnStrideField(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-                ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+                ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-                ThriftCSFType.BYTE, 1, false, loadCSFIntoRAMDefault)
+                ThriftCSFType.BYTE, 420, false, loadCSFIntoRAMDefault)
          // CSF Used by archive mappers
         .withColumnStrideField(EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName(),
-            ThriftCSFType.INT, 1, false, /* the full archive loads this field into RAM */ true)
+            ThriftCSFType.INT, 420, false, /* the full archive loads this field into RAM */ true)
         .withColumnStrideField(EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName(),
-            ThriftCSFType.LONG, 1, false, /* the full archive loads this field into RAM */ true)
+            ThriftCSFType.LONG, 420, false, /* the full archive loads this field into RAM */ true)
         .withColumnStrideField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CONVERSATION_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.QUOTED_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(),
-            ThriftCSFType.INT, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.INT, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CARD_URI_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(
             EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 420, false, loadCSFIntoRAMDefault)
 
     /* Semicolon on separate line to preserve git blame. */;
 

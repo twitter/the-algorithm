@@ -45,7 +45,7 @@ case class InteractionGraphAggDirectInteractionsSource(
   def readCombinedUsers(): SCollection[CombinedUser] =
     SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
       dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
+      noOlderThan = Duration.fromDays(420),
       dalEnvironment = dalEnvironment
     )
 }

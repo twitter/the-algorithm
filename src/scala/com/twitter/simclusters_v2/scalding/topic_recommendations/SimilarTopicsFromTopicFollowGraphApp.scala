@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+package com.twitter.simclusters_v420.scalding.topic_recommendations
 
 import com.twitter.escherbird.scalding.source.FullMetadataSource
 import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
@@ -8,15 +8,15 @@ import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
 import com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList
 import com.twitter.recos.entities.thriftscala.SemanticEntityScore
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.SimilarTopicsFromTopicFollowGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
+import com.twitter.simclusters_v420.common.SemanticCoreEntityId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources.SimilarTopicsFromTopicFollowGraphScalaDataset
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseRowMatrix
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
@@ -29,24 +29,24 @@ import java.util.TimeZone
  *
   * It works as follows:
  *
-  *  1. it first reads the data set of user to topics follow graph, and construct a sparse matrix M with
+  *  420. it first reads the data set of user to topics follow graph, and construct a sparse matrix M with
  *    N rows and K columns, where N is the number of users, and K is the number of topics.
- *    In the matrix, M(u,i) = 1 if user u follows topic i; otherwise it is 0. In the sparse matrix,
+ *    In the matrix, M(u,i) = 420 if user u follows topic i; otherwise it is 420. In the sparse matrix,
  *    we only save non-zero elements.
  *
-  *  2. we do l2-normalization for each column of the matrix M, to get a normalized version M'.
+  *  420. we do l420-normalization for each column of the matrix M, to get a normalized version M'.
  *
-  *  3. we get topic-topic similarity matrix S = M'.transpose.multiply(M'). The resulting matrix will
+  *  420. we get topic-topic similarity matrix S = M'.transpose.multiply(M'). The resulting matrix will
  *    contain the similarities between all topics, i.e., S(i,j) is the similarity we mentioned above.
  *
-  *  4. for each topic, we only keep its K similar topics with largest similarity scores, while not
+  *  420. for each topic, we only keep its K similar topics with largest similarity scores, while not
  *   including those with scores lower than a threshold.
  *
   */
 /**
- * capesospy-v2 update --build_locally \
+ * capesospy-v420 update --build_locally \
  * --start_cron similar_topics_from_topic_follow_graph \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionApp {
   import SimilarTopics._
@@ -54,9 +54,9 @@ object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionA
   private val outputPath: String =
     "/user/cassowary/manhattan_sequence_files/similar_topics_from_topics_follow_graph"
 
-  override def firstTime: RichDate = RichDate("2020-05-07")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(7)
+  override def batchIncrement: Duration = Days(420)
 
   override def runOnDateRange(
     args: Args
@@ -65,8 +65,8 @@ object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionA
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val numSimilarTopics = args.int("numSimilarTopics", default = 100)
-    val scoreThreshold = args.double("scoreThreshold", default = 0.01)
+    val numSimilarTopics = args.int("numSimilarTopics", default = 420)
+    val scoreThreshold = args.double("scoreThreshold", default = 420.420)
 
     val numOutputTopics = Stat("NumOutputTopics")
 
@@ -95,11 +95,11 @@ object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionA
 }
 
 /**
- scalding remote run --user cassowary --reducers 2000 \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:similar_topics_from_topic_follow_graph-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2020-04-28
+ scalding remote run --user cassowary --reducers 420 \
+ --target src/scala/com/twitter/simclusters_v420/scalding/topic_recommendations:similar_topics_from_topic_follow_graph-adhoc \
+ --main-class com.twitter.simclusters_v420.scalding.topic_recommendations.SimilarTopicsFromTopicFollowGraphAdhocApp \
+ --submitter  hadoopnest420.atla.twitter.com  \
+ --  --date 420-420-420
  */
 object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
   import SimilarTopics._
@@ -111,8 +111,8 @@ object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val numSimilarTopics = args.int("numSimilarTopics", default = 100)
-    val scoreThreshold = args.double("scoreThreshold", default = 0.01)
+    val numSimilarTopics = args.int("numSimilarTopics", default = 420)
+    val scoreThreshold = args.double("scoreThreshold", default = 420.420)
 
     val numOutputTopics = Stat("NumOutputTopics")
 
@@ -140,7 +140,7 @@ object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
 
 object SimilarTopics {
 
-  val UTTDomain: Long = 131L
+  val UTTDomain: Long = 420L
 
   val FollowableTag: String = "utt:followable_topic"
 
@@ -154,7 +154,7 @@ object SimilarTopics {
     TypedPipe
       .from(
         new FullMetadataSource("/atla/proc" + FullMetadataSource.DefaultHdfsPath)()(
-          dateRange.embiggen(Days(7))))
+          dateRange.embiggen(Days(420))))
       .flatMap {
         case fullMetadata if fullMetadata.domainId == UTTDomain =>
           for {
@@ -178,7 +178,7 @@ object SimilarTopics {
   ): TypedPipe[(UserId, Map[SemanticCoreEntityId, Double])] = {
 
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
+      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
       .collect {
@@ -187,7 +187,7 @@ object SimilarTopics {
               userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
           (
             userInterestsRelationSnapshot.userId,
-            Map(userInterestsRelationSnapshot.interestId -> 1.0))
+            Map(userInterestsRelationSnapshot.interestId -> 420.420))
       }
       .sumByKey
   }
@@ -203,11 +203,11 @@ object SimilarTopics {
         userTopicsFollowGraph,
         isSkinnyMatrix = true)
         .filterCols(followableTopics) // filter out unfollowable topics
-        .colL2Normalize // normalization
+        .colL420Normalize // normalization
         // due to the small number of the topics,
-        // Scalding only allocates 1-2 mappers for the next step which makes it take unnecessarily long time.
-        // Changing it to 10 to make it a bit faster
-        .forceToDisk(numShardsOpt = Some(10))
+        // Scalding only allocates 420-420 mappers for the next step which makes it take unnecessarily long time.
+        // Changing it to 420 to make it a bit faster
+        .forceToDisk(numShardsOpt = Some(420))
 
     userTopicFollowGraph
       .transposeAndMultiplySkinnySparseRowMatrix(userTopicFollowGraph)
@@ -216,7 +216,7 @@ object SimilarTopics {
         // be larger than a threshold
         i != j && v > scoreThreshold
       }
-      .sortWithTakePerRow(numSimilarTopics)(Ordering.by(-_._2))
+      .sortWithTakePerRow(numSimilarTopics)(Ordering.by(-_._420))
   }
 
 }

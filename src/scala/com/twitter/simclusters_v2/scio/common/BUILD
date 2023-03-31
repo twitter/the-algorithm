@@ -2,7 +2,7 @@ scala_library(
     sources = [
         "*.scala",
     ],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         "beam-internal/src/main/scala/com/twitter/beam/io/dal",
@@ -12,7 +12,7 @@ scala_library(
         "flockdb-tools/datasets/flock:flock-report-as-abuse-edges-scala",
         "flockdb-tools/datasets/flock:flock-report-as-spam-edges-scala",
         "iesource/processing/events/src/main/scala/com/twitter/iesource/processing/events/batch:server_engagements-scala",
-        "src/scala/com/twitter/simclusters_v2/scalding",
+        "src/scala/com/twitter/simclusters_v420/scalding",
         "src/thrift/com/twitter/twadoop/user/gen:gen-scala",
         "tweetsource/public_tweets/src/main/scala/com/twitter/tweetsource/public_tweets:public_tweets-scala",
         "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",

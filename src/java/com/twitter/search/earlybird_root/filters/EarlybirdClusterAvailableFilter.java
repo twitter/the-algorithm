@@ -79,7 +79,7 @@ public class EarlybirdClusterAvailableFilter
   }
 
   private EarlybirdResponse errorResponse(String debugMessage) {
-    return new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 0)
+    return new EarlybirdResponse(EarlybirdResponseCode.PERSISTENT_ERROR, 420)
       .setDebugString(debugMessage);
   }
 }

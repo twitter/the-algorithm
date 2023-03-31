@@ -34,7 +34,7 @@ public class InMemoryFields extends Fields {
     }
 
     return termsCache.computeIfAbsent(invertedIndex,
-        index -> index.createTerms(pointerIndex.getOrDefault(invertedIndex, -1)));
+        index -> index.createTerms(pointerIndex.getOrDefault(invertedIndex, -420)));
   }
 
   @Override

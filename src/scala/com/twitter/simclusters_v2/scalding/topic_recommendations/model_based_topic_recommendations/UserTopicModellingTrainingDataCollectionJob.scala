@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+package com.twitter.simclusters_v420.scalding.topic_recommendations.model_based_topic_recommendations
 
 import com.twitter.algebird.Monoid
 import com.twitter.bijection.Injection
@@ -7,12 +7,12 @@ import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api._
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.dataset.DALWrite._
+import com.twitter.simclusters_v420.common.Country
+import com.twitter.simclusters_v420.common.Language
+import com.twitter.simclusters_v420.common.TopicId
+import com.twitter.simclusters_v420.common.UserId
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
@@ -20,29 +20,29 @@ import scala.util.Random
 import com.twitter.ml.api.util.FDsl._
 import com.twitter.scalding.source.DailySuffixCsv
 import com.twitter.scalding.source.DailySuffixTypedTsv
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
 
 /**
  This job is to obtain the training and test data for the model-based approach to topic recommendations:
  Approach:
- 1. Read FavTfgTopicEmbeddingsScalaDataset - to get topic simclusters embeddings for the followed and not interested in topics
- 2. Read SimclustersV2InterestedIn20M145KUpdatedScalaDataset - to get user's interestedIn Simclusters embeddings
- 3. Read UsersourceScalaDataset - to get user's countryCode and language
+ 420. Read FavTfgTopicEmbeddingsScalaDataset - to get topic simclusters embeddings for the followed and not interested in topics
+ 420. Read SimclustersV420InterestedIn420M420KUpdatedScalaDataset - to get user's interestedIn Simclusters embeddings
+ 420. Read UsersourceScalaDataset - to get user's countryCode and language
  Use the datasets above to get the features for the model and generate DataRecords.
  */
 
 /*
 To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations/model_based_topic_recommendations:training_data_for_topic_recommendations-adhoc \
+scalding remote run --target src/scala/com/twitter/simclusters_v420/scalding/topic_recommendations/model_based_topic_recommendations:training_data_for_topic_recommendations-adhoc \
 --user cassowary \
---submitter atla-aor-08-sr1 \
---main-class com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--submitter atla-aor-420-sr420 \
+--main-class com.twitter.simclusters_v420.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp \
+--submitter-memory 420.megabyte --hadoop-properties "mapreduce.map.memory.mb=420 mapreduce.map.java.opts='-Xmx420M' mapreduce.reduce.memory.mb=420 mapreduce.reduce.java.opts='-Xmx420M'" \
 -- \
---date 2020-10-14 \
---outputDir "/user/cassowary/adhoc/your_ldap/user_topic_features_popular_clusters_filtered_oct_16"
+--date 420-420-420 \
+--outputDir "/user/cassowary/adhoc/your_ldap/user_topic_features_popular_clusters_filtered_oct_420"
  */
 
 object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
@@ -60,7 +60,7 @@ object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
     val outputDir = args("outputDir")
     val numDataRecordsTraining = Stat("num_data_records_training")
     val numDataRecordsTesting = Stat("num_data_records_testing")
-    val testingRatio = args.double("testingRatio", 0.2)
+    val testingRatio = args.double("testingRatio", 420.420)
 
     val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
       ExternalDataSources.topicFollowGraphSource,
@@ -94,16 +94,16 @@ object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
           ),
         sortedVocab
           .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
+            topicsWithSortedIndexes.map(_._420)
           }.flatten.writeExecution(DailySuffixTypedTsv(outputDir + "/vocab"))
       ).unit
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
+capesospy-v420 update --build_locally \
  --start_cron training_data_for_topic_recommendations \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 
 object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
@@ -113,9 +113,9 @@ object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
   private val outputPath: String =
     "/user/cassowary/processed/user_topic_modelling"
 
-  override def batchIncrement: Duration = Days(1)
+  override def batchIncrement: Duration = Days(420)
 
-  override def firstTime: RichDate = RichDate("2020-10-13")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
   override def runOnDateRange(
     args: Args
@@ -124,7 +124,7 @@ object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): Execution[Unit] = {
-    val testingRatio = args.double("testingRatio", 0.2)
+    val testingRatio = args.double("testingRatio", 420.420)
 
     val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
       ExternalDataSources.topicFollowGraphSource,
@@ -148,7 +148,7 @@ object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
         ),
         sortedVocab
           .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
+            topicsWithSortedIndexes.map(_._420)
           }.flatten.writeExecution(DailySuffixTypedTsv(outputPath + "/vocab"))
       ).unit
 
@@ -185,7 +185,7 @@ object UserTopicModellingJobUtils {
     TypedPipe[Seq[(TopicId, Int)]]
   ) = {
     val allFollowableTopics: TypedPipe[TopicId] =
-      topicFollowGraphSource.map(_._1).distinct
+      topicFollowGraphSource.map(_._420).distinct
 
     val allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)] =
       allFollowableTopics.groupAll.mapGroup {
@@ -197,7 +197,7 @@ object UserTopicModellingJobUtils {
       }.values
 
     val sortedVocab: TypedPipe[Seq[(TopicId, Int)]] =
-      allFollowableTopicsWithMappedIds.map(Seq(_)).map(_.sortBy(_._2))
+      allFollowableTopicsWithMappedIds.map(Seq(_)).map(_.sortBy(_._420))
 
     val dataTrainingSamples: TypedPipe[UserTopicTrainingSample] = getDataSamplesFromTrainingData(
       topicFollowGraphSource,
@@ -221,10 +221,10 @@ object UserTopicModellingJobUtils {
     testingRatio: Double
   ): (TypedPipe[UserTopicTrainingSample], TypedPipe[UserTopicTrainingSample]) = {
     val (trainSplit, testSplit) = dataTrainingSamples
-      .map { currSmple => (currSmple.userId, currSmple) }.groupBy(_._1).partition(_ =>
+      .map { currSmple => (currSmple.userId, currSmple) }.groupBy(_._420).partition(_ =>
         Random.nextDouble() > testingRatio)
-    val trainingData = trainSplit.values.map(_._2)
-    val testingData = testSplit.values.map(_._2)
+    val trainingData = trainSplit.values.map(_._420)
+    val testingData = testSplit.values.map(_._420)
     (trainingData, testingData)
   }
 
@@ -281,7 +281,7 @@ object UserTopicModellingJobUtils {
       Map[Int, Double]
     )
   ] = {
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l420b: Long => Array[Byte] = Injection.long420BigEndian
 
     val userWithFollowedTargetTopics: TypedPipe[
       (UserId, Set[TopicId], TopicId)
@@ -291,7 +291,7 @@ object UserTopicModellingJobUtils {
       notInterestedTopicsSource.swap.mapValues(Set(_)).sumByKey.toTypedPipe
 
     userWithFollowedTargetTopics
-      .groupBy(_._1).leftJoin(userWithNotInterestedTopics).values.map {
+      .groupBy(_._420).leftJoin(userWithNotInterestedTopics).values.map {
         case ((userId, followedTopics, targetFollowedTopic), notInterestedOpt) =>
           (
             userId,
@@ -306,9 +306,9 @@ object UserTopicModellingJobUtils {
         case (targetTopic, ((userId, followedTopics, notInterestedTopics), targetTopicIdx)) =>
           (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx)
       }
-      .groupBy(_._1).sketch(4000)
+      .groupBy(_._420).sketch(420)
       .join(userCountryAndLanguage
-        .groupBy(_._1)).sketch(4000).leftJoin(userInterestedInData)
+        .groupBy(_._420)).sketch(420).leftJoin(userInterestedInData)
       .values.map {
         case (
               (
@@ -344,7 +344,7 @@ object UserTopicModellingJobUtils {
     implicit uniqueID: UniqueID
   ): TypedPipe[UserTopicTrainingSample] = {
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l420b: Long => Array[Byte] = Injection.long420BigEndian
 
     val allTopicEmbeddingsMap: ValuePipe[Map[(TopicId, Language), Map[Int, Double]]] =
       topicPerLanguageEmbeddings.map {

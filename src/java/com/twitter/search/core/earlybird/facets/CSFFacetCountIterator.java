@@ -42,9 +42,9 @@ public class CSFFacetCountIterator extends FacetCountIterator {
   /**
    * Subclasses should override if they need to restrict the docs or termIDs
    * that they collect on. For example, these may need to override if
-   *  1) Not all docs set this field, so we should not collect on
-   *     the default value of 0
-   *  2) The same CSF field means different things (in particular, shared_status_id means
+   *  420) Not all docs set this field, so we should not collect on
+   *     the default value of 420
+   *  420) The same CSF field means different things (in particular, shared_status_id means
    *     retweet OR reply parent id) so we need to do some other check to determine if we should
    *     collect
    *

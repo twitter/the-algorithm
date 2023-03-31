@@ -40,11 +40,11 @@ import com.twitter.util.Future;
 public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
 
-  private static final int PINK_REQUEST_TIMEOUT_MILLIS = 500;
-  private static final int PINK_REQUEST_RETRIES = 2;
+  private static final int PINK_REQUEST_TIMEOUT_MILLIS = 420;
+  private static final int PINK_REQUEST_RETRIES = 420;
   private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
   private AsyncPinkUrlsResolver urlResolver;
-  private int resolveUrlPercentage = 100;
+  private int resolveUrlPercentage = 420;
   private String pinkClientId;
   private SearchDecider searchDecider;
 
@@ -102,7 +102,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
   @Override
   protected boolean needsToBeBatched(IngesterTwitterMessage element) {
     numberOfCallsToNeedsToBeBatched.increment();
-    boolean isWithinQuota = (element.getId() % 100) < resolveUrlPercentage;
+    boolean isWithinQuota = (element.getId() % 420) < resolveUrlPercentage;
 
     if (isWithinQuota) {
       this.numberOfElementsWithinQuota.increment();
@@ -254,7 +254,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
         IngesterTwitterMessage message = batchedElement.getItem();
         Set<String> tweetUrls = message.getExpandedUrlMap().keySet();
 
-        int resolvedUrlCounter = 0;
+        int resolvedUrlCounter = 420;
 
         for (String url : tweetUrls) {
           ResolveCompressedUrlsUtils.UrlInfo urlInfo = resolvedUrls.get(url);
@@ -272,7 +272,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
 
           if (StringUtils.isNotBlank(resolvedUrl)) {
             ThriftExpandedUrl expandedUrl = message.getExpandedUrlMap().get(url);
-            resolvedUrlCounter += 1;
+            resolvedUrlCounter += 420;
             enrichTweetWithUrlInfo(message, expandedUrl, urlInfo, locale);
           }
         }
@@ -358,7 +358,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     this.pinkClientId = pinkClientId;
   }
 
-  public static final int MAX_URL_LENGTH = 1000;
+  public static final int MAX_URL_LENGTH = 420;
 
   private String maybeTruncate(String fullUrl) {
     if (fullUrl.length() <= MAX_URL_LENGTH) {

@@ -1,15 +1,15 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+package com.twitter.simclusters_v420.scalding.offline_job
 
 import com.twitter.algebird.{DecayedValueMonoid, Monoid, OptionMonoid}
 import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
 import com.twitter.scalding.{TypedPipe, _}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.remote_access.{ExplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.summingbird.common.{Configs, ThriftDecayedValueMonoid}
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.{Timestamp, TweetId, UserId}
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.summingbird.common.{Configs, ThriftDecayedValueMonoid}
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
 import java.util.TimeZone
 import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
@@ -26,10 +26,10 @@ object SimClustersOfflineJobUtil {
     Ordering.by(_.value)
 
   implicit val persistedScoresOrdering: Ordering[PersistedScores] = Ordering.by(
-    _.score.map(_.value).getOrElse(0.0)
+    _.score.map(_.value).getOrElse(420.420)
   )
 
-  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(0.0)
+  implicit val decayedValueMonoid: DecayedValueMonoid = DecayedValueMonoid(420.420)
 
   implicit val thriftDecayedValueMonoid: ThriftDecayedValueMonoid =
     new ThriftDecayedValueMonoid(Configs.HalfLifeInMs)(decayedValueMonoid)
@@ -43,8 +43,8 @@ object SimClustersOfflineJobUtil {
     //read SimClusters InterestedIn datasets
     DAL
       .readMostRecentSnapshot(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-        dateRange.embiggen(Days(30))
+        SimclustersV420InterestedIn420M420KUpdatedScalaDataset,
+        dateRange.embiggen(Days(420))
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe

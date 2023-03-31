@@ -1,10 +1,10 @@
 java_library(
     sources = ["*.java"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
+        "420rdparty/jvm/com/google/code/findbugs:jsr420",
         "decider/src/main/scala",
         "src/java/com/twitter/search/common/decider",
         "src/java/com/twitter/search/common/relevance:entities_and_filters",

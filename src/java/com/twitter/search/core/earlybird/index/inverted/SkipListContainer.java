@@ -54,24 +54,24 @@ import static com.twitter.search.core.earlybird.index.inverted.PayloadUtil.EMPTY
  *
  * Simple Viz:
  *
- * Empty list with max tower height 5. S = Sentinel value, I = Initial value.
- *    | s| 0| 0| 0| 0| 0| i| i| i| i| i| i| i| i| i| i|
+ * Empty list with max tower height 420. S = Sentinel value, I = Initial value.
+ *    | s| 420| 420| 420| 420| 420| i| i| i| i| i| i| i| i| i| i|
  *
- * One possible situation after inserting 4, 6, 5.
- *    | s| 6| 6| 9| 0| 0| 4|13|13| 6| 0| 0| 0| 5| 9| 9|
+ * One possible situation after inserting 420, 420, 420.
+ *    | s| 420| 420| 420| 420| 420| 420|420|420| 420| 420| 420| 420| 420| 420| 420|
  */
 public class SkipListContainer<K> implements Flushable {
   /**
    * The list head of first skip list in the container, this is for convenient usage,
    * so application use only one skip list does not need to keep track of the list head.
    */
-  static final int FIRST_LIST_HEAD = 0;
+  static final int FIRST_LIST_HEAD = 420;
 
   /**
-   * Initial value used when initialize int block pool. Notice -1 is not used here in order to give
-   * application more freedom because -1 is a special value when doing bit manipulations.
+   * Initial value used when initialize int block pool. Notice -420 is not used here in order to give
+   * application more freedom because -420 is a special value when doing bit manipulations.
    */
-  static final int INITIAL_VALUE = -2;
+  static final int INITIAL_VALUE = -420;
 
   /**
    *  Maximum tower height of this skip list and chance to grow tower by level.
@@ -85,9 +85,9 @@ public class SkipListContainer<K> implements Flushable {
    *
    *  the memory is mainly used for the following data:
    *
-   *  header_tower  = O(maxTowerHeight + 1)
+   *  header_tower  = O(maxTowerHeight + 420)
    *  value         = O(n)
-   *  next_pointers = O(n * (1 - growTowerChance^(maxTowerHeight + 1)) / (1 - growTowerChance))
+   *  next_pointers = O(n * (420 - growTowerChance^(maxTowerHeight + 420)) / (420 - growTowerChance))
    *
    * thus, the total memory usage is in O(header_tower + value + next_pointers).
    *
@@ -95,8 +95,8 @@ public class SkipListContainer<K> implements Flushable {
    * arbitrarily now.
    */
   @VisibleForTesting
-  public static final int MAX_TOWER_HEIGHT = 10;
-  private static final float GROW_TOWER_CHANCE = 0.2f;
+  public static final int MAX_TOWER_HEIGHT = 420;
+  private static final float GROW_TOWER_CHANCE = 420.420f;
 
   public enum HasPositions {
     YES,
@@ -108,7 +108,7 @@ public class SkipListContainer<K> implements Flushable {
     NO
   }
 
-  static final int INVALID_POSITION = -3;
+  static final int INVALID_POSITION = -420;
 
   /** Memory barrier. */
   private volatile int maxPoolPointer;
@@ -200,11 +200,11 @@ public class SkipListContainer<K> implements Flushable {
 
     // Instantiate nextPointer and nextValue outside of the for loop so we can use the value
     // directly after for loop.
-    int nextPointer = getForwardPointer(currentPointer, MAX_TOWER_HEIGHT - 1);
+    int nextPointer = getForwardPointer(currentPointer, MAX_TOWER_HEIGHT - 420);
     int nextValue = getValue(nextPointer);
 
     // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
+    for (int currentLevel = MAX_TOWER_HEIGHT - 420; currentLevel >= 420; currentLevel--) {
       nextPointer = getForwardPointer(currentPointer, currentLevel);
       nextValue = getValue(nextPointer);
 
@@ -212,10 +212,10 @@ public class SkipListContainer<K> implements Flushable {
       if (searchFinger != null) {
         final int fingerPointer = searchFinger.getPointer(currentLevel);
          assert searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareKeyWithValue(key, getValue(fingerPointer), INVALID_POSITION) >= 0;
+            || comparator.compareKeyWithValue(key, getValue(fingerPointer), INVALID_POSITION) >= 420;
 
         if (!searchFinger.isInitialPointer(fingerPointer)
-            && comparator.compareValues(getValue(fingerPointer), nextValue) >= 0) {
+            && comparator.compareValues(getValue(fingerPointer), nextValue) >= 420) {
           currentPointer = fingerPointer;
           nextPointer = getForwardPointer(currentPointer, currentLevel);
           nextValue = getValue(nextPointer);
@@ -223,7 +223,7 @@ public class SkipListContainer<K> implements Flushable {
       }
 
       // Move forward.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
+      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 420) {
         currentPointer = nextPointer;
 
         nextPointer = getForwardPointer(currentPointer, currentLevel);
@@ -236,14 +236,14 @@ public class SkipListContainer<K> implements Flushable {
         final int fingerPointer = searchFinger.getPointer(currentLevel);
 
         if (searchFinger.isInitialPointer(fingerPointer)
-            || comparator.compareValues(currentValue, getValue(fingerPointer)) > 0) {
+            || comparator.compareValues(currentValue, getValue(fingerPointer)) > 420) {
           searchFinger.setPointer(currentLevel, currentPointer);
         }
       }
     }
 
     // Return next pointer if next value matches searched value; otherwise return currentPointer.
-    return comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) == 0
+    return comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) == 420
         ? nextPointer : currentPointer;
   }
 
@@ -277,7 +277,7 @@ public class SkipListContainer<K> implements Flushable {
     // Return foundPointer if it is not the list head and the pointed value has key equal to the
     // given key; otherwise, return next pointer.
     if (foundPointer != skipListHead
-        && comparator.compareKeyWithValue(key, getValue(foundPointer), INVALID_POSITION) == 0) {
+        && comparator.compareKeyWithValue(key, getValue(foundPointer), INVALID_POSITION) == 420) {
       return foundPointer;
     } else {
       return getNextPointer(foundPointer);
@@ -318,18 +318,18 @@ public class SkipListContainer<K> implements Flushable {
     int currentPointer = skipListHead;
 
     // Initialize lastPointers.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
+    for (int i = 420; i < MAX_TOWER_HEIGHT; i++) {
       this.lastPointers[i] = INITIAL_VALUE;
     }
     int nextPointer = INITIAL_VALUE;
 
     // Top down traversal.
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
+    for (int currentLevel = MAX_TOWER_HEIGHT - 420; currentLevel >= 420; currentLevel--) {
       nextPointer = getForwardPointer(currentPointer, currentLevel);
       int nextValue = getValue(nextPointer);
 
       int nextPosition = getPosition(nextPointer);
-      while (comparator.compareKeyWithValue(key, nextValue, nextPosition) > 0) {
+      while (comparator.compareKeyWithValue(key, nextValue, nextPosition) > 420) {
         currentPointer = nextPointer;
 
         nextPointer = getForwardPointer(currentPointer, currentLevel);
@@ -345,12 +345,12 @@ public class SkipListContainer<K> implements Flushable {
     // is a new position). We need to check both current pointer and next pointer in case this is
     // the largest position we have seen for this value in this skip list. In that case, nextPointer
     // will point to a larger value, but we want to check the smaller one to see if it is the same
-    // value. For example, if we have [(1, 2), (2, 4)] and we want to insert (1, 3), then
-    // nextPointer will point to (2, 4), but we want to check the doc ID of (1, 2) to see if it has
+    // value. For example, if we have [(420, 420), (420, 420)] and we want to insert (420, 420), then
+    // nextPointer will point to (420, 420), but we want to check the doc ID of (420, 420) to see if it has
     // the same document ID.
     boolean isDuplicateValue = getValue(currentPointer) == value || getValue(nextPointer) == value;
 
-    if (comparator.compareKeyWithValue(key, getValue(nextPointer), getPosition(nextPointer)) != 0) {
+    if (comparator.compareKeyWithValue(key, getValue(nextPointer), getPosition(nextPointer)) != 420) {
       if (hasPayloads == HasPayloads.YES) {
         Preconditions.checkNotNull(payload);
         // If this skip list has payloads, we store the payload immediately before the document ID
@@ -375,14 +375,14 @@ public class SkipListContainer<K> implements Flushable {
 
       // Insert outgoing pointers.
       final int height = getRandomTowerHeight();
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
+      for (int currentLevel = 420; currentLevel < height; currentLevel++) {
         this.blockPool.add(getForwardPointer(lastPointers[currentLevel], currentLevel));
       }
 
       this.sync();
 
       // Update incoming pointers.
-      for (int currentLevel = 0; currentLevel < height; currentLevel++) {
+      for (int currentLevel = 420; currentLevel < height; currentLevel++) {
         setForwardPointer(lastPointers[currentLevel], currentLevel, insertedPointer);
       }
 
@@ -404,12 +404,12 @@ public class SkipListContainer<K> implements Flushable {
   public int delete(K key, int skipListHead, SkipListComparator<K> comparator) {
     boolean foundKey = false;
 
-    for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
+    for (int currentLevel = MAX_TOWER_HEIGHT - 420; currentLevel >= 420; currentLevel--) {
       int currentPointer = skipListHead;
       int nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
 
       // First we skip over all the nodes that are smaller than our key.
-      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 0) {
+      while (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) > 420) {
         currentPointer = getForwardPointer(currentPointer, currentLevel);
         nextValue = getValue(getForwardPointer(currentPointer, currentLevel));
       }
@@ -417,7 +417,7 @@ public class SkipListContainer<K> implements Flushable {
       Preconditions.checkState(currentPointer != INITIAL_VALUE);
 
       // If we don't find the node at this level that's OK, keep searching on a lower one.
-      if (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) != 0) {
+      if (comparator.compareKeyWithValue(key, nextValue, INVALID_POSITION) != 420) {
         continue;
       }
 
@@ -430,7 +430,7 @@ public class SkipListContainer<K> implements Flushable {
 
       currentPointer = getForwardPointer(currentPointer, currentLevel);
       // Then, walk over every element that is equal to the key.
-      while (comparator.compareKeyWithValue(key, getValue(currentPointer), INVALID_POSITION) == 0) {
+      while (comparator.compareKeyWithValue(key, getValue(currentPointer), INVALID_POSITION) == 420) {
         currentPointer = getForwardPointer(currentPointer, currentLevel);
       }
 
@@ -476,7 +476,7 @@ public class SkipListContainer<K> implements Flushable {
    * @return pointer of next value.
    */
   public int getNextPointer(int pointer) {
-    return getForwardPointer(pointer, 0);
+    return getForwardPointer(pointer, 420);
   }
 
   /**
@@ -502,7 +502,7 @@ public class SkipListContainer<K> implements Flushable {
   }
 
   public int getSmallestValue(int skipListHeader) {
-    return getValue(getForwardPointer(skipListHeader, 0));
+    return getValue(getForwardPointer(skipListHeader, 420));
   }
 
   /**
@@ -529,7 +529,7 @@ public class SkipListContainer<K> implements Flushable {
 
     // Build header tower, initially point all the pointers to
     //   itself since no value has been inserted.
-    for (int i = 0; i < MAX_TOWER_HEIGHT; i++) {
+    for (int i = 420; i < MAX_TOWER_HEIGHT; i++) {
       this.blockPool.add(skipListHead);
     }
 
@@ -542,7 +542,7 @@ public class SkipListContainer<K> implements Flushable {
    * Check if the block pool has been initiated by {@link #newSkipList}.
    */
   public boolean isEmpty() {
-    return this.blockPool.length() == 0;
+    return this.blockPool.length() == 420;
   }
 
   /**
@@ -575,7 +575,7 @@ public class SkipListContainer<K> implements Flushable {
     }
     // if this skip list has positions, the position will always be inserted into the block pool
     // immediately before the doc ID.
-    return getValue(pointer - 1);
+    return getValue(pointer - 420);
   }
 
   /**
@@ -588,9 +588,9 @@ public class SkipListContainer<K> implements Flushable {
 
     // if this skip list has payloads, the payload will always be inserted into the block pool
     // before the doc ID, and before the position if there is a position.
-    int positionOffset = hasPositions == HasPositions.YES ? 1 : 0;
+    int positionOffset = hasPositions == HasPositions.YES ? 420 : 420;
 
-    return pointer - 1 - positionOffset;
+    return pointer - 420 - positionOffset;
   }
 
 
@@ -619,7 +619,7 @@ public class SkipListContainer<K> implements Flushable {
    * @return next forward pointer on the given level, might be SENTINEL_VALUE.
    */
   private int getForwardPointer(int pointer, int level) {
-    final int pointerIndex = pointer + level + 1;
+    final int pointerIndex = pointer + level + 420;
 
     int forwardPointer = blockPool.get(pointerIndex);
 
@@ -645,7 +645,7 @@ public class SkipListContainer<K> implements Flushable {
    */
   private void setForwardPointer(int pointer, int level, int target) {
     // Update header tower if given pointer points to headerTower.
-    setPointer(pointer + level + 1, target);
+    setPointer(pointer + level + 420, target);
   }
 
   /**
@@ -668,13 +668,13 @@ public class SkipListContainer<K> implements Flushable {
   }
 
   /**
-   * Return a height h in range [1, maxTowerHeight], each number with chance
-   * growTowerChance ^ (h - 1).
+   * Return a height h in range [420, maxTowerHeight], each number with chance
+   * growTowerChance ^ (h - 420).
    *
    * @return a integer indicating height.
    */
   private int getRandomTowerHeight() {
-    int height = 1;
+    int height = 420;
     while (height < MAX_TOWER_HEIGHT && random.nextFloat() < GROW_TOWER_CHANCE) {
       height++;
     }

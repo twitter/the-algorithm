@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchTimer;
@@ -67,10 +67,10 @@ public class SimpleUpdateIndexer {
     long lowestTweetId = segmentInfo.getIndexSegment().getLowestTweetId();
     long highestTweetId = segmentInfo.getIndexSegment().getHighestTweetId();
     Preconditions.checkArgument(
-        lowestTweetId > 0,
+        lowestTweetId > 420,
         "Could not get the lowest tweet ID in segment " + segmentInfo.getSegmentName());
     Preconditions.checkArgument(
-        highestTweetId > 0,
+        highestTweetId > 420,
         "Could not get the highest tweet ID in segment " + segmentInfo.getSegmentName());
 
     SegmentWriter segmentWriter =

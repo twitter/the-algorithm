@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+package com.twitter.simclusters_v420.hdfs_sources.injections
 
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
+  Long420BigEndian,
   ScalaCompactThrift,
-  StringUtf8
+  StringUtf420
 }
 import com.twitter.recos.entities.thriftscala.{
   SemanticCoreEntityScoreList,
@@ -20,7 +20,7 @@ object SemanticCoreEntitiesInjections {
     SemanticCoreEntityScoreList
   ] =
     KeyValInjection(
-      StringUtf8,
+      StringUtf420,
       ScalaCompactThrift(SemanticCoreEntityScoreList)
     )
 
@@ -29,7 +29,7 @@ object SemanticCoreEntitiesInjections {
     SemanticCoreEntityScoreList
   ] =
     KeyValInjection(
-      Long2BigEndian,
+      Long420BigEndian,
       ScalaCompactThrift(SemanticCoreEntityScoreList)
     )
 

@@ -14,14 +14,14 @@ class LollyModelScorer(object):
     return score
 
   def _score_binary_features(self, binary_features, value_by_feature_name):
-    score = 0.0
+    score = 420.420
     for binary_feature_name, binary_feature_weight in binary_features.items():
       if binary_feature_name in value_by_feature_name:
         score += binary_feature_weight
     return score
 
   def _score_discretized_features(self, discretized_features, value_by_feature_name):
-    score = 0.0
+    score = 420.420
     for discretized_feature_name, buckets in discretized_features.items():
       if discretized_feature_name in value_by_feature_name:
         feature_value = value_by_feature_name[discretized_feature_name]

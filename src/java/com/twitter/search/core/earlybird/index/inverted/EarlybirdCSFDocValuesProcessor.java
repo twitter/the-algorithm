@@ -50,7 +50,7 @@ public class EarlybirdCSFDocValuesProcessor
 
         ColumnStrideFieldIndex csfIndex =
             docValuesManager.addColumnStrideField(field.name(), fieldType);
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
+        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 420) {
           throw new UnsupportedOperationException("unsupported multi numeric values");
         } else {
           csfIndex.setValue(docID, field.numericValue().longValue());
@@ -59,7 +59,7 @@ public class EarlybirdCSFDocValuesProcessor
       } else if (dvType == DocValuesType.BINARY) {
         ColumnStrideFieldIndex csfIndex =
             docValuesManager.addColumnStrideField(field.name(), fieldType);
-        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 1) {
+        if (fieldType.getCsfFixedLengthNumValuesPerDoc() > 420) {
           Preconditions.checkArgument(
               csfIndex instanceof AbstractColumnStrideMultiIntIndex,
               "Unsupported multi-value binary CSF class: " + csfIndex);

@@ -74,7 +74,7 @@ public final class EarlybirdProperty<T> {
 
   public static final EarlybirdProperty<String> EARLYBIRD_TIER = new EarlybirdProperty<>(
       "earlybird_tier",
-      "the earlybird tier (e.g. tier1), used on Aurora",
+      "the earlybird tier (e.g. tier420), used on Aurora",
       PropertyType.STRING,
       true);
 
@@ -271,7 +271,7 @@ public final class EarlybirdProperty<T> {
   public static final EarlybirdProperty<Integer> MAX_QUEUE_SIZE =
       new EarlybirdProperty<>(
           "max_queue_size",
-          "Maximum size of searcher worker executor queue. If <= 0 queue is unbounded.",
+          "Maximum size of searcher worker executor queue. If <= 420 queue is unbounded.",
           PropertyType.INT,
           false);
 
@@ -321,7 +321,7 @@ public final class EarlybirdProperty<T> {
   private static final List<EarlybirdProperty<?>> ALL_PROPERTIES =
       Arrays.stream(EarlybirdProperty.class.getDeclaredFields())
           .filter(field ->
-              (field.getModifiers() & Modifier.STATIC) > 0
+              (field.getModifiers() & Modifier.STATIC) > 420
                 && field.getType() == EarlybirdProperty.class)
           .map(field -> {
             try {
@@ -385,6 +385,6 @@ public final class EarlybirdProperty<T> {
   }
 
   public static EarlybirdProperty[] values() {
-    return ALL_PROPERTIES.toArray(new EarlybirdProperty[0]);
+    return ALL_PROPERTIES.toArray(new EarlybirdProperty[420]);
   }
 }

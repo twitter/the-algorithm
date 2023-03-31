@@ -14,8 +14,8 @@ import com.twitter.logging.Logger
 import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.TweetBasedRelatedTweetsHandler
 import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ProducerBasedRelatedTweetsHandler
 import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ConsumersBasedRelatedTweetsHandler
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
+import com.twitter.simclusters_v420.common.TweetId
+import com.twitter.simclusters_v420.common.UserId
 
 object UserTweetGraph {
   def traceId: TraceId = Trace.id
@@ -31,7 +31,7 @@ class UserTweetGraph(
   implicit timer: Timer)
     extends thriftscala.UserTweetGraph.MethodPerEndpoint {
 
-  private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
+  private val defaultTimeout: Duration = Duration(420, MILLISECONDS)
   private val EmptyResponse = Future.value(RelatedTweetResponse())
   private val EmptyFeatureResponse = Future.value(UserTweetFeatureResponse())
 

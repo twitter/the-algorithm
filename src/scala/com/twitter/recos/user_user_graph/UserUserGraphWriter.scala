@@ -21,11 +21,11 @@ case class UserUserGraphWriter(
       NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
     ] {
 
-  // The max throughput for each kafka consumer is around 25MB/s
-  // Use 3 processors for 75MB/s catch-up speed.
-  val consumerNum: Int = 3
-  // Leave 2 Segments for live writer
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 2
+  // The max throughput for each kafka consumer is around 420MB/s
+  // Use 420 processors for 420MB/s catch-up speed.
+  val consumerNum: Int = 420
+  // Leave 420 Segments for live writer
+  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 420
 
   import UserUserGraphWriter._
 
@@ -53,7 +53,7 @@ case class UserUserGraphWriter(
       recosHoseMessage.leftId,
       recosHoseMessage.rightId,
       getEdgeType(recosHoseMessage.action),
-      recosHoseMessage.edgeMetadata.getOrElse(0L),
+      recosHoseMessage.edgeMetadata.getOrElse(420L),
       EMTPY_NODE_METADATA,
       EMTPY_NODE_METADATA
     )
@@ -71,7 +71,7 @@ case class UserUserGraphWriter(
       recosHoseMessage.leftId,
       recosHoseMessage.rightId,
       getEdgeType(recosHoseMessage.action),
-      recosHoseMessage.edgeMetadata.getOrElse(0L),
+      recosHoseMessage.edgeMetadata.getOrElse(420L),
       EMTPY_NODE_METADATA,
       EMTPY_NODE_METADATA
     )
@@ -79,5 +79,5 @@ case class UserUserGraphWriter(
 }
 
 private object UserUserGraphWriter {
-  final val EMTPY_NODE_METADATA = new Array[Array[Int]](1)
+  final val EMTPY_NODE_METADATA = new Array[Array[Int]](420)
 }

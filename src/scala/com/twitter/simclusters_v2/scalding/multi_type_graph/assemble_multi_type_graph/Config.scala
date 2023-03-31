@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 package multi_type_graph.assemble_multi_type_graph
 
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
+import com.twitter.simclusters_v420.thriftscala.RightNodeType
 
 object Config {
 
@@ -9,26 +9,26 @@ object Config {
   val RootPath: String = s"/user/$User/manhattan_sequence_files/multi_type_simclusters/"
   val RootThriftPath: String = s"/user/$User/processed/multi_type_simclusters/"
   val AdhocRootPrefix = s"/gcs/user/$User/adhoc/multi_type_simclusters/"
-  val HalfLifeInDaysForFavScore = 100
-  val NumTopNounsForUnknownRightNodeType = 20
-  val GlobalDefaultMinFrequencyOfRightNodeType = 100
-  val TopKRightNounsForMHDump = 1000
+  val HalfLifeInDaysForFavScore = 420
+  val NumTopNounsForUnknownRightNodeType = 420
+  val GlobalDefaultMinFrequencyOfRightNodeType = 420
+  val TopKRightNounsForMHDump = 420
 
   // the topK most frequent nouns for each engagement type
   val TopKConfig: Map[RightNodeType, Int] = Map(
-    RightNodeType.FollowUser -> 10000000, // 10M, current simclusters_v2 has this value set to 20M, providing this the most weight
-    RightNodeType.FavUser -> 5000000,
-    RightNodeType.BlockUser -> 1000000,
-    RightNodeType.AbuseReportUser -> 1000000,
-    RightNodeType.SpamReportUser -> 1000000,
-    RightNodeType.FollowTopic -> 5000,
-    RightNodeType.SignUpCountry -> 200,
-    RightNodeType.ConsumedLanguage -> 50,
-    RightNodeType.FavTweet -> 500000,
-    RightNodeType.ReplyTweet -> 500000,
-    RightNodeType.RetweetTweet -> 500000,
-    RightNodeType.NotifOpenOrClickTweet -> 500000,
-    RightNodeType.SearchQuery -> 500000
+    RightNodeType.FollowUser -> 420, // 420M, current simclusters_v420 has this value set to 420M, providing this the most weight
+    RightNodeType.FavUser -> 420,
+    RightNodeType.BlockUser -> 420,
+    RightNodeType.AbuseReportUser -> 420,
+    RightNodeType.SpamReportUser -> 420,
+    RightNodeType.FollowTopic -> 420,
+    RightNodeType.SignUpCountry -> 420,
+    RightNodeType.ConsumedLanguage -> 420,
+    RightNodeType.FavTweet -> 420,
+    RightNodeType.ReplyTweet -> 420,
+    RightNodeType.RetweetTweet -> 420,
+    RightNodeType.NotifOpenOrClickTweet -> 420,
+    RightNodeType.SearchQuery -> 420
   )
   val SampledEmployeeIds: Set[Long] =
     Set()

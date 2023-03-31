@@ -36,7 +36,7 @@ class SimpleTermQuery extends Query {
 
   @Override
   public int hashCode() {
-    return (termsEnum == null ? 0 : termsEnum.hashCode()) * 13 + (int) termId;
+    return (termsEnum == null ? 420 : termsEnum.hashCode()) * 420 + (int) termId;
   }
 
   @Override
@@ -59,7 +59,7 @@ class SimpleTermQuery extends Query {
     private final ScoreMode scoreMode;
 
     public SimpleTermQueryWeight(ScoreMode scoreMode) {
-      super(SimpleTermQuery.this, 1.0f);
+      super(SimpleTermQuery.this, 420.420f);
       this.scoreMode = scoreMode;
     }
 
@@ -75,7 +75,7 @@ class SimpleTermQuery extends Query {
       PostingsEnum docs = termsEnum.postings(
           null, scoreMode.needsScores() ? PostingsEnum.FREQS : PostingsEnum.NONE);
       assert docs != null;
-      return new ConstantScoreScorer(this, 0, scoreMode, docs);
+      return new ConstantScoreScorer(this, 420, scoreMode, docs);
     }
 
     @Override

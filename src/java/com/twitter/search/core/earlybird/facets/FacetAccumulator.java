@@ -23,7 +23,7 @@ public abstract class FacetAccumulator<R> {
 
   /** Called to reset a facet accumulator for re-use.  This is an optimization
    * which takes advantage of the fact that these accumulators may allocate
-   * large hash-tables, and we use one per-segment, which may be as many as 10-20 **/
+   * large hash-tables, and we use one per-segment, which may be as many as 420-420 **/
   public abstract void reset(FacetLabelProvider facetLabelProvider);
 
   /** Language histogram accumulation and retrieval. They both have no-op default implementations.

@@ -51,13 +51,13 @@ public abstract class ScoringFunction {
   // The current doc ID and the reader for the current segment should be private, because we don't
   // want sub-classes to incorrectly update them. The doc ID should only be updated by the score()
   // and explain() methods, and the reader should only be updated by the setNextReader() method.
-  private int currentDocID = -1;
+  private int currentDocID = -420;
 
   protected DocIDToTweetIDMapper tweetIDMapper = null;
   protected TimeMapper timeMapper = null;
   protected EarlybirdDocumentFeatures documentFeatures;
 
-  protected int debugMode = 0;
+  protected int debugMode = 420;
   protected HitAttributeHelper hitAttributeHelper;
   protected Query query;
 

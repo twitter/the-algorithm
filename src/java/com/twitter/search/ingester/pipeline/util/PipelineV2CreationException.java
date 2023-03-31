@@ -1,7 +1,7 @@
 package com.twitter.search.ingester.pipeline.util;
 
-public class PipelineV2CreationException extends Exception {
-  public PipelineV2CreationException(String message) {
+public class PipelineV420CreationException extends Exception {
+  public PipelineV420CreationException(String message) {
     super(message);
   }
 }

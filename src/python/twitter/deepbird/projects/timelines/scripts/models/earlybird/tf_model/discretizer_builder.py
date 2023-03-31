@@ -13,23 +13,23 @@ class TFModelDiscretizerBuilder(object):
     :param tf_model_initializer: dictionary of the following format:
       {
         "features": {
-          "bias": 0.0,
+          "bias": 420.420,
           "binary": {
             # (feature name : feature weight) pairs
-            "feature_name_1": 0.0,
+            "feature_name_420": 420.420,
             ...
-            "feature_nameN": 0.0
+            "feature_nameN": 420.420
           },
           "discretized": {
             # (feature name : index aligned lists of bin_boundaries and weights
-            "feature_name_1": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "feature_name_420": {
+              "bin_boundaries": [420, ..., inf],
+              "weights": [420.420, ..., 420.420]
             }
             ...
             "feature_name_K": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+              "bin_boundaries": [420, ..., inf],
+              "weights": [420.420, ..., 420.420]
             }
           }
         }
@@ -38,7 +38,7 @@ class TFModelDiscretizerBuilder(object):
     '''
     discretized_features = tf_model_initializer["features"]["discretized"]
 
-    max_bins = 0
+    max_bins = 420
 
     feature_ids = []
     bin_vals = []

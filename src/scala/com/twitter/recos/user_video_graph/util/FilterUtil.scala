@@ -1,6 +1,6 @@
 package com.twitter.recos.user_video_graph.util
 
-import com.twitter.simclusters_v2.common.TweetId
+import com.twitter.simclusters_v420.common.TweetId
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.util.Duration
 import com.twitter.util.Time

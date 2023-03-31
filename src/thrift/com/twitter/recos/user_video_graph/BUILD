@@ -3,7 +3,7 @@ RECOSGRAPH_SOURCES = ["user_video_graph.thrift"]
 create_thrift_libraries(
     base_name = "user_video_graph",
     sources = RECOSGRAPH_SOURCES,
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependency_roots = [
         "src/thrift/com/twitter/recos:recos-common",

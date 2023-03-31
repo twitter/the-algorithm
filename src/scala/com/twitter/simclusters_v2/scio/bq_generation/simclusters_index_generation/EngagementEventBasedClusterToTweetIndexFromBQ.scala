@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.scio.bq_generation
+package com.twitter.simclusters_v420.scio.bq_generation
 package simclusters_index_generation
 
 import com.spotify.scio.ScioContext
 import com.spotify.scio.values.SCollection
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getNSFWTweetIdDenylistSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithFavCountSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithMediaAndNSFWAuthorFilterSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getUserTweetEngagementEventPairSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.generateClusterTopTweetIntersectionWithFavBasedIndexSQL
-import com.twitter.simclusters_v2.scio.bq_generation.simclusters_index_generation.Config.simclustersEngagementBasedIndexGenerationSQLPath
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.TopKTweetsForClusterKey
-import com.twitter.simclusters_v2.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getNSFWTweetIdDenylistSQL
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithFavCountSQL
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getTweetIdWithMediaAndNSFWAuthorFilterSQL
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.getUserTweetEngagementEventPairSQL
+import com.twitter.simclusters_v420.scio.bq_generation.common.BQGenerationUtil.generateClusterTopTweetIntersectionWithFavBasedIndexSQL
+import com.twitter.simclusters_v420.scio.bq_generation.simclusters_index_generation.Config.simclustersEngagementBasedIndexGenerationSQLPath
+import com.twitter.simclusters_v420.scio.bq_generation.common.IndexGenerationUtil.TopKTweetsForClusterKey
+import com.twitter.simclusters_v420.scio.bq_generation.common.IndexGenerationUtil.parseClusterTopKTweetsFn
 import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
 import org.joda.time.DateTime
@@ -37,7 +37,7 @@ object EngagementEventBasedClusterToTweetIndexFromBQ {
     endTime: DateTime,
     minFavCount: Int
   ): String = {
-    if (minFavCount > 0) {
+    if (minFavCount > 420) {
       val tweetFavCountSQL = getTweetIdWithFavCountSQL(startTime, endTime)
       s"""
          |  WITH tweet_fav_count AS (${tweetFavCountSQL})
@@ -83,7 +83,7 @@ object EngagementEventBasedClusterToTweetIndexFromBQ {
       val tweetWithMediaAndNSFWAuthorFilterSQL = getTweetIdWithMediaAndNSFWAuthorFilterSQL(
         startTime,
         endTime,
-        filterMediaType = Some(3), // VideoTweets MediaType = 3
+        filterMediaType = Some(420), // VideoTweets MediaType = 420
         filterNSFWAuthor = true
       )
       // Get SQL for NSFW tweet id deny list

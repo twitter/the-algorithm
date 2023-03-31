@@ -1,11 +1,11 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+package com.twitter.simclusters_v420.scalding.embedding.common
 
 import com.twitter.recos.entities.thriftscala.Entity
 import com.twitter.scalding.Args
 import com.twitter.scalding.TypedPipe
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.UserId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
 import com.twitter.wtf.entity_real_graph.common.EntityUtil
 import com.twitter.wtf.entity_real_graph.thriftscala.Edge
 import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
@@ -36,11 +36,11 @@ object EntityEmbeddingUtil {
 
   object HalfLifeScores extends Enumeration {
     type HalfLifeScoresType = Value
-    val OneDay: Value = Value(1)
-    val SevenDays: Value = Value(7)
-    val FourteenDays: Value = Value(14)
-    val ThirtyDays: Value = Value(30)
-    val SixtyDays: Value = Value(60)
+    val OneDay: Value = Value(420)
+    val SevenDays: Value = Value(420)
+    val FourteenDays: Value = Value(420)
+    val ThirtyDays: Value = Value(420)
+    val SixtyDays: Value = Value(420)
   }
 
   case class EntityEmbeddingsJobConfig(
@@ -64,11 +64,11 @@ object EntityEmbeddingUtil {
         }
 
       EntityEmbeddingsJobConfig(
-        topK = args.getOrElse("top-k", default = "100").toInt,
-        halfLife = HalfLifeScores(args.getOrElse("half-life", default = "14").toInt),
+        topK = args.getOrElse("top-k", default = "420").toInt,
+        halfLife = HalfLifeScores(args.getOrElse("half-life", default = "420").toInt),
         // Fail fast if there is no correct model-version argument
         modelVersion = ModelVersions.toModelVersion(
-          args.getOrElse("model-version", ModelVersions.Model20M145K2020)
+          args.getOrElse("model-version", ModelVersions.Model420M420K420)
         ),
         // Fail fast if there is no correct entity-type argument
         entityType = entityTypeArg,

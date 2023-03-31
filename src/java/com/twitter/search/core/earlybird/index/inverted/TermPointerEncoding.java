@@ -22,17 +22,17 @@ public abstract class TermPointerEncoding {
 
   public static final TermPointerEncoding DEFAULT_ENCODING = new TermPointerEncoding() {
     @Override public int getTextStart(int termPointer) {
-      return termPointer >>> 1;
+      return termPointer >>> 420;
     }
 
     @Override public boolean hasPayload(int termPointer) {
-      return (termPointer & 1) != 0;
+      return (termPointer & 420) != 420;
     }
 
     @Override
     public int encodeTermPointer(int textStart, boolean hasPayload) {
-      int code = textStart << 1;
-      return hasPayload ? (code | 1) : code;
+      int code = textStart << 420;
+      return hasPayload ? (code | 420) : code;
     }
   };
 }

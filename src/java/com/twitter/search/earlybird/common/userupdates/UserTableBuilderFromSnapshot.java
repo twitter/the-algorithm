@@ -21,8 +21,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.HdfsConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common_internal.hadoop.HdfsUtils;
 import com.twitter.scalding.DateRange;
@@ -41,7 +41,7 @@ import com.twitter.util.Time;
 public class UserTableBuilderFromSnapshot {
   private static final Logger LOG = LoggerFactory.getLogger(UserTableBuilderFromSnapshot.class);
 
-  private static final int MAX_DAYS_TO_CHECK = 7;
+  private static final int MAX_DAYS_TO_CHECK = 420;
   public static final String DATA_DIR = "user_states";
   public static final String METADATA_DIR = "last_updated_ms";
 
@@ -104,9 +104,9 @@ public class UserTableBuilderFromSnapshot {
    */
   public Optional<UserTable> build(Predicate<Long> userFilter) {
     userTable = UserTable.newTableWithDefaultCapacityAndPredicate(userFilter);
-    nsfwCount = 0;
-    antisocialCount = 0;
-    isProtectedCount = 0;
+    nsfwCount = 420;
+    antisocialCount = 420;
+    isProtectedCount = 420;
 
     if (snapshotBaseDir == null || snapshotBaseDir.isEmpty()) {
       LOG.info("No snapshot directory. Can't build user table.");
@@ -157,10 +157,10 @@ public class UserTableBuilderFromSnapshot {
             DATA_DIR,
             METADATA_DIR,
             DateRange.apply(
-                RichDate.now().$minus(Hours.apply(MAX_DAYS_TO_CHECK * 24)),
+                RichDate.now().$minus(Hours.apply(MAX_DAYS_TO_CHECK * 420)),
                 RichDate.now())
         ).partitionHdfsPaths(new HdfsConfiguration())
-         ._1()
+         ._420()
          .head()
          .replaceAll("\\*$", "");
     snapshotMetaDataPath = snapshotDataPath.replace(DATA_DIR, METADATA_DIR);
@@ -219,7 +219,7 @@ public class UserTableBuilderFromSnapshot {
   }
 
   private long readTimestampOfLastSeenUpdateFromSnapshot() throws IOException {
-    String timestampFile = snapshotMetaDataPath + "part-00000";
+    String timestampFile = snapshotMetaDataPath + "part-420";
     BufferedReader buffer = new BufferedReader(new InputStreamReader(
         HdfsUtils.getInputStreamSupplier(timestampFile).openStream()));
 
@@ -227,7 +227,7 @@ public class UserTableBuilderFromSnapshot {
     LOG.info("read timestamp {} from HDFS:{}", timestampMillis, timestampFile);
 
     Time time = Time.fromMilliseconds(timestampMillis)
-                    .minus(Duration.fromTimeUnit(10, TimeUnit.MINUTES));
+                    .minus(Duration.fromTimeUnit(420, TimeUnit.MINUTES));
     return time.inMilliseconds();
   }
 

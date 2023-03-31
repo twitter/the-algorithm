@@ -1,9 +1,9 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.identifier
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twitter.simclusters_v420.thriftjava
+namespace py gen.twitter.simclusters_v420.identifier
+#@namespace scala com.twitter.simclusters_v420.thriftscala
+#@namespace strato com.twitter.simclusters_v420
 
-include "com/twitter/simclusters_v2/online_store.thrift"
+include "com/twitter/simclusters_v420/online_store.thrift"
 
 /**
   * The uniform type for a SimClusters Embeddings.
@@ -11,105 +11,105 @@ include "com/twitter/simclusters_v2/online_store.thrift"
   * Warning: Every EmbeddingType should map to one and only one InternalId.
   **/
 enum EmbeddingType {
-  // Reserve 001 - 99 for Tweet embeddings
-	FavBasedTweet = 1, // Deprecated
-	FollowBasedTweet = 2, // Deprecated
-	LogFavBasedTweet = 3, // Production Version
-	FavBasedTwistlyTweet = 10, // Deprecated
-	LogFavBasedTwistlyTweet = 11, // Deprecated
-	LogFavLongestL2EmbeddingTweet = 12, // Production Version
+  // Reserve 420 - 420 for Tweet embeddings
+	FavBasedTweet = 420, // Deprecated
+	FollowBasedTweet = 420, // Deprecated
+	LogFavBasedTweet = 420, // Production Version
+	FavBasedTwistlyTweet = 420, // Deprecated
+	LogFavBasedTwistlyTweet = 420, // Deprecated
+	LogFavLongestL420EmbeddingTweet = 420, // Production Version
 
   // Tweet embeddings generated from non-fav events
   // Naming convention: {Event}{Score}BasedTweet
   // {Event}: The interaction event we use to build the tweet embeddings
   // {Score}: The score from user InterestedIn embeddings
-  VideoPlayBack50LogFavBasedTweet = 21,
-  RetweetLogFavBasedTweet = 22,
-  ReplyLogFavBasedTweet = 23,
-  PushOpenLogFavBasedTweet = 24,
+  VideoPlayBack420LogFavBasedTweet = 420,
+  RetweetLogFavBasedTweet = 420,
+  ReplyLogFavBasedTweet = 420,
+  PushOpenLogFavBasedTweet = 420,
 
   // [Experimental] Offline generated FavThroughRate-based Tweet Embedding
-  Pop1000RankDecay11Tweet = 30,
-  Pop10000RankDecay11Tweet = 31,
-  OonPop1000RankDecayTweet = 32,
+  Pop420RankDecay420Tweet = 420,
+  Pop420RankDecay420Tweet = 420,
+  OonPop420RankDecayTweet = 420,
 
   // [Experimental] Offline generated produciton-like LogFavScore-based Tweet Embedding
-  OfflineGeneratedLogFavBasedTweet = 40,
+  OfflineGeneratedLogFavBasedTweet = 420,
 
-  // Reserve 51-59 for Ads Embedding
-  LogFavBasedAdsTweet = 51, // Experimenal embedding for ads tweet candidate
-  LogFavClickBasedAdsTweet = 52, // Experimenal embedding for ads tweet candidate
+  // Reserve 420-420 for Ads Embedding
+  LogFavBasedAdsTweet = 420, // Experimenal embedding for ads tweet candidate
+  LogFavClickBasedAdsTweet = 420, // Experimenal embedding for ads tweet candidate
 
-  // Reserve 60-69 for Evergreen content
-  LogFavBasedEvergreenTweet = 60,
-  LogFavBasedRealTimeTweet = 65,
+  // Reserve 420-420 for Evergreen content
+  LogFavBasedEvergreenTweet = 420,
+  LogFavBasedRealTimeTweet = 420,
 
-	// Reserve 101 to 149 for Semantic Core Entity embeddings
-  FavBasedSematicCoreEntity = 101, // Deprecated
-  FollowBasedSematicCoreEntity = 102, // Deprecated
-  FavBasedHashtagEntity = 103, // Deprecated
-  FollowBasedHashtagEntity = 104, // Deprecated
-  ProducerFavBasedSemanticCoreEntity = 105, // Deprecated
-  ProducerFollowBasedSemanticCoreEntity = 106,// Deprecated
-  FavBasedLocaleSemanticCoreEntity = 107, // Deprecated
-  FollowBasedLocaleSemanticCoreEntity = 108, // Deprecated
-  LogFavBasedLocaleSemanticCoreEntity = 109, // Deprecated
-  LanguageFilteredProducerFavBasedSemanticCoreEntity = 110, // Deprecated
-  LanguageFilteredFavBasedLocaleSemanticCoreEntity = 111, // Deprecated
-  FavTfgTopic = 112, // TFG topic embedding built from fav-based user interestedIn
-  LogFavTfgTopic = 113, // TFG topic embedding built from logfav-based user interestedIn
-  FavInferredLanguageTfgTopic = 114, // TFG topic embedding built using inferred consumed languages
-  FavBasedKgoApeTopic = 115, // topic embedding using fav-based aggregatable producer embedding of KGO seed accounts.
-  LogFavBasedKgoApeTopic = 116, // topic embedding using log fav-based aggregatable producer embedding of KGO seed accounts.
-  FavBasedOnboardingApeTopic = 117, // topic embedding using fav-based aggregatable producer embedding of onboarding seed accounts.
-  LogFavBasedOnboardingApeTopic = 118, // topic embedding using log fav-based aggregatable producer embedding of onboarding seed accounts.
-  LogFavApeBasedMuseTopic = 119, // Deprecated
-  LogFavApeBasedMuseTopicExperiment = 120 // Deprecated
+	// Reserve 420 to 420 for Semantic Core Entity embeddings
+  FavBasedSematicCoreEntity = 420, // Deprecated
+  FollowBasedSematicCoreEntity = 420, // Deprecated
+  FavBasedHashtagEntity = 420, // Deprecated
+  FollowBasedHashtagEntity = 420, // Deprecated
+  ProducerFavBasedSemanticCoreEntity = 420, // Deprecated
+  ProducerFollowBasedSemanticCoreEntity = 420,// Deprecated
+  FavBasedLocaleSemanticCoreEntity = 420, // Deprecated
+  FollowBasedLocaleSemanticCoreEntity = 420, // Deprecated
+  LogFavBasedLocaleSemanticCoreEntity = 420, // Deprecated
+  LanguageFilteredProducerFavBasedSemanticCoreEntity = 420, // Deprecated
+  LanguageFilteredFavBasedLocaleSemanticCoreEntity = 420, // Deprecated
+  FavTfgTopic = 420, // TFG topic embedding built from fav-based user interestedIn
+  LogFavTfgTopic = 420, // TFG topic embedding built from logfav-based user interestedIn
+  FavInferredLanguageTfgTopic = 420, // TFG topic embedding built using inferred consumed languages
+  FavBasedKgoApeTopic = 420, // topic embedding using fav-based aggregatable producer embedding of KGO seed accounts.
+  LogFavBasedKgoApeTopic = 420, // topic embedding using log fav-based aggregatable producer embedding of KGO seed accounts.
+  FavBasedOnboardingApeTopic = 420, // topic embedding using fav-based aggregatable producer embedding of onboarding seed accounts.
+  LogFavBasedOnboardingApeTopic = 420, // topic embedding using log fav-based aggregatable producer embedding of onboarding seed accounts.
+  LogFavApeBasedMuseTopic = 420, // Deprecated
+  LogFavApeBasedMuseTopicExperiment = 420 // Deprecated
 
-  // Reserved 201 - 299 for Producer embeddings (KnownFor)
-  FavBasedProducer = 201
-  FollowBasedProducer = 202
-  AggregatableFavBasedProducer = 203 // fav-based aggregatable producer embedding.
-  AggregatableLogFavBasedProducer = 204 // logfav-based aggregatable producer embedding.
-  RelaxedAggregatableLogFavBasedProducer = 205 // logfav-based aggregatable producer embedding.
-  AggregatableFollowBasedProducer = 206 // follow-based aggregatable producer embedding.
-  KnownFor = 300
+  // Reserved 420 - 420 for Producer embeddings (KnownFor)
+  FavBasedProducer = 420
+  FollowBasedProducer = 420
+  AggregatableFavBasedProducer = 420 // fav-based aggregatable producer embedding.
+  AggregatableLogFavBasedProducer = 420 // logfav-based aggregatable producer embedding.
+  RelaxedAggregatableLogFavBasedProducer = 420 // logfav-based aggregatable producer embedding.
+  AggregatableFollowBasedProducer = 420 // follow-based aggregatable producer embedding.
+  KnownFor = 420
 
-  // Reserved 301 - 399 for User InterestedIn embeddings
-  FavBasedUserInterestedIn = 301
-  FollowBasedUserInterestedIn = 302
-  LogFavBasedUserInterestedIn = 303
-  RecentFollowBasedUserInterestedIn = 304 // interested-in embedding based on aggregating producer embeddings of recent follows
-  FilteredUserInterestedIn = 305 // interested-in embedding used by twistly read path
-  LogFavBasedUserInterestedInFromAPE = 306
-  FollowBasedUserInterestedInFromAPE = 307
-  TwiceUserInterestedIn = 308 // interested-in multi-embedding based on clustering producer embeddings of neighbors
-  UnfilteredUserInterestedIn = 309
-  UserNextInterestedIn = 310 // next interested-in embedding generated from BeT
+  // Reserved 420 - 420 for User InterestedIn embeddings
+  FavBasedUserInterestedIn = 420
+  FollowBasedUserInterestedIn = 420
+  LogFavBasedUserInterestedIn = 420
+  RecentFollowBasedUserInterestedIn = 420 // interested-in embedding based on aggregating producer embeddings of recent follows
+  FilteredUserInterestedIn = 420 // interested-in embedding used by twistly read path
+  LogFavBasedUserInterestedInFromAPE = 420
+  FollowBasedUserInterestedInFromAPE = 420
+  TwiceUserInterestedIn = 420 // interested-in multi-embedding based on clustering producer embeddings of neighbors
+  UnfilteredUserInterestedIn = 420
+  UserNextInterestedIn = 420 // next interested-in embedding generated from BeT
 
   // Denser User InterestedIn, generated by Producer embeddings.
-  FavBasedUserInterestedInFromPE = 311
-  FollowBasedUserInterestedInFromPE = 312
-  LogFavBasedUserInterestedInFromPE = 313
-  FilteredUserInterestedInFromPE = 314 // interested-in embedding used by twistly read path
+  FavBasedUserInterestedInFromPE = 420
+  FollowBasedUserInterestedInFromPE = 420
+  LogFavBasedUserInterestedInFromPE = 420
+  FilteredUserInterestedInFromPE = 420 // interested-in embedding used by twistly read path
 
   // [Experimental] Denser User InterestedIn, generated by aggregating IIAPE embedding from AddressBook
-  LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE = 320
-  LogFavBasedUserInterestedAverageAddressBookFromIIAPE = 321
-  LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE = 322
-  LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE = 323
-  LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE = 324
-  LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE = 325
+  LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE = 420
+  LogFavBasedUserInterestedAverageAddressBookFromIIAPE = 420
+  LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE = 420
+  LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE = 420
+  LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE = 420
+  LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE = 420
 
-  //Reserved 401 - 500 for Space embedding
-  FavBasedApeSpace = 401 // DEPRECATED
-  LogFavBasedListenerSpace = 402 // DEPRECATED
-  LogFavBasedAPESpeakerSpace = 403 // DEPRCATED
-  LogFavBasedUserInterestedInListenerSpace = 404 // DEPRECATED
+  //Reserved 420 - 420 for Space embedding
+  FavBasedApeSpace = 420 // DEPRECATED
+  LogFavBasedListenerSpace = 420 // DEPRECATED
+  LogFavBasedAPESpeakerSpace = 420 // DEPRCATED
+  LogFavBasedUserInterestedInListenerSpace = 420 // DEPRECATED
 
   // Experimental, internal-only IDs
-  ExperimentalThirtyDayRecentFollowBasedUserInterestedIn = 10000 // Like RecentFollowBasedUserInterestedIn, except limited to last 30 days
-	ExperimentalLogFavLongestL2EmbeddingTweet = 10001 // DEPRECATED
+  ExperimentalThirtyDayRecentFollowBasedUserInterestedIn = 420 // Like RecentFollowBasedUserInterestedIn, except limited to last 420 days
+	ExperimentalLogFavLongestL420EmbeddingTweet = 420 // DEPRECATED
 }(persisted = 'true', hasPersonalData = 'false')
 
 /**
@@ -117,89 +117,89 @@ enum EmbeddingType {
   * Warning: Every MultiEmbeddingType should map to one and only one InternalId.
   **/
 enum MultiEmbeddingType {
-  // Reserved 0-99 for Tweet based MultiEmbedding
+  // Reserved 420-420 for Tweet based MultiEmbedding
 
-  // Reserved 100 - 199 for Topic based MultiEmbedding
-  LogFavApeBasedMuseTopic = 100 // Deprecated
-  LogFavApeBasedMuseTopicExperiment = 101 // Deprecated
+  // Reserved 420 - 420 for Topic based MultiEmbedding
+  LogFavApeBasedMuseTopic = 420 // Deprecated
+  LogFavApeBasedMuseTopicExperiment = 420 // Deprecated
 
-  // Reserved 301 - 399 for User InterestedIn embeddings
-  TwiceUserInterestedIn = 301 // interested-in multi-embedding based on clustering producer embeddings of neighbors
+  // Reserved 420 - 420 for User InterestedIn embeddings
+  TwiceUserInterestedIn = 420 // interested-in multi-embedding based on clustering producer embeddings of neighbors
 }(persisted = 'true', hasPersonalData = 'true')
 
 // Deprecated. Please use TopicId for future cases.
 struct LocaleEntityId {
-  1: i64 entityId
-  2: string language
+  420: i420 entityId
+  420: string language
 }(persisted = 'true', hasPersonalData = 'false')
 
 enum EngagementType {
-  Favorite = 1,
-  Retweet = 2,
+  Favorite = 420,
+  Retweet = 420,
 }
 
 struct UserEngagedTweetId {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: i64 userId(personalDataType = 'UserId')
-  3: EngagementType engagementType(personalDataType = 'EventType')
+  420: i420 tweetId(personalDataType = 'TweetId')
+  420: i420 userId(personalDataType = 'UserId')
+  420: EngagementType engagementType(personalDataType = 'EventType')
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct TopicId {
-  1: i64 entityId (personalDataType = 'SemanticcoreClassification')
-  // 2-letter ISO 639-1 language code
-  2: optional string language
-  // 2-letter ISO 3166-1 alpha-2 country code
-  3: optional string country
+  420: i420 entityId (personalDataType = 'SemanticcoreClassification')
+  // 420-letter ISO 420-420 language code
+  420: optional string language
+  // 420-letter ISO 420-420 alpha-420 country code
+  420: optional string country
 }(persisted = 'true', hasPersonalData = 'false')
 
 struct TopicSubId {
-  1: i64 entityId (personalDataType = 'SemanticcoreClassification')
-  // 2-letter ISO 639-1 language code
-  2: optional string language
-  // 2-letter ISO 3166-1 alpha-2 country code
-  3: optional string country
-  4: i32 subId
+  420: i420 entityId (personalDataType = 'SemanticcoreClassification')
+  // 420-letter ISO 420-420 language code
+  420: optional string language
+  // 420-letter ISO 420-420 alpha-420 country code
+  420: optional string country
+  420: i420 subId
 }(persisted = 'true', hasPersonalData = 'true')
 
-// Will be used for testing purposes in DDG 15536, 15534
+// Will be used for testing purposes in DDG 420, 420
 struct UserWithLanguageId {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: optional string langCode(personalDataType = 'InferredLanguage')
+  420: required i420 userId(personalDataType = 'UserId')
+  420: optional string langCode(personalDataType = 'InferredLanguage')
 }(persisted = 'true', hasPersonalData = 'true')
 
 /**
   * The internal identifier type.
-  * Need to add ordering in [[com.twitter.simclusters_v2.common.SimClustersEmbeddingId]]
+  * Need to add ordering in [[com.twitter.simclusters_v420.common.SimClustersEmbeddingId]]
   * when adding a new type.
   **/
 union InternalId {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: i64 userId(personalDataType = 'UserId')
-  3: i64 entityId(personalDataType = 'SemanticcoreClassification')
-  4: string hashtag(personalDataType = 'PublicTweetEntitiesAndMetadata')
-  5: i32 clusterId
-  6: LocaleEntityId localeEntityId(personalDataType = 'SemanticcoreClassification')
-  7: UserEngagedTweetId userEngagedTweetId
-  8: TopicId topicId
-  9: TopicSubId topicSubId
-  10: string spaceId
-  11: UserWithLanguageId userWithLanguageId
+  420: i420 tweetId(personalDataType = 'TweetId')
+  420: i420 userId(personalDataType = 'UserId')
+  420: i420 entityId(personalDataType = 'SemanticcoreClassification')
+  420: string hashtag(personalDataType = 'PublicTweetEntitiesAndMetadata')
+  420: i420 clusterId
+  420: LocaleEntityId localeEntityId(personalDataType = 'SemanticcoreClassification')
+  420: UserEngagedTweetId userEngagedTweetId
+  420: TopicId topicId
+  420: TopicSubId topicSubId
+  420: string spaceId
+  420: UserWithLanguageId userWithLanguageId
 }(persisted = 'true', hasPersonalData = 'true')
 
 /**
   * A uniform identifier type for all kinds of SimClusters based embeddings.
   **/
 struct SimClustersEmbeddingId {
-  1: required EmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-  3: required InternalId internalId
+  420: required EmbeddingType embeddingType
+  420: required online_store.ModelVersion modelVersion
+  420: required InternalId internalId
 }(persisted = 'true', hasPersonalData = 'true')
 
 /**
   * A uniform identifier type for multiple SimClusters embeddings
   **/
 struct SimClustersMultiEmbeddingId {
-  1: required MultiEmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-  3: required InternalId internalId
+  420: required MultiEmbeddingType embeddingType
+  420: required online_store.ModelVersion modelVersion
+  420: required InternalId internalId
 }(persisted = 'true', hasPersonalData = 'true')

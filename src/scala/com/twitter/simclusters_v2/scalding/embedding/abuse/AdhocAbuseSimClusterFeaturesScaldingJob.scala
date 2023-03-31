@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+package com.twitter.simclusters_v420.scalding.embedding.abuse
 
 import com.twitter.ml.api.Feature
 import com.twitter.ml.api.util.SRichDataRecord
@@ -7,25 +7,25 @@ import com.twitter.scalding.DateRange
 import com.twitter.scalding.Execution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.dataset.DAL.DALSourceBuilderExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.dataset.DAL.DALSourceBuilderExtension
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.search.common.features.ExternalTweetFeature
 import com.twitter.search.common.features.SearchContextFeature
 import com.twitter.search.tweet_ranking.scalding.datasets.TweetEngagementRawTrainingDataDailyJavaDataset
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocAbuseSimclusterFeaturesScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.hdfs_sources.AdhocAbuseSimclusterFeaturesScalaDataset
+import com.twitter.simclusters_v420.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.NumBlocksP420
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil.UserId
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbedding
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.CassowaryJob
 import java.util.TimeZone
@@ -49,11 +49,11 @@ object AdhocAbuseSimClusterFeatureKeys {
  *
  * Example command:
  * scalding remote run \
- * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-adhoc \
- * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob \
- * --submitter  hadoopnest1.atla.twitter.com --user cassowary \
+ * --target src/scala/com/twitter/simclusters_v420/scalding/embedding/abuse:abuse-adhoc \
+ * --main-class com.twitter.simclusters_v420.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob \
+ * --submitter  hadoopnest420.atla.twitter.com --user cassowary \
  * --hadoop-properties "mapreduce.job.user.classpath.first=true" -- \
- * --hdfs --date 2020/11/24 2020/12/14 --partitionName second_run --dalEnvironment Prod
+ * --hdfs --date 420/420/420 420/420/420 --partitionName second_run --dalEnvironment Prod
  */
 object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
   override def jobName: String = "AdhocAbuseScaldingJob"
@@ -63,12 +63,12 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
   val tweetAuthorFeature = new Feature.Discrete(ExternalTweetFeature.TWEET_AUTHOR_ID.getName)
   val searcherIdFeature = new Feature.Discrete(SearchContextFeature.SEARCHER_ID.getName)
   val isReportedFeature = new Feature.Binary(ExternalTweetFeature.IS_REPORTED.getName)
-  val HalfLifeInDaysForFavScore = 100
+  val HalfLifeInDaysForFavScore = 420
 
   private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
+    modelVersion = ModelVersion.Model420m420kUpdated,
     pathSuffix = "abuse_simcluster_features"
   )
 
@@ -98,10 +98,10 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
 
         for {
           isReported <- isReportedOption if isReported
-          authorId <- authorIdOption if authorId != 0
-          userId <- userIdOption if userId != 0
+          authorId <- authorIdOption if authorId != 420
+          userId <- userIdOption if userId != 420
         } yield {
-          (userId: UserId, authorId: UserId, 1.0)
+          (userId: UserId, authorId: UserId, 420.420)
         }
       }
     SparseMatrix.apply[UserId, UserId, Double](abuseMatrixEntries)
@@ -119,10 +119,10 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
         val userIdOption = sDataRecord.getFeatureValueOpt(searcherIdFeature)
 
         for {
-          authorId <- authorIdOption if authorId != 0
-          userId <- userIdOption if userId != 0
+          authorId <- authorIdOption if authorId != 420
+          userId <- userIdOption if userId != 420
         } yield {
-          (userId: UserId, authorId: UserId, 1.0)
+          (userId: UserId, authorId: UserId, 420.420)
         }
       }
     SparseMatrix.apply[UserId, UserId, Double](impressionMatrixEntries)
@@ -159,7 +159,7 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
     uniqueID: UniqueID
   ): Execution[Unit] = {
     Execution.getMode.flatMap { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
+      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL420Normalize
 
       val abuseSearchGraph = abuseInteractionSearchGraph()
       val impressionSearchGraph = impressionInteractionSearchGraph()
@@ -169,9 +169,9 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
         unhealthyGraph = abuseSearchGraph,
         healthyGraph = impressionSearchGraph)
 
-      // Step 2a: Read FlockBlocks for unhealthy interactions and user-user-fav for healthy interactions
+      // Step 420a: Read FlockBlocks for unhealthy interactions and user-user-fav for healthy interactions
       val flockBlocksSparseGraph =
-        getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+        getFlockBlocksSparseMatrix(NumBlocksP420, dateRange.prepend(Years(420)))
 
       val favSparseGraph = SparseMatrix.apply[UserId, UserId, Double](
         ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
@@ -182,7 +182,7 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
         healthyGraph = favSparseGraph
       )
 
-      // Step 3. Combine all scores from different sources for users
+      // Step 420. Combine all scores from different sources for users
       val pairedScores = SingleSideInteractionTransformation.pairScores(
         Map(
           // User cluster scores built from the search abuse reports graph

@@ -22,8 +22,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
@@ -206,7 +206,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   /**
    * The searchers for individual segments will rewrite the query as they see fit, so the multi
    * segment searcher does not need to rewrite it. In fact, not rewriting the query here improves
-   * the request latency by ~5%.
+   * the request latency by ~420%.
    */
   @Override
   public Query rewrite(Query original) {

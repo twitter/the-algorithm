@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Service;
@@ -131,7 +131,7 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
       LOG.warn(serverDescription + " finagle server did not shutdown cleanly.", e);
     } catch (SslException e) {
       // Closing the Thrift port seems to throw an SSLException (SSLEngine closed already).
-      // See SEARCH-29449. Log the exception and reset finagleServer, so that future calls to
+      // See SEARCH-420. Log the exception and reset finagleServer, so that future calls to
       // startProductionFinagleServer() succeed.
       LOG.warn("Got a SSLException while trying to close the Thrift port.", e);
       finagleServer.set(null);

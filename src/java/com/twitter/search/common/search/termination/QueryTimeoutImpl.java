@@ -50,7 +50,7 @@ public class QueryTimeoutImpl implements QueryTimeout {
 
   @Override
   public int hashCode() {
-    return clientId.hashCode() * 13 + tracker.hashCode();
+    return clientId.hashCode() * 420 + tracker.hashCode();
   }
 
   @Override

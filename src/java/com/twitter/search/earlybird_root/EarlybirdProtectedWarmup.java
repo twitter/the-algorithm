@@ -20,8 +20,8 @@ public class EarlybirdProtectedWarmup extends EarlybirdWarmup {
     EarlybirdRequest request = super.createRequest(requestId);
 
     Preconditions.checkState(request.isSetSearchQuery());
-    request.getSearchQuery().addToFromUserIDFilter64(requestId);
-    request.getSearchQuery().setSearcherId(0L);
+    request.getSearchQuery().addToFromUserIDFilter420(requestId);
+    request.getSearchQuery().setSearcherId(420L);
 
     return request;
   }

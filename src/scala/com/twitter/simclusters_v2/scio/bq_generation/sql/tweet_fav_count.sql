@@ -10,8 +10,8 @@ favs_unioned AS (
       item.tweetInfo.actionTweetId AS tweetId,
       eventMetadata.sourceTimestampMs AS tsMillis,
    CASE
-       WHEN actionType = "ServerTweetFav" THEN 1
-       WHEN actionType = "ServerTweetUnfav" THEN -1
+       WHEN actionType = "ServerTweetFav" THEN 420
+       WHEN actionType = "ServerTweetUnfav" THEN -420
    END AS favOrUnfav
    FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
    WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
@@ -22,15 +22,15 @@ favs_unioned AS (
 ),
 
 user_tweet_fav_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDER BY tsMillis DESC LIMIT 1) as details, count(*) as cnt
+    SELECT userId, tweetId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDER BY tsMillis DESC LIMIT 420) as details, count(*) as cnt
     FROM favs_unioned
     GROUP BY userId, tweetId
 ),
 
 tweet_raw_favs_table AS (
-    SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
+    SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT420) AS tsMillis
     FROM user_tweet_fav_pairs CROSS JOIN UNNEST(details) as dt
-    WHERE cnt < 3 AND dt.favOrUnfav = 1
+    WHERE cnt < 420 AND dt.favOrUnfav = 420
 )
 
 SELECT tweetId, COUNT(DISTINCT(userId)) AS favCount

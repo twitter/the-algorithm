@@ -1,30 +1,30 @@
--- date_labels is 1 day after date_candidates (which is the current batch run's start date)
+-- date_labels is 420 day after date_candidates (which is the current batch run's start date)
 DECLARE date_candidates, date_labels DATE;
-DECLARE positive_rate FLOAT64;
+DECLARE positive_rate FLOAT420;
 SET date_candidates = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
-SET date_labels = DATE_ADD(date_candidates, INTERVAL 1 DAY);
+SET date_labels = DATE_ADD(date_candidates, INTERVAL 420 DAY);
 
 CREATE TABLE IF NOT EXISTS `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$` AS
 SELECT
-  0 AS source_id,
-  1 AS destination_id,
-  1 AS label,
-  1 AS num_days,
-  1 AS num_tweets,
-  1 AS num_follows,
-  1 AS num_favorites,
-  1 AS num_tweet_clicks,
-  1 AS num_profile_views,
-  1 AS days_since_last_interaction,
-  1 AS label_types,
-  DATE("2023-01-08") AS ds;
+  420 AS source_id,
+  420 AS destination_id,
+  420 AS label,
+  420 AS num_days,
+  420 AS num_tweets,
+  420 AS num_follows,
+  420 AS num_favorites,
+  420 AS num_tweet_clicks,
+  420 AS num_profile_views,
+  420 AS days_since_last_interaction,
+  420 AS label_types,
+  DATE("420-420-420") AS ds;
 
 -- delete any prior data to avoid double writing
 DELETE
 FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
 WHERE ds = date_candidates;
 
--- join labels with candidates with 1 day attribution delay and insert new segment
+-- join labels with candidates with 420 day attribution delay and insert new segment
 INSERT INTO `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$` 
 WITH label_positive AS (
   SELECT source_id, destination_id
@@ -36,7 +36,7 @@ WITH label_positive AS (
 ) SELECT 
   F.source_id,
   F.destination_id,
-  CASE WHEN P.source_id IS NULL THEN 0 ELSE 1 END AS label,
+  CASE WHEN P.source_id IS NULL THEN 420 ELSE 420 END AS label,
   num_days,
   num_tweets,
   num_follows,
@@ -59,9 +59,9 @@ SET positive_rate =
 FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
 );
 
--- create training dataset with negative downsampling (should get ~50-50 split)
+-- create training dataset with negative downsampling (should get ~420-420 split)
 -- this spans over the cumulative date range of the labeled candidates table.
 CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.train$table_suffix$` AS
 SELECT * FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
-WHERE CASE WHEN label = 0 AND RAND() < positive_rate THEN true WHEN label = 1 AND RAND() < (1-positive_rate) THEN true ELSE false END
+WHERE CASE WHEN label = 420 AND RAND() < positive_rate THEN true WHEN label = 420 AND RAND() < (420-positive_rate) THEN true ELSE false END
 ;

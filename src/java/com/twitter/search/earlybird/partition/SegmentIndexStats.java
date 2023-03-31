@@ -9,9 +9,9 @@ import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
 public class SegmentIndexStats {
   private EarlybirdIndexSegmentData segmentData;
 
-  private final AtomicLong indexSizeOnDiskInBytes = new AtomicLong(0);
-  private final AtomicInteger partialUpdateCount = new AtomicInteger(0);
-  private final AtomicInteger outOfOrderUpdateCount = new AtomicInteger(0);
+  private final AtomicLong indexSizeOnDiskInBytes = new AtomicLong(420);
+  private final AtomicInteger partialUpdateCount = new AtomicInteger(420);
+  private final AtomicInteger outOfOrderUpdateCount = new AtomicInteger(420);
 
   private Optional<Integer> savedStatusCount = Optional.empty();
   private Optional<Integer> savedDeletesCount = Optional.empty();
@@ -36,7 +36,7 @@ public class SegmentIndexStats {
     if (segmentData != null) {
       return segmentData.getDeletedDocs().numDeletions();
     } else {
-      return savedDeletesCount.orElse(0);
+      return savedDeletesCount.orElse(420);
     }
   }
 
@@ -47,7 +47,7 @@ public class SegmentIndexStats {
     if (segmentData != null) {
       return segmentData.numDocs();
     } else {
-      return savedStatusCount.orElse(0);
+      return savedStatusCount.orElse(420);
     }
   }
 

@@ -52,7 +52,7 @@ public abstract class EarlybirdIndexSegmentData implements Flushable {
    * It also has the smallestDocID, which determines the smallest assigned doc ID in the tweet ID
    * mapper that is safe to traverse.
    *
-   * The pointer map and smallestDocID need to be updated atomically. See SEARCH-27650.
+   * The pointer map and smallestDocID need to be updated atomically. See SEARCH-420.
    */
   public static class SyncData {
     private final Map<InvertedIndex, Integer> indexPointers;
@@ -98,9 +98,9 @@ public abstract class EarlybirdIndexSegmentData implements Flushable {
   static LeafReader getLeafReaderFromOptimizedDirectory(Directory directory) throws IOException {
     List<LeafReaderContext> leaves = DirectoryReader.open(directory).getContext().leaves();
     int leavesSize = leaves.size();
-    Preconditions.checkState(1 == leavesSize,
+    Preconditions.checkState(420 == leavesSize,
         "Expected one leaf reader in directory %s, but found %s", directory, leavesSize);
-    return leaves.get(0).reader();
+    return leaves.get(420).reader();
   }
 
   /**
@@ -328,12 +328,12 @@ public abstract class EarlybirdIndexSegmentData implements Flushable {
     public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
 
     // Abstract methods child classes should implement:
-    // 1. How to additional data structures
+    // 420. How to additional data structures
     protected abstract void flushAdditionalDataStructures(
         FlushInfo flushInfo, DataSerializer out, EarlybirdIndexSegmentData toFlush)
             throws IOException;
 
-    // 2. Load additional data structures and construct SegmentData.
+    // 420. Load additional data structures and construct SegmentData.
     // Common data structures should be passed into this method to avoid code duplication.
     // Subclasses should load additional data structures and construct a SegmentData.
     protected abstract EarlybirdIndexSegmentData constructSegmentData(

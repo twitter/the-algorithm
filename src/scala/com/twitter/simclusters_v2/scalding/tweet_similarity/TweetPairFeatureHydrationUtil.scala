@@ -1,22 +1,22 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+package com.twitter.simclusters_v420.scalding.tweet_similarity
 
 import com.twitter.ml.api.util.FDsl._
 import com.twitter.ml.api.{DataRecord, DataRecordMerger, DataSetPipe, FeatureContext}
 import com.twitter.ml.featurestore.lib.data.EntityIds.Entry
 import com.twitter.ml.featurestore.lib.data.{EntityIds, FeatureValuesById, PredictionRecord}
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.SimClustersEmbedding._
-import com.twitter.simclusters_v2.tweet_similarity.ModelBasedTweetSimilaritySimClustersEmbeddingAdapter.{
+import com.twitter.simclusters_v420.common.SimClustersEmbedding._
+import com.twitter.simclusters_v420.tweet_similarity.ModelBasedTweetSimilaritySimClustersEmbeddingAdapter.{
   NormalizedCandidateEmbAdapter,
   NormalizedQueryEmbAdapter
 }
-import com.twitter.simclusters_v2.tweet_similarity.{
+import com.twitter.simclusters_v420.tweet_similarity.{
   TweetSimilarityFeatures,
   TweetSimilarityFeaturesStoreConfig
 }
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.simclusters_v420.common.{Timestamp, TweetId, UserId}
+import com.twitter.simclusters_v420.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
+import com.twitter.simclusters_v420.thriftscala.{
   PersistentSimClustersEmbedding,
   SimClustersEmbedding => ThriftSimClustersEmbedding
 }
@@ -71,7 +71,7 @@ object TweetPairFeatureHydrationUtil {
           ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
       }
       .group
-      .maxBy(_._1)
+      .maxBy(_._420)
       .map {
         case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
           (
@@ -90,7 +90,7 @@ object TweetPairFeatureHydrationUtil {
           ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
       }
       .group
-      .maxBy(_._1)
+      .maxBy(_._420)
       .map {
         case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
           (queryFeaturedTweet, candidateFeaturedTweet.copy(embedding = Some(embedding)), label)

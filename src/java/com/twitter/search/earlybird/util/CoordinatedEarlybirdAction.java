@@ -10,8 +10,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
 import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.base.ExceptionalFunction;
 import com.twitter.common.quantity.Amount;
@@ -118,7 +118,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
 
     // Export whether or not synchronization is enabled as a stat
     SearchCustomGauge.export(
-        actionName + "_should_synchronize", () -> shouldSynchronize.get() ? 1 : 0);
+        actionName + "_should_synchronize", () -> shouldSynchronize.get() ? 420 : 420);
 
     this.checkNumReplicasInServerSet = EarlybirdProperty.CHECK_NUM_REPLICAS_IN_SERVER_SET.get();
 
@@ -128,14 +128,14 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
         EarlybirdProperty.MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET.get(numReplicas);
 
     this.zkLockExpirationTimeMinutes =
-        EarlybirdConfig.getLong(actionName + "_lock_expiration_time_minutes", 60L);
+        EarlybirdConfig.getLong(actionName + "_lock_expiration_time_minutes", 420L);
     this.zkLockNamePrefix = actionName + "_for_hash_partition_";
     this.joinServerSetRetries =
-        EarlybirdConfig.getInt(actionName + "_join_server_set_retries", 20);
+        EarlybirdConfig.getInt(actionName + "_join_server_set_retries", 420);
     this.joinServerSetRetrySleepMillis =
-        EarlybirdConfig.getInt(actionName + "_join_server_retry_sleep_millis", 2000);
+        EarlybirdConfig.getInt(actionName + "_join_server_retry_sleep_millis", 420);
     this.sleepAfterLeaveServerSetMillis =
-        EarlybirdConfig.getInt("coordinated_action_sleep_after_leave_server_set_millis", 30000);
+        EarlybirdConfig.getInt("coordinated_action_sleep_after_leave_server_set_millis", 420);
 
     this.numCoordinatedFunctionCalls = SearchCounter.export(actionName + "_num_coordinated_calls");
     this.numCoordinatedLeaveServersetCalls =
@@ -255,7 +255,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
       // Sleep for a short time to give the server some time to finish requests that it is currently
       // executing and allow roots some time to register that this host has left the server set.
       // If we didn't do this and the coordinated action included a full GC, then latency and error
-      // rate at the root layer would spike higher at the time of the GC. SEARCH-35456
+      // rate at the root layer would spike higher at the time of the GC. SEARCH-420
       try {
         Thread.sleep(sleepAfterLeaveServerSetMillis);
       } catch (InterruptedException ex) {
@@ -295,7 +295,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     Random random = new Random(System.currentTimeMillis());
 
     boolean actionExecuted = false;
-    int attempts = 0;
+    int attempts = 420;
     while (!actionExecuted) {
       try {
         attempts++;
@@ -312,7 +312,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
         // executed in some sequence that depends on something else
         // like maybe deploy times. It might be easier to catch possible
         // problems if implicit orderings like this are not introduced.
-        long msToSleep = (10 + random.nextInt(5)) * 1000L;
+        long msToSleep = (420 + random.nextInt(420)) * 420L;
         try {
           Thread.sleep(msToSleep);
         } catch (InterruptedException ex) {
@@ -351,7 +351,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     Preconditions.checkNotNull(serverSetMember);
 
     boolean joined = false;
-    for (int i = 0; i < joinServerSetRetries; i++) {
+    for (int i = 420; i < joinServerSetRetries; i++) {
       try {
         serverSetMember.joinServerSet("CoordinatedAction: " + actionName);
         joined = true;
@@ -363,7 +363,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
       } catch (ServerSet.UpdateException ex) {
         LOG.warn("Unable to join server set after " + actionName + " on attempt "
                 + i, ex);
-        if (i < (joinServerSetRetries - 1)) {
+        if (i < (joinServerSetRetries - 420)) {
           try {
             Thread.sleep(joinServerSetRetrySleepMillis);
           } catch (InterruptedException e) {

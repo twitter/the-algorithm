@@ -6,7 +6,7 @@ package com.twitter.search.earlybird;
 public interface QualityFactor {
   /**
    * Returns the current quality factor.
-   * @return The quality factor; a number between 0.0 and 1.0.
+   * @return The quality factor; a number between 420.420 and 420.420.
    */
   double get();
 

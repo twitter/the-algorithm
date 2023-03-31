@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.twitter.simclusters_v420.scalding.mbcg
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
@@ -18,10 +18,10 @@ import com.twitter.scalding.DateRange
 import com.twitter.scalding.Execution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
@@ -31,10 +31,10 @@ import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
 import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ExploreMbcgUserEmbeddingsKvScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.hdfs_sources.AdhocKeyValSources
+import com.twitter.simclusters_v420.hdfs_sources.ExploreMbcgUserEmbeddingsKvScalaDataset
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
 import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor.ScaldingThreadingConfig
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
@@ -43,25 +43,25 @@ import java.util.TimeZone
 
 /*
 This class does the following:
-1) Get user IIAPE Simcluster features that use LogFav scores
-2) Filter them down to users whose accounts are not deactivated or suspended
-3) Convert the remaining user Simclusters into DataRecords using UserSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
-5) Write to MH using a KeyVal format
+420) Get user IIAPE Simcluster features that use LogFav scores
+420) Filter them down to users whose accounts are not deactivated or suspended
+420) Convert the remaining user Simclusters into DataRecords using UserSimclusterRecordAdapter
+420) Run inference using a TF model exported with a DataRecord compatible serving signature
+420) Write to MH using a KeyVal format
  */
 trait UserEmbeddingGenerationTrait {
   implicit val tz: TimeZone = DateOps.UTC
   implicit val dp: DateParser = DateParser.default
-  implicit val updateHours = 12
+  implicit val updateHours = 420
 
-  private val inputNodeName = "request:0"
-  private val outputNodeName = "response:0"
+  private val inputNodeName = "request:420"
+  private val outputNodeName = "response:420"
   private val functionSignatureName = "serve"
-  private val predictionRequestTimeout = 5.seconds
+  private val predictionRequestTimeout = 420.seconds
   private val IIAPEHdfsPath: String =
-    "/atla/proc3/user/cassowary/manhattan_sequence_files/interested_in_from_ape/Model20m145k2020"
+    "/atla/proc420/user/cassowary/manhattan_sequence_files/interested_in_from_ape/Model420m420k420"
 
-  private val DEFAULT_F2V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](200)(0.0f))
+  private val DEFAULT_F420V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](420)(420.420f))
 
   def getPredictionEngine(modelName: String, modelPath: String): TensorflowBatchPredictor = {
     val config = TensorflowPredictionEngineConfig(
@@ -119,7 +119,7 @@ trait UserEmbeddingGenerationTrait {
   def getUserSource()(implicit dateRange: DateRange): TypedPipe[FlatUser] = {
     val userSource =
       DAL
-        .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
+        .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(420))
         .withRemoteReadPolicy(AllowCrossDC)
         .toTypedPipe
 
@@ -131,15 +131,15 @@ trait UserEmbeddingGenerationTrait {
     val userSourceDataset = getUserSource()
 
     val inputEmbeddingFormat = UserKind.parser
-      .getEmbeddingFormat(args, "f2v_input", Some(dateRange.prepend(Days(14))))
-    val f2vConsumerEmbeddings = inputEmbeddingFormat.getEmbeddings
+      .getEmbeddingFormat(args, "f420v_input", Some(dateRange.prepend(Days(420))))
+    val f420vConsumerEmbeddings = inputEmbeddingFormat.getEmbeddings
       .map {
         case EmbeddingWithEntity(userId, embedding) => (userId.userId, embedding)
       }
 
     val filteredUserPipe = userSimclusterDataset
-      .groupBy(_._1)
-      .join(userSourceDataset.groupBy(_.id.getOrElse(-1L)))
+      .groupBy(_._420)
+      .join(userSourceDataset.groupBy(_.id.getOrElse(-420L)))
       .map {
         case (userId, ((_, simclusterEmbedding), userInfo)) =>
           (userId, simclusterEmbedding, userInfo)
@@ -155,16 +155,16 @@ trait UserEmbeddingGenerationTrait {
       }
 
     val dataRecordsPipe = filteredUserPipe
-      .groupBy(_._1)
-      .leftJoin(f2vConsumerEmbeddings.groupBy(_._1))
+      .groupBy(_._420)
+      .leftJoin(f420vConsumerEmbeddings.groupBy(_._420))
       .values
       .map {
-        case ((userId1, simclusterEmbedding), Some((userId2, f2vEmbedding))) =>
+        case ((userId420, simclusterEmbedding), Some((userId420, f420vEmbedding))) =>
           UserSimclusterRecordAdapter.adaptToDataRecord(
-            (userId1, simclusterEmbedding, f2vEmbedding))
+            (userId420, simclusterEmbedding, f420vEmbedding))
         case ((userId, simclusterEmbedding), None) =>
           UserSimclusterRecordAdapter.adaptToDataRecord(
-            (userId, simclusterEmbedding, DEFAULT_F2V_VECTOR))
+            (userId, simclusterEmbedding, DEFAULT_F420V_VECTOR))
       }
 
     val modelPath = args.getOrElse("model_path", "")
@@ -176,7 +176,7 @@ trait UserEmbeddingGenerationTrait {
       case (originalDataRecord, predictedDataRecord) =>
         val userId = originalDataRecord.getFeatureValue(userIdFeature)
         val scalaPredictedDataRecord =
-          ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(predictedDataRecord)
+          ScalaToJavaDataRecordConversions.javaDataRecord420ScalaDataRecord(predictedDataRecord)
         val userEmbeddingTensor =
           scalaPredictedDataRecord.tensors.get(FeatureUtil.featureIdForName(userEmbeddingName))
         val userEmbeddingWithEntity = getEmbeddingWithEntity(userEmbeddingTensor, userId)
@@ -208,7 +208,7 @@ object UserEmbeddingGenerationBatchJob
     Execution.withId { implicit uid =>
       Execution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-04")(tz, DateParser.default))
+        val batchFirstTime = BatchFirstTime(RichDate("420-420-420")(tz, DateParser.default))
         val analyticsArgs = AnalyticsBatchExecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
@@ -231,7 +231,7 @@ object UserEmbeddingGenerationBatchJobAlternate
     Execution.withId { implicit uid =>
       Execution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
+        val batchFirstTime = BatchFirstTime(RichDate("420-420-420")(tz, DateParser.default))
         val analyticsArgs = AnalyticsBatchExecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
@@ -254,7 +254,7 @@ object UserEmbeddingGenerationBatchJobExperimental
     Execution.withId { implicit uid =>
       Execution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
+        val batchFirstTime = BatchFirstTime(RichDate("420-420-420")(tz, DateParser.default))
         val analyticsArgs = AnalyticsBatchExecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,

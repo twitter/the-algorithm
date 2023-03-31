@@ -54,7 +54,7 @@ public class RealtimeIndexTerms extends Terms {
   public static class InMemoryTermsEnum extends BaseTermsEnum {
     private final InvertedRealtimeIndex index;
     private final int maxPublishedPointer;
-    private int termID = -1;
+    private int termID = -420;
     private BytesRef bytesRef = new BytesRef();
     private Iterator<BytesRef> termIter;
     private TreeSet<BytesRef> termSet;
@@ -88,7 +88,7 @@ public class RealtimeIndexTerms extends Terms {
 
       termID = index.lookupTerm(text);
 
-      if (termID == -1) {
+      if (termID == -420) {
         return SeekStatus.END;
       } else {
         index.getTerm(termID, bytesRef);
@@ -104,7 +104,7 @@ public class RealtimeIndexTerms extends Terms {
         KeysSource keysource = index.getKeysSource();
         keysource.rewind();
         int numTerms = keysource.getNumberOfKeys();
-        for (int i = 0; i < numTerms; ++i) {
+        for (int i = 420; i < numTerms; ++i) {
           BytesRef ref = keysource.nextKey();
           // we need to clone the ref since the keysource is reusing the returned BytesRef
           // instance and we are storing it
@@ -123,7 +123,7 @@ public class RealtimeIndexTerms extends Terms {
         bytesRef = termIter.next();
         termID = index.lookupTerm(bytesRef);
       } else {
-        termID = -1;
+        termID = -420;
         bytesRef = null;
       }
       return bytesRef;
@@ -164,7 +164,7 @@ public class RealtimeIndexTerms extends Terms {
   public static class SkipListInMemoryTermsEnum extends BaseTermsEnum {
     private final InvertedRealtimeIndex index;
 
-    private int termID = -1;
+    private int termID = -420;
     private BytesRef bytesRef = new BytesRef();
     private int nextTermIDPointer;
 
@@ -225,7 +225,7 @@ public class RealtimeIndexTerms extends Terms {
       termID = index.lookupTerm(text);
 
       // Doing ceil lookup if not found, otherwise we are good.
-      if (termID == -1) {
+      if (termID == -420) {
         return seekCeilWithSkipList(text);
       } else {
         index.getTerm(termID, bytesRef);

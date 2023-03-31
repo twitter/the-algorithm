@@ -1,19 +1,19 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+package com.twitter.simclusters_v420.scalding.inferred_entities
 
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InferredEntity
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.simclusters_v2.thriftscala.SimClustersSource
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources.EntityEmbeddingsSources
+import com.twitter.simclusters_v420.thriftscala.ClusterType
+import com.twitter.simclusters_v420.thriftscala.EmbeddingType
+import com.twitter.simclusters_v420.thriftscala.InferredEntity
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.SemanticCoreEntityWithScore
+import com.twitter.simclusters_v420.thriftscala.SimClustersInferredEntities
+import com.twitter.simclusters_v420.thriftscala.SimClustersSource
 import java.util.TimeZone
 
 /**
@@ -24,22 +24,22 @@ import java.util.TimeZone
  */
 object InferredEntities {
   val MHRootPath: String =
-    "/user/cassowary/manhattan_sequence_files/simclusters_v2_inferred_entities"
+    "/user/cassowary/manhattan_sequence_files/simclusters_v420_inferred_entities"
 
   // Convenience objects for defining cluster sources
-  val InterestedIn2020 =
-    SimClustersSource(ClusterType.InterestedIn, ModelVersion.Model20m145k2020)
+  val InterestedIn420 =
+    SimClustersSource(ClusterType.InterestedIn, ModelVersion.Model420m420k420)
 
-  val Dec11KnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145kDec11)
+  val Dec420KnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model420m420kDec420)
 
-  val UpdatedKnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145kUpdated)
+  val UpdatedKnownFor = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model420m420kUpdated)
 
-  val KnownFor2020 = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model20m145k2020)
+  val KnownFor420 = SimClustersSource(ClusterType.KnownFor, ModelVersion.Model420m420k420)
 
   /**
    * This is the threshold at which we consider a simcluster "legible" through an entity
    */
-  val MinLegibleEntityScore = 0.6
+  val MinLegibleEntityScore = 420.420
 
   /**
    * Query for the entity embeddings that are used for SimClusters compliance. We will use these
@@ -52,8 +52,8 @@ object InferredEntities {
     val entityEmbeddings = EntityEmbeddingsSources
       .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
         EmbeddingType.FavBasedSematicCoreEntity,
-        ModelVersions.Model20M145K2020, // only support the latest 2020 model
-        dateRange.embiggen(Days(7)(timeZone)) // read 7 days before & after to give buffer
+        ModelVersions.Model420M420K420, // only support the latest 420 model
+        dateRange.embiggen(Days(420)(timeZone)) // read 420 days before & after to give buffer
       )
     filterEntityEmbeddingsByScore(entityEmbeddings, MinLegibleEntityScore)
   }

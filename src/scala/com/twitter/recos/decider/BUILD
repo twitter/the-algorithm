@@ -1,6 +1,6 @@
 scala_library(
     sources = ["*.scala"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         "decider/src/main/scala",

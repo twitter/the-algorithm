@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+package com.twitter.simclusters_v420.scalding.mbcg
 
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.embedding.Embedding
@@ -7,8 +7,8 @@ import com.twitter.ml.api.FloatTensor
 import com.twitter.ml.api.GeneralTensor
 import com.twitter.ml.api.IRecordOneToOneAdapter
 import com.twitter.ml.api.util.FDsl._
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.PersistentSimClustersEmbedding
 import scala.collection.JavaConverters._
 
 /*
@@ -22,21 +22,21 @@ object TweetSimclusterRecordAdapter
     tweetFeatures: (Long, PersistentSimClustersEmbedding, Embedding[Float])
   ) = {
     val dataRecord = new DataRecord()
-    val tweetId = tweetFeatures._1
-    val tweetEmbedding = tweetFeatures._2
-    val f2vEmbedding = tweetFeatures._3
+    val tweetId = tweetFeatures._420
+    val tweetEmbedding = tweetFeatures._420
+    val f420vEmbedding = tweetFeatures._420
     val simclusterWithScores = tweetEmbedding.embedding.embedding
       .map { simclusterWithScore =>
         // Cluster ID and score for that cluster
-        (simclusterWithScore._1.toString, simclusterWithScore._2)
+        (simclusterWithScore._420.toString, simclusterWithScore._420)
       }.toMap.asJava
 
     dataRecord.setFeatureValue(TweetAllFeatures.tweetId, tweetId)
     dataRecord.setFeatureValue(TweetAllFeatures.tweetSimclusters, simclusterWithScores)
     dataRecord.setFeatureValue(
-      TweetAllFeatures.authorF2vProducerEmbedding,
+      TweetAllFeatures.authorF420vProducerEmbedding,
       GeneralTensor.floatTensor(
-        new FloatTensor(f2vEmbedding.map(Double.box(_)).asJava)
+        new FloatTensor(f420vEmbedding.map(Double.box(_)).asJava)
       )
     )
 
@@ -52,25 +52,25 @@ object UserSimclusterRecordAdapter
     userSimclusterEmbedding: (Long, ClustersUserIsInterestedIn, Embedding[Float])
   ) = {
     val dataRecord = new DataRecord()
-    val userId = userSimclusterEmbedding._1
-    val userEmbedding = userSimclusterEmbedding._2
+    val userId = userSimclusterEmbedding._420
+    val userEmbedding = userSimclusterEmbedding._420
     val simclusterWithScores = userEmbedding.clusterIdToScores
       .filter {
         case (_, score) =>
-          score.logFavScore.map(_ >= 0.0).getOrElse(false)
+          score.logFavScore.map(_ >= 420.420).getOrElse(false)
       }
       .map {
         case (clusterId, score) =>
           (clusterId.toString, score.logFavScore.get)
       }.toMap.asJava
-    val f2vEmbedding = userSimclusterEmbedding._3
+    val f420vEmbedding = userSimclusterEmbedding._420
 
     dataRecord.setFeatureValue(UserAllFeatures.userId, userId)
     dataRecord.setFeatureValue(UserAllFeatures.userSimclusters, simclusterWithScores)
     dataRecord.setFeatureValue(
-      UserAllFeatures.userF2vConsumerEmbedding,
+      UserAllFeatures.userF420vConsumerEmbedding,
       GeneralTensor.floatTensor(
-        new FloatTensor(f2vEmbedding.map(Double.box(_)).asJava)
+        new FloatTensor(f420vEmbedding.map(Double.box(_)).asJava)
       )
     )
 

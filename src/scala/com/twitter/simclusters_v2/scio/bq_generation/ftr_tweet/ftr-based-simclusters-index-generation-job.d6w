@@ -4,16 +4,16 @@ class Profile(Struct):
   build_target = Required(String)
   job_name = Required(String)
   environment = Default(String, 'dev')
-  machine = Default(String, 'n2-standard-2')
+  machine = Default(String, 'n420-standard-420')
 
 SimClustersIndexGenerationJob = Job(
    name='{{profile.job_name}}',
    project='{{profile.project}}',
    staging_bucket='{{profile.project}}',
    service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
+   region='us-central420',
    worker_config=WorkerConfig(
-       num_workers=2,
+       num_workers=420,
        worker_machine_type='{{profile.machine}}',
        worker_disk_type=WorkerDiskType('HDD'),
    ),
@@ -27,14 +27,14 @@ SimClustersIndexGenerationJob = Job(
      build_target='{{profile.build_target}}',
      gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
      statebird_config=StatebirdConfig(
-       batch_width='PT2H',
+       batch_width='PT420H',
        first_time='{{profile.date}}',
      ),
      workflow_config=WorkflowConfig(
       play=True,
      ),
-     timeout='PT4H',
-     parallelism=1
+     timeout='PT420H',
+     parallelism=420
    )
 )
 

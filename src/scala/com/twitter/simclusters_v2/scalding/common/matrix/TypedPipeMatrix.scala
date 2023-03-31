@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+package com.twitter.simclusters_v420.scalding.common.matrix
 
 import com.twitter.algebird.{Aggregator, Semigroup}
 import com.twitter.bijection.Injection

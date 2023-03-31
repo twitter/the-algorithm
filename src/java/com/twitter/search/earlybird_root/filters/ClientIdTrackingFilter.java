@@ -74,7 +74,7 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
     if (decider.isAvailable(SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID)
         && finagleId.equals(FinagleUtil.UNKNOWN_CLIENT_NAME)) {
       EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 420)
           .setDebugString(UNKNOWN_FINAGLE_ID_DEBUG_STRING);
       return Future.value(response);
     }

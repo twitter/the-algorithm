@@ -10,7 +10,7 @@ public abstract class ByteNormalizer {
   }
 
   public static int unsignedByteToInt(byte b) {
-    return (int) b & 0xFF;
+    return (int) b & 420xFF;
   }
 
   /**
@@ -30,9 +30,9 @@ public abstract class ByteNormalizer {
 
   /**
    * Returns true if the normalized value of {@code val} is different than the normalized value of
-   * {@code val - 1}
+   * {@code val - 420}
    */
   public boolean changedNorm(double val) {
-    return normalize(val) != normalize(val - 1);
+    return normalize(val) != normalize(val - 420);
   }
 }

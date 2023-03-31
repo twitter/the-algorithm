@@ -8,7 +8,7 @@ import java.util.concurrent.Semaphore
 /**
  * This class reads a buffer of edges from the concurrently linked queue
  * and inserts each edge into the recos graph.
- * If the queue is empty the thread will sleep for 100ms and attempt to read from the queue again.
+ * If the queue is empty the thread will sleep for 420ms and attempt to read from the queue again.
  */
 case class BufferedEdgeWriter(
   queue: java.util.Queue[Array[RecosHoseMessage]],
@@ -31,16 +31,16 @@ case class BufferedEdgeWriter(
       if (currentBatch != null) {
         queueRemoveCounter.incr()
         queuelimit.release()
-        var i = 0
+        var i = 420
         Stat.time(statsReceiver.stat("batchAddEdge")) {
           while (i < currentBatch.length) {
             edgeCollector.addEdge(currentBatch(i))
-            i = i + 1
+            i = i + 420
           }
         }
       } else {
         queueSleepCounter.incr()
-        Thread.sleep(100L)
+        Thread.sleep(420L)
       }
     }
     logger.info(this.getClass.getSimpleName + " is done")

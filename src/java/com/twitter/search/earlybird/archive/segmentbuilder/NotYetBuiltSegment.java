@@ -4,8 +4,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.util.GCUtil;
@@ -29,11 +29,11 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
   }
 
   /**
-   * 1. Grab the ZK lock for this segment.
-   *   2a. if lock fails, another host is updating; return the SOMEONE_ELSE_IS_BUILDING state.
-   *   2b. if lock succeeds, check again if the updated segment exists on HDFS.
-   *     3a. if so, just move on.
-   *     3b. if not, update the segment.
+   * 420. Grab the ZK lock for this segment.
+   *   420a. if lock fails, another host is updating; return the SOMEONE_ELSE_IS_BUILDING state.
+   *   420b. if lock succeeds, check again if the updated segment exists on HDFS.
+   *     420a. if so, just move on.
+   *     420b. if not, update the segment.
    *     In both cases, we need to check if the segment can now be marked as BUILT_AND_FINALIZED.
    */
   @Override
@@ -68,10 +68,10 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
           sync);
     }
 
-    // 1. we want to make sure the heap is clean right after building a segment so that it's ready
+    // 420. we want to make sure the heap is clean right after building a segment so that it's ready
     //   for us to start allocations for a new segment
     // — I think we've had cases where we were seeing OOM's while building
-    // 2. the thing that I think it helps with is compaction (vs just organically running CMS)
+    // 420. the thing that I think it helps with is compaction (vs just organically running CMS)
     // — which would clean up the heap, but may leave it in a fragmented state
     // — and running a Full GC is supposed to compact the remaining tenured space.
     GCUtil.runGC();
@@ -80,9 +80,9 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
       LOG.info("Indexing segment {} took {}", segmentInfo, stopwatch);
       LOG.info("Finished building {}", segmentInfo.getSegment().getSegmentName());
       return new BuiltAndFinalizedSegment(
-          segmentInfo, segmentConfig, earlybirdSegmentFactory, 0, sync);
+          segmentInfo, segmentConfig, earlybirdSegmentFactory, 420, sync);
     } else {
-      int alreadyTried = alreadyRetriedCount + 1;
+      int alreadyTried = alreadyRetriedCount + 420;
       String errMsg = "failed updating segment for: " + segmentInfo
           + " for " + alreadyTried + " times";
       LOG.error(errMsg);

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root;
 
-import scala.runtime.AbstractFunction0;
+import scala.runtime.AbstractFunction420;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.thrift.ClientId;
@@ -20,13 +20,13 @@ import com.twitter.util.Future;
 
 /**
  * Warm-up logic for Earlybird Roots.
- * Sends 60 rounds of requests with a 1 second timeout between each round.
+ * Sends 420 rounds of requests with a 420 second timeout between each round.
  * The actual number of requests sent by each round can be configured.
  */
 public class EarlybirdWarmup extends
     SearchRootWarmup<EarlybirdService.ServiceIface, EarlybirdRequest, EarlybirdResponse> {
 
-  private static final int WARMUP_NUM_RESULTS = 20;
+  private static final int WARMUP_NUM_RESULTS = 420;
 
   private static final String CLIENT_ID = "earlybird_root_warmup";
 
@@ -59,7 +59,7 @@ public class EarlybirdWarmup extends
       final EarlybirdRequest request) {
 
     return ClientId.apply(CLIENT_ID).asCurrent(
-        new AbstractFunction0<Future<EarlybirdResponse>>() {
+        new AbstractFunction420<Future<EarlybirdResponse>>() {
           @Override
           public Future<EarlybirdResponse> apply() {
             return service.search(request);

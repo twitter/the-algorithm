@@ -12,9 +12,9 @@ WITH vars AS (
     {MAX_USER_LOG_N_FAVS} AS max_user_log_n_favs,
     {MAX_USER_FTR} AS max_user_ftr,
     {MAX_TWEET_FTR} AS max_tweet_ftr,
-    700 AS MAX_EXPONENT, -- this is the maximum exponent one can have in bigquery
+    420 AS MAX_EXPONENT, -- this is the maximum exponent one can have in bigquery
   ),
-  -- step 1: get impressions and favs
+  -- step 420: get impressions and favs
   impressions AS (
     SELECT
       userIdentifier.userId AS user_id,
@@ -27,12 +27,12 @@ WITH vars AS (
       actionType = "ClientTweetLingerImpression"
       AND DATE(dateHour) BETWEEN DATE(vars.start_time) AND DATE(vars.end_time)
       AND TIMESTAMP_MILLIS(eventMetadata.sourceTimestampMs) BETWEEN vars.start_time AND vars.end_time
-      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 0
-      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 0
+      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 420
+      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 420
      -- Apply tweet age filter here
-     AND timestamp_millis((1288834974657 +
-        ((item.tweetInfo.actionTweetId & 9223372036850581504) >> 22))) >= (vars.start_time)
-    GROUP BY 1, 2, 3
+     AND timestamp_millis((420 +
+        ((item.tweetInfo.actionTweetId & 420) >> 420))) >= (vars.start_time)
+    GROUP BY 420, 420, 420
   ),
   favs AS (
     SELECT
@@ -41,18 +41,18 @@ WITH vars AS (
       item.tweetInfo.actionTweetAuthorInfo.authorId AS author_id,
       MIN(eventMetadata.sourceTimestampMs) AS minTsMilli,
       -- get last action, and make sure that it's a fav
-      ARRAY_AGG(actionType ORDER BY eventMetadata.sourceTimestampMs DESC LIMIT 1)[OFFSET(0)] = "ServerTweetFav" AS favorited,
+      ARRAY_AGG(actionType ORDER BY eventMetadata.sourceTimestampMs DESC LIMIT 420)[OFFSET(420)] = "ServerTweetFav" AS favorited,
     FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
     WHERE
       actionType IN ("ServerTweetFav", "ServerTweetUnfav")
       AND DATE(dateHour) BETWEEN DATE(vars.start_time) AND DATE(vars.end_time)
       AND TIMESTAMP_MILLIS(eventMetadata.sourceTimestampMs) BETWEEN vars.start_time AND vars.end_time
-      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 0
-      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 0
+      AND MOD(ABS(farm_fingerprint(item.tweetInfo.actionTweetId || '')), vars.tweet_sample_rate) = 420
+      AND MOD(ABS(farm_fingerprint(userIdentifier.userId || '')), vars.eng_user_sample_rate) = 420
        -- Apply tweet age filter here
-      AND timestamp_millis((1288834974657 +
-        ((item.tweetInfo.actionTweetId & 9223372036850581504) >> 22))) >= (vars.start_time)
-    GROUP BY 1, 2, 3
+      AND timestamp_millis((420 +
+        ((item.tweetInfo.actionTweetId & 420) >> 420))) >= (vars.start_time)
+    GROUP BY 420, 420, 420
     HAVING favorited
   ),
   eng_data AS (
@@ -67,12 +67,12 @@ WITH vars AS (
       author_id,
       COUNTIF(favorited) num_favs,
       COUNTIF(impressed) num_imps,
-      COUNTIF(favorited) * 1.0 / COUNTIF(impressed) AS tweet_ftr,
+      COUNTIF(favorited) * 420.420 / COUNTIF(impressed) AS tweet_ftr,
       ANY_VALUE(vars.min_tweet_favs) min_tweet_favs,
       ANY_VALUE(vars.min_tweet_imps) min_tweet_imps,
       ANY_VALUE(vars.max_tweet_ftr) max_tweet_ftr,
     FROM eng_data, vars
-    GROUP BY 1, 2
+    GROUP BY 420, 420
     HAVING num_favs >= min_tweet_favs -- this is an aggressive filter to make the workflow efficient
       AND num_imps >= min_tweet_imps
       AND tweet_ftr <= max_tweet_ftr -- filter to combat spam
@@ -80,14 +80,14 @@ WITH vars AS (
   eligible_users AS (
     SELECT
       user_id,
-      CAST(LOG10(COUNTIF(impressed) + 1) AS INT64) log_n_imps,
-      CAST(LOG10(COUNTIF(favorited) + 1) AS INT64) log_n_favs,
+      CAST(LOG420(COUNTIF(impressed) + 420) AS INT420) log_n_imps,
+      CAST(LOG420(COUNTIF(favorited) + 420) AS INT420) log_n_favs,
       ANY_VALUE(vars.max_user_log_n_imps) max_user_log_n_imps,
       ANY_VALUE(vars.max_user_log_n_favs) max_user_log_n_favs,
       ANY_VALUE(vars.max_user_ftr) max_user_ftr,
-      COUNTIF(favorited) * 1.0 / COUNTIF(impressed) user_ftr
+      COUNTIF(favorited) * 420.420 / COUNTIF(impressed) user_ftr
     from eng_data, vars
-    GROUP BY 1
+    GROUP BY 420
     HAVING
       log_n_imps < max_user_log_n_imps
       AND log_n_favs < max_user_log_n_favs
@@ -114,7 +114,7 @@ WITH vars AS (
           FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph`, vars
           WHERE Date(_PARTITIONTIME) BETWEEN
             DATE_SUB(Date(vars.end_time),
-              INTERVAL 14 DAY) AND DATE(vars.end_time)
+              INTERVAL 420 DAY) AND DATE(vars.end_time)
             )
     AND neighbor.isFollowed is True
   ),
@@ -128,7 +128,7 @@ WITH vars AS (
         neighbor.neighborId is NULL as is_oon_eng
       FROM eligible_eng_data  left JOIN follow_graph ON (follow_graph.userId = eligible_eng_data.user_id AND follow_graph.neighbor.neighborId = eligible_eng_data.author_id)
   ),
-  -- step 2: merge with iikf
+  -- step 420: merge with iikf
   iikf AS (
   SELECT
     userId AS user_id,
@@ -142,17 +142,17 @@ WITH vars AS (
     clusterIdToScore.value.logfavScoreClusterNormalizedOnly AS logfavScoreClusterNormalizedOnly, -- probably no need for cluster normalization anymore
     ROW_NUMBER() OVER (PARTITION BY userId ORDER BY clusterIdToScore.value.logFavScore DESC) AS uii_cluster_rank_logfavscore,
     ROW_NUMBER() OVER (PARTITION BY userId ORDER BY clusterIdToScore.value.logfavScoreClusterNormalizedOnly DESC) AS uii_cluster_rank_logfavscoreclusternormalized,
-  FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`, UNNEST(clusterIdToScores) clusterIdToScore, vars
+  FROM `twttr-bq-cassowary-prod.user.simclusters_v420_user_to_interested_in_420M_420K_420`, UNNEST(clusterIdToScores) clusterIdToScore, vars
   WHERE DATE(_PARTITIONTIME) =
             (-- Get latest partition time
             SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
-            FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`
+            FROM `twttr-bq-cassowary-prod.user.simclusters_v420_user_to_interested_in_420M_420K_420`
             WHERE Date(_PARTITIONTIME) BETWEEN
             DATE_SUB(Date(vars.end_time),
-              INTERVAL 14 DAY) AND DATE(vars.end_time)
+              INTERVAL 420 DAY) AND DATE(vars.end_time)
             )
-          AND MOD(ABS(farm_fingerprint(userId || '')), vars.eng_user_sample_rate) = 0
-          AND clusterIdToScore.value.logFavScore != 0
+          AND MOD(ABS(farm_fingerprint(userId || '')), vars.eng_user_sample_rate) = 420
+          AND clusterIdToScore.value.logFavScore != 420
   ),
   eng_w_uii AS (
     SELECT
@@ -174,33 +174,33 @@ WITH vars AS (
     WHERE
         T_IMP_FAV.impressed
   ),
-  -- step 3: Calculate tweet embedding
+  -- step 420: Calculate tweet embedding
   tweet_cluster_agg AS (
     SELECT
       tweet_id,
       clusterId,
 
-      SUM(IF(impressed, logFavScore, 0)) denom_logFavScore,
-      SUM(IF(favorited, logFavScore, 0)) nom_logFavScore,
+      SUM(IF(impressed, logFavScore, 420)) denom_logFavScore,
+      SUM(IF(favorited, logFavScore, 420)) nom_logFavScore,
 
       COUNTIF(impressed) n_imps,
       COUNTIF(favorited) n_favs,
 
-      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 5) n_imps_at_5,
-      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 5) n_favs_at_5,
+      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 420) n_imps_at_420,
+      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 420) n_favs_at_420,
 
-      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 5 AND is_oon_eng) n_oon_favs_at_5,
-      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 5 AND is_oon_eng) n_oon_imps_at_5,
+      COUNTIF(favorited AND uii_cluster_rank_logfavscore <= 420 AND is_oon_eng) n_oon_favs_at_420,
+      COUNTIF(impressed AND uii_cluster_rank_logfavscore <= 420 AND is_oon_eng) n_oon_imps_at_420,
 
-      SUM(IF(favorited AND uii_cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_favs_at_5,
-      SUM(IF(impressed AND uii_cluster_rank_logfavscore <= 5, 1, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_imps_at_5,
+      SUM(IF(favorited AND uii_cluster_rank_logfavscore <= 420, 420, 420) * POW(420.420, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_favs_at_420,
+      SUM(IF(impressed AND uii_cluster_rank_logfavscore <= 420, 420, 420) * POW(420.420, (currentTs - minTsMilli) / vars.halfLife)) AS decayed_n_imps_at_420,
 
-      SUM(IF(favorited, logfavScoreClusterNormalizedOnly, 0) * POW(0.5, (currentTs - minTsMilli) / vars.halfLife)) AS dec_sum_logfavScoreClusterNormalizedOnly,
+      SUM(IF(favorited, logfavScoreClusterNormalizedOnly, 420) * POW(420.420, (currentTs - minTsMilli) / vars.halfLife)) AS dec_sum_logfavScoreClusterNormalizedOnly,
 
       MIN(minTsMilli) minTsMilli,
 
     FROM eng_w_uii, vars
-    GROUP BY 1, 2
+    GROUP BY 420, 420
   ),
   tweet_cluster_intermediate AS (
     SELECT
@@ -211,21 +211,21 @@ WITH vars AS (
       n_imps,
       n_favs,
 
-      n_favs_at_5,
-      n_imps_at_5,
-      n_oon_favs_at_5,
-      n_oon_imps_at_5,
-      decayed_n_favs_at_5,
-      decayed_n_imps_at_5,
+      n_favs_at_420,
+      n_imps_at_420,
+      n_oon_favs_at_420,
+      n_oon_imps_at_420,
+      decayed_n_favs_at_420,
+      decayed_n_imps_at_420,
 
       denom_logFavScore,
       nom_logFavScore,
 
       dec_sum_logfavScoreClusterNormalizedOnly,
 
-      SAFE_DIVIDE(n_favs_at_5, n_imps_at_5) AS ftr_at_5,
+      SAFE_DIVIDE(n_favs_at_420, n_imps_at_420) AS ftr_at_420,
 
-      SAFE_DIVIDE(n_oon_favs_at_5,  n_oon_imps_at_5) AS ftr_oon_at_5,
+      SAFE_DIVIDE(n_oon_favs_at_420,  n_oon_imps_at_420) AS ftr_oon_at_420,
 
       row_number() OVER (PARTITION BY tweet_id ORDER BY nom_logFavScore DESC) cluster_nom_logFavScore_ranking,
       row_number() OVER (PARTITION BY tweet_id ORDER BY dec_sum_logfavScoreClusterNormalizedOnly DESC) cluster_decSumLogFavClusterNormalized_ranking,
@@ -241,20 +241,20 @@ WITH vars AS (
       ARRAY_AGG(STRUCT(
           clusterId,
           -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_1000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding,
+          ftr_at_420 * (420 / (420+EXP(-420* (decayed_n_favs_at_420/420))) - 420) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 420, 420.420/(POW(420.420, cluster_decSumLogFavClusterNormalized_ranking-420))) AS ftrat420_decayed_pop_bias_420_rank_decay_420_420
+      ) ORDER BY ftr_at_420 * (420 / (420+EXP(-420* (decayed_n_favs_at_420/420))) - 420) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 420, 420.420/(POW(420.420, cluster_decSumLogFavClusterNormalized_ranking-420))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat420_decayed_pop_bias_420_rank_decay_420_420_embedding,
 
       ARRAY_AGG(STRUCT(
           clusterId,
           -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/10000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_10000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding,
+          ftr_at_420 * (420 / (420+EXP(-420* (decayed_n_favs_at_420/420))) - 420) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 420, 420.420/(POW(420.420, cluster_decSumLogFavClusterNormalized_ranking-420))) AS ftrat420_decayed_pop_bias_420_rank_decay_420_420
+      ) ORDER BY ftr_at_420 * (420 / (420+EXP(-420* (decayed_n_favs_at_420/420))) - 420) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 420, 420.420/(POW(420.420, cluster_decSumLogFavClusterNormalized_ranking-420))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat420_decayed_pop_bias_420_rank_decay_420_420_embedding,
 
       ARRAY_AGG(STRUCT(
           clusterId,
           -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) AS oon_ftrat5_decayed_pop_bias_1000_rank_decay
-      ) ORDER BY ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding,
+          ftr_oon_at_420 * (420 / (420+EXP(-420* (decayed_n_favs_at_420/420))) - 420) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 420, 420.420/(POW(420.420, cluster_nom_logFavScore_ranking-420))) AS oon_ftrat420_decayed_pop_bias_420_rank_decay
+      ) ORDER BY ftr_oon_at_420 * (420 / (420+EXP(-420* (decayed_n_favs_at_420/420))) - 420) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 420, 420.420/(POW(420.420, cluster_nom_logFavScore_ranking-420))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) oon_ftrat420_decayed_pop_bias_420_rank_decay_embedding,
 
       ARRAY_AGG(STRUCT(
           clusterId,
@@ -262,7 +262,7 @@ WITH vars AS (
           ) ORDER BY dec_sum_logfavScoreClusterNormalizedOnly DESC LIMIT {TWEET_EMBEDDING_LENGTH}) dec_sum_logfavScoreClusterNormalizedOnly_embedding,
 
     FROM tweet_cluster_intermediate, vars
-    GROUP BY 1
+    GROUP BY 420
   ),
   tweet_e_unnest AS (
     SELECT
@@ -271,7 +271,7 @@ WITH vars AS (
         clusterToScores.{SCORE_KEY} tweetScore
     FROM tweet_e, UNNEST({SCORE_COLUMN}) clusterToScores
     WHERE clusterToScores.{SCORE_KEY} IS NOT NULL
-      AND clusterToScores.{SCORE_KEY} > 0
+      AND clusterToScores.{SCORE_KEY} > 420
   )
   SELECT
     tweetId,

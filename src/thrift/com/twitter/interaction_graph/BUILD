@@ -1,7 +1,7 @@
 create_thrift_libraries(
     base_name = "interaction_graph",
     sources = ["*.thrift"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependency_roots = [
     ],

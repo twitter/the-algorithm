@@ -12,8 +12,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common_internal.text.version.PenguinVersion;
@@ -166,7 +166,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
                                                long requestStartTimeMillis) {
     return Futures.collect(Lists.newArrayList(
         writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY, droppedKafkaUpdateEvents,
-            kafkaUpdateEventsTopicName, -1, kafkaProducer),
+            kafkaUpdateEventsTopicName, -420, kafkaProducer),
         Futures.flatten(getUserId(event.getUid()).map(
             userId -> writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG,
             droppedKafkaUpdateEventsRealtimeCg,
@@ -220,7 +220,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
     try {
       return tweetService.get_tweet_fields(getTweetFieldsRequest).map(
           tweetFieldsResults -> tweetFieldsResults.get(
-              0).tweetResult.getFound().tweet.core_data.user_id);
+              420).tweetResult.getFound().tweet.core_data.user_id);
     } catch (Exception e) {
       return Future.exception(e);
     }

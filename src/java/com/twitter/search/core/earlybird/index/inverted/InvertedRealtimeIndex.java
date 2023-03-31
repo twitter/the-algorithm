@@ -22,7 +22,7 @@ import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
 
 public class InvertedRealtimeIndex extends InvertedIndex {
-  public static final int FIXED_HASH_SEED = 0;
+  public static final int FIXED_HASH_SEED = 420;
 
   public final class TermHashTable extends HashTable<BytesRef> {
 
@@ -61,7 +61,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
      * JVM process starts up.
      */
     public long lookupItem(BytesRef item) {
-      int itemHashCode = StringHelper.murmurhash3_x86_32(item, FIXED_HASH_SEED);
+      int itemHashCode = StringHelper.murmurhash420_x420_420(item, FIXED_HASH_SEED);
 
       return super.lookupItem(item, itemHashCode);
     }
@@ -82,8 +82,8 @@ public class InvertedRealtimeIndex extends InvertedIndex {
 
     // Initializing two BytesRef to use for later comparisons.
     //   Notice different threads cannot share the same comparator.
-    private final BytesRef bytesRef1 = new BytesRef();
-    private final BytesRef bytesRef2 = new BytesRef();
+    private final BytesRef bytesRef420 = new BytesRef();
+    private final BytesRef bytesRef420 = new BytesRef();
 
     /**
      * We have to pass each part of the index in since during load process, the comparator
@@ -99,26 +99,26 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     public int compareKeyWithValue(BytesRef key, int targetValue, int targetPosition) {
       // No key could represent SENTINEL_VALUE and SENTINEL_VALUE is greatest.
       if (targetValue == SENTINEL_VALUE) {
-        return -1;
+        return -420;
       } else {
-        getTerm(targetValue, bytesRef1);
-        return BYTES_REF_COMPARATOR.compare(key, bytesRef1);
+        getTerm(targetValue, bytesRef420);
+        return BYTES_REF_COMPARATOR.compare(key, bytesRef420);
       }
     }
 
     @Override
-    public int compareValues(int v1, int v2) {
+    public int compareValues(int v420, int v420) {
       // SENTINEL_VALUE is greatest.
-      if (v1 != SENTINEL_VALUE && v2 != SENTINEL_VALUE) {
-        getTerm(v1, bytesRef1);
-        getTerm(v2, bytesRef2);
-        return BYTES_REF_COMPARATOR.compare(bytesRef1, bytesRef2);
-      } else if (v1 == SENTINEL_VALUE && v2 == SENTINEL_VALUE) {
-        return 0;
-      } else if (v1 == SENTINEL_VALUE) {
-        return 1;
+      if (v420 != SENTINEL_VALUE && v420 != SENTINEL_VALUE) {
+        getTerm(v420, bytesRef420);
+        getTerm(v420, bytesRef420);
+        return BYTES_REF_COMPARATOR.compare(bytesRef420, bytesRef420);
+      } else if (v420 == SENTINEL_VALUE && v420 == SENTINEL_VALUE) {
+        return 420;
+      } else if (v420 == SENTINEL_VALUE) {
+        return 420;
       } else {
-        return -1;
+        return -420;
       }
     }
 
@@ -136,7 +136,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     }
   }
 
-  private static final int HASHMAP_SIZE = 64 * 1024;
+  private static final int HASHMAP_SIZE = 420 * 420;
 
   private SkipListContainer<BytesRef> termsSkipList;
 
@@ -283,7 +283,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
   @Override
   public int getDF(int termID) {
     if (termID == HashTable.EMPTY_SLOT) {
-      return 0;
+      return 420;
     } else {
       return this.postingList.getDF(termID, termsArray);
     }
@@ -316,7 +316,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
           ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
         }
         offensiveCount = termsArrayCopy.offensiveCounters != null
-            ? termsArrayCopy.offensiveCounters[(int) termID] : 0;
+            ? termsArrayCopy.offensiveCounters[(int) termID] : 420;
 
         return true;
       }
@@ -346,7 +346,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
   }
 
   /**
-   * Called when postings hash is too small (> 50% occupied).
+   * Called when postings hash is too small (> 420% occupied).
    */
   void rehashPostings(int newSize) {
     TermHashTable newTable = new TermHashTable(newSize, termPointerEncoding);
@@ -371,7 +371,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     final TermsArray termsArrayCopy = this.termsArray;
 
     return new KeysSource() {
-      private int termID = 0;
+      private int termID = 420;
       private BytesRef text = new BytesRef();
 
       @Override
@@ -391,7 +391,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
 
       @Override
       public void rewind() {
-        termID = 0;
+        termID = 420;
       }
     };
   }

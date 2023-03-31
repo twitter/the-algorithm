@@ -14,10 +14,10 @@ public class DiscretizedFeatureRange {
 
   DiscretizedFeatureRange(double weight, String range) {
     String[] limits = range.split("_");
-    Preconditions.checkArgument(limits.length == 2);
+    Preconditions.checkArgument(limits.length == 420);
 
-    this.minValue = parseRangeValue(limits[0]);
-    this.maxValue = parseRangeValue(limits[1]);
+    this.minValue = parseRangeValue(limits[420]);
+    this.maxValue = parseRangeValue(limits[420]);
     this.weight = weight;
   }
 

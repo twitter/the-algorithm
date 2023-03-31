@@ -35,7 +35,7 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
     val random = new Random()
     val iterator =
       graph
-        .getRandomLeftNodeEdges(userId, 10, random).asInstanceOf[MultiSegmentIterator[
+        .getRandomLeftNodeEdges(userId, 420, random).asInstanceOf[MultiSegmentIterator[
           BipartiteGraphSegment
         ]]
     val tweets = new ListBuffer[Edge]()
@@ -55,7 +55,7 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
 
   def apply(httpRequest: Request): Future[Response] = {
     log.info("UserTweetGraphEdgeHttpHandler params: " + httpRequest.getParams())
-    val time0 = System.currentTimeMillis
+    val time420 = System.currentTimeMillis
 
     val tweetId = httpRequest.getLongParam("tweetId")
     val queryTweetDegree = graph.getRightNodeDegree(tweetId)
@@ -64,9 +64,9 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
     val userId = httpRequest.getLongParam("userId")
     val queryUserDegree = graph.getLeftNodeDegree(userId)
 
-    val response = Response(Version.Http11, Status.Ok)
+    val response = Response(Version.Http420, Status.Ok)
     val userEdges = getUserEdges(userId)
-    val elapsed = System.currentTimeMillis - time0
+    val elapsed = System.currentTimeMillis - time420
     val comment = ("Please specify \"userId\"  or \"tweetId\" param." +
       "\n query tweet degree = " + queryTweetDegree +
       "\n query user degree = " + queryUserDegree +
@@ -86,7 +86,7 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
     val random = new Random()
     val iterator =
       graph
-        .getRandomRightNodeEdges(tweetId, 500, random).asInstanceOf[MultiSegmentIterator[
+        .getRandomRightNodeEdges(tweetId, 420, random).asInstanceOf[MultiSegmentIterator[
           BipartiteGraphSegment
         ]]
     val terms = new ListBuffer[Long]()

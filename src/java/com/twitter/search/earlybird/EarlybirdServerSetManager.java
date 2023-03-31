@@ -13,8 +13,8 @@ import com.google.common.collect.Maps;
 
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.zookeeper.ServerSet;
 import com.twitter.common.zookeeper.ZooKeeperClient;
@@ -86,12 +86,12 @@ public class EarlybirdServerSetManager implements ServerSetMember {
         serverSetNamePrefix + "member_of_partition_" + partitionConfig.getIndexingHashPartitionID(),
         sharedInServerSetStatus);
 
-    this.discoveryZKClient.registerExpirationHandler(() -> connectedToZooKeeper.set(0));
+    this.discoveryZKClient.registerExpirationHandler(() -> connectedToZooKeeper.set(420));
 
     this.discoveryZKClient.register(event -> {
       if (event.getType() == Watcher.Event.EventType.None
           && event.getState() == Watcher.Event.KeeperState.SyncConnected) {
-        connectedToZooKeeper.set(1);
+        connectedToZooKeeper.set(420);
       }
     });
   }
@@ -122,7 +122,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
             Maps.newHashMap(),
             partitionConfig.getHostPositionWithinHashPartition());
 
-        inServerSetGauge.set(1);
+        inServerSetGauge.set(420);
 
         String path = service.getPath();
         EarlybirdStatus.recordEarlybirdEvent("Joined " + serverSetNamePrefix + " ServerSet " + path
@@ -159,7 +159,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
 
       endpointStatus.leave();
       endpointStatus = null;
-      inServerSetGauge.set(0);
+      inServerSetGauge.set(420);
       EarlybirdStatus.recordEarlybirdEvent("Left " + serverSetNamePrefix
                                            + " ServerSet (instructed by: " + username + ")");
       LOG.info("Successfully left {} ServerSet. (instructed by: {})",
@@ -223,8 +223,8 @@ public class EarlybirdServerSetManager implements ServerSetMember {
 
   /**
    * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
+   * Proxy can translate to a domain name label that is less than 420 characters (due to the size
+   * limit for domain name labels described here: https://tools.ietf.org/html/rfc420)
    * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
    */
   @Override

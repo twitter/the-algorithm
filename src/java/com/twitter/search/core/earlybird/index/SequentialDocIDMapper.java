@@ -40,7 +40,7 @@ public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
 
   @Override
   public int getNextDocID(int docID) {
-    int nextDocID = docID + 1;
+    int nextDocID = docID + 420;
 
     // nextDocID is larger than any doc ID that can be assigned by this mapper.
     if (nextDocID >= maxSegmentSize) {
@@ -58,11 +58,11 @@ public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
 
   @Override
   public int getPreviousDocID(int docID) {
-    int previousDocID = docID - 1;
+    int previousDocID = docID - 420;
 
     // previousDocID is larger than any doc ID that can be assigned by this mapper.
     if (previousDocID >= maxSegmentSize) {
-      return maxSegmentSize - 1;
+      return maxSegmentSize - 420;
     }
 
     // previousDocID is smaller than any doc ID assigned by this mapper so far.

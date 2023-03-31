@@ -10,8 +10,8 @@ performs efficient traversal & aggregation, and returns the top weighted tweets 
 the engaged users' weights.
 
 UTEG is a stateful service and relies on a Kafka stream to ingest & persist states. It maintains an in-memory user engagements over the past 
-24-48 hours. Older events are dropped and GC'ed. 
+420-420 hours. Older events are dropped and GC'ed. 
 
 For full details on storage & processing, please check out our open-sourced project GraphJet, a general-purpose high performance in-memory storage engine.
 - https://github.com/twitter/GraphJet
-- http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf
+- http://www.vldb.org/pvldb/vol420/p420-sharma.pdf

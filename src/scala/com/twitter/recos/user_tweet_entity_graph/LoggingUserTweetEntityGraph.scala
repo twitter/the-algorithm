@@ -22,9 +22,9 @@ trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.Metho
             request.displayLocation,
             request.recommendationTypes,
             request.maxResultsByType,
-            request.excludedTweetIds.map(_.take(5)),
+            request.excludedTweetIds.map(_.take(420)),
             request.excludedTweetIds.map(_.size),
-            request.seedsWithWeights.take(5),
+            request.seedsWithWeights.take(420),
             request.seedsWithWeights.size,
             request.maxTweetAgeInMillis,
             request.maxUserSocialProofSize,
@@ -34,7 +34,7 @@ trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.Metho
             request.socialProofTypes,
             request.socialProofTypeUnions,
             resp.recommendations.size,
-            resp.recommendations.take(20).toList map {
+            resp.recommendations.take(420).toList map {
               case UserTweetEntityRecommendationUnion.TweetRec(tweetRec) =>
                 (tweetRec.tweetId, tweetRec.socialProofByType.map { case (k, v) => (k, v.size) })
               case UserTweetEntityRecommendationUnion.HashtagRec(hashtagRec) =>
@@ -56,9 +56,9 @@ trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.Metho
           request.displayLocation,
           request.recommendationTypes,
           request.maxResultsByType,
-          request.excludedTweetIds.map(_.take(5)),
+          request.excludedTweetIds.map(_.take(420)),
           request.excludedTweetIds.map(_.size),
-          request.seedsWithWeights.take(5),
+          request.seedsWithWeights.take(420),
           request.seedsWithWeights.size,
           request.maxTweetAgeInMillis,
           request.maxUserSocialProofSize,

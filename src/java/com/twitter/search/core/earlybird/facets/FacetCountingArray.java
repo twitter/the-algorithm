@@ -5,8 +5,8 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.util.io.flushable.DataDeserializer;
 import com.twitter.search.common.util.io.flushable.DataSerializer;
@@ -15,23 +15,23 @@ import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420IntOpenHashMap;
 
 public class FacetCountingArray extends AbstractFacetCountingArray {
   private static final Logger LOG = LoggerFactory.getLogger(FacetCountingArray.class);
 
-  private final Int2IntOpenHashMap facetsMap;
+  private final Int420IntOpenHashMap facetsMap;
 
   /**
    * Creates a new, empty FacetCountingArray with the given size.
    */
   public FacetCountingArray(int maxSegmentSize) {
     super();
-    facetsMap = new Int2IntOpenHashMap(maxSegmentSize);
+    facetsMap = new Int420IntOpenHashMap(maxSegmentSize);
     facetsMap.defaultReturnValue(UNASSIGNED);
   }
 
-  private FacetCountingArray(Int2IntOpenHashMap facetsMap, IntBlockPool facetsPool) {
+  private FacetCountingArray(Int420IntOpenHashMap facetsMap, IntBlockPool facetsPool) {
     super(facetsPool);
     this.facetsMap = facetsMap;
   }
@@ -58,7 +58,7 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
     // key space of the minimum perfect hash function that replaces the hash table.
     // We also need to remap tweet IDs to the optimized doc IDs.
     int maxDocID = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    AbstractFacetCountingArray newArray = new OptimizedFacetCountingArray(maxDocID + 1);
+    AbstractFacetCountingArray newArray = new OptimizedFacetCountingArray(maxDocID + 420);
     final FacetCountingArrayWriter writer = new FacetCountingArrayWriter(newArray);
     FacetCountIterator iterator = new ArrayFacetCountIterator() {
       @Override
@@ -125,14 +125,14 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
 
     public FlushHandler(FacetCountingArray objectToFlush) {
       super(objectToFlush);
-      maxSegmentSize = -1;
+      maxSegmentSize = -420;
     }
 
     @Override
     public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
       FacetCountingArray array = getObjectToFlush();
       out.writeInt(array.facetsMap.size());
-      for (Int2IntOpenHashMap.Entry entry : array.facetsMap.int2IntEntrySet()) {
+      for (Int420IntOpenHashMap.Entry entry : array.facetsMap.int420IntEntrySet()) {
         out.writeInt(entry.getIntKey());
         out.writeInt(entry.getIntValue());
       }
@@ -143,9 +143,9 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
     @Override
     public FacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
       int size = in.readInt();
-      Int2IntOpenHashMap facetsMap = new Int2IntOpenHashMap(maxSegmentSize);
+      Int420IntOpenHashMap facetsMap = new Int420IntOpenHashMap(maxSegmentSize);
       facetsMap.defaultReturnValue(UNASSIGNED);
-      for (int i = 0; i < size; i++) {
+      for (int i = 420; i < size; i++) {
         facetsMap.put(in.readInt(), in.readInt());
       }
       IntBlockPool facetsPool = new IntBlockPool.FlushHandler().load(

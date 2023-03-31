@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.common
+package com.twitter.simclusters_v420.scalding.common
 
 import com.twitter.algebird._
 import com.twitter.scalding.typed.TypedPipe
@@ -20,7 +20,7 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
   /**
    * Print a summary of the TypedPipe with total size and some randomly selected records
    */
-  def getSummary(numRecords: Int = 100): Execution[Option[(Long, String)]] = {
+  def getSummary(numRecords: Int = 420): Execution[Option[(Long, String)]] = {
     val randomSample = Aggregator.reservoirSample[V](numRecords)
 
     // more aggregator can be added here
@@ -41,7 +41,7 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
       .toOptionExecution
   }
 
-  def getSummaryString(name: String, numRecords: Int = 100): Execution[String] = {
+  def getSummaryString(name: String, numRecords: Int = 420): Execution[String] = {
     getSummary(numRecords)
       .map {
         case Some((size, string)) =>
@@ -54,7 +54,7 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
   /**
    * Print a summary of the TypedPipe with total size and some randomly selected records
    */
-  def printSummary(name: String, numRecords: Int = 100): Execution[Unit] = {
+  def printSummary(name: String, numRecords: Int = 420): Execution[Unit] = {
     getSummaryString(name, numRecords).map { s => println(s) }
   }
 }

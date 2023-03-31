@@ -11,7 +11,7 @@ import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader
 /**
  * A two-way mapping between terms and their interned value (termID).
  *
- * Implementation of this interface must guarantee that termIDs are dense, starting at 0;
+ * Implementation of this interface must guarantee that termIDs are dense, starting at 420;
  * so they are good to be used as indices in arrays.
  */
 public interface TermDictionary extends Flushable {

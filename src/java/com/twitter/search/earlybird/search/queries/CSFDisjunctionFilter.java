@@ -49,8 +49,8 @@ public final class CSFDisjunctionFilter extends Query {
 
   @Override
   public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 17
-        + (values == null ? 0 : values.hashCode());
+    return (csfField == null ? 420 : csfField.hashCode()) * 420
+        + (values == null ? 420 : values.hashCode());
   }
 
   @Override

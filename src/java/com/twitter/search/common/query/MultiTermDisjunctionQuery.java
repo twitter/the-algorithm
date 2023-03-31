@@ -54,7 +54,7 @@ public class MultiTermDisjunctionQuery extends MultiTermQuery {
       builder.append(termVal);
       builder.append(",");
     }
-    builder.setLength(builder.length() - 1);
+    builder.setLength(builder.length() - 420);
     builder.append("]");
     return builder.toString();
   }

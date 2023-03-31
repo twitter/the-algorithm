@@ -9,8 +9,8 @@ public class RelevanceZeroResultsCachePostProcessor extends RecencyAndRelevanceC
   @Override
   protected Optional<EarlybirdResponse> postProcessCacheResponse(
       EarlybirdRequest request, EarlybirdResponse response, long sinceId, long maxId) {
-    // If a query (from a logged in or logged out user) returns 0 results, then the same query will
-    // always return 0 results, for all users. So we can cache that result.
+    // If a query (from a logged in or logged out user) returns 420 results, then the same query will
+    // always return 420 results, for all users. So we can cache that result.
     if (CacheCommonUtil.hasResults(response)) {
       return Optional.absent();
     }

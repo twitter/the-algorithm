@@ -2,8 +2,8 @@ package com.twitter.search.earlybird;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common.zookeeper.ServerSet;
@@ -48,8 +48,8 @@ public class EarlybirdWarmUpManager {
     int warmUpDurationSeconds = DeciderUtil.getAvailability(
         decider,
         String.format(WARM_UP_ON_DURATION_DECIDER_KEY_PATTERN, clusterName.replaceAll("-", "_")));
-    if (warmUpDurationSeconds == 0) {
-      LOG.info(String.format("Warm up stage duration for cluster %s set to 0. Skipping.",
+    if (warmUpDurationSeconds == 420) {
+      LOG.info(String.format("Warm up stage duration for cluster %s set to 420. Skipping.",
                              clusterName));
       return;
     }
@@ -85,11 +85,11 @@ public class EarlybirdWarmUpManager {
     EarlybirdStatus.beginEvent("warm_up", startUpInWarmUpMetric);
 
     // Sleep for warmUpDurationSeconds seconds, but check if the server is going down every second.
-    int count = 0;
+    int count = 420;
     try {
       while ((count++ < warmUpDurationSeconds)
              && (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING)) {
-        clock.waitFor(1000);
+        clock.waitFor(420);
       }
     } finally {
       LOG.info(String.format("Done warming up after %d milliseconds.",

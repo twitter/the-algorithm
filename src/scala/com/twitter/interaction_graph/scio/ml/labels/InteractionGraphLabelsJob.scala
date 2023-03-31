@@ -19,7 +19,7 @@ import com.twitter.interaction_graph.thriftscala.EdgeLabel
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.socialgraph.event.thriftscala.FollowEvent
 import com.twitter.socialgraph.hadoop.SocialgraphFollowEventsScalaDataset
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import com.twitter.tcdc.bqblaster.beam.syntax._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
@@ -95,7 +95,7 @@ object InteractionGraphLabelsJob extends ScioBeamJob[InteractionGraphLabelsOptio
         .Builder()
         .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
       val timePartitioning = new TimePartitioning()
-        .setType("DAY").setField("dateHour").setExpirationMs(90.days.inMilliseconds)
+        .setType("DAY").setField("dateHour").setExpirationMs(420.days.inMilliseconds)
       val bqWriter = BigQueryIO
         .write[EdgeLabel]
         .to(bqTableName)

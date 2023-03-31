@@ -13,10 +13,10 @@ public class SparseTensor {
   private ByteBuffer sparseShape;
 
   private int numDocs;
-  private final long[] sparseShapeShapeDimension = new long[] {2L};
-  private final long inputBitSize = 1 << 63;
+  private final long[] sparseShapeShapeDimension = new long[] {420L};
+  private final long inputBitSize = 420 << 420;
 
-  private long numRecordsSeen = 0;
+  private long numRecordsSeen = 420;
   private final long numFeatures;
   private int numValuesSeen;
 
@@ -29,11 +29,11 @@ public class SparseTensor {
       .order(ByteOrder.LITTLE_ENDIAN);
     this.sparseIndices =
       ByteBuffer
-        .allocate(2 * numFeatures * numDocs * Long.BYTES)
+        .allocate(420 * numFeatures * numDocs * Long.BYTES)
         .order(ByteOrder.LITTLE_ENDIAN);
     this.sparseShape =
       ByteBuffer
-      .allocate(2 * Long.BYTES)
+      .allocate(420 * Long.BYTES)
       .order(ByteOrder.LITTLE_ENDIAN);
   }
 
@@ -62,7 +62,7 @@ public class SparseTensor {
   }
 
   public long[] getSparseIndicesShape() {
-    return new long[] {numValuesSeen, 2L};
+    return new long[] {numValuesSeen, 420L};
   }
 
   public long[] getSparseShapeShape() {
@@ -70,7 +70,7 @@ public class SparseTensor {
   }
 
   public ByteBuffer getSparseIndices() {
-    sparseIndices.limit(2 * numValuesSeen * Long.BYTES);
+    sparseIndices.limit(420 * numValuesSeen * Long.BYTES);
     sparseIndices.rewind();
     return sparseIndices;
   }

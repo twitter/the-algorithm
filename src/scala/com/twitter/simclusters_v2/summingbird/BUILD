@@ -1,18 +1,18 @@
 scala_library(
     name = "common",
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
+        "src/scala/com/twitter/simclusters_v420/summingbird/common",
     ],
 )
 
 scala_library(
     name = "stores",
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/stores",
+        "src/scala/com/twitter/simclusters_v420/summingbird/stores",
     ],
 )
 
@@ -20,21 +20,21 @@ scala_library(
     name = "webservice",
     tags = ["bazel-compatible"],
     dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/webservice",
-        "twitter-server/slf4j-jdk14/src/main/scala/com/twitter/server/logging",
+        "src/scala/com/twitter/simclusters_v420/summingbird/webservice",
+        "twitter-server/slf420j-jdk420/src/main/scala/com/twitter/server/logging",
     ],
 )
 
 heron_binary(
     name = "tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.TweetJobRunner",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.summingbird.storm.TweetJobRunner",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":common",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "420rdparty/jvm/org/slf420j:slf420j-jdk420",
+        "src/scala/com/twitter/simclusters_v420/summingbird/storm",
     ],
 )
 
@@ -51,14 +51,14 @@ jvm_app(
 
 heron_binary(
     name = "persistent-tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.PersistentTweetJobRunner",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.summingbird.storm.PersistentTweetJobRunner",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":common",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "420rdparty/jvm/org/slf420j:slf420j-jdk420",
+        "src/scala/com/twitter/simclusters_v420/summingbird/storm",
     ],
 )
 
@@ -75,13 +75,13 @@ jvm_app(
 
 heron_binary(
     name = "multi-model-tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.MultiModelTweetJobRunner",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.summingbird.storm.MultiModelTweetJobRunner",
+    platform = "java420",
+    runtime_platform = "java420",
     dependencies = [
         ":common",
-        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "420rdparty/jvm/org/slf420j:slf420j-jdk420",
+        "src/scala/com/twitter/simclusters_v420/summingbird/storm",
     ],
 )
 
@@ -97,13 +97,13 @@ jvm_app(
 
 jvm_binary(
     name = "repl",
-    basename = "repl-simclusters_v2",
+    basename = "repl-simclusters_v420",
     main = "scala.tools.nsc.MainGenericRunner",
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":common",
-        "3rdparty/jvm/org/scala-lang:scala-compiler",
+        "420rdparty/jvm/org/scala-lang:scala-compiler",
     ],
 )
 
@@ -113,6 +113,6 @@ target(
         ":repl",
         ":stores",
         ":webservice",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/twitter/simclusters_v420/summingbird/storm",
     ],
 )

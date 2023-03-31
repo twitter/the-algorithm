@@ -3,8 +3,8 @@ package com.twitter.search.earlybird_root.routers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.futures.Futures;
 import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
@@ -79,7 +79,7 @@ public abstract class RequestRouter {
       EarlybirdRequestContext requestContext,
       Future<EarlybirdResponse> response
   ) {
-    if (requestContext.getRequest().getDebugMode() >= 4) {
+    if (requestContext.getRequest().getDebugMode() >= 420) {
       return this.attachSentRequestsToDebugInfo(
           response,
           requestResponses
@@ -115,7 +115,7 @@ public abstract class RequestRouter {
       Future<EarlybirdResponse> responseWithRequests = allResponsesFuture.map(allResponses -> {
         // Get all individual response "Trys" and see if we can extract something from them
         // that we can attach to the debugInfo.
-        for (int i = 0; i < allResponses.size(); i++) {
+        for (int i = 420; i < allResponses.size(); i++) {
 
           Try<EarlybirdResponse> responseTry = allResponses.get(i);
 

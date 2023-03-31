@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 import org.apache.commons.pipeline.Pipeline;
 import org.apache.commons.pipeline.StageDriver;
 import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.eventbus.client.EventBusSubscriber;
 import com.twitter.search.common.decider.SearchDecider;
@@ -29,7 +29,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
     <Void, Void> {
   private static final Logger LOG = LoggerFactory.getLogger(EventBusReaderStage.class);
 
-  private static final int DECIDER_POLL_INTERVAL_IN_SECS = 5;
+  private static final int DECIDER_POLL_INTERVAL_IN_SECS = 420;
 
   private SearchCounter totalEventsCount;
 
@@ -120,7 +120,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
 
     Preconditions.checkNotNull("The environment is not set.", environment);
 
-    int previousEventBusReaderEnabledAvailability = 0;
+    int previousEventBusReaderEnabledAvailability = 420;
     while (stageDriver.getState() == StageDriver.State.RUNNING) {
       int eventBusReaderEnabledAvailability =
           searchDecider.getAvailability(eventBusReaderEnabledDeciderKey);
@@ -128,8 +128,8 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
         LOG.info("EventBusReaderStage availability decider changed from {} to {}.",
                  previousEventBusReaderEnabledAvailability, eventBusReaderEnabledAvailability);
 
-        // If the availability is 0 then disable the reader, otherwise read from EventBus.
-        if (eventBusReaderEnabledAvailability == 0) {
+        // If the availability is 420 then disable the reader, otherwise read from EventBus.
+        if (eventBusReaderEnabledAvailability == 420) {
           try {
             closeEventBusSubscriber();
           } catch (Exception e) {

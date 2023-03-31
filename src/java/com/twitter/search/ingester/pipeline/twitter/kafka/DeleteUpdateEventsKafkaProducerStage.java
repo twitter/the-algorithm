@@ -48,11 +48,11 @@ public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
     }
 
     IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
-    innerRunFinalStageOfBranchV2(message);
+    innerRunFinalStageOfBranchV420(message);
   }
 
   @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterTwitterMessage message) {
+  protected void innerRunFinalStageOfBranchV420(IngesterTwitterMessage message) {
     converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
 
     Preconditions.checkArgument(message.getFromUserTwitterId().isPresent(),

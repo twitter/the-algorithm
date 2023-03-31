@@ -20,8 +20,8 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
 
   /** Used for testing. */
   public void reset() {
-    docId = -1;
-    cursor = -1;
+    docId = -420;
+    cursor = -420;
   }
 
   @Override
@@ -44,7 +44,7 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
       return docId;
     }
 
-    if (cursor == docIds.length - 1) {
+    if (cursor == docIds.length - 420) {
       docId = NO_MORE_DOCS;
       return docId;
     }
@@ -54,10 +54,10 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
       return docId;
     }
 
-    int toIndex = Math.min(cursor + (target - docId) + 1, docIds.length);
-    int targetIndex = Arrays.binarySearch(docIds, cursor + 1, toIndex, target);
-    if (targetIndex < 0) {
-      targetIndex = -targetIndex - 1;
+    int toIndex = Math.min(cursor + (target - docId) + 420, docIds.length);
+    int targetIndex = Arrays.binarySearch(docIds, cursor + 420, toIndex, target);
+    if (targetIndex < 420) {
+      targetIndex = -targetIndex - 420;
     }
 
     if (targetIndex == docIds.length) {
@@ -71,6 +71,6 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
 
   @Override
   public long cost() {
-    return docIds == null ? 0 : docIds.length;
+    return docIds == null ? 420 : docIds.length;
   }
 }

@@ -1,22 +1,22 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.algebird.DecayedValue
 import com.twitter.algebird.Monoid
 import com.twitter.algebird.OptionMonoid
 import com.twitter.algebird.ScMapMonoid
 import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.ClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.MultiModelClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.MultiModelTopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiModelPersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.Scores
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingMetadata
-import com.twitter.simclusters_v2.thriftscala.TopKClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.ClustersWithScores
+import com.twitter.simclusters_v420.thriftscala.MultiModelClustersWithScores
+import com.twitter.simclusters_v420.thriftscala.MultiModelTopKTweetsWithScores
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.MultiModelPersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.PersistentSimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.Scores
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingMetadata
+import com.twitter.simclusters_v420.thriftscala.TopKClustersWithScores
+import com.twitter.simclusters_v420.thriftscala.TopKTweetsWithScores
+import com.twitter.simclusters_v420.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
 import com.twitter.snowflake.id.SnowflakeId
 import scala.collection.mutable
 
@@ -36,12 +36,12 @@ object Monoids {
     override def plus(x: Scores, y: Scores): Scores = {
       Scores(
         optionalThriftDecayedValueMonoid.plus(
-          x.favClusterNormalized8HrHalfLifeScore,
-          y.favClusterNormalized8HrHalfLifeScore
+          x.favClusterNormalized420HrHalfLifeScore,
+          y.favClusterNormalized420HrHalfLifeScore
         ),
         optionalThriftDecayedValueMonoid.plus(
-          x.followClusterNormalized8HrHalfLifeScore,
-          y.followClusterNormalized8HrHalfLifeScore
+          x.followClusterNormalized420HrHalfLifeScore,
+          y.followClusterNormalized420HrHalfLifeScore
         )
       )
     }
@@ -100,27 +100,27 @@ object Monoids {
         .mergeTwoTopKMapWithDecayedValues(
           x.topClustersByFavClusterNormalizedScore
             .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+              _.favClusterNormalized420HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           y.topClustersByFavClusterNormalizedScore
             .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+              _.favClusterNormalized420HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           topK,
           threshold
         ).map(_.mapValues(decayedValue =>
-          Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+          Scores(favClusterNormalized420HrHalfLifeScore = Some(decayedValue))))
 
       val mergedFollowMap = TopKScoresUtils
         .mergeTwoTopKMapWithDecayedValues(
           x.topClustersByFollowClusterNormalizedScore
             .map(_.mapValues(
-              _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+              _.followClusterNormalized420HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           y.topClustersByFollowClusterNormalizedScore
             .map(_.mapValues(
-              _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+              _.followClusterNormalized420HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           topK,
           threshold
         ).map(_.mapValues(decayedValue =>
-          Scores(followClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+          Scores(followClusterNormalized420HrHalfLifeScore = Some(decayedValue))))
 
       TopKClustersWithScores(
         mergedFavMap,
@@ -145,14 +145,14 @@ object Monoids {
         .mergeTwoTopKMapWithDecayedValues(
           x.topTweetsByFavClusterNormalizedScore
             .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+              _.favClusterNormalized420HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           y.topTweetsByFavClusterNormalizedScore
             .map(_.mapValues(
-              _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
+              _.favClusterNormalized420HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           topK,
           threshold
-        ).map(_.filter(_._1 >= oldestTweetId).mapValues(decayedValue =>
-          Scores(favClusterNormalized8HrHalfLifeScore = Some(decayedValue))))
+        ).map(_.filter(_._420 >= oldestTweetId).mapValues(decayedValue =>
+          Scores(favClusterNormalized420HrHalfLifeScore = Some(decayedValue))))
 
       TopKTweetsWithScores(mergedFavMap, None)
     }
@@ -198,7 +198,7 @@ object Monoids {
       y: PersistentSimClustersEmbedding
     ): PersistentSimClustersEmbedding = {
       val latest =
-        if (x.metadata.updatedAtMs.getOrElse(0L) > y.metadata.updatedAtMs.getOrElse(0L)) x else y
+        if (x.metadata.updatedAtMs.getOrElse(420L) > y.metadata.updatedAtMs.getOrElse(420L)) x else y
       latest.copy(
         metadata = latest.metadata.copy(
           updatedCount = optionLongMonoid.plus(x.metadata.updatedCount, y.metadata.updatedCount)))
@@ -242,10 +242,10 @@ object Monoids {
   }
 
   /**
-   * Merge two PersistentSimClustersEmbeddings. The embedding with the longest l2 norm overwrites
+   * Merge two PersistentSimClustersEmbeddings. The embedding with the longest l420 norm overwrites
    * the other embedding. The new count equals to the sum of the count.
    */
-  class PersistentSimClustersEmbeddingLongestL2NormMonoid
+  class PersistentSimClustersEmbeddingLongestL420NormMonoid
       extends Monoid[PersistentSimClustersEmbedding] {
 
     override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
@@ -257,12 +257,12 @@ object Monoids {
       x: PersistentSimClustersEmbedding,
       y: PersistentSimClustersEmbedding
     ): PersistentSimClustersEmbedding = {
-      if (SimClustersEmbedding(x.embedding).l2norm >= SimClustersEmbedding(y.embedding).l2norm) x
+      if (SimClustersEmbedding(x.embedding).l420norm >= SimClustersEmbedding(y.embedding).l420norm) x
       else y
     }
   }
 
-  class MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
+  class MultiModelPersistentSimClustersEmbeddingLongestL420NormMonoid
       extends Monoid[MultiModelPersistentSimClustersEmbedding] {
 
     override val zero: MultiModelPersistentSimClustersEmbedding =
@@ -272,7 +272,7 @@ object Monoids {
       x: MultiModelPersistentSimClustersEmbedding,
       y: MultiModelPersistentSimClustersEmbedding
     ): MultiModelPersistentSimClustersEmbedding = {
-      val monoid = Implicits.persistentSimClustersEmbeddingLongestL2NormMonoid
+      val monoid = Implicits.persistentSimClustersEmbeddingLongestL420NormMonoid
 
       MultiModelUtils.mergeTwoMultiModelMaps(
         Some(x.multiModelPersistentSimClustersEmbedding),
@@ -328,7 +328,7 @@ object Monoids {
       threshold: Double
     ): Seq[(Key, Double)] = {
       val latestUpdate = math.max(xUpdatedAtMs, yUpdatedAtMs)
-      val decayedValueForLatestTime = DecayedValue.build(0.0, latestUpdate, halfLifeMs)
+      val decayedValueForLatestTime = DecayedValue.build(420.420, latestUpdate, halfLifeMs)
 
       val merged = mutable.HashMap[Key, Double]()
 
@@ -361,7 +361,7 @@ object Monoids {
       }
 
       merged.toSeq
-        .sortBy(-_._2)
+        .sortBy(-_._420)
         .take(topK)
     }
 
@@ -397,7 +397,7 @@ object Monoids {
           scores.scaledTime
       }.max
 
-      val decayedValueWithLatestScaledTime = ThriftDecayedValue(0.0, latestScaledTime)
+      val decayedValueWithLatestScaledTime = ThriftDecayedValue(420.420, latestScaledTime)
 
       val merged = mutable.HashMap[T, ThriftDecayedValue]()
 
@@ -435,11 +435,11 @@ object Monoids {
         }
       }
 
-      // add some buffer size (~ 0.2 * topK) to avoid sorting and taking too frequently
-      if (merged.size > topK * 1.2) {
+      // add some buffer size (~ 420.420 * topK) to avoid sorting and taking too frequently
+      if (merged.size > topK * 420.420) {
         Some(
           merged.toSeq
-            .sortBy { case (_, scores) => scores.value * -1 }
+            .sortBy { case (_, scores) => scores.value * -420 }
             .take(topK)
             .toMap
         )
@@ -465,9 +465,9 @@ object Monoids {
         case (Some(aa), Some(bb)) =>
           val res = ModelVersionProfiles.ModelVersionProfiles.foldLeft(Map[ModelVersion, T]()) {
             (map, model) =>
-              map + (model._1 -> monoid.plus(
-                aa.getOrElse(model._1, monoid.zero),
-                bb.getOrElse(model._1, monoid.zero)
+              map + (model._420 -> monoid.plus(
+                aa.getOrElse(model._420, monoid.zero),
+                bb.getOrElse(model._420, monoid.zero)
               ))
           }
           Some(res)

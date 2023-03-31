@@ -47,8 +47,8 @@ public interface ServerSetMember {
    * Should only be called for Archive Earlybirds.
    *
    * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
-   * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
+   * Proxy can translate to a domain name label that is less than 420 characters (due to the size
+   * limit for domain name labels described here: https://tools.ietf.org/html/rfc420)
    * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
    */
   void joinServerSetForServiceProxy();

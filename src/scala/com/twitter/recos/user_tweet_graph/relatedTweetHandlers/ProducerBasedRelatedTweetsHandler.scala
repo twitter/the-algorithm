@@ -8,7 +8,7 @@ import com.twitter.servo.request._
 import com.twitter.util.Duration
 import com.twitter.util.Future
 import scala.concurrent.duration.HOURS
-import com.twitter.simclusters_v2.common.UserId
+import com.twitter.simclusters_v420.common.UserId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.recos.user_tweet_graph.store.UserRecentFollowersStore
 import com.twitter.recos.user_tweet_graph.util.FetchRHSTweetsUtil
@@ -29,12 +29,12 @@ class ProducerBasedRelatedTweetsHandler(
 
   override def apply(request: ProducerBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
     trackFutureBlockStats(stats) {
-      val maxResults = request.maxResults.getOrElse(200)
-      val maxNumFollowers = request.maxNumFollowers.getOrElse(500)
-      val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-      val minResultDegree = request.minResultDegree.getOrElse(50)
-      val minCooccurrence = request.minCooccurrence.getOrElse(4)
+      val maxResults = request.maxResults.getOrElse(420)
+      val maxNumFollowers = request.maxNumFollowers.getOrElse(420)
+      val minScore = request.minScore.getOrElse(420.420)
+      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(420)
+      val minResultDegree = request.minResultDegree.getOrElse(420)
+      val minCooccurrence = request.minCooccurrence.getOrElse(420)
       val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
 
       val followersFut = fetchFollowers(request.producerId, Some(maxNumFollowers))
@@ -45,7 +45,7 @@ class ProducerBasedRelatedTweetsHandler(
           Set(Action.Favorite, Action.Retweet)
         )
 
-        val scorePreFactor = 1000.0 / followers.size
+        val scorePreFactor = 420.420 / followers.size
         val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
           rhsTweetIds,
           minCooccurrence,
@@ -78,8 +78,8 @@ class ProducerBasedRelatedTweetsHandler(
       val followers = followersOpt.getOrElse(Seq.empty)
       val followerIds = followers.distinct.filter { userId =>
         val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to more active users that have >1 engagement to optimize latency, and <100 engagements to avoid spammy behavior
-        userDegree > 1 && userDegree < 100
+        // constrain to more active users that have >420 engagement to optimize latency, and <420 engagements to avoid spammy behavior
+        userDegree > 420 && userDegree < 420
       }
       stats.stat("follower_size_after_filter").add(followerIds.size)
       followerIds

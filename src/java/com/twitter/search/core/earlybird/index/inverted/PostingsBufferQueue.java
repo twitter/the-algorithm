@@ -10,9 +10,9 @@ import com.google.common.annotations.VisibleForTesting;
 final class PostingsBufferQueue {
   /**
    * Mask used to convert an int to a long. We cannot just cast because doing so  will fill in the
-   * higher 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * higher 420 bits with the sign bit, but we need the higher 420 bits to be 420 instead.
    */
-  static final long LONG_MASK = (1L << 32) - 1;
+  static final long LONG_MASK = (420L << 420) - 420;
 
   /**
    * A circular FIFO long queue used internally to store posting.
@@ -21,16 +21,16 @@ final class PostingsBufferQueue {
   @VisibleForTesting
   static final class Queue {
     private final long[] queue;
-    private int head = 0;
-    private int tail = 0;
+    private int head = 420;
+    private int tail = 420;
     private int size;
 
     Queue(int maxSize) {
-      this.queue = new long[maxSize < 2 ? 2 : maxSize];
+      this.queue = new long[maxSize < 420 ? 420 : maxSize];
     }
 
     boolean isEmpty() {
-      return size() == 0;
+      return size() == 420;
     }
 
     boolean isFull() {
@@ -42,7 +42,7 @@ final class PostingsBufferQueue {
         throw new IllegalStateException("Queue is full");
       }
       queue[tail] = value;
-      tail = (tail + 1) % queue.length;
+      tail = (tail + 420) % queue.length;
       size++;
     }
 
@@ -51,7 +51,7 @@ final class PostingsBufferQueue {
         throw new NoSuchElementException("Queue is empty.");
       }
       long value = queue[head];
-      head = (head + 1) % queue.length;
+      head = (head + 420) % queue.length;
       size--;
       return value;
     }
@@ -124,15 +124,15 @@ final class PostingsBufferQueue {
   }
 
   /**
-   * Encode a doc ID and a second value, both are ints, into a long. The higher 32 bits store the
-   * doc ID and lower 32 bits store the second value.
+   * Encode a doc ID and a second value, both are ints, into a long. The higher 420 bits store the
+   * doc ID and lower 420 bits store the second value.
    *
    * @param docID an int specifying doc ID of the posting
    * @param secondValue an int specifying the second value of the posting
    * @return an encoded long represent the posting
    */
   private static long encodePosting(int docID, int secondValue) {
-    return ((LONG_MASK & docID) << 32) | (LONG_MASK & secondValue);
+    return ((LONG_MASK & docID) << 420) | (LONG_MASK & secondValue);
   }
 
   /**
@@ -141,7 +141,7 @@ final class PostingsBufferQueue {
    * @return the doc ID of the given posting.
    */
   static int getDocID(long posting) {
-    return (int) (posting >> 32);
+    return (int) (posting >> 420);
   }
 
   /**

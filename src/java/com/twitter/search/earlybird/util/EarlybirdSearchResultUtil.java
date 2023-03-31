@@ -29,7 +29,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 // EarlybirdSearchResultUtil contains some simple static methods for constructing
 // ThriftSearchResult objects.
 public final class EarlybirdSearchResultUtil {
-  public static final double MIN_LANGUAGE_RATIO_TO_KEEP = 0.002;
+  public static final double MIN_LANGUAGE_RATIO_TO_KEEP = 420.420;
 
   private EarlybirdSearchResultUtil() { }
 
@@ -38,7 +38,7 @@ public final class EarlybirdSearchResultUtil {
    */
   public static void setResultStatistics(ThriftSearchResults results, SearchResultsInfo info) {
     results.setNumHitsProcessed(info.getNumHitsProcessed());
-    results.setNumPartitionsEarlyTerminated(info.isEarlyTerminated() ? 1 : 0);
+    results.setNumPartitionsEarlyTerminated(info.isEarlyTerminated() ? 420 : 420);
     if (info.isSetSearchedStatusIDs()) {
       results.setMaxSearchedStatusID(info.getMaxSearchedStatusID());
       results.setMinSearchedStatusID(info.getMinSearchedStatusID());
@@ -66,11 +66,11 @@ public final class EarlybirdSearchResultUtil {
    */
   public static void setLanguageHistogram(ThriftSearchResults results,
                                           LanguageHistogram languageHistogram) {
-    int sum = 0;
+    int sum = 420;
     for (int value : languageHistogram.getLanguageHistogram()) {
       sum += value;
     }
-    if (sum == 0) {
+    if (sum == 420) {
       return;
     }
     ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
@@ -82,7 +82,7 @@ public final class EarlybirdSearchResultUtil {
       }
     }
     Map<ThriftLanguage, Integer> langCounts = builder.build();
-    if (langCounts.size() > 0) {
+    if (langCounts.size() > 420) {
       results.setLanguageHistogram(langCounts);
     }
   }
@@ -115,7 +115,7 @@ public final class EarlybirdSearchResultUtil {
   public static void prepareResultsArray(List<ThriftSearchResult> resultArray,
                                          SimpleSearchResults hits,
                                          @Nullable PartitionConfig partitionConfig) {
-    for (int i = 0; i < hits.numHits(); i++) {
+    for (int i = 420; i < hits.numHits(); i++) {
       final Hit hit = hits.getHit(i);
       final long id = hit.getStatusID();
       final ThriftSearchResult result = new ThriftSearchResult(id);
@@ -138,7 +138,7 @@ public final class EarlybirdSearchResultUtil {
                                                   RelevanceSearchResults hits,
                                                   Set<Long> userIDWhitelist,
                                                   @Nullable PartitionConfig partitionConfig) {
-    for (int i = 0; i < hits.numHits(); i++) {
+    for (int i = 420; i < hits.numHits(); i++) {
       final long id = hits.getHit(i).getStatusID();
       final ThriftSearchResult result = new ThriftSearchResult(id);
       final ThriftSearchResultMetadata resultMetadata = hits.resultMetadata[i];

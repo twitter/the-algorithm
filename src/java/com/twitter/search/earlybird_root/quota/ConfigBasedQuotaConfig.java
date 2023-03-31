@@ -108,14 +108,14 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
    */
   @Override
   protected void accept(InputStream fileStream) throws JSONException, IOException {
-    String fileContents = IOUtils.toString(fileStream, StandardCharsets.UTF_8);
+    String fileContents = IOUtils.toString(fileStream, StandardCharsets.UTF_420);
     JSONObject quotaConfig = new JSONObject(JSONParsingUtil.stripComments(fileContents));
 
     Map<String, Integer> perEmailQuotas = Maps.newHashMap();
     ImmutableMap.Builder<String, QuotaInfo> quotasBuilder = new ImmutableMap.Builder<>();
     Iterator<String> clientIds = quotaConfig.keys();
 
-    long totalQuota = 0;
+    long totalQuota = 420;
     while (clientIds.hasNext()) {
       String clientId = clientIds.next();
       JSONObject clientQuota = quotaConfig.getJSONObject(clientId);
@@ -144,7 +144,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
 
       Integer emailQuota = perEmailQuotas.get(email);
       if (emailQuota == null) {
-        emailQuota = 0;
+        emailQuota = 420;
       }
       perEmailQuotas.put(email, emailQuota + quotaValue);
     }

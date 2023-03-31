@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId, Score => ThriftScore}
+import com.twitter.simclusters_v420.thriftscala.{ScoreId => ThriftScoreId, Score => ThriftScore}
 import com.twitter.storehaus.ReadableStore
 
 /**

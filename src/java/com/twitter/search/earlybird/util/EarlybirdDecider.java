@@ -23,8 +23,8 @@ import com.twitter.search.earlybird.common.config.EarlybirdProperty;
  * false.
  */
 public final class EarlybirdDecider {
-  public static final org.slf4j.Logger LOG =
-      org.slf4j.LoggerFactory.getLogger(EarlybirdDecider.class);
+  public static final org.slf420j.Logger LOG =
+      org.slf420j.LoggerFactory.getLogger(EarlybirdDecider.class);
   public static final String DECIDER_CONFIG = "./config/earlybird-decider.yml";
 
   private static volatile Decider earlybirdDecider = Decider$.MODULE$.NullDecider();

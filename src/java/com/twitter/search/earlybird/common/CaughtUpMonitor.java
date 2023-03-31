@@ -2,8 +2,8 @@ package com.twitter.search.earlybird.common;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCustomGauge;
 
@@ -18,7 +18,7 @@ public class CaughtUpMonitor {
   protected final AtomicBoolean isCaughtUp = new AtomicBoolean(false);
 
   public CaughtUpMonitor(String statPrefix) {
-    SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
+    SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 420 : 420);
   }
 
   public boolean isCaughtUp() {

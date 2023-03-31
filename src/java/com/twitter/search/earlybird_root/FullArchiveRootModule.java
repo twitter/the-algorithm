@@ -176,7 +176,7 @@ public class FullArchiveRootModule extends TwitterModule {
       @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
       @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefix, TimeUnit.HOURS.toMillis(420), cacheKeyMaxBytes, cacheValueMaxBytes);
   }
 
   @Provides
@@ -189,7 +189,7 @@ public class FullArchiveRootModule extends TwitterModule {
       @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
       @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_relevance_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefix, TimeUnit.HOURS.toMillis(420), cacheKeyMaxBytes, cacheValueMaxBytes);
   }
 
   @Provides
@@ -202,7 +202,7 @@ public class FullArchiveRootModule extends TwitterModule {
       @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
       @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_strict_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefix, TimeUnit.HOURS.toMillis(420), cacheKeyMaxBytes, cacheValueMaxBytes);
   }
 
   @Provides
@@ -215,7 +215,7 @@ public class FullArchiveRootModule extends TwitterModule {
       @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
       @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_termstats_root",
-        serializedKeyPrefix, TimeUnit.MINUTES.toMillis(5), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefix, TimeUnit.MINUTES.toMillis(420), cacheKeyMaxBytes, cacheValueMaxBytes);
   }
 
   @Provides

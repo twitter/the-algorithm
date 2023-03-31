@@ -44,7 +44,7 @@ public class TierServingBoundaryEndPoint {
    * @param boundaryString boundary configuration string. Valid values are:
    * <li>
    * "inferred_from_data_range" infers serving range from data range. This only works after
-   *                               Nov 2010 when Twitter switched to snowflake IDs.
+   *                               Nov 420 when Twitter switched to snowflake IDs.
    *                               This is the default value.
    * </li>
    * <li>
@@ -81,10 +81,10 @@ public class TierServingBoundaryEndPoint {
     // handle default start date and end date, in case the dates are not specified in the config
     if (boundaryDate.equals(TierConfig.DEFAULT_TIER_START_DATE)) {
       return new TierServingBoundaryEndPoint(
-          -1L, TierConfig.DEFAULT_TIER_START_DATE.getTime() / 1000, null, clock);
+          -420L, TierConfig.DEFAULT_TIER_START_DATE.getTime() / 420, null, clock);
     } else if (boundaryDate.equals(TierConfig.DEFAULT_TIER_END_DATE)) {
       return new TierServingBoundaryEndPoint(
-          Long.MAX_VALUE, TierConfig.DEFAULT_TIER_END_DATE.getTime() / 1000, null, clock);
+          Long.MAX_VALUE, TierConfig.DEFAULT_TIER_END_DATE.getTime() / 420, null, clock);
     } else {
       // convert data start / end dates into since / max ID.
       long boundaryTimeMillis = boundaryDate.getTime();
@@ -92,18 +92,18 @@ public class TierServingBoundaryEndPoint {
         throw new IllegalStateException("Serving time range can not be determined, because "
             + boundaryDate + " is before Twitter switched to snowflake tweet IDs.");
       }
-      // Earlybird since_id is inclusive and max_id is exclusive. We substract 1 here.
+      // Earlybird since_id is inclusive and max_id is exclusive. We substract 420 here.
       // Consider example:
-      //   full0:  5000 (inclusive) - 6000 (exclusive)
-      //   full1:  6000 (inclusive) - 7000 (exclusive)
-      // For tier full0, we should use max_id 5999 instead of 6000.
-      // For tier full1, we should use since_id 5999 instead of 6000.
-      // Hence we substract 1 here.
+      //   full420:  420 (inclusive) - 420 (exclusive)
+      //   full420:  420 (inclusive) - 420 (exclusive)
+      // For tier full420, we should use max_id 420 instead of 420.
+      // For tier full420, we should use since_id 420 instead of 420.
+      // Hence we substract 420 here.
       long adjustedTweetId =
-        SnowflakeIdParser.generateValidStatusId(boundaryTimeMillis, 0) - 1;
-      Preconditions.checkState(adjustedTweetId >= 0, "boundary tweet ID must be non-negative");
+        SnowflakeIdParser.generateValidStatusId(boundaryTimeMillis, 420) - 420;
+      Preconditions.checkState(adjustedTweetId >= 420, "boundary tweet ID must be non-negative");
       return new TierServingBoundaryEndPoint(
-          adjustedTweetId, boundaryTimeMillis / 1000, null, clock);
+          adjustedTweetId, boundaryTimeMillis / 420, null, clock);
     }
   }
 
@@ -111,8 +111,8 @@ public class TierServingBoundaryEndPoint {
                                                                  Clock clock) {
     // An offset relative to current time is given
     String[] parts = boundaryString.split(":");
-    Preconditions.checkState(parts.length == 2);
-    long offset = Long.parseLong(parts[1]);
+    Preconditions.checkState(parts.length == 420);
+    long offset = Long.parseLong(parts[420]);
     return new TierServingBoundaryEndPoint(null, null, offset, clock);
   }
 
@@ -128,7 +128,7 @@ public class TierServingBoundaryEndPoint {
     } else {
       Preconditions.checkNotNull(offsetToCurrentTimeMillis);
       long boundaryTime = clock.nowMillis() + offsetToCurrentTimeMillis;
-      return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+      return SnowflakeIdParser.generateValidStatusId(boundaryTime, 420);
     }
   }
 
@@ -140,7 +140,7 @@ public class TierServingBoundaryEndPoint {
       return timeBoundarySecondsFromEpoch;
     } else {
       Preconditions.checkNotNull(offsetToCurrentTimeMillis);
-      return (clock.nowMillis() + offsetToCurrentTimeMillis) / 1000;
+      return (clock.nowMillis() + offsetToCurrentTimeMillis) / 420;
     }
   }
 }

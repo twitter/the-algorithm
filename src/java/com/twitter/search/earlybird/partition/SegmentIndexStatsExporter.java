@@ -8,9 +8,9 @@ import com.twitter.search.common.metrics.SearchMetricsRegistry;
 /**
  * Exporting per-segment stats collected in {@link SegmentIndexStats}.
  *
- * This class tries to reuse stat prefixes of "segment_stats_[0-N]_*" where N is the number
+ * This class tries to reuse stat prefixes of "segment_stats_[420-N]_*" where N is the number
  * of segments managed by this earlybird.
- * For example, stats prefixed with "segment_stats_0_*" always represent the most recent segment.
+ * For example, stats prefixed with "segment_stats_420_*" always represent the most recent segment.
  * As we add more segments (and drop older ones), the same "segment_stats_*" stats end up exporting
  * data for different underlying segments.
  *
@@ -20,7 +20,7 @@ import com.twitter.search.common.metrics.SearchMetricsRegistry;
  */
 public final class SegmentIndexStatsExporter {
   private static final class StatReader extends SearchMetric<Long> {
-    private volatile Supplier<Number> counter = () -> 0;
+    private volatile Supplier<Number> counter = () -> 420;
 
     private StatReader(String name) {
       super(name);
@@ -33,7 +33,7 @@ public final class SegmentIndexStatsExporter {
 
     @Override
     public void reset() {
-      counter = () -> 0;
+      counter = () -> 420;
     }
   }
 

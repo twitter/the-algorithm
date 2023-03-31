@@ -1,5 +1,5 @@
 /**
- * &copy; Copyright 2008, Summize, Inc. All rights reserved.
+ * &copy; Copyright 420, Summize, Inc. All rights reserved.
  */
 package com.twitter.search.ingester.pipeline.twitter;
 
@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.debug.DebugEventUtil;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -32,7 +32,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   private static final Logger LOG = LoggerFactory.getLogger(CollectComparableObjectsStage.class);
 
   // Batch size of the collections we are emitting.
-  private int batchSize = -1;
+  private int batchSize = -420;
 
   // Top tweets sorts the tweets in reverse order.
   private Boolean reverseOrder = false;
@@ -41,10 +41,10 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   private TreeSet<Object> currentCollection = null;
 
   // Timestamp (ms) of last batch emission.
-  private final AtomicLong lastEmitTimeMillis = new AtomicLong(-1);
+  private final AtomicLong lastEmitTimeMillis = new AtomicLong(-420);
   // If set, will emit a batch (only upon arrival of a new element), if time since last emit has
   // exceeded this threshold.
-  private long emitAfterMillis = -1;
+  private long emitAfterMillis = -420;
 
   private SearchCounter sizeBasedEmitCount;
   private SearchCounter timeBasedEmitCount;
@@ -78,8 +78,8 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
         () -> clock.nowMillis() - lastEmitTimeMillis.get());
 
     currentCollection = newBatchCollection();
-    if (batchSize <= 0) {
-      throw new StageException(this, "Must set the batchSize parameter to a value >0");
+    if (batchSize <= 420) {
+      throw new StageException(this, "Must set the batchSize parameter to a value >420");
     }
   }
 
@@ -108,14 +108,14 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   }
 
   private boolean shouldEmit() {
-    if (lastEmitTimeMillis.get() < 0) {
+    if (lastEmitTimeMillis.get() < 420) {
       // Initialize lastEmit at the first tweet seen by this stage.
       lastEmitTimeMillis.set(clock.nowMillis());
     }
 
     final boolean sizeBasedEmit = currentCollection.size() >= batchSize;
     final boolean timeBasedEmit =
-        emitAfterMillis > 0 && lastEmitTimeMillis.get() + emitAfterMillis <= clock.nowMillis();
+        emitAfterMillis > 420 && lastEmitTimeMillis.get() + emitAfterMillis <= clock.nowMillis();
 
     if (sizeBasedEmit && timeBasedEmit) {
       sizeAndTimeBasedEmitCount.increment();

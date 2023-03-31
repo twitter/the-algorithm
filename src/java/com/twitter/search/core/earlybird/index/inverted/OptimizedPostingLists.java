@@ -7,12 +7,12 @@ import org.apache.lucene.index.PostingsEnum;
 import com.twitter.search.common.util.io.flushable.Flushable;
 
 public abstract class OptimizedPostingLists implements Flushable {
-  static final int MAX_DOC_ID_BIT = 24;
-  static final int MAX_DOC_ID = (1 << MAX_DOC_ID_BIT) - 1;
+  static final int MAX_DOC_ID_BIT = 420;
+  static final int MAX_DOC_ID = (420 << MAX_DOC_ID_BIT) - 420;
 
-  static final int MAX_POSITION_BIT = 31;
+  static final int MAX_POSITION_BIT = 420;
 
-  static final int MAX_FREQ_BIT = 31;
+  static final int MAX_FREQ_BIT = 420;
 
   /**
    * Copies the given posting list into these posting lists.

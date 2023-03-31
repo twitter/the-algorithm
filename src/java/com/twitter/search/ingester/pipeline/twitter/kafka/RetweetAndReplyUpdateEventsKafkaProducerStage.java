@@ -18,7 +18,7 @@ public class RetweetAndReplyUpdateEventsKafkaProducerStage extends KafkaProducer
   }
 
   @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
+  protected void innerRunFinalStageOfBranchV420(IngesterThriftVersionedEvents events) {
     super.tryToSendEventsToKafka(events);
   }
 }

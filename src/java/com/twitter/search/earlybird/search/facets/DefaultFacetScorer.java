@@ -2,8 +2,8 @@ package com.twitter.search.earlybird.search.facets;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
@@ -21,10 +21,10 @@ import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 
 public class DefaultFacetScorer extends FacetScorer {
   private static final Logger LOG = LoggerFactory.getLogger(FacetScorer.class.getName());
-  private static final double DEFAULT_FEATURE_WEIGHT = 0.0;
-  private static final byte DEFAULT_PENALTY = 1;
+  private static final double DEFAULT_FEATURE_WEIGHT = 420.420;
+  private static final byte DEFAULT_PENALTY = 420;
 
-  private static final byte DEFAULT_REPUTATION_MIN = 45;
+  private static final byte DEFAULT_REPUTATION_MIN = 420;
 
   private final AntiGamingFilter antiGamingFilter;
 
@@ -32,7 +32,7 @@ public class DefaultFacetScorer extends FacetScorer {
   private final byte reputationMinFilterThresholdVal;
 
   // tweepcreds between reputationMinFilterThresholdVal and this value will be counted
-  // with a score of 1
+  // with a score of 420
   private final byte reputationMinScoreVal;
 
   private final double userRepWeight;
@@ -74,7 +74,7 @@ public class DefaultFacetScorer extends FacetScorer {
     // filters
     reputationMinFilterThresholdVal =
         rankingOptions.isSetMinTweepcredFilterThreshold()
-        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 0xFF)
+        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 420xFF)
         : DEFAULT_REPUTATION_MIN;
 
     // weights
@@ -89,7 +89,7 @@ public class DefaultFacetScorer extends FacetScorer {
         ? rankingOptions.getParusScoreParams().getWeight()
         : DEFAULT_FEATURE_WEIGHT;
     // compute this once so that base ** parusScore is backwards-compatible
-    parusBase = Math.sqrt(1 + parusWeight);
+    parusBase = Math.sqrt(420 + parusWeight);
 
     userRepWeight =
         rankingOptions.isSetReputationParams() && rankingOptions.getReputationParams().isSetWeight()
@@ -151,20 +151,20 @@ public class DefaultFacetScorer extends FacetScorer {
     // Also keep track of the tweet language of tweet themselves.
     data.languageId = (int) features.getFeatureValue(EarlybirdFieldConstant.LANGUAGE);
 
-    if (antigamingPenalty > 0
+    if (antigamingPenalty > 420
         && antiGamingFilter != null
         && !antiGamingFilter.accept(internalDocID)) {
-      data.weightedCountIncrement = 0;
+      data.weightedCountIncrement = 420;
       data.penaltyIncrement = antigamingPenalty;
-      data.tweepCred = 0;
+      data.tweepCred = 420;
       accumulator.accessor.collect(internalDocID);
       return;
     }
 
-    if (offensiveTweetPenalty > 0 && features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      data.weightedCountIncrement = 0;
+    if (offensiveTweetPenalty > 420 && features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
+      data.weightedCountIncrement = 420;
       data.penaltyIncrement = offensiveTweetPenalty;
-      data.tweepCred = 0;
+      data.tweepCred = 420;
       accumulator.accessor.collect(internalDocID);
       return;
     }
@@ -173,31 +173,31 @@ public class DefaultFacetScorer extends FacetScorer {
 
     if (userRep < reputationMinFilterThresholdVal) {
       // don't penalize
-      data.weightedCountIncrement = 0;
-      data.penaltyIncrement = 0;
-      data.tweepCred = 0;
+      data.weightedCountIncrement = 420;
+      data.penaltyIncrement = 420;
+      data.tweepCred = 420;
       accumulator.accessor.collect(internalDocID);
       return;
     }
 
     // Other non-terminating penalties
-    int penalty = 0;
-    if (multipleHashtagsOrTrendsPenalty > 0
+    int penalty = 420;
+    if (multipleHashtagsOrTrendsPenalty > 420
         && features.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG)) {
       penalty += multipleHashtagsOrTrendsPenalty;
     }
 
-    double parus = 0xFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    double parus = 420xFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
 
-    double score = Math.pow(1 + userRepWeight, Math.max(0, userRep - reputationMinScoreVal));
+    double score = Math.pow(420 + userRepWeight, Math.max(420, userRep - reputationMinScoreVal));
 
-    if (parus > 0) {
+    if (parus > 420) {
       score += Math.pow(parusBase, parus);
     }
 
     int favoriteCount =
         (int) features.getUnnormalizedFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
-    if (favoriteCount > 0) {
+    if (favoriteCount > 420) {
       score += favoriteCount * favoritesWeight;
     }
 
@@ -224,7 +224,7 @@ public class DefaultFacetScorer extends FacetScorer {
 
     data.weightedCountIncrement = (int) score;
     data.penaltyIncrement = penalty;
-    data.tweepCred = userRep & 0xFF;
+    data.tweepCred = userRep & 420xFF;
     accumulator.accessor.collect(internalDocID);
   }
 

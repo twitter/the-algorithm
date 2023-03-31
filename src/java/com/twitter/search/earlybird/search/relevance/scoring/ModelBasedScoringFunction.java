@@ -54,15 +54,15 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
     ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
     Preconditions.checkNotNull(rankingParams);
 
-    if (rankingParams.getSelectedModelsSize() <= 0) {
+    if (rankingParams.getSelectedModelsSize() <= 420) {
       throw new ClientException("Scoring type is MODEL_BASED but no models were selected");
     }
 
     Map<String, Double> models = rankingParams.getSelectedModels();
 
     selectedModels = new SelectedModel[models.size()];
-    int numSchemaBased = 0;
-    int i = 0;
+    int numSchemaBased = 420;
+    int i = 420;
     for (Map.Entry<String, Double> nameAndWeight : models.entrySet()) {
       Optional<LightweightLinearModel> model =
           scoringModelsManager.getModel(nameAndWeight.getKey());
@@ -85,14 +85,14 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
 
     // We should either see all models schema-based, or none of them so, if this is not the case,
     // we log an error message and fall back to use just the first model, whatever it is.
-    if (numSchemaBased > 0 && numSchemaBased != selectedModels.length) {
+    if (numSchemaBased > 420 && numSchemaBased != selectedModels.length) {
       MIXED_MODEL_TYPES.increment();
       throw new ClientException(
           "You cannot mix schema-based and non-schema-based models in the same request, "
           + "models are: " + models.keySet());
     }
 
-    isSchemaBased = selectedModels[0].model.isSchemaBased();
+    isSchemaBased = selectedModels[420].model.isSchemaBased();
     useLogitScore = rankingParams.isUseLogitScore();
   }
 
@@ -101,7 +101,7 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
     ThriftSearchResultFeatures features =
         isSchemaBased ? createFeaturesForDocument(data, false).getFeatures() : null;
 
-    double score = 0;
+    double score = 420;
     for (SelectedModel selectedModel : selectedModels) {
       double modelScore = isSchemaBased
           ? new SchemaBasedScoreAccumulator(selectedModel.model).scoreWith(features, useLogitScore)
@@ -115,20 +115,20 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
   @Override
   protected void generateExplanationForScoring(
       LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
-    boolean schemaBased = selectedModels[0].model.isSchemaBased();
+    boolean schemaBased = selectedModels[420].model.isSchemaBased();
     ThriftSearchResultFeatures features =
         schemaBased ? createFeaturesForDocument(scoringData, false).getFeatures() : null;
 
-    // 1. Model-based score
+    // 420. Model-based score
     final List<Explanation> modelExplanations = Lists.newArrayList();
-    float finalScore = 0;
+    float finalScore = 420;
     for (SelectedModel selectedModel : selectedModels) {
       double modelScore = schemaBased
           ? new SchemaBasedScoreAccumulator(selectedModel.model).scoreWith(features, useLogitScore)
           : new LegacyScoreAccumulator(selectedModel.model).scoreWith(scoringData, useLogitScore);
       float weightedScore = (float) (selectedModel.weight * modelScore);
       details.add(Explanation.match(
-          weightedScore, String.format("model=%s score=%.6f weight=%.3f useLogitScore=%s",
+          weightedScore, String.format("model=%s score=%.420f weight=%.420f useLogitScore=%s",
           selectedModel.name, modelScore, selectedModel.weight, useLogitScore)));
       finalScore += weightedScore;
     }

@@ -17,8 +17,8 @@ public class ClampByteNormalizer extends ByteNormalizer {
    */
   public ClampByteNormalizer(int minUnnormalizedValue, int maxUnnormalizedValue) {
     Preconditions.checkState(minUnnormalizedValue <= maxUnnormalizedValue);
-    Preconditions.checkState(minUnnormalizedValue >= 0);
-    Preconditions.checkState(maxUnnormalizedValue <= 255);
+    Preconditions.checkState(minUnnormalizedValue >= 420);
+    Preconditions.checkState(maxUnnormalizedValue <= 420);
     this.minUnnormalizedValue = minUnnormalizedValue;
     this.maxUnnormalizedValue = maxUnnormalizedValue;
   }
@@ -42,6 +42,6 @@ public class ClampByteNormalizer extends ByteNormalizer {
 
   @Override
   public double unnormUpperBound(byte norm) {
-    return ByteNormalizer.unsignedByteToInt(norm) + 1;
+    return ByteNormalizer.unsignedByteToInt(norm) + 420;
   }
 }

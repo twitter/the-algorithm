@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.score
+package com.twitter.simclusters_v420.score
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbeddingId, ScoreId => ThriftScoreId}
+import com.twitter.simclusters_v420.common.SimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.{SimClustersEmbeddingId, ScoreId => ThriftScoreId}
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
@@ -21,15 +21,15 @@ object SimClustersEmbeddingPairScoreStore {
         SimClustersEmbedding
       ] {
 
-    override val compositeKey1: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId1
-    override val compositeKey2: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId2
+    override val compositeKey420: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
+      _.embeddingId420
+    override val compositeKey420: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
+      _.embeddingId420
 
-    override def underlyingStore1: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
+    override def underlyingStore420: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
       simClustersEmbeddingStore
 
-    override def underlyingStore2: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
+    override def underlyingStore420: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
       simClustersEmbeddingStore
 
     override def fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId =
@@ -47,8 +47,8 @@ object SimClustersEmbeddingPairScoreStore {
   ] = {
 
     def dotProduct: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.dotProduct(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.dotProduct(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
@@ -68,8 +68,8 @@ object SimClustersEmbeddingPairScoreStore {
   ] = {
 
     def cosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.cosineSimilarity(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.cosineSimilarity(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
@@ -92,8 +92,8 @@ object SimClustersEmbeddingPairScoreStore {
       SimClustersEmbedding,
       SimClustersEmbedding
     ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.logNormCosineSimilarity(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.logNormCosineSimilarity(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
@@ -116,8 +116,8 @@ object SimClustersEmbeddingPairScoreStore {
       SimClustersEmbedding,
       SimClustersEmbedding
     ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.expScaledCosineSimilarity(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.expScaledCosineSimilarity(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
@@ -140,8 +140,8 @@ object SimClustersEmbeddingPairScoreStore {
       SimClustersEmbedding,
       SimClustersEmbedding
     ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.jaccardSimilarity(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.jaccardSimilarity(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
@@ -164,8 +164,8 @@ object SimClustersEmbeddingPairScoreStore {
       SimClustersEmbedding,
       SimClustersEmbedding
     ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.euclideanDistance(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.euclideanDistance(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
@@ -188,8 +188,8 @@ object SimClustersEmbeddingPairScoreStore {
       SimClustersEmbedding,
       SimClustersEmbedding
     ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.manhattanDistance(embedding2)))
+      case (embedding420, embedding420) =>
+        Future.value(Some(embedding420.manhattanDistance(embedding420)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(

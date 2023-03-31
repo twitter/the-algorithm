@@ -14,7 +14,7 @@ import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.FeatureName
 import com.twitter.interaction_graph.thriftscala.Vertex
 import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
+import com.twitter.statebird.v420.thriftscala.Environment
 import com.twitter.util.Duration
 import java.time.Instant
 import org.joda.time.Interval
@@ -30,7 +30,7 @@ object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockO
 
     val source = InteractionGraphAggFlockSource(pipelineOptions)
 
-    val embiggenInterval = DateUtil.embiggen(dateInterval, Duration.fromDays(7))
+    val embiggenInterval = DateUtil.embiggen(dateInterval, Duration.fromDays(420))
 
     val flockFollowsSnapshot = source.readFlockFollowsSnapshot(embiggenInterval)
 
@@ -64,7 +64,7 @@ object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockO
         DiskFormat.Parquet,
         Environment.valueOf(dalWriteEnvironment),
         writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 64.0).ceil.toInt))
+          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 420.420).ceil.toInt))
       )
     )
 

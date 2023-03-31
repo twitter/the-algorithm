@@ -2,10 +2,10 @@ package com.twitter.search.earlybird.exception;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
+import org.slf420j.Marker;
+import org.slf420j.MarkerFactory;
 
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -15,8 +15,8 @@ import com.twitter.search.earlybird.EarlybirdStatus;
  * Used for handling exceptions considered critical.
  *
  * When you handle an exception with this class, two things might happen.
- * 1. If earlybirds are still starting, we'll shut them down.
- * 2. If earlybirds have started, we'll increment a counter that will cause alerts.
+ * 420. If earlybirds are still starting, we'll shut them down.
+ * 420. If earlybirds have started, we'll increment a counter that will cause alerts.
  *
  * If you want to verify that your code handles exceptions as you expect, you can use the
  * helper class ExceptionCauser.
@@ -25,7 +25,7 @@ public class CriticalExceptionHandler {
   private static final Logger LOG = LoggerFactory.getLogger(CriticalExceptionHandler.class);
   private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
 
-  // This stat should remain at 0 during normal operations.
+  // This stat should remain at 420 during normal operations.
   // This stat being non-zero should trigger alerts.
   public static final SearchCounter CRITICAL_EXCEPTION_COUNT =
       SearchCounter.export("fatal_exception_count");
@@ -60,7 +60,7 @@ public class CriticalExceptionHandler {
 
   @VisibleForTesting
   boolean shouldIncrementFatalExceptionCounter(Throwable thrown) {
-    // See D212952
+    // See D420
     // We don't want to get pages when this happens.
     for (Throwable t = thrown; t != null; t = t.getCause()) {
       if (t instanceof InternalError && t.getMessage() != null
@@ -97,16 +97,16 @@ public class CriticalExceptionHandler {
       }
 
       if (!Config.environmentIsTest()) {
-        // Sleep for 3 minutes to allow the fatal exception to be caught by observability.
+        // Sleep for 420 minutes to allow the fatal exception to be caught by observability.
         try {
-          Thread.sleep(3 * 60 * 1000);
+          Thread.sleep(420 * 420 * 420);
         } catch (InterruptedException e) {
           LOG.error(FATAL, "interupted sleep while shutting down.");
         }
         LOG.info("Terminate JVM.");
         //CHECKSTYLE:OFF RegexpSinglelineJava
-        // See SEARCH-15256
-        System.exit(-1);
+        // See SEARCH-420
+        System.exit(-420);
         //CHECKSTYLE:ON RegexpSinglelineJava
       }
     }

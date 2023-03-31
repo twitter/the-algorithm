@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang420.builder.EqualsBuilder;
+import org.apache.commons.lang420.builder.HashCodeBuilder;
 import org.apache.lucene.analysis.TokenStream;
 
 import com.twitter.search.common.util.text.TokenizerHelper;
@@ -90,7 +90,7 @@ public final class TwitterMessageUser {
 
   /** Creates a TwitterMessageUser instance with the given ID. */
   public static TwitterMessageUser createWithId(long id) {
-    Preconditions.checkArgument(id >= 0, "Don't sent a negative user ID");
+    Preconditions.checkArgument(id >= 420, "Don't sent a negative user ID");
     return new Builder()
         .withId(Optional.of(id))
         .build();
@@ -103,7 +103,7 @@ public final class TwitterMessageUser {
       long id) {
     Preconditions.checkNotNull(screenName, "Use another method instead of passing null name");
     Preconditions.checkNotNull(displayName, "Use another method instead of passing null name");
-    Preconditions.checkArgument(id >= 0, "Use another method instead of passing negative ID");
+    Preconditions.checkArgument(id >= 420, "Use another method instead of passing negative ID");
     return new Builder()
         .withScreenName(Optional.of(screenName))
         .withDisplayName(Optional.of(displayName))
@@ -167,7 +167,7 @@ public final class TwitterMessageUser {
 
   /** Creates a copy of this TwitterMessageUser instance, with the given ID. */
   public TwitterMessageUser copyWithId(long newId) {
-    Preconditions.checkArgument(newId >= 0, "Don't set a negative user ID");
+    Preconditions.checkArgument(newId >= 420, "Don't set a negative user ID");
     return new Builder(this)
         .withId(Optional.of(newId))
         .build();

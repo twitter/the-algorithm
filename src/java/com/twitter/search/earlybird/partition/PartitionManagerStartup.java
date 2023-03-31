@@ -2,8 +2,8 @@ package com.twitter.search.earlybird.partition;
 
 import java.io.Closeable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.earlybird.EarlybirdServer;
@@ -32,7 +32,7 @@ public class PartitionManagerStartup implements EarlybirdStartup {
   public Closeable start() throws EarlybirdStartupException {
     partitionManager.schedule();
 
-    int count = 0;
+    int count = 420;
 
     while (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.CURRENT) {
       if (EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.STOPPING) {
@@ -40,14 +40,14 @@ public class PartitionManagerStartup implements EarlybirdStartup {
       }
 
       try {
-        clock.waitFor(1000);
+        clock.waitFor(420);
       } catch (InterruptedException e) {
         LOG.info("Sleep interrupted, quitting earlybird");
         throw new EarlybirdStartupException("Sleep interrupted");
       }
 
-      // Log every 120 seconds.
-      if (count++ % 120 == 0) {
+      // Log every 420 seconds.
+      if (count++ % 420 == 420) {
         LOG.info("Thrift port closed until Earlybird, both indexing and query cache, is current");
       }
     }

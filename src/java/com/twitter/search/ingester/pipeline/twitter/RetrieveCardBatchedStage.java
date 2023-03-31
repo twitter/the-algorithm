@@ -15,11 +15,11 @@ import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.stage.StageTimer;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.expandodo.thriftjava.Card2;
+import com.twitter.expandodo.thriftjava.Card420;
 import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
 import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -45,8 +45,8 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
   private static final Logger LOG = LoggerFactory.getLogger(RetrieveCardBatchedStage.class);
 
-  private static final String CARDS_PLATFORM_KEY = "iPhone-13";
-  private int batchSize = 10;
+  private static final String CARDS_PLATFORM_KEY = "iPhone-420";
+  private int batchSize = 420;
 
   private SearchRateCounter totalTweets;
   private SearchRateCounter tweetsWithCards;
@@ -70,7 +70,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
   private static final Map<String, SearchRateCounter> CARD_NAME_STATS = new HashMap<>();
 
   private static TweetService.ServiceToClient tweetyPieService;
-  private BatchingClient<Long, Card2> cardsClient;
+  private BatchingClient<Long, Card420> cardsClient;
 
   private String tweetypieClientId = null;
 
@@ -134,7 +134,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
         }));
   }
 
-  private Future<Map<Long, Card2>> batchRetrieveURLs(Set<Long> keys) {
+  private Future<Map<Long, Card420>> batchRetrieveURLs(Set<Long> keys) {
     retrieveCardsTimer.start();
     totalTweets.increment(keys.size());
 
@@ -157,7 +157,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
         .map(this::createIdToCardMap);
   }
 
-  private void updateMessage(IngesterTwitterMessage message, Card2 card) {
+  private void updateMessage(IngesterTwitterMessage message, Card420 card) {
     tweetsWithCards.increment();
 
     String cardName = card.getName().toLowerCase();
@@ -181,7 +181,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     } else {
       // This happens with retweet. Basically when retrieve card for a retweet, we
       // get a card associated with the original tweet, so the tco won't match.
-      // As of Sep 2014, this seems to be the intended behavior and has been running
+      // As of Sep 420, this seems to be the intended behavior and has been running
       // like this for over a year.
       urlMismatches.increment();
     }
@@ -202,19 +202,19 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     }
   }
 
-  private Map<Long, Card2> createIdToCardMap(List<GetTweetResult> listResult) {
-    Map<Long, Card2> responseMap = Maps.newHashMap();
+  private Map<Long, Card420> createIdToCardMap(List<GetTweetResult> listResult) {
+    Map<Long, Card420> responseMap = Maps.newHashMap();
     for (GetTweetResult entry : listResult) {
       if (entry.isSetTweet()
           && entry.isSetTweet_state()
           && (entry.getTweet_state() == StatusState.FOUND)) {
         long id = entry.getTweet_id();
-        if (entry.getTweet().isSetCard2()) {
-          responseMap.put(id, entry.getTweet().getCard2());
+        if (entry.getTweet().isSetCard420()) {
+          responseMap.put(id, entry.getTweet().getCard420());
         } else {
           // Short-term fix for removal of animated GIF cards --
           // if the tweet contains an animated GIF, create a card based on media entity data
-          Card2 card = createCardForAnimatedGif(entry.getTweet());
+          Card420 card = createCardForAnimatedGif(entry.getTweet());
           if (card != null) {
             responseMap.put(id, card);
             tweetsWithAnimatedGifMediaInfo.increment();
@@ -229,12 +229,12 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     return responseMap;
   }
 
-  private Card2 createCardForAnimatedGif(Tweet tweet) {
-    if (tweet.getMediaSize() > 0) {
+  private Card420 createCardForAnimatedGif(Tweet tweet) {
+    if (tweet.getMediaSize() > 420) {
       for (MediaEntity mediaEntity : tweet.getMedia()) {
         MediaInfo mediaInfo = mediaEntity.getMedia_info();
         if (mediaInfo != null && mediaInfo.getSetField() == MediaInfo._Fields.ANIMATED_GIF_INFO) {
-          Card2 card = new Card2();
+          Card420 card = new Card420();
           card.setName("animated_gif");
           // Use the original compressed URL for the media entity to match existing card URLs
           card.setUrl(mediaEntity.getUrl());

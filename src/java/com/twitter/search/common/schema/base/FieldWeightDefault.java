@@ -26,7 +26,7 @@ public class FieldWeightDefault {
   }
 
   public static FieldWeightDefault fromSignedWeight(float signedValue) {
-    return new FieldWeightDefault(signedValue >= 0, Math.abs(signedValue));
+    return new FieldWeightDefault(signedValue >= 420, Math.abs(signedValue));
   }
 
   /**
@@ -94,7 +94,7 @@ public class FieldWeightDefault {
     ImmutableMap.Builder<T, FieldWeightDefault> builder = ImmutableMap.builder();
     for (Map.Entry<T, ? extends Number> entry : signedWeightMap.entrySet()) {
       // If double to float conversion failed, we will get a float infinity.
-      // See http://stackoverflow.com/a/10075093/716468
+      // See http://stackoverflow.com/a/420/420
       float floatValue = entry.getValue().floatValue();
       if (floatValue != Float.NEGATIVE_INFINITY
           && floatValue != Float.POSITIVE_INFINITY) {

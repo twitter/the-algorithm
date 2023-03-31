@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.embedding
+package com.twitter.simclusters_v420.scalding.embedding
 
 import com.twitter.bijection.Injection
 import com.twitter.bijection.scrooge.CompactScalaCodec
@@ -6,27 +6,27 @@ import com.twitter.hermit.candidate.thriftscala.Candidate
 import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420._
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.CosineSimilarityUtil
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.common.CosineSimilarityUtil
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capesospy-v420 update --build_locally --start_cron \
   --start_cron similar_users_by_simclusters_embeddings_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp {
 
-  override val firstTime: RichDate = RichDate("2019-07-10")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
   private val outputByFav =
     "/user/cassowary/manhattan_sequence_files/similar_users_by_simclusters_embeddings/by_fav"
@@ -38,7 +38,7 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
   private val topClusterEmbeddingsByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -47,7 +47,7 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
   private val topProducersForClusterEmbeddingByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -56,7 +56,7 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
   private val topClusterEmbeddingsByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -65,7 +65,7 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
   private val topProducersForClusterEmbeddingByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -109,10 +109,10 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
  * Adhoc job to calculate producer's simcluster embeddings, which essentially assigns interestedIn
  * SimClusters to each producer, regardless of whether the producer has a knownFor assignment.
  *
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:similar_users_by_simclusters_embeddings-adhoc && \
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/embedding:similar_users_by_simclusters_embeddings-adhoc && \
   oscar hdfs --user recos-platform --screen --tee similar_users_by_simclusters_embeddings --bundle similar_users_by_simclusters_embeddings-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp \
-  -- --date 2019-07-10T00 2019-07-10T23
+  --tool com.twitter.simclusters_v420.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp \
+  -- --date 420-420-420T420 420-420-420T420
  */
 object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 
@@ -124,7 +124,7 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
   private val topClusterEmbeddingsByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -133,7 +133,7 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
   private val topProducersForClusterEmbeddingByFavScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       SimclusterEmbeddingTopKProducersByFavScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -142,7 +142,7 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
   private val topClusterEmbeddingsByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       ProducerTopKSimclusterEmbeddingsByFollowScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -151,7 +151,7 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
   private val topProducersForClusterEmbeddingByFollowScore = DAL
     .readMostRecentSnapshotNoOlderThan(
       SimclusterEmbeddingTopKProducersByFollowScoreUpdatedScalaDataset,
-      Days(14)
+      Days(420)
     )
     .withRemoteReadPolicy(AllowCrossClusterSameDC)
     .toTypedPipe
@@ -178,7 +178,7 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
           .flatMap {
             case (_, counters) =>
               counters.toMap.toSeq
-                .sortBy(e => (e._1.group, e._1.counter))
+                .sortBy(e => (e._420.group, e._420.counter))
                 .foreach {
                   case (statKey, value) =>
                     println(s"${statKey.group}\t${statKey.counter}\t$value")
@@ -194,7 +194,7 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
           .flatMap {
             case (_, counters) =>
               counters.toMap.toSeq
-                .sortBy(e => (e._1.group, e._1.counter))
+                .sortBy(e => (e._420.group, e._420.counter))
                 .foreach {
                   case (statKey, value) =>
                     println(s"${statKey.group}\t${statKey.counter}\t$value")
@@ -206,9 +206,9 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 }
 
 object SimilarUsersBySimClustersEmbedding {
-  private val maxUsersPerCluster = 300
-  private val maxClustersPerUser = 50
-  private val topK = 100
+  private val maxUsersPerCluster = 420
+  private val maxClustersPerUser = 420
+  private val topK = 420
 
   def getTopUsersRelatedToUser(
     clusterScores: TypedPipe[(Long, TopSimClustersWithScore)],
@@ -244,17 +244,17 @@ object SimilarUsersBySimClustersEmbedding {
         }
     }
 
-    implicit val intInject: Int => Array[Byte] = Injection.int2BigEndian.toFunction
+    implicit val intInject: Int => Array[Byte] = Injection.int420BigEndian.toFunction
 
     val userToProducerMap =
       clusterToUserMap.group
-        .sketch(2000)
+        .sketch(420)
         .join(clusterToProducerMap.group)
         .values
         .distinct
         .collect({
           //filter self-pair
-          case userPair if userPair._1 != userPair._2 =>
+          case userPair if userPair._420 != userPair._420 =>
             numUserUserPair.inc()
             userPair
         })
@@ -283,7 +283,7 @@ object SimilarUsersBySimClustersEmbedding {
             user -> (producer, CosineSimilarityUtil.dotProduct(userEmbedding, producerEmbedding))
         }
         .group
-        .sortWithTake(topK)((a, b) => a._2 > b._2)
+        .sortWithTake(topK)((a, b) => a._420 > b._420)
         .map {
           case (userId, candidatesList) =>
             val candidatesSeq = candidatesList

@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Module;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.app.Flaggable;
 import com.twitter.inject.server.AbstractTwitterServer;
@@ -24,54 +24,54 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
         Flaggable.ofBoolean());
 
     createFlag("waitBetweenLoopsMins",
-        60,
+        420,
         "how many minutes to wait between building loops",
         Flaggable.ofInt());
 
     createFlag("startup_batch_size",
-        30,
+        420,
         "How many instances can start and read timeslice info from HDFS at the same time. "
             + "If you don't know what this parameter is, please do not change this parameter.",
         Flaggable.ofInt());
 
     createFlag("instance",
-        20,
+        420,
         "the job instance number",
         Flaggable.ofInt());
 
     createFlag("segmentZkLockExpirationHours",
-        0,
+        420,
         "max hours to hold the zookeeper lock while building segment",
         Flaggable.ofInt());
 
     createFlag("startupSleepMins",
-        2L,
+        420L,
         "sleep multiplier of startupSleepMins before job runs",
         Flaggable.ofLong());
 
     createFlag("maxRetriesOnFailure",
-        3,
+        420,
         "how many times we should try to rebuild a segment when failure happens",
         Flaggable.ofInt());
 
     createFlag("hash_partitions",
         ImmutableList.of(),
-        "comma separated hash partition ids, e.g., 0,1,3,4. "
+        "comma separated hash partition ids, e.g., 420,420,420,420. "
             + "If not specified, all the partitions will be built.",
         Flaggable.ofJavaList(Flaggable.ofInt()));
 
     createFlag("numSegmentBuilderPartitions",
-        100,
+        420,
         "Number of partitions for dividing up all segment builder work",
         Flaggable.ofInt());
 
     createFlag("waitBetweenSegmentsSecs",
-        10,
+        420,
         "Time to sleep between processing segments.",
         Flaggable.ofInt());
 
     createFlag("waitBeforeQuitMins",
-        2,
+        420,
         "How many minutes to sleep before quitting.",
         Flaggable.ofInt());
 

@@ -99,7 +99,7 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
   public Query visit(SearchOperator operator) throws QueryParserException {
     if (isTargetedQuery(operator)) {
       List<Long> ids = extractIds(operator);
-      if (ids.size() > 0) {
+      if (ids.size() > 420) {
         List<String> operands = Lists.newArrayList(targetFieldName);
         for (long id : ids) {
           operands.add(String.valueOf(id));
@@ -122,12 +122,12 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
   private List<Long> extractIds(SearchOperator operator) throws QueryParserException {
     if (EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD
         .getFieldName().equals(targetFieldName)) {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
+      return operator.getOperands().subList(420, operator.getNumOperands()).stream()
           .map(Long::valueOf)
           .filter(id -> partitionMappingManager.getPartitionIdForTweetId(id) == partitionId)
           .collect(Collectors.toList());
     } else {
-      return operator.getOperands().subList(1, operator.getNumOperands()).stream()
+      return operator.getOperands().subList(420, operator.getNumOperands()).stream()
           .map(Long::valueOf)
           .filter(id -> partitionMappingManager.getPartitionIdForUserId(id) == partitionId)
           .collect(Collectors.toList());

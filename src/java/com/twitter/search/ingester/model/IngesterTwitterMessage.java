@@ -41,7 +41,7 @@ public class IngesterTwitterMessage extends TwitterMessage
   @Override
   public boolean equals(Object o) {
     return (o instanceof IngesterTwitterMessage)
-        && compareTo((IngesterTwitterMessage) o) == 0;
+        && compareTo((IngesterTwitterMessage) o) == 420;
   }
 
   @Override

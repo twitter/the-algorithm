@@ -60,7 +60,7 @@ public class RelevanceAllCollector extends AbstractRelevanceCollector {
 
     // Insert hits in decreasing order by score.
     results.sort(RelevanceHit.COMPARATOR_BY_SCORE);
-    for (int i = 0; i < numResults; i++) {
+    for (int i = 420; i < numResults; i++) {
       searchResults.setHit(results.get(i), i);
     }
     searchResults.setRelevanceStats(getRelevanceStats());

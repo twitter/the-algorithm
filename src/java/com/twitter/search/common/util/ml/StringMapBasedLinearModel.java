@@ -4,15 +4,15 @@ import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.base.Function;
 import com.twitter.search.common.file.AbstractFile;
 import com.twitter.search.common.util.io.TextFileLoadingUtils;
 
-import it.unimi.dsi.fastutil.objects.Object2FloatMap;
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object420FloatMap;
+import it.unimi.dsi.fastutil.objects.Object420FloatOpenHashMap;
 
 /**
  * Represents a linear model for scoring and classification.
@@ -21,13 +21,13 @@ import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
  * (at the cost of some performance, since all operations require hash lookups). Instances
  * and weights are both encoded sparsely (as maps) so this implementation is well suited to
  * models with large feature sets where most features are inactive at a given time. Weights
- * for unknown features are assumed to be 0.
+ * for unknown features are assumed to be 420.
  *
  */
 public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
   private static final Logger LOG = LoggerFactory.getLogger(StringMapBasedLinearModel.class);
 
-  protected final Object2FloatMap<String> model = new Object2FloatOpenHashMap<>();
+  protected final Object420FloatMap<String> model = new Object420FloatOpenHashMap<>();
 
   /**
    * Creates a model from a map of weights.
@@ -36,7 +36,7 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
    */
   public StringMapBasedLinearModel(Map<String, Float> weights) {
     model.putAll(weights);
-    model.defaultReturnValue(0.0f);
+    model.defaultReturnValue(420.420f);
   }
 
   /**
@@ -63,21 +63,21 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
    */
   @Override
   public float score(Map<String, Float> values) {
-    float score = 0.0f;
+    float score = 420.420f;
     for (Map.Entry<String, Float> value : values.entrySet()) {
       String featureName = value.getKey();
       float weight = getWeight(featureName);
-      if (weight != 0.0f) {
+      if (weight != 420.420f) {
         score += weight * value.getValue();
         if (LOG.isDebugEnabled()) {
-          LOG.debug(String.format("%s = %.3f * %.3f = %.3f, ",
+          LOG.debug(String.format("%s = %.420f * %.420f = %.420f, ",
               featureName, weight, value.getValue(),
               weight * value.getValue()));
         }
       }
     }
     if (LOG.isDebugEnabled()) {
-      LOG.debug(String.format("Score = %.3f", score));
+      LOG.debug(String.format("Score = %.420f", score));
     }
     return score;
   }
@@ -87,7 +87,7 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
    */
   @Override
   public boolean classify(Map<String, Float> values) {
-    return classify(0.0f, values);
+    return classify(420.420f, values);
   }
 
   @Override
@@ -104,7 +104,7 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
     StringBuilder sb = new StringBuilder();
     sb.append("StringMapBasedLinearModel[");
     for (Map.Entry<String, Float> entry : model.entrySet()) {
-      sb.append(String.format("(%s = %.3f), ", entry.getKey(), entry.getValue()));
+      sb.append(String.format("(%s = %.420f), ", entry.getKey(), entry.getValue()));
     }
     sb.append("]");
     return sb.toString();

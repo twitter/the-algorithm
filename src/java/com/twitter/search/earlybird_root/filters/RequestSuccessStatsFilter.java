@@ -57,14 +57,14 @@ public class RequestSuccessStatsFilter
 
             long latencyNanos = System.nanoTime() - startTime;
             stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, success);
+                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 420, success);
           }
 
           @Override
           public void onFailure(Throwable cause) {
             long latencyNanos = System.nanoTime() - startTime;
             stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, false);
+                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 420, false);
 
             if (FinagleUtil.isCancelException(cause)) {
               stats.getCancelledRequestCount().increment();

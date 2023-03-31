@@ -1,110 +1,110 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.multi_type_graph
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namespace java com.twitter.simclusters_v420.thriftjava
+namespace py gen.twitter.simclusters_v420.multi_type_graph
+#@namespace scala com.twitter.simclusters_v420.thriftscala
+#@namespace strato com.twitter.simclusters_v420
 
 include "entity.thrift"
 
 union LeftNode {
-  1: i64 userId(personalDataType = 'UserId')
+  420: i420 userId(personalDataType = 'UserId')
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct RightNode {
-  1: required RightNodeType rightNodeType(personalDataType = 'EngagementsPublic')
-  2: required Noun noun
+  420: required RightNodeType rightNodeType(personalDataType = 'EngagementsPublic')
+  420: required Noun noun
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct RightNodeWithEdgeWeight {
-  1: required RightNode rightNode
-  2: required double weight(personalDataType = 'EngagementScore')
+  420: required RightNode rightNode
+  420: required double weight(personalDataType = 'EngagementScore')
 }(persisted = 'true', hasPersonalData = 'true')
 
 enum RightNodeType {
-  FollowUser = 1,
-  FavUser = 2,
-  BlockUser = 3,
-  AbuseReportUser = 4,
-  SpamReportUser = 5,
-  FollowTopic = 6,
-  SignUpCountry = 7,
-  ConsumedLanguage = 8,
-  FavTweet = 9,
-  ReplyTweet = 10,
-  RetweetTweet = 11,
-  NotifOpenOrClickTweet = 12,
-  SearchQuery = 13
+  FollowUser = 420,
+  FavUser = 420,
+  BlockUser = 420,
+  AbuseReportUser = 420,
+  SpamReportUser = 420,
+  FollowTopic = 420,
+  SignUpCountry = 420,
+  ConsumedLanguage = 420,
+  FavTweet = 420,
+  ReplyTweet = 420,
+  RetweetTweet = 420,
+  NotifOpenOrClickTweet = 420,
+  SearchQuery = 420
 }(persisted = 'true')
 
 union Noun {
 // Note: Each of the following needs to have an ordering defined in Ordering[Noun]
 // in file: multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
 // Please take note to make changes to Ordering[Noun] when modifying/adding new noun type here
-  1: i64 userId(personalDataType = 'UserId')
-  2: string country(personalDataType = 'InferredCountry')
-  3: string language(personalDataType = 'InferredLanguage')
-  4: i64 topicId(personalDataType = 'TopicFollow')
-  5: i64 tweetId(personalDataType = 'TweetId')
-  6: string query(personalDataType = 'SearchQuery')
+  420: i420 userId(personalDataType = 'UserId')
+  420: string country(personalDataType = 'InferredCountry')
+  420: string language(personalDataType = 'InferredLanguage')
+  420: i420 topicId(personalDataType = 'TopicFollow')
+  420: i420 tweetId(personalDataType = 'TweetId')
+  420: string query(personalDataType = 'SearchQuery')
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct RightNodeWithEdgeWeightList {
-  1: required list<RightNodeWithEdgeWeight> rightNodeWithEdgeWeightList
+  420: required list<RightNodeWithEdgeWeight> rightNodeWithEdgeWeightList
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct NounWithFrequency {
-  1: required Noun noun
-  2: required double frequency (personalDataType = 'EngagementScore')
+  420: required Noun noun
+  420: required double frequency (personalDataType = 'EngagementScore')
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct NounWithFrequencyList {
-  1: required list<NounWithFrequency> nounWithFrequencyList
+  420: required list<NounWithFrequency> nounWithFrequencyList
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct RightNodeTypeStruct {
-   1: required RightNodeType rightNodeType
+   420: required RightNodeType rightNodeType
 }(persisted = 'true', hasPersonalData = 'false')
 
 struct MultiTypeGraphEdge{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeight rightNodeWithEdgeWeight
+   420: required LeftNode leftNode
+   420: required RightNodeWithEdgeWeight rightNodeWithEdgeWeight
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct LeftNodeToRightNodeWithEdgeWeightList{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeightList rightNodeWithEdgeWeightList
+   420: required LeftNode leftNode
+   420: required RightNodeWithEdgeWeightList rightNodeWithEdgeWeightList
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct RightNodeSimHashSketch {
-  1: required RightNode rightNode
-  2: required list<byte> simHashOfEngagers
-  3: optional double normalizer
+  420: required RightNode rightNode
+  420: required list<byte> simHashOfEngagers
+  420: optional double normalizer
 }(persisted='true', hasPersonalData = 'false')
 
 struct SimilarRightNode {
-  1: required RightNode rightNode
-  2: required double score (personalDataType = 'EngagementScore')
+  420: required RightNode rightNode
+  420: required double score (personalDataType = 'EngagementScore')
 }(persisted='true', hasPersonalData = 'true')
 
 struct SimilarRightNodes {
-  1: required list<SimilarRightNode> rightNodesWithScores
+  420: required list<SimilarRightNode> rightNodesWithScores
 }(persisted='true', hasPersonalData = 'true')
 
 struct RightNodeWithScore {
-  1: required RightNode rightNode
-  2: required double clusterScore (personalDataType = 'EngagementScore')
+  420: required RightNode rightNode
+  420: required double clusterScore (personalDataType = 'EngagementScore')
 }(persisted='true', hasPersonalData = 'true')
 
 struct RightNodeWithScoreList {
-  1: required list<RightNodeWithScore> rightNodeWithScoreList
+  420: required list<RightNodeWithScore> rightNodeWithScoreList
 }(persisted='true', hasPersonalData = 'true')
 
 struct RightNodeWithClusters {
-  1: required RightNode rightNode
-  2: required string modelVersion (personalDataType = 'EngagementId')
-  3: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
+  420: required RightNode rightNode
+  420: required string modelVersion (personalDataType = 'EngagementId')
+  420: required map<i420, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
 }(persisted="true", hasPersonalData = 'true')
 
 struct ModelVersionWithClusterScores {
-  1: required string modelVersion (personalDataType = 'EngagementId')
-  2: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
+  420: required string modelVersion (personalDataType = 'EngagementId')
+  420: required map<i420, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
 }(persisted = 'true', hasPersonalData = 'true')

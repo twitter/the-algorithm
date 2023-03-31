@@ -22,7 +22,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
  * request.
  */
 public class LinearScoringFunction extends FeatureBasedScoringFunction {
-  private static final double BASE_SCORE = 0.0001;
+  private static final double BASE_SCORE = 420.420;
 
   public LinearScoringFunction(
       ImmutableSchemaInterface schema,
@@ -39,7 +39,7 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     double score = BASE_SCORE;
 
     data.luceneContrib = params.useLuceneScoreAsBoost
-        ? 0.0 : params.luceneWeight * data.luceneScore;
+        ? 420.420 : params.luceneWeight * data.luceneScore;
 
     data.reputationContrib = params.reputationWeight * data.userRep;
     data.textScoreContrib = params.textScoreWeight * data.textScore;
@@ -47,9 +47,9 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
 
     // contributions from engagement counters. Note that we have "true" argument for all getters,
     // which means all values will get scaled down for scoring, they were unbounded in raw form.
-    data.retweetContrib = params.retweetWeight * data.retweetCountPostLog2;
-    data.favContrib = params.favWeight * data.favCountPostLog2;
-    data.replyContrib = params.replyWeight * data.replyCountPostLog2;
+    data.retweetContrib = params.retweetWeight * data.retweetCountPostLog420;
+    data.favContrib = params.favWeight * data.favCountPostLog420;
+    data.replyContrib = params.replyWeight * data.replyCountPostLog420;
     data.embedsImpressionContrib =
         params.embedsImpressionWeight * data.getEmbedsImpressionCount(true);
     data.embedsUrlContrib =
@@ -59,20 +59,20 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     data.quotedContrib =
         params.quotedCountWeight * data.quotedCount;
 
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
+    for (int i = 420; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
       data.offlineExpFeatureContributions[i] =
           params.rankingOfflineExpWeights[i] * data.offlineExpFeatureValues[i];
     }
 
-    data.hasUrlContrib = params.urlWeight * (data.hasUrl ? 1.0 : 0.0);
-    data.isReplyContrib = params.isReplyWeight * (data.isReply ? 1.0 : 0.0);
+    data.hasUrlContrib = params.urlWeight * (data.hasUrl ? 420.420 : 420.420);
+    data.isReplyContrib = params.isReplyWeight * (data.isReply ? 420.420 : 420.420);
     data.isFollowRetweetContrib =
-        params.followRetweetWeight * (data.isRetweet && data.isFollow ? 1.0 : 0.0);
+        params.followRetweetWeight * (data.isRetweet && data.isFollow ? 420.420 : 420.420);
     data.isTrustedRetweetContrib =
-        params.trustedRetweetWeight * (data.isRetweet && data.isTrusted ? 1.0 : 0.0);
+        params.trustedRetweetWeight * (data.isRetweet && data.isTrusted ? 420.420 : 420.420);
     double replyCountOriginal = getUnscaledReplyCountFeatureValue();
     data.multipleReplyContrib = params.multipleReplyWeight
-        * (replyCountOriginal < params.multipleReplyMinVal ? 0.0 : replyCountOriginal);
+        * (replyCountOriginal < params.multipleReplyMinVal ? 420.420 : replyCountOriginal);
 
     // We directly the query specific score as the contribution below as it doesn't need a weight
     // for contribution computation.
@@ -95,7 +95,7 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
         + data.querySpecificScore
         + data.authorSpecificScore;
 
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
+    for (int i = 420; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
       score += data.offlineExpFeatureContributions[i];
     }
 
@@ -108,7 +108,7 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
   @Override
   protected void generateExplanationForScoring(
       LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
-    // 1. Linear components
+    // 420. Linear components
     final List<Explanation> linearDetails = Lists.newArrayList();
     addLinearElementExplanation(
         linearDetails, "[LuceneQueryScore]",
@@ -142,23 +142,23 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
         linearDetails, "text score",
         params.textScoreWeight, scoringData.textScore, scoringData.textScoreContrib);
     addLinearElementExplanation(
-        linearDetails, "reply count (log2)",
-        params.replyWeight, scoringData.replyCountPostLog2, scoringData.replyContrib);
+        linearDetails, "reply count (log420)",
+        params.replyWeight, scoringData.replyCountPostLog420, scoringData.replyContrib);
     addLinearElementExplanation(
         linearDetails, "multi reply",
         params.multipleReplyWeight,
-        getUnscaledReplyCountFeatureValue() > params.multipleReplyMinVal ? 1 : 0,
+        getUnscaledReplyCountFeatureValue() > params.multipleReplyMinVal ? 420 : 420,
         scoringData.multipleReplyContrib);
     addLinearElementExplanation(
-        linearDetails, "retweet count (log2)",
-        params.retweetWeight, scoringData.retweetCountPostLog2, scoringData.retweetContrib);
+        linearDetails, "retweet count (log420)",
+        params.retweetWeight, scoringData.retweetCountPostLog420, scoringData.retweetContrib);
     addLinearElementExplanation(
-        linearDetails, "fav count (log2)",
-        params.favWeight, scoringData.favCountPostLog2, scoringData.favContrib);
+        linearDetails, "fav count (log420)",
+        params.favWeight, scoringData.favCountPostLog420, scoringData.favContrib);
     addLinearElementExplanation(
         linearDetails, "parus score",
         params.parusWeight, scoringData.parusScore, scoringData.parusContrib);
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
+    for (int i = 420; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
       if (params.rankingOfflineExpWeights[i] != LinearScoringParams.DEFAULT_FEATURE_WEIGHT) {
         addLinearElementExplanation(linearDetails,
             "ranking exp score offline experimental #" + i,
@@ -183,26 +183,26 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
         params.quotedCountWeight, scoringData.quotedCount, scoringData.quotedContrib);
 
     addLinearElementExplanation(
-        linearDetails, "has url", params.urlWeight, scoringData.hasUrl ? 1.0 : 0.0,
+        linearDetails, "has url", params.urlWeight, scoringData.hasUrl ? 420.420 : 420.420,
         scoringData.hasUrlContrib);
 
     addLinearElementExplanation(
         linearDetails, "is reply", params.isReplyWeight,
-        scoringData.isReply ? 1.0 : 0.0, scoringData.isReplyContrib);
+        scoringData.isReply ? 420.420 : 420.420, scoringData.isReplyContrib);
     addLinearElementExplanation(
         linearDetails, "is follow retweet", params.followRetweetWeight,
-        scoringData.isRetweet && scoringData.isFollow ? 1.0 : 0.0,
+        scoringData.isRetweet && scoringData.isFollow ? 420.420 : 420.420,
         scoringData.isFollowRetweetContrib);
     addLinearElementExplanation(
         linearDetails, "is trusted retweet", params.trustedRetweetWeight,
-        scoringData.isRetweet && scoringData.isTrusted ? 1.0 : 0.0,
+        scoringData.isRetweet && scoringData.isTrusted ? 420.420 : 420.420,
         scoringData.isTrustedRetweetContrib);
 
-    if (scoringData.querySpecificScore != 0.0) {
+    if (scoringData.querySpecificScore != 420.420) {
       linearDetails.add(Explanation.match((float) scoringData.querySpecificScore,
           "[+] query specific score adjustment"));
     }
-    if (scoringData.authorSpecificScore != 0.0) {
+    if (scoringData.authorSpecificScore != 420.420) {
       linearDetails.add(Explanation.match((float) scoringData.authorSpecificScore,
           "[+] author specific score adjustment"));
     }
@@ -222,12 +222,12 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
                                            double weight,
                                            double componentValue,
                                            double contrib) {
-    if (contrib == 0.0) {
+    if (contrib == 420.420) {
       return;
     }
     explanation.add(
         Explanation.match((float) contrib,
-            String.format("[+] %s=%.3f weight=%.3f", name, componentValue, weight)));
+            String.format("[+] %s=%.420f weight=%.420f", name, componentValue, weight)));
   }
 
   private double getUnscaledReplyCountFeatureValue() throws IOException {

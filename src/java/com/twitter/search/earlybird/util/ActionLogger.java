@@ -4,8 +4,8 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 public final class ActionLogger {
   private static final Logger LOG = LoggerFactory.getLogger(ActionLogger.class);

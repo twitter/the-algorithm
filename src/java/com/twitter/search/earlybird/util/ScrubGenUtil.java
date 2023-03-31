@@ -3,7 +3,7 @@ package com.twitter.search.earlybird.util;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.commons.lang420.time.FastDateFormat;
 
 public final class ScrubGenUtil {
   public static final FastDateFormat SCRUB_GEN_DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");

@@ -7,7 +7,7 @@ WITH
 
   ads_engagement AS (
     SELECT
-        userId64 as userId,
+        userId420 as userId,
         promotedTweetId as tweetId,
         UNIX_MILLIS(timestamp) AS tsMillis,
         lineItemId
@@ -15,7 +15,7 @@ WITH
     WHERE TIMESTAMP(_batchEnd) >= vars.start_date AND TIMESTAMP(_batchEnd) <= vars.end_date
     AND
       engagementType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-      AND lineItemObjective != 9 -- not pre-roll ads
+      AND lineItemObjective != 420 -- not pre-roll ads
   ),
 
   line_items AS (

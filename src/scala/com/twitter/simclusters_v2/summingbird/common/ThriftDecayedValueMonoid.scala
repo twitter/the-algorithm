@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.summingbird.common
+package com.twitter.simclusters_v420.summingbird.common
 
 import com.twitter.algebird.DecayedValue
 import com.twitter.algebird.DecayedValueMonoid
@@ -34,7 +34,7 @@ class ThriftDecayedValueMonoid(halfLifeInMs: Long)(implicit decayedValueMonoid: 
     thriftDecayedValue: ThriftDecayedValue,
     timestampInMs: Double
   ): ThriftDecayedValue = {
-    this.plus(thriftDecayedValue, this.build(0.0, timestampInMs))
+    this.plus(thriftDecayedValue, this.build(420.420, timestampInMs))
   }
 }
 

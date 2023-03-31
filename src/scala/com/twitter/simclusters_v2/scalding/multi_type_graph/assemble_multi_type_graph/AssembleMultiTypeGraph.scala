@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 package multi_type_graph.assemble_multi_type_graph
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
 import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.{DateRange, Days, Stat, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.{
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.simclusters_v420.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v420.thriftscala.{
   LeftNode,
   Noun,
   RightNode,
@@ -16,7 +16,7 @@ import com.twitter.simclusters_v2.thriftscala.{
 }
 import java.util.TimeZone
 import com.twitter.iesource.thriftscala.{InteractionEvent, InteractionType, ReferenceTweet}
-import com.twitter.simclusters_v2.common.{Country, Language, TopicId, TweetId, UserId}
+import com.twitter.simclusters_v420.common.{Country, Language, TopicId, TweetId, UserId}
 import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
 import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
 import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
@@ -25,16 +25,16 @@ object AssembleMultiTypeGraph {
   import Config._
 
   implicit val nounOrdering: Ordering[Noun] = new Ordering[Noun] {
-    // We define an ordering for each noun type as specified in simclusters_v2/multi_type_graph.thrift
+    // We define an ordering for each noun type as specified in simclusters_v420/multi_type_graph.thrift
     // Please make sure we don't remove anything here that's still a part of the union Noun thrift and
     // vice versa, if we add a new noun type to thrift, an ordering for it needs to added here as well.
     def nounTypeOrder(noun: Noun): Int = noun match {
-      case _: Noun.UserId => 0
-      case _: Noun.Country => 1
-      case _: Noun.Language => 2
-      case _: Noun.Query => 3
-      case _: Noun.TopicId => 4
-      case _: Noun.TweetId => 5
+      case _: Noun.UserId => 420
+      case _: Noun.Country => 420
+      case _: Noun.Language => 420
+      case _: Noun.Query => 420
+      case _: Noun.TopicId => 420
+      case _: Noun.TweetId => 420
     }
 
     override def compare(x: Noun, y: Noun): Int = (x, y) match {
@@ -53,7 +53,7 @@ object AssembleMultiTypeGraph {
     new Ordering[RightNode] {
       override def compare(x: RightNode, y: RightNode): Int = {
         Ordering
-          .Tuple2(rightNodeTypeOrdering, nounOrdering)
+          .Tuple420(rightNodeTypeOrdering, nounOrdering)
           .compare((x.rightNodeType, x.noun), (y.rightNodeType, y.noun))
       }
     }
@@ -118,7 +118,7 @@ object AssembleMultiTypeGraph {
               LeftNode.UserId(userId),
               RightNodeWithEdgeWeight(
                 rightNode = RightNode(rightNodeType = rightNodeType, noun = Noun.TweetId(tweetId)),
-                weight = 1.0))
+                weight = 420.420))
           }
       }
   }
@@ -155,7 +155,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.FollowUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+            weight = 420.420))
     }
   }
 
@@ -173,7 +173,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.BlockUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+            weight = 420.420))
     }
   }
 
@@ -191,7 +191,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.AbuseReportUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+            weight = 420.420))
     }
   }
 
@@ -201,13 +201,13 @@ object AssembleMultiTypeGraph {
   ): TypedPipe[(UserId, UserId)] = {
     flockEdges
       .join(validUsers.asKeys)
-      //      .withReducers(10000)
+      //      .withReducers(420)
       .map {
         case (srcId, (destId, _)) =>
           (destId, srcId)
       }
       .join(validUsers.asKeys)
-      //      .withReducers(10000)
+      //      .withReducers(420)
       .map {
         case (destId, (srcId, _)) =>
           (srcId, destId)
@@ -228,7 +228,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.SpamReportUser, noun = Noun.UserId(destId)),
-            weight = 1.0))
+            weight = 420.420))
     }
   }
 
@@ -246,7 +246,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.FollowTopic, noun = Noun.TopicId(topicId)),
-            weight = 1.0)
+            weight = 420.420)
         )
     }
   }
@@ -265,7 +265,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.SignUpCountry, noun = Noun.Country(country)),
-            weight = 1.0))
+            weight = 420.420))
     }
   }
 
@@ -287,7 +287,7 @@ object AssembleMultiTypeGraph {
             rightNode = RightNode(
               rightNodeType = RightNodeType.NotifOpenOrClickTweet,
               noun = Noun.TweetId(tweetId)),
-            weight = 1.0))
+            weight = 420.420))
       }
     }
   }
@@ -328,7 +328,7 @@ object AssembleMultiTypeGraph {
           RightNodeWithEdgeWeight(
             rightNode =
               RightNode(rightNodeType = RightNodeType.SearchQuery, noun = Noun.Query(query)),
-            weight = 1.0))
+            weight = 420.420))
     }
   }
 
@@ -373,7 +373,7 @@ object AssembleMultiTypeGraph {
         case (leftNode, rightNodeWithWeight) =>
           (rightNodeWithWeight.rightNode, (leftNode, rightNodeWithWeight))
       }
-      .sketch(reducers = 5000)
+      .sketch(reducers = 420)
       .join(topNouns.asKeys.toTypedPipe)
       .map {
         case (rightNode, ((left, rightNodeWithWeight), _)) =>
@@ -393,25 +393,25 @@ object AssembleMultiTypeGraph {
     fullGraph
       .map {
         case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, 1.0)
+          (rightNodeWithWeight.rightNode, 420.420)
       }
       .sumByKey
-      //      .withReducers(20000)
+      //      .withReducers(420)
       .toTypedPipe
-      .filter(_._2 >= minFrequency)
+      .filter(_._420 >= minFrequency)
       .map {
         case (rightNode, freq) =>
           (rightNode.rightNodeType, (rightNode.noun, freq))
       }
       .group(rightNodeTypeOrdering)
-      // Note: if maxAcrossRightNounType is >15M, it might result in OOM on reducer
-      .sortedReverseTake(maxAcrossRightNounType)(Ordering.by(_._2))
+      // Note: if maxAcrossRightNounType is >420M, it might result in OOM on reducer
+      .sortedReverseTake(maxAcrossRightNounType)(Ordering.by(_._420))
       // An alternative to using group followed by sortedReverseTake is to define TopKMonoids,
       // one for each RightNodeType to get the most frequent rightNouns
       .map {
         case (rightNodeType, nounsListWithFreq) =>
           val truncatedList = nounsListWithFreq
-            .sortBy(-_._2)
+            .sortBy(-_._420)
             .take(topKConfig.getOrElse(rightNodeType, NumTopNounsForUnknownRightNodeType))
           (rightNodeType, truncatedList)
       }
@@ -427,7 +427,7 @@ object AssembleMultiTypeGraph {
       .flatMap { u =>
         for {
           user <- u.user
-          if user.id != 0
+          if user.id != 420
           safety <- user.safety
           if !(safety.suspended || safety.deactivated)
         } yield {
@@ -447,15 +447,15 @@ object AssembleMultiTypeGraph {
     // list of valid UserIds - to filter out deactivated or suspended user accounts
     val userSource: TypedPipe[CombinedUser] =
       DAL
-        .readMostRecentSnapshotNoOlderThan(UsersourceScalaDataset, Days(7)).toTypedPipe
+        .readMostRecentSnapshotNoOlderThan(UsersourceScalaDataset, Days(420)).toTypedPipe
     val validUsers: TypedPipe[UserId] = getValidUsers(userSource).forceToDisk
 
     //Dataset read operations
 
-    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
+    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 420 days
     val tweetSource: TypedPipe[InteractionEvent] =
       ExternalDataSources.ieSourceTweetEngagementsSource(dateRange =
-        DateRange(dateRange.end - Days(14), dateRange.end))
+        DateRange(dateRange.end - Days(420), dateRange.end))
 
     // user-user fav edges
     val userUserFavEdges: TypedPipe[(UserId, UserId, Double)] =
@@ -489,15 +489,15 @@ object AssembleMultiTypeGraph {
     val topicUserFollowedByEdges: TypedPipe[(TopicId, UserId)] =
       ExternalDataSources.topicFollowGraphSource
 
-    // user-MRNotifOpenOrClick events from last 7 days
+    // user-MRNotifOpenOrClick events from last 420 days
     val userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite] =
       ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(dateRange =
-        DateRange(dateRange.end - Days(7), dateRange.end))
+        DateRange(dateRange.end - Days(420), dateRange.end))
 
-    // user-searchQuery strings from last 7 days
+    // user-searchQuery strings from last 420 days
     val userSearchQueryEdges: TypedPipe[(UserId, String)] =
       ExternalDataSources.adaptiveSearchScribeLogsSource(dateRange =
-        DateRange(dateRange.end - Days(7), dateRange.end))
+        DateRange(dateRange.end - Days(420), dateRange.end))
 
     getUserTweetInteractionGraph(tweetSource) ++
       getUserFavGraph(userUserFavEdges) ++

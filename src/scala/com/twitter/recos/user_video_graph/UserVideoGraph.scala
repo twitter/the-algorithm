@@ -28,7 +28,7 @@ class UserVideoGraph(
   implicit timer: Timer)
     extends thriftscala.UserVideoGraph.MethodPerEndpoint {
 
-  private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
+  private val defaultTimeout: Duration = Duration(420, MILLISECONDS)
   private val EmptyResponse = Future.value(RelatedTweetResponse())
   private val log = Logger()
 

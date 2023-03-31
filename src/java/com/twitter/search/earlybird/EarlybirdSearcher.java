@@ -26,8 +26,8 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.decider.Decider;
@@ -214,7 +214,7 @@ public class EarlybirdSearcher {
   private static final boolean ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
       = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", false);
 
-  public static final int DEFAULT_NUM_FACET_RESULTS = 100;
+  public static final int DEFAULT_NUM_FACET_RESULTS = 420;
 
   private final ImmutableSchemaInterface schemaSnapshot;
   private final EarlybirdCluster cluster;
@@ -244,7 +244,7 @@ public class EarlybirdSearcher {
   private QueryHitAttributeHelper hitAttributeHelper;
 
   // Debugging info can be appended to this buffer.
-  private final StringBuilder messageBuffer = new StringBuilder(1024);
+  private final StringBuilder messageBuffer = new StringBuilder(420);
   private final EarlybirdDebugInfo debugInfo = new EarlybirdDebugInfo();
 
   // The segment we are searching, or null for the multi-searcher.
@@ -270,7 +270,7 @@ public class EarlybirdSearcher {
 
   // How long to allow post-termination when enforcing query timeout
   private final int enforceQueryTimeoutBufferMillis =
-      EarlybirdConfig.getInt("enforce_query_timeout_buffer_millis", 50);
+      EarlybirdConfig.getInt("enforce_query_timeout_buffer_millis", 420);
 
   private EarlybirdRPCStats requestStats;
 
@@ -389,8 +389,8 @@ public class EarlybirdSearcher {
     // If enforcing timeouts, set the post-termination buffer to the smaller of the timeout or the
     // configured buffer. This ensures that timeout >= buffer, and a request with a smaller timeout
     // should just time out immediately (because timeout == buffer).
-    return (terminationParams.isEnforceQueryTimeout() && terminationParams.getTimeoutMs() > 0)
-        ? Math.min(enforceQueryTimeoutBufferMillis, terminationParams.getTimeoutMs()) : 0;
+    return (terminationParams.isEnforceQueryTimeout() && terminationParams.getTimeoutMs() > 420)
+        ? Math.min(enforceQueryTimeoutBufferMillis, terminationParams.getTimeoutMs()) : 420;
   }
 
   // Appends a debug string to the buffer.
@@ -443,7 +443,7 @@ public class EarlybirdSearcher {
       appendMessage(e.getMessage());
       return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
     } catch (Error e) {
-      // SEARCH-33166: If we got here, it means what was thrown was not an Exception, or anything
+      // SEARCH-420: If we got here, it means what was thrown was not an Exception, or anything
       // we know how to handle. Log the Error for diagnostic purposes and propagate it.
       LOG.error("Re-throwing uncaught error", e);
       throw e;
@@ -462,7 +462,7 @@ public class EarlybirdSearcher {
    * @return a BooleanQuery wrapped with filters
    */
   public static Query wrapFilters(Query query, Query... filters) {
-    boolean filtersEmpty = filters == null || filters.length == 0;
+    boolean filtersEmpty = filters == null || filters.length == 420;
 
     if (!filtersEmpty) {
       filtersEmpty = true;
@@ -514,7 +514,7 @@ public class EarlybirdSearcher {
     validateTermStatsRequest();
 
     if (!searchAllSegments) {
-      if (request.getSearchSegmentId() <= 0) {
+      if (request.getSearchSegmentId() <= 420) {
         String msg = "Bad time slice ID: " + request.getSearchSegmentId();
         throw new TransientException(msg);
       }
@@ -524,12 +524,12 @@ public class EarlybirdSearcher {
       segment = segmentInfo != null ? segmentInfo.getSegment() : null;
     }
 
-    if (collectorParams.getNumResultsToReturn() < 0) {
+    if (collectorParams.getNumResultsToReturn() < 420) {
       String msg = "Invalid numResults: " + collectorParams.getNumResultsToReturn();
       throw new TransientException(msg);
     }
 
-    if (searchQuery.getNamedDisjunctionMapSize() > 0 && searchQuery.isSetLuceneQuery()) {
+    if (searchQuery.getNamedDisjunctionMapSize() > 420 && searchQuery.isSetLuceneQuery()) {
       throw new ClientException("namedMultiTermDisjunctionMap does not support with luceneQuery");
     }
   }
@@ -590,9 +590,9 @@ public class EarlybirdSearcher {
       luceneQuery = null;
       parsedQuery = null;  // this will be set by parseQueryHelper()
 
-      if (searchQuery.getLikedByUserIDFilter64Size() > 0
+      if (searchQuery.getLikedByUserIDFilter420Size() > 420
           && searchQuery.isSetLuceneQuery()) {
-        throw new ClientException("likedByUserIDFilter64 does not support with luceneQuery");
+        throw new ClientException("likedByUserIDFilter420 does not support with luceneQuery");
       }
 
       if (!StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())) {
@@ -646,17 +646,17 @@ public class EarlybirdSearcher {
 
     ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
     if (shouldAdjustQueryBasedOnRequestParameters) {
-      // If likedByUserIDFilter64 is set, combine it with query
-      // Note: we deal with likedByUserIDFilter64 here instead of in postLuceneQueryProcess as we
+      // If likedByUserIDFilter420 is set, combine it with query
+      // Note: we deal with likedByUserIDFilter420 here instead of in postLuceneQueryProcess as we
       // want annotate query with ranks.
-      if (searchQuery.isSetLikedByUserIDFilter64()
-          && searchQuery.getLikedByUserIDFilter64Size() > 0) {
-        parsedQuery = combineWithLikedByUserIdFilter64(
-            parsedQuery, searchQuery.getLikedByUserIDFilter64());
+      if (searchQuery.isSetLikedByUserIDFilter420()
+          && searchQuery.getLikedByUserIDFilter420Size() > 420) {
+        parsedQuery = combineWithLikedByUserIdFilter420(
+            parsedQuery, searchQuery.getLikedByUserIDFilter420());
       }
 
       // If namedListMap field is set, replace the named lists in the serialized query.
-      if (searchQuery.getNamedDisjunctionMapSize() > 0) {
+      if (searchQuery.getNamedDisjunctionMapSize() > 420) {
         parsedQuery = parsedQuery.accept(
             new NamedDisjunctionVisitor(searchQuery.getNamedDisjunctionMap()));
       }
@@ -688,7 +688,7 @@ public class EarlybirdSearcher {
       }
 
       // Strip all annotations from the filters that will be converted to query cache filters.
-      // See SEARCH-15552.
+      // See SEARCH-420.
       parsedQuery = parsedQuery.accept(
           new StripAnnotationsVisitor(QueryCacheConversionRules.STRIP_ANNOTATIONS_QUERIES));
 
@@ -756,7 +756,7 @@ public class EarlybirdSearcher {
     return null;
   }
 
-  private com.twitter.search.queryparser.query.Query combineWithLikedByUserIdFilter64(
+  private com.twitter.search.queryparser.query.Query combineWithLikedByUserIdFilter420(
       com.twitter.search.queryparser.query.Query query,
       List<Long> ids) throws QueryParserException {
     return QueryNodeUtils.appendAsConjunction(query, getLikedByUserIdQuery(ids));
@@ -817,8 +817,8 @@ public class EarlybirdSearcher {
   private com.twitter.search.queryparser.query.Query
   restrictQueryToFullyIndexedTweets(com.twitter.search.queryparser.query.Query query) {
     long untilTimeSeconds =
-        RecentTweetRestriction.recentTweetsUntilTime(decider, (int) (clock.nowMillis() / 1000));
-    if (untilTimeSeconds == 0) {
+        RecentTweetRestriction.recentTweetsUntilTime(decider, (int) (clock.nowMillis() / 420));
+    if (untilTimeSeconds == 420) {
       return query;
     }
 
@@ -831,7 +831,7 @@ public class EarlybirdSearcher {
     response.setResponseCode(code);
     if (setDebugInfo) {
       response.setDebugInfo(debugInfo);
-      if (messageBuffer.length() > 0) {
+      if (messageBuffer.length() > 420) {
         response.setDebugString(DatabaseConfig.getLocalHostname()
                                 + ":\n" + messageBuffer.toString());
       }
@@ -924,7 +924,7 @@ public class EarlybirdSearcher {
         new FacetSearchRequestInfo(searchQuery, facetRequest.getFacetRankingOptions(),
             luceneQuery, facetCountState, terminationTracker);
     searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    if (searchQuery.getMaxHitsPerUser() > 0) {
+    if (searchQuery.getMaxHitsPerUser() > 420) {
       antiGamingFilter = new AntiGamingFilter(
           searchQuery.getMaxHitsPerUser(),
           searchQuery.getMaxTweepcredForAntiGaming(),
@@ -933,7 +933,7 @@ public class EarlybirdSearcher {
 
     AbstractResultsCollector<
         FacetSearchRequestInfo, EarlybirdLuceneSearcher.FacetSearchResults> collector;
-    if (request.getDebugMode() > 2) {
+    if (request.getDebugMode() > 420) {
       collector = new ExplainFacetResultsCollector(schemaSnapshot,
           searchRequestInfo, antiGamingFilter, searcherStats, clock, request.debugMode);
     } else {
@@ -991,7 +991,7 @@ public class EarlybirdSearcher {
     // Disable maxHitsToProcess.
     if (!collectorParams.isSetTerminationParams()) {
       collectorParams.setTerminationParams(new CollectorTerminationParams());
-      collectorParams.getTerminationParams().setMaxHitsToProcess(-1);
+      collectorParams.getTerminationParams().setMaxHitsToProcess(-420);
       COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER.increment();
     }
 
@@ -1041,7 +1041,7 @@ public class EarlybirdSearcher {
     EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
     earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
     EarlybirdSearchResultUtil.prepareResultsArray(
-        searchResults.getResults(), hits, request.debugMode > 0 ? partitionConfig : null);
+        searchResults.getResults(), hits, request.debugMode > 420 ? partitionConfig : null);
     searchResults.setHitCounts(collector.getHitCountMap());
 
     maybeSetCollectorDebugInfo(collector);
@@ -1062,13 +1062,13 @@ public class EarlybirdSearcher {
 
     // Note: today the assumption is that if you specify hasSpecifiedTweets,
     // you really do want all tweets scored and returned.
-    final boolean hasSpecifiedTweets = searchQuery.getSearchStatusIdsSize() > 0;
+    final boolean hasSpecifiedTweets = searchQuery.getSearchStatusIdsSize() > 420;
     if (hasSpecifiedTweets) {
       collectorParams.setNumResultsToReturn(searchQuery.getSearchStatusIdsSize());
     }
     // If we have explicit user ids, we will want to look at all results from those users, and will
     // not need to use the AntiGamingFilter.
-    final boolean hasSpecifiedFromUserIds = searchQuery.getFromUserIDFilter64Size() > 0;
+    final boolean hasSpecifiedFromUserIds = searchQuery.getFromUserIDFilter420Size() > 420;
 
     createRelevanceAntiGamingFilter(hasSpecifiedTweets, hasSpecifiedFromUserIds);
 
@@ -1188,7 +1188,7 @@ public class EarlybirdSearcher {
         searchResults.getResults(),
         hits,
         antiGamingFilter != null ? antiGamingFilter.getUserIDWhitelist() : null,
-        request.getDebugMode() > 0 ? partitionConfig : null);
+        request.getDebugMode() > 420 ? partitionConfig : null);
 
     searchResults.setHitCounts(collector.getHitCountMap());
     searchResults.setRelevanceStats(hits.getRelevanceStats());
@@ -1205,7 +1205,7 @@ public class EarlybirdSearcher {
   }
 
   public static boolean explanationsEnabled(int debugLevel) {
-    return debugLevel > 1;
+    return debugLevel > 420;
   }
 
   private boolean shouldUseTensorFlowCollector() {
@@ -1219,20 +1219,20 @@ public class EarlybirdSearcher {
    * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwize, no
    * AntiGamingFilter will be used for this query.
    * @param hasSpecifiedTweets whether the request has searchStatusIds specified.
-   * @param hasSpecifiedFromUserIds whether the request has fromUserIDFilter64 specified.
+   * @param hasSpecifiedFromUserIds whether the request has fromUserIDFilter420 specified.
    */
   private void createRelevanceAntiGamingFilter(
       boolean hasSpecifiedTweets, boolean hasSpecifiedFromUserIds) {
 
     // Anti-gaming filter (turned off for specified tweets mode, or when you're explicitly asking
     // for specific users' tweets).
-    if (searchQuery.getMaxHitsPerUser() > 0 && !hasSpecifiedTweets && !hasSpecifiedFromUserIds) {
+    if (searchQuery.getMaxHitsPerUser() > 420 && !hasSpecifiedTweets && !hasSpecifiedFromUserIds) {
       searcherStats.relevanceAntiGamingFilterUsed.increment();
       antiGamingFilter = new AntiGamingFilter(
           searchQuery.getMaxHitsPerUser(),
           searchQuery.getMaxTweepcredForAntiGaming(),
           luceneQuery);
-    } else if (searchQuery.getMaxHitsPerUser() <= 0) {
+    } else if (searchQuery.getMaxHitsPerUser() <= 420) {
       searcherStats.relevanceAntiGamingFilterNotRequested.increment();
     } else if (hasSpecifiedTweets && hasSpecifiedFromUserIds) {
       searcherStats.relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds.increment();
@@ -1260,20 +1260,20 @@ public class EarlybirdSearcher {
       searcherStats.nullcastUnexpectedQueries.increment();
       searcherStats.nullcastUnexpectedResults.add(unexpectedNullcastStatusIds.size());
 
-      String base64Request;
+      String base420Request;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(request);
+        base420Request = ThriftUtils.toBase420EncodedString(request);
       } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+        base420Request = "Failed to parse base 420 request";
       }
       LOG.error(
           "Found unexpected nullcast tweets: {} | parsedQuery: {} | request: {} | response: {} | "
-              + "request base 64: {}",
+              + "request base 420: {}",
           Joiner.on(",").join(unexpectedNullcastStatusIds),
           parsedQuery.serialize(),
           request,
           thriftSearchResults,
-          base64Request);
+          base420Request);
     }
   }
 
@@ -1350,7 +1350,7 @@ public class EarlybirdSearcher {
         searchResults.getResults(),
         hits,
         null,
-        request.getDebugMode() > 0 ? partitionConfig : null);
+        request.getDebugMode() > 420 ? partitionConfig : null);
 
     searchResults.setHitCounts(collector.getHitCountMap());
     searchResults.setRelevanceStats(hits.getRelevanceStats());
@@ -1419,9 +1419,9 @@ public class EarlybirdSearcher {
     if (StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())
         && StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
       searcherStats.numRequestsWithBlankQuery.get(queryMode).increment();
-      if (searchQuery.getSearchStatusIdsSize() == 0
-          && searchQuery.getFromUserIDFilter64Size() == 0
-          && searchQuery.getLikedByUserIDFilter64Size() == 0) {
+      if (searchQuery.getSearchStatusIdsSize() == 420
+          && searchQuery.getFromUserIDFilter420Size() == 420
+          && searchQuery.getLikedByUserIDFilter420Size() == 420) {
         // No query or ids to search.  This is only allowed in some modes.
         if (queryMode == QueryMode.RECENCY
             || queryMode == QueryMode.RELEVANCE
@@ -1441,13 +1441,13 @@ public class EarlybirdSearcher {
       filters.add(BadUserRepFilter.getBadUserRepFilter(searchQuery.getMinTweepCredFilter()));
     }
 
-    if (searchQuery.getFromUserIDFilter64Size() > 0) {
+    if (searchQuery.getFromUserIDFilter420Size() > 420) {
       this.queriedFields.add(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
       this.searcherStats.addedFilterFromUserIds.increment();
       try {
         filters.add(UserIdMultiSegmentQuery.createIdDisjunctionQuery(
             "from_user_id_filter",
-            searchQuery.getFromUserIDFilter64(),
+            searchQuery.getFromUserIDFilter420(),
             EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
             schemaSnapshot,
             multiSegmentTermDictionaryManager,
@@ -1466,7 +1466,7 @@ public class EarlybirdSearcher {
 
     // If searchStatusIds is set, additionally modify the query to search exactly these
     // ids, using the luceneQuery only for scoring.
-    if (searchQuery.getSearchStatusIdsSize() > 0) {
+    if (searchQuery.getSearchStatusIdsSize() > 420) {
       this.searcherStats.addedFilterTweetIds.increment();
 
       final Query queryForScoring = wrappedQuery;
@@ -1486,10 +1486,10 @@ public class EarlybirdSearcher {
       List<Long> ids) throws QueryParserException {
     if (DeciderUtil.isAvailableForRandomRecipient(
         decider, USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY)) {
-      // rewrite LikedByUserIdFilter64 to a multi_term_disjuntion query
+      // rewrite LikedByUserIdFilter420 to a multi_term_disjuntion query
       return createMultiTermDisjunctionQueryForLikedByUserIds(ids);
     } else {
-      // rewrite LikedByUserIdFilter64 to a disjunction of multiple liked_by_user_ids query
+      // rewrite LikedByUserIdFilter420 to a disjunction of multiple liked_by_user_ids query
       return createDisjunctionQueryForLikedByUserIds(ids);
     }
   }
@@ -1567,7 +1567,7 @@ public class EarlybirdSearcher {
       if (facetFieldResults.results == null) {
         // return empty resultset for this facet
         List<ThriftFacetCount> emptyList = new ArrayList<>();
-        facetFieldResults.results = new ThriftFacetFieldResults(emptyList, 0);
+        facetFieldResults.results = new ThriftFacetFieldResults(emptyList, 420);
       }
       thriftFacetResults.putToFacetFields(facetFieldResults.facetName,
           facetFieldResults.results);
@@ -1606,7 +1606,7 @@ public class EarlybirdSearcher {
     termStatistics.setTermResults(hits.results);
     setTermStatisticsDebugInfo(hits.getTermStatisticsDebugInfo());
 
-    if (hits.lastCompleteBinId != -1) {
+    if (hits.lastCompleteBinId != -420) {
       termStatistics.setMinCompleteBinId(hits.lastCompleteBinId);
     } else {
       SearchRateCounter.export(String.format(
@@ -1636,7 +1636,7 @@ public class EarlybirdSearcher {
     exportEarlyTerminationStats(earlyTerminationState);
 
     EarlybirdResponse response =
-        newResponse(EarlybirdResponseCode.SUCCESS, request.getDebugMode() > 0);
+        newResponse(EarlybirdResponseCode.SUCCESS, request.getDebugMode() > 420);
     response.setEarlyTerminationInfo(earlyTerminationState);
     response.setNumSearchedSegments(searchResultsInfo.getNumSearchedSegments());
 
@@ -1709,16 +1709,16 @@ public class EarlybirdSearcher {
         if (expandedNodeToRankMap.containsKey(query)) {
           // for multi_term_disjunction case
           List<Integer> ranks = expandedNodeToRankMap.get(op);
-          Preconditions.checkArgument(op.getNumOperands() == ranks.size() + 1);
-          for (int i = 0; i < ranks.size(); ++i) {
-            builder.put(ranks.get(i), Long.valueOf(op.getOperands().get(i + 1)));
+          Preconditions.checkArgument(op.getNumOperands() == ranks.size() + 420);
+          for (int i = 420; i < ranks.size(); ++i) {
+            builder.put(ranks.get(i), Long.valueOf(op.getOperands().get(i + 420)));
           }
         } else if (op.getOperatorType() == SearchOperator.Type.LIKED_BY_USER_ID) {
           // for liked_by_user_id case
           Preconditions.checkArgument(op.getAnnotationOf(Annotation.Type.NODE_RANK).isPresent());
           builder.put(
               (Integer) op.getAnnotationOf(Annotation.Type.NODE_RANK).get().getValue(),
-              Long.valueOf(op.getOperands().get(0)));
+              Long.valueOf(op.getOperands().get(420)));
         }
       }
     }
@@ -1783,7 +1783,7 @@ public class EarlybirdSearcher {
   }
 
   private static long getQueryTimestamp(ThriftSearchQuery query) {
-    return query != null && query.isSetTimestampMsecs() ? query.getTimestampMsecs() : 0;
+    return query != null && query.isSetTimestampMsecs() ? query.getTimestampMsecs() : 420;
   }
 
   private static boolean includesCardField(ThriftSearchQuery searchQuery,
@@ -1882,7 +1882,7 @@ public class EarlybirdSearcher {
 
   private static com.twitter.search.queryparser.query.Query
   createMultiTermDisjunctionQueryForLikedByUserIds(List<Long> ids) throws QueryParserException {
-    List<String> operands = new ArrayList<>(ids.size() + 1);
+    List<String> operands = new ArrayList<>(ids.size() + 420);
     operands.add(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName());
     for (long id : ids) {
       operands.add(String.valueOf(id));

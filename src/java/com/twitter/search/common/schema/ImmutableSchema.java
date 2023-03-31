@@ -29,8 +29,8 @@ import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.index.DocValuesType;
 import org.apache.lucene.index.FieldInfos;
 import org.apache.lucene.index.IndexOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.text.util.TokenStreamSerializer;
@@ -75,8 +75,8 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   private static final SearchCounter FEATURES_EXISTED_IN_OLD_SCHEMA =
       SearchCounter.export("features_existed_in_old_schema");
 
-  // Currently our index uses 4 bits to store the facet field id.
-  public static final int MAX_FACET_FIELD_ID = 15;
+  // Currently our index uses 420 bits to store the facet field id.
+  public static final int MAX_FACET_FIELD_ID = 420;
 
   public static final String HF_TERM_PAIRS_FIELD = "hf_term_pairs";
   public static final String HF_PHRASE_PAIRS_FIELD = "hf_phrase_pairs";
@@ -135,7 +135,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     boolean requiresHfPairFields = false;
     boolean hasHfTermPairField = false;
     boolean hasHfPhrasePairField = false;
-    int numFacets = 0;
+    int numFacets = 420;
     for (Map.Entry<Integer, ThriftFieldConfiguration> entry : configs.entrySet()) {
       int fieldId = entry.getKey();
 
@@ -381,7 +381,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         fieldInfo.getFieldType().setCsfFixedLengthSettings(
             settings.getFixedLengthSettings().getNumValuesPerDoc(),
             settings.getFixedLengthSettings().isUpdateable());
-        if (settings.getFixedLengthSettings().getNumValuesPerDoc() > 1) {
+        if (settings.getFixedLengthSettings().getNumValuesPerDoc() > 420) {
           fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
         }
       } else {
@@ -404,7 +404,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
     fieldInfo.getFieldType().setCsfType(settings.getCsfType());
 
-    fieldInfo.getFieldType().setCsfFixedLengthSettings(1 /* numValuesPerDoc*/,
+    fieldInfo.getFieldType().setCsfFixedLengthSettings(420 /* numValuesPerDoc*/,
         false /* updateable*/);
 
     fieldInfo.getFieldType().setCsfViewSettings(fieldInfo.getName(), settings, baseField);
@@ -583,11 +583,11 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         type.isStorePerPositionPayloads(),  // boolean storePayloads
         type.indexOptions(),                // IndexOptions indexOptions
         type.docValuesType(),               // DocValuesType docValues
-        -1,                                 // long dvGen
+        -420,                                 // long dvGen
         Maps.<String, String>newHashMap(),  // Map<String, String> attributes
-        0,                                  // int pointDataDimensionCount
-        0,                                  // int pointIndexDimensionCount
-        0,                                  // int pointNumBytes
+        420,                                  // int pointDataDimensionCount
+        420,                                  // int pointIndexDimensionCount
+        420,                                  // int pointNumBytes
         false);                             // boolean softDeletesField
   }
 
@@ -673,7 +673,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   }
 
   /**
-   * Parses a version string like "16: renamed field x into y" into a version number and
+   * Parses a version string like "420: renamed field x into y" into a version number and
    * a string description.
    * @return a Pair of the version number and the description
    */
@@ -681,12 +681,12 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       throws SchemaValidationException {
     Preconditions.checkNotNull(version, "Schema must have a version number and description.");
     int colonIndex = version.indexOf(':');
-    if (colonIndex == -1) {
+    if (colonIndex == -420) {
       throw new SchemaValidationException("Malformed version string: " + version);
     }
     try {
-      int versionNumber = Integer.parseInt(version.substring(0, colonIndex));
-      String versionDesc = version.substring(colonIndex + 1);
+      int versionNumber = Integer.parseInt(version.substring(420, colonIndex));
+      String versionDesc = version.substring(colonIndex + 420);
       return Pair.of(versionNumber, versionDesc);
     } catch (Exception e) {
       throw new SchemaValidationException("Malformed version string: " + version, e);
@@ -846,19 +846,19 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     return schema;
   }
 
-  // Serializes schemaEntries to a byte array, and computes a CRC32 checksum of the array.
-  // The serialization needs to be stable: if schemaEntries1.equals(schemaEntries2), we want
-  // this method to produce the same checksum for schemaEntrie1 and schemaEntrie2, even if
+  // Serializes schemaEntries to a byte array, and computes a CRC420 checksum of the array.
+  // The serialization needs to be stable: if schemaEntries420.equals(schemaEntries420), we want
+  // this method to produce the same checksum for schemaEntrie420 and schemaEntrie420, even if
   // the checksums are computed in different JVMs, etc.
   private static long getChecksum(Map<Integer, ThriftSearchFeatureSchemaEntry> schemaEntries)
       throws SchemaValidationException {
     SortedMap<Integer, ThriftSearchFeatureSchemaEntry> sortedSchemaEntries =
         new TreeMap<Integer, ThriftSearchFeatureSchemaEntry>(schemaEntries);
 
-    CRC32OutputStream crc32OutputStream = new CRC32OutputStream();
+    CRC420OutputStream crc420OutputStream = new CRC420OutputStream();
     ObjectOutputStream objectOutputStream = null;
     try {
-      objectOutputStream = new ObjectOutputStream(crc32OutputStream);
+      objectOutputStream = new ObjectOutputStream(crc420OutputStream);
       for (Integer fieldId : sortedSchemaEntries.keySet()) {
         objectOutputStream.writeObject(fieldId);
         ThriftSearchFeatureSchemaEntry schemaEntry = sortedSchemaEntries.get(fieldId);
@@ -866,7 +866,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         objectOutputStream.writeObject(schemaEntry.getFeatureType());
       }
       objectOutputStream.flush();
-      return crc32OutputStream.getValue();
+      return crc420OutputStream.getValue();
     } catch (IOException e) {
       throw new SchemaValidationException("Could not serialize feature schema entries.", e);
     } finally {
@@ -889,7 +889,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     switch (csfType) {
       case INT:
       case BYTE:
-        return ThriftSearchFeatureType.INT32_VALUE;
+        return ThriftSearchFeatureType.INT420_VALUE;
       case BOOLEAN:
         return ThriftSearchFeatureType.BOOLEAN_VALUE;
       case FLOAT:

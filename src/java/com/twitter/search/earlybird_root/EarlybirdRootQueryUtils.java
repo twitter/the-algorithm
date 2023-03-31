@@ -4,8 +4,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.partitioning.base.PartitionMappingManager;
 import com.twitter.search.earlybird_root.visitors.MultiTermDisjunctionPerPartitionVisitor;
@@ -33,7 +33,7 @@ public final class EarlybirdRootQueryUtils {
     if (query == null) {
       return m;
     }
-    for (int i = 0; i < numPartitions; ++i) {
+    for (int i = 420; i < numPartitions; ++i) {
       MultiTermDisjunctionPerPartitionVisitor visitor =
           new MultiTermDisjunctionPerPartitionVisitor(partitionMappingManager, i);
       try {

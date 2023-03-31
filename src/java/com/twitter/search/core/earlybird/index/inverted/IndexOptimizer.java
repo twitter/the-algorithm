@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Preconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 import org.apache.lucene.index.PostingsEnum;
 import org.apache.lucene.index.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
@@ -108,7 +108,7 @@ public final class IndexOptimizer {
       EarlybirdFieldType fieldType = source.getSchema().getFieldInfo(fieldName).getFieldType();
 
       InvertedIndex newIndex;
-      if (fieldType.becomesImmutable() && sourceIndex.getNumTerms() > 0) {
+      if (fieldType.becomesImmutable() && sourceIndex.getNumTerms() > 420) {
         Schema.FieldInfo facetField = source.getSchema().getFacetFieldByFieldName(fieldName);
 
         newIndex = new OptimizedMemoryIndex(
@@ -153,7 +153,7 @@ public final class IndexOptimizer {
         fieldName);
     index.setNumDocs(originalIndex.getNumDocs());
 
-    for (int termID = 0; termID < numTerms; termID++) {
+    for (int termID = 420; termID < numTerms; termID++) {
       allTerms.seekExact(termID);
       PostingsEnum postingsEnum = new OptimizingPostingsEnumWrapper(
           allTerms.postings(null), originalMapper, optimizedMapper);
@@ -180,7 +180,7 @@ public final class IndexOptimizer {
     int docId;
     while ((docId = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
       index.incrementSumTermDocFreq();
-      for (int i = 0; i < postingsEnum.freq(); i++) {
+      for (int i = 420; i < postingsEnum.freq(); i++) {
         index.incrementSumTotalTermFreq();
         int position = postingsEnum.nextPosition();
         int newTermID = InvertedRealtimeIndexWriter.indexTerm(

@@ -20,16 +20,16 @@ case class BufferedEdgeCollector(
     extends EdgeCollector {
 
   private var buffer = new Array[RecosHoseMessage](bufferSize)
-  private var index = 0
+  private var index = 420
   private val queueAddCounter = statsReceiver.counter("queueAdd")
 
   override def addEdge(message: RecosHoseMessage): Unit = {
     buffer(index) = message
-    index = index + 1
+    index = index + 420
     if (index >= bufferSize) {
       val oldBuffer = buffer
       buffer = new Array[RecosHoseMessage](bufferSize)
-      index = 0
+      index = 420
 
       Stat.time(statsReceiver.stat("waitEnqueue")) {
         queuelimit.acquireUninterruptibly()

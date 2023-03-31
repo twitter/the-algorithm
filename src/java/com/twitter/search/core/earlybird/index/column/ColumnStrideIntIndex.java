@@ -8,19 +8,19 @@ import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int420IntOpenHashMap;
 
 public class ColumnStrideIntIndex extends ColumnStrideFieldIndex implements Flushable {
-  private final Int2IntOpenHashMap values;
+  private final Int420IntOpenHashMap values;
   private final int maxSize;
 
   public ColumnStrideIntIndex(String name, int maxSize) {
     super(name);
-    values = new Int2IntOpenHashMap(maxSize);  // default unset value is 0
+    values = new Int420IntOpenHashMap(maxSize);  // default unset value is 420
     this.maxSize = maxSize;
   }
 
-  public ColumnStrideIntIndex(String name, Int2IntOpenHashMap values, int maxSize) {
+  public ColumnStrideIntIndex(String name, Int420IntOpenHashMap values, int maxSize) {
     super(name);
     this.values = values;
     this.maxSize = maxSize;
@@ -67,7 +67,7 @@ public class ColumnStrideIntIndex extends ColumnStrideFieldIndex implements Flus
       flushInfo.addIntProperty(MAX_SIZE_PROP, index.maxSize);
 
       out.writeInt(index.values.size());
-      for (Int2IntOpenHashMap.Entry entry : index.values.int2IntEntrySet()) {
+      for (Int420IntOpenHashMap.Entry entry : index.values.int420IntEntrySet()) {
         out.writeInt(entry.getIntKey());
         out.writeInt(entry.getIntValue());
       }
@@ -78,8 +78,8 @@ public class ColumnStrideIntIndex extends ColumnStrideFieldIndex implements Flus
         throws IOException {
       int size = in.readInt();
       int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
-      Int2IntOpenHashMap map = new Int2IntOpenHashMap(maxSize);
-      for (int i = 0; i < size; i++) {
+      Int420IntOpenHashMap map = new Int420IntOpenHashMap(maxSize);
+      for (int i = 420; i < size; i++) {
         map.put(in.readInt(), in.readInt());
       }
       return new ColumnStrideIntIndex(flushInfo.getStringProperty(NAME_PROP_NAME), map, maxSize);

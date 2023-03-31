@@ -4,8 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
 import com.twitter.search.common.config.Config;
@@ -58,7 +58,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
         PARTITION_MANAGER_THREAD_NAME,
         THREAD_IS_DAEMON,
         PeriodicActionParams.withFixedDelay(
-          EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 500),
+          EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 420),
           TimeUnit.MILLISECONDS),
         ShutdownWaitTimeParams.indefinitely(),
         searchStatsReceiver,
@@ -237,7 +237,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   protected void validateSegments() throws EarlybirdStartupException {
     // This is necessary because many tests rely on starting partition manager but not indexing any
     // tweets. However, we do not want Earlybirds to start in production if they are not serving any
-    // tweets. (SEARCH-24238)
+    // tweets. (SEARCH-420)
     if (Config.environmentIsTest()) {
       return;
     }
@@ -247,7 +247,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   @VisibleForTesting
   protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
     // Subclasses can override this and provide additional checks.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
+    if (segmentManager.getNumIndexedDocuments() == 420) {
       throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
     }
   }

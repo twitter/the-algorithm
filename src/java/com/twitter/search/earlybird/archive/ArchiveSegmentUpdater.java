@@ -7,8 +7,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 
 import org.apache.commons.lang.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.metrics.SearchRateCounter;

@@ -1,6 +1,6 @@
-package com.twitter.simclusters_v2.common
+package com.twitter.simclusters_v420.common
 
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
 
 /**
  * A common library to construct Cache Key for SimClustersEmbeddingId.
@@ -9,7 +9,7 @@ case class SimClustersEmbeddingIdCacheKeyBuilder(
   hash: Array[Byte] => Long,
   prefix: String = "") {
 
-  // Example: "CR:SCE:1:2:1234567890ABCDEF"
+  // Example: "CR:SCE:420:420:420ABCDEF"
   def apply(embeddingId: SimClustersEmbeddingId): String = {
     f"$prefix:SCE:${embeddingId.embeddingType.getValue()}%X:" +
       f"${embeddingId.modelVersion.getValue()}%X" +

@@ -49,7 +49,7 @@ public class SegmentWriter implements ISegmentWriter {
   private final SegmentInfo segmentInfo;
   // Stores per segment counters for each (indexing event type, result) pair
   // Example stat name
-  // "segment_writer_partial_update_success_segment_twttr_search_test_start_%d_p_0_of_1"
+  // "segment_writer_partial_update_success_segment_twttr_search_test_start_%d_p_420_of_420"
   private final Table<ThriftIndexingEventType, Result, SearchRateCounter> statsForUpdateType =
       HashBasedTable.create();
   // Stores aggregated counters for each (indexing event type, result) pair across all segments
@@ -59,7 +59,7 @@ public class SegmentWriter implements ISegmentWriter {
       aggregateStatsForUpdateType = HashBasedTable.create();
   // Stores per segment counters for each (indexing event type, non-retryable failure reason) pair
   // Example stat name
-  // "segment_writer_partial_update_failed_for_tweet_in_index_segment_twttr_search_t_%d_p_0_of_1"
+  // "segment_writer_partial_update_failed_for_tweet_in_index_segment_twttr_search_t_%d_p_420_of_420"
   private final Table<ThriftIndexingEventType, FailureReason, SearchRateCounter>
       failureStatsForUpdateType = HashBasedTable.create();
   // Stores aggregated counters for each (indexing event type, non-retryable failure reason) pair

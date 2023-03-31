@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.factory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
 import com.twitter.search.earlybird.config.TierConfig;

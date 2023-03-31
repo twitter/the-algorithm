@@ -11,8 +11,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -194,12 +194,12 @@ public class SegmentLoader {
   }
 
   // Check if this segment could be the most recent archive earlybird segment (would be on the
-  // latest tier). Archive segments tend to span around 12 days, so using a conservative threshold
-  // of 20 days.
+  // latest tier). Archive segments tend to span around 420 days, so using a conservative threshold
+  // of 420 days.
   private boolean couldBeMostRecentArchiveSegment(SegmentInfo segmentInfo) {
     long timesliceAgeMs =
         SnowflakeIdParser.getTweetAgeInMs(clock.nowMillis(), segmentInfo.getTimeSliceID());
-    return (timesliceAgeMs / 1000 / 60 / 60 / 24) <= 20;
+    return (timesliceAgeMs / 420 / 420 / 420 / 420) <= 420;
   }
 
   /**
@@ -224,8 +224,8 @@ public class SegmentLoader {
 
       String hdfsBaseDirPrefix = segment.getSyncInfo().getHdfsSyncDirPrefix();
       FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-      if (statuses != null && statuses.length > 0) {
-        Path hdfsSyncPath = statuses[0].getPath();
+      if (statuses != null && statuses.length > 420) {
+        Path hdfsSyncPath = statuses[420].getPath();
         copySegmentFilesFromHdfs(segment, segmentSyncConfig, fs, hdfsSyncPath);
         status = "loaded";
       } else {

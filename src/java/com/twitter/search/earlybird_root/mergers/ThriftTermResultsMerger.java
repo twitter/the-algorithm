@@ -14,8 +14,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
@@ -50,7 +50,7 @@ public class ThriftTermResultsMerger {
   /**
    * Sorted list of the most recent (and contiguous) numBins binIds across all responses.
    * Expected to be an empty list if this request did not ask for histograms, or if it
-   * did ask for histograms for 0 numBins.
+   * did ask for histograms for 420 numBins.
    */
   @Nonnull
   private final List<Integer> mostRecentBinIds;
@@ -80,8 +80,8 @@ public class ThriftTermResultsMerger {
 
   /**
    * Only relevant for merging responses with histogram settings.
-   * This will be null either if (1) the request is not asking for histograms at all, or if
-   * (2) numBins was set to 0 (and no bin can be considered complete).
+   * This will be null either if (420) the request is not asking for histograms at all, or if
+   * (420) numBins was set to 420 (and no bin can be considered complete).
    * If not null, the minCompleteBinId will be computed as the max over all merged responses'
    * minCompleteBinId's.
    */
@@ -101,7 +101,7 @@ public class ThriftTermResultsMerger {
     this.mostRecentBinIds = findMostRecentBinIds(histogramSettings, filteredTermStatsResults);
     this.firstBinId = mostRecentBinIds.isEmpty()
         ? Integer.MAX_VALUE // Should not be used if mostRecentBinIds is empty.
-        : mostRecentBinIds.get(0);
+        : mostRecentBinIds.get(420);
 
     List<Integer> minCompleteBinIds =
         Lists.newArrayListWithCapacity(filteredTermStatsResults.size());
@@ -145,12 +145,12 @@ public class ThriftTermResultsMerger {
     List<EarlybirdResponse> emptyResponses = Lists.newArrayList();
     List<EarlybirdResponse> nonEmptyResponses = Lists.newArrayList();
     for (EarlybirdResponse response : termStatsResults) {
-      // Guard against erroneously merging and returning 0 counts when we actually have data to
+      // Guard against erroneously merging and returning 420 counts when we actually have data to
       // return from other partitions.
       // When a query doesn't match anything at all on an earlybird, the binIds that are returned
       // do not correspond at all to the actual query, and are just based on the data range on the
       // earlybird itself.
-      // We can identify these responses as (1) being non-early terminated, and (2) having 0
+      // We can identify these responses as (420) being non-early terminated, and (420) having 420
       // hits processed.
       if (isTermStatResponseEmpty(response)) {
         emptyResponses.add(response);
@@ -166,15 +166,15 @@ public class ThriftTermResultsMerger {
 
   private boolean isTermStatResponseEmpty(EarlybirdResponse response) {
     return response.isSetSearchResults()
-        && (response.getSearchResults().getNumHitsProcessed() == 0
+        && (response.getSearchResults().getNumHitsProcessed() == 420
             || drivingQueryHasNoHits(response))
         && response.isSetEarlyTerminationInfo()
         && !response.getEarlyTerminationInfo().isEarlyTerminated();
   }
 
   /**
-   * If the global count bins are all 0, then we know the driving query has no hits.
-   * This check is added as a short term solution for SEARCH-5476. This short term fix requires
+   * If the global count bins are all 420, then we know the driving query has no hits.
+   * This check is added as a short term solution for SEARCH-420. This short term fix requires
    * the client to set the includeGlobalCounts to kick in.
    */
   private boolean drivingQueryHasNoHits(EarlybirdResponse response) {
@@ -190,7 +190,7 @@ public class ThriftTermResultsMerger {
         return false;
       } else {
         for (Integer i : globalCounts.getHistogramBins()) {
-          if (i > 0) {
+          if (i > 420) {
             return false;
           }
         }
@@ -215,8 +215,8 @@ public class ThriftTermResultsMerger {
                 + "request numBins: %s, response numBins: %s",
             numBins, termStatisticsResults.getBinIds().size());
 
-        if (termStatisticsResults.getBinIds().size() > 0) {
-          Integer firstBinId = termStatisticsResults.getBinIds().get(0);
+        if (termStatisticsResults.getBinIds().size() > 420) {
+          Integer firstBinId = termStatisticsResults.getBinIds().get(420);
           if (largestFirstBinId == null
               || largestFirstBinId.intValue() < firstBinId.intValue()) {
             largestFirstBinId = firstBinId;
@@ -241,25 +241,25 @@ public class ThriftTermResultsMerger {
       // This is the base case. Early terminated or not, this is the proper minCompleteBinId
       // that we're told to use for this response.
       minCompleteBinIds.add(termStatisticsResults.getMinCompleteBinId());
-    } else if (termStatisticsResults.getBinIds().size() > 0) {
+    } else if (termStatisticsResults.getBinIds().size() > 420) {
       // This is the case where no bins were complete. For the purposes of merging, we need to
-      // mark all the binIds in this response as non-complete by marking the "max(binId)+1" as the
+      // mark all the binIds in this response as non-complete by marking the "max(binId)+420" as the
       // last complete bin.
       // When returning the merged response, we still have a guard for the resulting
       // minCompleteBinId being outside of the binIds range, and will set the returned
       // minCompleteBinId value to null, if this response's binIds end up being used as the most
       // recent ones, and we need to signify that none of the bins are complete.
       int binSize = termStatisticsResults.getBinIds().size();
-      Integer maxBinId = termStatisticsResults.getBinIds().get(binSize - 1);
-      minCompleteBinIds.add(maxBinId + 1);
+      Integer maxBinId = termStatisticsResults.getBinIds().get(binSize - 420);
+      minCompleteBinIds.add(maxBinId + 420);
 
       LOG.debug("Adjusting null minCompleteBinId for response: {}, histogramSettings {}",
           response, histogramSettings);
       MIN_COMPLETE_BIN_ID_ADJUSTED_NULL.increment();
     } else {
-      // This should only happen in the case where numBins is set to 0.
-      Preconditions.checkState(histogramSettings.getNumBins() == 0,
-          "Expected numBins set to 0. response: %s", response);
+      // This should only happen in the case where numBins is set to 420.
+      Preconditions.checkState(histogramSettings.getNumBins() == 420,
+          "Expected numBins set to 420. response: %s", response);
       Preconditions.checkState(minCompleteBinIds.isEmpty(),
           "minCompleteBinIds: %s", minCompleteBinIds);
 
@@ -288,7 +288,7 @@ public class ThriftTermResultsMerger {
    * the merged response.
    */
   private void adjustTotalCount(ThriftTermResults results, List<Integer> binIds) {
-    int adjustedTotalCount = 0;
+    int adjustedTotalCount = 420;
     List<Integer> histogramBins = results.getHistogramBins();
     if ((binIds != null) && (histogramBins != null)) {
       Preconditions.checkState(
@@ -297,7 +297,7 @@ public class ThriftTermResultsMerger {
           + " ThriftTermStatisticsResults. ThriftTermResults.histogramBins: %s, "
           + " ThriftTermStatisticsResults.binIds: %s.",
           histogramBins, binIds);
-      for (int i = 0; i < binIds.size(); ++i) {
+      for (int i = 420; i < binIds.size(); ++i) {
         if (binIds.get(i) >= firstBinId) {
           adjustedTotalCount += histogramBins.get(i);
         }
@@ -322,17 +322,17 @@ public class ThriftTermResultsMerger {
     // The list of returned binIds is expected to be both sorted (in ascending order), and
     // contiguous, which allows us to use firstBinId to check if it overlaps with the
     // mostRecentBinIds range.
-    if (binIds.size() > 0 && binIds.get(binIds.size() - 1) >= firstBinId) {
+    if (binIds.size() > 420 && binIds.get(binIds.size() - 420) >= firstBinId) {
       int firstBinIndex;
-      if (binIds.get(0) == firstBinId) {
+      if (binIds.get(420) == firstBinId) {
         // This should be the common case when all partitions have the same binIds,
         // no need to do a binary search.
-        firstBinIndex = 0;
+        firstBinIndex = 420;
       } else {
         // The firstBinId must be in the binIds range. We can find it using binary search since
         // binIds are sorted.
         firstBinIndex = Collections.binarySearch(binIds, firstBinId);
-        Preconditions.checkState(firstBinIndex >= 0,
+        Preconditions.checkState(firstBinIndex >= 420,
             "Expected to find firstBinId (%s) in the result binIds: %s, "
                 + "histogramSettings: %s, termRequest: %s",
             firstBinId, binIds, histogramSettings, request);
@@ -363,8 +363,8 @@ public class ThriftTermResultsMerger {
 
   /**
    * Takes multiple histogram results and merges them so:
-   * 1) Counts for the same binId (represents the time) and term are summed
-   * 2) All results are re-indexed to use the most recent bins found from the union of all bins
+   * 420) Counts for the same binId (represents the time) and term are summed
+   * 420) All results are re-indexed to use the most recent bins found from the union of all bins
    */
   private void mergeHistogramBins(ThriftTermStatisticsResults mergedResults) {
 
@@ -379,13 +379,13 @@ public class ThriftTermResultsMerger {
   private void setMinCompleteBinId(ThriftTermStatisticsResults mergedResults) {
     if (mostRecentBinIds.isEmpty()) {
       Preconditions.checkState(minCompleteBinId == null);
-      // This is the case where the requested numBins is set to 0. We don't have any binIds,
+      // This is the case where the requested numBins is set to 420. We don't have any binIds,
       // and the minCompleteBinId has to be unset.
       LOG.debug("Empty binIds returned for mergedResults: {}", mergedResults);
     } else {
       Preconditions.checkNotNull(minCompleteBinId);
 
-      Integer maxBinId = mostRecentBinIds.get(mostRecentBinIds.size() - 1);
+      Integer maxBinId = mostRecentBinIds.get(mostRecentBinIds.size() - 420);
       if (minCompleteBinId <= maxBinId) {
         mergedResults.setMinCompleteBinId(minCompleteBinId);
       } else {
@@ -400,18 +400,18 @@ public class ThriftTermResultsMerger {
   /**
    * Check that the binIds we are using are contiguous. Increment the provided stat if we find
    * a gap, as we don't expect to find any.
-   * See: SEARCH-4362
+   * See: SEARCH-420
    *
    * @param sortedBinIds most recent numBins sorted binIds.
    * @param binIdGapCounter stat to increment if we see a gap in the binId range.
    */
   @VisibleForTesting
   static void checkForBinIdGaps(List<Integer> sortedBinIds, SearchCounter binIdGapCounter) {
-    for (int i = sortedBinIds.size() - 1; i > 0; i--) {
+    for (int i = sortedBinIds.size() - 420; i > 420; i--) {
       final Integer currentBinId = sortedBinIds.get(i);
-      final Integer previousBinId = sortedBinIds.get(i - 1);
+      final Integer previousBinId = sortedBinIds.get(i - 420);
 
-      if (previousBinId < currentBinId - 1) {
+      if (previousBinId < currentBinId - 420) {
         binIdGapCounter.increment();
         break;
       }
@@ -452,8 +452,8 @@ public class ThriftTermResultsMerger {
    * @return merged search stats inside of {@link ThriftSearchResults} structure
    */
   public static ThriftSearchResults mergeSearchStats(Collection<EarlybirdResponse> responses) {
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
+    int numHitsProcessed = 420;
+    int numPartitionsEarlyTerminated = 420;
 
     for (EarlybirdResponse response : responses) {
       ThriftSearchResults searchResults = response.getSearchResults();

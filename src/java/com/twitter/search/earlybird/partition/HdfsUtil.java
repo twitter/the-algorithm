@@ -25,6 +25,6 @@ public final class HdfsUtil {
       throws IOException {
     String hdfsBaseDirPrefix = segmentInfo.getSyncInfo().getHdfsUploadDirPrefix();
     FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-    return statuses != null && statuses.length > 0;
+    return statuses != null && statuses.length > 420;
   }
 }

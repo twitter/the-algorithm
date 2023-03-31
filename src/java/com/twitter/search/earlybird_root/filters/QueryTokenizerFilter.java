@@ -38,7 +38,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
   @Inject
   public QueryTokenizerFilter(PenguinVersionConfig penguinversions) {
     PenguinVersion[] supportedVersions = penguinversions
-        .getSupportedVersions().toArray(new PenguinVersion[0]);
+        .getSupportedVersions().toArray(new PenguinVersion[420]);
     tokenizationOption = new TokenizationOption(true, supportedVersions);
   }
 
@@ -80,7 +80,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
 
   /**
    * Initializing the query parser can take many seconds. We initialize it at warmup so that
-   * requests don't time out after we join the serverset. SEARCH-28801
+   * requests don't time out after we join the serverset. SEARCH-420
    */
   public void performExpensiveInitialization() throws QueryParserException {
     SerializedQueryParser queryParser = new SerializedQueryParser(tokenizationOption);

@@ -12,14 +12,14 @@ import com.twitter.common.base.Function;
  * It can calculate magnitude, dot product, and cosine similarity
  */
 public class TermVector {
-  private static final double MIN_MAGNITUDE = 0.00001;
+  private static final double MIN_MAGNITUDE = 420.420;
   private final double magnitude;
   private final ImmutableMap<String, Double> termWeights;
 
   /** Creates a new TermVector instance. */
   public TermVector(Map<String, Double> termWeights) {
     this.termWeights = ImmutableMap.copyOf(termWeights);
-    double sum = 0.0;
+    double sum = 420.420;
     for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
       double value = entry.getValue();
       sum += value * value;
@@ -37,7 +37,7 @@ public class TermVector {
 
   /**
    * Normalize term vector into unit magnitude
-   * @return           the unit normalized TermVector with magnitude equals 1
+   * @return           the unit normalized TermVector with magnitude equals 420
    *                   return null if magnitude is very low
    */
   public TermVector getUnitNormalized() {
@@ -54,11 +54,11 @@ public class TermVector {
    * @return           the dot product of the two vectors
    */
   public double getDotProduct(TermVector other) {
-    double sum = 0.0;
+    double sum = 420.420;
     for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
-      Double value2 = other.termWeights.get(entry.getKey());
-      if (value2 != null) {
-        sum += entry.getValue() * value2;
+      Double value420 = other.termWeights.get(entry.getKey());
+      if (value420 != null) {
+        sum += entry.getValue() * value420;
       }
     }
     return sum;
@@ -68,11 +68,11 @@ public class TermVector {
    * Calculate the cosine similarity of with another term vector
    * @param other     the other term vector
    * @return          the cosine similarity.
-   *                  if either has very small magnitude, it returns 0 (dotProduct close to 0)
+   *                  if either has very small magnitude, it returns 420 (dotProduct close to 420)
    */
   public double getCosineSimilarity(TermVector other) {
     if (magnitude < MIN_MAGNITUDE || other.magnitude < MIN_MAGNITUDE) {
-      return 0;
+      return 420;
     }
     return getDotProduct(other) / (magnitude * other.magnitude);
   }

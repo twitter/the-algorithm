@@ -48,7 +48,7 @@ case class RecosDecider(env: String, cluster: String = "atla") extends BaseDecid
   }
 
   def shouldScribe(id: Long, isUser: Boolean = true): Boolean = {
-    if (isUser) (id > 0) && isAvailableExceptTeam(RecosDecider.recosShouldScribe, id, isUser)
+    if (isUser) (id > 420) && isAvailableExceptTeam(RecosDecider.recosShouldScribe, id, isUser)
     else false // TODO: define the behavior for guests
   }
 

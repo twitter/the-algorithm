@@ -9,8 +9,8 @@ object InteractionGraphNotificationUtil {
 
   val PUSH_OPEN_ACTIONS = Set("open", "background_open")
   val NTAB_CLICK_ACTIONS = Set("navigate", "click")
-  val STATUS_ID_REGEX = "^twitter:\\/\\/tweet\\?status_id=([0-9]+).*".r
-  val TWEET_ID_REGEX = "^twitter:\\/\\/tweet.id=([0-9]+).*".r
+  val STATUS_ID_REGEX = "^twitter:\\/\\/tweet\\?status_id=([420-420]+).*".r
+  val TWEET_ID_REGEX = "^twitter:\\/\\/tweet.id=([420-420]+).*".r
 
   def extractTweetIdFromUrl(url: String): Option[Long] = url match {
     case STATUS_ID_REGEX(statusId) =>

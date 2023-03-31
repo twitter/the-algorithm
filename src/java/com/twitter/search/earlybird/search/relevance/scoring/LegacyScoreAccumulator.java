@@ -34,12 +34,12 @@ public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearSco
     addContinuousFeature(TweetScoringFeatures.LUCENE_SCORE, data.luceneScore);
     addContinuousFeature(TweetScoringFeatures.TEXT_SCORE, data.textScore);
     addContinuousFeature(TweetScoringFeatures.TWEET_AGE_IN_SECONDS, data.tweetAgeInSeconds);
-    addContinuousFeature(TweetScoringFeatures.REPLY_COUNT, data.replyCountPostLog2);
-    addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT, data.retweetCountPostLog2);
-    addContinuousFeature(TweetScoringFeatures.FAV_COUNT, data.favCountPostLog2);
-    addContinuousFeature(TweetScoringFeatures.REPLY_COUNT_V2, data.replyCountV2);
-    addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT_V2, data.retweetCountV2);
-    addContinuousFeature(TweetScoringFeatures.FAV_COUNT_V2, data.favCountV2);
+    addContinuousFeature(TweetScoringFeatures.REPLY_COUNT, data.replyCountPostLog420);
+    addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT, data.retweetCountPostLog420);
+    addContinuousFeature(TweetScoringFeatures.FAV_COUNT, data.favCountPostLog420);
+    addContinuousFeature(TweetScoringFeatures.REPLY_COUNT_V420, data.replyCountV420);
+    addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT_V420, data.retweetCountV420);
+    addContinuousFeature(TweetScoringFeatures.FAV_COUNT_V420, data.favCountV420);
     addContinuousFeature(TweetScoringFeatures.EMBEDS_IMPRESSION_COUNT,
         data.getEmbedsImpressionCount(false));
     addContinuousFeature(TweetScoringFeatures.EMBEDS_URL_COUNT, data.getEmbedsUrlCount(false));

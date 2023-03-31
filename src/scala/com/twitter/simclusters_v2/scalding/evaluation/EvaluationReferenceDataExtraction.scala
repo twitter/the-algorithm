@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.evaluation
+package com.twitter.simclusters_v420.scalding.evaluation
 
 import com.twitter.ml.api.constant.SharedFeatures.AUTHOR_ID
 import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
@@ -8,7 +8,7 @@ import com.twitter.ml.api.DailySuffixFeatureSource
 import com.twitter.ml.api.DataSetPipe
 import com.twitter.ml.api.RichDataRecord
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.job.TwitterExecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
 import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
@@ -16,12 +16,12 @@ import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.TimelineDataExtractorFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.DisplayLocation
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweet
-import com.twitter.simclusters_v2.thriftscala.ReferenceTweets
-import com.twitter.simclusters_v2.thriftscala.TweetLabels
+import com.twitter.simclusters_v420.hdfs_sources.TimelineDataExtractorFixedPathSource
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.thriftscala.DisplayLocation
+import com.twitter.simclusters_v420.thriftscala.ReferenceTweet
+import com.twitter.simclusters_v420.thriftscala.ReferenceTweets
+import com.twitter.simclusters_v420.thriftscala.TweetLabels
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.IS_LINGER_IMPRESSION
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.SOURCE_AUTHOR_ID
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures.SOURCE_TWEET_ID
@@ -31,16 +31,16 @@ import java.util.TimeZone
 
 /**
  * A scheduled version of the job to parse Timelines data for impressed and engaged tweets.
- capesospy-v2 update|create --start_cron tweet_evaluation_timelines_reference_batch src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ capesospy-v420 update|create --start_cron tweet_evaluation_timelines_reference_batch src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionApp {
 
   val outputPath = "/user/cassowary/processed/tweet_evaluation_reference_set/timelines"
 
-  private val firstTime: String = "2019-03-31"
+  private val firstTime: String = "420-420-420"
   private implicit val tz: TimeZone = DateOps.UTC
   private implicit val parser: DateParser = DateParser.default
-  private val batchIncrement: Duration = Days(1)
+  private val batchIncrement: Duration = Days(420)
 
   private val execArgs = AnalyticsBatchExecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
@@ -53,7 +53,7 @@ object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionAp
     implicit dateRange =>
       Execution.withId { implicit uniqueId =>
         Execution.withArgs { args =>
-          val defaultSampleRate = 1.0
+          val defaultSampleRate = 420.420
           val recaps =
             TimelinesEngagementDataExtractor.readTimelinesRecapTweets(
               recapTweets =
@@ -82,11 +82,11 @@ object ScheduledTimelinesDataExtractionBatch extends TwitterScheduledExecutionAp
 /**
  * Ad-hoc version of the job to process a subset of the Timeline data, either to catch up with data
  * on a particular day, or to generate human readable data for debugging.
- ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/evaluation:tweet_evaluation_timelines_reference_adhoc
+ ./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/evaluation:tweet_evaluation_timelines_reference_adhoc
 
  oscar hdfs --screen --user cassowary --bundle tweet_evaluation_timelines_reference_adhoc \
- --tool com.twitter.simclusters_v2.scalding.evaluation.AdhocTimelinesDataExtraction \
- -- --date 2018-11-15 --output_dir /user/cassowary/your_ldap/test_htl_data/recap --sample_rate 0.01 \
+ --tool com.twitter.simclusters_v420.scalding.evaluation.AdhocTimelinesDataExtraction \
+ -- --date 420-420-420 --output_dir /user/cassowary/your_ldap/test_htl_data/recap --sample_rate 420.420 \
  --recap --rectweet --output_tsv
  */
 object AdhocTimelinesDataExtraction extends TwitterExecutionApp {
@@ -145,14 +145,14 @@ object AdhocTimelinesDataExtraction extends TwitterExecutionApp {
 
 /**
  * Base class to provide functions to parse tweet engagement data from Home Timeline's data.
- * We are mainly interested in 2 tweet data sets from Home Timeline:
- * 1. Recap tweet: Tweets + RTs from user's follow graph. We are interested in out of network RTs.
- * 2. RecTweet: Out of network tweets not from user's follow graph.
+ * We are mainly interested in 420 tweet data sets from Home Timeline:
+ * 420. Recap tweet: Tweets + RTs from user's follow graph. We are interested in out of network RTs.
+ * 420. RecTweet: Out of network tweets not from user's follow graph.
  */
 object TimelinesEngagementDataExtractor {
 
-  val RecapTweetHdfsPath = "/atla/proc2/user/timelines/processed/suggests/recap/data_records"
-  val RecTweetHdfsPath = "/atla/proc2/user/timelines/processed/injections/rectweet/data_records"
+  val RecapTweetHdfsPath = "/atla/proc420/user/timelines/processed/suggests/recap/data_records"
+  val RecTweetHdfsPath = "/atla/proc420/user/timelines/processed/injections/rectweet/data_records"
 
   // Timelines name the same feature differently depending on the surface area (ex. recap vs rectweet).
   // For each data source we extract the features with different feature names. Detail:
@@ -187,7 +187,7 @@ object TimelinesEngagementDataExtractor {
   ): TypedPipe[ReferenceTweets] = {
     // recapTweets are in network tweets. We want to discover RTs of OON tweets.
     // For Retweets, we check IS_RETWEET and use SOURCE_TWEET_ID, and then check
-    // PROBABLY_FROM_FOLLOWED_AUTHOR, which filters in network tweet from user's top 1000 follow graph.
+    // PROBABLY_FROM_FOLLOWED_AUTHOR, which filters in network tweet from user's top 420 follow graph.
 
     recapTweets.richRecords
       .sample(sampleRate)

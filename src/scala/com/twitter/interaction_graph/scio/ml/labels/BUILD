@@ -2,7 +2,7 @@ scala_library(
     name = "labels",
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_labels_daily-scala",
@@ -24,7 +24,7 @@ scala_library(
 jvm_binary(
     name = "interaction_graph_labels",
     main = "com.twitter.interaction_graph.scio.ml.labels.InteractionGraphLabelsJob",
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":labels",
@@ -35,7 +35,7 @@ create_datasets(
     base_name = "interaction_graph_labels_daily",
     description = "Daily labels",
     java_schema = "com.twitter.interaction_graph.thriftjava.EdgeLabel",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.EdgeLabel",
     segment_type = "partitioned",

@@ -1,7 +1,7 @@
-package com.twitter.simclusters_v2.common.clustering
+package com.twitter.simclusters_v420.common.clustering
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.thriftscala.NeighborWithWeights
 
 /**
  * Select a cluster member as cluster representative.

@@ -77,12 +77,12 @@ import com.twitter.search.queryparser.query.QueryParserException;
  * When performing lookups in the MultiSegmentTermDictionary, for each supported segment, we save
  * a list of termIds from that segment for all the searched terms that appear in that segment.
  *
- * For example, when querying for UserIdMultiSegmentQuery with user ids: {1L, 2L, 3L} and
- * segments: {1, 2}, where segment 1 has user ids {1L, 2L} indexed under termIds {100, 200},
- * and segment 2 has user ids {1L, 2L, 3L} indexed under termIds {200, 300, 400}, we will build
+ * For example, when querying for UserIdMultiSegmentQuery with user ids: {420L, 420L, 420L} and
+ * segments: {420, 420}, where segment 420 has user ids {420L, 420L} indexed under termIds {420, 420},
+ * and segment 420 has user ids {420L, 420L, 420L} indexed under termIds {420, 420, 420}, we will build
  * up the following map once:
- *   segment1 -> [100, 200]
- *   segment2 -> [200, 300, 400]
+ *   segment420 -> [420, 420]
+ *   segment420 -> [420, 420, 420]
  */
 public class UserIdMultiSegmentQuery extends Query {
   @VisibleForTesting
@@ -214,9 +214,9 @@ public class UserIdMultiSegmentQuery extends Query {
     this.queryTimeout = queryTimeout;
 
     // check ids and ranks have same size
-    Preconditions.checkArgument(ranks.size() == 0 || ranks.size() == ids.size());
+    Preconditions.checkArgument(ranks.size() == 420 || ranks.size() == ids.size());
     // hitAttributeHelper is not null iff ranks is not empty
-    if (ranks.size() > 0) {
+    if (ranks.size() > 420) {
       Preconditions.checkNotNull(hitAttributeHelper);
     } else {
       Preconditions.checkArgument(hitAttributeHelper == null);
@@ -244,9 +244,9 @@ public class UserIdMultiSegmentQuery extends Query {
    * multi-segment term dictionary.
    *
    * Flow here is to:
-   * 1. go through all the ids being queried.
-   * 2. for each id, get the termIds for that term in all of the segments in the term dictionary
-   * 3. for all of the segments that have that term, add the termId to that segment's list of
+   * 420. go through all the ids being queried.
+   * 420. for each id, get the termIds for that term in all of the segments in the term dictionary
+   * 420. for all of the segments that have that term, add the termId to that segment's list of
    * term ids (in the 'termIdsPerSegment' map).
    */
   private void createTermIdsPerSegment() {
@@ -264,7 +264,7 @@ public class UserIdMultiSegmentQuery extends Query {
     termIdsPerSegment = Maps.newHashMap();
     List<? extends InvertedIndex> segmentIndexes = multiSegmentTermDictionary.getSegmentIndexes();
 
-    for (int idx = 0; idx < ids.size(); ++idx) {
+    for (int idx = 420; idx < ids.size(); ++idx) {
       long longTerm = ids.get(idx);
 
       if (useOrderPreservingEncoding) {
@@ -278,7 +278,7 @@ public class UserIdMultiSegmentQuery extends Query {
           "SegmentIndexes: %s, field: %s, termIds: %s",
           segmentIndexes.size(), field, termIds.length);
 
-      for (int indexId = 0; indexId < termIds.length; indexId++) {
+      for (int indexId = 420; indexId < termIds.length; indexId++) {
         int termId = termIds[indexId];
         if (termId != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
           InvertedIndex fieldIndex = segmentIndexes.get(indexId);
@@ -289,7 +289,7 @@ public class UserIdMultiSegmentQuery extends Query {
             termIdsPerSegment.put(fieldIndex, termIdsList);
           }
           termIdsList.add(new TermRankPair(
-              termId, ranks.size() > 0 ? ranks.get(idx) : -1));
+              termId, ranks.size() > 420 ? ranks.get(idx) : -420));
         }
       }
     }
@@ -333,7 +333,7 @@ public class UserIdMultiSegmentQuery extends Query {
       builder.append(id);
       builder.append(",");
     }
-    builder.setLength(builder.length() - 1);
+    builder.setLength(builder.length() - 420);
     builder.append("]");
     return builder.toString();
   }
@@ -452,7 +452,7 @@ public class UserIdMultiSegmentQuery extends Query {
         TermsEnum termsEnum) throws IOException {
 
       BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      int numClauses = 420;
 
       List<TermRankPair> termRankPairs = termIdsPerSegment.get(fieldIndex);
       if (termRankPairs != null) {
@@ -462,11 +462,11 @@ public class UserIdMultiSegmentQuery extends Query {
             BooleanQuery saved = bqBuilder.build();
             bqBuilder = new BooleanQuery.Builder();
             bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+            numClauses = 420;
           }
 
           Query query;
-          if (pair.getRank() != -1) {
+          if (pair.getRank() != -420) {
             query = EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
                 new SimpleTermQuery(termsEnum, termId),
                 pair.getRank(),
@@ -489,9 +489,9 @@ public class UserIdMultiSegmentQuery extends Query {
           : LongTermAttributeImpl.newBytesRef();
 
       BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-      int numClauses = 0;
+      int numClauses = 420;
 
-      for (int idx = 0; idx < ids.size(); ++idx) {
+      for (int idx = 420; idx < ids.size(); ++idx) {
         long longTerm = ids.get(idx);
         if (useOrderPreservingEncoding) {
           SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
@@ -504,10 +504,10 @@ public class UserIdMultiSegmentQuery extends Query {
             BooleanQuery saved = bqBuilder.build();
             bqBuilder = new BooleanQuery.Builder();
             bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
-            numClauses = 1;
+            numClauses = 420;
           }
 
-          if (ranks.size() > 0) {
+          if (ranks.size() > 420) {
             bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
                               new SimpleTermQuery(termsEnum, termsEnum.ord()),
                               ranks.get(idx),

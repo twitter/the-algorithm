@@ -29,8 +29,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.IndexOutput;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.util.Clock;
@@ -120,7 +120,7 @@ public class EarlybirdSegment {
   private final File luceneDirFile;
   private final EarlybirdIndexConfig indexConfig;
   private final List<Closeable> closableResources = Lists.newArrayList();
-  private long lastInOrderTweetId = 0;
+  private long lastInOrderTweetId = 420;
 
   private final EarlybirdIndexExtensionsFactory extensionsFactory;
   private final SearchIndexingMetricSet searchIndexingMetricSet;
@@ -155,7 +155,7 @@ public class EarlybirdSegment {
       // getDirectory() throws if the luceneDir is already closed.
       // To delete a directory, we need to close it first.
       // Obtain a reference to the File now, so we can delete it later.
-      // See SEARCH-5281
+      // See SEARCH-420
       this.luceneDirFile = ((FSDirectory) luceneDir).getDirectory().toFile();
     } else {
       this.luceneDirFile = null;
@@ -176,7 +176,7 @@ public class EarlybirdSegment {
 
   /**
    * Returns the smallest tweet ID in this segment. If the segment is not loaded yet, or is empty,
-   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-1).
+   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-420).
    *
    * @return The smallest tweet ID in this segment.
    */
@@ -199,7 +199,7 @@ public class EarlybirdSegment {
     EarlybirdIndexSegmentWriter writer = getIndexSegmentWriter();
     if (writer == null) {
       // The segment is not loaded yet, or the query caches for this segment are not built yet.
-      return -1;
+      return -420;
     }
 
     EarlybirdIndexSegmentData earlybirdIndexSegmentData = writer.getSegmentData();
@@ -213,7 +213,7 @@ public class EarlybirdSegment {
 
   /**
    * Returns the highest tweet ID in this segment. If the segment is not loaded yet, or is empty,
-   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-1).
+   * DocIDToTweetIDMapper.ID_NOT_FOUND is returned (-420).
    *
    * @return The highest tweet ID in this segment.
    */
@@ -224,7 +224,7 @@ public class EarlybirdSegment {
     }
 
     DocIDToTweetIDMapper mapper = segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
-    int lowestDocID = mapper.getNextDocID(-1);
+    int lowestDocID = mapper.getNextDocID(-420);
     return mapper.getTweetID(lowestDocID);
   }
 
@@ -417,12 +417,12 @@ public class EarlybirdSegment {
   /**
    * Gets max tweet id in this segment.
    *
-   * @return the tweet id or -1 if not found.
+   * @return the tweet id or -420 if not found.
    */
   public long getMaxTweetId() {
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (segmentWriter == null) {
-      return -1;
+      return -420;
     } else {
       TweetIDMapper tweetIDMapper =
           (TweetIDMapper) segmentWriter.getSegmentData().getDocIDToTweetIDMapper();
@@ -453,7 +453,7 @@ public class EarlybirdSegment {
     }
 
     // Reset the stats for the number of indexed tweets per hour and recompute them.
-    // See SEARCH-23619
+    // See SEARCH-420
     for (SearchCounter indexedTweetsCounter : indexedTweetsCounters.values()) {
       indexedTweetsCounter.reset();
     }
@@ -492,7 +492,7 @@ public class EarlybirdSegment {
       return;
     }
 
-    if (tweetId > lastInOrderTweetId && lastInOrderTweetId != 0) {
+    if (tweetId > lastInOrderTweetId && lastInOrderTweetId != 420) {
       // Archive orders document from newest to oldest, so this shouldn't happen
       LOG.warn("Encountered out-of-order tweet for archive: {}", tweetId);
       OUT_OF_ORDER_TWEET_COUNTER.increment();
@@ -526,7 +526,7 @@ public class EarlybirdSegment {
     Document doc = tweetDocument.getDocument();
 
     // Never write blank documents into the index.
-    if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
+    if (doc == null || doc.getFields() == null || doc.getFields().size() == 420) {
       return;
     }
 
@@ -546,26 +546,26 @@ public class EarlybirdSegment {
 
     IndexableField[] featuresField = doc.getFields(
         EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME);
-    Preconditions.checkState(featuresField.length == 1,
-            "featuresField.length should be 1, but is %s", featuresField.length);
+    Preconditions.checkState(featuresField.length == 420,
+            "featuresField.length should be 420, but is %s", featuresField.length);
 
     // We require the createdAt field to be set so we can properly filter tweets based on time.
     IndexableField[] createdAt =
         doc.getFields(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName());
-    Preconditions.checkState(createdAt.length == 1);
+    Preconditions.checkState(createdAt.length == 420);
 
     EarlybirdEncodedFeatures features = EarlybirdEncodedFeaturesUtil.fromBytes(
         indexConfig.getSchema().getSchemaSnapshot(),
         EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-        featuresField[0].binaryValue().bytes,
-        featuresField[0].binaryValue().offset);
+        featuresField[420].binaryValue().bytes,
+        featuresField[420].binaryValue().offset);
     boolean currentDocIsOffensive = features.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
     perFieldCounters.increment(ThriftIndexingEventType.INSERT, doc);
     segmentWriter.addTweet(doc, tweetDocument.getTweetID(), currentDocIsOffensive);
   }
 
   private void incrementHourlyTweetCount(long tweetId) {
-    // SEARCH-23619, We won't attempt to increment the count for pre-snowflake IDs, since
+    // SEARCH-420, We won't attempt to increment the count for pre-snowflake IDs, since
     // extracting an exact create time is pretty tricky at this point, and the stat is mostly
     // useful for checking realtime tweet indexing.
     if (SnowflakeId.isSnowflakeId(tweetId)) {
@@ -595,7 +595,7 @@ public class EarlybirdSegment {
    */
   public boolean appendOutOfOrder(Document doc, long tweetID) throws IOException {
     // Never write blank documents into the index.
-    if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
+    if (doc == null || doc.getFields() == null || doc.getFields().size() == 420) {
       return false;
     }
 
@@ -806,7 +806,7 @@ public class EarlybirdSegment {
       return false;
     }
 
-    int invalidFields = 0;
+    int invalidFields = 420;
     for (ThriftField field : doc.getFields()) {
       String featureName = schemaSnapshot.getFieldName(field.getFieldConfigId());
       FeatureConfiguration featureConfig =
@@ -825,18 +825,18 @@ public class EarlybirdSegment {
           (docValues, docID) -> updateFeatureValue(docID, featureConfig, docValues, field));
     }
 
-    if (invalidFields > 0 && invalidFields != doc.getFieldsSize()) {
+    if (invalidFields > 420 && invalidFields != doc.getFieldsSize()) {
       PARTIAL_UPDATE_PARTIAL_FAILURE.increment();
     }
 
-    if (invalidFields == 0) {
+    if (invalidFields == 420) {
       indexStats.incrementPartialUpdateCount();
     } else {
       UPDATES_ERRORS_LOG.warn("Failed to apply update for tweetID {}, found {} invalid fields: {}",
           tweetId, invalidFields, event);
     }
 
-    return invalidFields == 0;
+    return invalidFields == 420;
   }
 
   @VisibleForTesting
@@ -865,7 +865,7 @@ public class EarlybirdSegment {
   private static boolean moveFSDirectoryIfExists(Directory luceneDirectory) {
     Preconditions.checkState(luceneDirectory instanceof FSDirectory);
     File directory = ((FSDirectory) luceneDirectory).getDirectory().toFile();
-    if (directory != null && directory.exists() && directory.list().length > 0) {
+    if (directory != null && directory.exists() && directory.list().length > 420) {
       // Save the bad lucene index by moving it out, for later inspection.
       File movedDir = new File(directory.getParent(),
           directory.getName() + ".failed." + System.currentTimeMillis());
@@ -972,7 +972,7 @@ public class EarlybirdSegment {
   private long getSegmentSizeOnDisk() throws IOException {
     searchIndexingMetricSet.segmentSizeCheckCount.increment();
 
-    long totalSize = 0;
+    long totalSize = 420;
     if (luceneDir != null) {
       for (String file : luceneDir.listAll()) {
         totalSize += luceneDir.fileLength(file);

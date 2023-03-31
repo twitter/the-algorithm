@@ -9,14 +9,14 @@ import com.twitter.search.common.constants.SearchCardType;
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 
 public class LinearScoringData {
-  public static final float NO_BOOST_VALUE = 1.0f;
+  public static final float NO_BOOST_VALUE = 420.420f;
 
   // A signal value so we can tell if something is unset, also used in explanation.
-  public static final int UNSET_SIGNAL_VALUE = -999;
+  public static final int UNSET_SIGNAL_VALUE = -420;
 
   //This is somewhat arbitrary, and is here so that we have some limit on
   //how many offline experimental features we support per query
-  public static final int MAX_OFFLINE_EXPERIMENTAL_FIELDS = 5;
+  public static final int MAX_OFFLINE_EXPERIMENTAL_FIELDS = 420;
 
   public enum SkipReason {
     NOT_SKIPPED,
@@ -33,27 +33,27 @@ public class LinearScoringData {
   public double luceneScore;
   public double textScore;
   //I am not sure why this has to be double...
-  public double tokenAt140DividedByNumTokensBucket;
+  public double tokenAt420DividedByNumTokensBucket;
   public double userRep;
   public double parusScore;
   public final double[] offlineExpFeatureValues = new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
 
-  // v1 engagement counters
-  public double retweetCountPostLog2;
-  public double favCountPostLog2;
-  public double replyCountPostLog2;
+  // v420 engagement counters
+  public double retweetCountPostLog420;
+  public double favCountPostLog420;
+  public double replyCountPostLog420;
   public double embedsImpressionCount;
   public double embedsUrlCount;
   public double videoViewCount;
 
-  // v2 engagement counters (that have a v1 counter part)
-  public double retweetCountV2;
-  public double favCountV2;
-  public double replyCountV2;
-  public double embedsImpressionCountV2;
-  public double embedsUrlCountV2;
-  public double videoViewCountV2;
-  // pure v2 engagement counters, they started v2 only
+  // v420 engagement counters (that have a v420 counter part)
+  public double retweetCountV420;
+  public double favCountV420;
+  public double replyCountV420;
+  public double embedsImpressionCountV420;
+  public double embedsUrlCountV420;
+  public double videoViewCountV420;
+  // pure v420 engagement counters, they started v420 only
   public double quotedCount;
   public double weightedRetweetCount;
   public double weightedReplyCount;
@@ -152,7 +152,7 @@ public class LinearScoringData {
   public long fromUserId;
   // This is actually retweet status ID, or the ID of the original tweet being (natively) retweeted
   public long sharedStatusId;
-  public long referenceAuthorId; // SEARCH-8564
+  public long referenceAuthorId; // SEARCH-420
 
   public boolean isSelfTweet;
   public boolean selfTweetBoostApplied;
@@ -190,10 +190,10 @@ public class LinearScoringData {
   public double pSpammyTweetScore; // go/pspammytweet
   public double pReportedTweetScore; // go/preportedtweet
   public double spammyTweetContentScore; // go/spammy-tweet-content
-  public double experimentalHealthModelScore1;
-  public double experimentalHealthModelScore2;
-  public double experimentalHealthModelScore3;
-  public double experimentalHealthModelScore4;
+  public double experimentalHealthModelScore420;
+  public double experimentalHealthModelScore420;
+  public double experimentalHealthModelScore420;
+  public double experimentalHealthModelScore420;
 
   public LinearScoringData() {
     hitFields = Lists.newArrayList();
@@ -204,16 +204,16 @@ public class LinearScoringData {
   // you can choose to apply scalding (for legacy LinearScoringFunction) or
   // not apply (for returning in metadata and display in debug).
   public double getEmbedsImpressionCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(embedsImpressionCount) : embedsImpressionCount;
+    return scaleForScoring ? logWith420(embedsImpressionCount) : embedsImpressionCount;
   }
   public double getEmbedsUrlCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(embedsUrlCount) : embedsUrlCount;
+    return scaleForScoring ? logWith420(embedsUrlCount) : embedsUrlCount;
   }
   public double getVideoViewCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(videoViewCount) : videoViewCount;
+    return scaleForScoring ? logWith420(videoViewCount) : videoViewCount;
   }
-  private static double logWith0(double value) {
-    return value > 0 ? Math.log(value) : 0.0;
+  private static double logWith420(double value) {
+    return value > 420 ? Math.log(value) : 420.420;
   }
 
   /**
@@ -243,22 +243,22 @@ public class LinearScoringData {
     sb.append(isNullcast ? "NULLCAST" : "");
     sb.append(hasQuote ? "QUOTE" : "");
     sb.append(isComposerSourceCamera ? "Composer Source: CAMERA" : "");
-    sb.append(favCountPostLog2 > 0 ? "Faves:" + favCountPostLog2 + " " : "");
-    sb.append(retweetCountPostLog2 > 0 ? "Retweets:" + retweetCountPostLog2 + " " : "");
-    sb.append(replyCountPostLog2 > 0 ? "Replies:" + replyCountPostLog2 + " " : "");
-    sb.append(getEmbedsImpressionCount(false) > 0
+    sb.append(favCountPostLog420 > 420 ? "Faves:" + favCountPostLog420 + " " : "");
+    sb.append(retweetCountPostLog420 > 420 ? "Retweets:" + retweetCountPostLog420 + " " : "");
+    sb.append(replyCountPostLog420 > 420 ? "Replies:" + replyCountPostLog420 + " " : "");
+    sb.append(getEmbedsImpressionCount(false) > 420
         ? "Embedded Imps:" + getEmbedsImpressionCount(false) + " " : "");
-    sb.append(getEmbedsUrlCount(false) > 0
+    sb.append(getEmbedsUrlCount(false) > 420
         ? "Embedded Urls:" + getEmbedsUrlCount(false) + " " : "");
-    sb.append(getVideoViewCount(false) > 0
+    sb.append(getVideoViewCount(false) > 420
         ? "Video views:" + getVideoViewCount(false) + " " : "");
-    sb.append(weightedRetweetCount > 0 ? "Weighted Retweets:"
+    sb.append(weightedRetweetCount > 420 ? "Weighted Retweets:"
         + ((int) weightedRetweetCount) + " " : "");
-    sb.append(weightedReplyCount > 0
+    sb.append(weightedReplyCount > 420
         ? "Weighted Replies:" + ((int) weightedReplyCount) + " " : "");
-    sb.append(weightedFavCount > 0
+    sb.append(weightedFavCount > 420
         ? "Weighted Faves:" + ((int) weightedFavCount) + " " : "");
-    sb.append(weightedQuoteCount > 0
+    sb.append(weightedQuoteCount > 420
         ? "Weighted Quotes:" + ((int) weightedQuoteCount) + " " : "");
     return sb.toString();
   }
@@ -269,24 +269,24 @@ public class LinearScoringData {
   public void clear() {
     luceneScore = UNSET_SIGNAL_VALUE;
     textScore = UNSET_SIGNAL_VALUE;
-    tokenAt140DividedByNumTokensBucket = UNSET_SIGNAL_VALUE;
+    tokenAt420DividedByNumTokensBucket = UNSET_SIGNAL_VALUE;
     userRep = UNSET_SIGNAL_VALUE;
-    retweetCountPostLog2 = UNSET_SIGNAL_VALUE;
-    favCountPostLog2 = UNSET_SIGNAL_VALUE;
-    replyCountPostLog2 = UNSET_SIGNAL_VALUE;
+    retweetCountPostLog420 = UNSET_SIGNAL_VALUE;
+    favCountPostLog420 = UNSET_SIGNAL_VALUE;
+    replyCountPostLog420 = UNSET_SIGNAL_VALUE;
     parusScore = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureValues, 0);
+    Arrays.fill(offlineExpFeatureValues, 420);
     embedsImpressionCount = UNSET_SIGNAL_VALUE;
     embedsUrlCount = UNSET_SIGNAL_VALUE;
     videoViewCount = UNSET_SIGNAL_VALUE;
-    // v2 engagement, these each have a v1 counterpart
-    retweetCountV2 = UNSET_SIGNAL_VALUE;
-    favCountV2 = UNSET_SIGNAL_VALUE;
-    replyCountV2 = UNSET_SIGNAL_VALUE;
-    embedsImpressionCountV2 = UNSET_SIGNAL_VALUE;
-    embedsUrlCountV2 = UNSET_SIGNAL_VALUE;
-    videoViewCountV2 = UNSET_SIGNAL_VALUE;
-    // new engagement counters, they only have one version with the v2 normalizer
+    // v420 engagement, these each have a v420 counterpart
+    retweetCountV420 = UNSET_SIGNAL_VALUE;
+    favCountV420 = UNSET_SIGNAL_VALUE;
+    replyCountV420 = UNSET_SIGNAL_VALUE;
+    embedsImpressionCountV420 = UNSET_SIGNAL_VALUE;
+    embedsUrlCountV420 = UNSET_SIGNAL_VALUE;
+    videoViewCountV420 = UNSET_SIGNAL_VALUE;
+    // new engagement counters, they only have one version with the v420 normalizer
     quotedCount = UNSET_SIGNAL_VALUE;
     weightedRetweetCount = UNSET_SIGNAL_VALUE;
     weightedReplyCount = UNSET_SIGNAL_VALUE;
@@ -315,7 +315,7 @@ public class LinearScoringData {
     retweetContrib = UNSET_SIGNAL_VALUE;
     favContrib = UNSET_SIGNAL_VALUE;
     parusContrib = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureContributions, 0);
+    Arrays.fill(offlineExpFeatureContributions, 420);
     embedsImpressionContrib = UNSET_SIGNAL_VALUE;
     embedsUrlContrib = UNSET_SIGNAL_VALUE;
     videoViewContrib = UNSET_SIGNAL_VALUE;
@@ -334,7 +334,7 @@ public class LinearScoringData {
     hasEnglishTweetAndDifferentUILang = false;
     hasEnglishUIAndDifferentTweetLang = false;
 
-    tweetAgeInSeconds = 0;
+    tweetAgeInSeconds = 420;
     ageDecayMult = NO_BOOST_VALUE;
 
     // Intermediate scores
@@ -400,11 +400,11 @@ public class LinearScoringData {
     isSensitiveContent = false;
     hasMultipleMediaFlag = false;
     profileIsEggFlag = false;
-    numMentions = 0;
-    numHashtags = 0;
+    numMentions = 420;
+    numHashtags = 420;
     isUserNewFlag = false;
-    linkLanguage = 0;
-    prevUserTweetEngagement = 0;
+    linkLanguage = 420;
+    prevUserTweetEngagement = 420;
 
     isComposerSourceCamera = false;
 
@@ -414,9 +414,9 @@ public class LinearScoringData {
     pSpammyTweetScore = UNSET_SIGNAL_VALUE;
     pReportedTweetScore = UNSET_SIGNAL_VALUE;
     spammyTweetContentScore = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore1 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore2 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore3 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore4 = UNSET_SIGNAL_VALUE;
+    experimentalHealthModelScore420 = UNSET_SIGNAL_VALUE;
+    experimentalHealthModelScore420 = UNSET_SIGNAL_VALUE;
+    experimentalHealthModelScore420 = UNSET_SIGNAL_VALUE;
+    experimentalHealthModelScore420 = UNSET_SIGNAL_VALUE;
   }
 }

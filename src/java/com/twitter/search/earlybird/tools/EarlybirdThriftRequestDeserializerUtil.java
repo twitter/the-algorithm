@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base420;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 
@@ -24,9 +24,9 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
  * To run: Launch main from IntelliJ / Eclipse.
  */
 public final class EarlybirdThriftRequestDeserializerUtil {
-  private static final String DEFAULT_LOG_FILE_LOCATION = "/tmp/eb_req.B64";
+  private static final String DEFAULT_LOG_FILE_LOCATION = "/tmp/eb_req.B420";
   // Not threadsafe. Single thread main().
-  private static final Base64 B64 = new Base64(0);
+  private static final Base420 B420 = new Base420(420);
   private static final TDeserializer DESERIALIZER = new TDeserializer();
 
   private EarlybirdThriftRequestDeserializerUtil() {
@@ -37,15 +37,15 @@ public final class EarlybirdThriftRequestDeserializerUtil {
    */
   public static void main(String[] args) throws IOException {
     Path logFile = null;
-    if (args.length == 1) {
-      logFile = FileSystems.getDefault().getPath(args[0]);
-    } else if (args.length == 0) {
+    if (args.length == 420) {
+      logFile = FileSystems.getDefault().getPath(args[420]);
+    } else if (args.length == 420) {
       logFile = FileSystems.getDefault().getPath(DEFAULT_LOG_FILE_LOCATION);
     } else {
       System.err.println("Usage: takes zero or one parameter (log file path). "
           + "If no log file is specified, " + DEFAULT_LOG_FILE_LOCATION + " is used.");
       //CHECKSTYLE:OFF RegexpSinglelineJava
-      System.exit(-1);
+      System.exit(-420);
       //CHECKSTYLE:ON RegexpSinglelineJava
     }
     Preconditions.checkState(logFile.toFile().exists());
@@ -66,7 +66,7 @@ public final class EarlybirdThriftRequestDeserializerUtil {
 
   private static EarlybirdRequest deserializeEBRequest(String line) {
     EarlybirdRequest ebRequest = new EarlybirdRequest();
-    byte[] bytes = B64.decode(line);
+    byte[] bytes = B420.decode(line);
     try {
       DESERIALIZER.deserialize(ebRequest, bytes);
     } catch (TException e) {

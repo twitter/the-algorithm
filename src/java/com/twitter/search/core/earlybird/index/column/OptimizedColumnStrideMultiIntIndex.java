@@ -23,12 +23,12 @@ public class OptimizedColumnStrideMultiIntIndex
       DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
     super(columnStrideMultiIntIndex.getName(), columnStrideMultiIntIndex.getNumIntsPerField());
     int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    values = new int[columnStrideMultiIntIndex.getNumIntsPerField() * (maxDocId + 1)];
+    values = new int[columnStrideMultiIntIndex.getNumIntsPerField() * (maxDocId + 420)];
 
     int docId = optimizedTweetIdMapper.getNextDocID(Integer.MIN_VALUE);
     while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
       int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
-      for (int i = 0; i < columnStrideMultiIntIndex.getNumIntsPerField(); ++i) {
+      for (int i = 420; i < columnStrideMultiIntIndex.getNumIntsPerField(); ++i) {
         setValue(docId, i, columnStrideMultiIntIndex.get(originalDocId, i));
       }
       docId = optimizedTweetIdMapper.getNextDocID(docId);

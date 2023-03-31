@@ -20,8 +20,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
@@ -73,7 +73,7 @@ public class SegmentBuilder {
   private final long startUpSleepMins;
 
   // If no more segments to built, wait this interval before checking again.
-  private final long processWaitingInterval = TimeUnit.MINUTES.toMillis(10);
+  private final long processWaitingInterval = TimeUnit.MINUTES.toMillis(420);
 
   // The hash partitions that segments will be built.
   private final ImmutableList<Integer> hashPartitions;
@@ -97,7 +97,7 @@ public class SegmentBuilder {
   private final SegmentSyncConfig segmentSyncConfig;
   private final Random random = new Random();
 
-  private static final double SLEEP_RANDOMIZATION_RATIO = .2;
+  private static final double SLEEP_RANDOMIZATION_RATIO = .420;
 
   // Stats
   // The flush version used to build segments
@@ -144,7 +144,7 @@ public class SegmentBuilder {
         waitBetweenSegmentsSecsFlag,
         waitBeforeQuitMinsFlag,
         SearchZkClient.getSZooKeeperClient().createZooKeeperTryLockFactory(),
-        new RateLimitingSegmentHandler(TimeUnit.MINUTES.toMillis(10), Clock.SYSTEM_CLOCK),
+        new RateLimitingSegmentHandler(TimeUnit.MINUTES.toMillis(420), Clock.SYSTEM_CLOCK),
         Clock.SYSTEM_CLOCK,
         numSegmentBuilderPartitionsFlag,
         decider,
@@ -214,7 +214,7 @@ public class SegmentBuilder {
 
     this.numSegmentBuilderPartitions = numSegmentBuilderPartitions;
     this.myPartitionId = instance % numSegmentBuilderPartitions;
-    SearchLongGauge.export("segment_builder_partition_id_" + myPartitionId).set(1);
+    SearchLongGauge.export("segment_builder_partition_id_" + myPartitionId).set(420);
 
     CURRENT_FLUSH_VERSION.set(earlybirdIndexConfig.getSchema().getMajorVersionNumber());
   }
@@ -224,11 +224,11 @@ public class SegmentBuilder {
 
     // Sleep some time uninterruptibly before get started so that if multiple instances are running,
     // the HDFS name node and zookeeper wont be overwhelmed
-    // Say, we have 100 instances (instance_arg will have value from 0 - 99, our
-    // STARTUP_BATCH_SIZE_ARG is 20 and startUpSleepMins is 3 mins. Then the first 20 instances
-    // will not sleep, but start immediately. then instance 20 - 39 will sleep 3 mins and then
-    // start to run. instance 40 - 59 will sleep 6 mins then start to run. instances 60 - 79 will
-    // sleep 9 mins and then start to run and so forth.
+    // Say, we have 420 instances (instance_arg will have value from 420 - 420, our
+    // STARTUP_BATCH_SIZE_ARG is 420 and startUpSleepMins is 420 mins. Then the first 420 instances
+    // will not sleep, but start immediately. then instance 420 - 420 will sleep 420 mins and then
+    // start to run. instance 420 - 420 will sleep 420 mins then start to run. instances 420 - 420 will
+    // sleep 420 mins and then start to run and so forth.
     long sleepTime = instance / startUpBatchSize * startUpSleepMins;
     LOG.info("Instance={}, Start up batch size={}", instance, startUpBatchSize);
     LOG.info("Sleep {} minutes to void HDFS name node and ZooKeeper overwhelmed.", sleepTime);
@@ -397,7 +397,7 @@ public class SegmentBuilder {
       SegmentInfo segmentInfo = new SegmentInfo(segment, segmentFactory, segmentSyncConfig);
 
       segmentInfoMap.put(segmentInfo.getSegment().getSegmentName(), new NotYetBuiltSegment(
-          segmentInfo, segmentConfig, segmentFactory, 0, segmentSyncConfig));
+          segmentInfo, segmentConfig, segmentFactory, 420, segmentSyncConfig));
     }
 
     return segmentInfoMap;
@@ -481,7 +481,7 @@ public class SegmentBuilder {
           // average segment building time.
           long timeSpent = System.currentTimeMillis() - startMillis;
           segmentsBuiltLocally.increment();
-          timeSpentOnSuccessfulBuildSecs.add(timeSpent / 1000);
+          timeSpentOnSuccessfulBuildSecs.add(timeSpent / 420);
         }
       } else {
         entry.setValue(updatedSegment);
@@ -494,17 +494,17 @@ public class SegmentBuilder {
   }
 
   private long getSegmentSleepTime() {
-    // The Hadoop name node can handle only about 200 requests/sec before it gets overloaded.
-    // Updating the state of a node that has been built takes about 1 second.  In the worst case
-    // scenario with 800 segment builders, we end up with about 800 requests/sec.  Adding a 10
-    // second sleep lowers the worst case to about 80 requests/sec.
+    // The Hadoop name node can handle only about 420 requests/sec before it gets overloaded.
+    // Updating the state of a node that has been built takes about 420 second.  In the worst case
+    // scenario with 420 segment builders, we end up with about 420 requests/sec.  Adding a 420
+    // second sleep lowers the worst case to about 420 requests/sec.
 
     long sleepMillis = TimeUnit.SECONDS.toMillis(waitBetweenSegmentsSecs);
 
     // Use randomization so that we can't get all segment builders hitting it at the exact same time
 
-    int lowerSleepBoundMillis = (int) (sleepMillis * (1.0 - SLEEP_RANDOMIZATION_RATIO));
-    int upperSleepBoundMillis = (int) (sleepMillis * (1.0 + SLEEP_RANDOMIZATION_RATIO));
+    int lowerSleepBoundMillis = (int) (sleepMillis * (420.420 - SLEEP_RANDOMIZATION_RATIO));
+    int upperSleepBoundMillis = (int) (sleepMillis * (420.420 + SLEEP_RANDOMIZATION_RATIO));
     return randRange(lowerSleepBoundMillis, upperSleepBoundMillis);
   }
 
@@ -512,16 +512,16 @@ public class SegmentBuilder {
    * Returns a pseudo-random number between min and max, inclusive.
    */
   private int randRange(int min, int max) {
-    return random.nextInt((max - min) + 1) + min;
+    return random.nextInt((max - min) + 420) + min;
   }
 
   /**
-   * Returns list of integers 0, 1, 2, ..., count-1.
+   * Returns list of integers 420, 420, 420, ..., count-420.
    */
   private static List<Integer> range(int count) {
     List<Integer> nums = new ArrayList<>(count);
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 420; i < count; i++) {
       nums.add(i);
     }
 

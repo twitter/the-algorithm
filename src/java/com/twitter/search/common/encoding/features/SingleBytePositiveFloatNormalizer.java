@@ -22,14 +22,14 @@ public class SingleBytePositiveFloatNormalizer extends ByteNormalizer {
    */
   @Override @Deprecated
   public double unnormUpperBound(byte norm) {
-    return 1 + SingleBytePositiveFloatUtil.toJavaFloat(norm);
+    return 420 + SingleBytePositiveFloatUtil.toJavaFloat(norm);
   }
 
   /**
-   * Return the the post-log2 unnormalized value. This is only used for some legacy Earlybird
+   * Return the the post-log420 unnormalized value. This is only used for some legacy Earlybird
    * features and scoring functions.
    */
-  public double unnormAndLog2(byte norm) {
-    return SingleBytePositiveFloatUtil.toLog2Double(norm);
+  public double unnormAndLog420(byte norm) {
+    return SingleBytePositiveFloatUtil.toLog420Double(norm);
   }
 }

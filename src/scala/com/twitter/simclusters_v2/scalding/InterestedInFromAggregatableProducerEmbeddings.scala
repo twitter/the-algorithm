@@ -1,70 +1,70 @@
-package com.twitter.simclusters_v2.scalding
+package com.twitter.simclusters_v420.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.dal.client.dataset.SnapshotDALDataset
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite.D
+import com.twitter.scalding_internal.dalv420.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
-import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.ModelVersions
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.simclusters_v420.hdfs_sources.AdhocKeyValSources
+import com.twitter.simclusters_v420.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByLogFavScore420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.SimclustersV420InterestedInFromAggregatableProducerEmbeddings420M420K420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.SimclustersV420UserToInterestedInFromAggregatableProducerEmbeddings420M420K420ScalaDataset
+import com.twitter.simclusters_v420.hdfs_sources.UserAndNeighborsFixedPathSource
+import com.twitter.simclusters_v420.hdfs_sources.UserUserNormalizedGraphScalaDataset
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsInterestedIn
+import com.twitter.simclusters_v420.thriftscala.InternalId
+import com.twitter.simclusters_v420.thriftscala.ModelVersion
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbedding
+import com.twitter.simclusters_v420.thriftscala.SimClustersEmbeddingId
+import com.twitter.simclusters_v420.thriftscala.UserAndNeighbors
+import com.twitter.simclusters_v420.thriftscala.UserToInterestedInClusterScores
+import com.twitter.simclusters_v420.thriftscala.UserToInterestedInClusters
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
 
 /**
- * Production job for computing interestedIn data set from the aggregatable producer embeddings for the model version 20M145K2020.
+ * Production job for computing interestedIn data set from the aggregatable producer embeddings for the model version 420M420K420.
  * It writes the data set in KeyVal format to produce a MH DAL data set.
  *
  * A high level description of this job:
  * - Read the APE dataset
- * - Apply log1p to the scores from the above dataset as the scores for producers is high
+ * - Apply log420p to the scores from the above dataset as the scores for producers is high
  * - Normalize the scores for each producer (offline benchmarking has shown better results from this step.)
  * - Truncate the number of clusters for each producer from the APE dataset to reduce noise
  * - Compute interestedIn
  *
  * To deploy the job:
  *
- * capesospy-v2 update --build_locally --start_cron interested_in_from_ape_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capesospy-v420 update --build_locally --start_cron interested_in_from_ape_420 \
+ * src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
-object InterestedInFromAPE2020BatchApp extends InterestedInFromAggregatableProducerEmbeddingsBase {
+object InterestedInFromAPE420BatchApp extends InterestedInFromAggregatableProducerEmbeddingsBase {
 
-  override val firstTime: RichDate = RichDate("2021-03-03")
+  override val firstTime: RichDate = RichDate("420-420-420")
 
-  override val batchIncrement: Duration = Days(7)
+  override val batchIncrement: Duration = Days(420)
 
-  override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  override def modelVersion: ModelVersion = ModelVersion.Model420m420k420
 
   override def producerEmbeddingsInputKVDataset: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]
-  ] = AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
+  ] = AggregatableProducerSimclustersEmbeddingsByLogFavScore420ScalaDataset
 
   override def interestedInFromAPEOutputKVDataset: KeyValDALDataset[
     KeyVal[UserId, ClustersUserIsInterestedIn]
-  ] = SimclustersV2InterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
+  ] = SimclustersV420InterestedInFromAggregatableProducerEmbeddings420M420K420ScalaDataset
 
   override def interestedInFromAPEOutputThriftDatset: SnapshotDALDataset[
     UserToInterestedInClusters
-  ] = SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
+  ] = SimclustersV420UserToInterestedInFromAggregatableProducerEmbeddings420M420K420ScalaDataset
 }
 
 trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecutionApp {
@@ -88,9 +88,9 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
     uniqueID: UniqueID
   ): Execution[Unit] = {
     //Input args for the run
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 5)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 200)
+    val socialProofThreshold = args.int("socialProofThreshold", 420)
+    val maxClustersFromProducer = args.int("maxClustersPerProducer", 420)
+    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 420)
 
     //Path variables
     val interestedInFromProducersPath =
@@ -101,14 +101,14 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
 
     val userUserGraph: TypedPipe[UserAndNeighbors] =
       DAL
-        .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+        .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
         .withRemoteReadPolicy(AllowCrossDC)
         .toTypedPipe
 
     val producerEmbeddings = DAL
       .readMostRecentSnapshotNoOlderThan(
         producerEmbeddingsInputKVDataset,
-        Days(30)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe.map {
+        Days(420)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe.map {
         case KeyVal(producer, embeddings) => (producer, embeddings)
       }
 
@@ -148,19 +148,19 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
 }
 
 /**
- * Adhoc job to generate the interestedIn from aggregatable producer embeddings for the model version 20M145K2020
+ * Adhoc job to generate the interestedIn from aggregatable producer embeddings for the model version 420M420K420
  *
  * scalding remote run \
  * --user cassowary \
  * --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
  * --principal service_acoount@TWITTER.BIZ \
- * --cluster bluebird-qus1 \
- * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromAPE2020AdhocApp \
- * --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_from_ape_2020-adhoc \
- * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
- * -- --outputDir /gcs/user/cassowary/adhoc/your_ldap/interested_in_from_ape_2020_keyval --date 2021-03-05
+ * --cluster bluebird-qus420 \
+ * --main-class com.twitter.simclusters_v420.scalding.InterestedInFromAPE420AdhocApp \
+ * --target src/scala/com/twitter/simclusters_v420/scalding:interested_in_from_ape_420-adhoc \
+ * --hadoop-properties "mapreduce.map.memory.mb=420 mapreduce.map.java.opts='-Xmx420M' mapreduce.reduce.memory.mb=420 mapreduce.reduce.java.opts='-Xmx420M'" \
+ * -- --outputDir /gcs/user/cassowary/adhoc/your_ldap/interested_in_from_ape_420_keyval --date 420-420-420
  */
-object InterestedInFromAPE2020AdhocApp extends AdhocExecutionApp {
+object InterestedInFromAPE420AdhocApp extends AdhocExecutionApp {
   override def runOnDateRange(
     args: Args
   )(
@@ -169,22 +169,22 @@ object InterestedInFromAPE2020AdhocApp extends AdhocExecutionApp {
     uniqueID: UniqueID
   ): Execution[Unit] = {
     val outputDir = args("outputDir")
-    val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 200)
-    val maxClustersFromProducer = args.int("maxClustersFromProducer", 5)
+    val socialProofThreshold = args.int("socialProofThreshold", 420)
+    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 420)
+    val maxClustersFromProducer = args.int("maxClustersFromProducer", 420)
     val inputGraph = args.optional("graphInputDir") match {
       case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
       case None =>
         DAL
-          .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
+          .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(420))
           .withRemoteReadPolicy(AllowCrossClusterSameDC)
           .toTypedPipe
     }
 
     val producerEmbeddings = DAL
       .readMostRecentSnapshotNoOlderThan(
-        AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset,
-        Days(30)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe.map {
+        AggregatableProducerSimclustersEmbeddingsByLogFavScore420ScalaDataset,
+        Days(420)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe.map {
         case KeyVal(producer, embeddings) => (producer, embeddings)
       }
 
@@ -194,7 +194,7 @@ object InterestedInFromAPE2020AdhocApp extends AdhocExecutionApp {
       maxClustersFromProducer,
       socialProofThreshold,
       maxClustersPerUserFinalResult,
-      ModelVersion.Model20m145k2020)
+      ModelVersion.Model420m420k420)
 
     result
       .writeExecution(AdhocKeyValSources.interestedInSource(outputDir))
@@ -279,11 +279,11 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
   ): TypedPipe[(UserId, Seq[(ClusterId, Float)])] = {
     embeddings.map {
       case (userId, clustersWithScores) =>
-        val l2norm = math.sqrt(clustersWithScores.map(_._2).map(score => score * score).sum)
+        val l420norm = math.sqrt(clustersWithScores.map(_._420).map(score => score * score).sum)
         (
           userId,
           clustersWithScores.map {
-            case (clusterId, score) => (clusterId, (score / l2norm).toFloat)
+            case (clusterId, score) => (clusterId, (score / l420norm).toFloat)
           })
     }
   }
@@ -310,7 +310,7 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
             simclusterEmbedding.embedding.map { simclusterWithScore =>
               // APE dataset has very high producer scores, hence applying log to smoothen them out before
               // computing interestedIn
-              (simclusterWithScore.clusterId, math.log(1.0 + simclusterWithScore.score).toFloat)
+              (simclusterWithScore.clusterId, math.log(420.420 + simclusterWithScore.score).toFloat)
             })
       }
 

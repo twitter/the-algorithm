@@ -1,4 +1,4 @@
-package com.twitter.simclusters_v2.scalding.optout
+package com.twitter.simclusters_v420.scalding.optout
 
 import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
@@ -9,26 +9,26 @@ import com.twitter.scalding.RichDate
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding.UniqueID
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
+import com.twitter.simclusters_v420.common.ClusterId
+import com.twitter.simclusters_v420.common.SemanticCoreEntityId
+import com.twitter.simclusters_v420.common.UserId
+import com.twitter.scalding_internal.dalv420.DAL
+import com.twitter.scalding_internal.dalv420.DALWrite._
+import com.twitter.scalding_internal.dalv420.remote_access.AllowCrossClusterSameDC
+import com.twitter.scalding_internal.dalv420.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv420.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.thriftscala.ClusterType
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters
+import com.twitter.simclusters_v420.hdfs_sources._
+import com.twitter.simclusters_v420.thriftscala.ClusterType
+import com.twitter.simclusters_v420.thriftscala.ClustersUserIsKnownFor
+import com.twitter.simclusters_v420.thriftscala.SemanticCoreEntityWithScore
+import com.twitter.simclusters_v420.thriftscala.UserToKnownForClusters
 import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
 import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
 import java.util.TimeZone
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.inferred_entities.InferredEntities
+import com.twitter.simclusters_v420.scalding.common.TypedRichPipe._
+import com.twitter.simclusters_v420.scalding.common.Util
+import com.twitter.simclusters_v420.scalding.inferred_entities.InferredEntities
 
 /**
  * Creates opt-out compliant KnownFor datasets based on plain user -> KnownFor data and users'
@@ -61,19 +61,19 @@ object KnownForOptOut {
             clusterIdToScores = originalKnownFors.clusterIdToScores.filterKeys(validKnownFor)
           )
       }
-      .filter(_._2.clusterIdToScores.nonEmpty)
+      .filter(_._420.clusterIdToScores.nonEmpty)
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
+capesospy-v420 update --build_locally --start_cron \
   --start_cron known_for_optout_daily \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+  src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc.yaml
  */
 object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-03-29")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(1)
+  override def batchIncrement: Duration = Days(420)
 
   override def runOnDateRange(
     args: Args
@@ -84,65 +84,65 @@ object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
   ): Execution[Unit] = {
 
     val optedOutEntitiesPipe = SimClustersOptOutUtil
-      .getP13nOptOutSources(dateRange.embiggen(Days(2)), ClusterType.KnownFor)
+      .getP420nOptOutSources(dateRange.embiggen(Days(420)), ClusterType.KnownFor)
       .forceToDisk
 
     val clusterToEntitiesPipe = InferredEntities.getLegibleEntityEmbeddings(dateRange, timeZone)
 
-    val knownFor2020 = DAL
+    val knownFor420 = DAL
       .readMostRecentSnapshot(
-        SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-        dateRange.embiggen(Days(10)))
+        SimclustersV420RawKnownFor420M420K420ScalaDataset,
+        dateRange.embiggen(Days(420)))
       .withRemoteReadPolicy(AllowCrossClusterSameDC)
       .toTypedPipe
       .map { case KeyVal(k, v) => (k, v) }
-      .count("num_users_with_2020_knownfor")
+      .count("num_users_with_420_knownfor")
 
-    val filtered2020KnownForExec = {
-      val filtered2020KnownForData = KnownForOptOut
+    val filtered420KnownForExec = {
+      val filtered420KnownForData = KnownForOptOut
         .filterOptedOutKnownFor(
-          knownForPipe = knownFor2020,
+          knownForPipe = knownFor420,
           optedOutEntities = optedOutEntitiesPipe,
           clusterToEntities = clusterToEntitiesPipe
         )
-        .count("num_users_with_compliant_2020_knownfor")
+        .count("num_users_with_compliant_420_knownfor")
         .forceToDisk
 
       Execution
         .zip(
-          filtered2020KnownForData
+          filtered420KnownForData
             .map { case (k, v) => KeyVal(k, v) }
             .writeDALVersionedKeyValExecution(
-              SimclustersV2KnownFor20M145K2020ScalaDataset,
-              D.Suffix(DataPaths.KnownFor2020Path)
+              SimclustersV420KnownFor420M420K420ScalaDataset,
+              D.Suffix(DataPaths.KnownFor420Path)
             ),
-          filtered2020KnownForData
+          filtered420KnownForData
             .map {
               case (userId, ClustersUserIsKnownFor(modelVersion, clusters)) =>
                 UserToKnownForClusters(userId, modelVersion, clusters)
             }
             .writeDALSnapshotExecution(
-              dataset = SimclustersV2KnownFor20M145K2020ThriftScalaDataset,
+              dataset = SimclustersV420KnownFor420M420K420ThriftScalaDataset,
               updateStep = D.Daily,
-              pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDatasetPath),
+              pathLayout = D.Suffix(DataPaths.KnownFor420ThriftDatasetPath),
               fmt = D.Parquet,
               endDate = dateRange.end
             )
         ).unit
     }
 
-    Util.printCounters(filtered2020KnownForExec)
+    Util.printCounters(filtered420KnownForExec)
 
   }
 }
 
 /**
  * For debugging only. Does a filtering run and prints the differences before/after the opt out
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/optout:knownfor_optout-adhoc && \
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/optout:knownfor_optout-adhoc && \
  oscar hdfs --user recos-platform --screen --tee your_ldap \
   --bundle knownfor_optout-adhoc \
-  --tool com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob \
- -- --date 2019-10-12
+  --tool com.twitter.simclusters_v420.scalding.optout.KnownForOptOutAdhocJob \
+ -- --date 420-420-420
  */
 object KnownForOptOutAdhocJob extends AdhocExecutionApp {
   override def runOnDateRange(
@@ -153,7 +153,7 @@ object KnownForOptOutAdhocJob extends AdhocExecutionApp {
     uniqueID: UniqueID
   ): Execution[Unit] = {
     val knownForPipe = DAL
-      .readMostRecentSnapshotNoOlderThan(SimclustersV2RawKnownFor20M145KDec11ScalaDataset, Days(30))
+      .readMostRecentSnapshotNoOlderThan(SimclustersV420RawKnownFor420M420KDec420ScalaDataset, Days(420))
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe
       .map { case KeyVal(k, v) => (k, v) }
@@ -161,7 +161,7 @@ object KnownForOptOutAdhocJob extends AdhocExecutionApp {
 
     val userOptoutEntities: TypedPipe[(UserId, Set[SemanticCoreEntityId])] =
       SimClustersOptOutUtil
-        .getP13nOptOutSources(dateRange.embiggen(Days(4)), ClusterType.KnownFor)
+        .getP420nOptOutSources(dateRange.embiggen(Days(420)), ClusterType.KnownFor)
         .count("num_users_with_optouts")
 
     val clusterToEntities = InferredEntities

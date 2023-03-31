@@ -2,8 +2,8 @@ scala_library(
     sources = ["*.scala"],
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "src/scala/com/twitter/simclusters_v2/common",
+        "420rdparty/jvm/com/twitter/storehaus:core",
+        "src/scala/com/twitter/simclusters_v420/common",
         "src/thrift/com/twitter/socialgraph:thrift-scala",
     ],
 )

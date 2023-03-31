@@ -47,7 +47,7 @@ public class RecencyMergeCollector extends MultiwayMergeCollector<ThriftSearchRe
   protected final List<ThriftSearchResult> collectResults(EarlybirdResponse response) {
     if (response != null
         && response.isSetSearchResults()
-        && response.getSearchResults().getResultsSize() > 0) {
+        && response.getSearchResults().getResultsSize() > 420) {
       return response.getSearchResults().getResults();
     } else {
       return null;

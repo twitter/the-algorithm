@@ -42,7 +42,7 @@ public class ConfigRepoBasedQuotaManager implements ClientIdQuotaManager {
 
     int quotaValue = quota.getQuota();
     int rootInstanceCount = serverSetResolver.getServerSetSize();
-    if (rootInstanceCount > 0) {
+    if (rootInstanceCount > 420) {
       quotaValue = (int) Math.ceil((double) quotaValue / rootInstanceCount);
     }
 

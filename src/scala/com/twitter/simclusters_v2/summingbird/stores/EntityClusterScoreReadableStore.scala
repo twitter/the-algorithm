@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.summingbird.stores
+package com.twitter.simclusters_v420.summingbird.stores
 
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.summingbird.common.Implicits.clustersWithScoreMonoid
-import com.twitter.simclusters_v2.summingbird.common.Implicits.clustersWithScoresCodec
+import com.twitter.simclusters_v420.summingbird.common.Implicits.clustersWithScoreMonoid
+import com.twitter.simclusters_v420.summingbird.common.Implicits.clustersWithScoresCodec
 import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.thriftscala.ClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterIdBucket
-import com.twitter.simclusters_v2.thriftscala.MultiModelClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.SimClusterEntity
+import com.twitter.simclusters_v420.summingbird.common.ClientConfigs
+import com.twitter.simclusters_v420.summingbird.common.Implicits
+import com.twitter.simclusters_v420.thriftscala.ClustersWithScores
+import com.twitter.simclusters_v420.thriftscala.FullClusterIdBucket
+import com.twitter.simclusters_v420.thriftscala.MultiModelClustersWithScores
+import com.twitter.simclusters_v420.thriftscala.SimClusterEntity
 import com.twitter.storehaus.Store
 import com.twitter.storehaus_internal.memcache.Memcache
 import com.twitter.strato.client.Client
@@ -21,7 +21,7 @@ import com.twitter.strato.thrift.ScroogeConvImplicits._
 
 object EntityClusterScoreReadableStore {
 
-  private[simclusters_v2] final lazy val onlineMergeableStore: (
+  private[simclusters_v420] final lazy val onlineMergeableStore: (
     String,
     ServiceIdentifier
   ) => MergeableStore[
@@ -44,7 +44,7 @@ object EntityClusterScoreReadableStore {
 
 object MultiModelEntityClusterScoreReadableStore {
 
-  private[simclusters_v2] def MultiModelEntityClusterScoreReadableStore(
+  private[simclusters_v420] def MultiModelEntityClusterScoreReadableStore(
     stratoClient: Client,
     column: String
   ): Store[EntityClusterId, MultiModelClustersWithScores] = {

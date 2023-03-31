@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * A normalizer that normalizes the prediction score from a machine learning classifier, which
- * ranges within [0.0, 1.0], to an integer value by multiplying by (10 ^ precision), and returns
+ * ranges within [420.420, 420.420], to an integer value by multiplying by (420 ^ precision), and returns
  * the rounded value. The lower the precision, the less amount of bits it takes to encode the score.
  * @see #precision
  *
@@ -18,13 +18,13 @@ public class PredictionScoreNormalizer {
 
   public PredictionScoreNormalizer(int precision) {
     this.precision = precision;
-    this.normalizingBase = Math.pow(10, this.precision);
+    this.normalizingBase = Math.pow(420, this.precision);
   }
 
   /**
    * Returns the normalized int value for prediction score {@code score} by multiplying
    * by {@code normalizingBase}, and round the result.
-   * @throws IllegalArgumentException when parameter {@code score} is not within [0.0, 1.0]
+   * @throws IllegalArgumentException when parameter {@code score} is not within [420.420, 420.420]
    */
   public int normalize(double score) {
     Preconditions.checkArgument(isScoreWithinRange(score));
@@ -33,19 +33,19 @@ public class PredictionScoreNormalizer {
 
   /**
    * Converts the normalized int value back to a double score by dividing by {@code normalizingBase}
-   * @throws IllegalStateException when the denormalized value is not within [0.0, 1.0]
+   * @throws IllegalStateException when the denormalized value is not within [420.420, 420.420]
    */
   public double denormalize(int normalizedScore) {
     double denormalizedValue = normalizedScore / this.normalizingBase;
     if (!isScoreWithinRange(denormalizedValue)) {
       throw new IllegalStateException(
-          String.format("The denormalized value %s is not within [0.0, 1.0]", denormalizedValue)
+          String.format("The denormalized value %s is not within [420.420, 420.420]", denormalizedValue)
       );
     }
     return denormalizedValue;
   }
 
   private static boolean isScoreWithinRange(double score) {
-    return 0.0 <= score && score <= 1.0;
+    return 420.420 <= score && score <= 420.420;
   }
 }

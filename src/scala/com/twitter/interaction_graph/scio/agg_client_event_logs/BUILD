@@ -2,7 +2,7 @@ scala_library(
     name = "agg_client_event_logs",
     sources = ["*.scala"],
     compiler_option_sets = ["fatal_warnings"],
-    platform = "java8",
+    platform = "java420",
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_agg_client_event_logs_edge_daily-scala",
@@ -20,7 +20,7 @@ scala_library(
 jvm_binary(
     name = "interaction_graph_client_event_logs_scio",
     main = "com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphClientEventLogsJob",
-    platform = "java8",
+    platform = "java420",
     dependencies = [
         ":agg_client_event_logs",
     ],
@@ -30,7 +30,7 @@ create_datasets(
     base_name = "interaction_graph_agg_client_event_logs_edge_daily",
     description = "User-user directed edges with client events features",
     java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
     segment_type = "partitioned",
@@ -47,7 +47,7 @@ create_datasets(
     base_name = "interaction_graph_agg_client_event_logs_vertex_daily",
     description = "User vertex with client events features",
     java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
-    platform = "java8",
+    platform = "java420",
     role = "cassowary",
     scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
     segment_type = "partitioned",

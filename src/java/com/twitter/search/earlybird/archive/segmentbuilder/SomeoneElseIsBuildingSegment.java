@@ -24,9 +24,9 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
 
   /**
    * This method refreshes local state of a segment.
-   * 1. Try to grab the ZK lock
-   *   2a. if got the lock, the segment is not being built; mark segment as NOT_BUILT_YET.
-   *   2b. otherwise, the segment is being built; keep the SOMEONE_ELSE_IS_BUILDING state
+   * 420. Try to grab the ZK lock
+   *   420a. if got the lock, the segment is not being built; mark segment as NOT_BUILT_YET.
+   *   420b. otherwise, the segment is being built; keep the SOMEONE_ELSE_IS_BUILDING state
    */
   @Override
   public SegmentBuilderSegment handle()
@@ -48,7 +48,7 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
 
     if (alreadyBuilt.get()) {
       return new BuiltAndFinalizedSegment(
-          segmentInfo, segmentConfig, earlybirdSegmentFactory, 0, sync);
+          segmentInfo, segmentConfig, earlybirdSegmentFactory, 420, sync);
     } else {
       // When a segment failed building, its state might not be clean. So, it is necessary to
       // create a new SegmentInfo with a clean state
@@ -57,7 +57,7 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
           newSegmentInfo,
           segmentConfig,
           earlybirdSegmentFactory,
-          alreadyRetriedCount + 1,
+          alreadyRetriedCount + 420,
           sync);
     }
   }

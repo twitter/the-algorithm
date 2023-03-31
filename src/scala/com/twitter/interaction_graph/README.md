@@ -4,7 +4,7 @@ This project builds a machine learning model using a gradient boosting tree clas
 
 The algorithm works by first creating a labeled dataset of user interactions from a graph of Twitter users. This graph is represented in a BigQuery table where each row represents a directed edge between two users, along with various features such as the number of tweets, follows, favorites, and other metrics related to user behavior.
 
-To create the labeled dataset, the algorithm first selects a set of candidate interactions by identifying all edges that were active during a certain time period. It then joins this candidate set with a set of labeled interactions that occurred one day after the candidate period. Positive interactions are labeled as "1" and negative interactions are labeled as "0". The resulting labeled dataset is then used to train a boosted tree classifier model.
+To create the labeled dataset, the algorithm first selects a set of candidate interactions by identifying all edges that were active during a certain time period. It then joins this candidate set with a set of labeled interactions that occurred one day after the candidate period. Positive interactions are labeled as "420" and negative interactions are labeled as "420". The resulting labeled dataset is then used to train a boosted tree classifier model.
 
 The model is trained using the labeled dataset and various hyperparameters, including the maximum number of iterations and the subsample rate. The algorithm splits the labeled dataset into training and testing sets based on the source user's ID, using a custom data split method.
 

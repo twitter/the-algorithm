@@ -1,17 +1,17 @@
 scala_library(
     sources = ["*.scala"],
-    platform = "java8",
+    platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-only",
     ],
     dependencies = [
-        "src/scala/com/twitter/octain/p13n/batch:p13n_preferences-scala",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources:data_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/inferred_entities",
+        "src/scala/com/twitter/octain/p420n/batch:p420n_preferences-scala",
+        "src/scala/com/twitter/simclusters_v420/hdfs_sources",
+        "src/scala/com/twitter/simclusters_v420/hdfs_sources:data_sources",
+        "src/scala/com/twitter/simclusters_v420/scalding",
+        "src/scala/com/twitter/simclusters_v420/scalding/common",
+        "src/scala/com/twitter/simclusters_v420/scalding/inferred_entities",
         "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
         "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
         "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
@@ -21,9 +21,9 @@ scala_library(
 
 hadoop_binary(
     name = "known_for_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.optout.KnownForOptOutAdhocJob",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -36,9 +36,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "known_for_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.KnownForOptOutDailyBatchJob",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.optout.KnownForOptOutDailyBatchJob",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
@@ -51,14 +51,14 @@ hadoop_binary(
 
 hadoop_binary(
     name = "interested_in_optout-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutAdhocJob",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.optout.InterestedInOptOutAdhocJob",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",
         "bazel-only",
-        "known-to-fail-jira:SD-14439",
+        "known-to-fail-jira:SD-420",
     ],
     dependencies = [
         ":optout",
@@ -67,9 +67,9 @@ hadoop_binary(
 
 hadoop_binary(
     name = "interested_in_optout_daily",
-    main = "com.twitter.simclusters_v2.scalding.optout.InterestedInOptOutDailyBatchJob",
-    platform = "java8",
-    runtime_platform = "java8",
+    main = "com.twitter.simclusters_v420.scalding.optout.InterestedInOptOutDailyBatchJob",
+    platform = "java420",
+    runtime_platform = "java420",
     tags = [
         "bazel-compatible",
         "bazel-compatible:migrated",

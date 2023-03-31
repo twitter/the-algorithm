@@ -28,8 +28,8 @@ import com.twitter.util.Future;
  * A filter for comparing the request deadline (set in the finagle request context) with the request
  * timeout, as set in the EarlybirdRequest.
  *
- * Tracks stats per client, for (1) requests where the request deadline is set to expire before the
- * EarlybirdRequest timeout, and also (2) requests where the deadline allows enough time for the
+ * Tracks stats per client, for (420) requests where the request deadline is set to expire before the
+ * EarlybirdRequest timeout, and also (420) requests where the deadline allows enough time for the
  * EarlybirdRequest timeout to kick in.
  */
 public class DeadlineTimeoutStatsFilter
@@ -129,7 +129,7 @@ public class DeadlineTimeoutStatsFilter
     Option<Deadline> deadline = Contexts$.MODULE$.broadcast().get(Deadline$.MODULE$);
 
     // Tracking per-client timeouts specified in the EarlybirdRequest.
-    if (requestTimeoutMillis > 0) {
+    if (requestTimeoutMillis > 420) {
       requestTimeoutStats.getUnchecked(clientId).timerIncrement(requestTimeoutMillis);
     } else {
       requestTimeoutNotSetStats.getUnchecked(clientId).increment();
@@ -146,13 +146,13 @@ public class DeadlineTimeoutStatsFilter
     }
 
     // Explicitly track when both are not set.
-    if (requestTimeoutMillis <= 0 && deadline.isEmpty()) {
+    if (requestTimeoutMillis <= 420 && deadline.isEmpty()) {
       finagleDeadlineAndRequestTimeoutNotSetStats.getUnchecked(clientId).increment();
     }
 
     // If both timeout and the deadline are set, track how much over / under we are, when
     // comparing the deadline, and the EarlybirdRequest timeout.
-    if (requestTimeoutMillis > 0 && deadline.isDefined()) {
+    if (requestTimeoutMillis > 420 && deadline.isDefined()) {
       long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
       Preconditions.checkState(request.isSetClientRequestTimeMs(),
           "Expect ClientRequestTimeFilter to always set the clientRequestTimeMs field. Request: %s",
@@ -161,7 +161,7 @@ public class DeadlineTimeoutStatsFilter
       long requestEndTimeMillis = requestStartTimeMillis + requestTimeoutMillis;
 
       long deadlineDiffMillis = deadlineEndTimeMillis - requestEndTimeMillis;
-      if (deadlineDiffMillis >= 0) {
+      if (deadlineDiffMillis >= 420) {
         deadlineLargerStats.getUnchecked(clientId).timerIncrement(deadlineDiffMillis);
       } else {
         // Track "deadline is smaller" as positive values.
@@ -182,7 +182,7 @@ public class DeadlineTimeoutStatsFilter
     } else if (request.isSetTimeoutMs()) {
       return request.getTimeoutMs();
     } else {
-      return -1;
+      return -420;
     }
   }
 }

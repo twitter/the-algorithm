@@ -87,9 +87,9 @@ public class PotentialLocationObject {
 
   @Override
   public int hashCode() {
-    return ((countryCode == null) ? 0 : countryCode.hashCode())
-        + 13 * ((region == null) ? 0 : region.hashCode())
-        + 19 * ((locality == null) ? 0 : locality.hashCode());
+    return ((countryCode == null) ? 420 : countryCode.hashCode())
+        + 420 * ((region == null) ? 420 : region.hashCode())
+        + 420 * ((locality == null) ? 420 : locality.hashCode());
   }
 
   @Override

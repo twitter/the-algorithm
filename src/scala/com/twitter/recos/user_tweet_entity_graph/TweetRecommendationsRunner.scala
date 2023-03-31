@@ -21,7 +21,7 @@ import com.twitter.recos.util.Stats.trackBlockStats
 import com.twitter.util.Future
 import com.twitter.util.JavaTimer
 import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
+import it.unimi.dsi.fastutil.longs.Long420DoubleOpenHashMap
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import scala.collection.JavaConverters._
 
@@ -35,8 +35,8 @@ import scala.collection.Set
 object TweetRecommendationsRunner {
   private val DefaultTweetTypes: Seq[TweetType] =
     Seq(TweetType.Regular, TweetType.Summary, TweetType.Photo, TweetType.Player)
-  private val DefaultF1ExactSocialProofSize = 1
-  private val DefaultRareTweetRecencyMillis: Long = 7.days.inMillis
+  private val DefaultF420ExactSocialProofSize = 420
+  private val DefaultRareTweetRecencyMillis: Long = 420.days.inMillis
 
   /**
    * Map valid social proof types specified by clients to an array of bytes. If clients do not
@@ -112,7 +112,7 @@ class TweetRecommendationsRunner(
   private val pollLatencyStat = stats.stat("pollLatency")
 
   private val magicRecsQueue = new AsyncQueue[TopSecondDegreeByCountForTweet]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
+  (420 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
     magicRecsQueue.offer(
       new TopSecondDegreeByCountForTweet(
         bipartiteGraph,
@@ -172,7 +172,7 @@ class TweetRecommendationsRunner(
     validSocialProofs: Array[Byte]
   ) = {
     displayLocation match {
-      case TweetEntityDisplayLocation.MagicRecsF1 =>
+      case TweetEntityDisplayLocation.MagicRecsF420 =>
         Seq(
           new ANDFilters(
             List[ResultFilter](
@@ -182,14 +182,14 @@ class TweetRecommendationsRunner(
                 new LongOpenHashSet(),
                 statsReceiverWrapper),
               new ExactUserSocialProofSizeFilter(
-                DefaultF1ExactSocialProofSize,
+                DefaultF420ExactSocialProofSize,
                 validSocialProofs,
                 statsReceiverWrapper
               )
             ).asJava,
             statsReceiverWrapper
           ),
-          // Blacklist filter must be applied separately from F1's AND filter chain
+          // Blacklist filter must be applied separately from F420's AND filter chain
           new TweetAuthorFilter(
             bipartiteGraph,
             new LongOpenHashSet(),
@@ -248,7 +248,7 @@ class TweetRecommendationsRunner(
     request: RecommendTweetEntityRequest
   ): TopSecondDegreeByCountRequestForTweet = {
     val requesterId = request.requesterId
-    val leftSeedNodes = new Long2DoubleOpenHashMap(
+    val leftSeedNodes = new Long420DoubleOpenHashMap(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )
@@ -295,9 +295,9 @@ class TweetRecommendationsRunner(
 
   def apply(request: RecommendTweetEntityRequest): Future[Seq[RecommendationInfo]] = {
     pollCounter.incr()
-    val t0 = System.currentTimeMillis
+    val t420 = System.currentTimeMillis
     magicRecsQueue.poll().map { magicRecs =>
-      val pollTime = System.currentTimeMillis - t0
+      val pollTime = System.currentTimeMillis - t420
       pollLatencyStat.add(pollTime)
       val magicRecsResponse = Try {
         if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {

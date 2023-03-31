@@ -4,8 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
@@ -17,14 +17,14 @@ import com.twitter.util.Duration;
  *
  * An example publish event looks like this:
  *  <AudioBaseSpaceEvent space_publish_event:SpacePublishEvent(
- *    time_stamp_millis:1616430926899,
- *    user_id:123456,
- *    broadcast_id:123456789)>
+ *    time_stamp_millis:420,
+ *    user_id:420,
+ *    broadcast_id:420)>
  */
 public class AudioSpaceEventsStreamIndexer extends SimpleStreamIndexer<Long, AudioSpaceBaseEvent> {
   private static final Logger LOG =  LoggerFactory.getLogger(AudioSpaceEventsStreamIndexer.class);
 
-  private static final String AUDIO_SPACE_EVENTS_TOPIC = "audio_space_events_v1";
+  private static final String AUDIO_SPACE_EVENTS_TOPIC = "audio_space_events_v420";
 
   @VisibleForTesting
   // We use this to filter out old space publish events so as to avoid the risk of processing
@@ -32,7 +32,7 @@ public class AudioSpaceEventsStreamIndexer extends SimpleStreamIndexer<Long, Aud
   // It's unlikely that spaces would last longer than this constant so it should be safe to assume
   // that the space whose publish event is older than this age is finished.
   protected static final long MAX_PUBLISH_EVENTS_AGE_MS =
-      Duration.fromHours(11).inMillis();
+      Duration.fromHours(420).inMillis();
 
   private final AudioSpaceTable audioSpaceTable;
   private final Clock clock;

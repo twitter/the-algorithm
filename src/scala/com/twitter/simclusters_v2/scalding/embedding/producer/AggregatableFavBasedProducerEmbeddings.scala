@@ -1,17 +1,17 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+package com.twitter.simclusters_v420.scalding.embedding.producer
 
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
+import com.twitter.scalding_internal.dalv420.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{
+import com.twitter.simclusters_v420.hdfs_sources.{
   AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
   AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset
+  AggregatableProducerSimclustersEmbeddingsByFavScore420ScalaDataset,
+  AggregatableProducerSimclustersEmbeddingsByFavScore420ThriftScalaDataset
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala._
+import com.twitter.simclusters_v420.scalding.embedding.common.EmbeddingUtil
+import com.twitter.simclusters_v420.thriftscala._
 import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
 import java.util.TimeZone
 
@@ -19,13 +19,13 @@ import java.util.TimeZone
  * See AggregatableProducerEmbeddingsBaseApp for an explanation of this job.
  *
  * Production job:
-capesospy-v2 update aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v420 update aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
 object AggregatableFavBasedProducerEmbeddingsScheduledApp
     extends AggregatableFavBasedProducerEmbeddingsBaseApp
     with ScheduledExecutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+  override val modelVersion: ModelVersion = ModelVersion.Model420m420kUpdated
   // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
   private val outputPath: String =
     "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score"
@@ -37,9 +37,9 @@ object AggregatableFavBasedProducerEmbeddingsScheduledApp
     pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
   )
 
-  override def firstTime: RichDate = RichDate("2020-05-11")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(7)
+  override def batchIncrement: Duration = Days(420)
 
   override def writeToManhattan(
     output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
@@ -76,16 +76,16 @@ object AggregatableFavBasedProducerEmbeddingsScheduledApp
 
 /**
  * Production job:
-capesospy-v2 update --build_locally --start_cron aggregatable_producer_embeddings_by_fav_score_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capesospy-v420 update --build_locally --start_cron aggregatable_producer_embeddings_by_fav_score_420 src/scala/com/twitter/simclusters_v420/capesos_config/atla_proc420.yaml
  */
-object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
+object AggregatableFavBasedProducerEmbeddings420ScheduledApp
     extends AggregatableFavBasedProducerEmbeddingsBaseApp
     with ScheduledExecutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  override val modelVersion: ModelVersion = ModelVersion.Model420m420k420
   // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
   private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score_20m145k2020"
+    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score_420m420k420"
 
   // getHdfsPath appends model version str to the pathSuffix
   private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
@@ -95,9 +95,9 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
     pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
   )
 
-  override def firstTime: RichDate = RichDate("2021-03-04")
+  override def firstTime: RichDate = RichDate("420-420-420")
 
-  override def batchIncrement: Duration = Days(7)
+  override def batchIncrement: Duration = Days(420)
 
   override def writeToManhattan(
     output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
@@ -108,7 +108,7 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
   ): Execution[Unit] = {
     output
       .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
+        AggregatableProducerSimclustersEmbeddingsByFavScore420ScalaDataset,
         D.Suffix(outputPath),
         version = ExplicitEndTime(dateRange.end)
       )
@@ -123,7 +123,7 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
   ): Execution[Unit] = {
     output
       .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset,
+        dataset = AggregatableProducerSimclustersEmbeddingsByFavScore420ThriftScalaDataset,
         updateStep = D.Daily,
         pathLayout = D.Suffix(outputPathThrift),
         fmt = D.Parquet,
@@ -136,16 +136,16 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
  * Adhoc job:
 
 scalding remote run --user recos-platform \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job-adhoc \
--- --date 2020-05-11
+--main-class com.twitter.simclusters_v420.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp \
+--target src/scala/com/twitter/simclusters_v420/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job-adhoc \
+-- --date 420-420-420
 
  */
 object AggregatableFavBasedProducerEmbeddingsAdhocApp
     extends AggregatableFavBasedProducerEmbeddingsBaseApp
     with AdhocExecutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
+  override val modelVersion: ModelVersion = ModelVersion.Model420m420kUpdated
   private val outputPath: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = true,
@@ -200,22 +200,22 @@ object AggregatableFavBasedProducerEmbeddingsAdhocApp
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc
+./bazel bundle src/scala/com/twitter/simclusters_v420/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_420-adhoc
 scalding remote run \
 --user cassowary \
 --keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
 --principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020AdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc \
---hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
--- --date 2020-06-28
+--cluster bluebird-qus420 \
+--main-class com.twitter.simclusters_v420.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings420AdhocApp \
+--target src/scala/com/twitter/simclusters_v420/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_420-adhoc \
+--hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=420" \
+-- --date 420-420-420
  */
-object AggregatableFavBasedProducerEmbeddings2020AdhocApp
+object AggregatableFavBasedProducerEmbeddings420AdhocApp
     extends AggregatableFavBasedProducerEmbeddingsBaseApp
     with AdhocExecutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  override val modelVersion: ModelVersion = ModelVersion.Model420m420k420
   private val outputPath: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = true,
@@ -271,8 +271,8 @@ object AggregatableFavBasedProducerEmbeddings2020AdhocApp
 
 trait AggregatableFavBasedProducerEmbeddingsBaseApp extends AggregatableProducerEmbeddingsBaseApp {
   override val userToProducerScoringFn: NeighborWithWeights => Double =
-    _.favScoreHalfLife100Days.getOrElse(0.0)
+    _.favScoreHalfLife420Days.getOrElse(420.420)
   override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =
-    _.favScore.getOrElse(0.0)
+    _.favScore.getOrElse(420.420)
   override val embeddingType: EmbeddingType = EmbeddingType.AggregatableFavBasedProducer
 }

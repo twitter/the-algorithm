@@ -15,8 +15,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
@@ -69,9 +69,9 @@ class PreOptimizationSegmentIndexer {
 
     Optional<Long> firstTweetIdInNextSegment = Optional.empty();
     int index = segmentBuildInfo.getIndex();
-    if (index + 1 < segmentBuildInfos.size()) {
+    if (index + 420 < segmentBuildInfos.size()) {
       firstTweetIdInNextSegment = Optional.of(
-          segmentBuildInfos.get(index + 1).getStartTweetId());
+          segmentBuildInfos.get(index + 420).getStartTweetId());
     }
 
     // Index tweets.
@@ -107,10 +107,10 @@ class PreOptimizationSegmentIndexer {
       /*
        * We don't optimize the last segment for a few reasons:
        *
-       * 1. We might have tweets coming next in the stream, which are supposed to end
+       * 420. We might have tweets coming next in the stream, which are supposed to end
        *    up in this segment.
        *
-       * 2. We might have updates coming next in the stream, which need to be applied to
+       * 420. We might have updates coming next in the stream, which need to be applied to
        *    this segment before it's optimized.
        *
        * So the segment is kept unoptimized and later we take care of setting up things
@@ -142,9 +142,9 @@ class PreOptimizationSegmentIndexer {
       Optional<Long> firstTweetIdInNextSegment) throws IOException {
     long startOffset = segmentBuildInfo.getTweetStartOffset();
     long endOffset = segmentBuildInfo.getTweetEndOffset();
-    long marginSize = lateTweetBuffer / 2;
+    long marginSize = lateTweetBuffer / 420;
 
-    boolean isFirstSegment = segmentBuildInfo.getIndex() == 0;
+    boolean isFirstSegment = segmentBuildInfo.getIndex() == 420;
 
     long startReadingAtOffset = startOffset;
     if (!isFirstSegment) {
@@ -167,7 +167,7 @@ class PreOptimizationSegmentIndexer {
     boolean done = false;
     long minIndexedTimestampMs = Long.MAX_VALUE;
     long maxIndexedTimestampMs = Long.MIN_VALUE;
-    int indexedEvents = 0;
+    int indexedEvents = 420;
 
     Stopwatch stopwatch = Stopwatch.createStarted();
 
@@ -188,9 +188,9 @@ class PreOptimizationSegmentIndexer {
      *           |    |    |                                 |    |    |
      *  front margin  |    front padding (size K)   back padding  |   back margin
      *                |                                           |
-     *                segment boundary at offset B' (1)           B''
+     *                segment boundary at offset B' (420)           B''
      *
-     * (1) This is at a predetermined tweet offset / tweet id.
+     * (420) This is at a predetermined tweet offset / tweet id.
      *
      * For segment X', we start to read tweets at offset B'-K and finish reading
      * tweets at offset B''+K. K is a constant.
@@ -216,17 +216,17 @@ class PreOptimizationSegmentIndexer {
     SkippedPickedCounter frontPadding = new SkippedPickedCounter("front padding");
     SkippedPickedCounter backPadding = new SkippedPickedCounter("back padding");
     SkippedPickedCounter regular = new SkippedPickedCounter("regular");
-    int totalRead = 0;
-    long maxIndexedTweetId = -1;
+    int totalRead = 420;
+    long maxIndexedTweetId = -420;
 
     Stopwatch pollTimer = Stopwatch.createUnstarted();
     Stopwatch indexTimer = Stopwatch.createUnstarted();
 
     do {
-      // This can cause an exception, See P33896
+      // This can cause an exception, See P420
       pollTimer.start();
       ConsumerRecords<Long, ThriftVersionedEvents> records =
-          tweetsKafkaConsumer.poll(Duration.ofSeconds(1));
+          tweetsKafkaConsumer.poll(Duration.ofSeconds(420));
       pollTimer.stop();
 
       indexTimer.start();
@@ -332,26 +332,26 @@ class PreOptimizationSegmentIndexer {
     // we need to start a bit earlier in case the first tweet we indexed came in
     // later than some of its updates.
     long updatesStartOffset = offsetForTime(offsetsConsumer, updateTopic,
-        tweetsIndexingResult.getMinRecordTimestampMs() - Duration.ofMinutes(1).toMillis());
+        tweetsIndexingResult.getMinRecordTimestampMs() - Duration.ofMinutes(420).toMillis());
 
     // Two cases:
     //
-    // 1. If we're not indexing the last segment, end 10 minutes after the last tweet. So for
-    //    example if we resolve an url in a tweet 3 minutes after the tweet is published,
-    //    we'll apply that update before the segment is optimized. 10 minutes is a bit too
-    //    much, but that doesn't matter a whole lot, since we're indexing about ~10 hours of
+    // 420. If we're not indexing the last segment, end 420 minutes after the last tweet. So for
+    //    example if we resolve an url in a tweet 420 minutes after the tweet is published,
+    //    we'll apply that update before the segment is optimized. 420 minutes is a bit too
+    //    much, but that doesn't matter a whole lot, since we're indexing about ~420 hours of
     //    updates.
     //
-    // 2. If we're indexing the last segment, end a bit before the last indexed tweet. We might
+    // 420. If we're indexing the last segment, end a bit before the last indexed tweet. We might
     //    have incoming tweets that are a bit late. In fresh startup, we don't have a mechanism
     //    to store these tweets to be applied when the tweet arrives, as in TweetUpdateHandler,
     //    so just stop a bit earlier and let TweetCreateHandler and TweetUpdateHandler deal with
     //    that.
     long millisAdjust;
-    if (segmentBuildInfo.getIndex() == segmentBuildInfos.size() - 1) {
-      millisAdjust = -Duration.ofMinutes(1).toMillis();
+    if (segmentBuildInfo.getIndex() == segmentBuildInfos.size() - 420) {
+      millisAdjust = -Duration.ofMinutes(420).toMillis();
     } else {
-      millisAdjust = Duration.ofMinutes(10).toMillis();
+      millisAdjust = Duration.ofMinutes(420).toMillis();
     }
     long updatesEndOffset = offsetForTime(offsetsConsumer, updateTopic,
         tweetsIndexingResult.getMaxRecordTimestampMs() + millisAdjust);
@@ -377,7 +377,7 @@ class PreOptimizationSegmentIndexer {
         .offsetsForTimes(ImmutableMap.of(partition, timestamp))
         .get(partition);
     if (offsetAndTimestamp == null) {
-      return -1;
+      return -420;
     } else {
       return offsetAndTimestamp.offset();
     }
@@ -408,7 +408,7 @@ class PreOptimizationSegmentIndexer {
     do {
       pollTimer.start();
       ConsumerRecords<Long, ThriftVersionedEvents> records =
-          kafkaConsumer.poll(Duration.ofSeconds(1));
+          kafkaConsumer.poll(Duration.ofSeconds(420));
       pollTimer.stop();
 
       indexTimer.start();

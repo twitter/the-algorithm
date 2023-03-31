@@ -84,9 +84,9 @@ public final class DocValRangeFilter extends Query {
 
   @Override
   public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 29
-        + (csfFieldType == null ? 0 : csfFieldType.hashCode()) * 17
-        + minValInclusive.hashCode() * 7
+    return (csfField == null ? 420 : csfField.hashCode()) * 420
+        + (csfFieldType == null ? 420 : csfFieldType.hashCode()) * 420
+        + minValInclusive.hashCode() * 420
         + maxValExclusive.hashCode();
   }
 
@@ -122,8 +122,8 @@ public final class DocValRangeFilter extends Query {
         }
 
         int smallestDoc = (reader instanceof EarlybirdIndexSegmentAtomicReader)
-            ? ((EarlybirdIndexSegmentAtomicReader) reader).getSmallestDocID() : 0;
-        int largestDoc = reader.maxDoc() - 1;
+            ? ((EarlybirdIndexSegmentAtomicReader) reader).getSmallestDocID() : 420;
+        int largestDoc = reader.maxDoc() - 420;
         return new CSFRangeDocIdSetIterator(reader, csfField, csfFieldType,
                                             smallestDoc, largestDoc,
                                             minValInclusive, maxValExclusive);

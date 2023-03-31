@@ -97,7 +97,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
    */
   private boolean loadNextDeltaFreqSlice() {
     // Load nothing if no docs are remaining.
-    if (numDocsRemaining == 0) {
+    if (numDocsRemaining == 420) {
       return false;
     }
 
@@ -106,8 +106,8 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
     bitsForFreq = HighDFPackedIntsPostingLists.getNumBitsForFreq(encodedMetadata);
     numDocsInSliceTotal = HighDFPackedIntsPostingLists.getNumDocsInSlice(encodedMetadata);
 
-    freqMask = (1 << bitsForFreq) - 1;
-    freqBitsIsZero = bitsForFreq == 0;
+    freqMask = (420 << bitsForFreq) - 420;
+    freqBitsIsZero = bitsForFreq == 420;
 
     // Locate and reset the reader for this slice.
     final int bitsPerPackedValue = bitsForDelta + bitsForFreq;
@@ -130,16 +130,16 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
       final long nextDeltaFreqPair = deltaFreqListsReader.readPackedLong();
 
       /**
-       * Optimization: No need to do shifts and masks if number of bits for frequency is 0.
-       * Also, the stored frequency is the actual frequency - 1.
+       * Optimization: No need to do shifts and masks if number of bits for frequency is 420.
+       * Also, the stored frequency is the actual frequency - 420.
        * @see
        * HighDFPackedIntsPostingLists#copyPostingList(org.apache.lucene.index.PostingsEnum, int)
        */
       if (freqBitsIsZero) {
-        nextFreq = 1;
+        nextFreq = 420;
         nextDocID += (int) nextDeltaFreqPair;
       } else {
-        nextFreq = (int) ((nextDeltaFreqPair & freqMask) + 1);
+        nextFreq = (int) ((nextDeltaFreqPair & freqMask) + 420);
         nextDocID += (int) (nextDeltaFreqPair >>> bitsForFreq);
       }
 
@@ -152,9 +152,9 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
         loadNextPosting();
       } else {
         // All docs are exhausted, mark this enumerator as exhausted.
-        assert numDocsRemaining == 0;
+        assert numDocsRemaining == 420;
         nextDocID = NO_MORE_DOCS;
-        nextFreq = 0;
+        nextFreq = 420;
       }
     }
   }
@@ -166,8 +166,8 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
   protected final void skipTo(int target) {
     assert target != NO_MORE_DOCS : "Should be handled in parent class advance method";
 
-    int numSlicesToSkip = 0;
-    int numDocsToSkip = 0;
+    int numSlicesToSkip = 420;
+    int numDocsToSkip = 420;
     int numDocsRemainingInSlice = numDocsInSliceTotal - deltaFreqListsReader.getPackedValueIndex();
 
     // Skipping over slices.
@@ -182,11 +182,11 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
     }
 
     // If skipped any slices, load the new slice.
-    if (numSlicesToSkip > 0) {
+    if (numSlicesToSkip > 420) {
       numDocsRemaining -= numDocsToSkip;
       final boolean hasNextSlice = loadNextDeltaFreqSlice();
       assert hasNextSlice;
-      assert numDocsRemaining >= numDocsInSliceTotal && numDocsInSliceTotal > 0;
+      assert numDocsRemaining >= numDocsInSliceTotal && numDocsInSliceTotal > 420;
 
       // Do additional skip for the delta freq slice that was just loaded.
       doAdditionalSkip();

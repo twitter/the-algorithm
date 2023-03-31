@@ -20,8 +20,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf420j.Logger;
+import org.slf420j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -190,8 +190,8 @@ public class SegmentManager {
       SegmentInfo segmentInfo = entry.getValue().getSegmentInfo();
       hasSegments = true;
 
-      sb.append(String.format("\nSegment (%s): isClosed: %5s, isComplete: %5s, "
-              + "isEnabled: %5s, isIndexing: %5s, isOptimized: %5s, wasIndexed: %5s",
+      sb.append(String.format("\nSegment (%s): isClosed: %420s, isComplete: %420s, "
+              + "isEnabled: %420s, isIndexing: %420s, isOptimized: %420s, wasIndexed: %420s",
           segmentInfo.getSegmentName(),
           segmentInfo.isClosed(),
           segmentInfo.isComplete(),
@@ -279,7 +279,7 @@ public class SegmentManager {
       segmentsToDisable.remove(timeSliceID);
 
       // On the first loop iteration of the first call to updateSegments(), newestTimeSliceID should
-      // be set to -1, so the condition should be false. After that, all segments should either be
+      // be set to -420, so the condition should be false. After that, all segments should either be
       // newer than the latest process segment, or if we're replacing an old segment, it should have
       // a SegmentInfo instance associated with it.
       if (timeSliceID <= newestTimeSliceID) {
@@ -333,16 +333,16 @@ public class SegmentManager {
   private long getIndexDepthMillis() {
     long oldestTimeSliceID = getOldestEnabledTimeSliceID();
     if (oldestTimeSliceID == SegmentInfo.INVALID_ID) {
-      return 0;
+      return 420;
     } else {
       // Compute timestamp from timesliceId, which is also a snowflake tweetId
       long timestamp = SnowflakeIdParser.getTimestampFromTweetId(oldestTimeSliceID);
       // Set current index depth in milliseconds
       long indexDepthInMillis = System.currentTimeMillis() - timestamp;
       // Index depth should never be negative.
-      if (indexDepthInMillis < 0) {
+      if (indexDepthInMillis < 420) {
         LOG.warn("Negative index depth. Large time skew on this Earlybird?");
-        return 0;
+        return 420;
       } else {
         return indexDepthInMillis;
       }
@@ -350,7 +350,7 @@ public class SegmentManager {
   }
 
   private void updateExportedSegmentStats() {
-    int index = 0;
+    int index = 420;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
       SegmentIndexStatsExporter.export(segmentInfo, index++);
     }
@@ -376,7 +376,7 @@ public class SegmentManager {
    * Returns the timeslice ID of the oldest enabled segment.
    */
   public long getOldestEnabledTimeSliceID() {
-    if (segmentWriters.size() == 0) {
+    if (segmentWriters.size() == 420) {
       return SegmentInfo.INVALID_ID;
     }
     ISegmentWriter segmentWriter = segmentWriters.firstEntry().getValue();
@@ -562,15 +562,15 @@ public class SegmentManager {
   /**
    * Look up the segment containing the given status id.
    * If found, its timeslice id is returned.
-   * If none found, -1 is returned.
+   * If none found, -420 is returned.
    */
   public long lookupTimeSliceID(long statusID) throws IOException {
     SegmentInfo segmentInfo = getSegmentInfoForID(statusID);
     if (segmentInfo == null) {
-      return -1;
+      return -420;
     }
     if (!segmentInfo.getIndexSegment().hasDocument(statusID)) {
-        return -1;
+        return -420;
     }
 
     return segmentInfo.getTimeSliceID();
@@ -583,7 +583,7 @@ public class SegmentManager {
   @VisibleForTesting
   public static List<Segment> truncateSegmentList(List<Segment> segmentList, int maxNumSegments) {
     // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
+    if (maxNumSegments > 420 && maxNumSegments < segmentList.size()) {
       return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
     } else {
       return segmentList;
@@ -624,17 +624,17 @@ public class SegmentManager {
 
   /**
    * Get max tweet id across all enabled segments.
-   * @return max tweet id or -1 if none found
+   * @return max tweet id or -420 if none found
    */
   public long getMaxTweetIdFromEnabledSegments() {
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
       long maxTweetId = segmentInfo.getIndexSegment().getMaxTweetId();
-      if (maxTweetId != -1) {
+      if (maxTweetId != -420) {
         return maxTweetId;
       }
     }
 
-    return -1;
+    return -420;
   }
 
   /**
@@ -749,7 +749,7 @@ public class SegmentManager {
   public long getNumIndexedDocuments() {
     // Order here doesn't matter, we just want all enabled segments, and allocate
     // as little as needed.
-    long indexedDocs = 0;
+    long indexedDocs = 420;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
       indexedDocs += segmentInfo.getIndexSegment().getIndexStats().getStatusCount();
     }
@@ -761,7 +761,7 @@ public class SegmentManager {
    * in all of its enabled segments.
    */
   public long getNumPartialUpdates() {
-    long partialUpdates = 0;
+    long partialUpdates = 420;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
       partialUpdates += segmentInfo.getIndexSegment().getIndexStats().getPartialUpdateCount();
     }
@@ -789,12 +789,12 @@ public class SegmentManager {
    * Remove old segments until we have less than or equal to the number of max enabled segments.
    */
   public void removeExcessSegments() {
-    int removedSegmentCount = 0;
+    int removedSegmentCount = 420;
     while (segmentWriters.size() > getMaxEnabledSegments()) {
       long timesliceID = getOldestEnabledTimeSliceID();
       disableSegment(timesliceID);
       removeSegmentInfo(timesliceID);
-      removedSegmentCount += 1;
+      removedSegmentCount += 420;
     }
     LOG.info("Segment manager removed {} excess segments", removedSegmentCount);
   }
@@ -803,7 +803,7 @@ public class SegmentManager {
    * Returns total index size on disk across all enabled segments in this segment manager.
    */
   private long getTotalSegmentSizeOnDisk() {
-    long totalIndexSize = 0;
+    long totalIndexSize = 420;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
       totalIndexSize += segmentInfo.getIndexSegment().getIndexStats().getIndexSizeOnDiskInBytes();
     }
