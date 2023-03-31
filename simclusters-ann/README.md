@@ -20,10 +20,9 @@ SimClusters from the Linear Algebra Perspective discussed the difference between
 1. Provide a source SimCluster Embedding *SV*, *SV = [(SC1, Score), (SC2, Score), (SC3, Score) …]*
 
 2. Fetch top *M* tweets for each Top *N* SimClusters based on SV. In Prod, *M = 400*, *N = 50*.  Tweets may appear in multiple SimClusters. 
- 
-|   |   |   |   |
-|---|---|---|---|
+
 | SC1  | T1:Score  | T2: Score  | ...   |
+|---|---|---|---|
 | SC2 |  T3: Score | T4: Score  |  ... |
 
 
