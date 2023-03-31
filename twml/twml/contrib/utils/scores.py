@@ -26,8 +26,9 @@ def get_pairwise_label_scores(labels):
       each value is within [0, 1]
   """
   # raw pairwise label scores/differences
-  pairwise_label_scores = get_pairwise_scores(labels)
+  pairwise_differences = get_pairwise_scores(labels)
   # sanity check to make sure values in differences_ij are [-1, 1]
-  differences_ij = tf.maximum(tf.minimum(1.0, pairwise_label_scores), -1.0)
+  pairwise_differences_clipped = tf.maximum(tf.minimum(1.0, pairwise_differences), -1.0)
   # values in pairwise_label_scores are within [0, 1] for cross entropy
-  return (1.0 / 2.0) * (1.0 + differences_ij)
+  pairwise_label_scores = (1.0 / 2.0) * (1.0 + pairwise_differences_clipped)
+  return pairwise_label_scores
