@@ -27,12 +27,12 @@ case class ListTweetsQuery(
     extends PipelineQuery
     with HasPipelineCursor[UrtOrderedCursor]
     with HasListId
-    with HomeAdsQuery {
-  override val product: Product = ListTweetsProduct
+//     with HomeAdsQuery {
+//   override val product: Product = ListTweetsProduct
 
-  override def withFeatureMap(features: FeatureMap): ListTweetsQuery =
-    copy(features = Some(features))
+//   override def withFeatureMap(features: FeatureMap): ListTweetsQuery =
+//     copy(features = Some(features))
 
-  override val timelineRequestParams: Option[TimelineRequestParams] =
-    Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
-}
+//   override val timelineRequestParams: Option[TimelineRequestParams] =
+//     Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
+// }

@@ -32,19 +32,19 @@ case class FollowingQuery(
     with HasDeviceContext
     with HasSeenTweetIds
     with HasFlipInjectionParams
-    with HomeAdsQuery {
-  override val product: Product = FollowingProduct
+//     with HomeAdsQuery {
+//   override val product: Product = FollowingProduct
 
-  override def withFeatureMap(features: FeatureMap): FollowingQuery =
-    copy(features = Some(features))
+//   override def withFeatureMap(features: FeatureMap): FollowingQuery =
+//     copy(features = Some(features))
 
-  override val timelineRequestParams: Option[TimelineRequestParams] =
-    Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
+//   override val timelineRequestParams: Option[TimelineRequestParams] =
+//     Some(TimelineRequestParams(homeTimelineType = Some(HomeTimelineType.HomeLatest)))
 
-  // Fields below are used for FLIP Injection in Onboarding Task Service (OTS)
-  override val displayLocation: ots.DisplayLocation = ots.DisplayLocation.HomeLatestTimeline
-  override val rankingDisablerWithLatestControlsAvailable: Option[Boolean] = None
-  override val isEmptyState: Option[Boolean] = None
-  override val isFirstRequestAfterSignup: Option[Boolean] = None
-  override val isEndOfTimeline: Option[Boolean] = None
-}
+//   // Fields below are used for FLIP Injection in Onboarding Task Service (OTS)
+//   override val displayLocation: ots.DisplayLocation = ots.DisplayLocation.HomeLatestTimeline
+//   override val rankingDisablerWithLatestControlsAvailable: Option[Boolean] = None
+//   override val isEmptyState: Option[Boolean] = None
+//   override val isFirstRequestAfterSignup: Option[Boolean] = None
+//   override val isEndOfTimeline: Option[Boolean] = None
+// }
