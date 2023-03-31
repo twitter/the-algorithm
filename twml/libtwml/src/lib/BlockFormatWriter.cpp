@@ -19,7 +19,7 @@ namespace twml {
 
     BlockFormatWriter::BlockFormatWriter(const char *file_name, int record_per_block) :
       file_name_(file_name), record_index_(0), records_per_block_(record_per_block) {
-      snprintf(temp_file_name_, PATH_MAX, "%s.block", file_name);
+      snprintf_s(temp_file_name_, PATH_MAX, "%s.block", file_name);
       outputfile_ = fopen(file_name_, "a");
     }
 
