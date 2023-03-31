@@ -176,6 +176,12 @@ public class EarlybirdSearcherStats {
         .build());
   }
 
+
+  /**
+   * Creates a search timer with options specified by TweetsEarlybirdSearcherStats.
+   * @param name The name of the timer.
+   * @return A new SearchTimer.
+   */
   private SearchTimerStats getTimerStatsByClient(
       ThriftScoringFunctionType type,
       String clientId) {
@@ -185,27 +191,55 @@ public class EarlybirdSearcherStats {
         cid -> getTimerStatsByName(getStatsNameByClientAndType(type, cid)));
   }
 
+    /**
+     * Returns the name of the stats for the given scoring function type and client.
+     * @param type The scoring function type.
+     * @param clientId The client ID.
+     * @return The name of the stats.
+     */
   private SearchTimerStats getTimerStatsByTensorflowModel(String modelName) {
     return latencyByTensorflowModel.computeIfAbsent(modelName,
         mn -> getTimerStatsByName(getStatsNameByTensorflowModel(mn)));
   }
 
+    /**
+     * Returns the name of the stats for the given scoring function type and client.
+     * @param type The scoring function type.
+     * @param clientId The client ID.
+     * @return The name of the stats.
+     */
   private SearchTimerStats getTimerStatsByName(String name) {
     return earlybirdServerStatsReceiver.getTimerStats(
         name, TIME_UNIT, false, true, false);
   }
 
+  /**
+   * Returns the name of the stats for the given scoring function type.
+   * @param type The scoring function type.
+   * @return The name of the stats.
+   */
   public static String getStatsNameByType(ThriftScoringFunctionType type) {
     return String.format(
         "search_relevance_scoring_function_%s_requests", type.name().toLowerCase());
   }
 
+  /**
+   * Returns the name of the stats for the given scoring function type and client.
+   * @param type The scoring function type.
+   * @param clientId The client ID.
+   * @return The name of the stats.
+   */
   public static String getStatsNameByClientAndType(
       ThriftScoringFunctionType type,
       String clientId) {
     return String.format("%s_%s", ClientIdUtil.formatClientId(clientId), getStatsNameByType(type));
   }
 
+  /**
+   * Returns the name of the stats for the given Tensorflow model.
+   * @param modelName The Tensorflow model name.
+   * @return The name of the stats.
+   */
   public static String getStatsNameByTensorflowModel(String modelName) {
     return String.format(
         "model_%s_%s", modelName, getStatsNameByType(ThriftScoringFunctionType.TENSORFLOW_BASED));
