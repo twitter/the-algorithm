@@ -233,6 +233,12 @@ object HomeTweetTypePredicates {
           .getOrElse(AuthorIdFeature, None)
           .exists(candidate.getOrElse(DDGStatsVitsFeature, Set.empty[Long]).contains)),
     (
+      "author_is_libertarian",
+      candidate =>
+        candidate
+          .getOrElse(AuthorIdFeature, None)
+          .exists(candidate.getOrElse(DDGStatsLibertariansFeature, Set.empty[Long]).contains)),
+    (
       "author_is_democrat",
       candidate =>
         candidate
