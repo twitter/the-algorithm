@@ -1,0 +1,95 @@
+# SimClusters embedding store enable / disable decider values
+
+# ---------- Dark Traffic Proxy ----------
+dark_traffic_filter:
+  comment: Proportion of the requests that are forwarded as dark traffic to the proxy
+  default_availability: 0
+
+# Tweet embeddings
+enable_LogFavBasedTweet_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavLongestL2EmbeddingTweet_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# Entity embeddings
+enable_FavTfgTopic_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+
+enable_LogFavBasedKgoApeTopic_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# KnownFor embeddings
+enable_FavBasedProducer_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_FollowBasedProducer_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_RelaxedAggregatableLogFavBasedProducer_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# InterestedIn embeddings
+enable_LogFavBasedUserInterestedInFromAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_FollowBasedUserInterestedInFromAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_FavBasedUserInterestedIn_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_FollowBasedUserInterestedIn_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedIn_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_FilteredUserInterestedIn_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_UnfilteredUserInterestedIn_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedAverageAddressBookFromIIAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_UserNextInterestedIn_Model20m145k2020:
+  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000

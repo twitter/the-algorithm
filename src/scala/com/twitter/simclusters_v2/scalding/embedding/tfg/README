@@ -1,0 +1,7 @@
+TFG stands for Topic Follow Graph
+The TFG topic embeddings are embeddings built from Topic Follow Graph.
+Each topic is represented by the sum of its followers' user InterestedIn embeddings.
+
+There are two types of embeddings:
+logfav - topic embeddings built from followers' logfav-based InterestedIn
+fav - topic embeddings built from followers' fav-based InterestedIn

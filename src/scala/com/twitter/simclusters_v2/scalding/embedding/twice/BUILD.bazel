@@ -1,0 +1,166 @@
+scala_library(
+    sources = [
+        "*.scala",
+        "common/*.scala",
+    ],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "src/scala/com/twitter/simclusters_v2/common/clustering",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_connected_components_ape_similarity-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_largest_dim_ape_similarity-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_largest_dim_ape_similarity_2_day_update-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:clusters_members_louvain_ape_similarity-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_by_largest_dim-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_by_largest_dim_2_day_update-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_by_largest_dim_fav_score-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_connected_components-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:interested_in_twice_louvain-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:user_user_normalized_graph-scala",
+        "src/scala/com/twitter/simclusters_v2/scalding/common",
+        "src/scala/com/twitter/simclusters_v2/scalding/embedding",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
+    ],
+)
+
+# ========================
+# ADHOC JOB CONFIGURATIONS
+# Note: Please change mapreduce.job.reduces and --num-reducers together.
+# ========================
+scalding_job(
+    name = "interested_in_twice_largest_dim-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLargestDimAdhocApp",
+    args = [
+        "--date 2021-08-31",
+        "--num-reducers 4000",
+    ],
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    hadoop_cluster = "qus1-bluebird",
+    hadoop_properties = [
+        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
+        ("scalding.with.reducers.set.explicitly", "true"),
+        ("mapreduce.job.reduces", "4000"),
+        ("mapreduce.task.timeout", "0"),
+    ],
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":twice"],
+)
+
+scalding_job(
+    name = "interested_in_twice_largest_dim_fav_score-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLargestDimMaxFavScoreAdhocApp",
+    args = [
+        "--date 2022-07-01",
+        "--num-reducers 4000",
+    ],
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    hadoop_cluster = "qus1-bluebird",
+    hadoop_properties = [
+        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
+        ("scalding.with.reducers.set.explicitly", "true"),
+        ("mapreduce.job.reduces", "4000"),
+        ("mapreduce.task.timeout", "0"),
+    ],
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":twice"],
+)
+
+scalding_job(
+    name = "interested_in_twice_louvain-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLouvainAdhocApp",
+    args = [
+        "--date 2021-08-31",
+        "--num-reducers 4000",
+        "--cosine_similarity_threshold 0.5",
+    ],
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    hadoop_cluster = "qus1-bluebird",
+    hadoop_properties = [
+        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
+        ("scalding.with.reducers.set.explicitly", "true"),
+        ("mapreduce.job.reduces", "4000"),
+        ("mapreduce.task.timeout", "0"),
+    ],
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":twice"],
+)
+
+scalding_job(
+    name = "interested_in_twice_connected_components-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceConnectedComponentsAdhocApp",
+    args = [
+        "--date 2021-08-31",
+        "--num-reducers 4000",
+        "--cosine_similarity_threshold 0.5",
+    ],
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    hadoop_cluster = "qus1-bluebird",
+    hadoop_properties = [
+        ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
+        ("scalding.with.reducers.set.explicitly", "true"),
+        ("mapreduce.job.reduces", "4000"),
+        ("mapreduce.task.timeout", "0"),
+    ],
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":twice"],
+)
+
+# ============================
+# SCHEDULED JOB CONFIGURATIONS
+# Twice jobs have been descheduled
+# ============================

@@ -1,0 +1,26 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "src/thrift/com/twitter/ml/featurestore/timelines:ml-features-timelines-scala",
+        "src/thrift/com/twitter/timelinescorer:thrift-scala",
+        "src/thrift/com/twitter/timelinescorer/server/internal:thrift-scala",
+        "strato/config/columns/ml/featureStore:featureStore-strato-client",
+    ],
+    exports = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "src/thrift/com/twitter/ml/featurestore/timelines:ml-features-timelines-scala",
+        "src/thrift/com/twitter/timelinescorer:thrift-scala",
+        "src/thrift/com/twitter/timelinescorer/server/internal:thrift-scala",
+        "strato/config/columns/ml/featureStore:featureStore-strato-client",
+    ],
+)

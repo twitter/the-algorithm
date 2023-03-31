@@ -1,0 +1,32 @@
+target(
+    dependencies = [
+        "timelineranker/server/src/main/scala/com/twitter/timelineranker/repository",
+        "timelineranker/server/src/main/scala/com/twitter/timelineranker/server",
+        "timelineranker/server/src/main/scala/com/twitter/timelineranker/source",
+    ],
+)
+
+jvm_binary(
+    name = "bin",
+    basename = "timelineranker-server",
+    main = "com.twitter.timelineranker.server.Main",
+    runtime_platform = "java11",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        ":scala",
+        "3rdparty/jvm/org/slf4j:jcl-over-slf4j",  # [1]
+        "3rdparty/jvm/org/slf4j:log4j-over-slf4j",  # [1]
+        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",  # [2]
+        "strato/src/main/scala/com/twitter/strato/logging/logback",  # [2]
+        "timelineranker/server/src/main/resources",  # [2]
+        "twitter-server/logback-classic/src/main/scala",  #[2]
+    ],
+)
+
+# [1] bridge other logging implementations to slf4j-api in addition to JUL
+#     https://docbird.twitter.biz/core_libraries_guide/logging/twitter_server.html
+#     without these, c.t.l.Logger become silent/null logger since no proper
+#     configuration can be found. This can be removed once there are no
+#     depdency from service to c.t.l.Logger
+#
+# [2] incur logback implementation

@@ -1,0 +1,20 @@
+java_library(
+    sources = ["*.java"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/commons-lang",
+        "cuad/projects/ner/thrift:thrift-java",
+        "periscope/api-proxy-thrift/thrift/src/main/thrift:thrift-java",
+        "scrooge/scrooge-core/src/main/scala",
+        "src/java/com/twitter/common/collections",
+        "stitch/stitch-core",
+        "strato/src/main/scala/com/twitter/strato/catalog",
+        "strato/src/main/scala/com/twitter/strato/client",
+        "strato/src/main/scala/com/twitter/strato/thrift",
+        "twitter-server-internal/src/main/scala",
+        "ubs/common/src/main/thrift/com/twitter/ubs:broadcast-thrift-java",
+        "util/util-core:util-core-util",
+    ],
+)

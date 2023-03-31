@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
+        "timelineranker/common:model",
+        "timelines:observe",
+        "timelines/src/main/scala/com/twitter/timelines/authorization",
+        "timelines/src/main/scala/com/twitter/timelines/features",
+        "timelines/src/main/scala/com/twitter/timelines/model/types",
+        "util/util-core:util-core-util",
+    ],
+)

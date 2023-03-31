@@ -1,0 +1,18 @@
+scala_library(
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "cr-ml-ranker/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/cr_ml_ranker",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+    ],
+    exports = [
+        "cr-ml-ranker/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/cr_ml_ranker",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+    ],
+)

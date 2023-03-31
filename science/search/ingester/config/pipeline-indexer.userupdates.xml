@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  
+
+<!--
+     This indexer reads UserModification from user_modification Kafka topic, converts the
+     data into AntisocialUserUpdate by querying Gizmoduck and then writes the data to the
+     the search_user_updates Kafka topic.
+-->
+<pipeline>
+  <property
+      propName="validator"
+      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
+  <listener className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
+  <driverFactory
+      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
+      id="pipeline">
+
+    <!-- This queue is a factor of batchSize larger than inner queues because it is unbatched -->
+    <property
+        propName="queueFactory"
+        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+        capacity="500"
+        fair="false"/>
+  </driverFactory>
+
+  <stage
+    className="com.twitter.search.ingester.pipeline.twitter.userupdates.UserUpdatesPipelineStage"
+    environment="prod"
+    driverFactoryId="pipeline"/>
+</pipeline>

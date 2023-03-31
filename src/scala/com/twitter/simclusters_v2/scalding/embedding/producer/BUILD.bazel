@@ -1,0 +1,223 @@
+scala_library(
+    sources = [
+        "*.scala",
+    ],
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "escherbird/src/scala/com/twitter/escherbird/scalding/source",
+        "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_fav_score-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources/presto_hdfs_sources",
+        "src/scala/com/twitter/simclusters_v2/scalding/common",
+        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
+        "src/scala/com/twitter/simclusters_v2/scalding/embedding",
+        "src/scala/com/twitter/wtf/entity_real_graph/common",
+        "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
+        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
+        "src/thrift/com/twitter/onboarding/relevance/candidates:candidates-scala",
+        "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
+        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
+        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+    ],
+)
+
+hadoop_binary(
+    name = "aggregatable_logfav_based_producer_embeddings_job-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsAdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_logfav_based_producer_embeddings_job_2020-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddings2020AdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_follow_based_producer_embeddings_job_2020-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFollowBasedProducerEmbeddings2020AdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_logfav_based_producer_embeddings_job",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_logfav_based_producer_embeddings_job_2020",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddings2020ScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_follow_based_producer_embeddings_job_2020",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFollowBasedProducerEmbeddings2020ScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_logfav_based_producer_embeddings_job_relaxed_fav_engagement_threshold_2020",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsRelaxedFavEngagementThreshold2020ScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_fav_based_producer_embeddings_job-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_fav_based_producer_embeddings_job",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_fav_based_producer_embeddings_job_2020-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020AdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+hadoop_binary(
+    name = "aggregatable_fav_based_producer_embeddings_job_2020",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020ScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+# Generated with `capesospy-v2 create_target aggregatable_producer_embeddings_by_logfav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash f8229a.
+scalding_job(
+    name = "aggregatable_producer_embeddings_by_logfav_score",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsScheduledApp",
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.queue", "cassowary.default"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    cron = "17 * * * *",
+    hadoop_cluster = "atla-proc3",
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)
+
+# Generated with `capesospy-v2 create_target aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash bc0103.
+scalding_job(
+    name = "aggregatable_producer_embeddings_by_fav_score",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsScheduledApp",
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.queue", "cassowary.default"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    cron = "17 * * * *",
+    hadoop_cluster = "atla-proc3",
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":producer"],
+)

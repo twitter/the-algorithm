@@ -1,0 +1,13 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "common-internal/analytics/twitter-client-user-agent-parser/src/main/scala",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
+        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/store/persistence",
+        "timelineservice/common:model",
+    ],
+)

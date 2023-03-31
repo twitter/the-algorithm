@@ -1,0 +1,20 @@
+java_library(
+    name = "termination",
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
+        "3rdparty/jvm/org/apache/lucene:lucene-core",
+        "3rdparty/jvm/org/apache/lucene:lucene-facet",
+        "3rdparty/jvm/org/apache/lucene:lucene-queries",
+        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "src/java/com/twitter/common/base",
+        "src/java/com/twitter/common/util:system-mocks",
+        "src/java/com/twitter/search/common/metrics",
+        "src/java/com/twitter/search/common/query",
+        "src/java/com/twitter/search/common/search",
+        "src/thrift/com/twitter/search:earlybird-java",
+    ],
+)

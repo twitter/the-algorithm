@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+
+import "tensorflow_serving/apis/classification.proto";
+import "tensorflow_serving/apis/inference.proto";
+import "tensorflow_serving/apis/logging.proto";
+import "tensorflow_serving/apis/predict.proto";
+import "tensorflow_serving/apis/regression.proto";
+import "tensorflow_serving/apis/session_service.proto";
+
+option cc_enable_arenas = true;
+
+message ClassifyLog {
+  ClassificationRequest request = 1;
+  ClassificationResponse response = 2;
+}
+
+message RegressLog {
+  RegressionRequest request = 1;
+  RegressionResponse response = 2;
+}
+
+message PredictLog {
+  PredictRequest request = 1;
+  PredictResponse response = 2;
+}
+
+message MultiInferenceLog {
+  MultiInferenceRequest request = 1;
+  MultiInferenceResponse response = 2;
+}
+
+message SessionRunLog {
+  SessionRunRequest request = 1;
+  SessionRunResponse response = 2;
+}
+
+// Logged model inference request.
+message PredictionLog {
+  LogMetadata log_metadata = 1;
+  oneof log_type {
+    ClassifyLog classify_log = 2;
+    RegressLog regress_log = 3;
+    PredictLog predict_log = 6;
+    MultiInferenceLog multi_inference_log = 4;
+    SessionRunLog session_run_log = 5;
+  }
+}

@@ -1,0 +1,16 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/java/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/ml/api/util",
+        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
+        "src/thrift/com/twitter/ml/api:data-java",
+        "src/thrift/com/twitter/ml/api:data-scala",
+        "src/thrift/com/twitter/ml/api:embedding-java",
+        "src/thrift/com/twitter/ml/api:embedding-scala",
+    ],
+)

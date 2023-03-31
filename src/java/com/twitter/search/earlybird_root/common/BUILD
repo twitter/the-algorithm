@@ -1,0 +1,22 @@
+java_library(
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/com/google/inject:guice",
+        "3rdparty/jvm/commons-lang",
+        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "src/java/com/twitter/common/util:system-mocks",
+        "src/java/com/twitter/search/common/decider",
+        "src/java/com/twitter/search/common/metrics",
+        "src/java/com/twitter/search/common/partitioning/snowflakeparser",
+        "src/java/com/twitter/search/queryparser",
+        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
+        "src/thrift/com/twitter/context:twitter-context-scala",
+        "src/thrift/com/twitter/search:earlybird-java",
+        "src/thrift/com/twitter/search/common:constants-java",
+        "src/thrift/com/twitter/search/common:features-java",
+        "twitter-context/src/main/scala",
+    ],
+)

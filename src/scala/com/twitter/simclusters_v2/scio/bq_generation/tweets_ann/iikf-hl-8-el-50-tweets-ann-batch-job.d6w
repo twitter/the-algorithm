@@ -1,0 +1,39 @@
+class Profile(Struct):
+  project = Required(String)
+  date = Required(String)
+  environment = Default(String, 'dev')
+  job_name = Default(String, 'iikf-hl-8-el-50-tweets-ann-batch-job')
+  machine = Default(String, 'n2-highmem-4')
+
+job = Job(
+   name='{{profile.job_name}}',
+   project='{{profile.project}}',
+   staging_bucket='{{profile.project}}',
+   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
+   region='us-central1',
+   worker_config=WorkerConfig(
+       num_workers=2,
+       worker_machine_type='{{profile.machine}}',
+       worker_disk_type=WorkerDiskType('HDD'),
+   ),
+   extra_args={
+     "date": '{{profile.date}}'
+   },
+   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
+   deployment_config=BatchDeploymentConfig(
+     role='{{profile.user_name}}',
+     environment='prod',
+     build_target='src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:iikf-hl-8-el-50-tweets-ann-batch-job',
+     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
+     statebird_config=StatebirdConfig(
+       batch_width='PT4H',
+       first_time='{{profile.date}}',
+     ),
+     workflow_config=WorkflowConfig(
+      play=True,
+     ),
+     timeout='PT24H'
+   )
+)
+
+jobs=[job]
