@@ -6,7 +6,7 @@ Visibility Filtering is a centralized rule engine that instructs clients how to 
 Notice
 ======
 
-Visibility Filtering library is currently being reviewed and rebuilt, and part of the code has been removed and is not ready to be shared yet. The remaining part of the code needs further review and will be shared once it’s ready. Also code comments have been sanitized.
+Visibility Filtering library is currently under review and being rebuilt, with part of the code already removed and the remaining code undergoing further review before it is ready to be shared. Code comments have also been sanitized.
 
 SafetyLevel
 ===========
