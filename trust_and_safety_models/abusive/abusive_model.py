@@ -33,7 +33,8 @@ ptos_prototype = Model(
 )
 print(ptos_prototype)
 
-cq_loader = BigQueryFeatureLoader(gcp_project=COMPUTE_PROJECT)
+cq_loader = BigQueryFeatureLoader(gcp_project=COMPUTE_PROJECT, parallel_calls=tf.data.experimental.AUTOTUNE)
+
 labels = [
   "has_non_punitive_action",
   "has_punitive_action",
