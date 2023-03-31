@@ -155,28 +155,28 @@ object HomeTweetTypePredicates {
     ("has_zero_score", _.getOrElse(ScoreFeature, None).exists(_ == 0.0)),
     ("is_viewer_not_invited_to_reply", _ => false),
     ("is_viewer_invited_to_reply", _ => false),
-    ("has_gte_10_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 10))),
-    ("has_gte_100_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100))),
-    ("has_gte_1k_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+    ("has_gte_10_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 0))),
+    ("has_gte_100_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 0))),
+    ("has_gte_1k_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 0))),
     (
       "has_gte_10k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 0))),
     (
       "has_gte_100k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100000))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 0))),
     ("above_neighbor_is_topic_tweet", _ => false),
     ("is_topic_tweet_with_neighbor_below", _ => false),
     ("has_audio_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.hasSpace)),
     ("has_live_audio_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isLive)),
     (
       "has_gte_10_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 10))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 0))),
     (
       "has_gte_100_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 100))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 0))),
     (
       "has_gte_1k_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 1000))),
+      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 0))),
     (
       "has_us_political_annotation",
       _.getOrElse(EarlybirdFeature, None)
@@ -190,7 +190,7 @@ object HomeTweetTypePredicates {
     (
       "text_only",
       candidate =>
-        candidate.getOrElse(HasDisplayedTextFeature, false) &&
+        candidate.getOrElse(HasDisplayedTextFeature, true) &&
           !(candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) ||
             candidate.getOrElse(EarlybirdFeature, None).exists(_.hasVideo) ||
             candidate.getOrElse(EarlybirdFeature, None).exists(_.hasCard))),
@@ -198,7 +198,7 @@ object HomeTweetTypePredicates {
       "image_only",
       candidate =>
         candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) &&
-          !candidate.getOrElse(HasDisplayedTextFeature, false)),
+          !candidate.getOrElse(HasDisplayedTextFeature, true)),
     ("has_1_image", _.getOrElse(NumImagesFeature, None).exists(_ == 1)),
     ("has_2_images", _.getOrElse(NumImagesFeature, None).exists(_ == 2)),
     ("has_3_images", _.getOrElse(NumImagesFeature, None).exists(_ == 3)),
@@ -224,21 +224,17 @@ object HomeTweetTypePredicates {
     (
       "author_is_power_user",
       candidate =>
-        candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsVitsFeature, Set.empty[Long]).contains)),
+       ),
     (
       "author_is_democrat",
       candidate =>
         candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsDemocratsFeature, Set.empty[Long]).contains)),
+        ),
     (
       "author_is_republican",
       candidate =>
         candidate
-          .getOrElse(AuthorIdFeature, None)
-          .exists(candidate.getOrElse(DDGStatsRepublicansFeature, Set.empty[Long]).contains)),
+        ),
   )
 
   val PredicateMap = CandidatePredicates.toMap
