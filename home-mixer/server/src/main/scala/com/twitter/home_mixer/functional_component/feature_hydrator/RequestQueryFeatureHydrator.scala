@@ -92,7 +92,7 @@ class RequestQueryFeatureHydrator[
       .add(DDGStatsDemocratsFeature, ddgStatsAuthors.longSeq(Democrats).toSet)
       .add(DDGStatsRepublicansFeature, ddgStatsAuthors.longSeq(Republicans).toSet)
       .add(DDGStatsVitsFeature, ddgStatsAuthors.longSeq(Vits).toSet)
-      .add(DDGStatsJoeFeature, ddgStatsAuthors.longValue(Elon))
+      .add(DDGStatsJoeFeature, ddgStatsAuthors.longValue(Joe))
       .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
       .add(
         GetInitialFeature,
