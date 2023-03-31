@@ -176,6 +176,7 @@ object HomeFeatures {
     override def personalDataTypes: Set[pd.PersonalDataType] = Set(pd.PersonalDataType.ClientType)
   }
   object CachedScoredTweetsFeature extends Feature[PipelineQuery, Seq[hmt.CachedScoredTweet]]
+  object DDGStatsAngrymouseFeature extends Feature[PipelineQuery, Long]
   object DDGStatsElonFeature extends Feature[PipelineQuery, Long]
   object DDGStatsVitsFeature extends Feature[PipelineQuery, Set[Long]]
   object DDGStatsDemocratsFeature extends Feature[PipelineQuery, Set[Long]]
