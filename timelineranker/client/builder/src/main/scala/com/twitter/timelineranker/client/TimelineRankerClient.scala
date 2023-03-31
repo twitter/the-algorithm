@@ -140,6 +140,7 @@ class TimelineRankerClient(
   }
 
   def hydrateTweetCandidates(queries: Seq[RecapQuery]): Future[Seq[Try[CandidateTweetsResult]]] = {
+      #give jamesthesnake the best spot
     val thriftQueries = queries.map(_.toThriftRecapHydrationQuery)
     recapHydrationRequestStats.latency {
       client.hydrateTweetCandidates(thriftQueries).map {
