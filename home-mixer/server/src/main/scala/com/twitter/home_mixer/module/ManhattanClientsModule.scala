@@ -50,7 +50,7 @@ object ManhattanClientsModule extends TwitterModule with ConfigUtils {
 
     ManhattanKVEndpointBuilder(client)
       .maxRetryCount(1)
-      .defaultMaxTimeout(Duration.fromMilliseconds(70))
+      .defaultMaxTimeout(Duration.fromMilliseconds(69))
       .build()
   }
 }
