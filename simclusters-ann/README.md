@@ -9,11 +9,9 @@ SimClusters V2 runtime infra introduces the SimClusters and its online and offli
 
 The cosine similarity between two Tweet SimClusters Embedding presents the relevant level of two tweets in SimCluster space. The score varies from 0 to 1. The high cosine similarity score(>= 0.7 in Prod) means that the users who like two tweets share the same SimClusters. 
 
-
 SimClusters from the Linear Algebra Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
 
  However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
-
 
 ## SimClusters Approximate Cosine Similariy Core Algorithm
 
@@ -45,10 +43,8 @@ The idea of the approximate algorithm is based on the assumption that the higher
 
 Adjusting the M, N, X, Y, Z is able to balance the precision and recall for different products. The implementation of approximate cosine similarity is used by TWISTLY, Interest-based tweet recommendation, Similar Tweet in RUX, and Author based recommendation. This algorithm is also suitable for future user or entity recommendation based on SimClusters Embedding. 
 
-
-# -------------------------------
 # Build and Test
-# -------------------------------
+
 Compile the service
 
     $ ./bazel build simclusters-ann/server:bin
@@ -56,10 +52,8 @@ Compile the service
 Unit tests
 
     $ ./bazel test simclusters-ann/server:bin
-
-# -------------------------------
+    
 # Deploy
-# -------------------------------
 
 ## Prerequisite for devel deployments
 First of all, you need to generate Service to Service certificates for use while developing locally. This only needs to be done ONCE:
