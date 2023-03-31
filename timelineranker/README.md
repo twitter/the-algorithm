@@ -1,6 +1,6 @@
 # Overview
 
-**TimelineRanker** (TLR) is a legacy service which provides relevance-scored tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service. Despite its name, it no longer does any kind of heavy ranking/model-based ranking itself - just uses relevance scores from the Search Index for ranked tweet endpoints.
+**TimelineRanker** (TLR) is a legacy service that provides relevance-scored tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service. Despite its name, it no longer does any kind of heavy ranking/model-based ranking itself - just uses relevance scores from the Search Index for ranked tweet endpoints.
 
 The following is a list of major services that Timeline Ranker interacts with:
 
