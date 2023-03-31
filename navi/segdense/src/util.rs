@@ -9,15 +9,13 @@ use crate::segdense_transform_spec_home_recap_2022::{self as seg_dense, InputFea
 
 pub fn load_config(file_name: &str) -> seg_dense::Root {
     let json_str = fs::read_to_string(file_name)
-        .expect(&format!("Unable to load segdense file {}", file_name));
-    let seg_dense_config =
-        parse(&json_str).expect(&format!("Unable to parse segdense file {}", file_name));
-    return seg_dense_config;
+        .unwrap_or_else(|_| panic!("Unable to load segdense file {file_name}"));
+    parse(&json_str).unwrap_or_else(|_| panic!("Unable to parse segdense file {file_name}"))
 }
 
 pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
     let root: seg_dense::Root = serde_json::from_str(json_str)?;
-    return Ok(root);
+    Ok(root)
 }
 
 /**
@@ -80,12 +78,9 @@ pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, S
         let feature_id = input_feature.feature_id;
         let feature_info = to_feature_info(&input_feature);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                fm.set(feature_id, info)
-            }
-            None => (),
+        if let Some(info) = feature_info {
+            debug!("{info:?}");
+            fm.set(feature_id, info)
         }
     }
 
@@ -94,18 +89,15 @@ pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, S
 #[allow(dead_code)]
 fn add_feature_info_to_mapper(
     feature_mapper: &mut FeatureMapper,
-    input_features: &Vec<InputFeature>,
+    input_features: &[InputFeature],
 ) {
     for input_feature in input_features.iter() {
         let feature_id = input_feature.feature_id;
         let feature_info = to_feature_info(input_feature);
 
-        match feature_info {
-            Some(info) => {
-                debug!("{:?}", info);
-                feature_mapper.set(feature_id, info)
-            }
-            None => (),
+        if let Some(info) = feature_info {
+            debug!("{info:?}");
+            feature_mapper.set(feature_id, info)
         }
     }
 }
