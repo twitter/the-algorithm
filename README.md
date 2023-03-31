@@ -1,7 +1,7 @@
 # Twitter Recommendation Algorithm
 
 The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
-Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
+Home Timeline. For an introduction to how the algorithm works, please refer to our [Engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
 diagram below illustrates how major services and jobs interconnect.
 
 ![](docs/system-diagram.png)
@@ -32,8 +32,8 @@ These are the main components of the Recommendation Algorithm included in this r
 
 We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
 
-## Contributing
+## For Contributors
 
-We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
+We invite the global community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter for everyone.
 
 Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
