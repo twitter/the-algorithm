@@ -1,7 +1,6 @@
 import tensorflow as tf
 
-physical_devices = tf.config.list_physical_devices('GPU') 
-for device in physical_devices:
+for device in tf.config.list_physical_devices('GPU'):
     tf.config.experimental.set_memory_growth(device, True)
 
 from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
