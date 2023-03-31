@@ -1,0 +1,22 @@
+{
+  "name": "the-algorithm",
+  "version": "1.0.0",
+  "description": "Source code for Twitter's Recommendation Algorithm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vloss3/the-algorithm.git"
+  },
+  "author": "vloss3",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vloss3/the-algorithm/issues"
+  },
+  "homepage": "https://github.com/vloss3/the-algorithm#readme",
+  "devDependencies": {
+    "typescript": "5.0.3"
+  }
+}
