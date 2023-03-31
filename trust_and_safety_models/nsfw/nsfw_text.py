@@ -7,7 +7,6 @@ from sklearn.metrics import average_precision_score, classification_report, prec
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import matplotlib.pyplot as plt
-import re
 
 from twitter.cuad.representation.models.optimization import create_optimizer
 from twitter.cuad.representation.models.text_encoder import TextEncoder
@@ -65,8 +64,8 @@ def clean_tweet(text):
     return text.strip().lower()
 
 
-df['processed_text'] = df['text'].astype(str).map(clean_tweet)
-df.sample(10)
+pd['processed_text'] = pd['text'].astype(str).map(clean_tweet)
+pd.sample(10)
 
 X_train, X_val, y_train, y_val = train_test_split(df[['processed_text']], df['is_nsfw'], test_size=0.1, random_state=1)
 
@@ -136,6 +135,7 @@ history = model.fit(
 
 model.predict(["xxx 🍑"])
 
+# Where is apply model coming from?
 preds = X_val.processed_text.apply(apply_model)
 print(classification_report(y_val, preds >= 0.90, digits=4))
 
