@@ -8,7 +8,7 @@ We build our user and tweet SimClusters embeddings based on the inferred communi
 
 For more details, please read our paper that was published in KDD'2020 Applied Data Science Track: https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
 
-## Brief introduction to Simclusters Algorithm
+## A brief introduction to Simclusters Algorithm
 
 ### Follow relationships as a bipartite graph
 Follow relationships on Twitter are perhaps most naturally thought of as directed graph, where each node is a user and each edge represents a Follow. Edges are directed in that User 1 can follow User 2, User 2 can follow User 1 or both User 1 and User 2 can follow each other.
@@ -22,7 +22,7 @@ This directed graph can be also viewed as a bipartite graph, where nodes are gro
 ### Community Detection - Known For 
 The bipartite follow graph can be used to identify groups of Producers who have similar followers, or who are "Known For" a topic. Specifically, the bipartite follow graph can also be represented as an *m x n* matrix (*A*), where consumers are presented as *u* and producers are represented as *v*.
 
-Producer-producer similarity is computed as the cosine similarity between users who follow each producer. The resulting cosine similarity values can be used to construct a producer-producer similarity graph, where the nodes are producers and edges are weighted by the corresponding cosine similarity value. Noise removal is performed, such that edges with weights below a specified threshold are deleted from the graph.
+The producer-producer similarity is computed as the cosine similarity between users who follow each producer. The resulting cosine similarity values can be used to construct a producer-producer similarity graph, where the nodes are producers and edges are weighted by the corresponding cosine similarity value. Noise removal is performed, such that edges with weights below a specified threshold are deleted from the graph.
 
 After noise removal has been completed, Metropolis-Hastings sampling-based community detection is then run on the Producer-Producer similarity graph to identify a community affiliation for each producer. This algorithm takes in a parameter *k* for the number of communities to be detected.
 
@@ -45,7 +45,7 @@ An Interested In matrix (*U*) can be computed by multiplying the matrix represen
 
 In this toy example, consumer 1 is interested in community 1 only, whereas consumer 3 is interested in all three communities. There is also a noise removal step applied to the Interested In matrix.
 
-We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based tweet recommendations.
+We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings are one of our major sources for consumer-based tweet recommendations.
 
 ### Producer Embeddings
 When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
@@ -57,7 +57,7 @@ To calculate producer embeddings, the cosine similarity is calculated between ea
 Producer embeddings are used for producer-based tweet recommendations. For example, we can recommend similar tweets based on an account you just followed.
 
 ### Entity Embeddings
-SimClusters can also be used to generate embeddings for different kind of contents, such as
+SimClusters can also be used to generate embeddings for different kinds of content, such as
 - Tweets (used for Tweet recommendations)
 - Topics (used for TopicFollow)
 
@@ -68,7 +68,7 @@ Since tweet embeddings are updated each time a tweet is favorited, they change o
 
 Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
 
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
+We have an online Heron job that updates the tweet embeddings in real time, check out [here](summingbird/README.md) for more. 
 
 #### Topic embeddings
 Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
