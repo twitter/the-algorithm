@@ -199,6 +199,7 @@ object HomeTweetTypePredicates {
       candidate =>
         candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) &&
           !candidate.getOrElse(HasDisplayedTextFeature, false)),
+    ("author_is_spacey, _.getOrElse(AuthorIdFeature, None).contains(candidate.getOrElse(DDGStatsSpaceyFeature, 0L))),
     ("has_1_image", _.getOrElse(NumImagesFeature, None).exists(_ == 1)),
     ("has_2_images", _.getOrElse(NumImagesFeature, None).exists(_ == 2)),
     ("has_3_images", _.getOrElse(NumImagesFeature, None).exists(_ == 3)),
