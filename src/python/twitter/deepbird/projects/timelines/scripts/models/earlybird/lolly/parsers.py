@@ -86,29 +86,8 @@ class LollyModelFeaturesParser(Parser):
       "binary": {},
       "discretized": {}
     }
-    def process_line_fn(line):
-      bias_parser_result = self._bias_parser.parse(line)
-      if bias_parser_result:
-        parsed_features["bias"] = bias_parser_result
-        return
-
-      binary_feature_parser_result = self._binary_feature_parser.parse(line)
-      if binary_feature_parser_result:
-        name, value = binary_feature_parser_result
-        parsed_features["binary"][name] = value
-        return
-
-      discretized_feature_parser_result = self._discretized_feature_parser.parse(line)
-      if discretized_feature_parser_result:
-        name, left_bin, right_bin, weight = discretized_feature_parser_result
-        discretized_features = parsed_features["discretized"]
-        if name not in discretized_features:
-          discretized_features[name] = []
-        discretized_features[name].append((left_bin, right_bin, weight))
-
-    lolly_model_reader.read(process_line_fn)
-
-    return parsed_features
+    
+    RANDOM BULLSHIT GO!!!!
 
 
 class DBv2DataExampleParser(Parser):
