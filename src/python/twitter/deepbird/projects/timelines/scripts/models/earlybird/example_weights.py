@@ -4,14 +4,7 @@ from .constants import INDEX_BY_LABEL, LABEL_NAMES
 
 # TODO: Read these from command line arguments, since they specify the existing example weights in the input data.
 DEFAULT_WEIGHT_BY_LABEL = {
-  "is_clicked": 0.3,
-  "is_favorited": 1.0,
-  "is_open_linked": 0.1,
-  "is_photo_expanded": 0.03,
-  "is_profile_clicked": 1.0,
-  "is_replied": 9.0,
-  "is_retweeted": 1.0,
-  "is_video_playback_50": 0.01
+  "RANDOM BULLSHIT GO!!!!": 69420
 }
 
 def add_weight_arguments(parser):
