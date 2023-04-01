@@ -3,7 +3,7 @@
 ## Overview
 SimClusters is as a general-purpose representation layer based on overlapping communities into which users as well as heterogeneous content can be captured as sparse, interpretable vectors to support a multitude of recommendation tasks.
 
-We build our user and tweet SimClusters embeddings based on the inferred communities, and the representations power our personalized tweet recommendation via our online serving service SimClusters ANN.
+We build our user and Tweet SimClusters embeddings based on the inferred communities, and the representations power our personalized Tweet recommendation via our online serving service SimClusters ANN.
 
 
 For more details, please read our paper that was published in KDD'2020 Applied Data Science Track: https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
@@ -45,16 +45,16 @@ An Interested In matrix (*U*) can be computed by multiplying the matrix represen
 
 In this toy example, consumer 1 is interested in community 1 only, whereas consumer 3 is interested in all three communities. There is also a noise removal step applied to the Interested In matrix.
 
-We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based tweet recommendations.
+We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based Tweet recommendations.
 
 ### Producer Embeddings
-When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
+When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users Tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
 
 To calculate producer embeddings, the cosine similarity is calculated between each Producer’s follow graph and the Interested In vector for each community.
 
 <img src="images/producer_embeddings.png">
 
-Producer embeddings are used for producer-based tweet recommendations. For example, we can recommend similar tweets based on an account you just followed.
+Producer embeddings are used for producer-based Tweet recommendations. For example, we can recommend similar Tweets based on an account you just followed.
 
 ### Entity Embeddings
 SimClusters can also be used to generate embeddings for different kind of contents, such as
@@ -62,16 +62,16 @@ SimClusters can also be used to generate embeddings for different kind of conten
 - Topics (used for TopicFollow)
 
 #### Tweet embeddings
-When a tweet is created, its tweet embedding is initialized as an empty vector.
-Tweet embeddings are updated each time the tweet is favorited. Specifically, the InterestedIn vector of each user who Fav-ed the tweet is added to the tweet vector.
-Since tweet embeddings are updated each time a tweet is favorited, they change over time.
+When a Tweet is created, its Tweet embedding is initialized as an empty vector.
+Tweet embeddings are updated each time the Tweet is favorited. Specifically, the InterestedIn vector of each user who Fav-ed the Tweet is added to the Tweet vector.
+Since Tweet embeddings are updated each time a Tweet is favorited, they change over time.
 
-Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
+Tweet embeddings are critical for our Tweet recommendation tasks. We can calculate Tweet similarity and recommend similar tweets to users based on their Tweet engagement history.
 
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
+We have a online Heron job that updates the Tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
 
 #### Topic embeddings
-Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
+Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a Tweet that has a topic annotation (with some time decay).
 
 <img src="images/topic_embeddings.png">
 
@@ -88,8 +88,8 @@ The whole SimClusters project can be understood as 2 main components
 | Jobs   | Code  | Description  |
 |---|---|---|
 | KnownFor  |  [simclusters_v2/scalding/update_known_for/UpdateKnownFor20M145K2020.scala](scalding/update_known_for/UpdateKnownFor20M145K2020.scala) | The job outputs the KnownFor dataset which stores the relationships between  clusterId and producerUserId. </n> KnownFor dataset covers the top 20M followed producers. We use this KnownFor dataset (or so-called clusters) to build all other entity embeddings. |
-| InterestedIn Embeddings|  [simclusters_v2/scalding/InterestedInFromKnownFor.scala](scalding/InterestedInFromKnownFor.scala) |  This code implements the job for computing users' interestedIn embedding from the  KnownFor dataset. </n> We use this dataset for consumer-based tweet recommendations.|
-| Producer Embeddings  | [simclusters_v2/scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala](scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala)  |  The code implements the job for computer producer embeddings, which represents the content user produces. </n> We use this dataset for producer-based tweet recommendations.|
+| InterestedIn Embeddings|  [simclusters_v2/scalding/InterestedInFromKnownFor.scala](scalding/InterestedInFromKnownFor.scala) |  This code implements the job for computing users' interestedIn embedding from the  KnownFor dataset. </n> We use this dataset for consumer-based Tweet recommendations.|
+| Producer Embeddings  | [simclusters_v2/scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala](scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala)  |  The code implements the job for computer producer embeddings, which represents the content user produces. </n> We use this dataset for producer-based Tweet recommendations.|
 | Semantic Core Entity Embeddings  | [simclusters_v2/scalding/embedding/EntityToSimClustersEmbeddingsJob.scala](scalding/embedding/EntityToSimClustersEmbeddingsJob.scala)   | The job computes the semantic core entity embeddings. It outputs datasets that stores the  "SemanticCore entityId -> List(clusterId)" and "clusterId -> List(SemanticCore entityId))" relationships.|
 | Topic Embeddings | [simclusters_v2/scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala](scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala)  | Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings </n> A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn. We use this embedding for topic related recommendations.|
 
@@ -108,5 +108,5 @@ All SimClusters related GCP jobs are under [src/scala/com/twitter/simclusters_v2
 
 | Jobs   | Code  | Description  |
 |---|---|---|
-| Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of tweets for the SimClusters |
+| Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of Tweets for the SimClusters |
 | Persistent Tweet Embedding Job|  [simclusters_v2/summingbird/storm/PersistentTweetJob.scala](summingbird/storm/PersistentTweetJob.scala) |  Persistent the tweet embeddings from MemCache into Manhattan.|
