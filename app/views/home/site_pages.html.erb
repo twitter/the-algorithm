@@ -1,0 +1,41 @@
+<!--BACK END, would love system docs to be classes of main-->
+<div class="system docs">
+	<h2 class="heading">Archive Pages</h2>
+
+<p class="notes">
+  The following links will take you to all of the possible pages in the archive. 
+  <strong>These are only links! You will still need the appropriate permissions to actually see the pages!</strong> 
+  If you have trouble, try logging in as the test user or test admin accounts. (Those will only work on webdev or test, FYI.)
+</p>
+
+<p class="notes">
+  If any of these pages do not work at all (ie if you get a 404 or a notice that no action matches), please notify a senior
+  coder, since that probably means it is an unused route that should get cleaned up to improve performance.
+</p>
+
+<p class="notes">  
+  Where an existing object is required to see a form (for instance when looking at a nested form), 
+  we will attempt to make the link using one that you (that is, the user you are currently logged in as) can access. 
+  If that doesn't work, you may need to manually edit the URL to put in the ID of an object 
+  that you can see, or make a new object.
+</p>
+
+<h4 class="heading">Pages</h4>
+<ul>
+  <%= @paths.sort {|a,b| a[0] <=> b[0]}.map {|path, name| content_tag(:li, link_to("#{path}  (#{name})", path))}.join("\n").html_safe %>
+</ul>
+
+<% unless @errors.empty? %>  
+  <h4 class="heading">Errors</h4>
+  <p class="notes">
+    There were problems linking to the following pages, either because we couldn't find an object to use or because it's a 
+    weird kind of page. You can manually fix and paste these routes in to see those pages.
+  </p>
+
+  <ul>
+    <%= @errors.map {|error| content_tag(:li, error)}.join("\n").html_safe %>
+  </ul>
+<% end %>
+
+
+</div>

@@ -1,0 +1,43 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= ts("Invitation Requests") %>
+</h2>
+
+<p>
+  <%= ts("To get a free Archive of Our Own account, you need an Invitation.
+         By submitting your email address to our invitation queue, you confirm
+         that you are at least 13 years old, and if you're in a country whose
+         residents/citizens have to be of an age older than 13 to consent,
+         you are old enough to consent to the processing of your personal data
+         without our obtaining written permission from a parent or legal guardian.
+         We will use the email address you submit only to send you an Invitation
+         and to process/manage your account activation. Please don't request an Invitation
+         unless you've read the %{tos} and agree to abide by those Terms.",
+         tos: link_to(ts("Terms of Service"), tos_path)
+      ).html_safe %>
+</p>
+<!--/descriptions-->
+
+<!--main content-->
+<h3 class="heading"><%= ts("Request an invitation") %></h3>
+
+<%= form_for(@invite_request, html: { class: "simple" }) do |f| %>
+  <%= error_messages_for @invite_request %>
+  <fieldset>
+    <p>
+      <%= f.label :email %>
+      <%= f.text_field :email %>
+      <%= f.submit ts("Add me to the list") %>
+    </p>
+  </fieldset>
+<% end %>
+
+<p> 
+    <%= ts("If you have already requested an invitation, you can %{status}. There are currently %{count} people on the waiting list. We are sending 
+    out %{invites} invitations per day.",
+      status: link_to("check your position on the waiting list",
+                      status_invite_requests_path),
+      count: InviteRequest.count,
+      invites: @admin_settings.invite_from_queue_number).html_safe %>
+</p>
+<!--/content-->

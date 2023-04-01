@@ -1,0 +1,52 @@
+/*==ZONE: TAGS, TAGSETS, and TAG WRANGLING 
+tag wrangling is a type of Home Zone
+individual tags are shown in many contexts across the site and are styled in types-groups.css
+tags also have various states in roles-states.css (arguably a nomination is an embyronic tag)/
+
+/*TAGS SHOW */
+
+ul.tree, ul.tree li {
+  display: block;
+}
+
+.tag_wranglers-index #tag_wranglers {
+  width: 75%;
+  float: left;
+}
+
+/*TAGSETS
+tagsets are new and homeless; they don't really fit into the site pattern yet
+so they might change their pattern a lot before 1.0*/
+
+/*reviewing nominations*/
+
+dl.nomination {
+  border: 0;
+  margin: 0;
+  padding: 0;
+    box-shadow: none;
+}
+
+.nomination dt, .nomination dd {
+  float: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  width: auto;
+}
+
+.nomination dt {
+  background: #fff;
+  width: 50%;
+}
+
+.nomination dd.autocomplete ul, .nomination dd.autocomplete li {
+  margin-bottom: -0.375em;
+}
+
+dd.autocomplete li.input {
+  margin: 0;
+  padding: 0;
+}
+
+/*END== */

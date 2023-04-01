@@ -1,0 +1,15 @@
+<% # this partial is used for an abbreviated list of unthreaded comments (by a single user) %>
+<% # expects local "comments" %>
+
+<dl class="comments index group">
+  <% comments.each do |comment| %>
+    <dt>
+      <%= ts("Comment on") %>  <%= link_to_comment_ultimate_parent(comment) %>
+      <span class="datetime"><%= time_in_zone(comment.created_at) %></span>
+    </dt>
+    <dd>
+      <%= truncate(comment.comment_content, length: 100, separator: ' ') %>
+    </dd>
+  <% end %>
+</dl>
+

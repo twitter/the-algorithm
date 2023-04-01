@@ -1,0 +1,188 @@
+<dl id="help">
+  <dt>You can create new skins for the Archive using our wizard, or by writing your own CSS (cascading style sheets) code</dt>
+  <dd>
+    <p>
+      Note that for security reasons, you can only use a limited set of CSS code: all other declarations and comments will be removed!
+    </p>
+  </dd>
+
+  <dt>We allow the following properties including all their variations (and shorthand values)</dt>
+  <dd>
+    <p>
+      <code>
+        background, border, column, cue, font, layer-background, layout-grid,
+        list-style, margin, marker, outline, overflow, padding, page-break, pause,
+        scrollbar, text, transform, transition
+      </code>
+    </p>
+  </dd>
+  <dt>We also allow the following specific properties</dt>
+  <dd>
+    <p>
+      <code>
+        -replace, -use-link-source, accelerator, alignment-adjust,
+        alignment-baseline, appearance, azimuth, baseline-shift, behavior,
+        binding, bookmark-label, bookmark-level, bookmark-target, bottom,
+        box-align, box-direction, box-flex, box-flex-group, box-lines, box-orient,
+        box-pack, box-shadow, box-sizing, caption-side, clear, clip, color,
+        color-profile, content, counter-increment, counter-reset, crop, cue,
+        cue-after, cue-before, cursor, direction, display, dominant-baseline,
+        drop-initial-after-adjust, drop-initial-after-align,
+        drop-initial-before-adjust, drop-initial-before-align, drop-initial-size,
+        drop-initial-value, elevation, empty-cells, filter, fit, fit-position,
+        float, float-offset, font, font-effect, font-emphasize,
+        font-emphasize-position, font-emphasize-style, font-family, font-size,
+        font-size-adjust, font-smooth, font-stretch, font-style, font-variant,
+        font-weight, grid-columns, grid-rows, hanging-punctuation, height,
+        hyphenate-after, hyphenate-before, hyphenate-character, hyphenate-lines,
+        hyphenate-resource, hyphens, icon, image-orientation, image-resolution,
+        ime-mode, include-source, inline-box-align, layout-flow, left,
+        letter-spacing, line-break, line-height, line-stacking,
+        line-stacking-ruby, line-stacking-shift, line-stacking-strategy, mark,
+        mark-after, mark-before, marks, marquee-direction, marquee-play-count,
+        marquee-speed, marquee-style, max-height, max-width, min-height,
+        min-width, move-to, nav-down, nav-index, nav-left, nav-right, nav-up,
+        opacity, orphans, page, page-policy, phonemes, pitch, pitch-range,
+        play-during, position, presentation-level, punctuation-trim, quotes,
+        rendering-intent, resize, rest, rest-after, rest-before, richness, right,
+        rotation, rotation-point, ruby-align, ruby-overhang, ruby-position,
+        ruby-span, size, speak, speak-header, speak-numeral, speak-punctuation,
+        speech-rate, stress, string-set, tab-side, table-layout, target,
+        target-name, target-new, target-position, top, unicode-bibi, unicode-bidi,
+        user-select, vertical-align, visibility, voice-balance, voice-duration,
+        voice-family, voice-pitch, voice-pitch-range, voice-rate, voice-stress,
+        voice-volume, volume, white-space, white-space-collapse, widows, width,
+        word-break, word-spacing, word-wrap, writing-mode, z-index
+      </code>
+    </p>
+  </dd>
+
+  <dt>Look at other public skins for examples</dt>
+  <dd>
+    <p>
+      <a href="/skins">All approved public skins</a> are visible and you can read their code and copy them to edit for
+      your own use.
+    </p>
+  </dd>
+
+  <dt>Use only one declaration per property per ruleset</dt>
+  <dd>
+    <p>
+      The CSS parser we use retains only one declaration for each property, meaning that rulesets like<br>
+      <code><pre>
+        .my-class {
+          background: -moz-linear-gradient(top, #1e5799 0%, #2989d8 50%, #207cca 51%, #7db9e8 100%);
+          background: -o-linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+          background: -webkit-linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+        }
+      </pre></code>
+      will have all but the last <code>background</code> declaration removed (so your gradient would only show up in WebKit browsers). To avoid losing declarations with repeated properties, split each one into its own ruleset, like so:
+      <code><pre>
+        .my-class { background: -moz-linear-gradient(top, #1e5799 0%, #2989d8 50%, #207cca 51%, #7db9e8 100%); }
+        .my-class { background: -o-linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%); }
+        .my-class { background: -webkit-linear-gradient(top, #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%); }
+      </pre></code>
+    </p>
+  </dd>
+
+  <dt>Font and Font Family</dt>
+  <dd>
+    <p>
+      Unfortunately, you cannot use the <code>font</code> shorthand in your CSS. All font properties have to be specified separately, e.g.,
+      <code>font-size: 1.1em; font-weight: bold; font-family: Cambria, Constantia, Palatino, Georgia, serif;</code>
+    </p>
+    <p>
+      In the <code>font-family</code> property, we allow you to specify any font with an alphanumeric name.
+      You can (but don't have to) specify the name with single or double quotes
+      around it, just make sure the quotes match. (e.g., 'Gill Sans' and "Gill Sans" are both fine; 'Gill Sans" won't work.)
+      Keep in mind that a font has to be installed on the user's operating system to work. It's a good idea when specifying fonts to use
+      fallbacks in case your first-choice font isn't available.
+      See <a href="https://www.w3schools.com/cssref/css_fonts_fallbacks.asp">a set of web-safe fonts with fallbacks</a>.
+    </p>
+    <p>
+      We <strong>cannot</strong> allow the <code>@font-face</code> attribute. Sorry! If you have an uncommon font that you want to
+      use in a skin you would like to share, we suggest adding a comment in the skin's "Description" field with a pointer to a place for users
+      to download the font themselves, and using web-safe fonts as fallbacks.
+    </p>
+  </dd>
+
+  <dt>URLs</dt>
+  <dd>
+    <p>
+      We allow external image URLs (specified as <code>url('http://somesite.com/my_awesome_image.jpg')</code>) in JPG, GIF, and PNG formats.
+      Please note, however, that skins using external images will not be approved for public use.
+    </p>
+  </dd>
+
+  <dt>Keywords</dt>
+  <dd>
+    <p>
+      We allow all standard CSS keyword values (e.g., <code>absolute</code>, <code>bottom</code>, <code>center</code>, <code>underline</code>, etc.).
+    </p>
+  </dd>
+
+  <dt>Numeric Values</dt>
+  <dd>
+    <p>
+      You can specify numeric values up to two decimal places, either as percentages or in <a href="https://w3schools.com/css/css_units.asp">various units</a>: <br/>
+      <code>cm, em, ex, in, mm, pc, pt, px</code>
+    </p>
+    <p>
+      PS: we highly encourage learning about and using <code>em</code>, which lets you set things relative to the viewer's current font size!
+      It will make your layouts much more flexible and responsive to different browser/font settings.
+    </p>
+  </dd>
+
+  <dt>Colors</dt>
+  <dd>
+    <p>
+      You can specify colors using hex values (eg, <code>#000000</code> is black in hex) or with RGB or RGBA values (e.g., <code>rgb(0,0,0)</code> and <code>rgba(0,0,0,0)</code> both give you black).
+      This may be safer since not all browsers will necessarily support all color names. However, color names are more
+      readable and easier to remember, so we also allow color names. (We suggest you stick to
+      <a href="https://www.w3schools.com/colors/colors_names.asp">the set of commonly-supported color names</a>.)
+    </p>
+  </dd>
+
+  <dt>Scale</dt>
+  <dd>
+    <p>
+      You can specify scale (for the <code>transform</code> property) as <code>scale(numeric value)</code> where the numeric value can be
+      specified up to two decimal places.
+    </p>
+  </dd>
+
+  <dt>Comments</dt>
+  <dd>
+    <p>Comments are stripped from CSS.</p>
+  </dd>
+
+  <dt>If you are new to CSS, here are the basics:</dt>
+  <dd>
+    <p>
+      A line of CSS code looks pretty much like this: <code>selector {property: value;}</code>
+    </p>
+    <p>
+      The <strong>selector</strong> is either the name of an HTML tag (like <code>body</code> or <code>h1</code>),
+       or it can be an id or class that has been set on a tag.
+      The <strong>property</strong> is what you want to change in the contents of that tag (for instance the font size),
+      and the <strong>value</strong> is what you want to set it to.
+    </p>
+    <p>
+      Examples:
+      <ul>
+        <li>Inside the "body" tag, set the font size slightly larger than the baseline: <code>body {font-size: 1.1em;}</code></li>
+        <li>Inside any tags with the id "header", set the background color to purple: <code>#header {background-color: purple}</code></li>
+        <li>Inside any tags with the class "meta", make the text blink: (we do not advise this) <code>.meta {font-style: blink}</code></li>
+      </ul>
+    </p>
+
+    <p>
+      Some useful CSS tutorials for more information:
+      <ul>
+        <li><a href="http://www.cssbasics.com/">CSS Basics tutorial</a></li>
+        <li><a href="http://developer.mozilla.org/docs/CSS/Getting_Started">Getting Started (CSS Tutorial) from MDN</a></li>
+      </ul>
+    </p>
+  </dd>
+
+</dl>

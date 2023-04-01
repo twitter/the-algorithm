@@ -1,0 +1,26 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= ts("Invitation Request Status") %>
+</h2>
+
+<p>
+  <%= ts("There are currently %{count} people on the waiting list.", count: InviteRequest.count) %>
+  <% if @admin_settings.invite_from_queue_enabled? %>
+    <%= ts("We are sending out %{invites} invitations per day.", invites: @admin_settings.invite_from_queue_number) %>
+  <% end %>
+</p>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_tag show_invite_request_path, { remote: true, method: :get, class: "simple" } do %>
+  <fieldset>
+    <p>
+      <%= label_tag :email %>
+      <%= text_field_tag :email %>
+      <%= submit_tag ts("Look me up") %>
+    </p>
+  </fieldset>
+<% end %>
+
+<div id="invite-status"></div>
+<!--/content-->

@@ -1,0 +1,17 @@
+<h2 class="heading"><%= ts('Edit Skin') %></h2>
+
+<%= error_messages_for :skin %>
+
+<!--subnav-->
+<%= render 'skin_navigation' %>
+<!--/subnav-->
+
+<h3 class="landmark heading"><%= ts('Edit Skin Form') %></h3>
+<%= form_for(@skin, html: { multipart: true, class: "skin verbose post" }) do |f| %>
+
+  <% if params[:wizard] %>
+    <%= render 'wizard_form', f: f %>
+  <% else %>
+    <%= render 'form', f: f %>
+  <% end %>
+<% end %>

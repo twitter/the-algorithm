@@ -1,0 +1,104 @@
+run_main_reindex_queues:
+  every: 1m
+  class: "ScheduledReindexJob"
+  queue: utilities
+  args: main
+  description: "Kick off a reindex of all main content indexing"
+
+run_background_reindex_queue:
+  every: 10m
+  class: "ScheduledReindexJob"
+  queue: utilities
+  args: background
+  description: "Kick off a reindex of all background reindexes"
+
+run_add_counts_to_queue:
+  every: 30m
+  class: "ScheduledTagJob"
+  queue: utilities
+  args: add_counts_to_queue
+  description: "update the cache of counts of usage for tags"
+
+# from https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
+run_write_redis_to_database:
+  every: 2m
+  class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+  queue: tag_counts
+  args:
+    job_class: RedisSetJobSpawner
+    queue_name: tag_counts
+    arguments: ["TagCountUpdateJob"]
+  description: "Flush the count updates to mysql"
+
+run_stats_reindex_queue:
+  every: 30m
+  class: "ScheduledReindexJob"
+  queue: utilities
+  args: stats
+  description: "Kick off a reindex of works with stats updates"
+
+run_update_filter_counts_small:
+  every: 2m
+  class: "FilterCount"
+  queue: utilities
+  args: update_counts_for_small_queue
+  description: "Update filter counts for small filters"
+
+run_update_filter_counts_large:
+  every: 1h
+  class: "FilterCount"
+  queue: utilities
+  args: update_counts_for_large_queue
+  description: "Update filter counts for large filters"
+
+# from https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
+update_stat_counters:
+  cron: "0,30 * * * *"
+  class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+  queue: stats
+  args:
+    job_class: RedisSetJobSpawner
+    queue_name: stats
+    arguments: ["StatCounterJob"]
+  description: "Update kudos/bookmark/comment counts on StatCounters."
+
+save_recent_counts_to_database:
+  cron: "15,45 * * * *"
+  class: "RedisHitCounter"
+  queue: utilities
+  args: save_recent_counts
+  description: "Save recent hit counts to database."
+
+remove_old_hit_count_data:
+  cron: "0 12 * * *"
+  class: "RedisHitCounter"
+  queue: utilities
+  args: remove_old_visits
+  description: "Remove old hit count information from redis."
+
+check_invite_queue:
+  cron: "21 6 * * *"
+  class: "AdminSetting"
+  queue: utilities
+  args: check_queue
+  description: "Invite users from the queue if it's time to do so."
+
+# from https://github.com/resque/resque-scheduler/issues/613#issuecomment-351484064
+readings_to_database:
+  cron: "55 * * * *"
+  class: ActiveJob::QueueAdapters::ResqueAdapter::JobWrapper
+  queue: readings
+  args:
+    job_class: RedisSetJobSpawner
+    queue_name: readings
+    arguments: ["ReadingsJob"]
+  description: "Transfer readings from redis to the database."
+
+cleanup_work_original_creators:
+  every: 1h
+  class: "WorkOriginalCreator"
+  queue: utilities
+  args: cleanup
+  description: >-
+    Remove original_creators for works orphaned/moved more than
+    ORIGINAL_CREATOR_TTL_HOURS hours ago.

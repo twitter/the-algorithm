@@ -1,0 +1,481 @@
+--- 
+user_00025: 
+  password_salt: 2aa64c10d3ea67188845a59d3d9d411d52301838
+  created_at: 2009-12-12 21:07:52 Z
+  confirmed_at: 2009-12-12 21:08:07 Z
+  encrypted_password: acfecdcd9a91ee01aa7da07d29d3ffb6036714fa
+  updated_at: 2009-12-12 21:08:07 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 25
+  suspended: false
+  suspended_until: 
+  login: badjuju
+  out_of_invites: true
+  email: mjsunbound@gmail.com
+  banned: false
+user_00014: 
+  password_salt: 9a5dd70dd81851f215947e1bd1ec3f37e2ecec6b
+  created_at: 2008-12-07 19:54:32 Z
+  confirmed_at: 2008-12-07 19:55:01 Z
+  encrypted_password: ea5ce5796d897bfec4a8572c2b3f980e8c4d0c1c
+  updated_at: 2008-12-07 19:55:01 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 14
+  suspended: false
+  suspended_until: 
+  login: Uriel
+  out_of_invites: true
+  email: Uriel@example.com
+  banned: false
+user_00003: 
+  password_salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  created_at: 2008-11-09 01:26:02 Z
+  confirmed_at: 2008-11-09 01:26:02 Z
+  encrypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1
+  updated_at: 2009-03-02 20:16:34 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 3
+  suspended: false
+  suspended_until: 
+  login: testuser3
+  out_of_invites: true
+  email: user3@example.com
+  banned: false
+user_00004: 
+  password_salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  created_at: 2008-11-09 01:26:02 Z
+  confirmed_at: 2008-11-09 01:26:02 Z
+  encrypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1
+  updated_at: 2008-11-09 01:26:02 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 4
+  suspended: false
+  suspended_until: 
+  login: testuser4
+  out_of_invites: true
+  email: user4@example.com
+  banned: false
+user_00015: 
+  password_salt: 787e39d8cc37646fb25274a444a48abbafeebd7a
+  created_at: 2009-07-17 22:44:23 Z
+  confirmed_at: 2009-07-17 20:44:32 Z
+  encrypted_password: 1109bcac6f7fd4ebd0118e29d8054c809fa915a4
+  updated_at: 2009-07-17 22:44:32 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 15
+  suspended: false
+  suspended_until: 
+  login: parenthetical
+  out_of_invites: true
+  email: sarkymoocow@example.com
+  banned: false
+user_00026: 
+  password_salt: 631dcaa51dd023f4cdcdf2747a6322fc2e108ceb
+  created_at: 2009-12-12 21:08:12 Z
+  confirmed_at: 2009-12-12 21:08:19 Z
+  encrypted_password: c6d89e7b1d2ea8db07513f7c6cb1db4e9ad395c9
+  updated_at: 2009-12-12 21:08:19 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 26
+  suspended: false
+  suspended_until: 
+  login: DawningStar
+  out_of_invites: true
+  email: dawn@ccaonline.com
+  banned: false
+user_00027: 
+  password_salt: 5a432a7543be536b62f1f51fee2255d0483c3b9d
+  created_at: 2009-12-12 21:09:13 Z
+  confirmed_at: 2009-12-12 21:09:19 Z
+  encrypted_password: 2f6ed9db9746b61559b8eb53703645d98ae6b155
+  updated_at: 2009-12-12 21:09:19 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 27
+  suspended: false
+  suspended_until: 
+  login: yulechatismadeofawesome
+  out_of_invites: true
+  email: attempt-unique@yahoo.com
+  banned: false
+user_00016: 
+  password_salt: 47bfebbcd173627903284aced46fc6efea0c9eb4
+  created_at: 2009-07-17 23:18:52 Z
+  confirmed_at: 2009-07-17 21:19:01 Z
+  encrypted_password: 052efc7beebceae632eb0550ff7a4e3ef9d5d96d
+  updated_at: 2009-07-17 23:19:01 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 16
+  suspended: false
+  suspended_until: 
+  login: cal
+  out_of_invites: true
+  email: cal@example.com
+  banned: false
+user_00005: 
+  password_salt: 343452076355fe7bf635ee217a55e6e98acf8d41
+  created_at: 2008-12-05 13:55:27 Z
+  confirmed_at: 2008-12-05 13:55:36 Z
+  encrypted_password: 95bea0ced35478e90ae12f9e262a3b732393b039
+  updated_at: 2008-12-05 13:55:36 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 5
+  suspended: false
+  suspended_until: 
+  login: Ash
+  out_of_invites: true
+  email: ash@example.com
+  banned: false
+user_00006: 
+  password_salt: 97bf16bc68d47f5d5cccca85770c82f52c23e58d
+  created_at: 2008-12-05 13:55:28 Z
+  confirmed_at: 2008-12-05 13:55:28 Z
+  encrypted_password: aac83c66fc4d77924456e8f8a3d003555e3823f2
+  updated_at: 2008-12-05 13:55:28 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 6
+  suspended: false
+  suspended_until: 
+  login: orphan_account
+  out_of_invites: true
+  email: 
+  banned: false
+user_00017: 
+  password_salt: 97730ef8bcd524fd18e4b9237fc05130a177c413
+  created_at: 2009-07-18 09:55:25 Z
+  confirmed_at: 2009-07-18 07:55:31 Z
+  encrypted_password: 8df0d8d741744cf6d91eefb3604429cf169e1565
+  updated_at: 2009-07-18 09:55:31 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 17
+  suspended: false
+  suspended_until: 
+  login: reccer
+  out_of_invites: true
+  email: reccer@example.com
+  banned: false
+user_00028: 
+  password_salt: 4231509879a346f8f3c88294be33d28567a3649f
+  created_at: 2009-12-12 21:10:24 Z
+  confirmed_at: 2009-12-12 21:10:32 Z
+  encrypted_password: 0a010b11c91f553a9389860bf109cdd1c91a2d2c
+  updated_at: 2009-12-12 21:10:32 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 28
+  suspended: false
+  suspended_until: 
+  login: Shusu
+  out_of_invites: true
+  email: boo@moog.com
+  banned: false
+user_00029: 
+  password_salt: 73c1309f8eafb8a949355857d46f682a36854cc3
+  created_at: 2009-12-12 21:13:55 Z
+  confirmed_at: 2009-12-12 21:14:02 Z
+  encrypted_password: 58cea097fa24e66ca55baef521b77e11dfbb9ff2
+  updated_at: 2009-12-12 21:14:02 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 29
+  suspended: false
+  suspended_until: 
+  login: whetherwoman
+  out_of_invites: true
+  email: marina@nbtsc.org
+  banned: false
+user_00007: 
+  password_salt: 2239939fc04c4d2a0d2b5ceedfc1727c3e527b63
+  created_at: 2008-12-05 14:07:24 Z
+  confirmed_at: 2008-12-05 14:07:30 Z
+  encrypted_password: 0c6769460328ab82af95dd6b2d31e7e353b9f9ed
+  updated_at: 2008-12-07 21:02:33 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 7
+  suspended: false
+  suspended_until: 
+  login: Boccaccio
+  out_of_invites: true
+  email: boccaccio@example.org
+  banned: false
+user_00030: 
+  password_salt: 3979aea39223e3479cf5d29af9a388ea2d13f25f
+  created_at: 2009-12-12 21:58:12 Z
+  confirmed_at: 2009-12-12 21:58:19 Z
+  encrypted_password: 912642a2cc0b19a89f9c8fe78a034f9bfbb46b29
+  updated_at: 2009-12-12 21:58:19 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 30
+  suspended: false
+  suspended_until: 
+  login: Lizifer
+  out_of_invites: true
+  email: elmiller00@gmail.com
+  banned: false
+user_00031: 
+  password_salt: 570b4a55a931c7a1c5be1f5608ee825a88b51e37
+  created_at: 2009-12-12 22:39:41 Z
+  confirmed_at: 2009-12-12 22:39:47 Z
+  encrypted_password: 1ef5fda6fdcf8d7f8e210f2c236a776761993d99
+  updated_at: 2009-12-12 22:39:47 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 31
+  suspended: false
+  suspended_until: 
+  login: tassos
+  out_of_invites: true
+  email: savyln7@gmail.com
+  banned: false
+user_00019: 
+  password_salt: 
+  created_at: 2009-09-16 23:37:53 Z
+  confirmed_at: 2009-09-16 22:38:08 Z
+  encrypted_password: 
+  updated_at: 2009-09-16 23:38:08 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 19
+  suspended: false
+  suspended_until: 
+  login: Zee
+  out_of_invites: true
+  email: zooey.glass04@gmail.com
+  banned: false
+user_00008: 
+  password_salt: 6e2ee018720464deaa10520d4b3f059710eb2b8d
+  created_at: 2008-12-06 22:53:08 Z
+  confirmed_at: 2008-12-06 22:53:13 Z
+  encrypted_password: f1c0fe050b41b4eadf88d5b3aeeb8745eab061ab
+  updated_at: 2008-12-06 22:53:13 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 8
+  suspended: false
+  suspended_until: 
+  login: Chaucer
+  out_of_invites: true
+  email: chaucer@example.com
+  banned: false
+user_00020: 
+  password_salt: 67363e5f3b3debc2a528aeead8c182e2e4398dab
+  created_at: 2009-12-12 21:06:59 Z
+  confirmed_at: 2009-12-12 21:07:14 Z
+  encrypted_password: 97d3a461ce608c24535ca1009aaccb554e6ab03a
+  updated_at: 2009-12-12 21:07:14 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 20
+  suspended: false
+  suspended_until: 
+  login: hh_ook
+  out_of_invites: true
+  email: hh-ook@gmail.com
+  banned: false
+user_00021: 
+  password_salt: 56e1aeae2f94163b784b694f4d22f6452241d543
+  created_at: 2009-12-12 21:07:09 Z
+  confirmed_at: 
+  encrypted_password: b44dbd78a27659a26ae2abb7ffa63251d21acffd
+  updated_at: 2009-12-12 21:07:09 Z
+  confirmation_token: 9dd48a83a9b178c5f24abc7e30eb5adc014f6944
+  invitation_id: 
+  id: 21
+  suspended: false
+  suspended_until: 
+  login: yulechatrulesall
+  out_of_invites: true
+  email: sdfsdf@gmail.com
+  banned: false
+user_00010: 
+  password_salt: efff6c5d4da98884f33dfe1b858163bf8b6832b3
+  created_at: 2008-12-06 23:03:31 Z
+  confirmed_at: 2008-12-06 23:03:35 Z
+  encrypted_password: bb8bbc22828c672359294455c2afbde00d0fcd3f
+  updated_at: 2008-12-06 23:03:35 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 10
+  suspended: false
+  suspended_until: 
+  login: Sam
+  out_of_invites: true
+  email: Sam@example.com
+  banned: false
+user_00009: 
+  password_salt: b09cbc4962f7a925a704704d687548e2040856d4
+  created_at: 2008-12-06 22:58:44 Z
+  confirmed_at: 2008-12-06 22:58:48 Z
+  encrypted_password: 78712719da26bee79356cb76916629f83bacff40
+  updated_at: 2008-12-06 22:58:48 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 9
+  suspended: false
+  suspended_until: 
+  login: Dean
+  out_of_invites: true
+  email: Dean@example.com
+  banned: false
+user_00032: 
+  password_salt: 143ff69e26d306a5cb0016e6d5feda3213027138
+  created_at: 2009-12-12 23:45:44 Z
+  confirmed_at: 2009-12-12 23:45:50 Z
+  encrypted_password: e2f9c3e1ead6e30fa856636ec33a9f6e2305eb5d
+  updated_at: 2009-12-12 23:45:50 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 32
+  suspended: false
+  suspended_until: 
+  login: Enigel
+  out_of_invites: true
+  email: enigel@gmail.com
+  banned: false
+user_00033: 
+  password_salt: feef278f6c8d201c0cb4c37253833f60f2090f8e
+  created_at: 2009-12-17 11:37:58 Z
+  confirmed_at: 2009-12-17 22:03:16 Z
+  encrypted_password: 1b719cd8460f4819cdf86576edccf8579b5efda7
+  updated_at: 2009-12-17 22:03:17 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 33
+  suspended: false
+  suspended_until: 
+  login: invitest
+  out_of_invites: true
+  email: liminimail@googlemail.com
+  banned: false
+user_00011: 
+  password_salt: 21f8f1eb19a6dd5b649b451bb4386841506a387d
+  created_at: 2008-12-06 23:05:24 Z
+  confirmed_at: 2008-12-06 23:05:33 Z
+  encrypted_password: 9a10d9736e97bd0110486ab180e7f3c781cacc6f
+  updated_at: 2008-12-06 23:05:33 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 11
+  suspended: false
+  suspended_until: 
+  login: Ellen
+  out_of_invites: true
+  email: Ellen@example.com
+  banned: false
+user_00022: 
+  password_salt: fef057870a00a1d4cd6d67e1441ce762a451d7cb
+  created_at: 2009-12-12 21:07:24 Z
+  confirmed_at: 2009-12-12 21:07:30 Z
+  encrypted_password: 40533058708f3b520a011c63f2d304c3fdd7bb56
+  updated_at: 2009-12-12 21:07:31 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 22
+  suspended: false
+  suspended_until: 
+  login: Jenn_Calaelen
+  out_of_invites: true
+  email: jenn.calaelen@googlemail.com
+  banned: false
+user_00023: 
+  password_salt: b510f1f2ac546e9b85d0d17dec60f590992715ca
+  created_at: 2009-12-12 21:07:37 Z
+  confirmed_at: 2009-12-12 21:07:59 Z
+  encrypted_password: b077330ede7e6ebffab30ddfb73f0a3b82fd2d0a
+  updated_at: 2009-12-12 21:07:59 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 23
+  suspended: false
+  suspended_until: 
+  login: Llwyden
+  out_of_invites: true
+  email: llwyden@trickster.org
+  banned: false
+user_00012: 
+  password_salt: c5e416e746f06c3c68b542ed3223d89ce9be52cf
+  created_at: 2008-12-06 23:13:19 Z
+  confirmed_at: 2008-12-06 23:13:23 Z
+  encrypted_password: 306f172efbaaafc2f9a604da962aa3265a689092
+  updated_at: 2008-12-06 23:13:23 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 12
+  suspended: false
+  suspended_until: 
+  login: Zooey_Glass
+  out_of_invites: true
+  email: zooey@example.com
+  banned: false
+user_00001: 
+  password_salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  created_at: 2008-11-09 01:26:02 Z
+  confirmed_at: 2008-11-09 01:26:02 Z
+  encrypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1
+  updated_at: 2010-08-11 21:37:42 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 1
+  suspended: false
+  suspended_until: 
+  login: testuser
+  out_of_invites: true
+  email: user1@example.com
+  banned: false
+user_00002: 
+  password_salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  created_at: 2008-11-09 01:26:02 Z
+  confirmed_at: 2008-11-09 01:26:02 Z
+  encrypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1
+  updated_at: 2010-01-09 13:55:01 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 2
+  suspended: false
+  suspended_until: 
+  login: testuser2
+  out_of_invites: true
+  email: user2@example.com
+  banned: false
+user_00013: 
+  password_salt: 5860eac2a470dbee25aa5a4ba8a4e6b841c38c37
+  created_at: 2008-12-06 23:29:42 Z
+  confirmed_at: 2008-12-06 23:29:46 Z
+  encrypted_password: ad7cc5971ae177042772fa29aa6728bbf0b582c5
+  updated_at: 2008-12-06 23:29:46 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 13
+  suspended: false
+  suspended_until: 
+  login: Jessica
+  out_of_invites: true
+  email: Jessica@example.com
+  banned: false
+user_00024: 
+  password_salt: 943292d06d1761ac3c7e8585a5b728db1f82a930
+  created_at: 2009-12-12 21:07:42 Z
+  confirmed_at: 2009-12-12 21:07:47 Z
+  encrypted_password: 4cb86274abca59515b0060f727e57ec32ac2a878
+  updated_at: 2009-12-12 21:07:47 Z
+  confirmation_token: 
+  invitation_id: 
+  id: 24
+  suspended: false
+  suspended_until: 
+  login: moriann
+  out_of_invites: true
+  email: aaa@bbb.com
+  banned: false

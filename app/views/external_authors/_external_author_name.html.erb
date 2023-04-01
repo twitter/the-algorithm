@@ -1,0 +1,9 @@
+<div class="external_author_name">
+  <dl>
+    <dt><%= form.label :name, t('.label_external_author_name', :default => "Name: ") %></dt>
+    <dd>
+       <%= form.text_field :name %>
+      <%= remove_name_link(form) %>
+    </dd>
+  </dl>
+</div>

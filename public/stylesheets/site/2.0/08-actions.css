@@ -1,0 +1,207 @@
+/*==ACTIONS: buttons!
+http://otwcode.github.com/docs/front_end_coding/patterns/actions
+subtypes:
+.action, .navigation, .sorting, .submit, .cancel, .close, .delete, .pagination, .current, .landmark, #skiplinks
+input[type="submit"], button
+*/
+
+.actions * {
+  display: inline;
+}
+
+ul.actions, p.actions, li.actions, span.actions, fieldset.actions, dd.actions {
+  padding: 0.429em 0.25em 0.25em 0;
+  float: right;
+  text-align: center;
+}
+
+ul.actions {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.actions a, .actions a:link, .action, .action:link, .actions input, input[type="submit"], button, .current, .actions label {
+  background: #eee;
+  color: #444;
+  width: auto;
+  font-size: 100%;
+  line-height: 1.286;
+  height: 1.286em;
+  vertical-align: middle;
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  white-space: nowrap;
+  overflow: visible;
+  position: relative;
+  text-decoration: none;
+  border: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+    background-image: -moz-linear-gradient(#fff 2%,#ddd 95%, #bbb 100%);
+    background-image: -webkit-linear-gradient(#fff 2%,#ddd 95%, #bbb 100%);
+    background-image: -o-linear-gradient(#fff 2%,#ddd 95%, #bbb 100%);
+    background-image: -ms-linear-gradient(#fff 2%,#ddd 95%, #bbb 100%);
+    background-image: linear-gradient(#fff 2%,#ddd 95%, #bbb 100%);
+    border-radius: 0.25em;
+    box-shadow: none;
+}
+
+button {
+  font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'GNU Unifont', Verdana, Helvetica, sans-serif;
+  box-sizing: content-box;
+}
+
+label.action {
+  padding: 0.15em 0.375em;
+}
+
+input[type="submit"] {
+  height: auto;
+  white-space: normal;
+}
+
+p.submit, input.submit, dd.submit {
+  text-align: right;
+}
+
+
+.actions input[type="checkbox"] {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+/*subtypes and modes
+test note: this pagination clear needs to be kept an eye on*/
+
+ol.pagination, div.pagination, ol.year {
+  text-align: center;
+  clear: right;
+  margin: 0.643em auto;
+}
+
+.actions a:visited, .action:visited, .action a:link, .action a:visited {
+  color: #111;
+}
+
+.actions a:hover, .actions input:hover, .actions a:focus, .actions input:focus, label.action:hover, .action:hover, .action:focus {
+  color: #900;
+  border-top: 1px solid #999;
+  border-left: 1px solid #999;
+    box-shadow: inset 2px 2px 2px #bbb;
+}
+
+.actions a:active, .current, a.current, a:link.current, .current a:visited {
+  color: #111;
+  background: #ccc;
+  border-color: #fff;
+    box-shadow: inset 1px 1px 3px #333;
+}
+
+.actions label.disabled {
+  background: #ccc;
+}
+
+.actions li a, .actions li input, .actions li input[type="submit"], .actions li .current, .actions li label {
+  margin: 0.375em auto;
+}
+
+.delete a, span.delete {
+  border: 0;
+  color: #900;
+  font-weight: 900;
+  margin-right: 0.375em;
+  padding: 0 0.1em 0.15em;
+    box-shadow: -1px -1px 2px rgba(0,0,0,0.75);
+    border-radius: 0.875em;
+}
+
+span.delete a {
+  margin: 0 0.2em;
+    box-shadow: none;
+}
+
+ul#skiplinks, .landmark, .landmark a, .index .heading.landmark {
+  font-size: 0;
+  line-height: 0;
+  height: 0;
+  margin: 0;
+  clear: both;
+  color: transparent;
+    opacity: 0;
+}
+
+.secondary {
+  background: #fff;
+  position: absolute;
+  z-index: 99;
+  border: 2px solid #bbb;
+  margin: auto;
+  padding: 0 0.375em;
+  overflow: hidden;
+  right: 2.5em;
+    box-shadow: 2px 2px 5px #bbb;
+    border-radius: 0.15em;
+}
+
+/* CONTEXTS */
+
+legend .action:link {
+  position: static;
+}
+
+.heading .actions, .heading .action, .heading span.actions {
+  height: auto;
+  font: 100 75%/1.286 'Lucida Grande', 'Lucida Sans Unicode', 'GNU Unifont', Verdana, Helvetica, sans-serif;
+  padding: 0.15em 0.375em;
+}
+
+th .actions, td .actions {
+  float: none;
+}
+
+dl.stats + .landmark + .actions {
+  clear: none;
+  float: left;
+  margin: 0 auto;
+}
+
+.actions .secondary .submit, .nomination .actions {
+  float: none;
+}
+
+.chapter .secondary, .download .secondary {
+  top: 3.5em;
+}
+
+.dashboard .landmark {
+  clear: right;
+}
+
+.actions .landmark {
+  clear: none;
+}
+
+.actions a.symbol, .action a {
+  border: 0;
+  background: none;
+  padding: 0 0 0.15em 0;
+}
+
+.many p.actions {
+  float: none;
+  text-align: right;
+}
+
+.concise label.action {
+  float: left;
+}
+
+dd.any label.action {
+  margin-left: 0.5625em;
+}
+
+dl.index p.actions {
+  margin: 0;
+}
+
+/*END== */

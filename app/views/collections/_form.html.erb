@@ -1,0 +1,250 @@
+<%= error_messages_for :collection %>
+<%= form_for(@collection, html: { multipart: true, class: "verbose post collection" }) do |collection_form| %>
+  <p class="notice required">* <%= ts('Required information') %></p>
+  <fieldset>
+    <legend><%= ts("Header") %></legend>
+    <dl>
+
+      <% if @collection.new_record? && current_user.pseuds.size > 1 %>
+        <dt>
+          <%= label_tag "owner_pseuds[]", ts("Owner pseud(s)") %>
+        </dt>
+        <dd>
+          <%= select_tag "owner_pseuds[]", options_from_collection_for_select(current_user.pseuds, :id, :name, current_user.default_pseud_id), multiple: true %>
+        </dd>
+      <% else %>
+        <p><%= hidden_field_tag "owner_pseuds[]", [current_user.default_pseud.id] %></p>
+      <% end %>
+
+      <dt class="required">
+        <%= collection_form.label :name, ts("Collection name" + "*") %>
+        <%= link_to_help "collection-name" %>
+      </dt>
+      <dd>
+        <%= collection_form.text_field :name, "aria-describedby" => "name-field-notes" %>
+        <p class="footnote" id="name-field-notes">
+          <%= ts("%{minimum} to %{maximum} characters (A-Z, a-z, _, 0-9 only), no spaces, cannot begin or end with underscore (_)",
+                minimum: ArchiveConfig.TITLE_MIN,
+                maximum: ArchiveConfig.TITLE_MAX) %>
+        </p>
+      </dd>
+
+      <dt class="required">
+        <%= collection_form.label :title, ts("Display title") + "*" %>
+      </dt>
+      <dd>
+        <%= collection_form.text_field :title, "aria-describedby" => "title-field-notes" %>
+        <p class="footnote" id="title-field-notes">
+          <%= ts("(text only)") %>
+        </p>
+      </dd>
+
+      <% if @collection.children.empty? %>
+        <dt>
+          <%= collection_form.label :parent_name, ts("Parent collection (that you maintain)") %>
+        </dt>
+        <dd>
+          <%= collection_form.text_field :parent_name, autocomplete_options("collection_parent_name", data: { autocomplete_token_limit: 1 }) %>
+        </dd>
+      <% end %>
+
+      <dt><%= collection_form.label :email, ts("Collection email") %></dt>
+      <dd><%= collection_form.text_field :email, size: 40 %></dd>
+
+      <dt>
+        <%= collection_form.label :header_image_url, ts("Custom header URL") %>
+      </dt>
+      <dd>
+        <%= collection_form.text_field :header_image_url, "aria-describedby" => "header-image-field-description" %>
+        <p class="footnote" id="header-image-field-description">
+          <%= ts("JPG, GIF, PNG") %>
+        </p>
+      </dd>
+
+      <dt><%= ts("Icon") %></dt>
+      <dd>
+        <ul class="notes">
+          <% unless @collection.new_record? %>
+            <li>
+              <%= image_tag(@collection.icon.url(:standard), size: "100x100", alt: @collection.icon_alt_text, skip_pipeline: true) %>
+              <%= ts("This is the collection's icon.") %>
+            </li>
+          <% end %>
+          <li><%= ts("Each collection can have one icon") %></li>
+          <li><%= ts("Icons can be in png, jpeg or gif form") %></li>
+          <li><%= ts("Icons should be sized 100x100 pixels for best results") %></li>
+        </ul>
+        <% if @collection.icon_file_name %>
+          <%= collection_form.check_box :delete_icon, {:checked => false} %>
+          <%= collection_form.label :delete_icon, ts("Delete collection icon and revert to our default") %>
+        <% end %>
+      </dd>
+
+      <dt><%= collection_form.label :icon, ts("Upload a new icon") %></dt>
+      <dd>
+        <%= collection_form.file_field :icon %>
+      </dd>
+
+    <dt>
+      <%= collection_form.label :icon_alt_text, ts("Icon alt text") %>
+      <%= link_to_help "icon-alt-text" %>
+    </dt>
+    <dd>
+      <%= collection_form.text_field :icon_alt_text, class: "observe_textlength" %>
+      <%= generate_countdown_html("collection_icon_alt_text", ArchiveConfig.ICON_ALT_MAX) %>
+    </dd>
+
+    <dt>
+      <%= collection_form.label :icon_comment_text, ts("Icon comment text") %>
+      <%= link_to_help "pseud-icon-comment" %>
+    </dt>
+    <dd>
+      <%= collection_form.text_field :icon_comment_text, class: "observe_textlength" %>
+      <%= generate_countdown_html("collection_icon_comment_text", ArchiveConfig.ICON_COMMENT_MAX) %>
+    </dd>
+
+      <dt><%= collection_form.label :description, ts("Brief description") %></dt>
+      <dd>
+        <%= collection_form.text_area :description, rows: 4, cols: 60, class: "description-field observe_textlength" %>
+        <%= live_validation_for_field('collection_description',
+              presence: false, maximum_length: ArchiveConfig.SUMMARY_MAX) %>
+        <%= generate_countdown_html("collection_description", ArchiveConfig.SUMMARY_MAX) %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <% @collection.build_collection_preference unless @collection.collection_preference %>
+  <%= collection_form.fields_for :collection_preference do |preference_form| %>
+    <fieldset>
+      <legend><%= ts("Preferences") %></legend>
+      <p>
+        <%= ts("You can also individually ") %>
+        <% if @collection.new_record? %>
+          <%= ts("Manage Items") %>
+        <% else %>
+          <%= link_to ts("Manage Items"), collection_items_path(@collection) %>
+        <% end %>
+        <%= ts(" in your collection.") %>
+      </p>
+      <dl>
+        <dt><%= preference_form.check_box :moderated %></dt>
+        <dd>
+          <%= preference_form.label :moderated, ts("This collection is moderated") %>
+          <%= link_to_help "collection-moderated" %>
+        </dd>
+
+        <dt><%= preference_form.check_box :closed %></dt>
+        <dd>
+          <%= preference_form.label :closed, ts("This collection is closed") %>
+          <%= link_to_help "collection-closed" %>
+        </dd>
+
+        <dt><%= preference_form.check_box :unrevealed %></dt>
+        <dd>
+          <%= preference_form.label :unrevealed, ts("This collection is unrevealed") %>
+        </dd>
+
+        <dt><%= preference_form.check_box :anonymous %></dt>
+        <dd>
+          <%= preference_form.label :anonymous, ts("This collection is anonymous") %>
+        </dd>
+
+        <dt><%= preference_form.check_box :show_random %></dt>
+        <dd>
+          <%= preference_form.label :show_random, ts("Show random works on the front page instead of the most recent") %>
+        </dd>
+
+        <dt><%= preference_form.check_box :email_notify %></dt>
+        <dd>
+          <%= preference_form.label :email_notify, ts("Send a message to the collection email when a work is added") %>
+        </dd>
+
+        <dt><%= label_tag :challenge_type, ts("Type of challenge, if any") %></dt>
+        <% type = @collection.challenge ? @collection.challenge.class.name : @challenge_type %>
+        <dd>
+          <%= select_tag :challenge_type, options_for_select(Collection::CHALLENGE_TYPE_OPTIONS, type) %>
+        </dd>
+        <dt><strong><%= ts("Notice to challenge creators") %></strong></dt>
+        <dd>
+          <ul class="notes">
+            <li><%= ts("As a challenge owner, you may have access to challenge participants' email addresses.") %></li>
+            <li><%= ts("Use of those email addresses for any purpose other than running the challenge will lead to the termination of your account.") %></li>
+          </ul>
+        </dd>
+      </dl>
+    </fieldset>
+  <% end %>
+
+  <% @collection.build_collection_profile unless @collection.collection_profile %>
+  <%= collection_form.fields_for :collection_profile do |profile_form| %>
+  <fieldset class="profile">
+    <legend><%= ts("Profile") %></legend>
+    <p><%= allowed_html_instructions %></p>
+    <p class="note">
+      <%= ts("Tip: if this is a subcollection or challenge, you don't need to repeat yourself: fields left blank will copy from your parent collection.") %>
+    </p>
+
+    <h3 class="heading">
+      <%= profile_form.label :intro, ts("Introduction") %>
+    </h3>
+    <p>
+      <%= profile_form.text_area :intro, rows: 10, cols: 80, class: "observe_textlength" %>
+      <%= live_validation_for_field('collection_collection_profile_attributes_intro',
+            presence: false, maximum_length: ArchiveConfig.INFO_MAX) %>
+      <%= generate_countdown_html("collection_collection_profile_attributes_intro", ArchiveConfig.INFO_MAX) %>
+    </p>
+
+    <h3 class="heading">
+      <%= profile_form.label :faq, ts("FAQ"), title: ts("frequently asked questions") %>
+    </h3>
+    <p>
+      <%= profile_form.text_area :faq, rows: 10, cols: 80, class: "observe_textlength" %>
+      <%= live_validation_for_field('collection_collection_profile_attributes_faq',
+            presence: false, maximum_length: ArchiveConfig.INFO_MAX) %>
+      <%= generate_countdown_html("collection_collection_profile_attributes_faq", ArchiveConfig.INFO_MAX) %>
+    </p>
+
+    <h3 class="heading">
+      <%= profile_form.label :rules, ts("Rules") %>
+    </h3>
+      <p><%= profile_form.text_area :rules, rows: 10, cols: 80, class: "observe_textlength" %>
+      <%= live_validation_for_field('collection_collection_profile_attributes_rules',
+            presence: false, maximum_length: ArchiveConfig.INFO_MAX) %>
+      <%= generate_countdown_html("collection_collection_profile_attributes_rules", ArchiveConfig.INFO_MAX) %>
+    </p>
+
+    <h3 class="heading">
+      <%= profile_form.label :assignment_notification, ts("Assignment notification message") %>
+    </h3>
+    <p class="note" id="assignment-notification-field-description">
+      <%= ts('This will be sent out with assignments in a gift exchange challenge. Plain text only.') %>
+    </p>
+    <p>
+      <%= profile_form.text_area :assignment_notification, rows: 8, cols: 80,
+            class: "observe_textlength",
+            "aria-describedby" => "assignment-notification-field-description" %>
+      <%= live_validation_for_field('collection_collection_profile_attributes_assignment_notification',
+            presence: false, maximum_length: ArchiveConfig.SUMMARY_MAX) %>
+      <%= generate_countdown_html("collection_collection_profile_attributes_assignment_notification", ArchiveConfig.SUMMARY_MAX) %>
+    </p>
+
+    <h3 class="heading">
+      <%= profile_form.label :gift_notification, ts("Gift notification message") %>
+    </h3>
+    <p class="note" id="gift-notification-field-description">
+      <%= ts('This will be sent out with each work notification when you "reveal" a gift exchange or prompt meme. Plain text only.') %>
+    </p>
+    <p>
+      <%= profile_form.text_area :gift_notification, rows: 8, cols: 80,
+            class: "observe_textlength",
+            "aria-describedby" => "gift-notification-field-description" %>
+      <%= live_validation_for_field('collection_collection_profile_attributes_gift_notification',
+            presence: false, maximum_length: ArchiveConfig.SUMMARY_MAX) %>
+      <%= generate_countdown_html("collection_collection_profile_attributes_gift_notification", ArchiveConfig.SUMMARY_MAX) %>
+    </p>
+
+  <% end %>
+</fieldset>
+
+<%= submit_fieldset collection_form %>
+<% end %>

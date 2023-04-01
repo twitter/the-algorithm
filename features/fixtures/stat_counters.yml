@@ -1,0 +1,25 @@
+first:
+  work_id: 1
+  hit_count: 1001
+  kudos_count: 4
+  bookmarks_count: 1
+second:
+  work_id: 2
+  hit_count: 10
+  kudos_count: 1
+  bookmarks_count: 1
+third:
+  work_id: 3
+  hit_count: 10000
+  bookmarks_count: 1
+fourth:
+  work_id: 4
+  hit_count: 0
+  bookmarks_count: 1
+fifth:
+  work_id: 5
+  hit_count: 2
+  bookmarks_count: 1
+sixth:
+  work_id: 6
+  hit_count: 37

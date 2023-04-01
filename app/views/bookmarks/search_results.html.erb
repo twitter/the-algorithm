@@ -1,0 +1,35 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Search Results') %></h2>
+
+<h4 class="heading">
+  <%= ts("You searched for:") %>
+  <%= (strip_tags @search.summary).html_safe %>
+</h4>
+
+<%= render "muted/muted_items_notice" %>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to ts("Edit Your Search"), current_path_with(edit_search: true) %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<% if @bookmarks.blank? %>
+  <p><%= ts("No results found. You may want to edit your search to make it less specific.") %></p>
+<% else %>
+  <h3 class="heading"><%= search_results_found(@bookmarks) %> <%= link_to_help "bookmark-search-results-help" %></h3>
+
+  <h3 class="landmark heading">Bookmarks List</h3>
+  <ol class="bookmark index group">
+    <% @bookmarks.each do |bookmark| %>
+      <% unless bookmark.nil? %>
+        <%= render 'bookmarks/bookmark_blurb', :bookmark => bookmark %>
+      <% end %>
+    <% end %>
+  </ol>
+ 
+ <%= will_paginate @bookmarks %>
+<% end %>
+<!--/content-->

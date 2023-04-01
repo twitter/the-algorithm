@@ -1,0 +1,28 @@
+<h4 class="landmark heading"><%= ts("Prompt Meme") %></h4>
+<ul class="navigation actions">
+  <% # added automatically to the collection sidebar for challenges. 
+    #  all items should be enclosed in <li> </li> and linked with span_if_current! 
+    #  @collection is defined, @challenge may not be. 
+%>
+  <% @user = current_user %>
+<li>
+  <%= span_if_current ts("Prompts (%{count})", :count => @collection.prompts.count), collection_requests_path(@collection) %>
+</li>
+<% if logged_in? %>
+  <% # signup form or link %>
+  <% if (@challenge_signup = ChallengeSignup.in_collection(@collection).by_user(current_user).first) %>
+    <li><%= span_if_current ts("My Prompts"), collection_signup_path(@collection, @challenge_signup) %></li>
+  <% elsif @collection.challenge.user_allowed_to_sign_up?(current_user) %>
+    <li><%= span_if_current ts("Prompt Form"), new_collection_signup_path(@collection) %></li>
+  <% end %>
+  <% if @user.request_claims.unposted.present? %>
+    <li>
+      <%= span_if_current ts("My Claims"), collection_claims_path(@collection, :for_user => true) %>
+    </li>
+  <% end %>
+  <% if @collection.user_is_maintainer?(current_user) %>
+    <li><%= link_to ts("Unposted Claims (%{count})", :count => ChallengeClaim.unposted_in_collection(@collection).count), collection_claims_path(@collection) %></li>
+  <% end %>    
+
+<% end %>
+</ul>

@@ -1,0 +1,36 @@
+<% work_skin = params[:skin_type] && params[:skin_type] == 'WorkSkin' %>
+
+<!--subnav-->
+<h3 class="landmark heading"><%= ts('Navigation') %></h3>
+<ul class="navigation actions" role="navigation">
+
+  <% if session[:site_skin] || (logged_in? && current_user.preference.skin_id != AdminSetting.default_skin_id) %>
+    <li><%= render "revert_skin_form" %></li>
+  <% end %>
+
+  <% if logged_in? %>
+    <% # Show Create Work or Site Skin link only on index %>
+    <% unless controller.action_name == 'new' || controller.action_name == 'edit' || controller.action_name == 'show' %>
+      <li>
+        <%= create_text = work_skin ? ts('Create Work Skin') : ts('Create Site Skin')
+            link_to create_text, new_skin_path(skin_type: work_skin ? "WorkSkin" : "Skin") %>
+      </li>
+    <% end %>
+
+    <% if action_name == 'new' || (action_name == 'edit' && !@skin.is_a?(WorkSkin)) %>
+      <li id="form-link">
+        <%= span_if_current ts('Write Custom CSS'), action_name == 'new' ? new_skin_path : edit_skin_path, params[:wizard].blank? %>
+      </li>
+      <li id="wizard-link">
+        <%= span_if_current ts('Use Wizard'), action_name == 'new' ? new_skin_path(wizard: true) : edit_skin_path(wizard: true), params[:wizard] %>
+      </li>
+    <% end %>
+
+    <% if action_name == 'new' || action_name === 'edit' %>
+      <li><%= my_site_skins_link %></li>
+      <li><%= my_work_skins_link %></li>
+    <% end %>
+
+  <% end %>
+</ul>
+<!--/subnav-->

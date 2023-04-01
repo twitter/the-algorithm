@@ -1,0 +1,29 @@
+<!--descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <% if @user %>
+    <%= search_header @series, nil, "Series", @pseud ? @pseud : @user %>
+  <% else %>
+    <%=h "View All Series" %>
+  <% end %>
+</h2>
+
+<%= render "muted/muted_items_notice" %>
+
+<!-- /descriptions-->
+
+<!--subnavigation-->
+<%= will_paginate @series %>
+<!--subnav-->
+
+<!--Main content-->
+<h3 class="landmark heading">Listing Series</h3>
+<ul class="series index group">
+  <% for series in @series %>
+	<%= render :partial => 'series/series_blurb', :locals => {:series => series} %>
+  <% end %>
+</ul>
+<!-- /content-->
+
+<!--subnav-->
+<%= will_paginate @series %>
+<!--/subnav-->

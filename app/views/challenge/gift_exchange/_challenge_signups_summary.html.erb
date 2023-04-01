@@ -1,0 +1,42 @@
+<% # display a summary version of what users have requested and offered %>
+<% # requires locals :challenge_collection :tag_type :summary_tags :generated_live %>
+<h2 class="heading"><%= ts("Sign-up Summary for %{challenge_collection}", :challenge_collection => challenge_collection.title) %></h2>
+
+<% unless generated_live %>
+  <p>
+    <%= ts("Last generated at:") %> <span class="datetime"><%= time_in_zone(Time.now, (challenge_collection.challenge.time_zone || Time.zone.name)) %></span>
+    <%= ts("(Generated hourly on request while sign-ups are open.)") %>
+  </p>
+<% end %>
+
+<% if summary_tags.empty? %>
+  <p class="notice"><%= ts("Tags were not used in this Challenge, so there is no summary to display here.") %></p>
+<% else %>
+  <h3 class="heading"><%= ts("Requested %{tag_type}", tag_type: tag_type_label_name(tag_type).pluralize) %></h3>
+  <p class="note">
+    <%= ts('Listed by fewest offers and most requests.') %>
+  </p>
+  <table id="challenge_summary" summary="<%= ts("Number of requests and offers for each requested %{tag_type} in this challenge, listed by fewest offers and most requests.", tag_type: tag_type_label_name(tag_type)) %>">
+    <caption><%=ts("Requests and Offers for Requested %{tag_type}", tag_type: tag_type_label_name(tag_type)) %></caption>
+    <thead>
+      <tr>
+        <th scope="col"><%= tag_type_label_name(tag_type) %></th>
+        <th scope="col"><%= ts('Requests') %></th>
+        <th scope="col"><%= ts('Offers') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% summary_tags.each do |tag| %>
+        <tr>
+          <th scope="row">
+            <span class="<%= tag.requests > 0 ? 'requested' : '' %> <%= tag.offers > 0 ? 'offered' : '' %>">
+              <%= tag.name %>
+            </span>
+          </th>
+          <td><span class="requested"><%= tag.requests.to_i %></span></td>
+          <td><span class="offered"><%= tag.offers.to_i %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

@@ -1,0 +1,12 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Delete Tag Set?") %></h2>
+
+<!--main content-->
+<%= form_for(@tag_set, :url => tag_set_path(@tag_set), :html => {:method => :delete, :class => "simple destroy"}) do |f| %>
+  <p class="caution notice"><%= ts("Are you certain you want to <strong><em>delete</em></strong> the %{tagset_title} Tag Set? This will delete all nominations and Tag Set associations as well!", :tagset_title => @tag_set.title).html_safe %></p>
+  <p class="actions">
+    <%= f.submit ts("Yes, Delete Tag Set") %>
+    <%= link_to ts("Back to the Tag Set"), tag_set_path(@tag_set) %>
+  </p>
+<% end %>
+<!--/content-->

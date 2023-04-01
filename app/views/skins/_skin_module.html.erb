@@ -1,0 +1,28 @@
+<% # expects skin %>
+<div class="header module">
+  <h4 class="heading">
+    <%= link_to skin.title, skin %>
+    <%= ts("by %{byline}", byline: skin.byline) %>
+  </h4>
+  <% if @user %>
+    <% if skin.official? %> 
+      <p class="status approved">(<%= ts('Approved') %>)</p>
+    <% elsif skin.rejected? %>
+      <p class="status declined">(<%= ts('Declined:')%> <%= link_to_help 'skins-approval' %> <%= skin.admin_note %>)</p>
+    <% elsif skin.public? %> 
+      <p class="status unread">(<%= ts('Not yet reviewed') %>) <%= link_to_help 'skins-approval' %></p>
+    <% end %>
+  <% end %>
+
+  <div class="icon"><%= skin_preview_display(skin) %></div>
+  <p class="datetime"><%= set_format_for_date(skin.created_at) %></p>
+</div>
+
+<!--summary/descriptions-->
+<h6 class="landmark heading"><%= ts('Description') %></h6>
+<blockquote class="userstuff summary">
+  <%=raw skin.description.blank? ? ts('(No Description Provided)') : strip_images(sanitize_field(skin, :description)) %>
+</blockquote>
+    
+<%= render "skin_actions", skin: skin %>
+

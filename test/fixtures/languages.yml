@@ -1,0 +1,55 @@
+---
+English:
+  id: 1
+  name: English
+  short: en
+  support_available: true
+  abuse_support_available: true
+French:
+  id: 2
+  name: Français
+  short: fr
+Spanish:
+  id: 3
+  name: Español
+  short: es
+German:
+  id: 4
+  name: Deutsch
+  short: de
+Italian:
+  id: 5
+  name: Italiano
+  short: it
+Japanese:
+  id: 6
+  name: 日本語
+  short: ja
+Czech:
+  id: 7
+  name: Čeština
+  short: cs
+Russian:
+  id: 8
+  name: Pyccĸий
+  short: ru
+Suomi:
+  id: 9
+  name: Suomi
+  short: fi
+Bahasa Indonesia:
+  id: 10
+  name: Bahasa Indonesia
+  short: id
+Nederlands:
+  id: 11
+  name: Nederlands
+  short: nl
+Português:
+  id: 12
+  name: Português
+  short: pt
+">中文":
+  id: 13
+  name: ">中文"
+  short: zh

@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Dewplayer</title>
+<link rel="stylesheet" type="text/css" href="styles.css" />
+
+</head>
+
+<body id="dewbody">
+
+	<div id="content">
+	
+		<h1>Dewplayer</h1>
+		
+		<div id="players">
+
+			<h2>Classic</h2>
+			<object type="application/x-shockwave-flash" data="dewplayer.swf?mp3=mp3/test1.mp3" width="200" height="20" id="dewplayer"><param name="wmode" value="transparent" /><param name="movie" value="dewplayer.swf?mp3=mp3/test1.mp3" /></object>
+
+			<h2>Mini</h2>
+			<object type="application/x-shockwave-flash" data="dewplayer-mini.swf?mp3=mp3/test2.mp3" width="160" height="20" id="dewplayer-mini"><param name="wmode" value="transparent" /><param name="movie" value="dewplayer-mini.swf?mp3=mp3/test2.mp3" /></object>
+
+			<h2>Multi</h2>
+			<object type="application/x-shockwave-flash" data="dewplayer-multi.swf?mp3=mp3/test1.mp3|mp3/test2.mp3|mp3/test3.mp3" width="240" height="20" id="dewplayer-multi"><param name="wmode" value="transparent" /><param name="movie" value="dewplayer-multi.swf?mp3=mp3/test1.mp3|mp3/test2.mp3|mp3/test3.mp3" /></object>
+			
+			<h2>Rect</h2>
+			<object type="application/x-shockwave-flash" data="dewplayer-rect.swf?mp3=mp3/test1.mp3|mp3/test2.mp3|mp3/test3.mp3" width="240" height="20" id="dewplayer-rect"><param name="wmode" value="transparent" /><param name="movie" value="dewplayer-rect.swf?mp3=mp3/test1.mp3|mp3/test2.mp3|mp3/test3.mp3" /></object>
+			
+			<h2>Vol</h2>
+			<object type="application/x-shockwave-flash" data="dewplayer-vol.swf?mp3=mp3/test1.mp3" width="240" height="20" id="dewplayer-vol"><param name="wmode" value="transparent" /><param name="movie" value="dewplayer-vol.swf?mp3=mp3/test1.mp3" /></object>
+			
+			<h2>Bubble</h2>
+			<object data="dewplayer-bubble.swf" width="250" height="65" name="dewplayer" id="dewplayer" type="application/x-shockwave-flash">
+			<param name="movie" value="dewplayer-bubble.swf" />
+			<param name="flashvars" value="mp3=mp3/test1.mp3" />
+			<param name="wmode" value="transparent" />
+			</object>
+			
+			<h2>Bubble+Vol</h2>
+			<object data="dewplayer-bubble-vol.swf" width="250" height="65" name="dewplayer" id="dewplayer" type="application/x-shockwave-flash">
+			<param name="movie" value="dewplayer-bubble-vol.swf" />
+			<param name="flashvars" value="mp3=mp3/test1.mp3" />
+			<param name="wmode" value="transparent" />
+			</object>
+			
+			<h2>Playlist</h2>
+			<p class="hint">La playlist est stockée dans le fichier playlist.xml</p>
+			<p class="hint">The playlist is stored in playlist.xml</p>
+			<object type="application/x-shockwave-flash" data="dewplayer-playlist.swf" width="240" height="200" id="dewplayer" name="dewplayer">
+			<param name="wmode" value="transparent" />
+			<param name="movie" value="dewplayer-playlist.swf" />
+			<param name="flashvars" value="showtime=true&autoreplay=true&xml=playlist.xml" />
+			</object>
+
+			<h2>Vinyl+Playlist</h2>
+			<object data="dewplayer-vinyl.swf" width="303" height="113" name="dewplayer" id="dewplayer" type="application/x-shockwave-flash">
+			<param name="movie" value="dewplayer-vinyl.swf" />
+			<param name="flashvars" value="xml=playlist.xml&javascript=off" />
+			<param name="wmode" value="transparent" />
+			</object>
+
+		</div> <!-- #players -->
+
+	</div> <!-- #content -->
+
+</body>
+</html>

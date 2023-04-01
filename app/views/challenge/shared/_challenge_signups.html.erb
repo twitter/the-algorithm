@@ -1,0 +1,31 @@
+<% 
+  # The purpose of this page is to display challenge signups for review by the moderator
+  # It should not be user-facing for most challenges
+%>
+
+<h2 class="heading"><%= ts("Sign-ups for %{collection}", :collection => @collection.title) %></h2>  
+<% @challenge ||= @collection.challenge %>
+
+<ul class="navigation actions" role="menu">
+  <li class="action">
+    <%= link_to ts("Download (CSV)"), collection_signups_path(@collection, :format => :csv) %>
+    <%= link_to_help "csv-download"%>
+  </li>
+</ul>
+
+<!-- main body of signups -->
+<% @challenge_signups.each do |challenge_signup| %>
+  
+  <% # the person who signed up, linking to their full individual signup, and a way to email them %>
+  <%= link_to challenge_signup.pseud.name, collection_signup_path(@collection, challenge_signup) %>
+  <%= mailto_link challenge_signup.pseud.user, :subject => "[#{h(@collection.title)}] Message from Collection Maintainer" %>
+  
+  <% # %>
+  
+  <% # %>
+  
+  <% # %>
+  
+  
+  <% # %>    
+  

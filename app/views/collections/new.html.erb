@@ -1,0 +1,23 @@
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading"><%= ts("New Collection") %></h2>
+
+<!--subnavgiation, sorting and actions-->
+<!--/subnav-->
+
+<h3 class="heading"><%= ts('Suggestions') %></h3>
+<ul class="notes">
+  <li><%= ts("Only registered users can post, so you don't need to worry about spam: you can leave your collection unmoderated. You can always reject works afterwards if there") %> <em><%= ts("is") %></em> <%= ts("a mistaken submission.") %></li>
+  <li><%= ts("The best way to set up a regular challenge (e.g., an annual challenge like Yuletide, 
+      or a weekly one like sga_flashfic) is to create a closed parent collection and then add a new, open, subcollection for each challenge.") %>
+   </li>
+   <li>
+      <%= ts("If you limit membership for each challenge (e.g., for a gift exchange), people can sign
+      up for each subcollection separately. If you just want the whole thing moderated, have people sign up as members of the parent collection; they'll then be able to post in every subcollection.") %>
+    </li>
+</ul>
+<!-- /descriptions-->
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("New Collection Form") %></h3>
+<%= render :partial => 'form' %> 
+<!--/content-->

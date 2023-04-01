@@ -1,0 +1,23 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Pseuds for %{user}", :user => @user.login) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<% if current_user == @user %>
+  <h3 class="landmark heading"><%= ts("Navigation") %></h3>
+  <ul class="navigation actions" role="navigation">
+    <li><%= link_to ts('New Pseud'), new_user_pseud_path(@user) %></li>
+  </ul>
+<% end %>
+<!--/subnav-->
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("List of Pseuds") %></h3>
+<ul class="pseud index group">
+  <% @pseuds.each do |pseud| %>
+    <%= render :partial => 'pseuds/pseud_blurb', :locals => {:pseud => pseud} %>
+  <% end %>
+</ul>
+<!--/content-->
+
+

@@ -1,0 +1,275 @@
+/* ==SYSTEM MESSAGES
+System messages use the following colours:
+* notice => blue: success, messages, additional information, no action needed, can proceed
+* caution => yellow: user may wish to change their mind, action optional, can proceed
+* error => red: mistake, go back and fix this problem, action needed before you can proceed
+*/
+
+.important {
+  font-weight: 900;
+}
+
+/* We don't generally chain class selectors, but Devise's non-customizable alert class conflicts with ours, making it necessary here */
+.required, .error, .alert.flash {
+  color: #900;
+}
+
+.footnote {
+  font-size: 0.75em;
+  float: right;
+}
+
+.datetime {
+  font-family: monospace;
+}
+
+div.error {
+  margin: 0.643em auto;
+  padding: 0.25em 0.375em;
+    border-radius: 0.25em;
+}
+
+.notice, .comment_notice, .kudos_notice, ul.notes, .caution, .error, .comment_error, .kudos_error, .alert.flash {
+  background: #d1e1ef;
+  border: 1px solid #c2d2df;
+  margin: 0.643em auto;
+  padding: 0.25em 0.375em;
+  clear: right;
+    box-shadow: inset 1px 1px 2px;
+    border-radius: 0.25em;
+}
+
+.caution {
+  background: #ffe34e;
+  color: #000;
+  border-color: #d89e36;
+}
+
+.error, .comment_error, .kudos_error, .alert.flash {
+  background: #efd1d1;
+  border-color: #900;
+    box-shadow: 1px 1px 2px;
+}
+
+.notes {
+  clear: right;
+}
+
+form .notice, form ul.notes {
+    box-shadow: 0px 0 3px #fff;
+}
+
+.notice p {
+  margin: 0;
+  padding: 0.643em;
+}
+
+ul.notes, .error ul, .notice ul, .caution ul, .alert.flash ul {
+  position: static;
+  margin: auto 0.643em;
+  padding: 0.25em 2.5em;
+}
+
+ul.notes li, .error ul li, .notice ul li, .caution ul li, .alert.flash ul li {
+  list-style-type: disc;
+  padding-left: 1.5em;
+}
+
+span.error {
+  display: block;
+}
+
+/* contexts */
+
+.actions + .footnote {
+ clear: both;
+}
+
+/* ADMIN ANNOUNCEMENT BANNERS
+Set by an admin, these banners appear on every page until the user dismisses them or the admin deletes it
+default (no additional class) => blue like other notice messages
+event => red gradient with white text for fundraising, celebrations, other happy Org events
+alert => yellow-orange to alert users of problems or planned downtime
+*/
+
+.announcement {
+  clear: both;
+  position: relative;
+}
+
+.announcement .userstuff {
+  background: #d1e1ef;
+  border: 1px solid #c2d2df;
+  color: #333;
+  margin: 0 2em;
+  padding: 0.375em 0.75em;
+  text-align: left;
+}
+
+.announcement .userstuff p {
+  margin: 0.375em auto;
+}
+
+.announcement p.submit {
+  bottom: -0.25em;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 1em;
+}
+
+.announcement input[type="submit"], .announcement .action {
+  background: #fff none;
+  border: 1px solid #bbb;
+  font-size: 0.875em;
+  padding: 0.25em 0.5em;
+    border-radius: 2em;
+}
+
+.announcement h1, .announcement h2, .announcement h3, .announcement h4, .announcement h5, .announcement h6 {
+  border: none;
+  color: inherit;
+  margin: 0;
+  text-align: center;
+    text-shadow: none;
+}
+
+.event .userstuff {
+  background: #700;
+  border-color: #600;
+  color: #fff;
+    background-image: -moz-linear-gradient(top, #700 0%, #a00 100%);
+    background-image: -webkit-linear-gradient(top, #700 0%, #a00 100%);
+    background-image: -o-linear-gradient(top, #700 0%, #a00 100%);
+    background-image: linear-gradient(to bottom, #700 0%, #a00 100%);
+}
+
+.event .userstuff a {
+  color: #eee;
+}
+
+.alert .userstuff {
+  background: #fece3f;
+  border-color: #edb202;
+  color: #333;
+}
+
+/* thermometer JavaScript widget for fundraising drives
+progress indicator colors are set in application.js */
+
+.announcement .thermometer-content {
+  height: 2.6em;
+  margin: auto;
+  width: 50%;
+}
+
+.announcement .thermometer {
+  position: relative;
+}
+
+.announcement .thermometer .track {
+  background: #fff;
+  border: 1px solid #aaa;
+  height: 1.25em;
+  margin: 0 auto;
+  position: relative;
+    background-image: linear-gradient(to bottom, #fff 0%, #f3f3f3 50%, #ededed 51%, #fff 100%);
+}
+
+.announcement .thermometer .progress {
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  position: absolute;
+}
+
+.announcement .thermometer .goal {
+  position: absolute;
+  right: 0;
+}
+
+.announcement .thermometer .amount {
+  font-weight: 700;
+  line-height: 1.25em;
+  position: absolute;
+}
+
+.announcement .thermometer .goal .amount {
+  left: 0;
+  padding-left: 0.25em;
+  top: 0;
+}
+
+.announcement .thermometer .progress .amount {
+  top: 1.35em;
+  right: 0;
+}
+
+/* SYMBOLS (mostly help button, arguably an action but hey ho);
+IN REVIEW: this block is very old (2008), a bit wonky and has an unexpected effect on blurb that needs detangling so it might change a lot*/
+
+span.symbol {
+  color: #2a547c;
+  font-family: Georgia, serif;
+  border: 1px solid;
+  vertical-align: super;
+    border-radius: 0.75em;
+}
+
+span.symbol span {
+  padding: 0.425em;
+}
+
+.symbols a, .symbol a {
+  text-decoration: none;
+  border: none;
+}
+
+.question a:hover {
+  background: #2a547c;
+  border-color: #d1e1ef;
+  color: #fff;
+  cursor: help;
+}
+
+span.question {
+  background: #d1e1ef;
+  border-color: #2a547c;
+    box-shadow: -1px -1px 2px rgba(0,0,0,0.25);
+}
+
+a.question {
+  border: 0;
+  font-weight: bold;
+}
+
+.heading a.question {
+  font-size: 0.75em;
+}
+
+/*SYMBOLS KEY (help content) */
+
+dl#symbols-key dt {
+  width: 100px;
+}
+
+dl#symbols-key dd {
+  margin: -55px auto auto 100px;
+}
+
+#symbols-key dl {
+  border: 1px solid #ddd;
+  margin-bottom: 1.286em;
+  padding: 0.15em;
+}
+
+#symbols-key dl dt img, #bookmark-symbols-key dt img, #symbols-key dl dt, #bookmark-symbols-key dt {
+  height: 25px;
+  width: 25px;
+}
+
+#symbols-key dl dd, #bookmark-symbols-key dd {
+  margin: -25px auto 20px 35px;
+}
+
+/*END== */

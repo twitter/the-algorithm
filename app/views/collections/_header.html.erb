@@ -1,0 +1,45 @@
+<!--Descriptive page name, messages and instructions-->
+<div class="primary header module">
+  <h2 class="heading"><%= link_to_unless_current(@collection.title, @collection) %></h2>
+  <div class="icon">
+    <%= image_tag(@collection.icon.url(:standard), size: "100x100", alt: collection.icon_alt_text, skip_pipeline: true) %>
+  </div>
+<!--/descriptions-->
+
+<!--subnav-->
+  <ul class="navigation actions" role="navigation">
+    <li><%= span_if_current ts("Profile"), collection_profile_path(@collection) %></li>
+
+    <% if logged_in? && @collection.closed? && @collection.challenge_type != "PromptMeme" && (@collection.user_is_owner?(current_user) || @collection.user_is_maintainer?(current_user)) %>
+      <li><%= link_to ts("Post to Collection"), new_collection_work_path(@collection) %></li>
+    <% else %>
+      <% if logged_in? && !@collection.closed? && @collection.challenge_type != "PromptMeme" %>
+        <li><%= link_to ts("Post to Collection"), new_collection_work_path(@collection) %></li>
+      <% end %>
+    <% end %>
+
+    <% if @collection.challenge # add custom navigation for the specific challenge if there is one %>
+      <%= render "challenge/#{challenge_class_name(@collection)}/challenge_navigation_user" %>
+    <% end %>
+
+    <% unless @collection.challenge || @collection.user_is_owner?(current_user) %>
+      <% if (@participant ||= @collection.get_participants_for_user(current_user).first) %>
+        <li><%= link_to ts("Leave"), collection_participant_path(@collection, @participant),
+          data: { confirm: ts('Are you certain you want to leave this collection?') }, 
+          method: :delete %></li>
+      <% elsif logged_in? && @collection.moderated? %>
+        <li><%= link_to ts("Join"), join_collection_participants_path(@collection) %></li>
+      <% end %>
+    <% end %>
+
+    <% if @collection.user_is_maintainer?(current_user) %>
+      <li><%= link_to ts("Membership"), collection_participants_path(@collection) %></li>
+      <li><%= link_to ts("Manage Items"), collection_items_path(@collection) %></li>
+    <% end %>
+  </ul>
+  <!--/subnav-->
+  <blockquote class="userstuff"><%=raw sanitize_field(@collection, :description) %></blockquote>
+  <p class="type">
+    (<%= collection.closed? ? ts("Closed") : ts("Open") %>, <%= collection.moderated? ? ts("Moderated") : ts("Unmoderated") %><%= collection.unrevealed? ? ts(", Unrevealed") : "" %><%= collection.anonymous? ? ts(", Anonymous") : "" %><%= collection.gift_exchange? ? ts(", Gift Exchange Challenge") : "" %><%= collection.prompt_meme? ? ts(", Prompt Meme Challenge") : "" %>)
+  </p>
+</div>

@@ -1,0 +1,14 @@
+<!--subnav-->
+<h3 class="landmark heading"><%= ts('Skin Type Navigation') %></h3>
+
+<ul class="actions" role="navigation">
+  <% if logged_in? %>
+    <li><%= my_site_skins_link %></li>
+    <li><%= my_work_skins_link %></li>
+  <% end %>
+  <% unless action_name == 'new' %>
+    <li><%= public_site_skins_link %></li>
+    <li><%= public_work_skins_link %></li>
+  <% end %>
+</ul>
+<!--/subnav-->

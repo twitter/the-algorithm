@@ -1,0 +1,9 @@
+<% unless RedisHitCounter.prevent_hits?(@work) || current_user&.is_author_of?(@work) %>
+  <% content_for :footer_js do %>
+    <script>
+      $j(document).on("loadedCSRF", function() {
+        $j.post("<%= work_hit_count_path(@work, format: :json) %>")
+      })
+    </script>
+  <% end %>
+<% end %>

@@ -1,0 +1,63 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Co-Creator Requests") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= will_paginate @creatorships %>
+<% if @creatorships.blank? %>
+  <p><%= ts("No co-creator requests found.") %></p>
+<% else %>
+  <%= form_tag user_creatorships_path(@user, page: params[:page]), method: :put do %>
+    <fieldset class="actions">
+      <legend><%= ts("Mass Edit Options") %></legend>
+
+      <ul>
+        <li><a class="check_all"><%= ts("Select All") %></a></li>
+        <li><a class="check_none"><%= ts("Select None") %></a></li>
+        <li><%= submit_tag ts("Accept"), name: "accept" %></li>
+        <li><%= submit_tag ts("Reject"), name: "reject" %></li>
+      </ul>
+    </fieldset>
+
+    <fieldset class="creatorships">
+      <legend><%= ts("List of Co-Creator Requests") %></legend>
+
+      <table>
+        <tr>
+          <th><%= ts("Creation") %></th>
+          <th><%= ts("Type") %></th>
+          <th><%= ts("Invited Pseud") %></th>
+          <th><%= ts("Date") %></th>
+          <th><%= ts("Selected?") %></th>
+        </tr>
+        <%= collection_check_boxes "", :selected, @creatorships, :id, :id do |builder| %>
+          <% creatorship = builder.object %>
+          <% next unless (creation = creatorship.creation) %>
+          <tr>
+            <td><%= link_to title_for_creation(creation), creation %></td>
+            <td><%= creatorship.creation_type %></td>
+            <td><%= creatorship.pseud.name %></td>
+            <td><%= set_format_for_date(creatorship.created_at) %></td>
+            <td><%= builder.check_box %></td>
+          </tr>
+        <% end %>
+      </table>
+    </fieldset>
+
+    <fieldset class="actions">
+      <legend><%= ts("Mass Edit Options") %></legend>
+
+      <ul>
+        <li><a class="check_all"><%= ts("Select All") %></a></li>
+        <li><a class="check_none"><%= ts("Select None") %></a></li>
+        <li><%= submit_tag ts("Accept"), name: "accept" %></li>
+        <li><%= submit_tag ts("Reject"), name: "reject" %></li>
+      </ul>
+    </fieldset>
+  <% end %>
+<% end %>
+<%= will_paginate @creatorships %>
+<!--/main content-->

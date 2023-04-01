@@ -1,0 +1,43 @@
+<% # this page is for administrators only, they cannot navigate to individual user pages %>
+<div class="admin">
+  <h2 class="heading"><%= ts("User Invite Requests") %></h2>
+  <p><%= ts("Enter \"0\" under quantity to deny the request. Clear the box to delay your decision for now.") %></p>
+  <p class="note"><%= ts("To give a user more invitations without a request, visit their individual invitations page.") %></p>
+  <!--/descriptions-->
+  <!--subnav-->
+  <%= will_paginate @user_invite_requests %>
+  <!--/subnav-->
+
+  <!--main content-->
+  <%= form_tag url_for(:controller => 'user_invite_requests', :action => 'update'), method: :patch do %>
+  <table summary="<%= ts('Requests from users for invites, with their given reasons. You can allot invites to individuals under the heading Quantity.') %>">
+    <caption><%= ts('Allot Invites to Users') %></caption>
+    <thead>
+      <tr>
+        <th scope="col"><%= ts('User') %></th>
+        <th scope="col"><%= ts('Reason') %></th>
+        <th scope="col"><%= ts('Quantity') %></th>
+        <th scope="col"><%= ts('Created at') %></th>
+        <th scope="col"><%= ts('Previous') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @user_invite_requests.each do |request| %>
+        <tr>
+          <td><%= link_to request.user.login, request.user %></td>
+          <td><%= request.reason %></td>
+          <td><%= text_field_tag "requests[#{request.id}]", request.quantity, :size => 2, :id => "requests[#{request.user.login}]" %></td>
+          <td><%= request.created_at %>
+          <td><%= link_to_previous_invite_requests(request) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <p class="submit"><%= submit_tag ts("Update") %><%= submit_tag ts("Decline All"), :name => 'decline_all', data: {confirm: "This will decline ALL requests. Are you sure?"} %></p>
+  <% end %>
+  <!--/content-->
+
+  <!--subnav-->
+  <%= will_paginate @user_invite_requests %>
+  <!--/subnav-->
+</div>

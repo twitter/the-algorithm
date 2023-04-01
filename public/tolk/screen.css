@@ -1,0 +1,336 @@
+/*-------------------------------------------------
+Defaults
+-------------------------------------------------*/
+
+acronym, abbr {
+  font-variant: small-caps; 
+  text-transform: lowercase; 
+  font-weight: bold;
+}
+
+.center {text-align: center;}	
+.large {font-size: larger;}	
+.small {font-size: smaller;}
+strong {font-weight: bold;}
+em {font-style: italic;}
+
+.clear {clear: both;}				 
+.clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }		 
+.clearfix { display: inline-block; }		 
+.clearfix{ display: block; }
+
+a {color: #888;}
+a:hover {color: #000;}
+
+/*-------------------------------------------------
+Layout
+-------------------------------------------------*/
+
+body {
+  font-family: "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  background: #e5e5e5; 
+  color: #333;   
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  line-height: 21px;
+  text-align: left;
+}
+
+div#container {
+  margin: 2% 4%;
+  padding: 25px;
+  background: #fff;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 15px rgba(00,00,00,0.5);
+  -moz-box-shadow: 0px 0px 15px rgba(00,00,00,0.5);
+  -webkit-box-shadow: 0px 0px 15px rgba(00,00,00,0.5);
+}
+
+div#head {
+  margin: -25px -25px 0;
+  background: #111;
+  color: #999;
+  padding: 25px 25px 20px 15px;
+  -webkit-border-top-left-radius: 20px;
+  -webkit-border-top-right-radius: 20px;
+  -moz-border-radius-topleft: 20px;
+  -moz-border-radius-topright: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  font-size: 18px;
+}
+
+div#head a {
+  color: #2fadcf;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+div#head span.home {
+  -webkit-border-top-left-radius: 10px;
+  -webkit-border-bottom-left-radius: 10px;
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-bottomleft: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background: #333;
+  padding: 8px 6px 8px 12px;
+  margin-right: 1px;
+}
+
+div#head span.locale {
+  color: #fff;
+  font-weight: bold;
+  background: #444;
+  padding: 8px 12px 8px 6px;
+  -webkit-border-top-right-radius: 10px;
+  -webkit-border-bottom-right-radius: 10px;
+  -moz-border-radius-topright: 10px;
+  -moz-border-radius-bottomright: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+div#head span.locale.empty {
+  background: #333;
+  padding-left: 0;
+  margin-left: -6px;
+}
+
+div#head span.locale em {
+  font-style: normal;
+  font-weight: normal;
+}
+
+div#head span.note {
+  color: #777;
+  font-size: 13px;
+  font-weight: normal;
+  margin-left: 10px;
+}
+
+h2,
+h3 {
+  font-size: 18px;
+  color: #2fadcf;
+  margin: 25px 0 10px;
+}
+
+h2 span,
+h3 span {
+  font-size: 13px;
+  color: #888;
+}
+
+ul.locales {
+  margin: 25px 0;
+}
+
+ul.locales li {
+  /*width: 230px;*/
+  width: 150px;
+  display: block;
+  float: left;
+  margin: 0 10px 10px 0;
+ /* background: #fff;
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+   border: 1px solid #e5e5e5;
+   padding: 5px 10px;*/
+}
+
+ul.locales a {
+  font-weight: bold;
+  text-decoration: underline;
+  color: #2fadcf;
+}
+
+/*ul.locales li:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
+}*/
+
+ul.locales span.missing_translations {
+  color: #fff;
+  font-weight: bold;
+  background: #c00;
+  font-size: 9px;
+  padding: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  line-height: 9px;
+  vertical-align: top;
+  display: inline-block;
+}
+
+ul.locales span {
+  font-size: 13px;
+  color: #666;
+}
+
+div.submit {
+  background: #f5f5f5;
+  margin: 25px -25px -25px;
+  padding: 15px 25px;
+  border-top: 1px dashed #ccc;
+  -webkit-border-bottom-right-radius: 20px;
+  -webkit-border-bottom-left-radius: 20px;
+  -moz-border-radius-bottomright: 20px;
+  -moz-border-radius-bottomleft: 20px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+span.updated {
+  font-size: 11px;
+  padding: 1px;
+  background: #ffc;
+  color: #777;
+  margin-bottom: 10px;
+  float: right;
+}
+
+div.table_submit {
+  background: #f5f5f5;
+  margin: -25px 0 0;
+  padding: 12px 15px 15px;
+  text-align: left;
+}
+
+div.translations {
+  width: 96%;
+  text-align: center;
+}
+
+span.notice {
+  background: #ffc;
+  color: #666;
+  font-size: 12px;
+  padding: 2px 5px;
+  margin: -5px 0 15px;
+  display: inline-block;
+}
+
+div.original {
+  color: #999;
+  margin: 5px 0;
+  padding: 1px 8px 4px;
+}
+
+div.updated {
+  background: #ffc;
+  padding: 1px 8px 4px;
+}
+
+table.translations div.original span.key {
+  margin: 0 0 -2px;
+  padding: 0;
+}
+
+table.translations div.updated span.key {
+  margin: 0 0 -2px;
+  color: orange !important;
+  padding: 0;
+}
+
+/*-------------------------------------------------
+Translation tables
+-------------------------------------------------*/
+
+table.translations {
+  margin: 0 0 25px;
+  width: 100%;
+  text-align: left;
+}
+
+table.translations td,
+table.translations th {
+  font-size: 14px;
+  color: #222;
+  padding: 12px 8px;
+  border-bottom: 1px solid #e5e5e5;
+  vertical-align: top;
+  width: 50%;
+}
+
+table.translations th {
+  border-bottom-color: #bbb;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #999;
+  padding-bottom: 2px;
+}
+
+table.translations textarea.locale {
+  font-family: "Lucida Sans", "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-size: 14px;
+  line-height: 21px;
+  color: #222;
+  padding: 1px;
+  width: 100%;
+  height: 42px;
+}
+
+table.translations span.key {
+  color: #aaa;
+  font-size: 9px;
+  display: block;
+}
+
+table.translations td.translation {
+  padding: 10px 8px;
+}
+
+table.translations tr.active td {
+  background: #edf9fe;
+}
+
+table.translations .highlight {
+  background-color: yellow;
+}
+
+/*-------------------------------------------------
+Pagination
+-------------------------------------------------*/
+
+div.paginate {
+  margin: 15px auto 20px;
+  font-size: 12px;
+  color: #777;
+}
+
+div.paginate a,
+div.paginate span {
+  padding: 2px 6px;
+  text-decoration: none;
+}
+
+div.paginate a:hover,
+div.paginate span.current {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background: #eee;
+  color: #333;
+}
+
+div.paginate .next_page,
+div.paginate .prev_page {
+ margin: 0 15px;
+ -webkit-border-radius: 5px;
+ -moz-border-radius: 5px;
+ border-radius: 5px;
+ border: 1px solid #bbb;
+ padding: 4px 8px;
+}
+
+div.paginate .disabled {
+  color: #ccc;
+  border-color: #eee;
+}

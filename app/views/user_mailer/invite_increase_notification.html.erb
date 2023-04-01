@@ -1,0 +1,10 @@
+<% content_for :message do %>
+  <p><%= t("mailer.general.greeting.informal.addressed", name: style_bold(@user.login)).html_safe %></p>
+
+  <p><%= t(".html.body", count: @total, invitation_page_link: style_link(t(".invitation_page_link_text"), user_invitations_url(@user))).html_safe %></p>
+
+  <p>
+    <%= t("mailer.general.closing.informal") %><br />
+    <%= t("mailer.general.signature.app_short_name") %>
+  </p>
+<% end %>

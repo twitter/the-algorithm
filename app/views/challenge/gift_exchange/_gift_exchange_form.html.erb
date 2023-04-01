@@ -1,0 +1,57 @@
+<!--descriptions-->
+<h2 class="heading"><%= ts("Setting Up the %{title} Gift Exchange", :title => @collection.title) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<% if @collection.challenge %>
+  <ul class="navigation actions">
+    <li><%= render "challenge/shared/challenge_form_delete" %></li>
+  </ul>
+<% end %>
+<!--/subnav-->
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts('Notes') %></h3>
+<ul class="notes">
+  <li><%= ts("The more options you allow here, the more complicated your sign-up form will be.") %></li>
+  <li><%= ts("If you keep to one request and one offer, automated matching will be easier! A single request can include multiple fandoms. Unless you want to do fairly complicated requests, you probably don't need more than one request/offer.") %></li>
+  <li><%= ts('You only need to set the "Allowed" number if you want more allowed than required.') %></li>
+</ul>
+
+<h3 class="landmark heading"><%= ts("Gift Exchange Settings") %></h3>
+<%= form_for([@collection, @challenge], :url => collection_gift_exchange_path(@collection), :html => {:class => "verbose create challenge"}) do |f| %>
+  <%= error_messages_for @challenge %>
+  <%= render "challenge/shared/challenge_form_schedule", :f => f %>
+
+  <fieldset>
+  	<legend><%= ts("Requests and Offers") %></legend>
+  	<h3 class="landmark heading"><%= ts("Requests and Offers") %></h3>
+    <dl>
+      <dt><%= f.label :requests_summary_visible, ts("Requests visible?") %> <%= link_to_help "challenge-requests-summary" %></dt>
+      <dd><%= f.check_box :requests_summary_visible %></dd>
+
+      <dt><%= f.label :requests_num_required, ts("Number of requests per sign-up:") %></dt>
+      <%= required_and_allowed(f, "requests", @collection.prompts.empty?, false) %>
+
+      <dt><%= f.label :offers_num_required, ts("Number of offers per sign-up:") %></dt>
+      <%= required_and_allowed(f, "offers", @collection.prompts.empty?, false) %>
+    </dl>
+  </fieldset>
+
+  <!-- restrictions for requests -->
+  <%= render "prompt_restrictions/prompt_restriction_form", :challenge_form => f, :is_offer => false, :show_tag_options => false, :type => "gift_exchange" %>
+
+  <!-- restrictions for offers -->
+  <%= render "prompt_restrictions/prompt_restriction_form", :challenge_form => f, :is_offer => true, :show_tag_options => true, :type => "gift_exchange" %>
+
+  <!-- matching settings -->
+  <%= render "potential_match_settings/potential_match_settings_form", :challenge_form => f %>
+
+  <!-- instructions from moderator -->
+  <%= render "challenge/shared/challenge_form_instructions", :f => f %>
+
+  <%= submit_fieldset f %>
+
+<% end %>
+
+<!--/content-->

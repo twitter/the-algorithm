@@ -1,0 +1,52 @@
+<%= error_messages_for :language %>
+
+<%= form_for(@language, html: { class: "post" }) do |f| %>
+
+  <p class="required notice">* <%= t('.required_notice', default: "Required information") %></p>
+
+  <fieldset>
+    <dl>
+      <dt class="required">
+        <%= f.label :name, t('.name', default: "Name") + " *" %>
+      </dt>
+      <dd class="required">
+        <%= f.text_field :name %>
+      </dd>
+
+      <dt class="required">
+        <%= f.label :short, t('.short', default: "Abbreviation") + " *" %>
+      </dt>
+      <dd class="required">
+        <%= f.text_field :short %>
+      </dd>
+
+      <dt>
+        <%= f.label :sortable_name, t('.sortable_name', default: "Name for alphabetical sorting") %>
+      </dt>
+      <dd>
+        <%= f.text_field :sortable_name %>
+      </dd>
+
+      <dt>
+        <%= f.check_box :support_available %>
+      </dt>
+      <dd>
+        <%= f.label :support_available, t('.support_available', default: "Support available") %>
+      </dd>
+      <dt>
+        <%= f.check_box :abuse_support_available %>
+      </dt>
+      <dd>
+        <%= f.label :abuse_support_available, t('.abuse_support_available', default: "Abuse support available") %>
+      </dd>
+    </dl>
+    <p class="submit actions">
+      <% if @language.new_record? %>
+        <%= f.submit t('.create', default: "Create Language") %>
+      <% else %>
+        <%= f.submit t('.update', default: "Update Language") %>
+      <% end %>
+    </p>
+  </fieldset>
+<% end %>
+

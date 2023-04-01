@@ -1,0 +1,505 @@
+---
+cs:
+  activerecord:
+    attributes:
+      archive_warning:
+        name_with_colon:
+          few: 'Varování:'
+          one: 'Varování:'
+          other: 'Varování:'
+      category:
+        name_with_colon:
+          few: 'Kategorie:'
+          one: 'Kategorie:'
+          other: 'Kategorií:'
+      character:
+        name_with_colon:
+          few: 'Postavy:'
+          one: 'Postava:'
+          other: 'Postav:'
+      fandom:
+        name_with_colon:
+          few: 'Fandomy:'
+          one: 'Fandom:'
+          other: 'Fandomů:'
+      freeform:
+        name_with_colon:
+          few: 'Vedlejší tagy:'
+          one: 'Vedlejší tag:'
+          other: 'Vedlejších tagů:'
+      rating:
+        name_with_colon: 'Zařazení:'
+      relationship:
+        name_with_colon:
+          few: 'Vztahy:'
+          one: 'Vztah:'
+          other: 'Vztahů:'
+      work:
+        summary: Shrnutí
+    models:
+      archive_warning:
+        few: Varování
+        one: Varování
+        other: Varování
+      category:
+        few: Kategorie
+        one: Kategorie
+        other: Kategorií
+      chapter:
+        few: Kapitoly
+        one: Kapitola
+        other: Kapitol
+      character:
+        few: Postavy
+        one: Postava
+        other: Postav
+      fandom:
+        few: Fandomy
+        one: Fandom
+        other: Fandomů
+      freeform:
+        few: Vedlejší tagy
+        one: Vedlejší tag
+        other: Vedlejších tagů
+      rating:
+        few: Zařazení
+        one: Zařazení
+        other: Zařazení
+      relationship:
+        few: Vztahy
+        one: Vztah
+        other: Vztahů
+      series:
+        few: Série
+        one: Série
+        other: Sérií
+  kudo_mailer:
+    batch_kudo_notification:
+      guest:
+        few: "%{count} návštěvníků"
+        many: "%{count} návštěvníků"
+        one: návštěvníka
+        other: "%{count} návštěvníků"
+      html:
+        left_kudos:
+          few: Práce %{commentable_link} dostala kudos od %{givers_list}.
+          one: Práce %{commentable_link} dostala kudos od %{givers_list}.
+          other: Práce %{commentable_link} dostala kudos od %{givers_list}.
+        single_guest:
+          giver_list: návštěvníka
+          left_kudos: Práce %{commentable_link} dostala kudos od %{giver_list}.
+      subject: "[%{app_name}] Máte nové kudos!"
+      text:
+        left_kudos:
+          few: Práce %{commentable_title} (%{commentable_url}) dostala kudos od %{givers_list}.
+          one: Práce %{commentable_title} (%{commentable_url}) dostala kudos od %{givers_list}.
+          other: Práce %{commentable_title} (%{commentable_url}) dostala kudos od
+            %{givers_list}.
+        single_guest: Práce %{commentable_title} (%{commentable_url}) dostala kudos
+          od návštěvníka.
+  mailer:
+    general:
+      closing:
+        formal: S pozdravem,
+        informal: S pozdravem,
+      creation:
+        link_with_word_count: "%{creation_link} (%{word_count})"
+        title_with_chapter_number: Kapitola %{position} z díla %{title}
+        title_with_word_count: '"%{creation_title}" (%{word_count})'
+        word_count:
+          few: "%{count} slova"
+          one: "%{count} slovo"
+          other: "%{count} slov"
+      footer:
+        general:
+          html:
+            donate_link_text: na vaše příspěvky
+            part1: Pokud jste obdrželi tuto zprávu omylem, prosím %{support_link}.
+            part2: AO3 je fanoušky vedený a podporovaný archiv, který spoléhá %{donate_link}.
+            support_link_text: kontaktujte Podporu
+          text:
+            part1: Pokud jste obdrželi tuto zprávu omylem, prosím kontaktujte Podporu
+              na %{support_url}.
+            part2: 'AO3 je fanoušky vedený a podporovaný archiv, který spoléhá na
+              vaše příspěvky: %{donate_url}.'
+        sent_at: Odesláno ve %{sent_at}.
+      greeting:
+        formal: Dobrý den, %{name},
+        informal:
+          addressed: Ahoj %{name},
+          unaddressed: Ahoj,
+        introductory: Zdravíme z Archive of Our Own - AO3 (Našeho vlastního archivu
+          - AO3),
+      metadata_label_indicator: ": "
+      signature:
+        app_short_name: AO3
+        open_doors: The Open Doors team (tým Otevřených dvěří)
+        parent_org: Organization for Transformative Works - OTW (Společnost pro transformativní
+          tvorbu)
+        support: Podpora AO3
+  users:
+    mailer:
+      reset_password_instructions:
+        expiration: Pokud tento odkaz nepoužijete ke změně hesla do sedmi dnů, vyprší
+          a budete si muset zažádat o nový.
+        intro: 'Byl vznesen požadavek na změnu hesla pro váš účet. Své heslo můžete
+          změnit kliknutím na následující odkaz a vyplněním nového hesla:'
+        link_title: Změnit heslo.
+        subject: "[%{app_name}] Změňte své heslo"
+        unrequested: Pokud jste si změnu hesla nevyžádal/a, můžete tento email ignorovat
+          a vaše stávající heslo zůstane platné.
+  user_mailer:
+    abuse_report:
+      description_para: 'Popis porušení zásad:'
+      para1: 'Tým pro dohled na dodržování pravidel a zásad serveru obdržel následující
+        nahlášení porušení pravidel a zásad serveru:'
+      subject: "[%{app_name}] Vaše nahlášení porušení pravidel a zásad serveru"
+      url_para: 'URL stránky, na které se porušení zásad nachází:'
+    admin_deleted_work_notification:
+      bye: Kopii své práce najdete v příloze.
+      contact_abuse: obraťte se prosím na Dohled na dodržování pravidel a zásad serveru
+      html:
+        part1: Vaše práce s názvem %{title} byla z Archivu smazána administrátorem.
+        part2: V případě, že byla vaše práce součástí projektu Open Doors (Otevřené
+          dveře), %{opendoors_link}.
+        tos_violation: V případě, že je možné, že vaše práce porušila Smluvní podmínky
+          Archivu, %{contact_abuse_link}.
+      opendoors: obraťte se s případnými dotazy na Open Doors
+      subject: "[%{app_name}] Vaše práce byla smazána administrátorem"
+      text:
+        part1: Vaše práce s názvem "%{title}" byla z Archivu smazána administrátorem.
+        part2: V případě, že byla vaše práce součástí projektu Open Doors (Otevřené
+          dveře), obraťte se s případnými dotazy na Open Doors (%{opendoors_link}).
+        tos_violation: V případě, že je možné, že vaše práce porušila Smluvní podmínky
+          Archivu, obraťte se prosím na Dohled na dodržování pravidel a zásad serveru
+          (%{contact_abuse_url}).
+    admin_hidden_work_notification:
+      access: Na stránku se skrytou prací se dostanete pomocí odkazu přiloženého výše,
+        nebude ale dostupná ostatním uživatelům AO3, a to ani ze stránky s přehledem
+        vašich prací.
+      check_email: Je možné, že vás výbor pro Dohled již kontaktoval ohledně důvodu
+        pro skrytí této práce, zkontrolujte proto prosím svoji e-mailovou schránku,
+        a to včetně složky s nevyžádanou poštou (spam).
+      contact_abuse: kontaktujte prosím výbor pro Dohled
+      html:
+        help: Pokud si nejste jisti, proč byla vaše práce skryta, a neobdrželi jste
+          další informace, na tento e-mail neodpovídejte, ale %{contact_abuse_link}.
+        hidden: Vaše práce %{title} byla skryta výborem pro Dohled na dodržování pravidel
+          a zásad serveru a není proto nadále veřejně dostupná.
+        tos_violation: Pokud byla vaše práce skryta z důvodu porušení %{tos_link}
+          AO3, budete muset práci upravit tak, aby s nimi byla v souladu. Pokud tak
+          neučiníte, hrozí, že bude vaše práce smazána.
+      subject: "[%{app_name}] Vaše práce byla skryta výborem pro Dohled na dodržování
+        pravidel a zásad serveru"
+      text:
+        help: 'Pokud si nejste jisti, proč byla vaše práce skryta, a neobdrželi jste
+          další informace, na tento e-mail neodpovídejte, ale kontaktujte prosím výbor
+          pro Dohled: %{contact_abuse_url}.'
+        hidden: Vaše práce "%{title}" (%{work_url}) byla skryta výborem pro Dohled
+          na dodržování pravidel a zásad serveru, a není proto nadále veřejně dostupná.
+        tos_violation: Pokud byla vaše práce skryta z důvodu porušení smluvních podmínek
+          AO3 (%{tos_url}), budete muset práci upravit tak, aby s nimi byla v souladu.
+          Jestli tak neučiníte, hrozí, že bude vaše práce smazána.
+      tos: smluvních podmínek
+    anonymous_or_unrevealed_notification:
+      anonymous_info: Anonymní práce jsou zahrnuty ve výpisech tagů, ale nejsou uvedeny
+        na stránce s vašimi pracemi. U dané práce bude vaše uživatelské jméno nahrazeno
+        slovem "Anonymous" (Anonymní).
+      anonymous_unrevealed_info: Správci sbírky mohou vaši práci později zveřejnit,
+        ale ponechat ji v anonymitě. Lidé, kteří se přihlásili k odběru vašich prací,
+        nebudou o této změně informováni. Po zveřejnění bude vaše práce zahrnuta ve
+        výpisech tagů, ale nebude uvedena na stránce s vašimi pracemi. Na stránce
+        práce bude vaše uživatelské jméno nahrazeno slovem "Anonymous" (Anonymní).
+      changed_status:
+        anonymous:
+          html: Správci sbírky %{collection_link} změnili status vaší práce %{work_link}
+            na anonymní.
+          text: Správci sbírky %{collection_title}" (%{collection_url}) změnili status
+            vaší práce "%{work_title}" (%{work_url}) na anonymní.
+        anonymous_unrevealed:
+          html: Správci sbírky %{collection_link} změnili status vaší práce %{work_link}
+            na anonymní a nezveřejněný.
+          text: Správci sbírky "%{collection_title}" (%{collection_url}) změnili status
+            vaší práce "%{work_title}" (%{work_url}) na nezveřejněný a anonymní.
+        unrevealed:
+          html: Správci sbírky %{collection_link} změnili stav vaší práce %{work_link}
+            na nezveřejněný.
+          text: Správci sbírky "%{collection_title}" (%{collection_url}) změnili status
+            vaší práce "%{work_title}" (%{work_url}) na nezveřejněný.
+      collection_items_link_text: Approved Collection Items (Schválené položky sbírky)
+      do_not_want:
+        anonymous:
+          html: Pokud nechcete, aby vaše práce byla anonymní, navštivte prosím stránku
+            %{collection_items_link} a odstraňte ji z této sbírky.
+          text: 'Pokud nechcete, aby vaše práce byla anonymní, navštivte prosím stránku
+            Approved Collection Items (Schválené položky sbírky) a odstraňte ji z
+            této sbírky: %{collection_items_url}'
+        anonymous_unrevealed:
+          html: Pokud nechcete, aby vaše práce byla anonymní a nezveřejněná, navštivte
+            prosím stránku %{collection_items_link} a odstraňte ji z této sbírky.
+          text: 'Pokud nechcete, aby vaše práce byla anonymní a nezveřejněná, navštivte
+            prosím stránku Approved Collection Items (Schválené položky sbírky) a
+            odstraňte ji z této sbírky: %{collection_items_url}'
+        unrevealed:
+          html: Pokud nechcete, aby vaše práce byla nezveřejněna, navštivte prosím
+            stránku %{collection_items_link} a odstraňte ji z této sbírky.
+          text: 'Pokud nechcete, aby vaše práce byla nezveřejněna, navštivte prosím
+            stránku Approved Collection Items (Schválené položky sbírky) a odstraňte
+            ji z této sbírky: %{collection_items_url}'
+      faq_link_text: Časté otázky ke sbírkám
+      more_info:
+        html: Pro více informací navštivte stránku %{faq_link}.
+        text: 'Pro více informací navštivte stránku Časté otázky ke sbírkám: %{faq_url}'
+      subject:
+        anonymous: "[%{app_name}] Vaše práce byla anonymizována"
+        anonymous_unrevealed: "[%{app_name}] Vaše práce byla anonymizována a skryta"
+        unrevealed: "[%{app_name}] Vaše práce byla skryta"
+      unrevealed_info: Nezveřejněné práce nejsou zahrnuty ve výpisech tagů ani uvedeny
+        na stránce s vašimi pracemi. Každý, kdo bude následovat odkaz na tuto práci,
+        obdrží oznámení, že práce je v danou chvíli nezveřejněná, a nebude mít přístup
+        k jejímu obsahu.
+    challenge_assignment_notification:
+      any: Jakékoliv
+      description: 'Popis:'
+      due: 'Termín splnění zadání je do:'
+      html:
+        footer: Tento e-mail jste obdrželi, protože jste se přihlásili do výzvy %{title}.
+          Více informací o této výzvě a kontakty na moderátory najdete na %{footer_link}.
+        footer_link: profilové stránce výzvy
+        look_up: Toto zadání můžete najít na %{link}.
+        look_up_link: své stránce Assignments (Zadání)
+        part1: Byla vám přidělena následující žádost ve výzvě %{link} na AO3!
+      optional_tags: 'Volitelné tagy:'
+      prompts: 'Náměty:'
+      prompt_url: 'URL námětu:'
+      recipient: 'Příjemce:'
+      recipient_missing: 'Žádný: pro pomoc kontaktujte moderátora!'
+      subject: "[%{app_name}][%{collection_title}] Vaše zadání!"
+      text:
+        assignment: Byla vám přidělena následující žádost ve výzvě "%{collection_title}"
+          (%{collection_url}) na AO3!
+        footer: Tento e-mail jste obdrželi, protože jste se přihlásili do výzvy %{title}
+          (%{url}). Více informací o této výzvě a kontakty na moderátory můžete najít
+          na %{profile_url}.
+        look_up: Toto zadání najdete na stránce Assignments (Zadání) pod odkazem %{link}.
+    change_email:
+      part1: "%{login}, email spojený s vaším účtem byl změněn na %{email}"
+      subject: "[%{app_name}] Email byl změněn"
+    collection_notification:
+      assignments_sent:
+        complete: Všechna zadání byla rozeslána.
+        subject: Zadání rozeslána
+      html:
+        received_message: 'Máte novou zprávu o vaší sbírce %{collection_link}:'
+      text:
+        received_message: 'Máte novou zprávu o vaší sbírce "%{collection_title}" (%{collection_url}):'
+    creatorship_notification:
+      explanation: Pokud jste spoluautorkou/em práce, můžete být přidány/i jako spoluautorky/ři
+        nových kapitol nehledě na vaše nastavení preferencí ohledně spoluautorství.
+        Budete také přidáni do všech sérií, do nichž bude tato práce přidána.
+      html:
+        creation: "%{creation_link} od %{pseud_links}"
+        edit_chapter: editovat kapitolu
+        edit_series: editovat sérii
+        remove_chapter: Pokud jste byly/i přidány/i omylem nebo nechcete být uváděny/i
+          jako autor/ka, zvolte možnost %{edit_chapter_link}, abyste se autorství
+          zřekly/i.
+        remove_series: Pokud jste byly/i přidány/i omylem nebo nechcete být uváděny/i
+          jako autor/ka, zvolte možnost %{edit_series_link}, abyste se autorství zřekly/i.
+      intro_chapter: 'Uživatel/ka %{adding_user} uvedl/a váš pseudonym %{pseud} jako
+        spoluautorku/a následující kapitoly:'
+      intro_series: 'Uživatel/ka %{adding_user} uvedl/a váš pseudonym %{pseud} jako
+        spoluautorku/a následující série:'
+      subject: "[%{app_name}] Oznámení o spoluautorství"
+      text:
+        creation: "%{title} (%{url}) od %{pseuds}"
+        remove_chapter: 'Pokud jste byly/i přidány/i omylem nebo nechcete být uváděny/i
+          jako autor/ka, můžete kapitolu editovat, abyste se autorství zřekly/i: %{url}'
+        remove_series: 'Pokud jste byly/i přidány/i omylem nebo nechcete být uváděny/i
+          jako autor/ka, můžete sérii editovat, abyste se autorství zřekly/i: %{url}'
+    creatorship_notification_archivist:
+      explanation: Jedná s vlastní pravomocí jakožto archivář Open Doors (Otevřené
+        dveře), a proto vás smí přidat bez pozvánky, i když jste pro svůj pseudonym
+        spoluautorství zakázali.
+      html:
+        creation: "%{creation_link} od %{pseud_links}"
+        edit_chapter: upravit kapitolu
+        edit_series: upravit sérii
+        edit_work: upravit práci
+        remove_chapter: Pokud jste byli přidáni omylem nebo nechcete být uváděni jako
+          autor, zvolte možnost %{edit_chapter_link}, abyste se autorství zřekli.
+        remove_series: Pokud jste byli přidáni omylem nebo nechcete být uváděni jako
+          autor, zvolte možnost %{edit_series_link}, abyste se autorství zřekli.
+        remove_work: Pokud jste byli přidáni omylem nebo nechcete být uváděni jako
+          autor, zvolte možnost %{edit_work_link}, abyste se autorství zřekli.
+      intro_chapter: 'Uživatel %{archivist} uvedl váš pseudonym %{pseud} jako spoluautora
+        následující kapitoly:'
+      intro_series: 'Uživatel %{archivist} uvedl váš pseudonym %{pseud} jako spoluautora
+        následující série:'
+      intro_work: 'Uživatel %{archivist} uvedl váš pseudonym %{pseud} jako spoluautora
+        následující práce:'
+      subject: "[%{app_name}] Oznámení archiváře o spoluautorství"
+      text:
+        creation: "%{title} (%{url}) od %{pseuds}"
+        remove_chapter: 'Pokud jste byli přidáni omylem nebo nechcete být uváděni
+          jako autor, můžete kapitolu upravit, abyste se autorství zřekli: %{url}'
+        remove_series: 'Pokud jste byli přidáni omylem nebo nechcete být uváděni jako
+          autor, můžete sérii upravit, abyste se autorství zřekli: %{url}'
+        remove_work: 'Pokud jste byli přidáni omylem nebo nechcete být uváděni jako
+          autor, můžete práci upravit, abyste se autorství zřekli: %{url}'
+    creatorship_request:
+      html:
+        creation: "%{creation_link} od %{pseud_links}"
+        instructions: Tuto pozvánku můžete přijmout nebo odmítnout na stránce %{page_name}.
+        page_name: Co-Creator Requests (Pozvánky ke spoluautorství)
+      intro_chapter: 'Uživatel %{inviting_user} zaslal vašemu pseudonymu %{pseud}
+        pozvánku ke spoluautorství u následující kapitoly:'
+      intro_series: 'Uživatel %{inviting_user} zaslal vašemu pseudonymu %{pseud} pozvánku
+        ke spoluautorství u následující série:'
+      intro_work: 'Uživatel %{inviting_user} zaslal vašemu pseudonymu %{pseud} pozvánku
+        ke spoluautorství u následující práce:'
+      subject: "[%{app_name}] Pozvánka ke spoluautorství"
+      text:
+        creation: "%{title} (%{url}) od %{pseuds}"
+        instructions: 'Tuto pozvánku můžete přijmout nebo odmítnout na stránce Co-Creator
+          Requests (Pozvánky ke spoluautorství): %{url}'
+    delete_work_notification:
+      html:
+        part1_other: Vaše práce %{title} byla smazána na žádost %{pseud}.
+        part1_yourself: Vaše práce %{title} byla na vaši žádost smazána.
+        part2: Pokud máte nějaké otázky, prosím %{support}.
+      part3: Kopii své práce najdete v příloze.
+      subject: "[%{app_name}] Vaše práce byla smazána"
+      support: kontaktujte Podporu
+      text:
+        part1_other: Vaše práce "%{title}" byla smazána na žádost %{pseud}.
+        part1_yourself: Vaše práce "%{title}" byla na vaši žádost smazána.
+        part2: Pokud máte nějaké otázky, prosím %{support} (%{url}).
+    invitation_to_claim:
+      html:
+        ao3_news: AO3 News
+        contact_open_doors: kontaktujte Open Doors
+        contact_support: kontaktujte podporu AO3
+        faq_page: stránce FAQ - často kladených otázek
+        open_doors: Open Doors (Otevřené dveře)
+        part5: Ke svým pracím se příhlásíte nebo je odstraníte zde.
+        tutorial_page: stránce s návody
+      part12: Pokud se nás rozhodnete kontaktovat, prosím přidejte si e-mailové adresy
+        z domény @transformativeworks.org na svůj seznam povolených adres a zkontrolujte
+        složku spamu pro případ, že by naše odpověď skončila tam.
+      part6: 'Mezi nahranými pracemi se nachází:'
+      part8: Za účelem zachování seznamů doporučení a záložek mohou webové adresy
+        importovaného archivu krátkodobě odkazovat na importované kopie těchto prací
+        (abyste se ujistili, zkontrolujte příspěvek s oznámeními o vašem archivu).
+        Pokud jste již nahráli kopii této práce a NEpoužili jste možnost importovat
+        z URL, budou v archivu dvě kopie této práce.
+      subject: "[%{app_name}] Výzva k přihlášení se o vaše práce"
+      text:
+        part1: Dostali jste tento e-mail, protože v rámci projektu Open Doors (Otevřené
+          dveře) (%{open_doors_link}) došlo v nedávné době k importu archivu do %{app_name}
+          (%{app_short_name} - %{app_url}) a my věříme, že následující práce patří
+          vám. Rádi bychom vám umožnili se k těmto pracím přihlásit (nebo je smazat/opustit),
+          pokud máte zájem. A pokud ještě nemáte účet pod jiným emailem, chceme vás
+          tímto pozvat na palubu!
+        part10: Pokud jste v tomto importovaném archivu měli další práce uvedené pod
+          e-mailovou adresou, k níž již nemáte přístup, prosím kontaktujte Open Doors
+          s jakoukoliv informací, která by mohla pomoci ověřit vaši identitu.
+        part11: S dalšími dotazy prosím kontaktujte Podporu AO3 na %{support_link}.
+        part2: Oznámení o nedávných přesunech archivu si můžete přečíst na AO3 News
+          (%{news_link}) a další informace najdete na Open Doors' FAQ – stránce často
+          kladených otázek k projektu Otevřené dveře (%{open_doors_faq_link}) nebo
+          na stránce s návody (%{open_doors_tutorial_link}). S jakýmikoliv otázkami
+          nezodpovězenými v FAQ a návodech nebo v tomto e-mailu prosím kontaktujte
+          Podporu na %{support_link}.
+        part3: Pokud došlo k omylu a toto nejsou vaše práce, prosím, nemažte je! Prosím,
+          kontaktujte Open Doors (%{open_doors_link}) a my se o to postaráme.
+        part4: V závislosti na archivu, ze kterého byly vaše práce importovány, mohly
+          být přístupné pouze registrovaným uživatelům (aby byly mimo dosah vyhledávání
+          Google). Pokud je toto váš případ, budou tyto práce dostupné pouze registrovaným
+          uživatelům, pokud se nerozhodnete učinit je plně přístupnými. Pro pomoc
+          se zpřístupňováním, opuštěním nebo mazáním vašich prací, kontaktujte prosím
+          Podporu AO3.
+        part5: 'Své práce si zaberete nebo odstraníte zde: %{claim_url}'
+        part7: Pokud vám tyto práce opravdu patří, ale nechcete je, můžete je opustit
+          (pak zůstanou na AO3, ale vaše jméno bude odstraněno) nebo je smazat (pak
+          budou z AO3 úplně odstraněny). Pro opuštění nebo smazání nepotřebujete tyto
+          práce přidávat k účtu – můžete tak udělat přímo pod odkazem výše. (Pro pomoc
+          prosím kontaktujte Podporu na %{support_link}.)
+        part9: Pokud si přejete, aby projekt Open Doors změnil přesměrování na vaši
+          již existující práci, prosím smažte importovanou kopii, kontaktujte Open
+          Doors pomocí tohoto odkazu %{open_doors_link} a sdělte jim vaše jméno na
+          AO3, vaše jméno na importovaném archivu a název a URL práce, na kterou chcete,
+          aby odkaz přesměrovával. (Pokud si přejete změnit přesměrování pro více
+          prací, můžete je všechny vyjmenovat v jednom emailu.)
+    invite_increase_notification:
+      body:
+        few: Rádi bychom vám sdělili, že máte %{count} nové pozvánky. Tyto pozvánky
+          lze využít k vytvoření nových účtů na Archivu. Své přátele můžete pozvat
+          na %{invitation_page}.
+        many: Rádi bychom vám sdělili, že máte %{count} nových pozvánek. Tyto pozvánky
+          lze využít k vytvoření nových účtů na Archivu. Své přátele můžete pozvat
+          na %{invitation_page}.
+        one: Rádi bychom vám sdělili, že máte %{count} novou pozvánku, kterou lze
+          využít k vytvoření nových účtů na Archivu. Své přátele můžete pozvat na
+          %{invitation_page}.
+        other: Rádi bychom vám sdělili, že máte %{count} nových pozvánek. Tyto pozvánky
+          lze využít k vytvoření nových účtů na Archivu. Své přátele můžete pozvat
+          na %{invitation_page}.
+      invitation_page_link_text: vaší stránce s pozvánkami
+      subject: "[%{app_name}] Nové pozvánky"
+    invite_request_declined:
+      main:
+        few: S lítostí vám oznamujeme, že vaší žádosti o %{count} nové pozvánky nemůže
+          být v současné době vyhověno.
+        many: S lítostí vám oznamujeme, že vaší žádosti o %{count} nových pozvánek
+          nemůže být v současné době vyhověno.
+        one: S lítostí vám oznamujeme, že vaší žádosti o novou pozvánku nemůže být
+          v současné době vyhověno.
+        other: S lítostí vám oznamujeme, že vaší žádosti o %{count} nových pozvánek
+          nemůže být v současné době vyhověno.
+      reason: 'Vaše žádost byla:'
+      subject: "[%{app_name}] Žádost o dodatečnou pozvánku zamítnuta"
+    recipient_notification:
+      html:
+        collection: Vám darovaná práce byla zveřejněna ve sbírce %{collection_link}
+          na AO3!
+      no_collection: Na AO3 pro vás byla zveřejněna fanouškovská práce!
+      subject:
+        collection: "[%{app_name}][%{collection_title}] Vám darovaná práce ze sbírky
+          %{collection_title}"
+        no_collection: "[%{app_name}] Fanouškovská práce jako dárek pro vás"
+      text:
+        collection: Ve sbírce "%{collection_title}" (%{collection_url}) na AO3 byla
+          zveřejněna vám darovaná práce!
+    signup_notification:
+      activate_your_account: 'Pro aktivaci vašeho účtu klikněte na tento odkaz '
+      admin_posts: Novinky AO3
+      bye: Doufáme, že se vám zde bude líbit.
+      contact_support: Kontaktujte naši Podporu
+      faq: FAQ
+      html:
+        part1: Prosím, %{activate_account_link}.
+        part2: Jakmile bude váš účet zprovozněn, budete moci přidávat své fanouškovské
+          práce, nastavit si upozornění na e-mail, které vás upozorní, pokud dojde
+          k aktualizaci u vašeho oblíbeného díla či autora, nastavit si vzhled stránky,
+          zaznamenávat v historii práce, které jste si již v Archivu zobrazili a mnoho
+          dalšího.
+        part3: Náš %{faq_link} poskytuje ohledně užívání Archivu spousta informací
+          a rad. Pokud vás zajímají novinky spojené s rozvojem stránky, můžete je
+          najít v %{admin_posts_link}. V případě, že budete potřebovat pomoc, narazíte
+          na chybu či budete mít dotaz nebo komentář, %{contact_support_link}, která
+          je vždy připravena a ochotna pomoci.
+      text:
+        part1: 'Prosím, aktivujte svůj účet pod tímto odkazem: %{activate_account_url}'
+        part2: Jakmile bude váš účet zprovozněn, budete moci přidávat své fanouškovské
+          práce, nastavit si upozornění na email, které vám dá vědět v případě, že
+          dojde k aktualizaci u vašeho oblíbeného díla či autora, nastavit si vzhled
+          stránky, zaznamenávat v historii  práce, které jste si již na Archivu zobrazili
+          a mnoho dalšího.
+        part3: Pod odkazem na FAQ %{faq_url} najdete spoustu informací a rad k používání
+          Archivu. Novinky spojené s rozvojem stránky si můžete přečíst na Novinkách
+          AO3 pod odkazem %{admin_posts_url}. V případě, že budete potřebovat pomoc,
+          narazíte na chybu či budete mít dotaz nebo komentář, kontaktujte prosím
+          naši Podporu %{contact_support_url}, která je vždy připravena a ochotna
+          pomoci.
+      welcome: Vítejte v Archive of Our Own (Našem vlastním archivu), %{login}!

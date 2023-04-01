@@ -1,0 +1,26 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".page_heading") %></h2>
+<%= error_messages_for resource %>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for resource, url: admin_password_reset_path, html: { method: :put, class: "reset password post" } do |f| %>
+  <%= f.hidden_field :reset_password_token %>
+  <dl>
+    <dt><%= label_tag :edit_password, t(".label.password") %></dt>
+    <dd>
+      <%= f.password_field(:password, id: :edit_password,
+                           "aria-describedby" => "password-field-description") %>
+      <p class="footnote" id="password-field-description">
+        <%= t(".describedby.password_length",
+              minimum: ArchiveConfig.ADMIN_PASSWORD_LENGTH_MIN,
+              maximum: ArchiveConfig.ADMIN_PASSWORD_LENGTH_MAX) %>
+      </p>
+    </dd>
+    <dt><%= label_tag :edit_password_confirmation, t(".label.confirmation") %></dt>
+    <dd><%= f.password_field :password_confirmation, id: :edit_password_confirmation %></dd>
+    <dt class="landmark"><%= t(".landmark.submit") %></dt>
+    <dd class="submit actions"><%= f.submit t(".submit") %></dd>
+  </dl>
+<% end %>
+<!--/content-->

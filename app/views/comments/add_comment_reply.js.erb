@@ -1,0 +1,5 @@
+/* hide redundant navigation */
+$j("#navigation_for_comment_<%= "#{@commentable.id}" %>").hide();
+/* render the form into the spot for it on the page */
+$j("#add_comment_reply_placeholder_<%= "#{@commentable.id}" %>").html("<%= escape_javascript(render :partial => "comments/comment_form", :locals => {:comment => @comment, :commentable => @commentable, :button_name => ts("Comment")}) %>");
+$j("#add_comment_reply_placeholder_<%= "#{@commentable.id}" %>").show();

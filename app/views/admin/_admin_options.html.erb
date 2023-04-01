@@ -1,0 +1,60 @@
+<!-- BEGIN admin options -->
+<div class="admin">
+
+  <% item_type = item.class.to_s.tableize.singularize %>
+
+  <h3 class="landmark heading"><%= t(".landmark") %></h3>
+  <ul class="management actions">
+    <% if policy(item).hide? %>
+      <li>
+        <% if item.hidden_by_admin? %>
+          <%= link_to t(".unhide.#{item_type}"),
+                      hide_admin_user_creation_path(item, creation_type: item.class, hidden: "false"),
+                      method: :put %>
+        <% else %>
+          <%= link_to t(".hide.#{item_type}"),
+                      hide_admin_user_creation_path(item, creation_type: item.class, hidden: "true"),
+                      method: :put %>
+        <% end %>
+      </li>
+    <% end %>
+    <% if @work.present? %>
+      <% if policy(@work).edit_tags? %>
+        <li>
+          <%= link_to t(".edit_tags"), edit_tags_work_path(@work) %>
+        </li>
+      <% end %>
+      <% if policy(@work).set_spam? %>
+        <li>
+          <% if @work.spam? %>
+            <%= link_to t(".not_spam"),
+                        set_spam_admin_user_creation_path(@work.id, creation_type: @work.class, spam: "false"),
+                        method: :put %>
+          <% else %>
+            <%= link_to t(".spam"),
+                        set_spam_admin_user_creation_path(@work.id, creation_type: @work.class, spam: "true"),
+                        method: :put %>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+    <% if item.class == ExternalWork %>
+      <% if policy(item).edit? %>
+        <li>
+          <%= link_to t(".edit.#{item_type}"), edit_external_work_path(item) %>
+        </li>
+      <% end %>
+    <% end %>
+    <% if policy(item).destroy? %>
+      <li>
+        <%= link_to t(".delete.#{item_type}"),
+                    admin_user_creation_path(item, creation_type: item.class),
+                    data: {
+                            confirm: t(".delete.confirmation")
+                          },
+                    method: :delete %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<!-- END admin options -->

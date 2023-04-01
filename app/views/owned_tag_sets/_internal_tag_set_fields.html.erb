@@ -1,0 +1,30 @@
+<% TagSet::TAG_TYPES.each do |tag_type| %>
+  <fieldset class="tagset listbox group">
+    <% unless TagSet::TAGS_AS_CHECKBOXES.include?(tag_type) %>
+      <% # fandoms, chars, relationships, freeforms %>
+
+        <% if @tag_set.with_type(tag_type).empty? %>
+          <h4 class="heading"><%= form.label "#{tag_type}_tagnames_to_add".to_sym, ts("Add #{tag_type_label_name(tag_type).pluralize}:") %></h4>
+        <% else %>
+          <h4 class="heading"><%= form.label "#{tag_type}_tags_to_remove".to_sym, ts("#{tag_type_label_name(tag_type).pluralize}") %></h4>
+          <%= check_all_none %>
+          <%= checkbox_section(form, "#{tag_type}_tags_to_remove", @tag_set.with_type(tag_type).by_name_without_articles) %>
+          <h5 class="heading"><%= form.label "#{tag_type}_tagnames_to_add".to_sym, ts("Add:") %></h5>
+        <% end %>
+
+        <div title="add tags"><%= form.text_field "#{tag_type}_tagnames_to_add".to_sym, autocomplete_options(tag_type) %></div>
+
+    <% else %>
+      <% # ratings, categories, archive_warnings %>
+        <h4 class="heading">
+          <%= ts("%{tag_type}", tag_type: tag_type_label_name(tag_type).pluralize) %>
+        </h4>
+
+        <%= check_all_none %>
+        <% raise "Redshirt: Attempted to constantize invalid class initialize _internal_tag_set_fields.html.erb (2) #{tag_type.gsub(/\s+/, "").classify}" unless %w(Category Rating ArchiveWarning).include?(tag_type.gsub(/\s+/, "").classify) %>
+        <%= checkbox_section(form, "#{tag_type}_tagnames", tag_type.gsub(/\s+/, "").classify.constantize.pluck(:name),
+                               :checked_method => "#{tag_type}_tagnames", :value_method => "to_s", :name_method => "to_s",
+                               :checkbox_side => "left") %>
+    <% end %>
+  </fieldset>
+<% end %>

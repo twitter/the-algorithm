@@ -1,0 +1,120 @@
+--- 
+serial_work_00007: 
+  position: 1
+  created_at: 2009-03-20 23:17:43 Z
+  updated_at: 2009-03-20 23:17:43 Z
+  id: 7
+  work_id: 49
+  series_id: 5
+serial_work_00008: 
+  position: 2
+  created_at: 2009-03-20 23:20:17 Z
+  updated_at: 2009-03-20 23:20:17 Z
+  id: 8
+  work_id: 50
+  series_id: 5
+serial_work_00009: 
+  position: 3
+  created_at: 2009-03-20 23:22:51 Z
+  updated_at: 2009-03-20 23:22:51 Z
+  id: 9
+  work_id: 51
+  series_id: 5
+serial_work_00010: 
+  position: 4
+  created_at: 2009-03-20 23:24:08 Z
+  updated_at: 2009-03-20 23:24:08 Z
+  id: 10
+  work_id: 52
+  series_id: 5
+serial_work_00011: 
+  position: 1
+  created_at: 2009-12-12 22:48:20 Z
+  updated_at: 2009-12-12 22:48:20 Z
+  id: 11
+  work_id: 93
+  series_id: 7
+serial_work_00001: 
+  position: 1
+  created_at: 2008-11-09 01:26:02 Z
+  updated_at: 2008-11-09 01:26:02 Z
+  id: 1
+  work_id: 1
+  series_id: 1
+serial_work_00012: 
+  position: 2
+  created_at: 2009-12-12 22:48:55 Z
+  updated_at: 2009-12-12 22:48:55 Z
+  id: 12
+  work_id: 94
+  series_id: 7
+serial_work_00013: 
+  position: 3
+  created_at: 2009-12-12 22:51:14 Z
+  updated_at: 2009-12-12 22:51:14 Z
+  id: 13
+  work_id: 95
+  series_id: 7
+serial_work_00002: 
+  position: 1
+  created_at: 2008-12-06 22:39:33 Z
+  updated_at: 2008-12-06 22:39:33 Z
+  id: 2
+  work_id: 7
+  series_id: 2
+serial_work_00003: 
+  position: 2
+  created_at: 2008-12-06 22:52:02 Z
+  updated_at: 2008-12-06 22:52:02 Z
+  id: 3
+  work_id: 8
+  series_id: 2
+serial_work_00014: 
+  position: 1
+  created_at: 2009-12-12 23:00:54 Z
+  updated_at: 2009-12-12 23:00:54 Z
+  id: 14
+  work_id: 97
+  series_id: 8
+serial_work_00015: 
+  position: 2
+  created_at: 2009-12-12 23:02:09 Z
+  updated_at: 2009-12-12 23:02:09 Z
+  id: 15
+  work_id: 96
+  series_id: 8
+serial_work_00004: 
+  position: 1
+  created_at: 2009-02-24 05:16:08 Z
+  updated_at: 2009-02-24 05:16:08 Z
+  id: 4
+  work_id: 3
+  series_id: 3
+serial_work_00005: 
+  position: 1
+  created_at: 2009-03-20 23:12:48 Z
+  updated_at: 2009-03-20 23:12:48 Z
+  id: 5
+  work_id: 47
+  series_id: 4
+serial_work_00016: 
+  position: 1
+  created_at: 2009-12-12 23:52:00 Z
+  updated_at: 2009-12-12 23:52:00 Z
+  id: 16
+  work_id: 102
+  series_id: 9
+serial_work_00017: 
+  position: 2
+  created_at: 2009-12-13 16:31:45 Z
+  updated_at: 2009-12-13 16:31:45 Z
+  id: 17
+  work_id: 103
+  series_id: 1
+serial_work_00006: 
+  position: 2
+  created_at: 2009-03-20 23:14:14 Z
+  updated_at: 2009-03-20 23:14:14 Z
+  id: 6
+  work_id: 48
+  series_id: 4

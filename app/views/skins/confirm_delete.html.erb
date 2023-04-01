@@ -1,0 +1,13 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Delete Skin") %></h2>
+
+<!--main content-->
+<%= form_for(@skin, html: { method: :delete, class: "simple destroy" }) do |f| %>
+  <p class="caution notice">
+    <%= t(".confirm_html", skin_title: @skin.title) %>
+  </p>
+  <p class="actions">
+    <%= f.submit ts("Yes, Delete Skin") %>
+  </p>
+<% end %>
+<!--/content-->

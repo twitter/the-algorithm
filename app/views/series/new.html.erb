@@ -1,0 +1,22 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%=h 'New series' %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= form_for(@series) do |f| %>
+  <%= error_messages_for @series %>
+  
+  <p class="submit actions">
+    <%= f.submit "Create" %>
+  </p>
+<% end %>
+<!--/content-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+<li><%= link_to 'Back', series_path %></li>
+</ul>
+<!--/subnav-->

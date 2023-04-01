@@ -1,0 +1,10 @@
+<%= form_tag add_collection_participants_path(@collection), class: "single simple post", method: :get do %>
+  <fieldset>
+    <legend>Add new members</legend>
+    <p>
+      <%= label_tag :participants_to_invite, ts("Add new members"), class: "landmark" %>
+      <%= text_field_tag :participants_to_invite, nil, autocomplete_options("pseud") %>
+      <span class="submit actions"><%= submit_tag ts("Submit") %></span>
+    </p>
+  </fieldset>
+<% end %>

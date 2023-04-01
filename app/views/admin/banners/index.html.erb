@@ -1,0 +1,38 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts('Banners') %></h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <%= render 'navigation' %>
+  <!--/subnav-->
+
+  <%= will_paginate @admin_banners %>
+
+  <!--main content-->
+  <ul class="banners index group">
+    <% for admin_banner in @admin_banners %>
+      <li class="blurb">
+        <%= render 'banner', admin_banner: admin_banner %>
+        <ul class="actions">
+          <% if admin_banner.active? %>
+            <li>
+              <span class="active current"><%= ts('Active') %></span>
+            </li>
+          <% end %>
+          </li>
+          <li>
+            <%= link_to ts('Edit'), edit_admin_banner_path(admin_banner) %>
+          </li>
+          <li>
+            <%= link_to ts('Delete'), confirm_delete_admin_banner_path(admin_banner), data: {confirm: ts('Are you sure you want to delete this banner?')} %>
+          </li>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+  <!--/content-->
+
+  <%= will_paginate @admin_banners %>
+
+</div>

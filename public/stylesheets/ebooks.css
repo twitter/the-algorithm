@@ -1,0 +1,45 @@
+.meta dl.tags {
+  border: none;
+  padding: 0;
+}
+
+.meta dl.tags > dt, .meta dl.tags > dd {
+  display: block;
+}
+
+.meta dl.tags > dt {
+  font-weight: bold;
+  margin: 0;
+}
+
+.meta dl.tags > dd {
+  margin: 0 0 1em 1em;
+}
+
+.meta dl.tags > dd:last-of-type {
+  margin-bottom: 0;
+}
+
+#chapters, .userstuff {
+  font-family: serif;
+  padding: 0;
+}
+
+/* maintain margins on note and summary text */
+.userstuff blockquote.userstuff {
+  margin: 1em;
+}
+
+/* decrease margins on chapter text */
+.userstuff div.userstuff {
+  margin: 1em 0;
+}
+
+img, embed, iframe, object {
+  max-width: 100% !important;
+}
+
+/* override default Calibre style for better obedience of max-width */
+embed, iframe, object {
+  border: none !important;
+}

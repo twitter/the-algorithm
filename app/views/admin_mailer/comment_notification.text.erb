@@ -1,0 +1,9 @@
+<% content_for :message do %>
+<%= @comment.comment_owner_name %> <% if @comment.comment_owner then %>(<%= polymorphic_url(@comment.comment_owner, :only_path => false) %>) <% end %>left the following comment on 
+<% if @comment.ultimate_parent.is_a?(Tag) then %>the tag "<%= @comment.ultimate_parent.commentable_name %>" (<%= url_for(:controller => :tags, :action => :show, :id => @comment.ultimate_parent, :only_path => false) %>) <% else %>"<%= @comment.ultimate_parent.commentable_name.html_safe %>" (<%= polymorphic_url(@comment.ultimate_parent, :only_path => false) %>)<% end %>:
+<%= text_divider %>
+
+<%= to_plain_text(raw @comment.sanitized_content) %>
+
+<%= render 'comment_mailer/comment_notification_footer', formats: [:text] %> 
+<% end %>

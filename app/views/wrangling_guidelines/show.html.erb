@@ -1,0 +1,22 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= link_to ts('Wrangling Guidelines'), wrangling_guidelines_path %> > <%= @wrangling_guideline.title %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+
+<!--/subnav-->
+
+<!--main content-->
+<div class="admin" role="article">
+  <% if logged_in_as_admin? %>
+    <div class="header">
+      <h3 class="heading">
+        Updated: <%=h @wrangling_guideline.updated_at %> | <%= link_to ts('Edit'), edit_wrangling_guideline_path(@wrangling_guideline) %>
+      </h3>
+    </div>
+  <% end %>
+  <div class="userstuff">
+    <%=raw sanitize_field(@wrangling_guideline, :content) %>
+  </div>
+</div>
+<!--/content-->

@@ -1,0 +1,1023 @@
+/* GLOBAL */
+
+/*form buttons (input, button, are currently styled the same as navigation and sorting buttons, in site-chrome.css)
+  forms embedded in navigation are also styled in site-chrome.css
+*/
+
+form fieldset legend, legend {
+  height: 0;
+  width: 0;
+  font-size: 0;
+  color: #fffef9;
+}
+
+#main form fieldset.table {
+  border: none;
+}
+
+form input {
+  font-size: 1em;
+}
+
+form p.submit, input.submit {
+  text-align: center;
+}
+
+#main form .submit input {
+  width: auto;
+}
+
+form p {
+  line-height: 2;
+  clear: both;
+}
+
+/*form dl { position:relative; }*/
+
+form dt {
+  float: left;
+  clear: left;
+  width: 12em;
+  margin: 0;
+  padding: 0.25em 0.5625em 0.25em 0;
+}
+
+form dd {
+  float: left;
+}
+
+form code {
+  display: block;
+}
+
+p.character_counter {
+  font-size: 85.7%;
+  color: #666;
+  display: inline;
+  position: relative;
+}
+
+.character_counter span {
+  display: inline-block;
+  width: 3.75em;
+  text-align: right;
+}
+
+form select {
+  vertical-align: text-top;
+  font-size: 1em;
+}
+
+/*DASHBOARD */
+
+.sidebar form {
+  float: left;
+}
+
+/*DASHBOARD: EDIT MULTIPLE WORKS */
+
+p.buttons {
+  text-align: center;
+}
+
+form .edit-multiple-controls p.submit {
+  text-align: left;
+  clear: none;
+}
+
+/*DASHBOARD: EDIT PREFERENCES */
+
+form.edit_preference ul {
+  margin: 0.562625em auto 1.12525em auto;
+  padding: 0.562625em 0;
+  border-bottom: 1px dashed;
+}
+
+.edit_preference li {
+  margin: 0.562625em 0;
+}
+
+/*DASHBOARD: EDIT PROFILE*/
+
+#main.users-edit form dl {
+  margin: 0 auto;
+}
+
+#main.users-edit dt {
+  width: 12em;
+}
+
+#main.users-edit dd.description {
+  float: none;
+}
+
+#main.users-edit textarea#profile_attributes_about_me {
+  height: 12em;
+  width: 99%;
+}
+
+#main.users-edit hr.clear {
+  margin-top: 39em;
+}
+
+#main.users-edit #link_to_openid, #main.users-edit #link_to_passwd {
+  clear: both;
+  margin: 0 0.25em 0.5625em 11.125em;
+  font-size: 1.125em;
+}
+
+/* DASHBOARD: PSEUD EDIT/NEW FORMS */
+
+#main .pseud-edit .pseud-name div.character_counter {
+  width: 20em;
+}
+
+/* DASHBOARD: INBOX */
+
+#inbox-form {
+  width: 72.5%;
+}
+
+/*DASHBOARD: REQUEST INVITES */
+
+#invitations-index form {
+  clear: right;
+}
+
+#new_user_invite_request p.submit {
+  float: left;
+}
+
+/* SIGN IN BOX */
+
+#signin p {
+  display: inline;
+}
+
+#signin p.footnote {
+  font-size: 85.7%;
+  padding: 0.125em 0 0 0.125em;
+}
+
+#signin input#remember_me {
+  margin: 0.125em 0.125em 0.125em 0;
+  vertical-align: middle;
+}
+
+img#openid {
+  margin-left: -20px;
+  vertical-align: middle;
+}
+
+/* sign in box when present in #header #login-block */
+
+#header #signin form {
+  background: url(/images/header-red.png) bottom left repeat-x #777;
+  margin: -1.5em -0.25em 1em;
+  padding: 0.25em;
+  border: 1px groove #500;
+}
+
+#header #signin p.submit, #header #signin .submit input {
+  padding: 0.15em;
+  border: 0;
+  line-height: 1;
+}
+
+/*SESSIONS (front front pages - login, create, etc)*/
+
+.session form {
+  padding-top: 1.5em;
+  margin-bottom: 1.5em;
+  padding-bottom: 1.5em;
+  border-bottom: 1px solid;
+}
+
+.session form p, .session input#user_login, .session input#user_password, .session input#openid_url {
+  float: none;
+  display: block !important;
+  margin: 0 0 0.875em 0;
+  width: 24em;
+}
+
+.session input#openid_url, .session form img {
+  display: inline;
+}
+
+#main.session #signin form p.submit {
+  margin: -2em auto 0 auto;
+  width: 6em;
+  float: right;
+}
+
+#main.session #signin form p.openid {
+  margin-top: 2em;
+}
+
+#main.users-new form dt {
+  width: 100%;
+  float: none;
+}
+
+#main.users-new form dl {
+  position: static;
+}
+
+#tos-partial {
+  height: 10em;
+  overflow: auto;
+  border: 1px solid;
+}
+
+/* SITE SEARCH */
+
+#header #search {
+  float: right;
+  clear: right;
+}
+
+#search p {
+  font-size: 0.8575em;
+  padding: 0 0.25em 0 0;
+  margin: 0;
+}
+
+/*Subset search IN MAIN */
+
+#main .search {
+  width: 50%;
+  margin: auto auto 0.5em auto;
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+
+/*ADMIN */
+
+.admin_sessions-new dt {
+  width: 12em;
+  padding-top: 0.5em;
+}
+
+.admin_sessions-new form {
+  width: 50%;
+  margin: auto;
+  padding: 0.25em;
+}
+
+.admin_users-notify dd {
+  width: 40%;
+}
+
+.admin_users-notify input {
+  width: 100%;
+}
+
+.admin_users-notify textarea {
+  height: 20em;
+  width: 100%;
+}
+
+.admin_invitations-index form {
+  float: right;
+  width: 99%;
+  border: 1px solid #ddd;
+  margin: 0 auto 1em auto;
+  padding: 0.5em;
+}
+
+.settings-index dt {
+  width: 70%;
+}
+
+.admin_invitations-index h3 {
+  clear: right;
+}
+
+/*ABUSE, FEEDBACK */
+
+#main.abuse_reports-new dt, form#new_feedback dt, form#new_feedback dd {
+  width: 100%;
+  float: none;
+}
+
+#new_feedback p.submit {
+  text-align: left;
+}
+
+.feedbacks-new form p.message {
+  clear: both;
+}
+
+/* POST WORK */
+
+#work-form fieldset, #upload-work-form fieldset {
+  background: #fffef9;
+  font-size: 0.875em;
+  margin: 0.5625em 0 2em 0;
+  padding: 0.375em 1.5em 3em 1.5em;
+  border: 1px solid #bbb;
+}
+
+#work-form fieldset fieldset {
+  line-height: 1.5;
+  margin: 0 auto 0.5625em auto;
+  padding-bottom: 1em;
+}
+
+#work-form legend {
+  background: #fffef9;
+  padding: 0.375em;
+  height: auto;
+  width: auto;
+  font-size: 1em;
+  color: #222222;
+}
+
+.works-preview legend, .works-update legend {
+  color: #fff;
+}
+
+#work-form input[type="text"] {
+  width: 70em;
+}
+
+#work-form select {
+  width: 74em;
+}
+
+#work-form textarea {
+  width: 75.5em;
+}
+
+#work-form dl, #work-form dt, #work-form dd {
+  float: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  border: 0;
+}
+
+#work-form dt, #work-form dd {
+  font-size: 1em;
+}
+
+#work-form dd dt, #work-form dd dd, #work-form dd fieldset {
+  font-size: 1.1em;
+  letter-spacing: normal;
+}
+
+#work-form dl {
+  margin-top: 0;
+}
+
+#work-form dl dl, #work-form .meta dl {
+  margin-top: 0;
+}
+
+#work-form dd fieldset, #work-form dd fieldset legend, #work-form fieldset.post-work {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+#work-form dd fieldset legend, #work-form fieldset.post-work legend {
+  height: 0;
+  width: 0;
+  font-size: 0;
+}
+
+#work-form dt {
+  margin: 1.5em 0 0.5em 0;
+}
+
+#work-form dt.work-parent, #work-form dt.work-is_serial, #work-form dt.work-restricted, #work-form dt.work-is_wip, #work-form dt.work-is-backdated, #work-form dt.coauthors, #work-form dt.endnotes {
+  position: relative;
+  bottom: -1.5em;
+  width: 2em;
+  height: 1em;
+  margin: 1em 0 0 0;
+}
+
+#work-form dd.work-parent, #work-form dd.work-is_serial, #work-form dd.work-restricted, #work-form dd.work-is_wip, #work-form dd.work-is-backdated, #work-form dd.coauthors, #work-form dd.endnotes {
+  position: relative;
+  top: 0.5em;
+  left: 2em;
+  width: 60em;
+}
+
+#work-form dd dl {
+  margin: 0 0 0 5em;
+}
+
+#work-form dd dt {
+  position: relative;
+  bottom: -1em;
+  height: 1em;
+  padding: 0;
+  margin: 0;
+}
+
+#work-form dd dd {
+  position: relative;
+  top: 0;
+  padding: 0;
+  margin: 0;
+}
+
+#work-form .meta input[type="text"] {
+  width: 49em;
+}
+
+#work-form .meta select {
+  width: 51.73em;
+}
+
+#work-form fieldset.meta, #upload-work-form fieldset.meta {
+  background: #ddd;
+}
+
+#work-form .meta dt, #upload-work-form .meta dt {
+  float: left;
+  clear: left;
+  width: 9em;
+  margin: 0;
+  padding: 0.25em 0.5625em 0.25em 0;
+}
+
+#work-form .meta dd, #upload-work-form .meta dd {
+  float: left;
+  margin: 0 0 1em 0;
+  padding: 0;
+}
+
+#work-form .meta dd.delay_notice {
+  padding-left: 9.5625em;
+  margin-top: -1em;
+  clear: left;
+  width: 70%;
+}
+
+#upload-work-form .meta input, #upload-work-form .meta select, #upload-work-form .meta textarea {
+  width: 99%;
+  margin: auto;
+}
+
+#upload-work-form .override-tags {
+  margin-bottom: 0.75em;
+  margin-left: 1em;
+}
+
+#work-form .meta .warning dl, #work-form .meta .warning dt, #work-form .meta .warning dd, #work-form .meta .category dl, #work-form .meta .category dt, #work-form .meta .category dd {
+  float: none;
+  clear: none;
+  display: block;
+  position: relative;
+  margin: 0;
+}
+
+#work-form .meta .warning dl, #work-form .meta .category dl {
+  border: 1px solid #7f9db9;
+  background: #ffffff;
+  width: 48.15em;
+  padding: 0.2em 0.5em 0.4em 0.5em;
+}
+
+#work-form .meta .warning dt, #work-form .meta .category dt {
+  top: 0;
+  left: 0;
+  width: 1.8em;
+  height: 0;
+  margin-bottom: -0.2em;
+}
+
+#work-form .meta .warning dd, #work-form .meta .category dd {
+  top: -0.1em;
+  left: 1.8em;
+  position: relative;
+  width: auto;
+}
+
+#work-form .meta .category dd {
+  width: 5em;
+}
+
+#work-form .meta .category dt.even {
+  left: 10em;
+  top: -1.6em;
+  margin-bottom: -1.8em;
+}
+
+#work-form .meta .category dd.even {
+  left: 11.8em;
+  top: 0em;
+}
+
+#work-preface textarea {
+  height: 10em;
+}
+
+#work-form dd.validation {
+  padding: 0.5em 0 1em 0;
+}
+
+#work-form span.LV_validation_message {
+  display: inline;
+  clear: none;
+  float: left;
+  margin: 0;
+  padding-top: 0.4em;
+}
+
+#work-form p.character_counter {
+  display: inline;
+  clear: none;
+  float: left;
+  margin: 0;
+}
+
+#work-form .rtf-html-field textarea {
+  float: left;
+  clear: both;
+}
+
+#work-form .rtf-html-field p.character_counter {
+  display: block;
+  clear: both;
+}
+
+#work-form #work_title {
+  display: block;
+} /* Enigel 03-2010 */
+
+#work-form .byline input[type="checkbox"] {
+  margin: 0 0.5em 0 0;
+}
+
+#co-authors-options dl.coauthors, #co-authors-options dl dt, #co-authors-options dl dd {
+  top: 0;
+  left: 0;
+  margin: 0.1em 0 0 0;
+}
+
+#co-authors-options dl dt, #co-authors-options dl dd {
+  margin-top: 0.5em;
+}
+
+#work-form dl.notes {
+  margin: -1.5em 0 0 0
+}
+
+#work-form dl.notes dl {
+  margin: 0.7em 0 0 0.1em;
+  top: 0;
+  left: 0;
+}
+
+#work-form dl.notes dl dt {
+  top: 0;
+  left: 0;
+  margin: 0;
+}
+
+#work-form dl.notes dl dd {
+  top: 0;
+  left: 0;
+  margin: 0.5em 0 0 0;
+}
+
+#work-form dl.notes dl dd.validation {
+  margin-top: 0;
+}
+
+#work-form .endnotes span.warning {
+  position: absolute;
+  top: 0;
+  left: 10em;
+}
+
+#work-form #work_challenge_claim_ids_options {
+  width: 60em;
+}
+
+#work-form #parent-options dl dt {
+  width: 9em;
+}
+
+#work-form #parent-options dl dd {
+  left: 10em;
+}
+
+#work-form dd ul.navigation {
+  float: left;
+}
+
+#work-form dd dd input[type="text"] {
+  width: 80%;
+}
+
+#work-form dd dd select {
+  width: auto;
+}
+
+#series-options dl dt {
+  width: 19em;
+}
+
+#series-options dl dd {
+  left: 20em;
+  width: 46em;
+}
+
+#series-options input[type="text"] {
+  width: 45em;
+}
+
+#chapters-options select {
+  width: 47.5em;
+}
+
+#chapters-options dl dt {
+  width: 8em;
+}
+
+#chapters-options dl dd {
+  left: 9em;
+  width: 56em;
+}
+
+#chapters-options input[type="text"] {
+  width: 56em;
+}
+
+#chapters-options input[type="text"].number-field {
+  width: 10em;
+}
+
+#work-form #chapter-ordering input.number-field {
+  width: 5em! important;
+}
+
+#backdate-options dl dd.managePublicationDate {
+  top: 1.5em;
+}
+
+#managePublicationDate select {
+  width: auto;
+}
+
+#work-form dt.work-language {
+  position: relative;
+  bottom: -1.5em;
+  width: 12em;
+  height: 1em;
+  margin: 1em 0 0 0;
+}
+
+#work-form dd.work-language {
+  position: relative;
+  top: 0.5em;
+  left: 13em;
+  width: 2em;
+}
+
+#work-form dd.work-language select {
+  width: auto;
+}
+
+#work-form .work-text textarea {
+  width: 99%;
+}
+
+#work-form textarea#content {
+  height: 31.25em;
+}
+
+#work-form dd.optionalField {
+  clear: left;
+  width: 100%;
+}
+
+#work-form dd.optionalField dd {
+  font-size: 1em;
+}
+
+#work-form .optionalField {
+  font-size: 1em;
+}
+
+#work-form p.submit input {
+  font-size: 1em;
+  width: auto;
+  text-align: center;
+}
+
+/*EDIT CHAPTERS */
+
+#main.chapters-edit dt {
+  width: 100%;
+  float: none;
+}
+
+#main.chapters-new #work-form p input {
+  width: auto;
+}
+
+#main.chapters-new.chapter_title input {
+  width: 80%;
+}
+
+#main.chapters-new dt, #main.chapters-new dd {
+  clear: both;
+  width: 100%;
+}
+
+#main.chapters-new dd textarea, #main.chapters-edit dd textarea, #main.chapters-update dd textarea {
+  width: 99%;
+  margin: auto;
+}
+
+#main.chapters-new #chapter-ordering select, #main.chapters-edit #chapter-ordering select, #main.chapters-update #chapter-ordering select {
+  width: auto;
+  float: left;
+}
+
+/*FILTERS*/
+
+form.filters {
+  margin: 0.5em auto;
+  width: 12.25em;
+  max-width: 20%;
+  padding: 0.75em 0.5625em;
+  float: right;
+  border: 2px solid #ddd;
+  background: #eee;
+}
+
+.filters legend {
+  font-size: 1em;
+  color: #111;
+  height: 1.5em;
+  width: auto;
+}
+
+.filters a {
+  float: right;
+  margin-top: -1.25em;
+}
+
+.filters legend a {
+  float: none;
+  margin: 0;
+}
+
+form.filters dt {
+  background: #eee;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin: 0.5625em auto 0;
+  padding: 0;
+  font-size: 0.875em;
+  float: none;
+  width: auto;
+  clear: both;
+}
+
+.filters dd {
+  padding: 0;
+}
+
+.filters dt:hover {
+  color: #fffef9;
+  background: #777;
+}
+
+.filters span {
+  font-weight: 500;
+}
+
+.filters dd label {
+  font-size: 0.8575em;
+}
+
+/*COMMENT */
+
+p.comment_form.instructions, dd.comment_form.instructions {
+  font-size: 0.8575em;
+}
+
+.comment_form dd.module {
+  width: 70%;
+  margin-top: -0;
+}
+
+textarea.comment_form {
+  width: 99%;
+  height: 12em;
+}
+
+#feedback li dl {
+  font-size: 1.142857em;
+}
+
+.comment_form {
+  clear: right;
+  margin-top: 1.5em;
+}
+
+/*TAG WRANGLINGS*/
+
+form#wrangle-select-fandom p, form#wrangle-select-media p {
+  display: inline;
+  margin-right: 0.5625em;
+}
+
+.tag_wranglings-index form fieldset {
+  border: 1px solid #bbb;
+  padding: 0.5em;
+}
+
+/* TAGS */
+
+#edit-tag input[readonly] {
+  background: #ededde;
+  border: 1px solid #dfdffd;
+}
+
+/* GLOBALIZE (in footer) you can find this in globalize.css*/
+
+/* BOOKMARKING */
+
+#dynamic-bookmark {
+  position: absolute;
+  z-index: 50;
+  background: #fffef9;
+}
+
+#dynamic-bookmark #bookmark-form {
+  border: 2px solid;
+  height: 100%;
+  width: 36em;
+  padding: 1em;
+  overflow: auto;
+}
+
+#dynamic-bookmark p#close-popup {
+  top: 0;
+  right: 2em;
+  position: absolute;
+  z-index: 60;
+}
+
+#bookmark-form h4 {
+  margin: auto;
+}
+
+#bookmark-form dd {
+  margin-top: 0;
+  padding: 0.25em 0.5625em 0.25em 0;
+}
+
+#bookmark-form fieldset {
+  background: #fffef9;
+  font-size: 0.875em;
+  margin: 0.5625em 0;
+  padding: 0.375em 1.5em;
+  border: 1px solid #bbb;
+  clear: both;
+  width: inherit;
+}
+
+#bookmark-form p.character_counter {
+  display: block;
+  text-align: right;
+}
+
+#bookmark-form p label {
+  padding-right: 2em;
+}
+
+#bookmark-form input#tag_string, #bookmark-form textarea {
+  width: 99%;
+}
+
+#bookmark-form fieldset input {
+  width: 28em;
+}
+
+#dynamic-collection_item {
+  background: #fffef9;
+  border: 2px solid;
+  bottom: 2em;
+  height: 8em;
+  padding: 1em 2em;
+  position: absolute;
+  z-index: 42;
+}
+
+#reply-to-comment {
+  position: absolute;
+  background: #fffef9;
+  border: 2px solid;
+  z-index: 42;
+  width: 65%;
+  padding: 1em;
+}
+
+#reply-to-comment #comment_form dd.module {
+  width: 100%;
+}
+
+#reply-to-comment #new_comment {
+  margin-top: 0;
+}
+
+#reply-to-comment p#close-popup {
+  top: 0;
+  right: 2em;
+  position: absolute;
+  z-index: 60;
+}
+
+/*COLLECTIONS, CREATE, similar complex forms*/
+
+form.new_collection fieldset, form.new_user fieldset, form.edit_collection fieldset {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+  margin: 1em auto;
+}
+
+form.new_collection p, form.new_user p, form.edit_collection p {
+  font-size: 1.5em;
+}
+
+form.new_collection dt, form.edit_collection dt {
+  width: 45%;
+}
+
+form.new_collection div, form.edit_collection div {
+  display: block;
+}
+
+/* temp workaround for collection_participants/participant_form */
+
+.collection_participants-index table td.submit input {
+  font-size: 0.75em;
+}
+
+/* tag set form */
+
+fieldset.tag_set {
+  border: 1px solid #bbb;
+  padding: 0.5em;
+  margin: 0.5em auto;
+}
+
+fieldset.tag_set textarea {
+  width: 90%;
+}
+
+.tagset .options, .options li {
+  clear: right;
+  padding: 0.25em;
+}
+
+label.action, a.action {
+  background: #e9e2dd;
+  padding: 0 0.75em;
+  margin: 0.25em;
+  border: 1px solid #bbb;
+  white-space: nowrap;
+    border-radius: 3em;
+    -moz-border-radius: 3em;
+    -webkit-border-radius: 2em;
+}
+
+/*prototype for new forms 30/07/11*/
+
+form.tagset fieldset {
+  background: #e9e2dd;
+  border: 2px solid #f3efec;
+  padding: 0.5em;
+  margin: 0.5em;
+    box-shadow: inset 1px 0 5px #999;
+}
+
+form.tagset fieldset fieldset {
+  background: #fffef9;
+}
+
+form.tagset dt {
+  border-bottom: 1px solid #f3efec;
+  clear: both;
+}
+
+form.tagset dd {
+  width: 70%;
+}
+
+form.tagset dd input[type="text"] {
+  width: 100%;
+  vertical-align: text-top;
+    box-shadow: inset 0px 1px 2px #ccc;
+}

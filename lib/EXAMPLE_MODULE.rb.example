@@ -1,0 +1,23 @@
+# Describe what the module does up here
+# This then gets included in whatever class you're working on:
+# "include [module name]"
+module Example
+  
+  # Class methods are ones that you run with "ClassName.whatever" -- you would define them
+  # in the class as "def self.whatever"
+  # Here you need to define them WITHOUT the "self." part :)
+  module ClassMethods   
+
+  end # CLASS METHODS
+  
+  # This last housekeeping method will load up the class methods and 
+  # any associations or validations into your class
+  def self.included(base)
+    base.class_eval do
+      # put any association or validations here, eg has_many, etc
+    end
+    base.extend(ClassMethods)
+  end
+  
+  
+end

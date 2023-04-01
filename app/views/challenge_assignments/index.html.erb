@@ -1,0 +1,5 @@
+<% if @user %>
+  <%= render "user_index" %>
+<% elsif @challenge && @challenge.user_allowed_to_see_assignments?(current_user) %>
+  <%= render "maintainer_index" %>
+<% end %>

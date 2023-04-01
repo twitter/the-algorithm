@@ -1,0 +1,3 @@
+$j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').slideUp();
+$j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').html("");
+$j('#recent_link_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').html('<%= escape_javascript(link_to(ts("Show Most Recent Bookmarks"), fetch_recent_bookmarks_path(@bookmark, fetch: true), :method => :get, :remote => true)) %>');

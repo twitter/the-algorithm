@@ -1,0 +1,112 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts("User") %>: <%= @user.login %> (<%= @user.id %>)</h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <p class="note">
+    <%= ts("To fix common errors with this user's Subscriptions and Stats pages, and to reindex their works and bookmarks, choose \"Troubleshoot Account.\"") %></p>
+  <ul class="navigation actions" role="navigation">
+    <li>
+      <%= link_to ts("Manage User Invitations"), manage_user_invitations_path(user_id: @user.login) %>
+    </li>
+    <li>
+      <%= link_to ts("Add User Invitations"), user_invitations_path(user_id: @user.login) %>
+    </li>
+    <li><%= link_to ts("Troubleshoot Account"), troubleshoot_admin_user_path(id: @user.login) %></li>
+    <li>
+      <%= button_to ts("Send Activation Email"), { action: "send_activation", id: @user }, disabled: @user.active? %>
+    </li>
+    <li>
+      <%= button_to ts("Activate User Account"), { action: "activate", id: @user }, disabled: @user.active? %>
+    </li>
+    <li>
+      <%= link_to ts("Manage User Roles"), { action: "index", name: @user.login, role: "0" } %>
+    </li>
+  </ul>
+  <!--/subnav-->
+
+  <!--main content-->
+  <h3 class="heading"><%= ts("Abuse Administration") %></h3>
+  <%= form_tag action: "update_next_of_kin", controller: "admin/admin_users" do %>
+    <%= error_messages_for @user.fannish_next_of_kin %>
+    <%= hidden_field_tag "user_login", @user.login %>
+    <fieldset<% unless policy(@user).can_manage_next_of_kin? %> disabled="disabled"<% end %>>
+      <legend><%= ts("Fannish Next of Kin") %></legend>
+      <h4 class="heading"><%= ts("Fannish Next of Kin") %></h4>
+      <dl>
+        <dt>
+          <%= label_tag "next_of_kin_name", ts("Fannish next of kin's username") %>
+        </dt>
+        <dd>
+          <%= text_field_tag "next_of_kin_name", @user.fannish_next_of_kin.try(:kin_name), autocomplete: "off" %>
+        </dd>
+        <dt>
+          <%= label_tag "next_of_kin_email", ts("Fannish next of kin's email") %>
+        </dt>
+        <dd>
+          <%= text_field_tag "next_of_kin_email", @user.fannish_next_of_kin.try(:kin_email), autocomplete: "off" %>
+        </dd>
+      </dl>
+    </fieldset>
+    <p class="submit"><%= submit_tag ts("Update Fannish Next of Kin") %></p>
+  <% end %>
+
+  <%= form_tag action: "update_status", controller: "admin/admin_users" do %>
+    <%= hidden_field_tag "user_login", @user.login %>
+    <fieldset<% unless policy(UserManager).can_manage_users? %> disabled="disabled"<% end %>>
+      <legend><%= ts("Warnings and Suspensions") %></legend>
+      <h4 class="heading"><%= ts("Warnings and Suspensions") %></h4>
+      <ul>
+        <li>
+          <%= radio_button_tag "admin_action", "note" %>
+          <%= label_tag "admin_action_note", ts("Record note") %>
+        </li>
+        <li>
+          <%= radio_button_tag "admin_action", "warn" %>
+          <%= label_tag "admin_action_warn", ts("Record warning") %>
+        </li>
+        <li>
+          <% if @user.suspended? %>
+            <%= radio_button_tag "admin_action", "unsuspend", false %>
+            <%= label_tag "admin_action_unsuspend", ts("Lift temporary suspension, effective immediately.") %>
+          <% else %>
+            <%= radio_button_tag "admin_action", "suspend", false, disabled: @user.banned? %>
+            <%= label_tag "admin_action_suspend", ts("Suspend: enter a whole number of days") %>
+            <%= text_field_tag "suspend_days", "", class: "number", size: 2, disabled: @user.banned? %>
+            <%= live_validation_for_field("suspend_days", presence: false, numericality: true) %>
+          <% end %>
+        </li>
+        <li>
+          <% if @user.banned? %>
+            <%= radio_button_tag "admin_action", "unban", false %>
+            <%= label_tag "admin_action_unban", ts("Lift permanent suspension, effective immediately.") %>
+          <% else %>
+            <%= radio_button_tag "admin_action", "ban", false %>
+            <%= label_tag "admin_action_ban", ts("Suspend permanently (ban user)") %>
+          <% end %>
+        </li>
+        <li>
+          <%= radio_button_tag "admin_action", "spamban", false %>
+          <%= label_tag "admin_action_spamban", ts("Spammer: ban and delete all creations") %>
+        </li>
+      </ul>
+    </fieldset>
+    <fieldset<% unless policy(UserManager).can_manage_users? %> disabled="disabled"<% end %>>
+      <legend><%= ts("Notes") %></legend>
+      <h4 class="heading"><%= label_tag "admin_note", ts("Notes") %></h4>
+      <p class="note">
+        <%= ts("Required when adding or removing a warning or suspension to an account.") %>
+      </p>
+      <p>
+        <%= text_area_tag "admin_note", nil, class: "observe_textlength" %>
+        <%= generate_countdown_html("admin_note", ArchiveConfig.LOGNOTE_MAX) %>
+      </p>
+    </fieldset>
+
+    <p class="submit"><%= submit_tag ts("Update") %></p>
+  <% end %>
+
+  <%= render "user_history", user: @user %>
+  <!--/content-->
+</div>

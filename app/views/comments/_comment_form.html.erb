@@ -1,0 +1,116 @@
+<!-- expects the local variables comment, commentable, and button_name -->
+<% if !commentable && @commentable %>
+  <% commentable = @commentable %>
+<% end %>
+<div class="post comment" id="comment_form_for_<%= commentable.id %>">
+  <%= form_for value_for_comment_form(commentable, comment), :remote => !comment.new_record?, :html => {:id => "comment_for_#{commentable.id}"} do |f| %>
+    <fieldset>
+      <legend><%= ts("Post Comment") %></legend>
+
+      <% # here come the hacks (hidden fields to transmit various info to the create action) %>
+      <% if commentable.is_a?(Tag) %>
+        <%= hidden_field_tag :tag_id, commentable.name %>
+      <% end %>
+
+      <% if params[:view_full_work] %>
+        <%= hidden_field_tag :view_full_work, params[:view_full_work] %>
+      <% end %>
+
+      <% if controller.controller_name == "inbox" && params[:filters] %>
+        <%= hidden_field_tag "filters[read]", params[:filters][:read] %>
+        <%= hidden_field_tag "filters[replied_to]", params[:filters][:replied_to] %>
+        <%= hidden_field_tag "filters[date]", params[:filters][:date] %>
+      <% end %>
+
+      <% if params[:page] %>
+        <%= hidden_field_tag :page, params[:page] %>
+      <% end %>
+
+      <% if comments_are_moderated(commentable) && !current_user_is_work_creator(commentable) %>
+        <p class="notice">
+          <%= ts("This work's creator has chosen to moderate comments on the work. Your comment will not appear until it has been approved by the creator.") %>
+        </p>
+      <% end %>
+
+      <% if logged_in? %>
+        <% if current_user_is_anonymous_creator(commentable) %>
+          <p class="notice">
+           <%= ts("While this work is anonymous, comments you post will also be listed anonymously.") %>
+          </p>
+        <% end %>
+
+        <% if current_user.pseuds.count > 1 %>
+          <h4 class="heading"><%= ts("Comment as") %> <%= f.collection_select :pseud_id, current_user.pseuds, :id, :name, {:selected => (comment.pseud ? comment.pseud.id.to_s : current_user.default_pseud.id.to_s)}, :id => "comment_pseud_id_for_#{commentable.id}", :title => ts("Choose Name") %>
+            <% if controller.controller_name == "inbox" %>
+              <% if commentable.by_anonymous_creator? %>
+                <span><%= ts("to") %> <%= "Anonymous Creator" %> <%= ts("on") %> <%= commentable_description_link(commentable) %></span>
+              <% else %>
+                <span><%= ts("to") %> <%= get_commenter_pseud_or_name(commentable) %> <%= ts("on") %> <%= commentable_description_link(commentable) %></span>
+              <% end %>
+            <% end %>
+            (<%= allowed_html_instructions %>)
+          </h4>
+        <% else %>
+          <h4 class="heading"><%= ts("Comment as") %> <span class="byline"><%= current_user.default_pseud.name %></span>
+            <%= f.hidden_field :pseud_id, :value => "#{current_user.default_pseud.id}", :id => "comment_pseud_id_for_#{commentable.id}" %>
+            <% if controller.controller_name == "inbox" %>
+              <% if commentable.by_anonymous_creator? %>
+                <span><%= ts("to") %> <%= "Anonymous Creator" %> <%= ts("on") %> <%= commentable_description_link(commentable) %></span>
+              <% else %>
+                <span><%= ts("to") %> <%= get_commenter_pseud_or_name(commentable) %> <%= ts("on") %> <%= commentable_description_link(commentable) %></span>
+              <% end %>
+            <% end %>
+          </h4>
+          <p class="footnote">(<%= allowed_html_instructions %>)</p>
+        <% end %>
+
+      <% elsif logged_in_as_admin? %>
+        <h4 class="heading"><%= ts("Comment as") %> <span class="byline"><%= current_admin.login %></span>
+          <%= f.hidden_field :name, :value => "#{current_admin.login}", :id => "comment_name_for_#{commentable.id}" %>
+          <%= f.hidden_field :email, :value => "#{current_admin.email}", :id => "comment_email_for_#{commentable.id}" %>
+        </h4>
+        <p class="footnote">(<%= allowed_html_instructions %>)</p>
+
+      <% else %>
+        <dl>
+          <dt class="landmark"><%= ts("Note") %>:</dt>
+          <dd class="instructions comment_form"><%=ts("All fields are required. Your email address will not be published.") %></dd>
+          <dt><%= f.label "name_for_#{commentable.id}", ts("Guest name: ") %></dt>
+          <dd>
+            <%= f.text_field :name, :id => "comment_name_for_#{commentable.id}" %>
+            <%= live_validation_for_field("comment_name_for_#{commentable.id}", :failureMessage => ts('Please enter your name.')) %>
+          </dd>
+          <dt><%= f.label "email_for_#{commentable.id}", ts("Guest email: ") %></dt>
+          <dd>
+            <%= f.text_field :email, :id => "comment_email_for_#{commentable.id}" %>
+            <%= live_validation_for_field("comment_email_for_#{commentable.id}", :failureMessage => ts('Please enter your email address.')) %>
+          </dd>
+        </dl>
+        <p class="footnote">(<%= allowed_html_instructions %>)</p>
+      <% end %>
+
+      <p>
+        <% content_id = "comment_content_for_#{commentable.id}" %>
+        <label for="<%= content_id %>" class="landmark"><%= ts("Comment") %></label>
+        <%= f.text_area :comment_content, :id => content_id, :class => "comment_form observe_textlength", :title => ts("Enter Comment") %>
+        <input type="hidden" id="controller_name_for_<%= commentable.id %>" name="controller_name" value="<%= @controller_name ||= controller.controller_name %>" />
+      </p>
+      <%= generate_countdown_html("comment_content_for_#{commentable.id}", ArchiveConfig.COMMENT_MAX) %>
+      <%= live_validation_for_field("comment_content_for_#{commentable.id}",
+              :failureMessage => ts('Brevity is the soul of wit, but we need your comment to have text in it.'),
+              :maximum_length => ArchiveConfig.COMMENT_MAX,
+              :tooLongMessage => ts("must be less than %{count} characters long.", :count => ArchiveConfig.COMMENT_MAX)) %>
+      <p class="submit actions">
+        <%= f.submit button_name, :id => "comment_submit_for_#{commentable.id}", data: {disable_with: ts("Please wait...")} %>
+        <% if controller.controller_name == 'inbox' %>
+          <a name="comment_cancel" id="comment_cancel"><%= ts("Cancel") %></a>
+        <% elsif comment.persisted? %>
+          <%= cancel_edit_comment_link(comment) %>
+        <% elsif commentable.is_a?(Comment) || commentable.is_a?(CommentDecorator) %>
+          <%= cancel_comment_reply_link(commentable) %>
+        <% end %>
+      </p>
+    </fieldset>
+  <% end %>
+</div>
+<div class="clear"></div>

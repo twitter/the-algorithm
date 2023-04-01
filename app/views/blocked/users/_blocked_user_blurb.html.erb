@@ -1,0 +1,9 @@
+<% pseud = block.blocked.default_pseud %>
+<li class="user pseud picture blurb group" role="article">
+  <%= render "pseuds/pseud_module", pseud: pseud %>
+
+  <h6 class="landmark heading">User Actions</h6>
+  <ul class="actions" role="navigation">
+    <li><%= block_link(pseud.user, block: block) %></li>
+  </ul>
+</li>

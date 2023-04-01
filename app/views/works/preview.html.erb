@@ -1,0 +1,68 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Preview") %></h2>
+<%= error_messages_for :work %>
+<!--/descriptions-->
+
+<!--main content-->
+<div id="previewpane">
+  <div class="draft work">
+    <%= render "works/work_header" %>
+    <div id="chapters">
+    <% if @chapters %>
+      <% @chapters.each do |chapter| %>
+        <%= render "chapters/chapter", chapter: chapter %>
+      <% end %>
+    <% else %>
+      <div class="userstuff"><%=raw sanitize_field(@chapter, :content) %></div>
+    <% end %>
+    </div>
+
+    <% inspired_by = get_inspired_by(@work) %>
+    <% if !@work.endnotes.blank? || !@work.serial_works.blank? || !inspired_by.empty? %>
+    <!--afterword-->
+    <div class="afterword preface group" role="complementary">
+      <% unless @work.endnotes.blank? %>
+        <%= render "works/work_endnotes" %>
+      <% end %>
+      <% unless @work.serial_works.blank? %>
+        <%= render "works/work_series_links" %>
+      <% end %>
+      <% unless inspired_by.empty? %>
+        <%= render "works/work_approved_children", inspired_by: inspired_by %>
+      <% end %>
+    </div>
+    <!--/afterword-->
+    <% end %>
+
+  </div>
+</div>
+
+<div class="clear"><!--presentational--></div>
+
+<%= form_for(@work) do |f| %>
+
+  <%= render "hidden_fields", form: f %>
+
+  <fieldset>
+    <legend><%= ts("Post Work") %></legend>
+    <ul class="actions">
+      <% if @work.posted? %>
+        <li><%= submit_tag ts("Update"), name: "update_button" %></li>
+      <% else %>
+        <li>
+          <%= submit_tag ts("Post"),
+                         name: "post_button",
+                         data: { disable_with: ts("Please wait...") } %>
+        </li>
+        <li>
+          <%= submit_tag ts("Save As Draft"), name: "save_button" %>
+        </li>
+      <% end %>
+      <li><%= submit_tag ts("Edit"), name: "edit_button" %></li>
+      <li><%= submit_tag ts("Cancel"), name: "cancel_button" %></li>
+    </ul>
+  </fieldset>
+
+<% end %>
+</div>
+<!--/content-->

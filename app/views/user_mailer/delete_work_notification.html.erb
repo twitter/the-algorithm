@@ -1,0 +1,11 @@
+<% content_for :message do %>
+<p><%= t("mailer.general.greeting.formal", name: style_bold(@user.login)).html_safe %></p>
+<p><%= (@work.pseuds.count > 1 && @user != User.current_user) ?
+t('.html.part1_other',
+        title: style_creation_title(@work.title),
+        pseud: style_pseud_link(User.current_user.default_pseud)).html_safe :
+t('.html.part1_yourself',
+        title: style_creation_title(@work.title)).html_safe %></p>
+<p><%= t('.html.part2', support: support_link(t '.support')).html_safe %></p>
+<p><%= t('.part3') %></p>
+<% end %>

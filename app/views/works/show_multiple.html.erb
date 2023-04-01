@@ -1,0 +1,59 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">Edit Multiple Works</h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "users/header_navigation" %>
+<!--subnav-->
+
+<!--main content-->
+<%= form_tag edit_multiple_user_works_path(@user),  :id => 'edit-multiple-works' do %>
+
+  <fieldset>
+    <%= check_all_none %>
+
+    <fieldset>
+      <legend>Actions</legend>
+      <p class="submit">
+        <input type="submit" value="Edit" name="commit">
+        <input type="submit" value="Orphan" name="commit">
+        <input type="submit" value="Delete" name="commit">
+      </p>
+    </fieldset>
+
+    <ul class="index">
+      <% @works_by_fandom.keys.sort.each do |fandom| %>
+        <li>
+          <fieldset class="fandom listbox">
+            <legend>Select <%= fandom %> works</legend>
+            <h5 class="heading">
+              <%= fandom %>
+              <%= check_all_none %>
+            </h5>
+            <ul class="index concise">
+              <% @works_by_fandom[fandom].each do |work| %>
+                <li>
+                  <label class="action" title="select <%= work.title + (work.posted? ? "" : ts(' (Draft)'))%>"><%= check_box_tag "work_ids[]", work.id, false, id: "work_ids_#{work.id}" %></label>
+                <%= link_to work.title + (work.posted? ? "" : ts(' (Draft)')), work_path(:id => work.id) %>
+		</li>
+              <% end %>
+            </ul>
+          </fieldset>
+        </li>
+      <% end %>
+    </ul>
+  
+    <fieldset>
+      <legend>Actions</legend>
+      <p class="submit">
+        <input type="submit" value="Edit" name="commit">
+        <input type="submit" value="Orphan" name="commit">
+        <input type="submit" value="Delete" name="commit">
+      </p>
+    </fieldset>
+
+  </fieldset>
+
+<% end %>
+<!--/content-->
+

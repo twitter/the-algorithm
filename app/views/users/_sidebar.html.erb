@@ -1,0 +1,64 @@
+<div id="dashboard" class="region <%= @user == current_user ? "own" : "" %>" role="navigation region">
+<h4 class="landmark heading"><%= ts("Choices")%></h4>
+<ul class="navigation actions">
+  <li><%= span_if_current ts("Dashboard"), @user %></li>
+  <li><%= span_if_current ts("Profile"), user_profile_path(@user) %></li>
+  <% if @user.pseuds.size > 1 %>
+    <li class="pseud" aria-haspopup="true">
+      <a href="#" title="<%= ts("Pseud Switcher") %>"><%= ts("Pseuds") %></a>
+      <ul class="expandable secondary">
+        <%= print_pseud_selector(@user.pseuds) %>
+        <li><%= span_if_current ts("All Pseuds (%{pseud_number})", :pseud_number => @user.pseuds.count), user_pseuds_path(@user) %></li>
+      </ul>
+    </li>
+	<% end %>
+
+	<% if @user == current_user %>
+    <li><%= span_if_current ts("Preferences"), user_preferences_path(@user) %></li>
+    <li><%= span_if_current ts("Skins"), user_skins_path(@user) %></li>
+  <% end %>
+</ul>
+
+
+<h4 class="landmark heading"><%= ts("Pitch")%></h4>
+<ul class="navigation actions">
+	<li><%= works_link(@user, @pseud) %></li>
+	<% if @user == current_user || logged_in_as_admin? %>
+	  <li><%= span_if_current ts("Drafts") + " (#{@user.unposted_works.size})", drafts_user_works_path(@user) %></li>
+  <% end %>
+	<li><%= series_link(@user, @pseud) %></li>
+
+	<% unless @user == User.orphan_account %>
+	  <li><%= bookmarks_link(@user, @pseud) %></li>
+	<% end %>
+
+  <li><%= span_if_current ts("Collections (%{coll_number})", :coll_number => @user.maintained_collections.count), user_collections_path(@user) %></li>
+</ul>
+
+<% if @user == current_user %>
+  <h4 class="landmark heading"><%= ts("Catch")%></h4>
+  <ul class="navigation actions">
+	  <li><%= span_if_current ts("Inbox (%{inbox_number})", :inbox_number => @user.unread_inbox_comments_count.to_s), user_inbox_path(@user) %></li>
+	  <li><%= span_if_current ts("Statistics"), user_stats_path(@user) %></li>
+    <% if @user.preference.try(:history_enabled?) %>
+      <li><%= span_if_current ts("History"), user_readings_path(@user) %></li>
+    <% end %>
+    <li><%= span_if_current ts("Subscriptions"), user_subscriptions_path(@user) %></li>
+  </ul>
+<% end %>
+
+<h4 class="landmark heading"><%= ts("Switch")%></h4>
+<ul class="navigation actions">
+  <% if @user == current_user %>
+    <% if @user.preference.allow_cocreator %>
+      <li><%= span_if_current ts("Co-Creator Requests (%{count})", count: Creatorship.unapproved.for_user(@user).count), user_creatorships_path(@user) %></li>
+    <% end %>
+    <li><%= span_if_current ts("Sign-ups (%{signup_number})", :signup_number =>@user.challenge_signups.count), user_signups_path(@user) %></li>
+    <li><%= span_if_current ts("Assignments (%{assignment_number})", :assignment_number => (@user.offer_assignments.undefaulted.count + @user.pinch_hit_assignments.undefaulted.count)), user_assignments_path(@user) %></li>
+    <li><%= span_if_current ts("Claims (%{claim_number})", :claim_number => (@user.request_claims.unposted.count)), user_claims_path(@user) %></li>
+    <li><%= span_if_current ts("Related Works (%{related_works_number})", :related_works_number => (@user.related_works.posted.count + @user.parent_work_relationships.count)), user_related_works_path(@user) %></li>
+  <% end %>
+  <li><%= gifts_link(@user) %></li>
+</ul>
+
+</div>

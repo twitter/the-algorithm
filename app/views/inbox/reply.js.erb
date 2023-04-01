@@ -1,0 +1,9 @@
+$j('#reply-to-comment').show();
+window.location.hash = 'reply-to-comment';
+$j('#reply-to-comment').draggable({ opacity: 0.80 });
+$j('#reply-to-comment').html("<%= escape_javascript(render :partial => "comments/comment_form", 
+  :locals => {:comment => @comment, :commentable => @commentable, :button_name => ts("Comment")}) %>");
+$j('#comment_cancel').click(function() {
+    $j('#reply-to-comment').hide();
+    history.back(1);
+  });

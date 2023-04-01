@@ -1,0 +1,62 @@
+/* MEDIA: print */
+
+html, body, #main {
+  font-family: serif;
+}
+
+html, body, #main, .works-show, dl.meta, .meta, .meta dd, .meta ul, .preface blockquote, .preface p, .blurb dd ul, .blurb h4, .blurb h5, .blurb .summary blockquote {
+  margin: auto;
+  padding: 2pt;
+  min-height: auto;
+  width: auto;
+  color: black;
+  background: transparent;
+  border: none;
+  position: static;
+}
+
+#main p, #main li, #main dd {
+  font: normal 11pt serif;
+  line-height: 1.2;
+  margin: auto;
+  text-indent: 22pt;
+}
+
+#header, #footer, #dashboard, img, #skiplinks, .navigation, .meta dt, #feedback, .meta .stats, .blurb dt, .filters, .pagination, .flash, input, .landmark {
+  display: none;
+}
+
+.meta dd, .meta ul, .blurb dd, .blurb .stats dt, .blurb dd ul, .blurb ul li, .blurb .datetime {
+  font-size: 9pt;
+  display: inline;
+}
+
+li.blurb {
+  border-bottom: 3pt double black;
+  margin: 6pt auto;
+}
+
+a, a:link, a:visited {
+  color: black;
+  text-decoration: underline;
+  border: 0;
+}
+
+.meta a, .meta a:link, .meta a:visited, .blurb a:link, .blurb a:visited {
+  text-decoration: none;
+}
+
+/*CSS3 perks, print urls after links*/
+
+a:after {
+  content: " (" attr(href) ") ";
+  font-size: 9pt;
+}
+
+a[href^="/"]:after {
+  content: " (http://archiveofourown.org" attr(href) ") ";
+}
+
+.meta a:link:after, .meta a:visited:after, .blurb a:link:after, .blurb a:link:visited, .byline a:link:after, .byline a:visited:after {
+  content: " ";
+}

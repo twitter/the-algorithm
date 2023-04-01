@@ -1,0 +1,7 @@
+<% if logged_in? %>
+  <ul class="navigation actions" role="navigation">
+    <li><%= span_if_current ts("Invitations"), user_invitations_path(@user) %></li>
+    <li><%= span_if_current ts("Manage Invitations"), manage_user_invitations_path(@user) %></li>
+    <li><%= span_if_current ts("Request Invitations"), new_user_invite_request_path %></li>
+  </ul>
+<% end %>

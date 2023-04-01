@@ -1,0 +1,12 @@
+<p>
+  <%= ts("Posted") %>: <%= @comment.created_at %>
+  <% unless @comment.edited_at.blank? %>
+    <br /><%= ts("Last edited") %>: <%= @comment.edited_at %>
+  <% end %>
+</p>
+
+<% if @comment.ultimate_parent.is_a?(Tag) %>
+  <%= render "comment_mailer/comment_notification_footer_for_tag" %>
+<% else %>
+  <%= render "comment_mailer/comment_notification_footer_for_other" %>
+<% end %>

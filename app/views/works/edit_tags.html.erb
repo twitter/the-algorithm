@@ -1,0 +1,41 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <% if logged_in_as_admin? %>
+    <%= ts('Edit Work Tags and Language for %{title}', title: @work.title).html_safe %>
+  <% else %>
+    <%= ts('Edit Work Tags for %{title}', title: @work.title).html_safe %>
+  <% end %>
+</h2>
+
+<%= error_messages_for :work %>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for(@work, html: { id: "work-form", class: "verbose work post" }, url: { action: "update_tags" }) do |f| %>
+  <p class="required notice">* <%= ts('Required information') %></p>
+
+  <%= render 'work_form_tags', include_blank: false %>
+
+  <% if logged_in_as_admin? %>
+    <fieldset role="article">
+      <legend><%= ts('Associations') %></legend>
+      <h3 class="landmark heading"><%= ts('Associations') %></h3>
+      <dl>
+        <%= render 'work_form_associations_language', f: f %>
+      </dl>
+    </fieldset>
+  <% end %>
+
+  <fieldset>
+    <legend><%= ts('Post Work') %></legend>
+    <ul class="actions">
+      <% unless @work.posted? %>
+        <li><%= submit_tag ts('Save As Draft'), name: 'save_button' %></li>
+      <% end %>
+      <li><%= submit_tag ts('Preview'), name: 'preview_button' %></li>
+      <li><%= submit_tag ts('Post'), name: 'update_button' %></li>
+      <li><%= submit_tag ts('Cancel'), name: 'cancel_button' %></li>
+    </ul>
+  </fieldset>
+<% end %>
+<!--/content-->

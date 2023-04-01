@@ -1,0 +1,4 @@
+<ul class="navigation actions" role="navigation">
+  <li><%= span_if_current t('.link_to_index', :default => 'Locales'), locales_path %></li>
+  <li><%= span_if_current t('.link_to_new', :default => 'New Locale'), new_locale_path %></li>
+</ul>

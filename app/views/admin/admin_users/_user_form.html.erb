@@ -1,0 +1,25 @@
+<!--titled instead of labelled as per WCAG 2.0. do not revert.-->
+
+<%= form_tag action: "update", controller: "admin/admin_users" do %>
+  <%= hidden_field_tag :query, params[:query] %>
+  <%= hidden_field_tag :role, params[:role] %>
+  <%= hidden_field_tag "id", user.login %>
+  <% # HACK: We need the user param to be present so we can remove all roles.
+     # However, if we simply submit the form with all roles unchecked, the user
+     # param is stripped. Therefore, we need a placeholder. %>
+  <%= hidden_field_tag "user[roles][]", "", disabled: !admin_can_update_user_roles? %>
+  <th scope="row"><%= link_to user.login, user_path(user) %></th>
+  <td><%= text_field_tag "user[email]", user.email, title: ts("Email"), disabled: !admin_can_update_user_email? %></td>
+  <% for role in @roles %>
+    <td>
+      <%= check_box_tag "user[roles][]", role.id, user.roles.include?(role), title: role.name, id: "user_roles_#{role.id}", disabled: !admin_can_update_user_roles? %>
+    </td>
+  <% end %>
+  <td>
+    <% unless user.fannish_next_of_kin.blank? %>
+      <%= link_to user.fannish_next_of_kin.kin_name, user_path(user.fannish_next_of_kin.kin_name) %>
+    <% end %>
+  </td>
+  <td class="actions"><%= submit_tag ts("Update") %></td>
+  <td class="actions"><%= link_to ts("Details"), admin_user_path(user) %></td>
+<% end %>

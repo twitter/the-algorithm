@@ -1,0 +1,43 @@
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading"><%= ts("Unsorted Tags") %></h2>
+<!--/end descriptions-->
+
+<% if @tags %>
+
+  <%= will_paginate @tags %>
+
+  <%= form_tag mass_update_unsorted_tags_path do %>
+
+    <p class="submit"><%= submit_tag ts("Update") %></p>
+
+    <%= hidden_field_tag :page, params[:page] %>
+
+    <table summary="<%= ts("Tags used on bookmarks that need to be sorted into tag categories.") %>">
+      <caption><%= ts("Unsorted Tags") %></caption>
+      <thead>
+        <tr>
+          <th scope="col"><%= ts("Tag") %></th>
+          <th scope="col"><%= ts("Uses") %></th>
+          <th scope="col"><%= ts("Category") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tags.each do |tag| %>
+          <% cache("unsorted-#{tag.cache_key}", skip_digest: true) do %>
+          <tr>
+            <th scope="row"><%= link_to tag.name, edit_tag_path(tag) %></th>
+            <td><%= link_to ts("Bookmarks (%{count})", :count => tag.bookmarks.count), tag_bookmarks_path(tag) %></td>
+            <td><%= select_tag "tags[#{tag.id}]", options_for_select(["", ts("Fandom"), ts("Character"), ts("Relationship"), ts("Freeform")]) %></td>
+          </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+
+    <p class="submit"><%= submit_tag ts("Update") %></p>
+  
+    <%= will_paginate @tags %>
+
+  <% end %>
+
+<% end %>

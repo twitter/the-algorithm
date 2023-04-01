@@ -1,0 +1,29 @@
+first:
+  collection: first
+  closed: false
+  moderated: false
+
+second:
+  collection: second
+  closed: false
+  moderated: false
+
+third:
+  collection: third
+  closed: true
+  moderated: false
+
+fourth:
+  collection: fourth
+  closed: false
+  moderated: true
+
+fifth:
+  collection: fifth
+  closed: false
+  moderated: false
+
+sixth:
+  collection: sixth
+  closed: true
+  moderated: false

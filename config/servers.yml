@@ -1,0 +1,76 @@
+# Custom YAML configuration format for server objects in Capistrano per deploy stage.
+#
+# For example, this YAML snippet:
+#
+#     production:
+#       - host: ao3-app15
+#         roles: [app]
+#         options:
+#           primary: true
+#
+# is the same as adding this declaration in config/deploy/production.rb:
+#
+#     server "ao3-app15", :app, primary: true
+#
+# The :primary attribute is used for tasks we only want to run on one machine.
+# Refer to https://capistranorb.com/documentation/advanced-features/properties/.
+
+production:
+  - host: ao3-app01
+    roles: [app, db, schedulers]
+  - host: ao3-app09
+    roles: [app]
+  - host: ao3-app14
+    roles: [app]
+  - host: ao3-app15
+    roles: [app]
+    options:
+      primary: true
+  - host: ao3-app16
+    roles: [app]
+  - host: ao3-app17
+    roles: [app, workers, schedulers]
+  - host: ao3-app18
+    roles: [app, workers, schedulers]
+  - host: ao3-app19
+    roles: [app]
+  - host: ao3-app20
+    roles: [app]
+  - host: ao3-app21
+    roles: [app]
+  - host: ao3-app22
+    roles: [app]
+  - host: ao3-app23
+    roles: [app]
+  - host: ao3-app24
+    roles: [app, workers, schedulers]
+  - host: ao3-app25
+    roles: [app, workers, schedulers]
+  - host: ao3-app26
+    roles: [app, workers, schedulers]
+  - host: ao3-app27
+    roles: [app, workers, schedulers]
+  - host: ao3-app28
+    roles: [app, workers, schedulers]
+  - host: ao3-front07
+    roles: [web]
+  - host: ao3-front08
+    roles: [web]
+  - host: ao3-front09
+    roles: [web]
+  - host: ao3-front10
+    roles: [web]
+
+staging:
+  - host: test-app13
+    roles: [app, db, schedulers]
+  - host: test-app14
+    roles: [app, schedulers]
+  - host: test-app15
+    roles: [app, workers, schedulers]
+    options:
+      primary: true
+  - host: test-front11
+    roles: [web]
+  - host: test-front12
+    roles: [web]

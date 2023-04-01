@@ -1,0 +1,72 @@
+<h3 class="landmark heading"><%= ts("Admin Navigation", key: "header") %></h3>
+<ul class="admin primary navigation actions" role="navigation">
+  <% if policy(User).can_manage_users? %>
+    <li class="dropdown">
+      <%= link_to ts("Manage Users", key: "header"), admin_users_path %>
+      <ul class="menu" role="menu">
+        <li><%= link_to ts("Find Users", key: "header"), admin_users_path %></li>
+        <li><%= link_to ts("Bulk Email Search", key: "header"), bulk_search_admin_users_path %></li>
+      </ul>
+    </li>
+  <% end %>
+
+  <li class="dropdown">
+    <%= link_to ts("Invitations", key: "header"), admin_invitations_path %>
+    <ul class="menu" role="menu">
+      <li><%= link_to ts("Invite New Users", key: "header"), admin_invitations_path %></li>
+      <li><%= link_to ts("Manage Requests", key: "header"), user_invite_requests_path %></li>
+      <% if policy(InviteRequest).can_manage? %>
+        <li><%= link_to ts("Manage Queue", key: "header"), manage_invite_requests_path %></li>
+      <% end %>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <%= link_to ts("Admin Posts", key: "header"), admin_posts_path %>
+    <ul class="menu" role="menu">
+      <li><%= link_to ts("AO3 News", key: "header"), admin_posts_path %></li>
+      <% if policy(AdminPost).can_post? %>
+        <li><%= link_to ts("Post AO3 News", key: "header"), new_admin_post_path %></li>
+      <% end %>
+      <li><%= link_to ts("Archive FAQ", key: "header"), archive_faqs_path %></li>
+      <li><%= link_to ts("Known Issues", key: "header"), known_issues_path %></li>
+      <li><%= link_to ts("Wrangling Guidelines", key: "header"), wrangling_guidelines_path %></li>
+    </ul>
+  </li>
+  <% if policy(AdminBlacklistedEmail).index? %>
+    <li><%= link_to ts("Banned Emails", key: "header"), admin_blacklisted_emails_path %></li>
+  <% end %>
+  
+  <% if policy(ModeratedWork).index? %>
+    <li><%= link_to ts("Spam", key: "header"), admin_spam_index_path %></li>
+  <% end %>
+
+  <% if policy(AdminSetting).can_view_settings? %>
+    <li><%= link_to ts("Settings", key: "header"), admin_settings_path %></li>
+  <% end %>
+
+  <% if policy(AdminBanner).index? %>
+    <li><%= link_to ts("Banners", key: "header"), admin_banners_path %></li>
+  <% end %>
+
+  <% if policy(Skin).index? %>
+    <li class="dropdown">
+      <%= link_to ts("Skins", key: "header"), admin_skins_path %>
+      <ul class="menu" role="menu">
+        <li><%= link_to ts("Approval Queue", key: "header"), admin_skins_path %></li>
+        <li><%= link_to ts("Approved Skins", key: "header"), index_approved_admin_skins_path %></li>
+        <li><%= link_to ts("Rejected Skins", key: "header"), index_rejected_admin_skins_path %></li>
+      </ul>
+    </li>
+  <% end %>
+  <li><%= link_to ts("Tag Wrangling", key: "header"), tag_wranglings_path %></li>
+  
+  <% if policy(Locale).index? %>
+    <li><%= link_to ts("Locales", key: "header"), locales_path %></li>
+  <% end %>
+
+  <% if policy(AdminActivity).index? %>
+    <li><%= link_to ts("Activities", key: "header"), admin_activities_path %></li>
+  <% end %>
+
+  <li><%= link_to ts("Manage API Tokens", key: "header"), admin_api_index_path %></li>
+</ul>

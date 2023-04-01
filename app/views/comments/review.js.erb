@@ -1,0 +1,10 @@
+<% comment_container_id = "#feedback_comment_#{@comment.id}" %>
+<% read_comment_form_id = "#read_comment_form_#{@comment.id}" %>
+<% review_comment_list_item_id = "#review_comment_link_#{@comment.id}" %>
+<% reply_button_html = "#{j render('inbox/reply_button', feedback_comment: @comment)}" %>
+
+$j("<%= comment_container_id %>").toggleClass("unreviewed unread read");
+$j("<%= comment_container_id %>").children("h4").children(".unreviewed").remove();
+$j("<%= comment_container_id %>").children(".actions").find(".unread").remove();
+$j("<%= read_comment_form_id %>").remove();
+$j("<%= review_comment_list_item_id %>").replaceWith("<li>" + "<%= reply_button_html.html_safe %>" + "</li>");

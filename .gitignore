@@ -1,2 +1,76 @@
+*.swp
 .DS_Store
+.bundle
+.idea
+stdout
+*~
+# /
+/*.tmproj
+/sphinx
+/.DAV
+/rerun.txt
+/capybara-*.html
+/.dropbox
+/.dropbox.attr
+/.rspec
+REVISION
 
+# /config/
+/config/brakeman.ignore
+/config/database.yml
+/config/local.yml
+/config/backup.yml
+/config/*.sphinx.conf
+/config/s3.yml
+/config/sphinx.yml
+/config/unicorn.rb
+/config/newrelic.yml
+/config/redis.yml
+/config/redis-cucumber.conf
+/config/skins.dump
+
+# /config/environments/
+/config/environments/development.rb
+
+# /db/
+/db/*.sqlite3
+/db/backup
+/db/sphinx
+/db/seed
+
+# /log/
+/log/*
+
+# /public/
+/public/downloads
+/public/stylesheets/cached_for_screen.css
+/public/stylesheets/skins
+public/system/development
+/public/system/skins
+public/system/test
+/public/system/work_skins
+/public/tags
+
+# /public/images/
+/public/images/Thumbs.db
+
+# /tmp/
+/tmp/*
+
+# /vendor/
+/vendor/gems
+
+# /vendor/gems/
+/vendor/gems/*
+
+# /vendor/plugins/
+
+features/cassette_library/
+
+spec/results.html
+spec/results
+features_report.html
+coverage
+redis-cucumber-dump.rdb
+
+.rspec

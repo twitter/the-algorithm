@@ -1,0 +1,33 @@
+<h3 class="heading"><%= ts("#{pluralize(@users.total_entries, 'user')} found") %></h3>
+<% if @users.size > 0 %>
+  <div class="wrapper">
+    <table id="admin_users_table" summary="<%= ts("Users matching your search criteria, as well as options for updating the user's roles and viewing more information.") %>">
+      <caption><%= ts("List of Users") %></caption>
+      <colgroup>
+        <col class="name"/>
+        <col span="6"/>
+      </colgroup>
+      <thead>
+      <tr>
+        <th scope="col"><%= ts("Username") %></th>
+        <th scope="col"><%= ts("Email") %></th>
+        <% for role in @roles %>
+          <th scope="col"><%= role.name.try(:titleize) %></th>
+        <% end %>
+        <th scope="col"><%= ts("Fannish Next of Kin") %></th>
+        <th scope="col"><%= ts("Update") %></th>
+        <th scope="col"><%= ts("Details") %></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @users.each do |user| %>
+        <tr id="user_<%= user.id %>">
+          <%= render "user_form", user: user %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= will_paginate @users %>
+<% end %>
+<!--/content-->

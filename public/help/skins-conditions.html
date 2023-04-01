@@ -1,0 +1,92 @@
+<h3>Skin Conditions</h3>
+
+<p>
+  If you want a certain chunk of CSS loaded only in particular situations, you can create a skin with a specific set of conditions. 
+  We'll load that skin only when needed. The conditions we have available are:
+</p>
+
+<ul>
+  <li>
+    <h4>What It Does</h4>
+    <dl>
+      <dt>add on to the archive style</dt>
+      <dd>What you want 95% of the time. Will be loaded after the official archive style.</dd>
+
+      <dt>replace the archive style</dt>
+      <dd>Useful for complex skins where you don't want most of the default style underlying your work. (You can use the parts you want to keep as parents.)</dd>
+    </dl>
+  </li>
+  
+  <li>
+    <h4>Parent Only</h4>
+    <p class="note">
+      This option is mainly to help keep the skins listing tidy. 
+      
+      If you select this, neither you (nor anyone else) will be able to use this skin directly: it will only be used as a parent. 
+      The skin (even if made public) will not be listed in the main skins listing, only in the description of skins where it is
+      used as a parent. This makes it much easier to make components available for people to use without cluttering up the
+      skins listing with skins that wouldn't actually work right if someone tried to use them alone. :)
+    </p>
+  </li>       
+  
+  <li>
+    <h4>Media</h4>
+    <p class="note">
+      You can choose more than one media. 
+      Media stylesheets will only be loaded if whatever device you're browsing on supports that particular media type. 
+      For instance, not all screenreaders load "speech" stylesheets. If your device doesn't load your skin, 
+      try using "all" or "screen" instead (or drop us a Support request if you need help).
+    </p>
+    <dl>
+      <dt>all</dt>
+      <dd>What you want 95% of the time. Loaded for all devices. (Some very old browsers don't understand "all" and require "screen".)</dd>
+      
+      <dt>screen</dt>
+      <dd>Loaded for computer screens. (And usually for any device that doesn't support other media categories.)</dd>
+        
+      <dt>handheld</dt>
+      <dd>Will be loaded only for mobile devices and/or small screens.</dd>
+  
+      <dt>speech</dt>
+      <dd>Will be loaded only for screenreaders.</dd>
+  
+      <dt>print</dt>
+      <dd>Will be loaded only when the page is printed.</dd>
+
+      <dt>braille, embossed, projection, tty, tv</dt>
+      <dd>See <a href="http://www.w3.org/TR/CSS2/media.html">the W3C media specs</a> for details.</dd>  
+      
+      <dt>only screen and (max-width: 450px)</dt>
+      <dd>Loaded for iPhone (it doesn't load handheld stylesheets otherwise)</dd>
+    </dl>
+  </li>
+  
+  <li>
+    <h4>IE Only</h4>
+    <p class="note">
+      If you leave this blank, your skin will be loaded for all browsers. If you choose one of these options,
+      your skin will be loaded only for Internet Explorer browsers. This lets you add IE-specific overrides. 
+    </p>
+    <dl>
+      <dt>IE</dt>
+      <dd>Will be loaded for any Internet Explorer browser.</dd>
+      
+      <dt>IE5, IE6, IE7, IE8, IE9</dt>
+      <dd>Will be loaded only for this particular version of the Internet Explorer browser.</dd>
+
+      <dt>IE8_or_lower</dt>
+      <dd>Will be loaded for IE8 and below</dd>
+    </dl>
+  </li>
+</ul>
+    
+</p>  
+  
+<h4>Interaction With Parents</h4>
+<p>
+  If you also use skin parents, you can give conditions to particular parents, and then make a skin that acts differently
+  for different browsers. 
+  For instance, if you have one parent skin that holds most of your CSS, one that is IE-only, one for media "handheld" and one that uses the media "print", 
+  then your final skin will load each parent as appropriate based on the final user's browser!
+</p>
+

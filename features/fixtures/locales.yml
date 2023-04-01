@@ -1,0 +1,11 @@
+first:
+  id: 1
+  iso: en
+  short: en
+  name: English
+  main: 1
+  updated_at: 2014-10-04 12:10:41
+  language_id: 1
+  interface_enabled: 1
+  email_enabled: 1
+

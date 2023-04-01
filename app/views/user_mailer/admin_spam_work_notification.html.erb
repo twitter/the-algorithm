@@ -1,0 +1,9 @@
+<% content_for :message do %>
+  <p><%= t("mailer.general.greeting.formal", name: style_bold(@user.login)).html_safe %></p>
+
+  <p>Your work <%= style_creation_link(@work.title, @work) %> has been flagged by our automated system as spam and hidden until it can be reviewed by our Policy & Abuse team. While the work is hidden it can only be accessed by you and AO3 site admins.</p>
+
+  <p>If we determine that your work is not spam, we'll unhide it. Other users will then be able to access and leave feedback on it as usual. Please note that we do not screen works for other kinds of violations at this time. If your work is reported to us for a different reason in the future, that will be investigated separately.</p>
+
+  <p>If you have any questions, please <%= abuse_link("contact our Policy & Abuse Team") %>.</p>
+<% end %>

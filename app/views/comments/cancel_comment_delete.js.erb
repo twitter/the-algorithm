@@ -1,0 +1,5 @@
+/* hide, then remove the delete confirmation form */
+$j("#delete_comment_placeholder_<%= "#{@comment.id}" %>").slideUp();
+$j("#delete_comment_placeholder_<%= "#{@comment.id}" %>").html("");
+/* unhide the navigation */
+$j("#navigation_for_comment_<%= "#{@comment.id}" %>").show();

@@ -1,0 +1,119 @@
+<fieldset class="external">
+  <legend><%= ts("External Work") %></legend>
+  <dl>
+    <dt class="required"><%= ew.label :url, ts("URL") + "*" %></dt>
+    <dd class="required" title="URL">
+      <% if params[:url_from_external].present? %>
+        <%= ew.text_field :url, autocomplete_options("external_work", data: { autocomplete_token_limit: 1 }, value: params[:url_from_external]) %>
+      <% else %>
+        <%= ew.text_field :url, autocomplete_options("external_work", data: { autocomplete_token_limit: 1 }) %>
+      <% end %>
+      <%= hidden_field "fetched", "", id: "fetched" %>
+      <%= content_for :footer_js do %>
+        <%= javascript_tag do %>
+          <% if params[:url_from_external].present? %>
+            // The blur event isn't triggered if we start with a URL from the
+            // External Bookmarklet, so instead we grab the info on the initial
+            // page load. This only fires when we're using the bookmarklet, not
+            // when we're thrown back to the form due to an error -- we don't
+            // want to override information the user has put in.
+            $j(document).ready(function() {
+              loadExternalWorkInfoForBookmark();
+            });
+          <% else %>
+            // Fill in the external work information once we have chosen a URL
+            // from the autocomplete field.
+            $j("#bookmark-form").on("blur", "#external_work_url_autocomplete", function() {
+              loadExternalWorkInfoForBookmark();
+            });
+          <% end %>
+          function loadExternalWorkInfoForBookmark() {
+            $j.ajax({
+              type: "get",
+              data: "external_work_url=" + $j("#external_work_url").val(),
+              dataType: "script",
+              url: "<%= url_for(controller: "external_works", action: "fetch", only_path: true) %>"
+            });
+          }
+        <% end %>
+      <% end %>
+      <p class="showme hidden footnote">
+        <%= ts("If this URL has been bookmarked before, the work information will be filled in automatically.") %>
+      </p>
+    </dd>
+    <dt class="required"><%= ew.label :author, ts("Creator") + "*" %></dt>
+    <dd class="required">
+      <%= ew.text_field :author, class: "observe_textlength" %>
+      <%= generate_countdown_html("external_work_author", ExternalWork::AUTHOR_LENGTH_MAX) %>
+    </dd>
+    <dt class="required"><%= ew.label :title, ts("Title") + "*" %></dt>
+    <dd class="required">
+      <% if params[:url_from_external].present? %>
+        <%= ew.text_field :title, value: params[:title_from_external], class: "observe_textlength" %>
+      <% else %>
+        <%= ew.text_field :title, class: "observe_textlength" %>
+      <% end %>
+      <%= generate_countdown_html("external_work_title", ArchiveConfig.TITLE_MAX) %>
+    </dd>
+    <dt>
+      <%= ew.label :summary, ts("Creator's Summary") %>
+      <%= ts("(please copy and paste from original work)") %>
+    </dt>
+    <dd>
+      <%= ew.text_area :summary, rows: 5, class: "observe_textlength" %>
+      <%= generate_countdown_html("external_work_summary", ArchiveConfig.SUMMARY_MAX) %>
+    </dd>
+  </dl>
+</fieldset>
+<fieldset class="external">
+  <legend><%= ts("Creator's Tags") %></legend>
+  <p>
+    <%= ts("Creator's Tags (comma separated, %{max} characters per tag). Only a fandom is required. Fandom, relationship, and character tags must not add up to more than %{limit}. Category and rating tags do not count toward this limit.",
+           limit: ArchiveConfig.USER_DEFINED_TAGS_MAX,
+           max: ArchiveConfig.TAG_MAX) %>
+  </p>
+  <dl>
+    <dt class="required">
+      <%= ew.label :fandom_string, Fandom::NAME.pluralize + "*" %> <%= link_to_help "fandom-help" %>
+    </dt>
+    <dd class="required" title="fandom">
+      <%= ew.text_field :fandom_string, autocomplete_options("fandom") %>
+    </dd>
+    <dt class="rating">
+      <%= ew.label :rating_string, Rating::NAME %> <%= link_to_help "rating-help" %>
+    </dt>
+    <dd class="rating">
+      <%= ew.collection_select :rating_string,
+                               Rating.defaults_by_severity,
+                               :name,
+                               :name,
+                               selected: ew.object.rating_string.presence || ArchiveConfig.RATING_DEFAULT_TAG_NAME
+                               %>
+    </dd>
+    <dt>
+      <%= Category::NAME.pluralize %> <%= link_to_help "categories-help" %>
+    </dt>
+    <dd>
+      <ul>
+        <%= ew.collection_check_boxes :category_strings, Category.canonical.by_name.sort, :name, :name do |builder| %>
+          <li>
+            <%= builder.check_box %>
+            <%= builder.label %>
+          </li>
+        <% end %>
+      </ul>
+    </dd>
+    <dt>
+      <%= ew.label :relationship_string, Relationship::NAME.pluralize %> <%= link_to_help "relationships-help" %>
+    </dt>
+    <dd title="relationships">
+      <%= ew.text_field :relationship_string, autocomplete_options("relationship_in_fandom", data: { autocomplete_live_params: "fandom=external_work_fandom_string" }) %>
+    </dd>
+    <dt>
+      <%= ew.label :character_string, Character::NAME.pluralize %> <%= link_to_help "characters-help" %>
+    </dt>
+    <dd title="characters">
+      <%= ew.text_field :character_string, autocomplete_options("character_in_fandom", data: { autocomplete_live_params: "fandom=external_work_fandom_string" }) %>
+    </dd>
+  </dl>
+</fieldset>

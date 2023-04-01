@@ -1,0 +1,16 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t('.invite_user', :default => "Invite a User") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= form_for :invitation, @invitation, :url => { :controller => 'admin/admin_invitations', :action => :create } do |f| %>
+    <p><%= f.label :recipient_email, t('.email_address', :default => "Email address") %> <%= f.text_field :recipient_email %></p>
+    <p class="submit actions"><%= f.submit t('.submit', :default => "Invite!") %></p>
+<% end %>
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->

@@ -1,0 +1,46 @@
+<dl>
+  <dt>
+    <%= f.label :login, ts("User name") %>
+  </dt>
+  <dd>
+    <%= f.text_field :login, "aria-describedby" => "login-field-description" %>
+    <%= live_validation_for_field('user_registration_login',
+        maximum_length: ArchiveConfig.LOGIN_LENGTH_MAX,
+        minimum_length: ArchiveConfig.LOGIN_LENGTH_MIN,
+        failureMessage: ts("You need a user name! (At least %{minimum} letters long, please.)",
+                              minimum: ArchiveConfig.LOGIN_LENGTH_MIN)) %>
+    <p class="footnote" id="login-field-description">
+      <%= ts("%{minimum} to %{maximum} characters (A-Z, a-z, _, 0-9 only), no spaces, cannot begin or end with underscore (_)",
+             minimum: ArchiveConfig.LOGIN_LENGTH_MIN,
+             maximum: ArchiveConfig.LOGIN_LENGTH_MAX) %>
+    </p>
+  </dd>
+  <dt>
+    <%= f.label :password, ts("Password") %>
+  </dt>
+  <dd>
+    <%= f.password_field :password, "aria-describedby" => "password-field-description" %>
+    <%= live_validation_for_field('user_registration_password',
+          minimum_length: ArchiveConfig.PASSWORD_LENGTH_MIN,
+          maximum_length: ArchiveConfig.PASSWORD_LENGTH_MAX,
+          failureMessage: ts("Please enter a password! (At least %{minimum} letters long, please.)",
+                                minimum: ArchiveConfig.PASSWORD_LENGTH_MIN)) %>
+    <p class="footnote" id="password-field-description">
+      <%= ts("%{minimum} to %{maximum} characters",
+                               minimum: ArchiveConfig.PASSWORD_LENGTH_MIN,
+                               maximum: ArchiveConfig.PASSWORD_LENGTH_MAX) %>
+    </p>
+  </dd>
+  <dt><%= f.label :password_confirmation, ts("Confirm password") %></dt>
+  <dd>
+    <%= f.password_field :password_confirmation %>
+    <%= live_validation_for_field('user_registration_password_confirmation',
+          minimum_length: ArchiveConfig.PASSWORD_LENGTH_MIN,
+          maximum_length: ArchiveConfig.PASSWORD_LENGTH_MAX,
+          failureMessage: ts("Please enter the same password in both fields.")) %>
+  </dd>
+  <dt>
+    <%= f.label :email, ts("Valid email") %>
+  </dt>
+  <dd><%= f.text_field :email %></dd>
+</dl>

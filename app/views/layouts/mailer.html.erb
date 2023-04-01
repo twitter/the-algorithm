@@ -1,0 +1,122 @@
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<style type="text/css">
+  .ReadMsgBody { width: 100% !important; }
+  .ExternalClass { width: 100% !important; display: block !important; }
+  .yshortcuts { border-bottom:none !important; background:none !important; color: inherit !important; }
+  #ForceOutlook2010BrowserLink span { padding: 0px; }
+  table td { border-collapse:collapse; }
+</style>
+</head>
+<body bgcolor="#dddddd" style="margin:0px !important; padding:0px !important; width:100% !important;-webkit-font-smoothing: antialiased; -webkit-text-size-adjust:none; -ms-text-size-adjust:none;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#dddddd" style="border-collapse: collapse;">
+  <tr>
+    <td align="center" valign="top" style="padding:25px 0 50px">
+      <table width="683" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="right" valign="top">
+
+<!-- !logo top half -->
+            <img src="<%= root_url %>images/mailer/mailer-logo-top.gif" height="22" width="96" style="display:block; border:none" alt="">
+<!-- /logo top half -->
+
+          </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="354" align="center" valign="middle" bgcolor="#990000">
+                  <div style="font-family:Georgia, 'Times New Roman', Times, serif; font-size:28px; line-height:1em; color:#ffffff; font-weight:bold;">
+
+<!-- !banner -->
+                    <a href="<%= root_url %>" style="color:#ffffff; text-decoration:none"><span style="color:#ffffff; text-decoration:none">Archive of Our Own</span></a>
+<!-- /banner -->
+
+
+                  </div>
+                </td>
+                <td align="left" valign="top">
+
+<!-- !logo bottom half -->
+                  <img src="<%= root_url %>images/mailer/mailer-logo-bottom.gif" height="42" width="354" style="display:block; border:none" alt="">
+<!-- /logo bottom half -->
+
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" valign="top">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="8" align="left" valign="top" bgcolor="#dddddd"5>
+
+<!-- !banner corner -->
+                  <img src="<%= root_url %>images/mailer/mailer-banner-corner.gif" height="6" width="8" style="display:block; border:none" alt="">
+<!-- /banner corner -->
+
+
+                </td>
+                <td width="2" bgcolor="#333333"></td>
+                <td align="left" valign="top" bgcolor="#ffffff">
+                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-bottom-color:#333333; border-bottom-style: solid; border-bottom-width:2px">
+                    <tr>
+                      <td align="left" valign="top" style="padding-left:30px; padding-right:30px; padding-top:25px; padding-bottom:30px;">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+
+                          <tr>
+                            <td align="left" valign="top">
+                              <div style="font-family:Lucida Grande, Verdana, Geneva, sans-serif; font-size:1em; line-height:1.5em; color:#000000">
+
+<!-- !message_body-->
+                                <% if content_for?(:message) %>
+                                  <%= yield(:message) %>
+                                <% end %>
+<!-- /message_body -->
+
+                              </div>
+                            </td>
+                          </tr>
+
+                        </table>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td align="left" valign="top" style="padding:15px 25px 25px;" bgcolor="#990000">
+                        <div style="font-family:Lucida Grande, Verdana, Geneva, sans-serif; font-size:.7em; line-height:1.25em; color:#ffffff">
+
+<!-- !footer -->
+                          <% if content_for?(:footer_note) %>
+                            <p><%= yield(:footer_note) %></p>
+                          <% end %>
+
+                          <p><%= t("mailer.general.footer.general.html.part1", support_link: style_footer_link(t("mailer.general.footer.general.html.support_link_text"), new_feedback_report_url)).html_safe %></p>
+
+                          <p><%= t("mailer.general.footer.general.html.part2", donate_link: style_footer_link(t("mailer.general.footer.general.html.donate_link_text"), donate_url)).html_safe %></p>
+
+                          <% if content_for?(:sent_at) %>
+                            <p><%= t 'mailer.general.footer.sent_at', sent_at: yield(:sent_at).strip %></p>
+                          <% end %>
+<!-- /footer -->
+
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td width="2" bgcolor="#333333"></td>
+                <td width="31" bgcolor="#dddddd"></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>

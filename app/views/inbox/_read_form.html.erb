@@ -1,0 +1,6 @@
+<% # expects inbox_comment and current_user %>
+<%= form_tag user_inbox_path(current_user), method: 'put', class: 'ajax-remove' do %>
+  <%= hidden_field_tag 'read', true %>
+  <%= hidden_field_tag 'inbox_comments[]', inbox_comment.id, id: "inbox_comments_#{inbox_comment.id}" %>
+  <%= submit_tag ts('Mark Read') %>
+<% end %>

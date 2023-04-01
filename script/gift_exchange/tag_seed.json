@@ -1,0 +1,81 @@
+{
+  "fandoms": {
+    "Harry Potter": [
+      "Aberforth Dumbledore",
+      "Albus Dumbledore",
+      "Argus Filch",
+      "Arthur Weasley",
+      "Bellatrix Lestrange",
+      "Blaise Zabini",
+      "Cho Chang",
+      "Dean Thomas",
+      "Dobby",
+      "Draco Malfoy",
+      "Dudley Dursley",
+      "Fenrir Greyback",
+      "Fred Weasley",
+      "Gellert Grindelwald",
+      "George Weasley",
+      "Ginny Weasley",
+      "Harry Potter",
+      "Hermione Granger",
+      "James Potter",
+      "Kingsley Shacklebolt",
+      "Lavender Brown",
+      "Lily Evans Potter",
+      "Lucius Malfoy",
+      "Luna Lovegood",
+      "Mad-Eye Moody",
+      "Minerva McGonagall",
+      "Molly Weasley",
+      "Narcissa Malfoy",
+      "Neville Longbottom",
+      "Padma Patil",
+      "Parvati Patil",
+      "Peeves",
+      "Peter Pettigrew",
+      "Petunia Dursley",
+      "Regulus Black",
+      "Remus Lupin",
+      "Ron Weasley",
+      "Rubeus Hagrid",
+      "Severus Snape",
+      "Sirius Black",
+      "The Bloody Baron",
+      "The Giant Squid",
+      "Vernon Dursley",
+      "Voldemort"
+    ]
+  },
+
+  "freeforms": [
+    "Fic",
+    "Art"
+  ],
+
+  "ratings": [
+    "Not Rated",
+    "Explicit",
+    "Mature",
+    "Teen And Up Audiences",
+    "General Audiences"
+  ],
+
+  "categories": [
+    "Gen",
+    "F/M",
+    "M/M",
+    "F/F",
+    "Multi",
+    "Other"
+  ],
+
+  "warnings": [
+    "Choose Not To Use Archive Warnings",
+    "No Archive Warnings Apply",
+    "Graphic Depictions Of Violence",
+    "Major Character Death",
+    "Rape/Non-Con",
+    "Underage"
+  ]
+}

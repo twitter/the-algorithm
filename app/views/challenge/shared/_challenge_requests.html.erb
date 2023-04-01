@@ -1,0 +1,40 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Prompts for %{collection}", :collection => @collection.title) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <% if @collection.user_is_maintainer?(current_user) %>
+    <li>
+      <%= link_to ts("Download (CSV)"), collection_signups_path(@collection, format: :csv) %>
+      <%= link_to_help "csv-download" %>
+    </li>
+  <% end %>
+  <li><%= ts("Sort By") %></li>
+  <% if @show_request_fandom_tags %>
+    <% @collection.prompts.each do |f| %>
+      <% if f.tag_groups.include?("Fandom") %>
+        <li><%= sort_link ts("Fandom #{@collection.challenge.request_restriction.allowed("fandom")}"), :fandom %></li>
+        <% break %>
+      <% end %>
+    <% end %>
+  <% end %>
+  <% unless @collection.prompts.where(:anonymous => true).exists? %>
+    <li><%= sort_link ts("Prompter"), :prompter %></li>
+  <% end %>
+  <li><%= sort_link ts("Date"), :created_at %></li>
+</ul>
+<!--/subnav-->
+
+<%= will_paginate @requests %>
+
+<!--main content-->
+<ul class="prompt index group">
+  <% @requests.each do |request| %>
+    <% # here we render each prompt as a blurb %>
+    <%= render "prompts/prompt_blurb", :prompt => request %>
+  <% end %>
+</ul>
+<!--/content-->
+
+<%= will_paginate @requests %>

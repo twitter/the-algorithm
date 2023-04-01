@@ -1,0 +1,71 @@
+{
+  "participants": 100,
+  "tag_limits": {
+    "characters": 20,
+    "relationships": 150,
+    "freeforms": 2,
+    "ratings": 5
+  },
+  "offers": {
+    "prompts": {
+      "min": 4,
+      "max": 10,
+      "average": 7.0
+    },
+    "characters": {
+      "min": 1,
+      "max": 10,
+      "average": 6,
+      "any": 0.1
+    },
+    "relationships": {
+      "min": 0,
+      "max": 10,
+      "average": 5.0,
+      "unique": true,
+      "any": 0.1
+    },
+    "freeforms": {
+      "min": 1,
+      "max": 2,
+      "average": 1.5
+    },
+    "ratings": {
+      "min": 2,
+      "max": 5,
+      "average": 3.5,
+      "any": 0.1
+    }
+  },
+  "requests": {
+    "prompts": {
+      "min": 4,
+      "max": 6,
+      "average": 5.0
+    },
+    "characters": {
+      "min": 1,
+      "max": 10,
+      "average": 2,
+      "any": 0.1
+    },
+    "relationships": {
+      "min": 0,
+      "max": 5,
+      "average": 2.5,
+      "unique": true,
+      "any": 0.1
+    },
+    "freeforms": {
+      "min": 1,
+      "max": 2,
+      "average": 1.5
+    },
+    "ratings": {
+      "min": 2,
+      "max": 3,
+      "average": 2.5,
+      "any": 0.1
+    }
+  }
+}

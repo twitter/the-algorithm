@@ -1,0 +1,5 @@
+/* hide redundant navigation */
+$j("#navigation_for_comment_<%= "#{@comment.id}" %>").hide();
+/* render the delete confirmation form into its spot, then make it visible */
+$j("#delete_comment_placeholder_<%= "#{@comment.id}" %>").html("<%= escape_javascript(render :partial => "comments/confirm_delete", :locals => {:comment => @comment}) %>");
+$j("#delete_comment_placeholder_<%= "#{@comment.id}" %>").slideDown();

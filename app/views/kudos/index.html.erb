@@ -1,0 +1,22 @@
+<h2 class="heading">
+  <%= search_header(@kudos, nil, "User") %> Who Left Kudos on <%= link_to(@work.title, @work) %>
+</h2>
+
+<% if @guest_kudos_count.positive? %>
+  <h3 class="heading">
+    <%= t("kudos.guest_header", count: @guest_kudos_count) %>
+  </h3>
+<% end %>
+
+<% if @kudos.present? %>
+  <%= will_paginate @kudos %>
+
+  <div id="kudos">
+    <p class="kudos">
+      <%= @kudos.map { |kudo| link_to kudo.user.login, kudo.user }.to_sentence.html_safe %>
+      <%= ts(" left kudos on this work!") %>
+    </p>
+  </div>
+
+  <%= will_paginate @kudos %>
+<% end %>

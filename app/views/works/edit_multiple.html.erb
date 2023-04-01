@@ -1,0 +1,103 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Edit Multiple Works") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "users/header_navigation" %>
+<!--/subnav-->
+
+<!--main content-->
+<p class="caution notice">
+  <%= ts("Your edits will be applied to") %> <strong><%= ts("all") %></strong> <%= ts("of the following works:") %>
+</p>
+
+<%= render "works/work_abbreviated_list", :works => @works %>
+
+<%= form_for :work, :url => update_multiple_user_works_path(@user), method: :patch, :html => { :class => "post" } do |form| %>
+  <p class="required notice">
+    <%= ts("* Required information") %>
+    <% @works.each do |work| %>
+      <%= hidden_field_tag "work_ids[]", work.id %>
+    <% end %>
+  </p>
+
+  <%= render 'work_form_tags', :include_blank => true %>
+
+  <fieldset>
+    <legend><%= ts("Associations") %></legend>
+    <h3 class="landmark heading"><%= ts("Associations") %></h3>
+    <dl>
+      <%= render "works/work_form_pseuds", :form => form, :works => @works %>
+      <%= render "collectibles/collectible_form", :form => form, :collectibles => @works %>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Settings") %></legend>
+    <h3 class="landmark heading"><%= ts("Settings") %></h3>
+    <dl>
+      <dt><%= form.label :language_id, ts("Language") %> <%= link_to_help "languages-help" %></dt>
+      <dd>
+        <%= form.collection_select :language_id, sorted_languages, :id, :name, {:include_blank => true} %>
+      </dd>
+
+      <dt><%= form.label :work_skin_id, ts("Select Work Skin") %> <%= link_to_help "work-skins" %></dt>
+      <dd>
+        <%= form.collection_select :work_skin_id, WorkSkin.approved_or_owned_by(current_user).order(:title), :id, :title,
+            {:include_blank => true} %>
+      </dd>
+
+      <dt><%= ts("Visibility") %> <%= link_to_help "registered-users" %></dt>
+      <dd>
+        <fieldset>
+          <%=
+            radio_button_list(form, :restricted, [
+              ["", ts("Keep current visibility settings")],
+              ["1", ts("Only show to registered users")],
+              ["0", ts("Show to all")]
+            ])
+          %>
+        </fieldset>
+      </dd>
+
+      <dt><%= ts("Comment Moderation") %><%= link_to_help "comments-moderated" %></dt>
+      <dd>
+        <fieldset>
+          <%=
+            radio_button_list(form, :moderated_commenting_enabled, [
+              ["", ts("Keep current comment moderation settings")],
+              ["1", ts("Enable comment moderation")],
+              ["0", ts("Disable comment moderation")]
+            ])
+          %>
+        </fieldset>
+      </dd>
+
+      <dt>
+        <%= ts("Who can comment on these works") %>
+        <%= link_to_help "who-can-comment-on-this-work" %>
+      </dt>
+      <dd>
+        <fieldset>
+          <%=
+            radio_button_list(form, :comment_permissions, [
+              ["", ts("Keep current comment settings")],
+              [:enable_all, ts("Registered users and guests can comment")],
+              [:disable_anon, ts("Only registered users can comment")],
+              [:disable_all, ts("No one can comment")]
+            ])
+          %>
+        </fieldset>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <p class="caution notice">
+    <%= ts("Your edits will") %> <strong><%= ts("replace") %></strong> <%= ts("the existing values!
+    (If you leave a field blank it will remain unchanged.)") %>
+  </p>
+
+  <p class="submit actions"><%= submit_tag ts("Update All Works"), data: {confirm: ts("Are you sure? Remember this will replace all existing values!")} %></p>
+
+<% end %>
+<!--/content-->

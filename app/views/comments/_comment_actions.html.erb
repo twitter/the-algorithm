@@ -1,0 +1,78 @@
+<h5 class="landmark heading"><%= ts("Comment Actions") %></h5>
+
+<ul class="actions" id="navigation_for_comment_<%= comment.id %>">
+  <% # The effect is "Frozen" replaces "Reply." We can't do that in the helper
+     # method for the reply link because that would prevent "Frozen" from
+     # appearing on the Unreviewed Comments page for works with moderated
+     # comments. %>
+  <% if comment.iced? %>
+    <li><%= frozen_comment_indicator %></li>
+  <% end %>
+  <% if can_reply_to_comment?(comment) %>
+    <li id="add_comment_reply_link_<%= comment.id %>"><%= add_cancel_comment_reply_link comment %></li>
+  <% end %>
+  <% unless comment.unreviewed? %>
+    <li><%= link_to ts("Thread"), comment %></li>
+    <% if comment.depth > 0 %>
+      <li>
+        <%= link_to ts("Parent Thread"), comment_path(id: comment.thread) %>
+      </li>
+    <% end %>
+  <% end %>
+  <% if can_freeze_comment?(comment) %>
+    <li><%= freeze_comment_button(comment) %></li>
+  <% end %>
+  <% if can_hide_comment?(comment) %>
+    <li><%= hide_comment_button(comment) %></li>
+  <% end %>
+  <% if can_edit_comment?(comment) %>
+    <li id="edit_comment_link_<%= comment.id %>">
+      <%= edit_comment_link comment %>
+    </li>
+  <% end %>
+  <% if can_mark_comment_spam?(comment) || can_mark_comment_ham?(comment) %>
+    <li id="tag_comment_as_spam_link_<%= comment.id %>">
+      <%= tag_comment_as_spam_link comment %>
+    </li>
+  <% end %>
+  <% if comment.unreviewed? && is_author_of?(comment.ultimate_parent) %>
+    <li id="review_comment_link_<%= comment.id %>">
+      <%= button_to(ts("Approve"), review_comment_path(comment), method: :put) %>
+    </li>
+  <% end %>
+  <% if can_destroy_comment?(comment) %>
+    <li id="delete_comment_link_<%= comment.id %>">
+      <%= do_cancel_delete_comment_link comment %>
+    </li>
+  <% end %>
+  <% if current_user && comment.user && current_user != comment.user && !comment.by_anonymous_creator? %>
+    <li id="block_link_<%= comment.id %>">
+      <%= block_link(comment.user) %>
+    </li>
+  <% end %>
+</ul>
+
+<!-- this is where the comment delete confirmation will be displayed if we have javascript -->
+<!-- if not, here is where we will render the delete-comment form -->
+<% if params[:delete_comment_id] && params[:delete_comment_id] == comment.id.to_s %>
+  <div id="delete_comment_placeholder_<%= comment.id %>">
+    <%= render 'comments/confirm_delete', :comment => comment %>
+<% else %>
+  <div id="delete_comment_placeholder_<%= comment.id %>" style="display:none;">
+<% end %>
+  </div>
+
+<% if can_reply_to_comment?(comment) %>
+  <% # This is where the reply-to box will be added when "Reply" is hit, if the user has JavaScript. %>
+  <% # If not, we will render the comment form if this is the comment we are replying to. %>
+  <% if params[:add_comment_reply_id] && params[:add_comment_reply_id] == comment.id.to_s %>
+    <div id="add_comment_reply_placeholder_<%= comment.id %>" title="<%= ts("reply to this comment") %>">
+      <%= render 'comments/comment_form',
+        :comment => Comment.new,
+        :commentable => comment,
+        :button_name => ts("Comment") %>
+  <% else %>
+    <div id="add_comment_reply_placeholder_<%= comment.id %>" style="display: none;">
+  <% end %>
+    </div>
+<% end %>

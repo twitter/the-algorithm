@@ -1,0 +1,9 @@
+<% # expects tag_type %>
+<% if @tag_set.has_type?(tag_type) %>
+  <% tags = @tag_set.with_type(tag_type) %>
+  <% if tags.count <= ArchiveConfig.MAX_OPTIONS_TO_SHOW %>
+    <%= render "show_tags_in_single_list", :tag_type => tag_type %>
+  <% else %>
+    <%= render "show_tags_alpha_listbox", :tagname_list => tags.by_name_without_articles.pluck(:name), :tag_type => tag_type %>
+  <% end %>
+<% end %>

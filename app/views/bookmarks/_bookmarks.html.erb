@@ -1,0 +1,28 @@
+<% # show blurb for whatever is bookmarked if we're looking at a single bookmarked object %>
+<% if params[:work_id] %>
+  <%= render 'works/work_blurb', :work => @bookmarkable %>
+<% elsif params[:external_work_id] %>
+  <%= render 'external_works/blurb', :external_work => @bookmarkable %>
+<% elsif params[:series_id] %>
+  <%= render 'series/series_blurb', :series => @bookmarkable %>
+<% end %>
+
+<% if params[:show_recent] %>
+  <% # The javascript expanded view that shows more bookmarks for a particular work on an aggregated view %>  
+  <% # because this isn't rendered inside the index view we need to put a ul around it %>
+  <ul class="index group">
+    <%= render partial: 'bookmarks/bookmark_blurb_short', collection: @bookmarks, as: :bookmark %>
+  </ul>
+
+<% elsif @bookmarkable %>
+  <% # show only partial view for each bookmark since the bookmarked object is already shown above %>
+  <%= render partial: 'bookmarks/bookmark_blurb_short', collection: @bookmarks, as: :bookmark %>
+
+<% elsif @bookmarkable_items %>
+  <% # Display a list of bookmarkables, with several bookmarks under each %>
+  <%= render partial: 'bookmarks/bookmarkable_blurb', collection: @bookmarkable_items, as: :bookmarkable %>
+<% else %>
+  <% # Standard bookmarks index with full blurb %> 
+  <%= render partial: 'bookmarks/bookmark_blurb', collection: @bookmarks, as: :bookmark %>
+  
+<% end %>

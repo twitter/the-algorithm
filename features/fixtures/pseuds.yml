@@ -1,0 +1,31 @@
+testuser:
+  id: 1
+  name: testuser
+  user_id: 1
+testy:
+  id: 2
+  name: testy
+  user_id: 1
+tester_pseud:
+  id: 3
+  name: tester_pseud
+  user_id: 1
+testymctesty:
+  id: 4
+  name: testymctesty
+  user_id: 1
+  is_default: true
+testuser2:
+  id: 6
+  name: testuser2
+  user_id: 2
+testpseud2:
+  id: 7
+  name: something else
+  user_id: 2
+  is_default: true
+sad_user_with_no_pseuds:
+  id: 8
+  name: sad_user_with_no_pseuds
+  user_id: 3
+  is_default: true

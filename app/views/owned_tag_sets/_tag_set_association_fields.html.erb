@@ -1,0 +1,18 @@
+<% index ||= 0 %>
+<div class="removeme">
+  <fieldset>
+    <p class="actions cancel" title="<%= ts('cancel') %>"><%= link_to_remove_section ts("x"), form %></p>
+    <dl>
+      <dt><%= form.label :tag_id, ts("Tag: ") %></dt>
+      <dd>
+        <%= form.hidden_field :create_association, :value => true %>
+        <%= form.select :tag_id, options_for_select(@child_tags_in_set, form.object.tag_id), :include_blank => true %>
+      </dd>
+      <dt><%= form.label :parent_tag_id, ts("Parent tag: ") %></dt>
+      <dd><%= form.select :parent_tag_id, options_for_select(@parent_tags_in_set, form.object.parent_tag_id), :include_blank => true %></dd>
+    </dl>
+  </fieldset>
+</div>
+
+<!-- this div is used to hold the last id for adding new associations via javascript -->
+<div class="last_id" style="display:none;"><%= index.is_a?(String) ? index : index+1 %></div>

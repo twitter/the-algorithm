@@ -1,0 +1,28 @@
+first:
+  title: Some Test Collection
+  name: sometest
+  description: This is a testy collection or something
+
+second:
+  title: Some Other Collection
+  name: othertest
+  description: This is another collection or something
+
+third:
+  title: Another Plain Collection
+  name: anothertest
+
+fourth:
+  title: Surprise Presents
+  name: surprisetest
+  challenge_type: GiftExchange
+  
+fifth:
+  title: Another Gift Swap
+  name: swaptest
+  challenge_type: GiftExchange
+
+sixth:
+  title: On Demand
+  name: demandtest
+  challenge_type: PromptMeme

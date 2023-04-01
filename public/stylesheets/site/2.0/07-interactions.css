@@ -1,0 +1,690 @@
+/*==INTERACTIONS: global form rules
+http://otwcode.github.com/docs/front_end_coding/patterns/interactions
+(submit button styling is in actions.css with the other buttons)
+General rules for all form elements, and nearly ALL our forms use just these.
+Forms are normally in definition lists <dt label: dd input>
+with some un/ordered lists, normally of checkbox options <li checkbox:label>
+and some paragraphs, normally forms with a single <p label:input> .
+
+We might develop three MODES: .simple .verbose and .dynamic -- .sim and ver in early draft in sandbox
+We also have some jS WIDGETS, which are custom form interactions, like autocomplete
+and a few variations for INTERACTION TYPES, which are, roughly:
+.post, .login, make .associations, set .preferences, [.search, .filter] => in searchbrowse
+*/
+
+form {
+  clear: right;
+}
+
+/* wrap long text in Opera, Safari, and Chrome */
+fieldset {
+  min-width: 0;
+}
+
+/*Guideline: Forms are written by lots of people, and, this is beta, change a LOT.
+I've written a load of possible different nests to give a reasonably/broadly consistent view whatever goes in,
+but it's probably not complete. */
+
+fieldset, form dl, fieldset dl dl, fieldset fieldset fieldset, fieldset fieldset dl dl, dd.hideme, form blockquote.userstuff {
+  display: block;
+  background: #ddd;
+  border: 2px solid #f3efec;
+  margin: 0.643em;
+  padding: 0.643em;
+    box-shadow: inset 1px 0 5px #999;
+}
+
+fieldset dl, fieldset.actions, fieldset dl fieldset dl {
+  background: transparent;
+  border: none;
+  clear: right;
+    box-shadow: none;
+}
+
+fieldset fieldset, fieldset dl dl, form blockquote.userstuff {
+  background: #fff;
+  clear: right;
+}
+
+fieldset dd dl, form .meta dd, fieldset dl fieldset dl, dd fieldset {
+  margin: 0.643em 0;
+}
+
+/*end nesting */
+
+legend, input[type="hidden"] {
+  height: 0;
+  width: 0;
+  font-size: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+}
+
+label {
+  margin-right: 0.375em;
+}
+
+input, textarea {
+  font: 100% 'Lucida Grande', 'Lucida Sans Unicode', 'GNU Unifont', Verdana, Helvetica, sans-serif;
+  width: 100%;
+  border: 1px solid #bbb;
+    box-shadow: inset 0 1px 2px #ccc;
+}
+
+textarea {
+  min-height: 12em;
+}
+
+textarea.large {
+  height: 36em;
+}
+
+input:focus, select:focus, textarea:focus {
+  background: #f3efec;
+}
+
+input[type="radio"] + label, input[type="checkbox"] + label {
+  padding-left: 1em;
+}
+
+select {
+  vertical-align: text-top;
+  width: 100%;
+  min-width: 10.5em;
+}
+
+.datetime select {
+  width: 32.5%;
+}
+
+input[type="radio"], input[type="checkbox"], input[type="file"], input.number, p input, p select, .heading select, li select {
+  width: auto;
+  margin-right: 0.375em;
+}
+
+input.number {
+  width: 4em;
+}
+
+option, .actions option, form code {
+  display: block;
+}
+
+form p {
+  clear: right;
+  margin: auto;
+  padding: 0.643em;
+}
+
+form dt {
+  float: left;
+  clear: left;
+  min-width: 10.5em;
+  width: 25%;
+  padding: 0.25em 0.5625em 0 0;
+  border-bottom: 1px solid #f3efec;
+}
+
+form dd, form dd.any {
+  float: left;
+  width: 72.5%;
+}
+
+form dd.any {
+  margin-left: 25%;
+}
+
+form dd + dd {
+  width: 97.5%;
+  margin-left: 0.5625em;
+}
+
+form dd.required {
+  color: #2a2a2a;
+}
+
+form .footnote code {
+  display: inline;
+}
+
+/* when we display information that cannot be edited,
+like the current username on the change username form */
+form dd p.informational {
+  padding-top: 0;
+}
+
+/*END FORM RULES*/
+
+/* WIDGET: DEPENDENT OPTIONS */
+.toggle_formfield ~ ul.dependent {
+  margin-left: 2.625em;
+}
+
+/* WIDGET: CHARACTER COUNTER (todo: ARIA live region POLITE)*/
+
+p.character_counter {
+  font-size: 87.5%;
+  text-align: right;
+}
+
+.comment .character_counter {
+  float: left;
+}
+
+/* WIDGET: LIVE VALIDATION (todo: ARIA live region)
+We only use error messages for LiveValidation. Style spoofs the system error message. If we ever set a default success message, this will need updating. */
+
+.LV_validation_message {
+  font-weight: 900;
+  position: absolute;
+  margin-top: 0.643em;
+  margin-right: 15em;
+}
+
+.LV_invalid {
+  background: #efd1d1;
+  border: 1px solid #900;
+  color: #900;
+  padding: 0.25em 0.375em;
+    box-shadow: 1px 1px 2px;
+    border-radius: 0.25em;
+}
+
+.LV_invalid_field, input.LV_invalid_field:hover, input.LV_invalid_field:active, textarea.LV_invalid_field:hover, textarea.LV_invalid_field:active {
+  border: 1px solid #c00;
+}
+
+.LV_invalid:before {
+  border-color: #900 transparent;
+  border-style: solid;
+  border-width: 0 0.643em 0.643em;
+  content: "";
+  left: 0.875em;
+  position: absolute;
+  top: -0.643em;
+}
+
+/* WIDGET: AUTO COMPLETE */
+
+.autocomplete div.dropdown ul {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 0.125em;
+  line-height: 1.286;
+  color: #000;
+  display: block;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.5);
+}
+
+.autocomplete ul li {
+  padding: 0.125em;
+  margin: 0.25em auto auto;
+}
+
+.autocomplete input, .autocomplete .dropdown ul li {
+  display: block;
+  min-width: 10em;
+}
+
+.autocomplete .dropdown ul li {
+  margin: 0.25em 0 0;
+}
+
+form li ul.autocomplete li.input {
+  border: 0;
+}
+
+.autocomplete .dropdown ul li:hover, .autocomplete .dropdown li.selected {
+  background: url("/images/skins/textures/tiles/red-ao3.png") top left #900;
+  color: #fff;
+}
+
+.required .autocomplete, .autocomplete .notice {
+  color: #2a2a2a;
+}
+
+.autocomplete .notice {
+  margin-top: 0 !important;
+}
+
+.autocomplete li.added, .post .meta dd ul li.added {
+  display: inline-block;
+}
+
+/* WIDGET: SORTABLE LIST (note: hope to merge with .sortable and .draggable etc)*/
+
+.ui-sortable li {
+  background: #eee;
+  border: 2px solid #ddd;
+  float: left;
+  width: 100%;
+  clear: both;
+    box-shadow: 1px 1px 3px transparent;
+}
+
+.ui-sortable li:hover {
+  background: #ddd;
+  border: 2px solid #999;
+  cursor: move;
+    box-shadow: 1px 1px 3px #bbb;
+}
+
+.ui-sortable input {
+  margin: 0.429em 0 0.25em 0.25em;
+}
+
+.ui-sortable .heading {
+  display: inline-block;
+}
+
+.ui-sortable ul.actions li {
+  float: none;
+  background: transparent;
+  border: none;
+}
+
+.ui-draggable form {
+  cursor: move;
+    box-shadow: 0 0 3px #555;
+}
+
+.ui-draggable a {
+  cursor: default;
+}
+
+/* WIDGET: DATEPICKER, TIMEPICKER (todo, requires ARIA managed focus) */
+
+#ui-datepicker-div {
+  background: #fff;
+  display: none;
+  overflow: hidden;
+  padding: 0.643em;
+  font-size: 87.5%;
+    box-shadow: 3px 3px 5px;
+}
+
+.ui-datepicker dt, .ui-datepicker dd, .ui-datepicker-buttonpane, .ui-timepicker-div, a.ui-datepicker-prev {
+  float: left;
+}
+
+.ui-datepicker button {
+  height: 2em;
+}
+
+.ui-datepicker dt {
+  clear: left;
+  width: 5em;
+  margin: 0.25em 0;
+}
+
+.ui-datepicker dd {
+  margin: 0.25em 0;
+}
+
+.ui-datepicker table {
+  background: #eee;
+}
+
+.ui-datepicker td {
+  border: 1px solid #aaa;
+}
+
+.ui-datepicker tr:hover {
+  background: #ddd;
+}
+
+.ui-datepicker td:hover {
+  background: #fff;
+}
+
+.ui-datepicker td a {
+  border-bottom: none;
+}
+
+a.ui-datepicker-next {
+  float: right;
+}
+
+.ui-datepicker-title {
+  clear: both;
+  text-align: center;
+}
+
+.ui-datepicker-buttonpane {
+  clear: left;
+}
+
+.ui-timepicker-div dl {
+  float: left;
+  margin: 0.643em 0;
+}
+
+.ui_tpicker_hour_label, .ui_tpicker_minute_label {
+  padding-top: 0.25em;
+  height: 1.45em;
+}
+
+
+/*WIDGET: TOOLTIP (todo, requires graceful degradation testing, can't see any reason for this jS)
+qTip2 Copyright 2009-2010 Craig Michael Thompson - http://craigsworks.com*/
+
+.qtip {
+  position: absolute;
+  left: -28000px;
+  top: -28000px;
+  display: none;
+  max-width: 22em;
+  min-width: 6em;
+  font-size: 0.625em;
+  z-index: 15000;
+}
+
+.qtip-content {
+  position: relative;
+  padding: 0.15em 0.25em;
+  background: #d1e1ef;
+  border: 1px solid #c2d2df;
+  overflow: hidden;
+    word-wrap: break-word;
+}
+
+/* WIDGET: MODAL DIALOGS (called by help links) */
+
+a.modal.help {
+  cursor: help;
+}
+
+#modal-bg, #modal-wrap {
+  display: none;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+#modal-bg {
+  background: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  width: 100%;
+  z-index: 499;
+}
+
+#modal-bg .loading {
+  background: url(/images/indicator.gif) no-repeat center center;
+  height: 124px;
+  left: 50%;
+  margin: -62px 0 0 -62px;
+  position: absolute;
+  top: 50%;
+  width: 124px;
+}
+
+#modal-wrap {
+  display: none;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  z-index: 500;
+}
+
+#modal-wrap:before {
+  content: '';
+  height: 100%;
+}
+
+#modal-wrap:before, #modal {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#modal {
+  background: #fff;
+  border: 10px solid #eee;
+  margin: 3% 0;
+  max-width: 800px;
+  min-width: 200px;
+  padding-bottom: 44px;
+  position: relative;
+  text-align: left;
+  width: 80%;
+  z-index: 501;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+#modal .content {
+  border-bottom: 1px solid #ccc;
+  font-size: 0.875em;
+  overflow: auto;
+  padding: 1.5em;
+}
+
+#modal.tall {
+  height: 80%;
+  max-height: 720px;
+}
+
+#modal.tall.img {
+  min-width: 0;
+  width: auto;
+}
+
+#modal.tall .content {
+  bottom: 44px;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#modal.img {
+  background: transparent;
+  border: 0;
+  margin: 0 0 44px;
+  max-height: none;
+  max-width: 90%;
+  min-width: 0;
+  padding: 0;
+  width: auto;
+    box-shadow: none;
+}
+
+#modal.img a {
+  border: 0;
+  color: #fff;
+}
+
+#modal.img.tall {
+  height: 90%;
+  width: auto;
+}
+
+#modal.img .content {
+  border: 0;
+  overflow: visible;
+  padding: 0;
+  text-align: center;
+}
+
+#modal.img.tall .content {
+  height: 100%;
+  position: relative;
+  width: auto;
+}
+
+#modal.img .content img {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  max-height: 100%;
+  max-width: 100%;
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+#modal .footer {
+  bottom: 0;
+  height: 44px;
+  left: 0;
+  line-height: 44px;
+  padding: 0 0.6432em;
+  right: 0;
+  position: absolute;
+}
+
+#modal.img .footer {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  position: fixed;
+  text-align: center;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+#modal .footer .action.modal-closer {
+  bottom: 8px;
+  position: absolute;
+  right: 8px;
+}
+
+#modal .content > h1:first-child, #modal .content > h2:first-child, #modal .content > .heading:first-child {
+  margin-top: 0.5em;
+}
+
+/*MODE: DYNAMIC is in early dev and so currently sharing styles with toggled */
+
+div.dynamic {
+  background: #fff;
+  position: absolute;
+  z-index: 500;
+}
+
+/*MODE: VERBOSE for forms with more than three fieldsets
+TO DO: Make VERBOSE a class on FORM across the site; it is a surrounding DIV
+in some areas, hence .verbose form */
+
+form.verbose legend, .verbose form legend {
+  height: auto;
+  width: auto;
+  font-size: 100%;
+  background: #fff;
+  border: 2px solid #ddd;
+  padding: 0.5em;
+    box-shadow: 1px 2px 3px #999;
+    opacity: 1;
+}
+
+/*MODE: SIMPLE for forms with three or fewer fieldsets (default) */
+
+form.simple span.actions {
+  float: none;
+}
+
+.simple input[type="submit"] {
+  margin: 0;
+}
+
+/* mods: SINGLE for prominent simple forms consisting of one text input, e.g., on the blocked user page */
+
+form.single fieldset {
+  background: transparent;
+  border: 1px solid #ddd;
+    box-shadow: none;
+}
+
+form.single legend {
+  height: auto;
+  width: auto;
+  font-size: 1.143em;
+  font-weight: bold;
+  padding: 0.5em;
+    opacity: 1;
+}
+
+form.single input[type="text"] {
+  min-width: 15em;
+}
+
+form.single input[type="submit"] {
+  vertical-align: bottom;
+}
+
+form.single span.submit {
+  padding: 0;
+}
+
+form.single ul.autocomplete {
+  display: inline-block;
+}
+
+form.single .autocomplete li.input {
+  margin: 0 0.643em 0.25em 0;
+}
+
+form.single .autocomplete .added {
+  margin-bottom: 0.125em;
+}
+
+/* let autocomplete input expand horizontally as the container takes up more room to accomodate multiple selected tokens */
+form.single .autocomplete input[type="text"] {
+  width: 100%;
+}
+
+/* tweak the margin of the submit button only if there's an autocomplete */
+form.single .autocomplete + input + span.submit input[type="submit"] {
+  margin-bottom: 0.125em;
+}
+
+/* WIDGET: TOGGLED FORMS (SHOW/HIDE bookmark and collection - hidden with jS) */
+
+.toggled form dd, .dynamic form dd {
+  width: 99%;
+}
+
+.toggled form p.footnote, .dynamic form p.footnote {
+  float: none;
+  margin: auto;
+  padding: 0;
+  line-height: 0.5;
+}
+
+.toggled form, .dynamic form {
+  padding: 0.5em;
+  border: 2px solid #ccc;
+  background: #fff;
+    box-shadow: 1px 2px 5px;
+}
+
+.dynamic form fieldset, .toggled form fieldset, .toggled form dl, .secondary .toggled form, .secondary form {
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+    box-shadow: none;
+}
+
+.toggled .bookmark form p.footnote {
+  padding-bottom: 0.643em;
+}
+
+/*INTERACTION: LOGIN SIGNUP*/
+
+/*INTERACTION: POST (work, chapter, comment, news, feedback, challenge etc) */
+
+.post .required .warnings, dd.required {
+  font-weight: normal;
+  color: #2a2a2a;
+}
+
+.post .text textarea {
+  clear: right;
+}
+
+/* CONTEXT: dashboard*/
+
+.dashboard > form {
+  float: left;
+  width: 100%;
+}
+
+.dashboard fieldset {
+  clear: right;
+}
+
+/*END== */

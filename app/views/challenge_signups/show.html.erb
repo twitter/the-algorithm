@@ -1,0 +1,13 @@
+<% # Only gift exchanges link to this page, but you can manually enter collections/name/signups/# to view for prompt memes %>
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Sign-up for %{person}", :person => @challenge_signup.pseud.byline) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "signup_controls", :challenge_signup => @challenge_signup, :subnav => true %>
+<!--/subnav-->
+
+<!--main content-->
+<%= render "show_requests", :challenge_signup => @challenge_signup %>
+<%= render "show_offers", :challenge_signup => @challenge_signup %>
+<!--/content-->

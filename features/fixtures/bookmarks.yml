@@ -1,0 +1,26 @@
+bookm1:
+  id: 1
+  pseud_id: 1
+  bookmarkable_id: 1
+  bookmarkable_type: Work
+  rec: true
+bookm2:
+  id: 2
+  pseud_id: 1  
+  bookmarkable_id: 2
+  bookmarkable_type: Work
+bookm3:
+  id: 3
+  pseud_id: 1
+  bookmarkable_id: 3
+  bookmarkable_type: Work
+bookmark4:
+  id: 4
+  pseud_id: 2
+  bookmarkable_id: 4
+  bookmarkable_type: Work
+bookmark5:
+  id: 5
+  pseud_id: 3
+  bookmarkable_id: 5
+  bookmarkable_type: Work

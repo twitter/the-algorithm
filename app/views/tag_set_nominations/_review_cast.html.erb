@@ -1,0 +1,25 @@
+<% # this lists extra characters/rels in already-approved fandoms. expects "cast" as a list of nominated chars/rels sorted in order of their parent tagname %>
+<% current_fandom = "" %>
+<% cast.each do |cast_nom| %>
+  <% unless @tagnames_seen[cast_nom.tagname] %>
+    <% if cast_nom.parent_tagname != current_fandom %>
+      <% unless current_fandom.blank? %>
+        <% # close the prior fandom listbox %>
+        </ol>
+        </li>
+      <% end %>
+      <% # start a new fandom listbox %>
+      <% current_fandom = cast_nom.parent_tagname %>
+      <li class="fandom listbox group">
+      <h3 class="heading"><%= current_fandom %></h3>
+      <ol class="tags index group">
+    <% end %>
+    <li>
+      <%= render "review_individual_nom", :nom => cast_nom %>
+    </li>
+  <% end %>
+<% end %>
+
+<% # close the last listbox %>
+</ol>
+</li>

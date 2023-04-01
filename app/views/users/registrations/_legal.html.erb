@@ -1,0 +1,23 @@
+  <!-- Age Check -->
+  <p class="note">
+  <%= ts('You need to be at least 13 years old to become a registered member of the Archive.') %>
+  <%= ts("(Sorry to anyone younger! You'll be more than welcome when the time comes.)") %></p>
+  <p>
+    <%= f.check_box :age_over_13 %>
+    <%= f.label :age_over_13, ts("Yes, I am at least 13.") %>
+  </p>
+  <!-- Terms of Service -->
+  <p>
+     <%= ts("And - really important - we need you to agree to our") %> 
+     <%= link_to "Terms of Service (opens new window)", tos_path, :target => '_blank' %>:
+  </p>
+  <fieldset name="<%= tos_field_name %>" id="tos-partial">
+    <div class="tos module">
+      <%= render 'home/tos' %>
+    </div>
+  </fieldset>
+  <!-- If this box is not checked, needs a modal dialog box: "You must agree to the Terms of Service in order to create an account.", with OK as the only choice. -->
+  <p>
+    <%= f.check_box :terms_of_service %>
+    <%= f.label :terms_of_service, ts("Yes, I have read the Terms of Service and agree to them."),  :class => 'important' %>
+  </p>

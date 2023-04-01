@@ -1,0 +1,31 @@
+<h2 class="heading"><%= t(".page_title.#{@item_type}") %></h2>
+<p><%= t(".page_description.#{@item_type}") %></p>
+
+<% if @item.is_a?(Tag) %>
+  <p><%= link_to @item.name, tag_path(@item) %> (<%= @item.type %>)</p>
+<% elsif @item.is_a?(Work) %>
+  <ol class="work index group">
+    <%= render "works/work_blurb", work: @item %>
+  </ol>
+<% end %>
+
+<%= form_tag troubleshooting_path, method: "patch" do %>
+  <dl>
+    <%= collection_check_boxes "", :actions, @allowed_actions, :to_s, :to_s do |builder| %>
+      <dt>
+        <%= builder.label do %>
+          <%= builder.check_box %>
+          <%= t(".#{builder.text}.title") %>
+        <% end %>
+      </dt>
+      <dd>
+        <%= t(".#{builder.text}.description") %>
+      </dd>
+    <% end %>
+  </dl>
+  <ul class="actions">
+    <li>
+      <%= submit_tag "Troubleshoot" %>
+    </li>
+  </ul>
+<% end %>

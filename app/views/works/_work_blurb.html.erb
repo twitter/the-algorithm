@@ -1,0 +1,18 @@
+<% # expects "work" %>
+<li id="work_<%= work.id %>" class="<% if is_author_of?(work) %>own <% end %>work <%= css_classes_for_creation_blurb(work) %>" role="article">
+  <%= render 'works/work_module', :work => work %>
+  <% if is_author_of?(work) %>
+    <h6 class="landmark heading"><%= ts("Author Actions") %></h6>
+  	<ul class="actions" role="navigation">
+      <li><%= link_to ts('Edit'), edit_work_path(work) %></li>
+  	  <li><%= link_to ts("Edit Tags"), edit_tags_work_path(work) %></li>
+      <% if work.is_wip %>
+        <li><%= link_to ts('Add Chapter'), new_work_chapter_path(work) %></li>
+      <% end %>
+      <% if !work.posted? %>
+        <li><%= link_to ts('Post Draft'), post_draft_work_path(work), :method => :put %></li>
+        <li role="button"><%= link_to ts("Delete Draft"), confirm_delete_work_path(work), data: {confirm: ts("Are you sure you want to delete this draft?")} %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

@@ -1,0 +1,14 @@
+<ul class="navigation actions" role="navigation">
+  <% if current_page?(opendoors_external_authors_path) %>
+    <li class="search" role="search">
+      <%= form_tag opendoors_external_authors_path, :class => "simple search", :method => :get do |form| %>
+        <fieldset>
+          <%= text_field_tag "query", @query, :title => "search" %>
+          <%= submit_tag "Search External Authors" %>
+        </fieldset>
+      <% end %>
+    </li>    
+  <% end %>
+  <li><%= span_if_current ts("External Authors"), opendoors_external_authors_path, (current_page?(opendoors_external_authors_path) && params[:query].blank?) %></li>
+  <li><%= span_if_current ts("Open Doors Tools"), opendoors_tools_path %></li>  
+</ul>

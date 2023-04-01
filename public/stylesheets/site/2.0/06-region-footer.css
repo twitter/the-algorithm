@@ -1,0 +1,70 @@
+/*==REGION: FOOTER is #4 of the 4 regions shown on every page 
+http://otwcode.github.com/docs/front_end_coding/patterns/supertypes
+*/
+
+#footer {
+  background: #900 url("/images/skins/textures/tiles/red-ao3.png");
+  border-top: 2px solid;
+  color: #fff;
+  float: left;
+  font-size: 0.75em;
+  position: relative;
+  padding: 0;
+  width: 100%;
+}
+
+#footer ul {
+  border: 0;
+  clear: both;
+  margin: 1.5em 0;
+  padding: 1em 5%;
+  float: left;
+  text-align: left;
+  width: 90%;
+}
+
+#footer li {
+  position: relative;
+  display: block;
+}
+
+#footer a {
+  background: transparent;
+  border: 0;
+  font-weight: 400;
+  margin: auto;
+  outline: 0;
+  padding: 0;
+  vertical-align: baseline;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+#footer a {
+  color: #fff;
+  display: inline;
+  border-bottom: 1px solid;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+#footer a:focus {
+  outline: 1px dotted;
+}
+
+#footer .module {
+  max-width: 20%;
+  padding: 0 2%;
+}
+
+#footer .menu {
+  margin: 0;
+  padding: 0;
+}
+
+#footer .heading {
+  display: block;
+  color: #fff;
+}
+
+/*END== */

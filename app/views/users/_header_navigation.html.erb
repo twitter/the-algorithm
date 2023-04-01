@@ -1,0 +1,20 @@
+<% # expects @user to be set %>
+<ul class="navigation actions" role="navigation">
+  <% if @user == current_user %>
+    <li><%= link_to ts("Post New"), new_work_path %></li>
+    <li><%= span_if_current ts("Edit Works"), (path = show_multiple_user_works_path(@user)), 
+              current_page?(path) && params[:work_ids].blank? %></li>      
+  <% end %>
+  <% if current_user && @subscription %>
+    <li>
+      <%= render :partial => 'subscriptions/form', :locals => { :subscription => @subscription } %>
+    </li>
+  <% end %>
+  <% if @user == current_user  %>
+    <li><%= span_if_current ts("Invitations"), user_invitations_path(@user) %></li>
+  <% end %>  
+  <% if current_user && @user != current_user %>
+    <li><%= block_link(@user) %></li>
+    <li><%= mute_link(@user) %></li>
+  <% end %>
+</ul>

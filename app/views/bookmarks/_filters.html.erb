@@ -1,0 +1,154 @@
+<%= form_for @search, as: :bookmark_search,
+  url: (@collection ? collection_bookmarks_path(@collection) : bookmarks_path),
+  html: {
+    method: :get,
+    class: "narrow-hidden filters",
+    id: "bookmark-filters"
+  } do |f| %>
+  <h3 class="landmark heading"><%= ts("Filters") %></h3>
+  <%= field_set_tag ts("Filter results:") do %>
+    <dl>
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= f.submit ts("Sort and Filter") %></dd>
+      <dt class="sort">
+        <%= f.label :sort_column, ts("Sort by") %>
+      </dt>
+      <dd class="sort">
+        <%= f.select :sort_column, options_for_select(@search.sort_options, @search.sort_column) %>
+      </dd>
+
+      <% %w(include exclude).each do |filter_action| %>
+        <dt class="<%= filter_action %> heading">
+          <h4 class="heading">
+            <%= ts("%{filter_action}", filter_action: filter_action.titleize) %>
+          </h4>
+          <%= link_to_help "bookmark-filters-#{filter_action}-tags" %>
+        </dt>
+        <dd class="<%= filter_action %> tags group">
+          <dl>
+            <% %w(rating archive_warning category fandom character relationship freeform tag).each do |tag_type| %>
+              <dt id="toggle_<%= filter_action %>_<%= tag_type %>_tags" class="filter-toggle <%= tag_type_css_class(tag_type) %> tags">
+                <% # For accessibility, include filter action (e.g. Include) as landmark text %>
+                <% # The space needs to be in the landmark to keep the text aligned %>
+                <%= ts("<span class=\"landmark\">%{filter_action} </span>%{tag_type}",
+                    filter_action: filter_action.titleize,
+                    tag_type: tag_type_label_name(tag_type).pluralize
+                    ).html_safe %>
+              </dt>
+              <dd id="<%= filter_action %>_<%= tag_type %>_tags" class="expandable <%= tag_type_css_class(tag_type) %> tags">
+                <ul>
+                  <% @facets[tag_type].each do |tag| %>
+                    <li>
+                      <% next if filter_action == "include" &&
+                          (@search.options[:excluded_tag_ids]&.include?(tag.id.to_s) ||
+                              @search.options[:excluded_bookmark_tag_ids]&.include?(tag.id.to_s)) %>
+                      <%= label_tag "#{filter_action}_bookmark_search_#{tag_type}_ids_#{tag.id}" do %>
+                        <% if (tag_type == "rating") && @facets[tag_type].length > 1 && filter_action == "include" %>
+                          <%= radio_button_tag "#{filter_action}_bookmark_search[#{tag_type}_ids][]",
+                              tag.id,
+                              filter_boolean_value(filter_action, tag_type, tag.id.to_s),
+                              id: "#{filter_action}_bookmark_search_#{tag_type}_ids_#{tag.id}" %>
+                        <% else %>
+                          <%= check_box_tag "#{filter_action}_bookmark_search[#{tag_type}_ids][]",
+                              tag.id,
+                              filter_boolean_value(filter_action, tag_type, tag.id.to_s),
+                              id: "#{filter_action}_bookmark_search_#{tag_type}_ids_#{tag.id}" %>
+                        <% end %>
+                        <% text = label_for_filter(tag_type, { name: tag.name, count: tag.count }) %>
+                        <%= label_indicator_and_text(text) %>
+                      <% end %>
+                    </li>
+                  <% end %>
+                </ul>
+              </dd>
+            <% end %>
+            <% field_name = filter_action == "include" ? "other_tag_names" : "excluded_tag_names" %>
+            <dt class="autocomplete search">
+              <%= f.label field_name, ts("Other work tags to %{filter_action}", filter_action: filter_action) %>
+            </dt>
+            <dd class="autocomplete search">
+              <%= f.text_field field_name, autocomplete_options("tag") %>
+            </dd>
+            <% field_name = filter_action == "include" ? "other_bookmark_tag_names" : "excluded_bookmark_tag_names" %>
+            <dt class="bookmarker autocomplete search">
+              <%= f.label field_name, ts("Other bookmarker's tags to %{filter_action}", filter_action: filter_action) %>
+            </dt>
+            <dd class="bookmarker autocomplete search">
+              <%= f.text_field field_name, autocomplete_options("tag") %>
+            </dd>
+          </dl>
+        </dd>
+      <% end %>
+
+      <dt class="more heading">
+        <h4 class="heading"><%= ts("More Options") %></h4>
+      </dt>
+      <dd class="more group">
+        <dl>
+          <dt class="search">
+            <%= f.label :bookmarkable_query, ts("Search within results") %>
+            <%= link_to_help "bookmark-search-text-help" %>
+          </dt>
+          <dd class="search">
+            <%= f.text_field :bookmarkable_query %>
+          </dd>
+
+          <dt class="bookmarker search">
+            <%= f.label :bookmark_query, ts("Search bookmarker's tags and notes") %>
+            <%= link_to_help "bookmark-search-text-help" %>
+          </dt>
+          <dd class="bookmarker search">
+            <%= f.text_field :bookmark_query %>
+          </dd>
+
+          <dt class="language">
+            <%= f.label :language_id, ts("Work language") %>
+          </dt>
+          <dd class="language">
+            <%= f.collection_select(:language_id, Language.default_order, :short, :name, include_blank: true) %>
+          </dd>
+
+          <dt class="options"><%= ts("Bookmark types") %></dt>
+          <dd class="options">
+            <ul>
+              <li>
+                <%= f.label :rec do %>
+                  <%= f.check_box :rec %>
+                  <%= label_indicator_and_text(ts("Recs only")) %>
+                <% end %>
+              </li>
+              <li>
+                <%= f.label :with_notes do %>
+                  <%= f.check_box :with_notes %>
+                  <%= label_indicator_and_text(ts("Only bookmarks with notes")) %>
+                <% end %>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+      </dd>
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= f.submit ts("Sort and Filter") %></dd>
+    </dl>
+
+    <% if @owner %>
+      <p class="footnote">
+        <%= link_to ts("Clear Filters"), bookmarks_original_path %>
+      </p>
+    <% end %>
+
+    <div>
+      <%= hidden_field_tag("collection_id", @collection.id) if @collection %>
+      <%= hidden_field_tag("tag_id", @tag.to_param) if @tag %>
+      <%= hidden_field_tag("fandom_id", @fandom.id) if @fandom %>
+      <%= hidden_field_tag("pseud_id", @pseud.name) if @pseud %>
+      <%= hidden_field_tag("user_id", @user.login) if @user %>
+    </div>
+  <% end %>
+  <% # On narrow screens, link jumps to top of index when JavaScript is disabled and closes filters when JavaScript is enabled %>
+  <p class="narrow-shown hidden">
+    <a href="#main" id="leave_filters" class="close">
+      <%= ts("Top of Bookmark Index") %>
+    </a>
+  </p>
+<% end %>

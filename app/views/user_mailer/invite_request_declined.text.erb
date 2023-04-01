@@ -1,0 +1,12 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+<%= t(".main", count: @total) %>
+
+<%= t(".reason") %>
+
+<%= to_plain_text(raw @reason) %>
+
+<%= t("mailer.general.closing.formal") %>
+<%= t("mailer.general.signature.app_short_name") %>
+<% end %>

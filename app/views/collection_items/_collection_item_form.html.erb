@@ -1,0 +1,36 @@
+<% item ||= @item %>
+<% @collection_item ||= CollectionItem.new %>
+<% in_page ||= false %>
+<div id="collection-form">
+  <% if item.is_a?(Work) %>
+    <h3 class="heading"><%= t(".invite_header_html", title: item.title) %></h3>
+  <% else %>
+    <h3 class="heading"><%= t(".add_bookmark_header") %></h3>
+  <% end %>
+  <%
+    # when in the works controller, such as for a non-multi-chapter work, form_for does not set work_id
+    # so the create action of the collection_items controller fails to find the targetted work
+    # hence the klutzy workaround with setting the <item_class>_id manually in the url, below
+  %>
+  <%= form_for([item, @collection_item], :url => { (item.class.name.foreign_key).to_sym => item.id, :controller => 'collection_items', :action => :create}) do |form| %>
+  <dl>
+    <dt><%= label_tag :collection_names, ts("Collection name(s): ") %></dt>
+    <dd title="collection name">
+      <%= text_field_tag :collection_names, nil, autocomplete_options("open_collection_names", :size => 40) %>
+    </dd>
+    <dt class="landmark"><%= ts("Submit") %></dt>
+    <dd class="submit actions">
+      <% if item.is_a?(Work) %>
+        <%= form.submit(t(".invite")) %>
+      <% else %>
+        <%= form.submit(t(".add")) %>
+      <% end %>
+      <% if in_page %>
+        <a class="collection_item_form_placement_close" href="#comments"><%= ts("Cancel") %></a>
+      <% else %>
+        <%= link_to ts("Back"), polymorphic_path(item) %>
+      <% end %>
+    </dd>
+  </dl>
+  <% end %>
+</div>

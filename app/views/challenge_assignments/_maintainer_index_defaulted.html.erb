@@ -1,0 +1,22 @@
+<% # list assignments which were defaulted-on and which need or have a pinch hitter assigned %>
+<legend><%= ts("Defaulted Assignments") %></legend>
+<h3 class="heading"><%=ts("Defaulted Assignments") %></h3>
+<dl class="index group">
+  <% @assignments.each do |assignment| %>
+    <dt class="assignment">
+      <!-- the recipient and if THEY have defaulted on their own assignment -->
+      <%= link_to assignment.request_byline, collection_signup_path(@collection, assignment.request) %>
+      <% assignments = ChallengeAssignment.in_collection(@collection).by_offering_user(assignment.request.pseud.user) %>
+      <% if (defaulted = assignments.defaulted) && assignments && defaulted.size == assignments.size %>
+        <span class="defaulter"><%= ts("(Also defaulted)") %></span>
+      <% end %>
+    </dt>
+    <dd>
+     <%= label_tag "undefault_#{assignment.id}", :class => 'action' do %>
+        <%= ts("Undefault") %> <%= assignment.offer_byline %>  <%= check_box_tag "undefault_#{assignment.id}" %>
+      <% end %>
+       <label class="autocomplete substitute" title="<%= ts('choose pinch hitter') %>"><%= ts("Pinch Hitter:") %> <%= text_field_tag "cover_#{assignment.id}", nil, autocomplete_options("pseud", data: { autocomplete_token_limit: 1 }) %></label>
+    </dd>
+
+  <% end %>
+</dl>

@@ -1,0 +1,167 @@
+phrase:
+  project_id: a3667b8095533c2b3f8d3ac946bb642f
+  file_format: yml
+  push:
+    sources:
+      # controllers
+      - file: ./config/locales/controllers/en.yml
+        params:
+          update_translations: true
+      # devise
+      - file: ./config/locales/devise/en.yml
+        params:
+          update_translations: true
+      # mailers
+      - file: ./config/locales/mailers/en.yml
+        params:
+          update_translations: true
+      # models
+      - file: ./config/locales/models/en.yml
+        params:
+          update_translations: true
+      # validators
+      - file: ./config/locales/validators/en.yml
+        params:
+          update_translations: true
+      # views
+      - file: ./config/locales/views/en.yml
+        params:
+          update_translations: true
+  pull:
+    targets:
+      - file: ./config/locales/phrase-exports/af.yml
+        params:
+          locale_id: af
+      - file: ./config/locales/phrase-exports/ar.yml
+        params:
+          locale_id: ar
+      - file: ./config/locales/phrase-exports/bg.yml
+        params:
+          locale_id: bg
+      - file: ./config/locales/phrase-exports/bn.yml
+        params:
+          locale_id: bn
+      - file: ./config/locales/phrase-exports/ca.yml
+        params:
+          locale_id: ca
+      - file: ./config/locales/phrase-exports/cs.yml
+        params:
+          locale_id: cs
+      - file: ./config/locales/phrase-exports/cy.yml
+        params:
+          locale_id: cy
+      - file: ./config/locales/phrase-exports/da.yml
+        params:
+          locale_id: da
+      - file: ./config/locales/phrase-exports/de.yml
+        params:
+          locale_id: de
+      - file: ./config/locales/phrase-exports/el.yml
+        params:
+          locale_id: el
+      - file: ./config/locales/phrase-exports/es.yml
+        params:
+          locale_id: es
+      - file: ./config/locales/phrase-exports/fa.yml
+        params:
+          locale_id: fa
+      - file: ./config/locales/phrase-exports/fi.yml
+        params:
+          locale_id: fi
+      - file: ./config/locales/phrase-exports/fil.yml
+        params:
+          locale_id: fil
+      - file: ./config/locales/phrase-exports/fr.yml
+        params:
+          locale_id: fr
+      - file: ./config/locales/phrase-exports/he.yml
+        params:
+          locale_id: he
+      - file: ./config/locales/phrase-exports/hi.yml
+        params:
+          locale_id: hi
+      - file: ./config/locales/phrase-exports/hr.yml
+        params:
+          locale_id: hr
+      - file: ./config/locales/phrase-exports/hu.yml
+        params:
+          locale_id: hu
+      - file: ./config/locales/phrase-exports/id.yml
+        params:
+          locale_id: id
+      - file: ./config/locales/phrase-exports/it.yml
+        params:
+          locale_id: it
+      - file: ./config/locales/phrase-exports/ja.yml
+        params:
+          locale_id: ja
+      - file: ./config/locales/phrase-exports/ko.yml
+        params:
+          locale_id: ko
+      - file: ./config/locales/phrase-exports/ky.yml
+        params:
+          locale_id: ky
+      - file: ./config/locales/phrase-exports/lt.yml
+        params:
+          locale_id: lt
+      - file: ./config/locales/phrase-exports/lv.yml
+        params:
+          locale_id: lv
+      - file: ./config/locales/phrase-exports/mk.yml
+        params:
+          locale_id: mk
+      - file: ./config/locales/phrase-exports/mr.yml
+        params:
+          locale_id: mr
+      - file: ./config/locales/phrase-exports/ms.yml
+        params:
+          locale_id: ms
+      - file: ./config/locales/phrase-exports/nb.yml
+        params:
+          locale_id: nb
+      - file: ./config/locales/phrase-exports/nl.yml
+        params:
+          locale_id: nl
+      - file: ./config/locales/phrase-exports/pl.yml
+        params:
+          locale_id: pl
+      - file: ./config/locales/phrase-exports/pt-BR.yml
+        params:
+          locale_id: pt-BR
+      - file: ./config/locales/phrase-exports/pt-PT.yml
+        params:
+          locale_id: pt-PT
+      - file: ./config/locales/phrase-exports/ro.yml
+        params:
+          locale_id: ro
+      - file: ./config/locales/phrase-exports/ru.yml
+        params:
+          locale_id: ru
+      - file: ./config/locales/phrase-exports/sk.yml
+        params:
+          locale_id: sk
+      - file: ./config/locales/phrase-exports/sl.yml
+        params:
+          locale_id: sl
+      - file: ./config/locales/phrase-exports/sr.yml
+        params:
+          locale_id: sr
+      - file: ./config/locales/phrase-exports/sv.yml
+        params:
+          locale_id: sv
+      - file: ./config/locales/phrase-exports/th.yml
+        params:
+          locale_id: th
+      - file: ./config/locales/phrase-exports/tr.yml
+        params:
+          locale_id: tr
+      - file: ./config/locales/phrase-exports/uk.yml
+        params:
+          locale_id: uk
+      - file: ./config/locales/phrase-exports/vi.yml
+        params:
+          locale_id: vi
+      - file: ./config/locales/phrase-exports/zh-CN.yml
+        params:
+          locale_id: zh-CN
+

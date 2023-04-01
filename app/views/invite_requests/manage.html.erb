@@ -1,0 +1,64 @@
+<div class="admin">
+<!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts("Manage the Invitation Queue") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+  <ul class="navigation actions" role="navigation">
+    <li class="search" role="search">
+      <%= form_tag manage_invite_requests_path, method: :get,
+          id: "invite-request-search", class: "simple search" do %>
+        <fieldset>
+          <%= text_field_tag :query, params[:query],
+              title: ts("Find invitation requests from") %>
+          <%= submit_tag ts("Search Queue") %>
+        </fieldset>
+      <% end %>
+    </li>
+  </ul>
+<!--/subnav-->
+
+<!--main content-->
+  <table summary="<%= ts("Lists each request, its email, IP, and current place in the queue. You can also delete each request.") %>">
+    <caption><%= ts("Manage the Invitation Queue") %></caption>
+    <thead>
+      <tr>
+        <th scope="col"><%= ts("Queue Position") %></th>
+        <th scope="col"><%= ts("Email Address") %></th>
+        <th scope="col"><%= ts("IP Address") %></th>
+        <th scope="col"><%= ts("Action") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @invite_requests.each_with_index do |request, index| %>
+        <% ip_address = if request.ip_address.present?
+                          request.ip_address
+                        else
+                          ts("No IP recorded")
+                        end %>
+
+        <% position = if @filtered
+                        request.position
+                      else
+                        @invite_requests.offset + index + 1
+                      end %>
+
+        <tr>
+          <td><%= position %></td>
+          <td><%= request.email %></td>
+          <td><%= ip_address %></td>
+          <td>
+            <%= form_tag invite_request_path(request, page: params[:page], query: params[:query]), method: "delete", class: "ajax-remove" do |f| %>
+              <%= submit_tag ts("Delete") %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<!--/content-->
+
+<!--subnav-->
+  <%= will_paginate @invite_requests %>
+<!--/subnav-->
+</div>

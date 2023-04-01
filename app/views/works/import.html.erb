@@ -1,0 +1,19 @@
+<h2 class="heading">Imported Works</h2>
+
+<% if @works && !@works.empty? %>
+  <p>
+    <%= ts("We were able to successfully upload the following works.") %>
+  </p>
+  <ul class="index group">
+    <% for work in @works %>
+      <% if work.posted? %>
+        <li><%= link_to(work.title.html_safe, work_path(work)) %></li>
+      <% else %>
+        <li><%= link_to(work.title.html_safe, preview_work_path(work)) %> <%= ts("(Draft)")%></li>
+      <% end %>
+    <% end %>
+  </ul>
+
+<% end %>
+
+

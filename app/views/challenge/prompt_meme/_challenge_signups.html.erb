@@ -1,0 +1,11 @@
+<h2 class="heading"><%= ts("Sign-ups for %{collection}", :collection => @collection.title) %></h2>
+  
+<% @challenge ||= @collection.challenge -%>
+<ul class="navigation actions" role="menu">
+  <li class="action">
+    <%= link_to ts("Download (CSV)"), collection_signups_path(@collection, :format => :csv) %>
+    <%= link_to_help "csv-download" %>
+  </li>
+  <li><%= link_to ts("Manage Prompts"), collection_requests_path(@collection) %></li>
+  <li><%= link_to ts("Manage Claims"), collection_claims_path(@collection) %></li>
+</ul>

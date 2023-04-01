@@ -1,0 +1,99 @@
+<div id="admin-post-form" class="post news">
+  <%= form_for(@admin_post) do |f| %>
+    <p class="required notice"><%= ts("All news posts need a title and some content.") %></p>
+    <%= error_messages_for @admin_post %>
+    <fieldset class="text">
+      <legend><%= ts("Post News") %></legend>
+      <h4><input type="hidden" name="admin_post[admin_id]" value="<%= current_admin.id %>" />
+      <%= f.text_field :title, :title =>"title" %></h4>
+      <!--BACK END, can we DRY up these post forms? There's admin_post_form, archive_faq_form, _chapter_form, known_issues_form, standard form-->
+      <ul class="hidden rtf-html-switch actions" role="menu">
+        <li><a class="rtf-link" href="#"><%= ts('Rich Text') %></a></li>
+        <li><a class="html-link" href="#"><%= ts('HTML') %></a></li>
+      </ul>
+      <p class="rtf-html-instructions note">
+        <span class="html-notes"><%= allowed_html_instructions %></span>
+        <span class="hidden rtf-notes"><%= ts("Type or paste formatted text.") %><%= link_to_help "rte-help" %></span>
+      </p>
+      <% use_tinymce %>
+      <div class="rtf-html-field">
+        <p><%= f.text_area :content, :class => "mce-editor observe_textlength", :id => "content", :title =>"content" %></p>
+        <%= live_validation_for_field('content',
+            :maximum_length => ArchiveConfig.CONTENT_MAX, :minimum_length => ArchiveConfig.CONTENT_MIN,
+            :tooLongMessage => ts("We salute your ambition! But sadly the content must be less than %{max} letters long.", :max => ArchiveConfig.CONTENT_MAX.to_s),
+            :tooShortMessage => ts("Brevity is the soul of wit, but your content does have to be at least %{min} letters long.", :min => ArchiveConfig.CONTENT_MIN.to_s),
+            :failureMessage => ts("You need to post some content here."))
+        %>
+        <%= generate_countdown_html("content", ArchiveConfig.CONTENT_MAX) %>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend><%= ts("Set Preferences") %></legend>
+      <h3 class="landmark heading"><%= ts("Set Preferences") %></h3>
+      <dl>
+        <dt><%= f.label :tag_list, t(".tags.label") %></dt>
+        <dd>
+          <% if @admin_post.translated_post %>
+            <ul class="tags commas">
+              <% for tag in @admin_post.tags %>
+                <li><%= link_to tag.name, admin_posts_path(tag: tag.id), class: "tag" %></li>
+              <% end %>
+            </ul>
+          <% else %>
+            <%= f.text_field :tag_list, autocomplete_options("admin_post_tags") %>
+            <p class="character_counter">
+              <%= ts("Comma separated, %{max} characters per tag", max: ArchiveConfig.TAG_MAX) %>
+            </p>
+          <% end %>
+        </dd>
+        <dt>
+          <%= f.label :language_id, t(".language.label") %>
+        </dt>
+        <dd>
+          <select id="admin_post_language_id" name="admin_post[language_id]">
+            <%= options_from_collection_for_select(@news_languages, :id, :name, @admin_post.language_id || Language.default.id) %>
+          </select>
+        </dd>
+        <dt>
+          <%= f.label :translated_post_id, t(".translated_post.label") %>
+        </dt>
+        <dd>
+          <%= f.text_field :translated_post_id,
+          autocomplete_options('admin_posts',
+                          title: ts('translation of'),
+                          data: { autocomplete_token_limit: 1 }) %>
+          <% unless @admin_post.translated_post %>
+            <p class="footnote"><%= t(".translated_post.footnote_comment_permissions") %></p>
+            <p class="footnote"><%= t(".translated_post.footnote_tags") %></p>
+          <% end %>
+        </dd>
+        <dt class="permissions comments">
+          <%= t(".comment_permissions.label") %>
+        </dt>
+        <dd class="permissions comments">
+          <% if @admin_post.translated_post %>
+            <p><%= t("comments.commentable.permissions.options.#{@admin_post.comment_permissions}") %></p>
+          <% else %>
+            <fieldset>
+              <%=
+                radio_button_list(f, :comment_permissions, [
+                  [:enable_all, t("comments.commentable.permissions.options.enable_all")],
+                  [:disable_anon, t("comments.commentable.permissions.options.disable_anon")],
+                  [:disable_all, t("comments.commentable.permissions.options.disable_all")]
+                ])
+              %>
+            </fieldset>
+          <% end %>
+        </dd>
+      </dl>
+    </fieldset>
+
+    <fieldset>
+      <legend><%= ts('Post') %></legend>
+      <h3 class="landmark heading"><%= ts("Post") %></h3>
+      <p class="submit actions">
+        <%= submit_tag ts('Post'), :name => 'post_button' %>
+      </p>
+    </fieldset>
+  <% end %>
+</div>

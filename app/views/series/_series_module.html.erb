@@ -1,0 +1,52 @@
+<% # expects "series" %>
+
+<!--title etc-->
+<div class="header module">
+  <h4 class="heading">
+    <%= link_to series.title, series %>
+    <%= ts('by') %>
+    <%= byline(series) %>
+    <% if series.restricted %>
+      <%= image_tag("lockblue.png", size: "15x15", alt: ts("(Restricted)"),
+                    title: ts("Restricted"),
+                    skip_pipeline: true) %>
+    <% end %>
+    <% if series.hidden_by_admin %>
+      <%= image_tag("lockred.png", size: "15x15", alt: ts("(Hidden by Admin)"),
+                    title: ts("Hidden by Administrator"),
+                    skip_pipeline: true) %>
+    <% end %>
+  </h4>
+  <h5 class="fandoms heading">
+    <span class="landmark"><%= ts('Fandom') %>:</span>
+    <%= series.work_tags.select{ |tag| tag.type == "Fandom" }.
+                         sort.collect{ |tag| link_to_tag_works(tag) }.
+                         join(', ').html_safe %>
+  </h5>
+  <%= get_symbols_for(series) %>
+  <p class="datetime"><%= set_format_for_date(series.revised_at) %></p>
+</div>
+
+<!--tags-->
+<ul class="tags commas">
+  <%= blurb_tag_block(series) %>
+</ul>
+
+<!--summary-->
+<% unless series.summary.blank? %>
+  <h6 class="landmark heading"><%= ts("Summary") %></h6>
+  <blockquote class="userstuff summary">
+    <%=raw strip_images(sanitize_field(series, :summary)) %>
+  </blockquote>
+<% end %>
+<!--stats-->
+<dl class="stats">
+  <dt><%= ts('Words:') %></dt> 
+  <dd><%= number_with_delimiter(series.visible_word_count) %></dd>
+  <dt><%= ts('Works:') %></dt> 
+  <dd><%= number_with_delimiter(series.visible_work_count) %></dd>
+  <% if (bookmark_count = series.bookmarks.is_public.count) > 0 %>
+    <dt><%= ts('Bookmarks:') %></dt>
+    <dd><%= link_to_bookmarkable_bookmarks(series, number_with_delimiter(bookmark_count)) %></dd>
+  <% end %>
+</dl>

@@ -1,0 +1,37 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Create Account") %></h2>
+<%= error_messages_for :user %>
+<!--/descriptions-->
+
+<!--main content-->
+<!-- TODO add ajax -->
+<%= form_for resource, as: :user_registration, url: registration_path(resource_name), :html => {:id => "user_registration_form"} do |f| %>
+  <%= hidden_field_tag :invitation_token, resource.invitation_token %>
+
+  <fieldset>
+    <legend><%= ts("User Details") %></legend>
+    <%= render :partial => "passwd", :locals => {:f => f} %>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Legal Agreements") %></legend>
+    <%= render :partial => "legal", :locals => {:f => f} %>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Submit") %></legend>
+    <p class="submit cancel actions">
+      <input type="submit" name="cancel_create_account" value="Cancel" />
+      <%= submit_tag ts('Create Account') %>
+    </p>
+  </fieldset>
+<% end %>
+<!--/content-->
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j(document).ready(function(){
+        $j('#user_registration_form').preventDoubleSubmit();
+     })
+  <% end %>
+<% end %>

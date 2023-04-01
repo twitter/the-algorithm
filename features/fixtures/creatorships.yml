@@ -1,0 +1,35 @@
+work1:
+  pseud_id: 1
+  creation_id: 1
+  creation_type: Work
+  approved: true
+chapter1:
+  pseud_id: 1
+  creation_id: 1
+  creation_type: Chapter
+  approved: true
+work2:
+  pseud_id: 1
+  creation_id: 2
+  creation_type: Work
+  approved: true
+work3:
+  pseud_id: 1
+  creation_id: 3
+  creation_type: Work
+  approved: true
+work4:
+  pseud_id: 6
+  creation_id: 4
+  creation_type: Work
+  approved: true
+work5:
+  pseud_id: 6
+  creation_id: 5
+  creation_type: Work
+  approved: true
+work6:
+  pseud_id: 6
+  creation_id: 6
+  creation_type: Work
+  approved: true

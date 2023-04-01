@@ -1,0 +1,60 @@
+#dewbody {
+	font-family:"Myriad","Myriad Pro",Georgia,Helvetica,Sans-serif;
+	height:100%;
+	padding:0 0 5em 0;
+	margin:0;
+	background:#eee;
+}
+
+#dewbody #content {
+	width:50%;
+	margin:auto;
+}
+
+#dewbody #players {
+	background:#fff;
+	overflow:auto;
+}
+
+#dewbody #players object {
+	margin:20px 0 20px 50px;
+}
+
+#dewbody h1 {
+	color:#456;
+	margin-top:2em;
+	padding:0 0 20px 10px;
+	font-weight:normal;
+	border-bottom:1px solid #ddd;
+}
+
+#dewbody h2 {
+	font-weight:normal;
+	background:#eee;
+	padding:2em 10px 10px 10px;
+	color:#444;
+	font-size:130%;
+	text-align:left;
+	margin:0;
+}
+
+#dewbody p {
+	margin:10px;
+	padding-bottom:10px;
+}
+
+#dewbody .hint {
+	color:#666;
+	float:right;
+	width:300px;
+	text-align:left;
+	margin-right:10px;
+	background:#f6f6e0;
+	padding:10px;
+	clear:both;
+}
+
+#dewbody a {
+	text-decoration:none;
+	color:#369;
+}

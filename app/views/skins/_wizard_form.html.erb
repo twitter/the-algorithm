@@ -1,0 +1,111 @@
+<p class="required notice">* <%= ts('Required information') %></p>
+<fieldset class="post skin wizard">
+  <legend><%= ts('About') %></legend>
+  <dl>
+    <dt class="required"><%= f.label :title, ts('Title') + "*" %></dt>
+    <dd class="required"><%= f.text_field :title %></dd>
+
+    <dt><%= f.label :description, ts('Description') %></dt>
+    <dd><%= f.text_field :description %></dd>
+  </dl>
+</fieldset>
+
+<fieldset>
+  <legend><%= ts("Fonts and Whitespace") %></legend>
+  <dl>
+    <dt>
+      <%= f.label :font, ts('Font') %>
+      <%= link_to_help('skins-wizard-font') %>
+    </dt>
+    <dd>
+      <%= f.text_field :font, "aria-describedby" => "font-field-notes" %>
+      <p class="footnote" id="font-field-notes">
+        <%= ts("Comma-separated list of font names.") %>
+      </p>
+    </dd>
+
+    <dt>
+      <%= f.label :base_em, ts('Percent of browser font size') %> 
+      <%= link_to_help('skins-wizard-font-size') %>
+    </dt>
+    <dd>
+      <%= f.text_field :base_em, "aria-describedby" => "base-em-field-notes" %>
+      <p class="footnote" id="base-em-field-notes">
+        <%= ts("Numbers only, treated as a percentage of the browser's default font size. Default: <code>100</code>").html_safe %>
+      </p>
+    </dd>
+
+    <dt>
+      <%= f.label :margin, ts('Work margin width') %>
+    </dt>
+    <dd>
+      <%= f.text_field :margin, "aria-describedby" => "margin-field-notes" %>
+      <p class="footnote" id="margin-field-notes">
+        <%= ts("Numbers only, treated as a percentage of the page width.") %>
+      </p>
+    </dd>
+
+    <dt>
+      <%= f.label :paragraph_margin, ts('Vertical gap between paragraphs') %> 
+      <%= link_to_help('skins-wizard-vertical-gap') %>
+    </dt>
+    <dd>
+      <%= f.text_field :paragraph_margin %>
+      <p class="footnote" id="paragraph-margin-field-notes">
+        <%= ts("Numbers only, treated as a multipler of the paragraph font size. Default: <code>1.286</code>").html_safe %>
+      </p>
+    </dd>
+  </dl>
+</fieldset>
+
+<fieldset>
+  <legend><%= ts("Colors") %></legend>
+  <p class="notes">
+    <%= ts('You may wish to refer to this <a href="https://www.w3schools.com/colors/colors_names.asp">handy list of colors</a>.').html_safe %>
+  </p>
+  <dl>
+    <dt>
+      <%= f.label :background_color, ts('Background color') %> 
+    </dt>
+    <dd>
+      <%= f.text_field :background_color, "aria-describedby" => "background-color-field-notes" %>
+      <p class="footnote" id="background-color-field-notes">
+        <%= ts("Name or hex code. Default: <code>#fff</code>".html_safe) %>
+      </p>
+    </dd>
+
+    <dt>
+      <%= f.label :foreground_color, ts('Text color') %>
+    </dt>
+    <dd>
+      <%= f.text_field :foreground_color, "aria-describedby" => "foreground-color-field-notes" %>
+      <p class="footnote" id="foreground-color-field-notes">
+        <%= ts("Name or hex code. Default: <code>#2a2a2a</code>".html_safe) %>
+      </p>
+    </dd>
+
+    <dt>
+      <%= f.label :headercolor, ts('Header color') %> 
+    </dt>
+    <dd>
+      <%= f.text_field :headercolor, "aria-describedby" => "header-color-field-notes" %>
+      <p class="footnote" id="header-color-field-notes">
+        <%= ts("Name or hex code. Default: <code>#900</code>".html_safe) %>
+      </p>
+    </dd>
+
+    <dt>
+      <%= f.label :accent_color, ts('Accent color') %>
+      <%= link_to_help('skins-wizard-accent-color') %>
+    </dt>
+    <dd>
+      <%= f.text_field :accent_color, "aria-describedby" => "accent-color-field-notes" %>
+      <p class="footnote" id="accent-color-field-notes">
+        <%= ts("Name or hex code. Default: <code>#ddd</code>".html_safe) %>
+      </p>
+    </dd>
+  </dl>
+  <%= hidden_field_tag 'wizard', true %>
+</fieldset>
+
+<%= submit_fieldset(f) %>

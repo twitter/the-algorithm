@@ -1,0 +1,51 @@
+<h3 class="heading"><%= ts("User History") %></h3>
+<div class="wrapper">
+  <table id="user_history" summary="<%= ts("Shows what notable actions, such as creating an account, a user performed, and when they did them.") %>">
+    <caption><%= ts("History of User Actions") %></caption>
+    <thead>
+    <tr>
+      <th scope="col"><%= ts("Date / Time") %></th>
+      <th scope="col"><%= ts("Action") %></th>
+      <th scope="col"><%= ts("Details") %></th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><%= @user.current_sign_in_at.nil? ? "" : @user.current_sign_in_at %></td>
+        <td><%= ts("Current Login") %></td>
+        <td>
+          <% if @user.current_sign_in_at.nil? %>
+            <%= ts("No login recorded") %>
+          <% else %>
+            <%= ts("IP Address: %{ip}", ip: @user.current_sign_in_ip) %>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td><%= @user.last_sign_in_at.nil? ? "" : @user.last_sign_in_at %></td>
+        <td><%= ts("Previous Login") %></td>
+        <td>
+          <% if @user.last_sign_in_at.nil? %>
+            <%= ts("No previous login recorded") %>
+          <% else %>
+            <%= ts("IP Address: %{ip}", ip: @user.last_sign_in_ip) %>
+          <% end %>
+        </td>
+      </tr>
+      <% unless @log_items.blank?
+         @log_items.each do |item| %>
+        <tr>
+          <td><%= item.created_at %></td>
+          <td><%= log_item_action_name(item.action) %><%= item.role.name if item.role %><%= item.enddate if item.enddate %></td>
+          <td><%= item.note %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    <tr>
+      <td><%= @user.created_at %></td>
+      <td><%= ts("Account Created") %></td>
+      <td><%= ts("System Generated") %></td>
+    </tr>
+    </tbody>
+  </table>
+</div>

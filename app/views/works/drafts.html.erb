@@ -1,0 +1,24 @@
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= search_header @works, nil, ts("Unposted Draft") %></h2>
+
+<p class="caution notice">
+  <strong><%= ts("Please note:") %></strong>
+  <%= ts("Unposted drafts are only saved for a month from the day they are first created, and then deleted from the Archive.") %>
+</p>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= will_paginate @works %>
+<!--/subnav-->
+
+<!--main content-->
+<ul class="work index group">
+  <% for work in @works %>
+    <%= render 'work_blurb', :work => work %>
+  <% end %>
+</ul>
+<!--/content-->
+
+<!--subnav-->
+<%= will_paginate @works %>
+<!--/subnav-->

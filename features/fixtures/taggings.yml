@@ -1,0 +1,80 @@
+tagging1:
+  tagger_id: 1
+  tagger_type: Tag
+  taggable_id: 1
+  taggable_type: Work
+tagging2:
+  tagger_id: 1
+  tagger_type: Tag
+  taggable_id: 2
+  taggable_type: Work
+tagging3:
+  tagger_id: 1
+  tagger_type: Tag
+  taggable_id: 3
+  taggable_type: Work
+tagging4:
+  tagger_id: 2
+  tagger_type: Tag
+  taggable_id: 1
+  taggable_type: Work
+tagging5:
+  tagger_id: 2
+  tagger_type: Tag
+  taggable_id: 2
+  taggable_type: Work
+tagging6:
+  tagger_id: 2
+  tagger_type: Tag
+  taggable_id: 3
+  taggable_type: Work
+tagging7:
+  tagger_id: 3
+  tagger_type: Tag
+  taggable_id: 1
+  taggable_type: Work
+tagging8:
+  tagger_id: 4
+  tagger_type: Tag
+  taggable_id: 2
+  taggable_type: Work
+tagging9:
+  tagger_id: 3
+  tagger_type: Tag
+  taggable_id: 3
+  taggable_type: Work
+tagging10:
+  tagger_id: 3
+  tagger_type: Tag
+  taggable_id: 4
+  taggable_type: Work
+tagging11:
+  tagger_id: 6
+  tagger_type: Tag
+  taggable_id: 5
+  taggable_type: Work
+tagging12:
+  tagger_id: 5
+  tagger_type: Tag
+  taggable_id: 3
+  taggable_type: Bookmark
+tagging13:
+  tagger_id: 9
+  tagger_type: Tag
+  taggable_id: 1
+  taggable_type: Work
+tagging14:
+  tagger_id: 10
+  tagger_type: Tag
+  taggable_id: 6
+  taggable_type: Work
+tagging15:
+  tagger_id: 1
+  tagger_type: Tag
+  taggable_id: 6
+  taggable_type: Work
+tagging16:
+  tagger_id: 2
+  tagger_type: Tag
+  taggable_id: 6
+  taggable_type: Work

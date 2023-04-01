@@ -1,0 +1,20 @@
+<% content_for :message do %>
+
+  <p>The following accounts have a suspicious level of traffic:</p>
+  <% @users.each do |user| %>
+    <% info = @spam[user.id] %>
+    User <%= style_link(user.login, user_works_url(user)) %> has a score of 
+    <%= info["score"] %>
+    <ul>
+    <% Work.where(id: info["work_ids"]).each do |work| %>
+      <li>
+        <%= style_link(work.title, work_url(work)) %>
+        <% if work.spam? %>
+          (<%= ts('Flagged as spam') %>)
+        <% end %>
+      </li>
+    <% end %>
+    </ul>
+  <% end %>
+
+<% end %>

@@ -1,0 +1,46 @@
+<div class="news admin home">
+  <div class="primary header module">
+    <!--Descriptive page name, messages and instructions-->
+    <h2 class="heading"><%= link_to ts("AO3 News"), admin_posts_path %></h2>
+    <div class="icon"></div>
+    <!--/descriptions-->
+    <!--subnav-->
+    <div class="navigation actions module">
+      <% if policy(@admin_post).can_post? %>
+      
+        <h4 class="landmark heading"><%= ts("Admin Actions") %></h4>
+        <ul class="management actions" role="navigation">
+          <li><%= link_to ts("Edit Post"), edit_admin_post_path(@admin_post) %></li>
+          <li>
+            <%= link_to t("admin.admin_nav.delete", default: "Delete Post"),
+                        @admin_post,
+                        data: { confirm: ts("Are you sure you want to delete this news post?") },
+                        method: :delete %>
+          </li>
+        </ul>
+      <% end %>
+      <h4 class="landmark heading"><%= ts("News Post Navigation") %></h4>
+      <ul class="actions" role="navigation">
+        <% if @previous_admin_post %>
+          <li><%= link_to("Previous Post", @previous_admin_post) %></li>
+        <% end %>
+        <% if @next_admin_post %>
+          <li><%= link_to("Next Post", @next_admin_post) %></li>
+        <% end %>
+        <li>
+          <%= link_to_rss admin_posts_path(:rss, language_id: @admin_post.language.short) %>
+        </li>
+      </ul>
+    </div>
+    <!--/subnav-->
+  </div>
+  <!--main content-->
+  <div role="article" class="news module group">
+    <%= render "admin_post", admin_post: @admin_post %>
+  </div>
+  <!--/content-->
+
+  <!-- BEGIN comment section -->
+  <%= render "comments/commentable", commentable: @admin_post %>
+  <!-- END comment section -->
+</div>

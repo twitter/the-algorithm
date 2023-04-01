@@ -1,0 +1,51 @@
+<h2 class="heading"><%= t(".title") %></h2>
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <h3 class="landmark heading"><%= t("a11y.navigation") %></h3>
+  <li><%= span_if_current t(".blocked_users"), user_blocked_users_path %></li>
+  <li><%= span_if_current t("muted.users.index.muted_users"), user_muted_users_path %></li>
+</ul>
+
+<div class="notice">
+  <p><%= t(".will.intro", block_limit: number_with_delimiter(ArchiveConfig.MAX_BLOCKED_USERS), count: ArchiveConfig.MAX_BLOCKED_USERS) %></p>
+
+  <ul>
+    <li><%= t(".will.commenting") %></li>
+    <li><%= t(".will.replying") %></li>
+  </ul>
+
+  <p><%= t(".will_not.intro") %></p>
+
+  <ul>
+    <li><%= t(".will_not.hide_works") %></li>
+    <li><%= t(".will_not.comments_on_works") %></li>
+    <li><%= t(".will_not.comments_elsewhere") %></li>
+  </ul>
+
+  <p><%= t(".mute_users_instead_html", muted_users_link: link_to(t(".muted_users_link_text"), user_muted_users_path(@user))) %></p>
+</div>
+
+<% # form for blocking users %>
+
+<%= form_tag confirm_block_user_blocked_users_path(@user), method: :get, class: "single simple post" do %>
+  <fieldset>
+    <legend><%= t(".legend") %></legend>
+    <p>
+      <%= label_tag :blocked_id, t(".label"), class: "landmark" %>
+      <%= text_field_tag :blocked_id, "", autocomplete_options("pseud", data: { autocomplete_token_limit: 1 }) %>
+      <span class="submit actions"><%= submit_tag t(".button") %></span>
+    </p>
+  </fieldset>
+<% end %>
+
+<h3 class="landmark heading"><%= t("heading.landmark.blocked") %> %></h3>
+<% if @blocks.present? %>
+  <ul class="pseud index group">
+    <%= render partial: "blocked_user_blurb", collection: @blocks, as: :block %>
+  </ul>
+<% else %>
+  <p><%= t(".none") %></p>
+<% end %>
+
+<%= will_paginate @blocks %>

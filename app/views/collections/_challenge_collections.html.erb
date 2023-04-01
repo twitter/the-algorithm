@@ -1,0 +1,12 @@
+<% if @challenge_collections.blank? %>
+  <p class="notes"><%= ts("There are no challenges currently open for sign-ups in the archive.") %></p>
+<% else %>
+  <p class="notes"><%= ts("The following challenges are currently open for sign-ups! Those closing soonest are at the top.") %></p>
+
+  <h3 class="landmark heading"><%= ts("List of Collections") %></h3>
+  <ul class="collection picture index group">
+  <% @challenge_collections.each do |collection| %>
+    <%= render :partial => "collection_blurb", :locals => {:collection => collection} %>
+  <% end %>
+  </ul>
+<% end %>

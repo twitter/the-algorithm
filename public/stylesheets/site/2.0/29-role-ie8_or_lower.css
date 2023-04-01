@@ -1,0 +1,163 @@
+/* IE_CONDITION: IE8_or_lower
+Put any IE-specific overrides into this file -- it will be loaded last and conditionally, only if the browser is IE 8 or below. 
+
+http://otwcode.github.com/docs/front_end_coding/debugging-ie
+test note: these files could certainly be reduced but I have no IE to test with*/
+
+/* emphasis */
+
+.navigation a:hover, .submit a:hover, .action a:hover {
+  background: #bbb;
+}
+
+span.replied. span.unreviewed, .actions a, .action {
+  font-family: "Arial Unicode MS", "Lucida Grande Unicode", Arial, sans-serif;
+}
+
+a.tag {
+  padding-left: 0.25em;
+}
+
+/* pathing and inheritance*/
+
+.blurb .stats dd, #comment_form p {
+  position: static;
+}
+
+.works-show .module {
+  border: 0;
+}
+
+/*float/clear */
+
+#header #search .submit, .stats dd, .stats dt {
+  float: none;
+  display: inline;
+}
+
+textarea, p.character, form dt.notes {
+  float: none;
+  display: block;
+  clear: both;
+}
+
+form dt.notes, form dd.notes {
+  overflow: hidden;
+}
+
+form dd.notes dl {
+  float: left;
+}
+
+/*stacking*/
+
+#new_comment .module, #footer {
+  position: static;
+}
+
+/*explicit widths*/
+
+.blurb .header, .bookmark .header {
+  width: auto;
+  border: 0;
+}
+
+/* Determines actual width in IE */
+
+.qtip-fluid {
+  display: block;
+  visibility: hidden;
+  position: static !important;
+  float: left !important;
+}
+
+/*margin and padding quirks*/
+
+.bookmark ul.required-tags, .comment div.icon, #main .bookmark .required-tags li, p.character_counter {
+  margin: 0;
+}
+
+.blurb .required-tags, .blurb .icon {
+  left: 0;
+}
+
+.admin .module p {
+  margin: 0.643em 1.5em;
+}
+
+span.symbol, span.symbol span {
+  font-size: 90%;
+  padding: 0 0.15em;
+  vertical-align: middle;
+}
+
+.qtip-titlebar .ui-state-default {
+  top: 16px;
+}
+
+/*incomplete display support */
+
+span.error {
+  display: block;
+}
+
+dl.index dd p, dl.index dd .heading {
+  display: inline;
+}
+
+/*line-height and baseline */
+
+.heading h3, .heading h4 {
+  font-weight: bold;
+  line-height: 1.125;
+}
+
+input, select, option, textarea, legend, label, .actions a {
+  vertical-align: baseline;
+}
+
+/*hasLayout */
+
+#header, #main, div.home, textarea, li.pseud, .listbox .index {
+  zoom: 1;
+}
+
+/*and zoom resets */
+
+.stats a, .preface a, .meta .series {
+  zoom: normal;
+}
+
+/*transparency*/
+
+.blurb ul.required-tags li span.text {
+  display: none;
+}
+
+#header .primary .menu a:hover, #header .primary .menu a:focus {
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#26000000', endColorstr='#26000000',GradientType=0);
+}
+
+#header .admin .menu a:hover, #header .admin .menu a:focus {
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#26ffffff', endColorstr='#26ffffff',GradientType=0);
+}
+
+/* commas */
+
+.commas li.last:after {
+  content: none;
+}
+
+/*DIAGNOSIS*/
+
+/* WIDGET: MODAL DIALOGS (called by help links) */
+
+#modal-bg {
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#B2000000,endColorstr=#B2000000)";
+}
+
+/* splash page */
+
+.logged-in .splash .odd {
+  clear: left;
+}

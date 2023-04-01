@@ -1,0 +1,35 @@
+<% # expects admin_posts %>
+<div class="latest news module">
+  <h3 class="heading">
+    <span class="title"><%= ts('News') %></span>
+    <span class="link"><%= link_to ts('All News'), admin_posts_path %></span>
+  </h3>
+  <ul class="news index group">
+    <% admin_posts.each do |admin_post| %>
+      <li class="post group">
+        <div class="header module">
+          <h4 class="heading" id="post_<%= admin_post.id %>_title">
+            <%= link_to admin_post.title.html_safe, admin_post %>
+          </h4>
+          <p class="meta">
+            <span class="published">
+              <%= ts('Published:') %> <%= time_in_zone(admin_post.created_at) %>
+            </span>
+            <span class="comments">
+              <%= ts('Comments:') %> <%= link_to(admin_post.count_visible_comments, polymorphic_path(admin_post, show_comments: true, anchor: :comments)) %>
+            </span>
+          </p>
+        </div>
+        <blockquote class="userstuff">
+          <%= first_paragraph(admin_post.content, 'No preview is available for this news post.') %>
+        </blockquote>
+        <p class="jump">
+          <%= link_to ts('Read more...'),
+                      admin_post,
+                      id: "post_#{admin_post.id}_more",
+                      :"aria-labelledby" => "post_#{admin_post.id}_more post_#{admin_post.id}_title" %>
+        </p>
+      </li>
+    <% end %>
+  </ul>
+</div>

@@ -1,0 +1,60 @@
+/*==REGION: DASHBOARD is #2 of the 4 regions shown on every page 
+http://otwcode.github.com/docs/front_end_coding/patterns/supertypes
+*/
+
+#dashboard {
+  width: 11.25em;
+  float: left;
+  padding: 0.5em;
+}
+
+#dashboard li {
+  padding: 0;
+}
+
+#dashboard a, #dashboard span {
+  color: #111;
+  display: block;
+  white-space: normal;
+  height: auto;
+  line-height: 2;
+  padding: 0 0.5625em;
+  margin: 0;
+  border: none;
+  background: transparent;
+  vertical-align: middle;
+    word-wrap: break-word;
+    box-shadow: none;
+}
+
+#dashboard a:hover {
+  background: #ddd;
+  color: #900;
+}
+
+#dashboard ul {
+  float: none;
+  display: block;
+  padding: 1.286em 0;
+  text-align: right;
+  border-top: 2px solid #ddd;
+  position: relative;
+}
+
+#dashboard .current {
+  background: #ccc;
+}
+
+#dashboard .secondary {
+  right: auto;
+}
+
+#dashboard.own {
+  background: transparent;
+  border-top: 15px solid #900;
+  border-bottom: 15px solid #900;
+    opacity: 1.0;
+    border-radius: 0.25em;
+}
+
+/*END== */

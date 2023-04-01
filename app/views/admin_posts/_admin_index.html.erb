@@ -1,0 +1,27 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("AO3 News (includes Release Notes)") %></h2>
+<!--/descriptions-->
+<!--subnav-->
+<%= render 'filters' %>
+<%= render :partial => 'admin/admin_nav' %>
+<!--/subnav-->
+
+<!--main content-->
+<h3 class="heading"><%= ts("Manage News Postings") %></h3>
+<dl class="news index group">
+  <% @admin_posts.each do |admin_post| %>
+  <dt><%= link_to admin_post.title.html_safe, admin_post %></dt>
+    <dd>
+      <p class="datetime"><%= ts("Created at %{created_date} and updated at %{updated_date}", :created_date => admin_post.created_at, :updated_date => admin_post.updated_at) %></p>
+      <ul class="actions">
+	      <li><%= link_to ts("Show"), admin_post %></li>
+			  <li><%= link_to ts("Edit"), edit_admin_post_path(admin_post) %></li>
+    	  <li><%= link_to ts("Delete"), admin_post, data: {confirm: 'Are you sure?'}, :method => :delete %></li>
+      </ul>
+	  </dd>
+  <% end %>
+</dl>
+<!--/content-->
+<!--subnav-->
+  <%= will_paginate @admin_posts %>
+<!--/subnav-->

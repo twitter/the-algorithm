@@ -1,0 +1,14 @@
+<% content_for :message do %>
+A response to your prompt has been posted<% if @collection %> in the "<%= @collection.title %>" collection (<%= collection_url(@collection) %>)<% end %> at the Archive of Our Own!
+
+"<%= @work.title.html_safe %>" (<%= @work.word_count %> words)
+<%= @collection ? collection_work_url(@collection, @work) : work_url(@work) %>
+
+by <%= @work.anonymous? ? "an anonymous responder" : (@work.pseuds.map{|p| text_pseud(p)}.to_sentence) %>
+
+<% unless @work.fandom_string.blank? %>Fandom: <%= @work.fandom_string %><% end %>
+
+<% unless @work.summary.blank? %>Summary:
+<%= to_plain_text(raw sanitize_field(@work, :summary)) %><% end %>  
+
+<% if @collection && !@collection.gift_notification.blank? %><%= @collection.gift_notification %><% end %><% end %>

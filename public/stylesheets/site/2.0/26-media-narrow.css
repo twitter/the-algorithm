@@ -1,0 +1,277 @@
+/* MEDIA: only screen and (max-width: 42em), handheld ENDMEDIA */
+
+#outer {
+  background: #fff;
+  font-size: 0.875em;
+  position: relative;
+}
+
+h1, h2, h3 {
+    word-break: break-all;
+    /* not supported in all browsers, so we need break-all as a fallback */
+    word-break: break-word;
+}
+
+/* non-JavaScript states
+.narrow-shown: should be displayed when this stylesheet is in use  */
+
+body .narrow-shown {
+  display: block;
+}
+
+.actions li.narrow-shown {
+  display: inline;
+}
+
+/* JavaScript states
+.javascript .narrow-hidden: should not be displayed when JS is enabled and this stylesheet is in use */
+
+.javascript .narrow-hidden {
+  display: none;
+}
+
+/* 03 region header */
+
+#header .logo {
+  height: 1.75em;
+}
+
+#header .dropdown a:focus {
+  outline: none;
+}
+
+#header .primary > li:first-of-type {
+  margin-left: 0;
+}
+
+#header .dropdown a:focus, #header .dropdown .menu a:focus {
+  background: transparent;
+  color: #111;
+}
+
+#header .open a:focus {
+  background: #ddd;
+}
+
+#header .primary .dropdown a:focus {
+  color: #fff;
+}
+
+#header .primary .open a:focus {
+  color: #111;
+}
+
+#header .user .open a:focus {
+  color: #900;
+}
+
+#header h2.collections {
+  padding: 1%;
+  margin: 0;
+}
+
+#header #small_login {
+  margin-left: 45px;
+}
+
+/* 04 region dashboard */
+
+#dashboard, #dashboard.own {
+  border-bottom-width: 7px;
+  border-top-width: 7px;
+  padding: 0.25em 0;
+}
+
+/* 05 region main */
+
+#main, #main.dashboard {
+  position: static;
+}
+
+#main.errors {
+  background-position: center;
+}
+
+#main.session {
+  background-image: none;
+}
+
+#main.errors p, #main.errors .heading {
+  margin-right: 0;
+}
+
+#main.errors p:last-child { 
+  margin-bottom: 500px;
+}
+
+/* once we remove the meta class from the work form, we can remove the form .meta selectors here */
+
+.filtered .index, form.filters, form dd, form dt, form .meta dd, form .meta dt, form.inbox {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  float: none;
+}
+
+.dashboard .index {
+  float: none;
+}
+
+.dashboard .landmark {
+  clear: both;
+}
+
+/* 10 types and groups */
+
+.blurb dl.tags dt, .blurb dl.tags dd, dl.meta dt, dl.meta dd, .alphabet .listbox li, .media .listbox {
+  width: auto;
+  float: none;
+}
+
+.blurb dl.tags dd, dl.meta dd {
+  margin-left: 1em;
+}
+
+.alphabet .listbox li {
+  display: block;
+}
+
+/* 11 group: listbox */
+
+.listbox .index {
+  width: auto;
+}
+
+/* 15 group: comments */
+
+.thread .thread {
+  margin-left: 1em;
+}
+
+.comment .userstuff {
+  min-height: 0;
+}
+
+.comment .icon {
+  height: 50px;
+  margin-bottom: 0;
+  width: 50px;
+}
+
+.comment .icon .visitor {
+  background: url(/images/imageset.png) no-repeat 0px -525px transparent;
+}
+
+.comment h4.byline {
+  padding-left: 58px;
+}
+
+/* 16 zone: system */
+
+.splash {
+  padding: 0;
+}
+
+.splash div.module, .logged-in .splash div.module {
+  clear: both;
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+}
+
+.splash .intro {
+  padding-top: 0;
+}
+
+.splash .intro h2 {
+  font-size: 1.5em;
+    word-break: normal;
+}
+
+.session #signin {
+  margin-left: 0;
+  width: 100%;
+}
+
+/* 18 zone: search browse */
+
+form.filters dl {
+  width: auto;
+}
+
+/* Filters with JavaScript */
+
+.javascript {
+  background: #ddd;
+}
+
+.javascript form.filters {
+  margin: 0;
+  max-width: 95%;
+  position: absolute;
+  top: 0;
+  right: -16em;
+  width: 16em; /* 14em/0.875em */
+  z-index: 400;
+}
+
+.javascript .filters fieldset {
+  border: none;
+  margin: 0;
+  position: relative;
+  z-index: 450;
+    box-shadow: none;
+}
+
+.javascript .filters p.narrow-shown {
+  position: relative; 
+}
+
+.filtering {
+  right: 14em;
+}
+
+.filtering .filters #leave_filters {
+  background: transparent none;
+  border-bottom: none;
+  position: fixed;
+  top: -101em;
+  bottom: -101em;
+  left: -10em;
+  right: -10em;
+  z-index: 0;
+}
+
+.filtering #leave_filters:focus {
+  outline: none;
+}
+
+/* 21 userstuff */
+
+#workskin {
+  margin: auto;
+}
+
+/* 22 system: messages */
+
+.announcement .userstuff {
+  margin: 1%;
+}
+
+.announcement p.submit {
+  bottom: -0.5em;
+  right: 1%;
+}
+
+.announcement .thermometer-content {
+  width: 80%;
+}
+
+.announcement .goal .amount {
+  display: none;
+}
+
+.announcement .thermometer .progress .amount {
+  left: 0;
+  right: auto;
+}

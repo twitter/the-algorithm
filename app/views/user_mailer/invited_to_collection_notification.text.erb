@@ -1,0 +1,8 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+The collection maintainers of "<%= @collection.title %>" (<%= collection_url(@collection) %>) would like to include your work "<%= @work.title.html_safe %>" (<%= work_url(@work) %>) in their collection!
+
+To approve or reject this request, please visit your "Collection Items" page: <%= user_collection_items_url(@user) %>.
+
+<% end %>

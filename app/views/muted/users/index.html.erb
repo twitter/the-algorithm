@@ -1,0 +1,55 @@
+<h2 class="heading"><%= t(".title") %></h2>
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <h3 class="landmark heading"><%= t("a11y.navigation") %></h3>
+  <li><%= span_if_current t("blocked.users.index.blocked_users"), user_blocked_users_path %></li>
+  <li><%= span_if_current t(".muted_users"), user_muted_users_path %></li>
+</ul>
+
+<div class="notice">
+  <p><%= t(".will.intro", mute_limit: number_with_delimiter(ArchiveConfig.MAX_MUTED_USERS), count: ArchiveConfig.MAX_MUTED_USERS) %></p>
+
+  <ul>
+    <li><%= t(".will.seeing_content") %></li>
+  </ul>
+
+  <p><%= t(".will_not.intro") %></p>
+
+  <ul>
+    <li><%= t(".will_not.prevent_emails") %></li>
+    <li><%= t(".will_not.hide_content_for_others") %></li>
+  </ul>
+
+  <p>
+    <%= t(".block_users_instead_html", blocked_users_link: link_to(t(".blocked_users_link_text"), user_blocked_users_path(@user))) %>
+  </p>
+
+  <p>
+    <%= t(".site_skin_warning_html", restore_site_skin_faq_link: link_to(t(".restore_site_skin_faq_link_text"), archive_faq_path("skins-and-archive-interface", anchor: :restoresiteskin))) %>
+  </p>
+</div>
+
+<%# form for muting users %>
+
+<%= form_tag confirm_mute_user_muted_users_path(@user), method: :get, class: "single simple post" do %>
+  <fieldset>
+    <legend><%= t(".legend") %></legend>
+    <p>
+      <%= label_tag :muted_id, t(".label"), class: "landmark" %>
+      <%= text_field_tag :muted_id, "", autocomplete_options("pseud", data: { autocomplete_token_limit: 1 }) %>
+      <span class="submit actions"><%= submit_tag t(".button") %></span>
+    </p>
+  </fieldset>
+<% end %>
+
+<h3 class="landmark heading"><%= t("heading.landmark.muted") %> %></h3>
+<% if @mutes.present? %>
+  <ul class="pseud index group">
+    <%= render partial: "muted_user_blurb", collection: @mutes, as: :mute %>
+  </ul>
+<% else %>
+  <p><%= t(".none") %></p>
+<% end %>
+
+<%= will_paginate @mutes %>

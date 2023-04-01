@@ -1,0 +1,40 @@
+<% content_for :message do %>
+<% @seen = {} %>
+<% @seen_summary = {} %>
+<% @creations.each_with_index do |creation, index| %>
+<% this_work = creation.respond_to?(:work) ? creation.work : creation %>
+<% cache "subscription-email-txt-preface-#{creation.cache_key}" do %>
+<%= creator_text(this_work) %> posted a <% if creation.is_a?(Work) then %><%= this_work.backdate ? "backdated" : "new" %> work:<% else %>new chapter of <%= this_work.title %> (<%= this_work.word_count %> words):<% end %>
+<%= creation.is_a?(Work) ? work_url(this_work) : work_chapter_url(this_work, creation) %>
+<% end %>
+
+<%= creation.is_a?(Work) ? this_work.title.html_safe : creation.full_chapter_title.html_safe %> (<%= creation.word_count%> words)<% unless @seen[this_work.id] %>
+by <%= creator_text(this_work) %><% end %>
+
+<% if !creation.summary.blank? && creation.is_a?(Chapter) %>
+Chapter Summary: <%= raw to_plain_text(sanitize_field(creation, :summary)) %>
+<% end %>
+
+<% unless @seen[this_work.id] %>
+<% cache "subscription-email-txt-meta-#{creation.cache_key}" do %>
+Chapters: <%= this_work.chapter_total_display %>
+Fandom: <%= this_work.fandoms.map{|f| f.name}.to_sentence.html_safe %>
+Rating: <%= this_work.rating_string %>
+Warnings: <%= this_work.archive_warning_string %>
+<% if this_work.relationship_string && !this_work.relationship_string.blank? then %>Relationships: <%= this_work.relationship_string %><% end %>
+<% if this_work.character_string && !this_work.character_string.blank? then %>Characters: <%= this_work.character_string %><% end %>
+<% if this_work.freeform_string && !this_work.freeform_string.blank? %>Additional Tags: <%= this_work.freeform_string %><% end %>
+<% if this_work.series.count > 0 %>Series: <%=raw to_plain_text(series_list_for_feeds(this_work)) %><% end %>
+<% end %><% @seen[this_work.id] = true %><% end %>
+
+<% unless @seen_summary[this_work.id] || this_work.summary.blank? %>
+Summary:
+    <%= raw to_plain_text(sanitize_field(this_work, :summary)) %><% @seen_summary[this_work.id] = true %><% end %><% if (index < @creations.length-1) %>
+
+<%= text_divider %>
+
+<% end %><% end %><% end %>
+
+<% content_for :footer_note do %>
+You're receiving this email because you've subscribed to <%= @subscription.name %>. Follow the link to unsubscribe if you no longer wish to receive updates: <%= polymorphic_url(@subscription.subscribable) %>
+<% end %>

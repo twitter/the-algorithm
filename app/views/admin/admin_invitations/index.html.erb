@@ -1,0 +1,62 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".page_heading") %></h2>
+<!--/descriptions-->
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to t(".navigation.requests"), user_invite_requests_path %></li>
+  <% if policy(InviteRequest).can_manage? %>
+    <li><%= link_to t(".navigation.queue"), manage_invite_requests_path %></li>
+  <% end %>
+</ul>
+<!--/subnav-->
+<!--main content-->
+<%= form_tag  url_for(:controller => 'admin/admin_invitations', :action => :create) do |f| %>
+  <fieldset class="simple">
+    <h3 class="heading">Send to email</h3>
+    <p>Send an invite code to the following email address:
+      <%= text_field_tag "invitation[invitee_email]", (@invitation.try(:invitee_email) || ""), :title => ts("invite by email") %>
+      <span class="submit actions"><%= submit_tag ts('Invite user')  %></span>
+    </p>
+  </fieldset>
+<% end %>
+
+<%= form_tag url_for(:controller => 'admin/admin_invitations', :action => 'invite_from_queue') do %>
+  <fieldset class="simple">
+    <h3 class="heading">Send invite codes to people in our <%= link_to 'invitations queue', invite_requests_path %></h3>
+    <p>There are <%= InviteRequest.count %> requests in the queue.</p>
+    <p>
+      <%= label_tag "invitation[invite_from_queue]", ts('Number of people to invite') %>: <%= text_field_tag "invitation[invite_from_queue]" %>
+      <span class="submit actions"><%= submit_tag ts('Invite from queue')  %></span>
+    </p>
+  </fieldset>
+<% end %>
+
+<%= form_tag  url_for(:controller => 'admin/admin_invitations', :action => 'grant_invites_to_users') do  %>
+  <fieldset>
+    <h3 class="heading"><%=h 'Give invite codes to current users' %></h3>
+    <dl>
+      <dt><%= label_tag "invitation[number_of_invites]", ts('Number of invitations') %>:</dt>
+      <dd><%= text_field_tag "invitation[number_of_invites]" %></dd>
+      <dt><%= label_tag "invitation[user_group]", ts('Users') %>:</dt>
+      <dd><%= select_tag "invitation[user_group]", "<option>All</option><option>With no unused invitations</option>".html_safe  %></dd>
+      <dt class="landmark">Submit</dt>
+      <dd class="submit actions"><%= submit_tag "Generate invitations" %></dd>
+  </fieldset>
+<% end %>
+
+<%= form_tag  url_for(:controller => 'admin/admin_invitations', :action => 'find'), :method => :get do  %>
+  <fieldset>
+    <h3 class="heading"><%=h 'Track invitations' %></h3>
+    <dl>
+      <dt><%= label_tag "invitation[user_name]", ts('Enter a user name') %>:</dt>
+      <dd><%= text_field_tag "invitation[user_name]"  %></dd>
+      <dt><%= label_tag "invitation[token]", ts('Enter an invite token') %>:</dt>
+      <dd><%= text_field_tag "invitation[token]"  %></dd>
+      <dt><%= label_tag "invitation[invitee_email]", ts('Enter all or part of an email address') %>:</dt>
+      <dd><%= text_field_tag "invitation[invitee_email]", nil, id: "track_invitation_invitee_email" %></dd>
+      <dt class="landmark">Submit</dt>
+      <dd class="submit actions"><%= submit_tag "Go" %></dd>
+    </dl>
+  </fieldset>
+<% end %>
+<!--/content-->

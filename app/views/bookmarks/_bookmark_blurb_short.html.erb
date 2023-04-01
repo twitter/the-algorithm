@@ -1,0 +1,43 @@
+<% # This partial requires local variable 'bookmark' %>
+<li class="<%= css_classes_for_bookmark_blurb_short(bookmark) %>" role="article">
+  <div class="header module">
+    <h5 class="byline heading">
+      <%= ts("Bookmarked by ") %>
+      <%= link_to(bookmark.pseud.byline, user_pseud_path(bookmark.pseud.user, bookmark.pseud)) %>
+    </h5>
+    <p class="datetime"><%= set_format_for_date(bookmark.created_at) %></p>
+    <p class="status">
+      <%= get_symbol_for_bookmark(bookmark) %>
+    </p>
+  </div>
+  <!--meta-->
+  <% unless bookmark.tag_string.blank? %>
+    <h6 class="meta heading"><%= ts("Bookmark Tags:") %></h6>
+    <ul class="meta tags commas">
+      <% bookmark.tags.each do |tag| %>
+        <li><%= link_to tag.name, link_to_tag_bookmarks(tag), :class => 'tag' %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <% unless bookmark.collections.blank? %>
+    <h6 class="meta heading"><%= ts("Bookmark Collections:") %></h6>
+    <ul class="meta commas">
+      <% bookmark.collections.each do |coll|%>
+        <li><%= link_to coll.title, collection_path(coll) %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <!--notes-->
+  <% unless bookmark.bookmarker_notes.blank? %>
+    <h6 class="landmark heading"><%= ts("Bookmark Notes:") %></h6>
+    <blockquote class="userstuff summary">
+      <%=raw sanitize_field(bookmark, :bookmarker_notes) %>
+    </blockquote>
+  <% end %>
+  <!--actions-->
+  <% if is_author_of?(bookmark) %>
+    <%= render :partial => 'bookmarks/bookmark_owner_navigation', :locals => {:bookmark => bookmark} %>
+  <% elsif logged_in_as_admin? %>
+    <%= render :partial => 'admin/admin_options', :locals => {:item => bookmark} %>
+  <% end %>
+</li>

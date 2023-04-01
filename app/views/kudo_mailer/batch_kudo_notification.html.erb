@@ -1,0 +1,29 @@
+<% content_for :message do %>
+
+  <% @commentables.each_with_index do |commentable, index| %>
+    <%
+      commentable_link = style_creation_link(commentable.commentable_name, polymorphic_url(commentable))
+      givers_hash = @user_kudos["#{commentable.class.name}_#{commentable.id}"]
+      names = givers_hash["names"]
+      guest_count = givers_hash["guest_count"].to_i
+      kudo_count = names.size + guest_count
+      # dup so we don't add "a guest" or "5 guests" to the original array. If
+      # that happens, kudo_count ends up too high whenever both named and guest
+      # kudos are present.
+      givers = names.dup
+      givers << t(".guest", count: guest_count) unless guest_count.zero?
+      givers_list = givers.map { |k| style_bold(k) }.to_sentence.html_safe
+    %>
+
+    <% if kudo_count == 1 && guest_count == 1 %>
+      <%= t(".html.single_guest.left_kudos", giver_list: style_bold(t(".html.single_guest.giver_list")).html_safe, commentable_link: commentable_link.html_safe).html_safe %>
+    <% else %>
+      <%= t(".html.left_kudos", givers_list: givers_list, commentable_link: commentable_link.html_safe, count: kudo_count).html_safe %>
+    <% end %>
+
+    <% if (index < @commentables.length - 1) %>
+      <%= styled_divider %>
+    <% end %>
+
+  <% end %>
+<% end %>

@@ -1,0 +1,79 @@
+<!--SEARCHBROWSE descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <% if @bookmarkable_items %>
+    <%= search_header @bookmarkable_items, @search, "Bookmarked Item", @owner %>
+  <% else %>
+    <%= search_header @bookmarks, @search, "Bookmark", @owner %>
+  <% end %>
+</h2>
+<!-- /descriptions-->
+
+<!--subnav-->
+<% if current_user.is_a?(User) || @tag || @facets.present? %>
+  <ul class="navigation actions" role="navigation">
+    <% if logged_in? && (@user == current_user || (@owner.blank? && @bookmarkable.blank?) || @collection) %>
+      <li><%= link_to ts("Bookmark External Work"), new_external_work_path %></li>
+    <% elsif params[:work_id] || params[:series_id] || params[:external_work_id] %>
+      <% bookmark_form_id = (@bookmarkable.blank? ? "#{@bookmark.id}" : "#{@bookmarkable.id}") %>
+      <% # let the user reading this bookmark save a copy for themselves %>
+      <% if logged_in? && !is_author_of?(@bookmark) %>
+        <li>
+          <% if (current_user_bookmark ||= bookmark_if_exists(@bookmarkable)) %>
+            <%= link_to ts("Edit Bookmark"), edit_bookmark_path(current_user_bookmark), :id => "bookmark_form_trigger_for_#{bookmark_form_id}", :remote => true %>
+          <% else %>
+            <%= link_to ts("Bookmark"), get_new_bookmark_path(@bookmarkable), :id => "bookmark_form_trigger_for_#{bookmark_form_id}", :remote => true %>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+    <% if @tag %>
+      <li><%= span_if_current ts('Works'), tag_works_path(@tag) %></li>
+      <li><%= span_if_current ts('Bookmarks'), tag_bookmarks_path(@tag) %></li>
+    <% end %>
+    <% if @facets.present? %>
+      <% # Filters button for narrow screens jumps to filters when JavaScript is disabled and opens filters when JavaScript is enabled %>
+      <li class="narrow-shown hidden"><a href="#bookmark-filters" id="go_to_filters"><%= ts("Filters") %></a></li>
+    <% end %>
+  </ul>
+<% end %>
+<!--/subnav-->
+
+<% if params[:work_id] || params[:series_id] || params[:external_work_id] %>
+  <% # bookmark form loaded here if requested %>
+  <div class="new dynamic" id="bookmark_form_placement_for_<%= bookmark_form_id %>"></div>
+<% end %>
+
+<% unless @owner.present? || @bookmarkable.present? %>
+  <p><%= ts("These are some of the latest bookmarks created on the Archive. To find more bookmarks, #{link_to 'choose a fandom', media_path} or #{link_to 'try our advanced search', search_bookmarks_path}.").html_safe %>
+<% end %>
+
+<%= render "muted/muted_items_notice" %>
+
+<% if @bookmarks.respond_to?(:total_pages) %>
+  <%= will_paginate @bookmarks %>
+<% elsif @bookmarkable_items.respond_to?(:total_pages) %>
+  <%= will_paginate @bookmarkable_items %>
+<% end %>
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("List of Bookmarks") %></h3>
+<ol class="bookmark index group">
+  <%= render "bookmarks/bookmarks" %>
+</ol>
+<!-- /content-->
+
+<!--filters subnav-->
+<% if @facets.present? %>
+  <%= render "filters" %>
+<% end %>
+<!---/subnav-->
+
+<div id="dynamic-bookmark" class="dynamic hidden"></div>
+
+<!--subnav-->
+<% if @bookmarks.respond_to?(:total_pages) %>
+  <%= will_paginate @bookmarks %>
+<% elsif @bookmarkable_items.respond_to?(:total_pages) %>
+  <%= will_paginate @bookmarkable_items %>
+<% end %>
+<!-- /subnav-->

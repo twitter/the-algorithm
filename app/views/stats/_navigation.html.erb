@@ -1,0 +1,4 @@
+<ul class="navigation actions" role="navigation">
+  <li><%= span_if_current ts("Stats"), user_stats_path(@user) %></li>
+  <li><%= link_to ts("Edit Works"), show_multiple_user_works_path(@user) %></li>
+</ul>

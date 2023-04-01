@@ -1,0 +1,48 @@
+<% # requires 'challenge_signup' local %>
+<% # to make the code more readable: %>
+<% collection = challenge_signup.collection %>
+<% challenge = collection.challenge %>
+<% user = challenge_signup.pseud.user %>
+
+<% if challenge.signup_open || (!challenge.signup_open && collection.user_is_maintainer?(current_user)) || collection.challenge_type == "PromptMeme" %>
+  <ul class="<%= subnav ? "navigation actions" : "actions" %>" role="menu">
+    <% # The edit and delete links shouldn't show on the challenge index for a prompt meme unless you are owner or mod, but should show on user index %>
+    <% unless (controller.action_name == "index" && @user.nil? && collection.challenge_type == "PromptMeme" && (current_user.nil? || (current_user && !collection.user_is_maintainer?(current_user)))) %>
+    <% # The edit link should show up only for the user who actually signed up while signups are open or for the owner or mod once signups are closed or always on a prompt meme %>
+    <% if (challenge.signup_open && user == current_user) || (!challenge.signup_open && collection.user_is_maintainer?(current_user)) || (collection.challenge_type == "PromptMeme" && collection.user_is_maintainer?(current_user)) %>
+      <li>
+        <% # Do not warn if matching has not run; OTHERWISE warn that matching will need to be rerun %>
+        <% if collection.potential_matches.count == 0 %>
+          <%= link_to(ts('Edit Sign-up'), edit_collection_signup_path(collection, challenge_signup)) %>
+        <% else %>
+          <%= link_to(ts('Edit Sign-up'), edit_collection_signup_path(collection, challenge_signup),
+            data: {confirm: ts("Note: Potential matches will need to be regenerated after your edits.")}) %>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% # The add prompt link should show up if signups are open and the current user owns the signup and is on the signup show page for a prompt meme and they haven't hit the max number of prompts %>
+    <% if (challenge.signup_open && user == current_user && controller.action_name == "show" && collection.challenge_type == "PromptMeme" && challenge_signup.requests.count < challenge.requests_num_allowed) %>
+      <li>
+        <%= link_to ts('Add Prompt'), new_collection_prompt_path(collection) %>
+      </li>
+    <% end %>
+
+    <% # The delete link should show up if signups are open and the current user owns the prompt, OR if the current user is a maintainer, AND only if the signup has more than the minimum number of prompts %>
+      <% if (challenge.signup_open && user == current_user) || (collection.user_is_maintainer?(current_user))  %>
+        <li>
+          <% # Warn about prompt loss if matching has not run; OTHERWISE warn that matching will need to be rerun %>
+          <% if collection.potential_matches.count == 0 %>
+            <%= link_to ts("Delete Sign-up"),
+              confirm_delete_collection_signup_path(collection, challenge_signup),
+              data: {confirm: ts("Are you sure? All prompts in this sign-up will be lost.")} %>
+          <% else %>
+            <%= link_to ts("Delete Sign-up"),
+              confirm_delete_collection_signup_path(collection, challenge_signup),
+              data: {confirm: ts("Are you sure? Potential matches will need to be regenerated afterwards.")} %>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

@@ -1,0 +1,66 @@
+<% content_for :message do %>
+  <p><%= t(".html.part1", link: style_link(@collection.title, collection_url(@collection))).html_safe %></p>
+
+  <p>
+    <%= style_bold(t(".recipient")) %> <%= @request.nil? ? t(".recipient_missing") : style_link(@request.pseud.byline, user_pseud_url(@request.pseud.user, @request.pseud)) %>
+  </p>
+
+  <%= style_bold(t(".prompts")) %>
+
+  <% @request.requests.each_with_index do |prompt, index| %>
+    <% tag_groups = prompt.tag_groups %>
+
+    <% def styled_tag_list(tags) %>
+      <% return nil if !tags || tags.empty? %>
+      <% tags.map { |tag| style_link(tag.name, tag_works_url(tag)) }.to_sentence.html_safe %>
+    <% end %>
+
+    <% fandoms = prompt.any_fandom ? t(".any") : styled_tag_list(tag_groups["Fandom"]) %>
+    <% chars = prompt.any_character ? t(".any") : styled_tag_list(tag_groups["Character"]) %>
+    <% ships = prompt.any_relationship ? t(".any") : styled_tag_list(tag_groups["Relationship"]) %>
+    <% ratings = prompt.any_rating ? t(".any") : (tag_groups["Rating"] ? get_title_string(tag_groups["Rating"]) : nil) %>
+    <% warnings = prompt.any_archive_warning ? t(".any") : (tag_groups["ArchiveWarning"] ? get_title_string(tag_groups["ArchiveWarning"]) : nil) %>
+    <% categories = prompt.any_category ? t(".any") : (tag_groups["Category"] ? get_title_string(tag_groups["Category"]) : nil) %>
+    <% atags = prompt.any_freeform ? t(".any") : styled_tag_list(tag_groups["Freeform"]) %>
+    <% otags = prompt.optional_tag_set ? styled_tag_list(prompt.optional_tag_set.tags) : nil %>
+
+    <%= styled_divider %>
+    <%= index + 1 %>. <%= style_bold(prompt.title) %>
+
+    <p>
+      <% if fandoms %><%= style_bold(Fandom.human_attribute_name("name_with_colon", count: prompt.any_fandom ? 1 : tag_groups["Fandom"].count)) %> <%= fandoms %><br><% end %>
+      <% if chars %><%= style_bold(Character.human_attribute_name("name_with_colon", count: prompt.any_character ? 1 : tag_groups["Character"].count)) %> <%= chars %><br><% end %>
+      <% if ships %><%= style_bold(Relationship.human_attribute_name("name_with_colon", count: prompt.any_relationship ? 1 : tag_groups["Relationship"].count)) %> <%= ships %><br><% end %>
+      <% if ratings %><%= style_bold(Rating.human_attribute_name("name_with_colon")) %> <%= ratings %><br><% end %>
+      <% if warnings %><%= style_bold(ArchiveWarning.human_attribute_name("name_with_colon", count: prompt.any_archive_warning ? 1 : tag_groups["ArchiveWarning"].count)) %> <%= warnings %><br><% end %>
+      <% if categories %><%= style_bold(Category.human_attribute_name("name_with_colon", count: prompt.any_category ? 1 : tag_groups["Category"].count)) %> <%= categories %><br><% end %>
+      <% if atags %><%= style_bold(Freeform.human_attribute_name("name_with_colon", count: prompt.any_freeform ? 1 : tag_groups["Freeform"].count)) %> <%= atags %><br><% end %>
+      <% if otags %><%= style_bold("#{t(".optional_tags")}") %> <%= otags %><br><% end %>
+      <% if prompt.url && !prompt.url.blank? %><%= style_bold("#{t(".prompt_url")}") %> <%= style_link(prompt.url, prompt.url) %><br><% end %>
+      <% if prompt.description && !prompt.description.blank? %>
+        <%= style_bold(t(".description")) %>
+        <%= style_quote(prompt.description) %>
+      <% end %>
+    </p>
+  <% end %>
+
+  <%= styled_divider %>
+
+  <p>
+    <%= style_bold(t(".due")) %> <%= time_in_zone(@collection.challenge.assignments_due_at, (@collection.challenge.time_zone || Time.zone.name), @assigned_user) %>.
+  </p>
+
+  <p><%= t(".html.look_up", link: style_link(t(".html.look_up_link"), user_assignments_url(@assigned_user))).html_safe %></p>
+
+  <% if @collection && !@collection.assignment_notification.blank? %>
+    <p><%= escape_html_and_create_linebreaks(@collection.assignment_notification) %></p>
+  <% end %>
+<% end %>
+
+<% content_for :footer_note do %>
+  <%= t(".html.footer", title: style_footer_link(@collection.title, collection_url(@collection)), footer_link: style_footer_link(t(".html.footer_link"), collection_profile_url(@collection))).html_safe %>
+<% end %>
+
+<% content_for :sent_at do %>
+  <%= l(Time.now) %>
+<% end %>

@@ -1,0 +1,52 @@
+<!-- potential match settings partial form, expects a local variable called "challenge_form" and @challenge  -->
+<% @challenge.build_potential_match_settings unless @challenge.potential_match_settings %>
+<% potential_match_settings = @challenge.potential_match_settings %>
+
+<%= challenge_form.fields_for(:potential_match_settings) do |match_settings_form| %>
+
+  <fieldset id="match_settings">
+    <legend><%= ts("Minimum Number to Match") %></legend>
+    <h3 class="landmark heading"><%= ts("Minimum Number to Match") %></h3>
+    <p class="note">
+      <%= ts("This means the") %> <em><%= ts("minimum") %></em> <%= ts("level of matching needed for an offer to match a request.
+      Any matches above the minimum required number will be used to rank the quality of potential matches.") %>
+    </p>
+
+    <p class="note">
+     <%= ts("If you change these
+      settings") %> <em><%= ts("after") %></em> <%= ts("you generate potential matches,
+      you will need to") %> <em><%= ts("regenerate potential matches") %></em> <%= ts("before your changes show.") %>
+    </p>
+
+    <dl>
+      <dt>
+        <%= match_settings_form.label(:num_required_prompts, ts("Requests:")) %>
+      </dt>
+      <dd><%= match_settings_form.select(:num_required_prompts, PotentialMatchSettings::REQUIRED_MATCH_OPTIONS.select {|k,v| k != "0"}, :selected => potential_match_settings.num_required_prompts) %></dd>
+
+      <% TagSet::TAG_TYPES.map {|t| t.pluralize }.each do |type| %>
+        <dt class="<%= tag_type_css_class(type) %>"><%= match_settings_form.label("num_required_#{type}", ts("%{tag_type}:", tag_type: tag_type_label_name(type).pluralize)) %></dt>
+        <dd><%= match_settings_form.select("num_required_#{type}", PotentialMatchSettings::REQUIRED_MATCH_OPTIONS, :selected => potential_match_settings.send("num_required_#{type}")) %></dd>
+      <% end %>
+
+      <dt>
+        <%= ts("Count optional tags for...") %>
+        <%= link_to_help("challenge-include-optional-tags") %>
+      </dt>
+        <dd>
+          <fieldset>
+            <ul>
+            <% TagSet::TAG_TYPES.map.each do |type| %>
+              <li class="<%= tag_type_css_class(type) %>">
+                <%= match_settings_form.check_box("include_optional_#{type.pluralize}", :checked => potential_match_settings.send("include_optional_#{type.pluralize}")) %>
+                <%= match_settings_form.label("include_optional_#{type.pluralize}", ts("%{tag_type}", tag_type: tag_type_label_name(type).pluralize)) %>
+              </li>
+            <% end %>
+            </ul>
+    </fieldset>
+    </dd>
+    </dl>
+
+  </fieldset>
+
+<% end %>

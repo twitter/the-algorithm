@@ -1,0 +1,12 @@
+<%
+last_tag = @display_tags.last
+if @display_category == 'warnings'
+  open_tags = "<li class=\"#{@display_category}\"><strong>"
+  closing_tags = "</strong></li>"
+else
+  open_tags = "<li class=\"#{@display_category}\">"
+  closing_tags = "</li>"
+end
+tag_list = @display_tags.map {|tag| open_tags + link_to_tag_works(tag) + closing_tags }
+%>
+$j("#<%= "#{@display_creation.class.to_s.underscore}_#{@display_creation.id}_category_#{@display_category}" %>").replaceWith("<%= escape_javascript(tag_list.join(" ").html_safe) %>");

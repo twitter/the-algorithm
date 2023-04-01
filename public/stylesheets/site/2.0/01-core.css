@@ -1,0 +1,54 @@
+/*==CORE:basic functional layout
+http://otwcode.github.com/docs/front_end_coding/css-shorthand*/
+
+body, .toggled form, .dynamic form, .secondary, .dropdown {
+  background: #fff;
+  color: #2a2a2a;
+  font: 100%/1.125 'Lucida Grande', 'Lucida Sans Unicode', 'GNU Unifont', Verdana, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.heading {
+  font-family: Georgia, serif;
+}
+
+a, a:link {
+  color: #900;
+  text-decoration: none;
+}
+
+#header, #footer, #main, #dashboard {
+  padding: 1em 3em;
+}
+
+.landmark {
+  font-size: 0;
+  opacity: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+li.blurb, fieldset, form dl {
+  border: 1px solid #ddd;
+  padding: 1em;
+  overflow: hidden;
+}
+
+.blurb li, .actions>*, .stats>*, .meta ul li {
+  list-style: none;
+  display: inline;
+  padding-left: 0.25em;
+}
+
+.actions form {
+  display: inline;
+}
+
+.actions input[type="submit"] {
+  margin: 0;
+}
+
+/*END== */

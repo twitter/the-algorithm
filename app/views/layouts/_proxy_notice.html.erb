@@ -1,0 +1,25 @@
+<div id="proxy-notice">
+  <div class="userstuff">
+    <% # TODO: When the interface is localized, this should be revised to only show the notice in the user's selected language. %>
+    <p class="important"><%= t(".faux_heading") %></p>
+    <ol>
+      <li><%= t(".point1") %></li>
+      <li><%= t(".point2") %></li>
+    </ol>
+    <p class="important"><%= t(".faux_heading", locale: :"zh-CN") %></p>
+    <ol>
+      <li><%= t(".point1", locale: :"zh-CN") %></li>
+      <li><%= t(".point2", locale: :"zh-CN") %></li>
+    </ol>
+    <p class="submit"><button class="action" type="button" id="proxy-notice-dismiss"><%= t(".button") %></button></p>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+  $j(document).ready(function() {
+    $j("#proxy-notice-dismiss").on("click", function() {
+      Cookies.set("proxy_notice", "0");
+      $j("#proxy-notice").slideUp();
+    });
+  });
+<% end %>

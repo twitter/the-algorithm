@@ -1,0 +1,25 @@
+<% # BACK END this seems giant and messy and confusing, pls can we review? 
+   # FRONT END yes let us rewrite this
+%>
+<% unless current_user && current_user.try(:preference).try(:banner_seen) %>
+<% if @admin_banner && @admin_banner.active? %>
+<% unless current_user.nil? && session[:hide_banner] %>
+  <div class="<%= @admin_banner.banner_type %> announcement group" id="admin-banner">
+    <blockquote class="userstuff">
+      <%=raw sanitize_field(@admin_banner, :content) %>
+    </blockquote>
+    <% if current_user.nil? %>
+      <p class="submit">
+        <%= link_to "&times;".html_safe, current_path_with(hide_banner: true), :class => 'showme action', :title => ts("hide banner") %>
+      </p>
+    <% else %>
+      <%= form_tag end_banner_user_path(current_user), :method => :post, :remote => true do %>
+        <p class="submit">
+          <%= submit_tag "&times;".html_safe, :title => ts("hide banner") %>
+        </p>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+<% end %>
+<% end %>

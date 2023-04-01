@@ -1,0 +1,5 @@
+<% if @user || params[:for_user] || (@challenge && !@challenge.user_allowed_to_see_claims?(current_user)) %>
+  <%= render "user_index" %>
+<% elsif @challenge && @challenge.user_allowed_to_see_claims?(current_user) %>
+  <%= render "maintainer_index" %>  
+<% end %>

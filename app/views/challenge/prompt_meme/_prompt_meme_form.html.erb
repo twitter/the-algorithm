@@ -1,0 +1,52 @@
+<!--descriptions-->
+<h2 class="heading"><%= ts("Setting Up the %{title} Prompt Meme", :title => @collection.title) -%></h2>
+<!-- /descriptions-->
+
+<!--subnav-->
+<% if @collection.challenge %>
+  <ul class="navigation actions">
+    <li><%= render "challenge/shared/challenge_form_delete" %></li>
+  </ul>
+<% end %>
+<!--/subnav-->
+
+<!--main content-->
+
+<h3 class="landmark heading"><%= ts("Notes") %></h3>
+<ul class="notes">
+  <li><%= ts("The more options you allow here, the more complicated your sign-up form will be.") %></li>
+  <li><%= ts('If you set the "Required" value higher than the corresponding "Allowed" value, we will
+    automatically assume that you want the allowed value to be the same as the required value. You only need to manually
+    set the "Allowed" number if you want more allowed than required.') %></li>
+</ul>
+
+<h3 class="landmark heading"><%= ts("Prompt Meme Settings") %></h3>
+
+<%= form_for([@collection, @challenge], :url => collection_prompt_meme_path(@collection), :html => {:class => "verbose create challenge"}) do |f| %>
+  <%= error_messages_for @challenge %>
+  <%= render "challenge/shared/challenge_form_schedule", :f => f %>
+
+  <fieldset>
+    <legend><%= ts("Prompts") %></legend>
+    <h3 class="landmark heading"><%= ts("Prompts") %></h3>
+    <dl>
+      <dt><%= f.label :anonymous, ts("Prompts anonymous by default?") %></dt>
+      <dd><%= f.check_box :anonymous %>
+      <p class="note">(Participants can override)</p>
+      </dd>
+      <dt><%= f.label :requests_num_required, ts("Number of prompts per sign-up:") %></dt>
+      <%= required_and_allowed(f, "requests", @collection.prompts.empty?, false) %>
+
+    </dl>
+  </fieldset>
+
+  <!-- restrictions for requests -->
+  <%= render "prompt_restrictions/prompt_restriction_form", :challenge_form => f, :is_offer => false, :show_tag_options => true, :type => "prompt_meme" -%>
+
+  <%= render "challenge/shared/challenge_form_instructions", :f => f %>
+
+  <%= submit_fieldset f %>
+
+<% end %>
+
+<!--/content-->

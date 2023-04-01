@@ -1,0 +1,530 @@
+---
+ro:
+  activerecord:
+    attributes:
+      archive_warning:
+        name_with_colon:
+          few: 'Avertismente:'
+          one: 'Avertisment:'
+          other: 'Avertismente:'
+      category:
+        name_with_colon:
+          few: 'Categorii:'
+          one: 'Categorie:'
+          other: 'Categorii:'
+      character:
+        name_with_colon:
+          few: 'Personaje:'
+          one: 'Personaj:'
+          other: 'Personaje:'
+      fandom:
+        name_with_colon:
+          few: 'Fandomuri:'
+          one: 'Fandom:'
+          other: 'Fandomuri:'
+      freeform:
+        name_with_colon:
+          few: 'Tag-uri adiționale:'
+          one: 'Tag adițional:'
+          other: 'Tag-uri adiționale:'
+      rating:
+        name_with_colon: 'Rating:'
+      relationship:
+        name_with_colon:
+          few: 'Relații:'
+          one: 'Relație:'
+          other: 'Relații:'
+      work:
+        summary: Rezumat
+    models:
+      archive_warning:
+        few: Avertismente
+        one: Avertisment
+        other: Avertismente
+      category:
+        few: Categorii
+        one: Categorie
+        other: Categorii
+      chapter:
+        few: Capitole
+        one: Capitole
+        other: Capitole
+      character:
+        few: Personaje
+        one: Personaj
+        other: Personaje
+      fandom:
+        few: Fandomuri
+        one: Fandom
+        other: Fandomuri
+      freeform:
+        few: Tag-uri adiționale
+        one: Tag adițional
+        other: Tag-uri adiționale
+      rating:
+        few: Ratinguri
+        one: Rating
+        other: Ratinguri
+      relationship:
+        few: Relații
+        one: Relație
+        other: Relații
+      series:
+        few: Serii
+        one: Serie
+        other: Serii
+  kudo_mailer:
+    batch_kudo_notification:
+      guest:
+        few: "%{count} vizitatori"
+        one: un vizitator
+        other: "%{count} de vizitatori"
+      html:
+        left_kudos:
+          few: "%{givers_list} au lăsat kudos pentru %{commentable_link}."
+          one: "%{givers_list} a lăsat kudos pentru %{commentable_link}."
+          other: "%{givers_list} au lăsat kudos pentru %{commentable_link}."
+        single_guest:
+          giver_list: Un vizitator
+          left_kudos: "%{giver_list} a lăsat kudos pentru %{commentable_link}."
+      subject: "[%{app_name}] Ai primit kudos!"
+      text:
+        left_kudos:
+          few: "%{givers_list} au lăsat kudos pentru %{commentable_title} (%{commentable_url})."
+          one: "%{givers_list} a lăsat kudos pentru %{commentable_title} (%{commentable_url})."
+          other: "%{givers_list} au lăsat kudos pentru %{commentable_title} (%{commentable_url})."
+        single_guest: Un vizitator a lăsat kudos pentru %{commentable_title} (%{commentable_url}).
+  mailer:
+    general:
+      closing:
+        formal: Cu drag,
+        informal: Cu drag,
+      creation:
+        link_with_word_count: "%{creation_link} (%{word_count})"
+        title_with_chapter_number: Capitolul %{position} din %{title}
+        title_with_word_count: „%{creation_title}" (%{word_count})
+        word_count:
+          few: "%{count} cuvinte"
+          one: "%{count} cuvânt"
+          other: "%{count} de cuvinte"
+      footer:
+        general:
+          html:
+            donate_link_text: donațiile tale
+            part1: Dacă ai primit acest mesaj din greșeală te rugăm %{support_link}.
+            part2: AO3 este o arhivă administrată și susținută de fani care se bazează
+              pe %{donate_link}.
+            support_link_text: să contactezi echipa de Suport Tehnic
+          text:
+            part1: Dacă ai primit acest mesaj din greșeală te rugăm să contactezi
+              echipa de Suport Tehnic la %{support_url}.
+            part2: 'AO3 este o arhivă administrată și susținută de fani care se bazează
+              pe donațiile tale: %{donate_url}.'
+        sent_at: Trimis %{sent_at}.
+      greeting:
+        formal: Bună %{name},
+        informal:
+          addressed: Bună %{name}!
+          unaddressed: Salut!
+        introductory: Salutări de la Archive of Our Own - AO3 (Arhiva Noastră)!
+      metadata_label_indicator: ": "
+      signature:
+        app_short_name: AO3
+        open_doors: Echipa Open Doors (Uși Deschise)
+        parent_org: Organization for Transformative Works (Organizația pentru Lucrări
+          Transformative)
+        support: Echipa de Suport Tehnic AO3
+  users:
+    mailer:
+      reset_password_instructions:
+        expiration: Dacă nu folosești acest link în următoarele șapte zile pentru
+          a-ți reseta parola, va trebui să ceri un link nou.
+        intro: 'Cineva a solicitat resetarea parolei pentru contul tău. Pentru a-ți
+          schimba parola, urmează link-ul de mai jos și introdu o parolă nouă:'
+        link_title: Schimbă parola.
+        subject: "[%{app_name}] Resetează-ți parola"
+        unrequested: Dacă nu ai solicitat schimbarea parolei, ignoră acest e-mail
+          și continuă să-ți folosești parola actuală.
+  user_mailer:
+    abuse_report:
+      description_para: 'Descrierea abuzului:'
+      para1: 'Următorul raport de abuz a fost trimis către echipa de Politici și Abuz:'
+      subject: "[%{app_name}] Raportul tău către Politici și Abuz"
+      url_para: 'Link-ul paginii pe care se regăsește abuzul:'
+    admin_deleted_work_notification:
+      bye: Îți trimitem în atașament o copie a lucrării tale, ca reper.
+      contact_abuse: contactează Comitetul de Politici și Abuz
+      html:
+        part1: Lucrarea ta %{title} a fost ștearsă din Arhivă de către un administrator
+          al site-ului.
+        part2: Dacă lucrarea ta făcea parte dintr-un proiect de importare gestionat
+          de echipa noastră Open Doors (Uși Deschise), te rugăm %{opendoors_link}
+          dacă ai întrebări suplimentare.
+        tos_violation: Dacă e posibil ca lucrarea ta să fi încălcat Termenii de Servicii
+          ai Arhivei, %{contact_abuse_link}.
+      opendoors: contactează Open Doors
+      subject: "[%{app_name}] Lucrarea ta a fost ștearsă de către un administrator"
+      text:
+        part1: Lucrarea ta %{title} a fost ștearsă din Arhivă de către un administrator
+          al site-ului.
+        part2: Dacă lucrarea ta făcea parte dintr-un proiect de importare gestionat
+          de echipa noastră Open Doors (Uși Deschise), te rugăm contactează Open Doors
+          (%{opendoors_link}) dacă ai întrebări suplimentare.
+        tos_violation: Dacă e posibil ca lucrarea ta să fi încălcat Termenii de Servicii
+          ai Arhivei, te rugăm contactează Comitetul de Politici și Abuz (%{contact_abuse_url}).
+    admin_hidden_work_notification:
+      access: Cât timp lucrarea ta este ascunsă, vei putea în continuare să o accesezi
+        prin link-ul furnizat mai sus, dar nu va fi listată pe pagina ta de lucrări
+        și nu va fi disponibilă pentru alți utilizatori ai AO3.
+      check_email: Te rugăm să îți verifici e-mailul, inclusiv folderul de spam, deoarece
+        este posibil ca echipa Politici și Abuz să te fi contactat deja, explicând
+        de ce lucrarea ta a fost ascunsă.
+      contact_abuse: să contactezi echipa de Politici și Abuz
+      html:
+        help: Dacă nu ești sigur/ă de ce lucrarea ta a fost ascunsă și nu ai fost
+          contactat/ă cu privire la această problemă, te rugăm %{contact_abuse_link}
+          direct.
+        hidden: Lucrarea ta %{title} a fost ascunsă de echipa de Politici și Abuz
+          și nu mai este accesibilă publicului.
+        tos_violation: Dacă lucrarea ta a fost ascunsă din cauza încălcării %{tos_link}
+          ai AO3, ți se va cere să iei măsuri pentru a corecta încălcarea. Dacă lucrarea
+          ta în continuare nu respecta Termenii de Servicii, acest lucru poate conduce
+          la ștergerea lucrării tale de pe AO3.
+      subject: "[%{app_name}] Lucrarea ta a fost ascunsă de echipa de Politici și
+        Abuz"
+      text:
+        help: Dacă nu ești sigur/ă de ce lucrarea ta a fost ascunsă și nu ai fost
+          contactat/ă cu privire la această problemă, te rugăm să contactezi echipa
+          de Politici și Abuz %{contact_abuse_url} direct.
+        hidden: Lucrarea ta "%{title}" (%{work_url}) a fost ascunsă de echipa de Politici
+          și Abuz și nu mai este accesibilă publicului.
+        tos_violation: Dacă lucrarea ta a fost ascunsă din cauza încălcării (%{tos_url})
+          ai AO3, ți se va cere să iei măsuri pentru a corecta încălcarea. Dacă lucrarea
+          ta în continuare nu respecta Termenii de Servicii, acest lucru poate conduce
+          la ștergerea lucrării tale de pe AO3.
+      tos: Termenilor de Servicii
+    anonymous_or_unrevealed_notification:
+      anonymous_info: Lucrările anonime sunt incluse pe listele generate de tag-uri,
+        dar nu și pe pagina ta de lucrări. Pe lucrare, numele tău de utilizator va
+        fi înlocuit cu "Anonymous" („Anonim”).
+      anonymous_unrevealed_info: Administratorii colecției pot dezvălui lucrarea ta
+        ulterior, dar sa o lase anonima. Persoanele care sunt abonate la pagina ta
+        nu vor primit notificare despre aceasta schimbare. Odată dezvăluită, lucrarea
+        va fi inclusă pe listele generate de tag-uri, dar nu și pe pagina ta de lucrări.
+        Pe lucrare numele tău de utilizator va fi înlocuit cu "Anonymous" (Anonim).
+      changed_status:
+        anonymous:
+          html: Administratorii colecției %{collection_link} au marcat ca anonim statusul
+            lucrării tale %{work_link}.
+          text: Administratorii colecției „%{collection_title}” (%{collection_url})
+            au schimbat statusul lucrării tale „%{work_title}” (%{work_url}) în anonimă.
+        anonymous_unrevealed:
+          html: Administratorii colecției %{collection_link} au marcat ca anonim și
+            nedezvăluit statusul lucrării tale %{work_link}.
+          text: Administratorii colecției „%{collection_title}” (%{collection_url})
+            au schimbat statusul lucrării tale „%{work_title}” (%{work_url}) în anonimă
+            și nedezvăluită.
+        unrevealed:
+          html: Administratorii colecției %{collection_link} au marcat ca nedezvăluit
+            statusul lucrării tale %{work_link}.
+          text: Administratorii colecției „%{collection_title}” (%{collection_url})
+            au schimbat statusul lucrării tale „%{work_title}” (%{work_url}) în nedezvăluită.
+      collection_items_link_text: pagina Approved Collection Items (Lucrări Aprobate
+        pentru Colecții)
+      do_not_want:
+        anonymous:
+          html: Dacă nu dorești ca lucrarea ta să fie anonimă, te rugăm vizitează
+            %{collection_items_link} pentru a o șterge din aceasta colecție.
+          text: 'Dacă nu dorești ca lucrarea ta să fie anonimă, te rugăm vizitează
+            pagina Approved Collection Items (Lucrări Aprobate pentru Colecții) pentru
+            a o șterge din aceasta colecție: %{collection_items_url}'
+        anonymous_unrevealed:
+          html: Dacă nu dorești ca lucrarea ta să fie nedezvăluită și anonimă, te
+            rugăm vizitează %{collection_items_link} pentru a o șterge din aceasta
+            colecție
+          text: 'Dacă nu dorești ca lucrarea ta să fie nedezvăluită și anonimă, te
+            rugăm vizitează pagina Approved Collection Items (Lucrări Aprobate pentru
+            Colecții) pentru a o șterge din aceasta colecție: %{collection_items_url}'
+        unrevealed:
+          html: Dacă nu dorești ca lucrarea ta să fie nedezvăluită, te rugăm vizitează
+            %{collection_items_link} pentru a o șterge din aceasta colecție.
+          text: 'Dacă nu dorești ca lucrarea ta să fie nedezvăluită, te rugăm vizitează
+            pagina Approved Collection Items (Lucrări Aprobate pentru Colecții) pentru
+            a o șterge din aceasta colecție: %{collection_items_url}'
+      faq_link_text: Întrebări Frecvente despre Colecții
+      more_info:
+        html: Pentru mai multe informații vizitează %{faq_link}.
+        text: 'Pentru mai multe informații vizitează Întrebări Frecvente despre Colecții:
+          %{faq_url}'
+      subject:
+        anonymous: "[%{app_name}] Lucrarea ta a fost marcată ca anonimă"
+        anonymous_unrevealed: "[%{app_name}] Lucrarea ta a fost marcată ca anonimă
+          și nedezvăluită"
+        unrevealed: "[%{app_name}] Lucrarea ta a fost marcată ca nedezvăluită"
+      unrevealed_info: Lucrările nedezvăluite nu sunt incluse pe listele generate
+        de tag-uri sau pe pagina ta de lucrări. Oricine folosește un link către lucrare
+        va primi o notificare că nu este dezvăluită în prezent și nu va putea accesa
+        conținutul acesteia.
+    challenge_assignment_notification:
+      any: Oricare
+      description: 'Descriere:'
+      due: 'Aceasta sarcină trebuie îndeplinită până pe:'
+      html:
+        footer: Ai primit acest email pentru că te-ai înscris în provocarea %{title}.
+          Pentru mai multe detalii despre această provocare și detaliile de contact
+          ale moderatorilor/ moderatoarelor, te rugăm să accesezi %{footer_link}.
+        footer_link: pagina de profil a provocării
+        look_up: Poți să verifici această sarcină pe %{link}.
+        look_up_link: pagina ta de Assignments (Sarcini)
+        part1: Ai primit sarcina de mai jos în provocarea %{link} pe AO3!
+      optional_tags: 'Tag-uri opționale:'
+      prompts: 'Sugestii:'
+      prompt_url: 'Link pentru sugestie:'
+      recipient: 'Destinatar:'
+      recipient_missing: 'Nici unul/ una: contactează un moderator/ o moderatoare
+        pentru ajutor!'
+      subject: "[%{app_name}][%{collection_title}] Sarcina ta!"
+      text:
+        assignment: Ai primit sarcina de mai jos în provocarea "%{collection_title}"
+          (%{collection_url}) pe AO3!
+        footer: Ai primit acest email pentru că te-ai înscris în provocarea %{title}
+          (%{url}). Pentru mai multe detalii despre această provocare și detaliile
+          de contact ale moderatorilor/ moderatoarelor, te rugăm să accesezi %{profile_url}.
+        look_up: Poți să verifici această sarcină pe pagina ta de Assignments (Sarcini),
+          accesând %{link}.
+    change_email:
+      part1: "%{login}, adresa de e-mail asociată cu contul tău a fost schimbată la
+        %{email}"
+      subject: "[%{app_name}] Adresa de e-mail schimbată"
+    collection_notification:
+      assignments_sent:
+        complete: Toate sarcinile au fost acum trimise.
+        subject: Sarcinile au fost trimise
+      html:
+        received_message: 'Ai primit un mesaj despre colecția ta %{collection_link}:'
+      text:
+        received_message: 'Ai primit un mesaj despre colecția ta "%{collection_title}"
+          (%{collection_url}):'
+    creatorship_notification:
+      explanation: Când apari drept co-creator/ co-creatoare la o lucrare, poți fi
+        adăugat(ă) la capitole noi, indiferent de setările tale pentru co-creator.
+        De asemenea, vei fi adăugat(ă) la orice serie la care se adaugă lucrarea.
+      html:
+        creation: "%{creation_link} de %{pseud_links}"
+        edit_chapter: edita capitolul
+        edit_series: edita seria
+        remove_chapter: Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          drept creator/ creatoare, poți %{edit_chapter_link} pentru a te scoate de
+          pe lista de creatori.
+        remove_series: Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          drept creator/ creatoare, poți %{edit_series_link} pentru a te scoate de
+          pe lista de creatori.
+      intro_chapter: 'Utilizatorul/ utilizatoarea %{adding_user} a adăugat pseudonimul
+        tău %{pseud} drept co-creator/ co-creatoare la următorul capitol:'
+      intro_series: 'Utilizatorul/ utlizatoarea %{adding_user} a adăugat pseudonimul
+        tău %{pseud} drept co-creator/ co-creatoare la următoarea serie:'
+      subject: "[%{app_name}] Notificare co-creator/ co-creatoare"
+      text:
+        creation: "%{title} (%{url}) de %{pseuds}"
+        remove_chapter: 'Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          drept creator/ creatoare, poți edita capitolul pentru a te scoate de pe
+          lista de creatori: %{url}'
+        remove_series: 'Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          drept creator/ creatoare, poți edita seria pentru a te scoate de pe lista
+          de creatori: %{url}'
+    creatorship_notification_archivist:
+      explanation: Deoarece își exercită capacitatea oficială de arhivar al Uși Deschise,
+        poate să te adauge fără invitație, chiar dacă ai funcția de co-creație dezactivată.
+      html:
+        creation: "%{creation_link} de %{pseud_links}"
+        edit_chapter: editezi capitolul
+        edit_series: editezi seria
+        edit_work: editezi lucrarea
+        remove_chapter: Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          pe lista de creatori, poți să %{edit_chapter_link} pentru a te elimina din
+          lista de creatori.
+        remove_series: Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          pe lista de creatori, poți să %{edit_series_link} pentru a te elimina din
+          lista de creatori.
+        remove_work: Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          pe lista de creatori, poți să %{edit_work_link} pentru a te elimina din
+          lista de creatori.
+      intro_chapter: 'Utilizatorul %{archivist} ți-a adăugat pseudonimul %{pseud}
+        drept co-creator la următorul capitol:'
+      intro_series: 'Utilizatorul %{archivist} ți-a adăugat pseudonimul %{pseud} drept
+        co-creator la următoarea serie:'
+      intro_work: 'Utilizatorul %{archivist} ți-a adăugat pseudonimul %{pseud} drept
+        co-creator la următoarele lucrări:'
+      subject: "[%{app_name}] Notificare de co-creator de la arhivar"
+      text:
+        creation: "%{title} (%{url}) de %{pseuds}"
+        remove_chapter: 'Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          pe lista de creatori, poți să editezi capitolul pentru a te elimina din
+          lista de creatori: %{url}'
+        remove_series: 'Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          pe lista de creatori, poți să editezi seria pentru a te elimina din lista
+          de creatori: %{url}'
+        remove_work: 'Dacă ai fost adăugat(ă) din greșeală sau nu dorești să apari
+          pe lista de creatori, poți să editezi lucrarea pentru a te elimina din lista
+          de creatori: %{url}'
+    creatorship_request:
+      html:
+        creation: "%{creation_link} de %{pseud_links}"
+        instructions: Poți să accepți sau să respingi această cerere pe pagina ta
+          de %{page_name}
+        page_name: Co-Creator Requests (Cerere de co-creator/ co-creatoare)
+      intro_chapter: 'Utilizatorul/ utilizatoarea %{inviting_user} a invitat pseudonimul
+        tău %{pseud} să fie adaugat la lista de co-creatori/ co-creatoare pentru capitolul
+        următor:'
+      intro_series: 'Utilizatorul/ utilizatoarea %{inviting_user} a invitat pseudonimul
+        tău%{pseud} să fie adaugat la lista de co-creatori/ co-creatoare pentru seria
+        următoare:'
+      intro_work: 'Utilizatorul/ utilizatoarea %{inviting_user} a invitat pseudonimul
+        tău %{pseud} să fie adaugat la lista de co-creatori/ co-creatoare pentru lucrarea
+        următoare:'
+      subject: "[%{app_name}] Cerere de co-creator/ co-creatoare"
+      text:
+        creation: "%{title} (%{url}) de %{pseuds}"
+        instructions: Poți să accepți sau să respingi această cerere pe pagina de
+          Co-Creator Requests (Cereri de co-creator) %{url}
+    delete_work_notification:
+      html:
+        part1_other: Lucrarea ta %{title} a fost ștearsă la cererea lui %{pseud}.
+        part1_yourself: Lucrarea ta %{title} a fost ștearsă la cererea ta.
+        part2: Dacă ai întrebări, te rugăm %{support}.
+      part3: Atașată este o copie a lucrării tale ca și referință.
+      subject: "[%{app_name}] Lucrarea ta a fost ștearsă"
+      support: să contactezi echipa de Suport Tehnic
+      text:
+        part1_other: Lucrarea ta "%{title}" a fost ștearsă la cererea lui %{pseud}.
+        part1_yourself: Lucrarea ta "%{title}" a fost ștearsă la cererea ta.
+        part2: Dacă ai întrebări, te rugăm %{support} (%{url}).
+    invitation_to_claim:
+      html:
+        ao3_news: Știri AO3
+        contact_open_doors: să contactezi Uși Deschise
+        contact_support: să contactezi echipa de Suport Tehnic AO3
+        faq_page: pagina Întrebări Frecvente
+        open_doors: Open Doors (Uși Deschise)
+        part5: Revendică sau șterge-ți lucrările aici.
+        tutorial_page: pagina de tutorial
+      part12: Dacă ne contactezi, te rugăm să adaugi adresele de e-mail de la @transformativeworks.org
+        la lista ta autorizată și să verifici folderele de spam pentru a găsi răspunsul
+        de la noi.
+      part6: 'Lucrările încărcate includ:'
+      part8: 'Pentru a păstra listele de recomandări sau semnele de carte, adresele
+        web ale arhivei importate pot redirecționa către copia importată a acestor
+        lucrări doar pentru o perioadă limitată de timp (verifică postarea anunțului
+        pentru arhiva ta ca să te asiguri). Dacă ai încărcat deja o copie a acestor
+        lucrări și NU ai folosit funcția de importare din URL, vor exista două copii
+        ale aceleiași lucrări în arhivă. '
+      subject: "[%{app_name}] Invitație de a revendica lucrări"
+      text:
+        part1: Ai primit acest e-mail pentru că o arhivă a fost importată recent de
+          către Open Doors (Uși Deschise) (%{open_doors_link}) în %{app_name} (%{app_short_name}
+          - %{app_url}) și considerăm că următoarele lucrări îți aparțin. Dorim să
+          îți oferim opțiunea de a revendica (sau șterge/abandona) aceste lucrări,
+          dacă vrei. Și dacă nu ai deja un cont înregistrat pe o adresă de e-mail
+          diferită, dorim să te invităm la bord!
+        part10: Dacă ai în arhiva importată alte lucrări înregistrate cu adrese de
+          e-mail pe care nu le mai poți accesa, te rugăm să contactezi Uși Deschise
+          și să furnizezi orice informație care ne poate ajuta să-ți verificăm identitatea.
+        part11: Pentru alte întrebări, te rugăm contactează echipa de Suport Tehnic
+          AO3 la %{support_link}.
+        part2: Poți citi anunțuri despre mutări recente ale arhivelor la Știri AO3
+          (%{news_link}) și informații suplimentare pe pagina Întrebări Frecvente
+          (%{open_doors_faq_link}) sau pagina de tutoriale (%{open_doors_tutorial_link})
+          ale Uși Deschise. Pentru orice întrebări care nu sunt incluse în Întrebările
+          Frecvente, tutoriale sau în acest e-mail, te rugăm  să contactezi echipa
+          de Suport Tehnic AO3 la %{support_link}.
+        part3: Dacă am greșit și aceste lucrări nu îți aparțin, te rugăm să nu le
+          ștergi! Te rugăm doar să contactezi Uși Deschise (%{open_doors_link}) și
+          ne vom ocupa noi de ele.
+        part4: În funcție de arhivă, este posibil ca lucrările tale să fi fost importate
+          în așa fel încât să fie accesibile numai utilizatorilor înregistrați (pentru
+          a le păstra în afara căutărilor Google). În cazul acesta, lucrările vor
+          putea fi accesate doar de către utilizatorii conectați, dacă nu alegi să
+          le faci vizibile pentru oricine. Pentru ajutor cu deblocarea, abandonarea
+          sau ștergerea lucrărilor tale, te rugăm să contactezi echipa de Suport Tehnic
+          AO3.
+        part5: 'Revendică sau șterge-ti lucrările aici: %{claim_url}'
+        part7: Dacă aceste lucrări îți aparțin, dar nu le vrei, le poți abandona (vor
+          rămâne pe AO3, dar numele tău va fi șters) sau șterge (vor fi înlăturate
+          complet de pe AO3). Nu trebuie să adaugi aceste lucrări la niciun cont ca
+          să le abandonezi sau să le ștergi--poți să faci acest lucru direct prin
+          accesarea link-ului de revendicare de mai sus. (Pentru ajutor, te rugăm
+          să contactezi echipa de Suport Tehnic AO3 la %{support_link}.)
+        part9: Dacă dorești ca Uși Deschise să actualizeze redirecționarea către lucrările
+          tale existente, te rugăm să ștergi copia importată și să contactezi Uși
+          Deschise la %{open_doors_link} cu numele contului tău de pe AO3, numele
+          contului tău în arhiva importată și titlul și URL-ul lucrării către care
+          ți-ai dori să se facă redirecționarea. (Dacă ai mai multe lucrări la care
+          dorești să schimbi redirecționările, le poți lista pe toate într-un singur
+          e-mail.)
+    invite_increase_notification:
+      body:
+        few: Vrem să te anunțăm că ai %{count} invitații noi care pot fi folosite
+          pentru a crea conturi noi de arhivă. Poți invita un prieten accesând %{invitation_page}.
+        one: Vrem să te anunțăm că ai %{count} invitație nouă care poate fi folosită
+          pentru a crea un cont nou de arhivă. Poți invita un prieten accesând %{invitation_page}.
+        other: Vrem să te anunțăm că ai %{count} de invitații noi care pot fi folosite
+          pentru a crea conturi noi de arhivă. Poți invita un prieten accesând %{invitation_page}.
+      invitation_page_link_text: pagina ta de Invitations (Invitații)
+      subject: "[%{app_name}] Invitații noi"
+    invite_request_declined:
+      main:
+        few: Te informăm cu regret că solicitarea pentru %{count} invitații noi nu
+          poate fi procesată pentru moment.
+        one: Te informăm cu regret că solicitarea pentru o nouă invitație nu poate
+          fi procesată pentru moment.
+        other: Te informăm cu regret că solicitarea pentru %{count} de invitații noi
+          nu poate fi procesată pentru moment.
+      reason: 'Solicitarea ta a fost:'
+      subject: "[%{app_name}] Solicitarea pentru codul de invitație suplimentar a
+        fost respinsă"
+    recipient_notification:
+      html:
+        collection: O lucrare cadou a fost postată pentru tine în colecția %{collection_link}
+          pe AO3!
+      no_collection: O lucrare cadou a fost postată pentru tine pe AO3!
+      subject:
+        collection: "[%{app_name}][%{collection_title}] O lucrare cadou pentru tine
+          de la %{collection_title}"
+        no_collection: "[%{app_name}] O lucrare cadou pentru tine"
+      text:
+        collection: O lucrare cadou a fost postată pentru tine în colecția „%{collection_title}"
+          (%{collection_url}) pe AO3!
+    signup_notification:
+      activate_your_account: să accesezi acest link pentru a-ți activa contul.
+      admin_posts: Știri AO3
+      bye: Sperăm că o să-ți facă plăcere să folosești Arhiva.
+      contact_support: iei legătura cu echipa de Suport Tehnic
+      faq: Întrebări Frecvente
+      html:
+        part1: Te rugăm %{activate_account_link}.
+        part2: După ce contul tău a fost înființat și funcționează, poți să postezi
+          lucrările tale de fan, să îți stabilești notificări pe e-mail pentru a fi
+          înștiințat/-ă când creatorii sau lucrările tale preferate au fost actualizate,
+          să îți definești preferințele pentru a personaliza modul în care site-ul
+          arată și funcționează pentru tine, să ții evidența lucrărilor pe care le-ai
+          accesat pe arhivă prin intermediul istoricului tău și multe altele.
+        part3: Găsești mai multe informații și sfaturi despre cum să folosești Arhiva
+          în secțiunea  %{faq_link} și cele mai recente știri despre  îmbunătățirile
+          aduse site-ului în %{admin_posts_link}. Dacă ai nevoie de mai mult ajutor,
+          sau ai descoperit ceva ce nu merge sau dacă ai întrebări sau comentarii,
+          te rugăm să %{contact_support_link}, care este oricând dornică să ajute.
+      text:
+        part1: 'Te rugăm să accesezi acest link pentru a-ți activa contul: %{activate_account_url}'
+        part2: După ce contul tău a fost înființat și funcționează, poți să postezi
+          lucrările tale de fan, să îți stabilești notificări pe e-mail pentru a fi
+          înștiințat/-ă când creatorii sau lucrările tale preferate au fost actualizate,
+          să îți definești preferințele pentru a personaliza modul în care site-ul
+          arată și funcționează pentru tine, să ții evidența lucrărilor pe care le-ai
+          accesat pe AO3 prin intermediul istoricului tău și multe altele.
+        part3: 'Găsești mai multe informații și sfaturi despre cum să folosești Arhiva
+          în secțiunea %{faq_url} și cele mai recente știri despre  îmbunătățirile
+          aduse site-ului în secțiunea de Știri AO3: %{admin_posts_url}. Dacă ai nevoie
+          de mai mult ajutor, sau ai descoperit ceva ce nu merge sau dacă ai întrebări
+          sau comentarii, te rugăm să contactezi echipa de Suport Tehnic, care este
+          oricând dornică să ajute: %{contact_support_url}.'
+      welcome: Bine ai venit pe Archive of Our Own, %{login}!

@@ -1,0 +1,260 @@
+/*  IE_CONDITION: IE6 */
+
+/*http://otwcode.github.com/docs/front_end_coding/debugging-ie*/
+
+#header {
+  z-index: 200;
+}
+
+#header .logo {
+  float: none;
+}
+
+#header .navigation .dropdown, #header .navigation .dropdown .menu li {
+  border: none;
+  display: block;
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+#header .primary li:first-child {
+  margin-left: 0;
+}
+
+#header #greeting .navigation .dropdown:hover .menu, #header #greeting .open .menu {
+  left: auto;
+  right: 0;
+  top: 1.715em;
+}
+
+#header .navigation .dropdown:hover .menu, #header .open .menu {
+  position: absolute;
+  top: 2.13em;
+  left: 0;
+}
+
+#header .navigation .dropdown .menu li {
+  border-bottom: 1px solid #888;
+  float: none;
+}
+
+#main {
+  z-index: 198;
+}
+
+/*emphasis */
+
+h1, h2, h3, h4, h5, h6, #header .navigation a {
+  font-weight: bold;
+}
+
+/*ie6 links not buttons */
+
+.actions a:hover {
+  background: #eee;
+  border: 0;
+  border-bottom: 1px solid;
+}
+
+#header .actions a {
+  color: #fff;
+  background: #900;
+}
+
+/* stacking */
+
+.own {
+  z-index: -30;
+}
+
+form.filters {
+  z-index: -50;
+}
+
+.index .user {
+  z-index: 20;
+}
+
+/*inheritance */
+
+form dl.meta {
+  width: 100%;
+  display: inline;
+}
+
+form .meta dt {
+  float: left;
+  clear: left;
+  width: 25%;
+  padding: 0.25em 0.5625em 0 0;
+  border-bottom: 1px solid #f3efec;
+}
+
+form .meta dd {
+  float: left;
+  width: 72.5%;
+}
+
+/*margin/padding quirks */
+
+span.question {
+  font-size: 90%;
+  padding: 0;
+  vertical-align: baseline;
+}
+
+/*hL*/
+
+form.filters {
+  position: relative;
+}
+
+.index .user, .index .blurb .heading, .actions a, li.blurb, li.comment, #main, .header, ul.media, form fieldset.preface dl, textarea {
+  zoom: 1;
+}
+
+/*transparency */
+
+p.kudos {
+  background: url("/images/legacy/kudos-legacy.png") top left no-repeat;
+}
+
+/*NOTE: at some point please swap this image into the a so it's clickable */
+
+
+#outer .landmark {
+  color: #900;
+}
+
+#inner .landmark {
+  color: #fff;
+}
+
+/*min-height */
+
+.home .primary {
+  height: 120px;
+}
+
+.titles {
+  height: 70px;
+}
+
+.blurb .header {
+  height: 55px;
+}
+
+.bookmark .picture .header {
+  height: 25px;
+}
+
+textarea {
+  height: 12em;
+}
+
+#main media-index li.medium {
+  height: 17.5em;
+}
+
+/*baseline*/
+
+input, select, option, textarea, legend, label {
+  vertical-align: middle;
+}
+
+/*explicit widths */
+
+input {
+  width: auto!important;
+}
+
+input.text, textarea, select, .filters dt {
+  width: 100% !important;
+}
+
+#header input, .dashboard .filters dt {
+  width: auto!important;
+}
+
+/*float/clear */
+
+form .preface {
+  overflow: hidden;
+}
+
+.dashboard .sorting ul, .dashboard .sorting ul li {
+  float: left;
+}
+
+form .preface dd {
+  display: inline;
+}
+
+/*linearise dashboard */
+
+#dashboard {
+  width: auto;
+  float: none;
+  margin: 1.5em;
+  padding: 0 0.5625em;
+  overflow: hidden;
+}
+
+#dashboard ul.navigation, #dashboard ul {
+  background: #fff;
+  width: 8.5em;
+  height: 12em;
+  padding: 0.5em;
+  margin: 0.25em;
+  float: left;
+  text-align: justify;
+  border: 2px solid #ddd;
+}
+
+#dashboard .landmark {
+  clear: none;
+}
+
+#main.dashboard {
+  width: auto;
+  margin: auto !important;
+}
+
+/*javascript patch for slow-hiding secondary*/
+
+.works-show .secondary {
+  top: 3em;
+}
+
+/*calc*/
+
+.index .listbox .index {
+  position: static;
+  overflow: visible;
+}
+
+ul.media, li.medium .index, .alphabet .listbox li {
+  float: none !important;
+}
+
+#main li.medium, #main .alphabet .index li {
+  width: auto !important;
+  float: none !important;
+  clear: none;
+  margin: auto !important;
+}
+
+/*font fallbacks for icons*/
+
+span.replied. span.unreviewed, .actions a, .action, .symbol {
+  font-family: 'Arial Unicode MS', 'Lucida Grande Unicode', Arial, sans-serif;
+}
+
+/*hL clearfixes
+                test note: these were put in last minute so might need redoing
+                http://www.stuffandnonsense.co.uk/archives/clearing_floats_without_structural_markup_in_ie7.html*/
+
+.group {
+  zoom: 1;
+}

@@ -1,0 +1,18 @@
+<h3 class="heading"><%= ts('Remove Link') %></h3>
+
+<p>
+  <%= ts('Would you like to remove the link from your work') %>
+  <%= link_to(related_work.parent.title.html_safe, related_work.parent) %>
+  <%= ts("to") %>
+  <%= link_to(related_work.work.title.html_safe, related_work.work) %>
+  <%= ts("by") %>
+  <%= byline(related_work.work) %>?
+</p>
+
+<p><%= ts('(You can come back to this page if you change your mind.)') %></p>
+
+<%= form_for(related_work) do |f| %>
+  <p class="submit actions">
+    <%= f.submit ts("Remove link") %>
+  </p>
+<% end %>

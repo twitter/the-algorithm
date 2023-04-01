@@ -1,0 +1,71 @@
+<h3>
+  <%=ts("Reviewing Assignments") %> 
+  <% if params[:no_potential_recipients] %>
+    <%=ts("With No Potential Recipients") %> 
+  <% elsif params[:no_potential_givers] %>
+    <%=ts("With No Potential Givers") %> 
+  <% elsif params[:no_recipient] %>
+    <%=ts("With No Recipient Assigned") %> 
+  <% elsif params[:no_giver] %>
+    <%=ts("With No Giver Assigned") %> 
+  <% elsif params[:dup_giver] %>
+    <%=ts("With The Same Giver Assigned More Than Once") %> 
+  <% elsif params[:dup_recipient] %>
+    <%=ts("With The Same Recipient Assigned More Than Once") %> 
+  <% end %>
+  <%= link_to_help "challenge-matching-assignments" %>
+</h3>
+
+<p class="note">
+  <% if params[:no_potential_recipients] %>
+    <%=ts("No one wants what they're offering! You must edit their signup before you can assign them to give to anyone.") %> 
+  <% elsif params[:no_potential_givers] %>
+    <%=ts("No one can give what they want! You must either edit their signup or write-in a volunteer giver.") %> 
+  <% elsif params[:no_recipient] %>
+    <%=ts("You can double-assign recipients or shuffle around the completed assignments to match everyone off.") %> 
+  <% elsif params[:no_giver] %>
+    <%=ts("You can write-in givers or shuffle around the completed assignments to match everyone off.") %> 
+  <% elsif params[:dup_giver] %>
+    <%=ts("These may not be a problem as long as the givers are willing to get more than one assignment, 
+            but you may want to put their name into the write-in field for all but their one official assignment.") %> 
+  <% elsif params[:dup_recipient] %>
+    <%=ts("These are most likely not a problem: these recipients will simply get more than one gift.") %> 
+  <% else %>
+    
+  <% end %>
+</p>
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><h4 class="heading"><%= ts("Assignments:") %></h4></li> 
+  <% if @assignments_with_no_potential_recipients.present? %>
+    <li><%= span_if_current ts("No Potential Recipients"), collection_potential_matches_path(@collection, no_potential_recipients: true) %></li>
+  <% end %>
+  <% if @assignments_with_no_potential_givers.present? %>
+    <li><%= span_if_current ts("No Potential Givers"), collection_potential_matches_path(@collection, no_potential_givers: true)%></li>
+  <% end %>
+  <% if @collection.assignments.with_offer.with_no_request.count > 0 %>
+    <li><%= span_if_current ts("No Recipient"), collection_potential_matches_path(@collection, no_recipient: true) %></li>
+  <% end %>
+  <% if @collection.assignments.with_request.with_no_offer.count > 0 %>
+    <li><%= span_if_current ts("No Giver"), collection_potential_matches_path(@collection, no_giver: true) %></li>
+  <% end %>
+  <% if ChallengeAssignment.duplicate_givers(@collection).count > 0 %>
+    <li><%= span_if_current ts("Duplicate Givers"), collection_potential_matches_path(@collection, dup_giver: true) %></li>
+  <% end %>
+  <% if ChallengeAssignment.duplicate_recipients(@collection).count > 0 %>
+    <li><%= span_if_current ts("Duplicate Recipients"), collection_potential_matches_path(@collection, dup_recipient: true) %></li>
+  <% end %>
+  <% if @collection.assignments.with_request.with_offer.count > 0 %>
+    <li><%= span_if_current ts("Complete"), collection_potential_matches_path(@collection, complete: true) %></li>
+  <% end %>
+</ul>
+<!--/subnav-->
+
+<% if params[:no_potential_recipients] %>
+  <%= render "no_potential_recipients" %>
+<% elsif params[:no_potential_givers] %>
+  <%= render "no_potential_givers" %>
+<% else %>
+  <%= render "potential_matches/assignments" %>
+<% end %>

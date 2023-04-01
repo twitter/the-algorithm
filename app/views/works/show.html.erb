@@ -1,0 +1,78 @@
+<!--page description, messages-->
+<ul class="landmark skip">
+  <li><a name="top">&nbsp;</a></li>
+  <li><a href="#work"><%= ts("Skip header") %></a></li>
+</ul>
+<% if !@work.posted? %>
+  <p class="notice">
+    <%= ts("This work is a draft and has not been posted. The draft will be") %> <strong><%= ts("automatically deleted") %></strong> <%= ts("on") %> <%= time_in_zone(@work.created_at + 1.month) %>
+  </p>
+<% end %>
+<% if @work.unrevealed? %>
+  <%= render "works/work_unrevealed_notice" %>
+<% end %>
+<% if @work.user_has_creator_invite?(current_user) %>
+  <p class="notice">
+    <%= ts("You've been invited to become a co-creator of this work. To accept or reject the request, visit your %{creator_requests_page}.",
+           creator_requests_page: link_to(ts("Co-Creator Requests page"), user_creatorships_path(current_user))).html_safe %>
+  </p>
+<% end %>
+
+<!--/descriptions-->
+
+<!--subnav-->
+<% if policy(@work).show_admin_options? %>
+  <%= render "admin/admin_options", item: @work %>
+<% end %>
+<!--/subnav-->
+
+<!-- BEGIN revealed -->
+<% if !@work.unrevealed? || logged_in_as_admin? || can_access_unrevealed_work(@work, current_user) %>
+<!-- BEGIN work -->
+<!--work description, metadata, notes and messages-->
+  <%= render partial: 'works/work_header' %>
+<!--/descriptions-->
+
+<!--chapter content-->
+    <div id="chapters" role="article">
+      <% if @chapters %>
+        <% for chapter in @chapters %>
+          <%= render 'chapters/chapter', chapter: chapter %>
+        <% end %>
+      <% else %>
+        <h3 class="landmark heading" id="work"><%= ts("Work Text:") %></h3>
+        <% cache("#{@chapter.cache_key}-show-content", skip_digest: true) do %>
+          <div class="userstuff"><%=raw sanitize_field(@chapter, :content) %></div>
+        <% end %><!-- end cache -->
+      <% end %>
+    </div>
+<!--/chapter-->
+
+    <% inspired_by = get_inspired_by(@work) %>
+    <% if !@work.endnotes.blank? || !@work.series.blank? || !inspired_by.empty? %>
+    <!--afterword-->
+    <div class="afterword preface group" role="complementary">
+      <% unless @work.endnotes.blank? %>
+        <%= render :partial => 'works/work_endnotes' %>
+      <% end %>
+      <% unless @work.series.blank? %>
+        <%= render :partial => 'works/work_series_links' %>
+      <% end %>
+      <% unless inspired_by.empty? %>
+        <%= render :partial => 'works/work_approved_children', :locals => {:inspired_by => inspired_by} %>
+      <% end %>
+    </div>
+    <!--/afterword-->
+    <% end %>
+
+  </div>
+  <!-- END work skin -->
+<!-- END work -->
+
+<!-- BEGIN comment section -->
+<%= render 'comments/commentable', :commentable => @work %>
+<!-- END comment section -->
+<% end %>
+<!-- END revealed -->
+
+<%= render "hit_count/include" %>

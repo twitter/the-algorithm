@@ -1,0 +1,207 @@
+---
+mr:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'प्रमाणीकरण अयशस्वी: %{errors}'
+        restrict_dependent_destroy:
+          has_one: अवलंबून %{record} अस्तित्वात असल्याने रेकॉर्ड हटवू शकत नाही
+          has_many: अवलंबून %{record} अस्तित्वात असल्याने रेकॉर्ड हटवू शकत नाही
+  date:
+    abbr_day_names:
+    - सोम
+    - मंगळ
+    - बुध
+    - गुरु
+    - शुक्र
+    - शनि
+    - रवि
+    abbr_month_names:
+    -
+    - जाने
+    - फेब्रु
+    - मार्च
+    - एप्रि
+    - मे
+    - जून
+    - जुलै
+    - ऑग
+    - सेप्टें
+    - ऑक्टोबर
+    - नोव्हें
+    - डिसे
+    day_names:
+    - सोमवार
+    - मंगळवार
+    - बुधवार
+    - गुरुवार
+    - शुक्रवार
+    - शनिवार
+    - रविवार
+    formats:
+      default: "%d-%m-%Y"
+      long: "%d %B %Y"
+      short: "%d %b"
+    month_names:
+    -
+    - जानेवारी
+    - फेब्रुवारी
+    - मार्च
+    - एप्रिल
+    - मे
+    - जून
+    - जुलै
+    - ऑगस्ट
+    - सप्टेंबर
+    - ऑक्टोबर
+    - नोव्हेंबर
+    - डिसेंबर
+    order:
+    - :day
+    - :month
+    - :year
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: सुमारे एक तास
+        other: सुमारे %{count} तास
+      about_x_months:
+        one: सुमारे 1 महीना
+        other: सुमारे %{count} महिना
+      about_x_years:
+        one: सुमारे 1 वर्ष
+        other: सुमारे %{count} वर्ष
+      almost_x_years:
+        one: जवळजवळ एक वर्ष
+        other: जवळजवळ %{count} वर्ष
+      half_a_minute: अर्धा मिनिट
+      less_than_x_seconds:
+        one: एक सेकंद पेक्षा कमी
+        other: "%{count} सेकंद पेक्षा कमी"
+      less_than_x_minutes:
+        one: एका मिनिटापेक्षा कमी
+        other: "%{count} मिनिटापेक्षा कमी"
+      over_x_years:
+        one: एका वर्षापेक्षा जास्त काळ
+        other: "%{count} वर्षापेक्षा जास्त काळ"
+      x_seconds:
+        one: एक सेकंद
+        other: "%{count} सेकंद"
+      x_minutes:
+        one: एक मिनिट
+        other: "%{count} मिनिट"
+      x_days:
+        one: एक दिवस
+        other: "%{count} दिवस"
+      x_months:
+        one: एक महिना
+        other: "%{count} महिना"
+    prompts:
+      second: सेकंद
+      minute: मिनिट
+      hour: तास
+      day: दिवस
+      month: महिना
+      year: वर्ष
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: मान्य केले पाहिजे
+      blank: रिक्त ठेवता येणार नाही
+      confirmation: "%{attribute} जुळत नाही"
+      empty: रिक्त असू शकत नाही
+      equal_to: "%{count} समान असणे आवश्यक"
+      even: समांक असणे आवश्यक आहे
+      exclusion: राखीव आहे
+      greater_than: "%{count} पेक्षा जास्त असणे आवश्यक आहे"
+      greater_than_or_equal_to: "%{count} पेक्षा मोठे किंवा समान असणे आवश्यक आहे"
+      inclusion: यादीत समाविष्ट नाही
+      invalid: अवैध आहे
+      less_than: "%{count} पेक्षा कमी असणे आवश्यक"
+      less_than_or_equal_to: "%{count} पेक्षा कमी किंवा समान असणे आवश्यक आहे"
+      not_a_number: क्रमांक नाही
+      not_an_integer: पूर्णांक असणे आवश्यक आहे
+      odd: विषम संख्या असणे आवश्यक आहे
+      other_than: "%{count} पेक्षा इतर असणे आवश्यक आहे"
+      present: रिक्त असणे आवश्यक आहे
+      taken: यापूर्वीच घेतले गेले आहे
+      too_long:
+        one: खूप लांब आहे (जास्तीत जास्त एक वर्ण परवानगी आहे)
+        other: खूप लांब आहे (जास्तीत जास्त %{count} वर्ण परवानगी आहे)
+      too_short:
+        one: खूप लहान आहे (किमान एक वर्ण परवानगी आहे)
+        other: खूप लहान आहे (किमान %{count} वर्ण परवानगी आहे)
+      wrong_length:
+        one: लांबी चुक आहे (एक वर्ण असणे आवश्यक आहे)
+        other: लांबी चुक आहे (%{count} वर्ण असणे आवश्यक आहे)
+    template:
+      body: 'खालील फील्ड सह समस्या होते:'
+      header:
+        one: एक चूक ह्या %{model} ला जतन करण्यापासून प्रतिबंधित करत आहे
+        other: "%{count} चुका ह्या %{model} ला जतन करण्यापासून प्रतिबंधित करत आहे"
+  helpers:
+    select:
+      prompt: कृपया निवडा
+    submit:
+      create: "%{model} निर्माण करा"
+      submit: "%{model} जतन करा"
+      update: "%{model} अद्यतनित करा"
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%u%n"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "₹"
+    format:
+      delimiter: ","
+      precision: 3
+      separator: "."
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: अब्ज
+          million: दशलक्ष
+          quadrillion: एकावर १५ शून्य इतकी संख्या
+          thousand: हजार
+          trillion: एकावर १२ शून्ये इतकी संख्या
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          gb: GB
+          kb: KB
+          mb: MB
+          tb: TB
+    percentage:
+      format:
+        delimiter: ''
+    precision:
+      format:
+        delimiter: ''
+  support:
+    array:
+      last_word_connector: ", आणि "
+      two_words_connector: " आणि "
+      words_connector: ", "
+  time:
+    am: म.पू.
+    formats:
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      long: "%d %B %Y %H:%M"
+      short: "%d %b %H:%M"
+    pm: म.नं.

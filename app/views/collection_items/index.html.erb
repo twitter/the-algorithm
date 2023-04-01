@@ -1,0 +1,47 @@
+<!--Descriptive page name, messages and instructions-->
+<% if @user %>
+  <h2 class="heading"><%= ts("Items by %{login} in Collections", :login => @user.login) %></h2>
+  <% else %>
+  <h2 class="heading"><%= ts("Items in") %> <%= link_to(@collection.title, @collection) %></h2>
+<% end %>
+<!--/descriptions-->
+<!--subnav-->
+<%
+  base_path = @user ? user_collection_items_path(@user) : collection_items_path(@collection)
+  approved_path = @user ? user_collection_items_path(@user, approved: true) : collection_items_path(@collection, approved: true)
+  rejected_path = @user ? user_collection_items_path(@user, rejected: true) : collection_items_path(@collection, rejected: true)
+%>
+
+<ul class="navigation actions" role="navigation">
+  <li><%= span_if_current ts("Awaiting Approval"), base_path, !(params[:rejected] || params[:approved] || params[:invited]) %></li>
+  <% unless @user %>
+    <li><%= span_if_current ts("Invited"),  base_path + "?invited=true"  %></li>
+  <% end %>
+  <li><%= span_if_current ts("Rejected"), rejected_path %></li>
+  <li><%= span_if_current ts("Approved"), approved_path %></li>
+</ul>
+<!--/subnav-->
+
+<% if params[:invited] %>
+  <p class="notice">
+    <%= ts("Works listed here have been invited to this collection. Once a work's creator has approved inclusion in this collection, the work will be moved to 'Approved'.") %>
+  </p>
+<% end %>
+<% if @collection_items.count < 1 %>
+  <p class="note"><%= ts("Nothing to review here!") %></p>
+<% else %>
+
+  <%= form_tag (@user ? update_multiple_user_collection_items_path(@user) : update_multiple_collection_items_path(@collection)), method: :patch do %>
+    <ul class="index group">
+      <% @collection_items.each do |collection_item| %>
+        <%= render 'item_fields', collection_item: collection_item %>
+      <% end %>
+    </ul>
+    <%= submit_fieldset %>
+  <% end %>
+
+  <% unless @user %>
+    <%= will_paginate @collection_items %>
+  <% end %>
+<% end %>
+<!--/content-->

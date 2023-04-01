@@ -1,0 +1,17 @@
+<div class="bookmark listbox group" id="collection-bookmarks">
+  <h3 class="heading">
+    <% if collection.collection_preference.show_random || params[:show_random] %>
+      <%= ts("Random bookmarks") %>  
+    <% else %>  
+      <%= ts("Recent bookmarks") %>
+    <% end %>
+  </h3>
+  <ul class="index group">
+    <% for bookmark in bookmarks %>
+      <%= render 'bookmarks/bookmark_blurb', :bookmark => bookmark %>
+    <% end %>
+  </ul>
+  <% if bookmarks.total_entries > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+    <ul class="actions" role="navigation"><li><%= link_to ts("Bookmarks (%{count})", :count => bookmarks.total_entries), collection_bookmarks_path(@collection) %></li></ul>
+  <% end %>
+</div>

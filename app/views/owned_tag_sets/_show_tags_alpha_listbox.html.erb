@@ -1,0 +1,36 @@
+<% # expects locals tag_type, tagname_list, and to be enclosed inside an ol/ul; can also pass itemcount to alter the number of items in a group %>
+<%
+  # too many tags to throw at the user!
+  # this gets a little tricky: here's what this code does
+  # every time we see a new letter at the start of a tagname, we want to start a new heading + inner ol
+  # we only want one heading for 0-9
+  # we start with that one, but we might not see any tags with a number, so we only display
+  #   the heading if we actually see one
+  # once we've opened a new heading and inner ol if we're going to, we just show the tagname
+  # in a list item
+%>
+<% itemcount ||= 30 %>
+<li class="<%= tag_type_css_class(tag_type) %> alphabet tagset index group listbox">
+  <h3>
+    <%= ts("%{tag_type}", tag_type: tag_type_label_name(tag_type).pluralize) %>
+    <%= expand_contract_all %>
+  </h3>
+  <ol class="index group">
+    <% slice_index = 0 %>
+    <% tagname_list.each_slice(itemcount) do |tagnames| %>
+      <li class="<%= tag_type_css_class(tag_type) %> letter range listbox">
+        <h3 class="expander_parent heading">
+          <span class="range">
+            <%= tagnames.first %>
+            <% unless tagnames.size < 2 %> &#8594; <%= tagnames.last %><% end %>
+          </span>
+          <%= expand_contract_shuffle("list_for_#{tag_type}_#{slice_index}") %>
+        </h3>
+        <ol id="list_for_<%= tag_type %>_<%= slice_index %>" class="tags index group">
+          <%= tagnames.map {|tn| content_tag(:li, tn)}.join(" ").html_safe %>
+        </ol>
+      </li>
+      <% slice_index += 1 %>
+    <% end %>
+  </ol>
+</li>

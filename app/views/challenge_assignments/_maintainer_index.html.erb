@@ -1,0 +1,82 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= ts("Assignments for %{collection_title}", collection_title: @collection.title) %>
+  <%= link_to_help "challenge-assignments" %>
+</h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li>
+    <%= span_if_current ts("Defaulted"),
+                        collection_assignments_path(@collection),
+                        !(params[:pinch_hit] || params[:unfulfilled] || params[:fulfilled]) %>
+  </li>
+  <li>
+    <%= span_if_current ts("Pinch Hits"),
+                        collection_assignments_path(@collection, pinch_hit: true) %>
+  </li>
+  <li>
+    <%= span_if_current ts("Open"),
+                        collection_assignments_path(@collection, unfulfilled: true) %>
+  </li>
+  <% if @collection.moderated? %>
+    <li>
+      <%= span_if_current ts("Awaiting Approval"), collection_items_path(@collection) %>
+    </li>
+  <% end %>
+  <li>
+    <%= span_if_current ts("Complete"),
+                        collection_assignments_path(@collection, fulfilled: true) %>
+  </li>
+  <li>
+    <%= link_to ts("Default All Incomplete"),
+                default_all_collection_assignments_path(@collection),
+                data: { confirm: ts("Are you sure? This will mark all unposted or unapproved assignments in the challenge as defaulting.") },
+                role: "button" %>
+  </li>
+  <li>
+    <%= link_to ts("Purge Assignments"),
+                confirm_purge_collection_assignments_path(@collection),
+                data: { confirm: ts("This will delete ALL assignments so you can edit and send them over. Please do not do this unless you absolutely must!") },
+                role: "button" %>
+  </li>
+</ul>
+<!--/subnav-->
+
+<% if @assignments.count < 1 %>
+  <!--main content-->
+  <p class="note"><%= ts("No assignments to review!") %></p>
+  <!--/content-->
+<% else %>
+
+  <%= will_paginate @assignments %>
+
+  <!--main content-->
+  <% if params[:fulfilled] %>
+    <%= render "maintainer_index_fulfilled" %>
+  <% else %>
+    <%= form_tag update_multiple_collection_assignments_path(@collection), method: :put do %>
+      <fieldset>
+
+        <% if !(params[:pinch_hit] || params[:unfulfilled] || params[:fulfilled]) %>
+          <%= render "maintainer_index_defaulted" %>
+        <% elsif params[:pinch_hit] %>
+          <legend><%= ts("Pinch Hit Assignments") %></legend>
+          <h3 class="heading"><%=ts("Pinch Hit Assignments") %></h3>
+          <%= render "maintainer_index_unfulfilled" %>
+        <% elsif params[:unfulfilled] %>
+          <legend><%= ts("Open Assignments") %></legend>
+          <h3 class="heading"><%=ts("Open Assignments") %></h3>
+          <%= render "maintainer_index_unfulfilled" %>
+        <% end %>
+
+      </fieldset>
+      <%= submit_fieldset %>
+    <% end %>
+  <% end %>
+  <!--/content-->
+
+  <%= will_paginate @assignments %>
+<% end %>
+

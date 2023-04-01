@@ -1,0 +1,6 @@
+<% # this just shows completed and approved assignments %>
+<dl class="index group">
+    <% @assignments.each do |assignment| %>
+      <%= render "assignment_blurb", :assignment => assignment %>
+    <% end %>
+</dl>

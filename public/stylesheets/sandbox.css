@@ -1,0 +1,115 @@
+/*==SANDBOX: All temporary, development, and unreviewed css lives here.
+Rules will be incorporated into the main cascade by Front End before deploy.
+If you've just coded up a new feature and put in some layout, put that layout here,
+with a comment, and the Front End Santa will make your wishes come true.
+Or if you've put in a fix and you've not yet read the Front End Docs?
+Put your fix in here.
+Examples:
+
+/*Fix for issue 996
+.bookmark .header {float:left;}
+
+/*Draft layout for views/shiny/new by astolat.
+It has to be purple, see wiki, ADT meeting 25
+.shiny-happy-people table {display:table-cell;
+background:purple; color:#555;}
+
+/*Some helpful notes
+0.875em/1.286 line height = 14px with 18px leading
+0.643em  = 9px, so {margin: 0.643em auto;} gives you a single blank line between block elements */
+
+/* styling for AO3-3359 to remove top padding from the new button
+and preserve the balance/symmetry of the page */
+#new_work_search fieldset:first-of-type .submit {
+  padding-top: 0;
+}
+
+/* Issue 3243 needs nested ul to be indented in external_authors/claim
+*/
+.edit_external_author ul ul {
+  margin-left: 2.75em;
+}
+
+/* While implementing AO3-5987 it was suggested we move to non-JS share buttons.
+ * These are statically styled with CSS instead.
+ *
+ * These styles are currently only used in app/views/share/_share.html.erb.
+ *
+ * Sourced from: https://sharingbuttons.io/
+ * See: https://github.com/otwcode/otwarchive/pull/3874#pullrequestreview-460459176
+ */
+
+a.resp-sharing-button__link,
+.resp-sharing-button__icon {
+  display: inline-block;
+}
+
+a.resp-sharing-button__link,
+a.resp-sharing-button__link:hover {
+  text-decoration: none;
+  color: #fff;
+  border: none;
+}
+
+.resp-sharing-button {
+  border-radius: 5px;
+  transition: 25ms ease-out;
+  padding: 0.5em 0.75em;
+}
+
+.resp-sharing-button__icon svg {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4em;
+  vertical-align: top
+}
+
+/* Non solid icons get a stroke */
+.resp-sharing-button__icon {
+  stroke: #fff;
+  fill: none;
+}
+
+/* Solid icons get a fill */
+.resp-sharing-button__icon--solid {
+  fill: #fff;
+  stroke: none;
+}
+
+.resp-sharing-button--twitter {
+  background-color: #55acee;
+}
+
+.resp-sharing-button--twitter:hover, a:focus .resp-sharing-button--twitter {
+  background-color: #2795e9;
+}
+
+.resp-sharing-button--tumblr {
+  background-color: #35465C;
+}
+
+.resp-sharing-button--tumblr:hover, a:focus .resp-sharing-button--tumblr {
+  background-color: #222d3c;
+}
+
+.resp-sharing-button--twitter {
+  background-color: #55acee;
+  border-color: #55acee;
+}
+
+.resp-sharing-button--twitter:hover,
+.resp-sharing-button--twitter:active {
+  background-color: #2795e9;
+  border-color: #2795e9;
+}
+
+.resp-sharing-button--tumblr {
+  background-color: #35465C;
+  border-color: #35465C;
+}
+
+.resp-sharing-button--tumblr:hover,
+.resp-sharing-button--tumblr:active {
+  background-color: #222d3c;
+  border-color: #222d3c;
+}

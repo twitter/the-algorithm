@@ -1,0 +1,76 @@
+/*==GROUP: PREFACE 
+http://otwcode.github.com/docs/front_end_coding/patterns/preface
+blockquote contents (the user-written notes) are styled in userstuff.css like all other user content
+.preface appears within #workskin on a work page
+*/
+
+div.preface {
+  margin: 1.5em 3em;
+  padding: 0.643em 0.643em 0;
+  float: none;
+}
+
+div.preface .module {
+  float: none;
+  margin: 0;
+  padding: 0 0 0.643em;
+  width: auto;
+}
+
+.chapter .preface {
+  border-top: 1px solid;
+}
+
+.preface h3 {
+  background: transparent;
+  border-bottom: 1px solid;
+}
+
+.preface h2.title {
+  display: block;
+  border-bottom: 0;
+  clear: right;
+}
+
+div.preface .title, div.preface .byline, div.preface .byline a {
+  border: 0;
+  text-align: center;
+  text-decoration: none;
+}
+
+.preface a:hover {
+  text-decoration: underline;
+}
+
+.preface blockquote {
+  border: 0;
+}
+
+div.preface .notes, div.preface .summary, div.preface .series, div.preface .children {
+  min-height: 5em;
+}
+
+div.preface .series ul, div.preface .children ul {
+  padding: 0 0.643em;
+}
+
+div.preface .associations {
+  margin-bottom: 1.5em;
+}
+
+div.preface .jump {
+  margin-top: 1.5em;
+}
+
+/* mod: afterword
+the preface that appears at the bottom of a work page */
+
+div.afterword {
+  margin-bottom: 2.5em;
+}
+
+div.afterword .series h3, div.afterword .children h3 {
+  border-bottom: none;
+}
+
+/*END== */

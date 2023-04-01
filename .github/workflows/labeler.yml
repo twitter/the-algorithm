@@ -1,0 +1,30 @@
+name: "Pull Request Labeler"
+on:
+  - pull_request_target
+
+jobs:
+  labeler:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Content-Based
+        uses: actions/labeler@v4
+        with:
+          configuration-path: ".github/labeler/contents.yml"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Awaiting Review
+        uses: actions/labeler@v4
+        if: github.event.action == 'opened'
+        with:
+          configuration-path: ".github/labeler/awaiting.yml"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Coder Has Actioned Review
+        uses: actions/labeler@v4
+        # https://github.community/t/do-something-if-a-particular-label-is-set/17149/4
+        if: "contains(github.event.pull_request.labels.*.name, 'Reviewed: Action Needed')"
+        with:
+          configuration-path: ".github/labeler/review.yml"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          sync-labels: true

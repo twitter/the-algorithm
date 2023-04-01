@@ -1,0 +1,22 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <% if @bookmarkable %>
+    <%= (ts("Editing bookmark for ") + link_to(@bookmarkable.title, @bookmarkable)).html_safe %>
+  <% else %>
+    <%= ts("Editing bookmark") %>
+  <% end %>
+</h2>
+
+<%= error_messages_for :bookmark %>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to ts("Show"), bookmark_path(@bookmark) %></li>
+  <li><%= link_to ts("My Bookmarks"), user_bookmarks_path(current_user) %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<%= render 'bookmark_form', :button_name => ts('Update'), :action => 'update', :bookmark => @bookmark, :bookmarkable => @bookmarkable %>
+<!--/content-->

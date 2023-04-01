@@ -1,0 +1,18 @@
+<%= style_link("Read all comments on " + @comment.ultimate_parent.name, 
+               tag_comments_url(@comment.ultimate_parent)) %>
+<br />
+
+<% unless @noreply %>
+  <%= style_link("Reply to this comment",
+                 comment_url(@comment, add_comment_reply_id: @comment.id)) %>
+  <br />
+<% end %>
+
+<%= style_link("Go to the thread starting from this comment", 
+               comment_url(@comment)) %>
+<br />
+
+<% unless @comment.id == @comment.thread %>
+  <%= style_link("Go to the thread to which this comment belongs", 
+                 comment_url(@comment.thread)) %>
+<% end %>

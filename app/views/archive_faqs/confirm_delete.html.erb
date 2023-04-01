@@ -1,0 +1,11 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Delete FAQ Category") %></h2>
+
+<!--main content-->
+<%= form_for(@archive_faq, :html => {:method => :delete, :class => "simple destroy"}) do |f| %>
+  <p class="caution notice"><%= ts("Are you sure you want to <strong><em>delete</em></strong> the FAQ Category \"%{category_name}\"?", :category_name => @archive_faq.title).html_safe %></p>
+  <p class="actions">
+    <%= f.submit ts("Yes, Delete FAQ Category") %>
+  </p>
+<% end %>
+<!--/content-->

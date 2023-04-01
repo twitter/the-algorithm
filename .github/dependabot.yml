@@ -1,0 +1,22 @@
+version: 2
+updates:
+
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "Awaiting Review"
+      - "Gem Updates"
+      - "Gem Updates: Security"
+    # Disable version updates; this has no impact on security updates,
+    # which have a separate, internal limit of 10 open pull requests.
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "Awaiting Review"
+      - "Scope: Tests Only"

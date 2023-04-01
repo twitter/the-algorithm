@@ -1,0 +1,29 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts('Wrangling Guidelines') %></h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <%= render 'admin/admin_nav' %>
+  <ul class="navigation actions" role="navigation">
+    <li><%= link_to ts('New Wrangling Guideline'), new_wrangling_guideline_path %></li>
+    <li><%= link_to ts('Reorder Wrangling Guidelines'), manage_wrangling_guidelines_path %></li>
+  </ul>
+  <!--/subnav-->
+
+  <!--main content-->
+  <h4 class="landmark heading"><%= ts("Manage Wrangling Guidelines") %></h3>
+  <dl class="faq index group">
+    <% @wrangling_guidelines.each do |wrangling_guideline| %>
+      <dt><%= link_to wrangling_guideline.title, wrangling_guideline %></dt>
+      <dd>
+        <p class="datetime"><%= ts('Created at') %> <%= wrangling_guideline.created_at %> <%= ts('and updated at') %> <%= wrangling_guideline.updated_at %></p>
+        <ul class="navigation actions">
+          <li><%= link_to ts('Show'), wrangling_guideline %></li>
+          <li><%= link_to ts('Edit'), edit_wrangling_guideline_path(wrangling_guideline) %></li>
+          <li><%= link_to ts('Delete'), wrangling_guideline, data: {confirm: ts('Are you sure you want to delete this Wrangling Guideline?')}, :method => :delete %></td>
+      </dd>
+    <% end %>
+  </dl>
+  <!--/content-->
+</div>

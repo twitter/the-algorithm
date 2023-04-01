@@ -1,0 +1,43 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Orphan Works') %></h2>
+
+<p class="caution">
+  <%= ts("Orphaning will")%>
+  <strong><%= ts("permanently")%></strong>
+  <%= ts("remove all identifying data from the following work(s), their chapters, associated series, and any feedback replies you may have left on them.") %>
+</p>
+
+<p class="caution">
+  <%= ts("Orphaning a work removes it from your account and re-attaches it to the specially created orphan_account. Please note that this is")%>
+  <strong><%= ts("permanent and irreversible.")%></strong>
+  <%= ts("You are giving up control over the work,")%>
+  <strong><%= ts("including the ability to edit or delete it.")%></strong>
+</p> 
+
+<%= render "works/work_abbreviated_list", :works => works %>
+
+<p class="caution">
+  <%= ts("Are you")%>
+  <strong><%= ts("really")%></strong>
+  <%= ts("sure you want to do this?")%>
+</p>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= form_tag orphans_path do %>
+  
+  <%= render 'orphans/choose_pseud' %>
+  
+  <p>
+    <% works.each_with_index do |work, index| %><%= hidden_field_tag "work_ids[]", work.id, :id => "work_ids_#{index}" %><% end %>
+  </p>
+  
+  <p class="submit actions"><%= submit_tag ts("Yes, I'm sure") %></p>
+<% end %>
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->

@@ -1,0 +1,36 @@
+<h4>Work Search: Any Field</h4>
+
+<p>Searches all the fields associated with a work in the database, including summary, notes and tags, but not the full work text.</p>
+
+<p>The characters ":" and "@" have special meanings. Leave them out of your search or you will get unexpected results. Like in the Title and Author/Artist field, you can use the following operators to combine your search terms:</p>
+
+<dl>
+  <dt>*: any characters </dt>
+  <dd><kbd>book*</kbd> will find <samp>book</samp> and <samp>books</samp> and <samp>booking</samp>.</dd>
+  
+  <dt>space: acts like AND for search terms in the same field of the work </dt>
+  <dd><kbd>Harry Potter</kbd> will find <samp>Harry Potter</samp> and <samp>Harry James Potter</samp> in any field, but it won't find works by a creator named <samp>Harry</samp> with the character tag <samp>Sherman Potter</samp>.</dd>
+
+  <dt>AND: searches for works which have both terms in any field </dt>
+  <dd><kbd>Harry AND Potter</kbd> will find works by a creator named <samp>Harry</samp> with the character tag <samp>Sherman Potter</samp>.</dd>
+  
+  <dt>||: OR (not exclusive) </dt>
+  <dd><kbd>Harry || Potter</kbd> will find <samp>Harry</samp>, <samp>Harry Potter</samp>, and <samp>Potter</samp>.</dd>
+  
+  <dt>"": words in exact sequence </dt>
+  <dd><kbd>"Harry Lockhart"</kbd> will find <samp>Harry Lockhart</samp> but not <samp>Harry Potter/Gilderoy Lockhart</samp>.</dd>
+  
+  <dt>-: NOT </dt>
+  <dd><kbd>Harry -Lockhart</kbd> will find <samp>Harry Potter</samp> but not <samp>Harry Lockhart</samp> or <samp>Gilderoy Lockhart/Harry Potter</samp>.</dd>
+</dl>
+
+<h5>Examples</h5>
+
+<dl>
+  <dt><kbd>"Fandom X" "F/F" -Explicit</kbd></dt>
+  <dd>will return all works from Fandom X tagged as F/F, and exclude those tagged Explicit</dd>
+	<dt><kbd>"Character A" OR "Character B" -"Character Death"</kbd></dt>
+  <dd>will return all works including Character A or Character B (or both), and no works tagged with "Character Death" in either the Warnings or the Additional tags</dd>
+  <dt><kbd>"Character A/Character B" Underage Mature OR Explicit</kbd></dt>
+  <dd>will return all works for this pairing that include an Underage warning and are either rated Mature or Explicit</dd>
+</dl>

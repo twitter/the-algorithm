@@ -1,0 +1,24 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Post New Work') %></h2>
+
+<%= error_messages_for @work %>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="menu">
+  <% if @unposted %>
+    <li>
+      <%= link_to ts('Restore From Last Unposted Draft?'), url_for(:action => :new, :load_unposted => true) %>
+    </li>
+  <% end %>
+  <li>
+    <%= link_to( ts('Import From An Existing URL Instead?'),
+      {:url => {:controller => :works, :action => :new, :import => true}},
+      :href => url_for(:controller => :works, :action => :new, :import => true)) %>
+  </li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<%= render :partial => "standard_form" %>
+<!--/content-->

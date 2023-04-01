@@ -1,0 +1,28 @@
+<% # ids of tag sets whose tags are being shown %>
+<% ids = @tag_set_ids.join("-") %>
+
+<% # the show tag sets' most recent updated_at %>
+<% newest_updated_at = @tag_sets.collect(&:updated_at).sort.last %>
+
+<% # cache key for all of the sets' tags, which expires when the number of tags changes or when the most recent updated_at changes %>
+<% tags_cache_key = @tags.cache_key %>
+
+<% cache("tagsets_#{ids}_#{newest_updated_at}_#{tags_cache_key}", skip_digest: true) do %>
+  <h2 class="heading">
+    <%= ts("%{tag_type} Options From", tag_type: tag_type_label_name(@tag_type)) %>:
+  </h2>
+  <ul class="commas">
+    <% @tag_sets.each do |ts| %>
+      <li><%= link_to ts.title, tag_set_path(ts) %></li>
+    <% end %>
+  </ul>
+
+  <% if @tags.empty? %>
+    <p class="note"><%= ts("None to list!") %></p>
+  <% else %>
+    <ol class="tagset index group">
+      <%= render "show_tags_alpha_listbox",
+                 tagname_list: @tags.pluck(:name), tag_type: @tag_type %>
+    </ol>
+  <% end %>
+<% end %>

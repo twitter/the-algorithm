@@ -1,0 +1,55 @@
+<!-- expects a local variable "form" -->
+
+<!-- put in all the information uploaded in hidden fields -->
+<div>
+  <%= form.fields_for :author_attributes do |creator_form| %>
+    <% (@work.current_user_pseuds || []).each do |pseud| %>
+      <%= creator_form.hidden_field :ids, value: pseud.id, multiple: true %>
+    <% end %>
+
+    <% @work.creatorships.each do |creatorship| %>
+      <% if creatorship.new_record? %>
+        <%= creator_form.hidden_field :coauthors, value: creatorship.pseud_id, multiple: true %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+<%= form.hidden_field :rating_string, :value => "#{@work.rating_string}" %>
+<%= form.hidden_field :archive_warning_string, :value => "#{@work.archive_warning_string}" %>
+<%= form.hidden_field :category_string, :value => "#{@work.category_string}" %>
+<%= form.hidden_field :fandom_string, :value => "#{@work.fandom_string}" %>
+<%= form.hidden_field :relationship_string, :value => "#{@work.relationship_string}" %>
+<%= form.hidden_field :character_string, :value => "#{@work.character_string}" %>
+<%= form.hidden_field :freeform_string, :value => "#{@work.freeform_string}" %>
+
+<%= form.hidden_field :title, :value => "#{@work.title}" %>
+<%= form.hidden_field :summary, :value => "#{@work.summary}" %>
+<%= form.hidden_field :collection_names, :value => "#{@work.collection_names}" %>
+<%= form.hidden_field :recipients, :value => "#{@work.recipients}" %>
+<%= form.hidden_field :notes, :value => "#{@work.notes}" %>
+<%= form.hidden_field :endnotes, :value => "#{@work.endnotes}" %>
+<%= fields_for "work[chapter_attributes]", @chapter do |c| %>
+  <%= c.hidden_field :content, :value => "#{@chapter.content}" %>
+  <%= c.hidden_field :title, :value => "#{@chapter.title}" %>
+  <%= c.hidden_field :published_at, :value => "#{@chapter.published_at}" %>
+<% end %>
+<%= fields_for "work[series_attributes]" do |s| %>
+  <%= s.hidden_field :id, value: "#{work_series_value(:id)}" %>
+  <%= s.hidden_field :title, value: "#{work_series_value(:title)}" %>
+<% end %>
+
+<%= form.fields_for :parent_work_relationships, @work.parent_work_relationships.select(&:new_record?) do |p| %>
+  <%= p.hidden_field :url %>
+  <%= p.hidden_field :title %>
+  <%= p.hidden_field :author %>
+  <%= p.hidden_field :language_id %>
+  <%= p.hidden_field :translation %>
+<% end %>
+
+<%= form.hidden_field :backdate, :value => "#{@work.backdate}" %>
+<%= form.hidden_field :wip_length, :value => "#{@work.wip_length}" %>
+<%= form.hidden_field :restricted, :value => "#{@work.restricted}" %>
+<%= form.hidden_field :comment_permissions, :value => "#{@work.comment_permissions}" %>
+<%= form.hidden_field :language_id, :value => "#{@work.language_id}" %>
+<%= form.hidden_field :work_skin_id, :value => "#{@work.work_skin_id}" %>
+</div>

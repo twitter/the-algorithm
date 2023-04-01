@@ -1,0 +1,490 @@
+---
+nb:
+  activerecord:
+    attributes:
+      archive_warning:
+        name_with_colon:
+          one: 'Advarsel:'
+          other: 'Advarsler:'
+      category:
+        name_with_colon:
+          one: 'Kategori:'
+          other: 'Kategorier:'
+      character:
+        name_with_colon:
+          one: 'Karakter:'
+          other: 'Karakterer:'
+      fandom:
+        name_with_colon:
+          one: 'Fandom:'
+          other: 'Fandommer:'
+      freeform:
+        name_with_colon:
+          one: 'Ytterligere tagg:'
+          other: 'Ytterligere tagger:'
+      rating:
+        name_with_colon: 'Aldersgrense:'
+      relationship:
+        name_with_colon:
+          one: 'Forhold:'
+          other: 'Forhold:'
+      work:
+        summary: Sammendrag
+    models:
+      archive_warning:
+        one: Advarsel
+        other: Advarsler
+      category:
+        one: Kategori
+        other: Kategorier
+      chapter:
+        one: Kapittel
+        other: Kapitler
+      character:
+        one: Karakter
+        other: Karakterer
+      fandom:
+        one: Fandom
+        other: Fandommer
+      freeform:
+        one: Ytterligere tagg
+        other: Ytterligere tagger
+      rating:
+        one: Aldersgrense
+        other: Aldersgrenser
+      relationship:
+        one: Forhold
+        other: Forhold
+      series:
+        one: Serie
+        other: Serier
+  kudo_mailer:
+    batch_kudo_notification:
+      guest:
+        one: en gjest
+        other: "%{count} gjester"
+      html:
+        left_kudos:
+          one: "%{givers_list} la igjen kudos på %{commentable_link}."
+          other: "%{givers_list} la igjen kudos på %{commentable_link}."
+        single_guest:
+          giver_list: En gjest
+          left_kudos: "%{giver_list} la igjen kudos på %{commentable_link}."
+      subject: "[%{app_name}] Du har fått kudos!"
+      text:
+        left_kudos:
+          one: "%{givers_list} la igjen kudos på %{commentable_title} (%{commentable_url})."
+          other: "%{givers_list} la igjen kudos på %{commentable_title} (%{commentable_url})."
+        single_guest: En gjest la igjen kudos på %{commentable_title} (%{commentable_url}).
+  mailer:
+    general:
+      closing:
+        formal: Med vennlig hilsen
+        informal: Med vennlig hilsen
+      creation:
+        link_with_word_count: "%{creation_link} (%{word_count})"
+        title_with_word_count: '"%{creation_title}" (%{word_count})'
+        word_count:
+          one: "%{count} ord"
+          other: "%{count} ord"
+      footer:
+        general:
+          html:
+            donate_link_text: dine donasjoner
+            part1: Dersom du feilaktig har mottatt denne beskjeden kan du %{support_link}.
+            part2: Vårt eget arkiv er et fan-drevet og fan-støttet arkiv som avhenger
+              av %{donate_link}.
+            support_link_text: kontakte support
+          text:
+            part1: 'Dersom du feilaktig har mottatt denne beskjeden, vennligst kontakt
+              support: %{support_url}.'
+            part2: 'AO3 er et fan-drevet og fan-støttet arkiv som avhenger av dine
+              donasjoner: %{donate_url}.'
+        sent_at: Sendt %{sent_at}.
+      greeting:
+        formal: Kjære %{name}
+        informal:
+          addressed: Hei, %{name}!
+          unaddressed: Hei!
+        introductory: En hilsen fra Archive of Our Own – AO3 (Vårt eget arkiv)!
+      metadata_label_indicator: ": "
+      signature:
+        app_short_name: AO3
+        open_doors: Teamet for Open Doors (Åpne Dører)
+        parent_org: Organization for Transformative Works – OTW (Organisasjonen for
+          transformative verk)
+        support: Teamet for AO3 support
+  users:
+    mailer:
+      reset_password_instructions:
+        expiration: Hvis du ikke bruker denne lenken til å tilbakestille passordet
+          ditt innen en uke, vil lenken utløpe, og du må be om en ny en.
+        intro: 'Noen har bedt om å tilbakestille passordet til kontoen din. Du kan
+          endre passordet til kontoen din ved å følge lenken under og fylle inn det
+          nye passordet ditt:'
+        link_title: Endre passordet mitt.
+        subject: "[%{app_name}] Tilbakestill passordet ditt"
+        unrequested: Hvis du ikke ba om å tilbakestille passordet ditt, kan du ignorere
+          denne e-posten og det tidligere passordet ditt vil fortsette å fungere.
+  user_mailer:
+    abuse_report:
+      description_para: 'Beskrivelse av misbruket:'
+      para1: 'Følgende melding om misbruk har blitt sendt til teamet for retningslinjer
+        og misbruk:'
+      subject: "[%{app_name}] Din melding til retningslinjer og misbruk"
+      url_para: 'URL til siden hvor misbruket er å finne:'
+    admin_deleted_work_notification:
+      bye: Vedlagt ligger en kopi av verket for din referanse.
+      contact_abuse: kontakt vår komité for retningslinjer og misbruk
+      html:
+        part1: Ditt verk %{title} ble slettet fra Arkivet av en sideadministrator.
+        part2: Hvis verket var en del av et importprosjekt administrert av vårt Åpne
+          Dører-team, vennligst %{opendoors_link} for eventuelle spørsmål.
+        tos_violation: Hvis det er mulig at verket ditt brøt med Arkivets brukervilkår,
+          vennligst %{contact_abuse_link}.
+      opendoors: kontakt Åpne Dører
+      subject: "[%{app_name}] Ditt verk har blitt slettet av en administrator"
+      text:
+        part1: Ditt verk "%{title}" ble slettet fra Arkivet av en sideadministrator.
+        part2: Hvis verket var en del av et importprosjekt administrert av vårt Åpne
+          Dører-team, vennligst kontakt Åpne Dører (%{opendoors_link}) for eventuelle
+          spørsmål.
+        tos_violation: Hvis det er mulig at verket ditt brøt med Arkivets brukervilkår,
+          vennligst kontakt vår komité for retningslinjer og misbruk %{contact_abuse_url}.
+    admin_hidden_work_notification:
+      access: Mens verket ditt er skjult kan du fortsatt få tilgang til det gjennom
+        lenken ovenfor, men det vil ikke være synlig på siden med oversikt over dine
+        verk, og det vil heller ikke være tilgjengelig for andre brukere av AO3.
+      check_email: Vennligst sjekk e-posten din, inkludert spam innboksen ettersom
+        teamet for retningslinjer og misbruk allerede kan ha kontaktet deg for å forklare
+        hvorfor verket ditt har blitt skjult.
+      contact_abuse: kontakt retningslinjer og misbruk
+      html:
+        help: Hvis du er usikker på hvorfor verket ditt ble skjult og du ikke har
+          mottatt videre kommunikasjon angående dette, vennligst %{contact_abuse_link}
+          direkte.
+        hidden: Verket ditt %{title} har blitt skjult av teamet for retningslinjer
+          og misbruk og er ikke lenger offentlig tilgjengelig.
+        tos_violation: Hvis verket ditt ble skjult fordi det er i strid med AO3s %{tos_link}
+          blir du nødt til å gjøre endringer for å rette opp dette. Dersom du ikke
+          endrer verket ditt slik at det samsvarer med brukervilkårene, kan det føre
+          til at verket ditt blir slettet fra AO3.
+      subject: "[%{app_name}] Verket ditt har blitt skjult av teamet for retningslinjer
+        og misbruk"
+      text:
+        help: 'Hvis du er usikker på hvorfor verket ditt ble skjult og du ikke har
+          mottatt videre kommunikasjon angående dette, vennligst kontakt retningslinjer
+          og misbruk direkte: %{contact_abuse_url}.'
+        hidden: Verket ditt "%{title}" (%{work_url}) har blitt skjult av teamet for
+          retningslinjer og misbruk og er ikke lenger offentlig tilgjengelig.
+        tos_violation: Hvis verket ditt ble skjult fordi det er i strid med AO3s brukervilkår
+          (%{tos_url}) blir du nødt til å gjøre endringer for å rette opp dette. Dersom
+          du ikke endrer verket ditt slik at det samsvarer med brukervilkårene, kan
+          det føre til at verket ditt blir slettet fra AO3.
+      tos: Brukervilkår
+    anonymous_or_unrevealed_notification:
+      anonymous_info: Anonyme verk inkluderes i tagg-lister, men ikke på oversikten
+        over dine verk. På selve verket vil brukernavnet ditt erstattes med “Anonymous”
+        (Anonym).
+      anonymous_unrevealed_info: Samlingens administratorer kan ved en senere anledning
+        velge å offentliggjøre verket men holde det anonymt. Brukere som abonnerer
+        på dine verk vil ikke motta noen notifikasjon når dette skjer. Når verket
+        er offentliggjort vil det inkluderes i tagg-lister, men ikke på oversikten
+        over dine verk. På selve verket vil brukernavnet ditt erstattes med “Anonymous”
+        (Anonym).
+      changed_status:
+        anonymous:
+          html: Administratorene for %{collection_link} har gjort verket ditt %{work_link}
+            anonymt.
+          text: Administratorene for samlingen "%{collection_title}" (%{collection_url})
+            har gjort verket ditt "%{work_title}" (%{work_url}) anonymt.
+        anonymous_unrevealed:
+          html: Administratorene for samlingen %{collection_link} har endret statusen
+            til verket ditt %{work_link} til skjult og anonymisert.
+          text: Administratorene for samlingen "%{collection_title}" (%{collection_url})
+            har endret statusen til verket ditt "%{work_title}" (%{work_url}) til
+            anonymisert og skjult.
+        unrevealed:
+          html: Administratorene for samlingen %{collection_link} har endret statusen
+            til verket ditt %{work_link} til skjult.
+          text: Administratorene for samlingen "%{collection_title}" (%{collection_url})
+            har endret statusen til verket ditt "%{work_title}" (%{work_url}) til
+            skjult.
+      collection_items_link_text: siden for Approved Collection Items (Godkjente samlingsverk)
+      do_not_want:
+        anonymous:
+          html: Dersom du ikke ønsker at verket ditt skal være anonymisert, vennligst
+            gå til %{collection_items_link} for å fjerne det fra det samlingen.
+          text: 'Dersom du ikke ønsker at verket ditt skal være anonymisert, vennligst
+            besøk din side for Approved Collection Items (Godkjente samlingsverk)
+            for å fjerne det fra denne samlingen: %{collection_items_url}'
+        anonymous_unrevealed:
+          html: Dersom du ikke ønsker at verket ditt skal være hverken skjult eller
+            anonymisert, vennligst besøk %{collection_items_link} for å fjerne det
+            fra denne samlingen.
+          text: 'Dersom du ikke ønsker at verket ditt skal være hverken skjult eller
+            anonymisert, vennligst besøk din side for Approved Collection Items (Godkjente
+            samlingsverk) for å fjerne det fra denne samlingen: %{collection_items_url}'
+        unrevealed:
+          html: Dersom du ikke ønsker at verket ditt skal være skjult, vennligst besøk
+            %{collection_items_link} for å fjerne det fra denne samlingen.
+          text: 'Dersom du ikke ønsker at verket ditt skal være skjult, vennligst
+            besøk din side for Approved Collection Items (Godkjente samlingsverk)
+            for å fjerne det fra denne samlingen: %{collection_items_url}'
+      faq_link_text: ofte stilte spørsmål om samlinger.
+      more_info:
+        html: For mer informasjon kan du besøke våre %{faq_link}.
+        text: 'For mer informasjon kan du besøke våre ofte stilte spørsmål om samlinger:
+          %{faq_url}'
+      subject:
+        anonymous: "[%{app_name}] Verket ditt har blitt anonymisert"
+        anonymous_unrevealed: "[%{app_name}] Verket ditt har blitt anonymisert og
+          skjult."
+        unrevealed: "[%{app_name}] Verket ditt er skjult"
+      unrevealed_info: Skjulte verk inkluderes ikke i tagg-lister, ei heller i oversikten
+        over dine verk. Alle som følger en link til verket ditt vil få en notifikasjon
+        om at verket for øyeblikket er skjult, og at de derfor ikke har tilgang.
+    challenge_assignment_notification:
+      any: Uansett
+      description: 'Beskrivelse:'
+      due: 'Dette oppdraget har frist:'
+      html:
+        footer: Du mottar denne e-posten fordi du har svart på %{title}-utfordringen.
+          For mer informasjon om denne utfordringen og kontaktinformasjonen til moderatorene,
+          gå til %{footer_link}.
+        footer_link: utfordringens profilside
+        look_up: Du kan finne dette oppdraget på %{link}.
+        look_up_link: Assignments (oppdrag)-siden din
+        part1: Du har fått følgende i oppdrag i %{link}-utfordringen på Archive of
+          Our Own (Vårt eget arkiv)!
+      optional_tags: 'Valgfrie tagger:'
+      prompts: 'Inspirasjon:'
+      prompt_url: 'URL til inspirasjonen:'
+      recipient: 'Mottaker:'
+      recipient_missing: 'Ingen: kontakt en moderator for hjelp!'
+      subject: "[%{app_name}][%{collection_title}] Ditt oppdrag!"
+      text:
+        assignment: Du har fått følgende i oppdrag i %{collection_title} (%{collection_url})
+          -utfordringen på Archive of Our Own (Vårt eget arkiv)!
+        footer: Du mottar denne e-posten fordi du har meldt deg på %{title}-utfordringen
+          (%{url}). For mer informasjon om denne utfordringen og kontaktinformasjonen
+          til moderatorene, gå til %{profile_url}.
+        look_up: Du kan finne dette oppdraget på Assignments (oppdrag)-siden din på
+          %{link}.
+    change_email:
+      part1: "%{login}, e-posten knyttet til din konto har blitt endret til %{email}"
+      subject: "[%{app_name}] E-post endret"
+    collection_notification:
+      assignments_sent:
+        complete: Alle oppdrag er nå sendt ut.
+        subject: Oppdrag utsendt
+      html:
+        received_message: 'Du har fått en melding om samlingen din %{collection_link}:'
+      text:
+        received_message: 'Du har fått en melding om samlingen din "%{collection_title}"
+          (%{collection_url}):'
+    creatorship_notification:
+      explanation: Når du er medskaper på et verk kan du bli lagt til på nye kapitler
+        uavhengig av dine medskaper-innstillinger. Du blir også lagt til på alle serier
+        som verket tilhører.
+      html:
+        creation: "%{creation_link} av %{pseud_links}"
+        edit_chapter: redigere kapittelet
+        edit_series: redigere serien
+        remove_chapter: Dersom du har blitt lagt til ved en feiltakelse eller du ikke
+          ønsker å stå oppført som skaper, kan du %{edit_chapter_link} for å fjerne
+          deg selv som skaper.
+        remove_series: Dersom du har blitt lagt til ved en feiltakelse eller du ikke
+          ønsker å stå oppført som skaper, kan du %{edit_series_link} for å fjerne
+          deg selv som skaper.
+      intro_chapter: 'Brukeren %{adding_user} har lagt til pseudonymet ditt %{pseud}
+        som medskaper på følgende kapittel:'
+      intro_series: 'Brukeren %{adding_user} har lagt til pseudonymet ditt %{pseud}
+        som medskaper på følgende serie:'
+      subject: "[%{app_name}] Varsel om at du har blitt lagt til som medskaper"
+      text:
+        creation: "%{title} (%{url}) av %{pseuds}"
+        remove_chapter: 'Dersom du har blitt lagt til ved en feiltakelse eller ikke
+          ønsker å stå oppført som skaper, kan du redigere kapittelet for å fjerne
+          deg selv som skaper: %{url}'
+        remove_series: 'Dersom du har blitt lagt til ved en feiltakelse eller du ikke
+          ønsker å stå oppført som skaper, kan du redigere serien for å fjerne deg
+          selv som skaper: %{url}'
+    creatorship_notification_archivist:
+      explanation: Fordi hen er offisielt utstedt arkivar for Åpne Dører, har hen
+        lov til å legge deg til uten invitasjon, selv om du har slått av innstillingen
+        for å kunne legges til som medskaper.
+      html:
+        creation: "%{creation_link} av %{pseud_links}"
+        edit_chapter: redigere kapittelet
+        edit_series: redigere serien
+        edit_work: redigere arbeidet
+        remove_chapter: Dersom du har blitt lagt til ved en feil, eller ikke ønsker
+          å listes som skaper, så kan du %{edit_chapter_link} for å fjerne deg selv
+          som skaper.
+        remove_series: Dersom du har blitt lagt til ved en feil, eller ikke ønsker
+          å listes som skaper, så kan du %{edit_series_link} for å fjerne deg selv
+          som skaper.
+        remove_work: Dersom du har blitt lagt til ved en feiltakelse eller ikke ønsker
+          å stå oppført som skaper, kan du %{edit_work_link} for å fjerne deg selv
+          som skaper.
+      intro_chapter: 'Brukeren %{archivist} har lagt til pseudonymet ditt %{pseud}
+        som medskaper på følgende kapittel:'
+      intro_series: 'Brukeren %{archivist} har lagt til pseudonymet ditt %{pseud}
+        som medskaper på følgende serie:'
+      intro_work: 'Brukeren %{archivist} har lagt til pseudonymet ditt %{pseud} som
+        medskaper på følgende verk:'
+      subject: "[%{app_name}] En arkivar har lagt deg til som medskaper"
+      text:
+        creation: "%{title} (%{url}) av %{pseuds}"
+        remove_chapter: 'Dersom du har blitt lagt til ved en feiltakelse eller ikke
+          ønsker å stå oppført som skaper, kan du redigere kapittelet for å fjerne
+          deg selv som skaper: %{url}'
+        remove_series: 'Dersom du har blitt lagt til ved en feiltakelse eller ikke
+          ønsker å stå oppført som skaper, kan du redigere serien for å fjerne deg
+          selv som skaper: %{url}'
+        remove_work: 'Dersom du har blitt lagt til ved en feiltakelse eller ikke ønsker
+          å stå oppført som skaper, kan du redigere verket for å fjerne deg selv som
+          skaper: %{url}'
+    creatorship_request:
+      html:
+        creation: "%{creation_link} av %{pseud_links}"
+        instructions: Du kan godkjenne eller avvise denne forespørselen på siden din
+          for %{page_name}.
+        page_name: Co-Creator Requests (medskaperforespørsler)
+      intro_chapter: 'Brukeren %{inviting_user} har invitert pseudonymet ditt %{pseud}
+        til å bli lagt til som medskaper på det følgende kapittelet:'
+      intro_series: 'Brukeren %{inviting_user} har invitert pseudonymet ditt %{pseud}
+        til å bli lagt til som medskaper på den følgende serien:'
+      intro_work: 'Brukeren %{inviting_user} har invitert pseudonymet ditt %{pseud}
+        til å bli lagt til som medskaper på det følgende verket:'
+      subject: "[%{app_name}] Medskaperforespørsel"
+      text:
+        creation: "%{title} (%{url}) av %{pseuds}"
+        instructions: 'Du kan godkjenne eller avvise denne forespørselen på siden
+          din for Co-Creator Requests (medskaperforespørsler): %{url}'
+    delete_work_notification:
+      html:
+        part1_other: Ditt verk %{title} ble slettet etter forespørsel fra %{pseud}.
+        part1_yourself: Ditt verk %{title} ble slettet per din forespørsel.
+        part2: Dersom du har noen spørsmål, vennligst %{support}.
+      part3: For videre referanse finner du en kopi at verket ditt vedlagt.
+      subject: "[%{app_name}] Ditt verk har blitt slettet"
+      support: kontakt support
+      text:
+        part1_other: Ditt verk “%{title}" ble slettet etter forespørsel fra %{pseud}.
+        part1_yourself: Ditt verk "%{title}" ble slettet per din forespørsel.
+        part2: Dersom du har noen spørsmål, vennligst %{support} (%{url}).
+    invitation_to_claim:
+      html:
+        ao3_news: AO3 nyheter
+        contact_open_doors: kontakt Åpne Dører
+        contact_support: kontakt AO3 support
+        faq_page: FAQ-side
+        open_doors: Open Doors (Åpne Dører)
+        part5: Gjør krav på eller fjern verk her.
+        tutorial_page: tutorial-side
+      part12: 'Dersom du tar kontakt med oss, vennligst merk e-postadresser fra @transformativeworks.org
+        som trygge og sjekk spamfilteret. '
+      part6: 'Verkene det gjelder er:'
+      part8: For å bevare anbefalingslister og bokmerker, vil det importerte arkivets
+        URL muligens viderekoble til den importerte versjonen av disse verkene i en
+        begrenset periode (sjekk innlegget med kunngjøringen for arkivet ditt for
+        å være sikker). Om du allerede har publisert noen av disse verkene og du IKKE
+        importerer fra URL, vil det eksistere to kopier av samme verk på arkivet.
+      subject: "[%{app_name}] Invitasjon til å gjøre krav på verk"
+      text:
+        part1: Du mottar denne e-posten fordi et arkiv nylig har blitt importert av
+          Åpne Dører (%{open_doors_link}) inn på %{app_name} (%{app_short_name} -
+          %{app_url}), og vi tror at de følgende verkene tilhører deg. Vi vil gi deg
+          sjansen til å gjøre krav på (eller slette/si i fra deg) disse verkene om
+          du vil. Og om du ikke allerede har en konto under en annen e-postadresse,
+          vil vi gjerne invitere deg med!
+        part10: Om du hadde andre verk på det importerte arkivet under en e-postadresse
+          du ikke lenger har tilgang til, vennligst kontakt Åpne Dører med informasjon
+          som kan bekrefte din identitet.
+        part11: 'For andre spørsmål, vennligst kontakt AO3 support her: %{support_link}.'
+        part2: 'Du kan lese kunngjøringene om nylige arkiv-flyttinger på AO3 nyheter
+          (%{news_link}), og du finner tilleggsinformasjon på Åpne Dørers FAQ-side
+          (%{open_doors_faq_link}) eller tutorial-siden (%{open_doors_tutorial_link}).
+          For spørsmål som ikke besvares i FAQ-en, tutorialen, eller denne e-posten,
+          vennligst kontakt support her: %{support_link}.'
+        part3: Om dette er en feil og disse verkene ikke tilhører deg, vær snill og
+          ikke slett dem! Vennligst kontakt Åpne Dører (%{open_doors_link}) og vi
+          vil ordne opp i det.
+        part4: Avhengig av arkivet, kan verkene dine ha blitt importert begrenset
+          til registrerte brukere (slik at de ikke vises i Google-søk). Om det er
+          slik, vil verkene kun være synlige for innloggede brukere med mindre du
+          velger å gjøre dem synlige. For hjelp med å låse opp, si i fra deg eller
+          slette verk, vennligst kontakt AO3 support.
+        part5: 'Gjør krav på eller fjern verk her: %{claim_url}'
+        part7: Om disse verkene tilhører deg men du ikke vil ha dem, kan du si dem
+          i fra deg (slik at de blir på AO3, men navnet ditt blir fjernet) eller slette
+          dem (slik at de blir fjernet helt fra AO3). Du behøver ikke å legge disse
+          verkene til en konto for å slette dem eller si dem i fra deg – du kan gjøre
+          det direkte fra krav-linken over. (Om du trenger hjelp med dette, vennligst
+          kontakt support på %{support_link}.)
+        part9: Om du vil at Åpne Dører skal oppdatere viderekoblingen til å vise til
+          et allerede eksisterende verk, vennligst slett den importerte versjonen,
+          og kontakt Åpne Dører på %{open_doors_link} med ditt AO3-brukernavn, brukernavnet
+          ditt på det importerte arkivet samt tittelen og URLen til det fanverket
+          du vil viderekoble til. (Om du har flere verk du vil endre viderekoblingen
+          til, kan du liste alle i samme e-post).
+    invite_increase_notification:
+      body:
+        one: Vi ville bare informere deg om at du har %{count} ny invitasjon som kan
+          brukes til å lage en ny bruker på arkivet. Du kan invitere en venn på %{invitation_page}.
+        other: Vi ville bare informere deg om at du har %{count} nye invitasjoner
+          som kan brukes til å lage nye brukere på arkivet. Du kan invitere en venn
+          på %{invitation_page}.
+      invitation_page_link_text: din invitasjonsside
+      subject: "[%{app_name}] Nye invitasjoner"
+    invite_request_declined:
+      main:
+        one: Vi beklager å måtte informere deg om at din forespørsel om å få tilsendt
+          en ny invitasjon ikke kan innfris på dette tidspunktet.
+        other: Vi beklager å måtte informere deg om at din forespørsel om å få tilsendt
+          %{count} nye invitasjoner ikke kan innfris på dette tidspunktet.
+      reason: 'Din forespørsel var:'
+      subject: "[%{app_name}] Forespørsel om ekstra invitasjonskode avvist"
+    recipient_notification:
+      html:
+        collection: Et verk er publisert som en gave til deg i samlingen %{collection_link}
+          på AO3!
+      no_collection: Et verk er publisert på AO3 som en gave til deg!
+      subject:
+        collection: "[%{app_name}][%{collection_title}] Du har fått et verk fra %{collection_title}"
+        no_collection: "[%{app_name}] Du har fått et verk"
+      text:
+        collection: Et verk er publisert som en gave til deg i samlingen "%{collection_title}"
+          (%{collection_url}) på AO3!
+    signup_notification:
+      activate_your_account: følg denne lenken for å aktivere kontoen din
+      admin_posts: AO3 nyheter
+      bye: Vi håper du vil trives med å bruke arkivet.
+      contact_support: kontakt vårt support team
+      faq: Ofte stilte spørsmål
+      html:
+        part1: Vennligst %{activate_account_link}.
+        part2: Så snart kontoen din er aktivert kan du publisere dine verk, lage e-post-abonnementer
+          slik at du får beskjed når dine favoritter har oppdatert, tilpasse dine
+          preferanser for hvordan siden ser ut og fungerer for deg, holde orden på
+          hvilke verk du har klikket på via loggen, og mye mer.
+        part3: Du kan finne mye informasjon og råd om hvordan du bruker arkivet under
+          %{faq_link}. Nyheter om nettstedets utvikling finner du her i %{admin_posts_link}.
+          Om du har behov for mer hjelp, støter på en feil eller har andre spørsmål
+          eller tilbakemeldinger, vennligst %{contact_support_link}, som alltid står
+          klare til å hjelpe.
+      text:
+        part1: 'Vennligst følg denne lenken for å aktivere kontoen din: %{activate_account_url}'
+        part2: Så snart kontoen din er aktivert kan du publisere dine verk, lage e-post-abonnementer
+          slik at du får beskjed når dine favoritter har oppdatert, tilpasse dine
+          preferanser for hvordan siden ser ut og fungerer for deg, holde orden på
+          hvilke verk du har klikket på via loggen, og mye mer.
+        part3: 'Du kan finne mye informasjon og råd for hvordan du bruker arkivet
+          i vår FAQ (ofte stilte spørsmål) under %{faq_url}. Oppdateringer om nettstedets
+          utvikling finner du hos AO3 nyheter: %{admin_posts_url}. Om du har behov
+          for mer hjelp, støter på en feil eller har andre spørsmål eller tilbakemeldinger,
+          vennligst kontakt vårt support team, som alltid står klare til å hjelpe:
+          %{contact_support_url}.'
+      welcome: Velkommen til Archive of Our Own, %{login}!

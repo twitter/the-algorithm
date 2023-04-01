@@ -1,0 +1,10 @@
+<h3 class="landmark"><%= ts("Filters") %></h3>
+<%= form_tag archive_faqs_path, :method => :get do %>
+  <p><%= label_tag :language_id, ts("Language:") %>
+    <% if User.current_user.is_a?(Admin) %>
+      <%= select_tag :language_id, ('<option></option>' + options_from_collection_for_select(Locale.default_order, :iso, :name, params[:language_id])).html_safe %>
+    <% else %>
+      <%= select_tag :language_id, ('<option></option>' + options_from_collection_for_select(available_faq_locales, :iso, :name, params[:language_id])).html_safe %>
+    <% end %>
+  <%= submit_tag ts('Go') %></p>
+<% end %>

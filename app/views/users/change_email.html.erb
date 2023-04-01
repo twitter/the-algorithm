@@ -1,0 +1,32 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Change My Email") %></h2>
+<%= error_messages_for :user %>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render 'edit_header_navigation' %>
+<!--/subnav-->
+
+<!--main content-->
+<%= form_tag changed_email_user_path(@user) do %>
+  <dl>
+    <dt><%= ts("Current Email") %></dt>
+    <dd><%= @user.email %></dd>
+
+    <dt><%= label_tag :new_email, ts("New Email") %></dt>
+    <dd><%= email_field_tag :new_email %></dd>
+
+    <dt><%= label_tag :email_confirmation, ts("Confirm New Email") %></dt>
+    <dd><%= email_field_tag :email_confirmation %></dd>
+
+    <dt><%= label_tag :password_check, ts("Password") %></dt>
+    <dd><%= password_field_tag :password_check %></dd>
+
+    <dt class="landmark"><%= label_tag :submit, ts("Submit") %></dt>
+    <dd class="submit actions">
+      <%= submit_tag ts("Change Email") %>
+    </dd>
+  </dl>
+<% end %>
+
+<!--/content-->

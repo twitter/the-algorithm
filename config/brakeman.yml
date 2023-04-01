@@ -1,0 +1,3 @@
+---
+:safe_methods:
+- :sanitize_field

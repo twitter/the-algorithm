@@ -1,0 +1,32 @@
+<%= form_for(@locale, html: { class: 'post' }) do |f| %>
+  <p class="required notice">* <%= t('.required_notice', :default => "Required information") %></p>
+  
+  <fieldset>
+    <legend><%= t('.locale_legend', :default => "Locale") %></legend>
+    <h3 class="landmark heading"><%= t('.locale_heading', :default => "Locale") %></h3>
+    <dl>
+      <dt class="required"><%= f.label :name, t('.name', :default => "Name") + '*' %></dt>
+      <dd class="required"><%= f.text_field :name %></dd>
+
+      <dt class="required"><%= f.label :iso, t('.iso', :default => "ISO code") + '*' %></dt>
+      <dd class="required"><%= f.text_field :iso %></dd>
+
+      <dt class="required"><%= f.label :language_id, t('.language', :default => "Language") + '*' %></dt>
+      <dd class="required"><%= f.select(:language_id, @languages.collect { |language| [ language.name, language.id ] }) %></dd>
+
+      <dt><%= f.check_box :email_enabled %></dt>
+      <dd><%= f.label :email_enabled, t('.enable_email', :default => "Use this locale to send email") %></dd>
+
+      <dt><%= f.check_box :interface_enabled %></dt>
+      <dd><%= f.label :interface_enabled, t('.enable_interface', :default => "Use this locale for the interface") %></dd>
+
+    </dl>
+  </fieldset>
+  <fieldset>
+    <legend><%= t('.actions_legend', :default => "Actions") %></legend>
+    <h3 class="landmark heading"><%= t('.actions_heading', :default => "Actions") %></h3>
+    <p class="submit actions">
+      <%= f.submit @locale.new_record? ? t('.create_button', :default => "Create Locale") : t('.edit_button', :default => "Update Locale") %>
+    </p>
+  </fieldset>
+<% end %>

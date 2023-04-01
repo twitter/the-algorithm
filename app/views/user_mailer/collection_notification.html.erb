@@ -1,0 +1,12 @@
+<% content_for :message do %>
+
+  <p>
+    <%= t(".html.received_message", collection_link: style_link(@collection.title, collection_url(@collection))).html_safe %>
+  </p>
+
+  <%= style_quote(raw @message) %>
+<% end %>
+
+<% content_for :sent_at do %>
+  <%= l(Time.now) %>
+<% end %>

@@ -1,0 +1,5 @@
+<% if logged_in_as_admin? %>
+  <%= render "admin_index" %>
+<% else %>
+  <%= render "faq_index" %>
+<% end %>

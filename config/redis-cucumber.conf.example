@@ -1,0 +1,14 @@
+# RAILS_ROOT/config/redis-cucumber.conf
+
+daemonize yes
+pidfile log/redis-cucumber.pid
+port 6398
+timeout 300
+save 900 1
+save 300 10
+save 60 10000
+dbfilename redis-cucumber-dump.rdb
+dir .
+loglevel debug
+logfile stdout
+databases 16

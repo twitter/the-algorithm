@@ -1,0 +1,20 @@
+<h4>People Search: Search All Fields</h4>
+
+<p>
+  Enter text in "Search all fields" to find people with usernames, pseuds, or pseud descriptions containing your search terms.
+</p>
+
+<p>
+  The characters ":" and "@" have special meanings. Leave them out of your search or you will get unexpected results.
+</p>
+
+<dl>
+  <dt>*: any characters </dt>
+  <dd><kbd>User*</kbd> will find <samp>User</samp> and <samp>Users</samp> and <samp>Username</samp>.</dd>
+  <dt>space: a space acts like AND </dt>
+  <dd><kbd>A. User</kbd> will find <samp>A. User</samp> and <samp>A. Test User</samp> but not <samp>User</samp>.</dd>
+  <dt>|: OR (not exclusive) </dt>
+  <dd><kbd>A. | User</kbd> will find <samp>A.</samp>, <samp>A. User</samp>, and <samp>User</samp>.</dd>
+  <dt>": words in exact sequence </dt>
+  <dd><kbd>"A. User"</kbd> will find <samp>"A. User"</samp> but not <samp>A. Test User</samp>.</dd>
+</dl>

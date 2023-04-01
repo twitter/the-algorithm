@@ -1,0 +1,101 @@
+<div class="tag wrangling wranglers home">
+<!--Descriptive page name, messages and instructions-->
+  <h2 class="heading">Tag Wrangling Assignments</h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <%= will_paginate(@assignments) %>
+  <!--/subnav-->
+
+  <!--main content-->
+  <%= form_tag url_for(:controller => 'tag_wranglers', :action => "create"), :id => "tag_wranglers" do %>
+    <fieldset>
+      <legend>Assign fandoms to yourself</legend>
+      <h3 class="heading">Assign fandoms to yourself</h3>
+      <p class="note">
+        (<%= label_tag "tag_fandom_string", "Enter as many fandoms as you like." %>)
+      </p>
+      <div title="enter as many fandoms as you like">
+        <%= text_field_tag "tag_fandom_string", params[:sign_up_fandoms], autocomplete_options("fandom") %>
+      </div>
+      <p class="submit actions"><%= submit_tag 'Assign' %></p>
+    </fieldset>
+
+    <% redirect_params = { fandom_string: params[:fandom_string], media_id: params[:media_id], wrangler_id: params[:wrangler_id] } %>
+
+    <fieldset>
+      <legend>Assign Wranglers to Fandoms</legend>
+      <h3 class="heading">Assign Wranglers to Fandoms</h3>
+      <dl class="index group">
+        <% @assignments.group_by(&:name).each do |name, assignments| %>
+          <dt><%= link_to name, {:controller => :tags, :action => :edit, :id => assignments.first} %></dt>
+          <% wranglers = assignments.collect(&:wrangler).compact %>
+          <dd>
+            <% unless wranglers.empty? %>
+              <ul class="wranglers" role="menu">
+                <% wranglers.each do |wrangler| %>
+                  <li>
+                    <%= link_to wrangler, tag_wrangler_path(:id => wrangler) %>
+                    <!--BACK END PLS take off this span and give the link the class delete-->
+                    <span class="action" title="remove">
+                      <%= link_to 'x', tag_wrangler_path(redirect_params.merge(:id => wrangler, :fandom_id => assignments.first.id)), :method => :delete %>
+                    </span>
+                  </li>
+                <% end %>
+              </ul>
+            <% end %>
+            <!--BACK END, is it possible to add a new complete one of these each time? Instead of just the one button and multiple successive ps?
+            p class="action"
+            select
+            span class="action" title="add more"
+            repeat p class="action"
+            ?
+            -->
+            <p id="wranglers-for-<%= assignments.first.id %>" title="wranglers for <%= assignments.first.id %>">
+              <% select_tag_to_add = select_tag("assignments[#{assignments.first.id}][]", options_for_select([''] + @wranglers.collect(&:login))) %>
+              <%= select_tag_to_add %>
+              <span class="action" title="add more">
+                <%= link_to_function("+",
+                                 "$j('#wranglers-for-#{assignments.first.id}').append('<p>" + escape_javascript(select_tag_to_add) + "</p>')") %>
+              </span>
+            </p>
+          </dd>
+        <% end %>
+      </dl>
+      <p class="submit actions">
+        <%= hidden_field_tag :fandom_string, params[:fandom_string] %>
+        <%= hidden_field_tag :media_id, params[:media_id] %>
+        <%= hidden_field_tag :wrangler_id, params[:wrangler_id] %>
+        <%= submit_tag 'Assign' %>
+      </p>
+    </fieldset>
+  <% end %>
+  <!--/content-->
+
+  <!--filters-->
+  <%= form_tag tag_wranglers_path, :class => 'filters', :method => :get do %>
+    <fieldset>
+      <h3 class="landmark heading">Filters</h3>
+      <dl class="filters" role="menu">
+        <dt>Show Only Media</dt>
+        <dd>
+          <%= select_tag :media_id, options_for_select([''] + Media.canonical.by_name.collect(&:name), params[:media_id]) %>
+        </dd>
+        <dt>Show Only Wrangler</dt>
+        <dd>
+          <%= select_tag :wrangler_id, options_for_select(['', 'No Wrangler'] + @wranglers.collect(&:login), params[:wrangler_id]) %>
+        </dd>
+        <dt>Only Fandoms Starting With</dt>
+        <dd>
+          <%= text_field_tag :fandom_string, params[:fandom_string] %>
+        </dd>
+        <dt class="landmark">Submit</dt>
+        <dd class="submit actions"><%= submit_tag 'Filter' %></dd>
+      </dl>
+    </fieldset>
+  <% end %>
+
+  <div class="clear"></div>
+  <%= will_paginate(@assignments) %>
+  <!--/subnav-->
+</div>

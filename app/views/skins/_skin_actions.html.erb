@@ -1,0 +1,25 @@
+<% # expects skin %>
+<% # shared between skin blurbs and the bottom of skin pages %>
+<% if (logged_in? && !skin.is_a?(WorkSkin)) || skin.editable? %>
+  <ul class="actions">
+    <% if logged_in? && !skin.is_a?(WorkSkin) && !skin.unusable? %>
+      <li><%= render "update_skin_form", skin: skin %></li>
+      <li><%= span_if_current ts("Preview"), preview_skin_path(skin) %></li>
+    <% end %>
+
+    <% if (logged_in? || logged_in_as_admin?) && skin.cached? %>
+      <li><%= link_to ts("Set For Session"), set_skin_path(skin) %></li>
+    <% end %>
+
+    <% if skin.editable? && (policy(skin).update? || !logged_in_as_admin?) %>
+      <li><%= span_if_current ts('Edit'), edit_skin_path(skin) %></li>
+      <% unless logged_in_as_admin? %>
+        <li>
+          <%= link_to ts("Delete"),
+                      confirm_delete_skin_path(skin),
+                      data: { confirm: ts("Are you sure you want to delete this skin?") } %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>

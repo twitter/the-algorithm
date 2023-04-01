@@ -1,0 +1,11 @@
+<%= form_for WorkSearchForm.new, as: :work_search, :url => search_works_path, :html => {:class => 'search', :id => 'search', :method => :get} do |f| %>
+  <fieldset>
+    <legend><%= ts('Search Works', key: 'header') %></legend>
+    <p>
+      <%= label_tag :site_search, ts('Work Search:', key: 'header'), :class => 'landmark' %>
+      <%= f.text_field :query, :class => 'text', :id => 'site_search', :"aria-describedby" => 'site_search_tooltip' %>
+      <span class="tip" role="tooltip" id="site_search_tooltip"><%= ts('tip:', key: 'header') %> <%= ts("#{random_search_tip}", key: 'searchtip') %></span>
+      <span class="submit actions"><%= submit_tag ts('Search', key: 'header'), :class => 'button', :name => nil %></span>
+    </p>
+  </fieldset>
+<% end %>

@@ -1,0 +1,61 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= params[:type].blank? ? ts('My Subscriptions') : 
+  ts('My %{type} Subscriptions', type: params[:type].to_s.singularize.titleize)
+  %>
+</h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<h3 class="landmark heading"><%= ts('Navigation') %></h3>
+<ul class="navigation actions" role="navigation">
+  <li>
+    <%= span_if_current ts('All Subscriptions'),
+    user_subscriptions_path(@user), params[:type].blank? %>
+  </li>
+  <li>
+    <%= span_if_current ts('Series Subscriptions'),
+    user_subscriptions_path(@user, :type => "series"), 
+    params[:type] == "series" %>
+  </li>
+  <li>
+    <%= span_if_current ts('User Subscriptions'),
+    user_subscriptions_path(@user, :type => "users"), 
+    params[:type] == "users" %>
+  </li>
+  <li>
+    <%= span_if_current ts('Work Subscriptions'),
+    user_subscriptions_path(@user, :type => "works"), 
+    params[:type] == "works" %>
+  </li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<%= will_paginate @subscriptions %>
+
+<h3 class="landmark heading"><%= ts('List of Subscriptions') %></h3>
+<dl class="subscription index group">
+  <% @subscriptions.each do |subscription| %>
+    <dt>
+      <%= link_to(subscription.name, subscription.subscribable) %>
+      <% if params[:type].blank? && subscription.subscribable_type == "Work" %>
+        <%= ts('(Work)') %>
+      <% end %>
+      <% if params[:type].blank? && subscription.subscribable_type == "Series" %>
+        <%= ts('(Series)') %>
+      <% end %>
+      <% unless subscription.subscribable_type == "User" %>
+        <%= ts('by %{creators}', :creators => byline(subscription.subscribable)).html_safe %>
+      <% end %>
+    </dt>
+    <dd>
+      <%= form_for [current_user, subscription], :html => {:method => :delete} do |f| %>
+        <%= f.submit ts('Unsubscribe from %{name}', :name => subscription.name).html_safe %>
+      <% end %>
+    </dd>
+  <% end %>
+</dl>
+
+<%= will_paginate @subscriptions %>
+<!--/content-->

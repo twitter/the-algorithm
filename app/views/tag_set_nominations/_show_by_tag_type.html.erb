@@ -1,0 +1,16 @@
+<% if @limit[tag_type] > 0 %>
+  <li class="<%= tag_type.to_s.pluralize.downcase %> listbox group">
+    <h4 class="heading">
+      <%= ts("%{tag_type}", tag_type: tag_type_label_name(tag_type).pluralize) %>
+    </h4>
+    <ol class="index group">
+      <% if @tag_set_nomination.nominated_tags(tag_type).count == 0 %>
+        <li><%= ts("None nominated in this category.") %></li>
+      <% else %>
+        <% @tag_set_nomination.send("#{tag_type}_nominations").each do |tag| %>
+          <li><%= render "show_tag_status", :tag => tag %></li>
+        <% end %>
+      <% end %>
+    </ol>
+  </li>
+<% end %>

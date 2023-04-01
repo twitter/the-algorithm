@@ -1,0 +1,24 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Orphan Series") %></h2>
+
+<p class="caution">
+  <%= ts('Are you sure you want to <strong>permanently</strong> remove all identifying data from your series "%{title}", its works and chapters, and any feedback replies you may have left on them?', 
+:title => series.title).html_safe %>
+</p>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= form_tag orphans_path do %>
+  
+  <%= render :partial => 'orphans/choose_pseud' %>
+  
+  <p><%= hidden_field_tag 'series_id', series.id %></p>
+  <p class="submit actions"><%= submit_tag ts("Yes, I'm sure") %></p>
+<% end %>
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->

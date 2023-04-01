@@ -1,0 +1,110 @@
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= ts("Statistics") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<h3 class="landmark heading"><%= ts('Navigation and Sorting') %></h3>
+<%= render "stats/navigation" %>
+<!--subnav-->
+
+<!--main content-->
+<ol class="year actions">
+  <% @years.each do |year| %>
+    <li>
+      <% if @current_year == year %>
+        <span class="current"><%= year %></span>
+      <% else %>
+        <%= link_to year, current_path_with(year: year) %>
+      <% end %>
+    </li>
+  <% end %>
+</ol>
+
+<h3 class="heading"><%= ts("Totals") %></h3>
+<div class="wrapper">
+  <dl class="statistics meta group" role="complementary">
+    <% { user_subscriptions: ts("User Subscriptions:"), 
+         kudos: ts("Kudos:"), 
+         comment_thread_count: ts("Comment Threads:"),
+         bookmarks: ts("Bookmarks:"), 
+         subscriptions: ts("Subscriptions:"), 
+         word_count: ts("Word Count:") }.each do |stat, stat_text| %>
+      <% stat == :word_count ? html_class = "words" : html_class = stat.to_s.humanize.downcase %>
+      <dt class="<%= html_class %>"><%= stat_text %></dt>
+      <dd class="<%= html_class %>"><%= number_with_delimiter(@totals[stat]) %></dd>
+    <% end %>
+    <dt class="hits"><%= ts("Hits:") %></dt>
+    <dd class="hits"><%= number_with_delimiter(@totals[:hits]) %></dd>
+  </dl>
+</div>
+
+<noscript><img src="<%= @image_chart %>" class="statistics chart"></noscript>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<div id="stat_chart" class="statistics chart"></div>
+<%= render_chart(@chart, 'stat_chart') %>
+
+<div class="actions module">
+  <h3 class="landmark heading"><%= ts('View Sorting and Actions') %></h3>
+  <ul class="sorting actions" role="menu">
+    <li><h4 class="heading"><%= ts('Sort By') %></h4></li>
+    <li><%= sort_link ts("Date"), "date" %></li>
+    <li><%= sort_link ts('Hits'), "hits", {:desc_default => true} %></li>
+    <li><%= sort_link ts('Kudos'), "kudos.count", {:desc_default => true} %></li>
+    <li><%= sort_link ts('Comment Threads'), "comment_thread_count", {:desc_default => true} %></li>
+    <li><%= sort_link ts('Bookmarks'), "bookmarks.count", {:desc_default => true} %></li>
+    <li><%= sort_link ts('Subscriptions'), "subscriptions.count", {:desc_default => true} %></li>
+    <li><%= sort_link ts('Word Count'), "word_count", {:desc_default => true} %></li>
+  </ul>
+
+  <ul class="view actions" role="menu">
+    <li><%= span_if_current ts("Fandoms View"), current_path_with(flat_view: nil), params[:flat_view].blank? %></li>
+    <li><%= span_if_current ts("Flat View"), current_path_with(flat_view: true) %></li>
+  </ul>
+</div>
+
+<h3 class="landmark heading"><%= ts('Listing Statistics') %></h3>
+<ul class="statistics index group">
+  <% @works.keys.sort.each do |fandom| %>
+    <li class="fandom listbox group">
+      <h5 class="heading">
+        <%= fandom %>
+      </h5>
+      <ul class="index group">
+        <% @works[fandom].each do |work| %>
+          <li>
+            <dl>
+              <dt>
+                <%= link_to work.title, work_path(:id => work.id) %> 
+                <% if params[:flat_view] %><span class="fandom">(<%= work.fandom_string %>)</span><% end %>
+                <span class="words">(<%= ts("%{wordcount} words", wordcount: number_with_delimiter(work.word_count)) %>)</span>
+              </dt>
+              <dd>
+                <dl class="stats">
+                  <% if (work_subscriber_count = Subscription.where(:subscribable_id => work.id, :subscribable_type => 'Work').count) > 0 %>
+                    <dt class="subscriptions"><%= ts("Subscriptions:") %></dt>
+                    <dd class="subscriptions"><%= number_with_delimiter(work_subscriber_count) %></dd>
+                  <% end %>
+                  <dt class="hits"><%= ts("Hits:") %></dt>
+                  <dd class="hits"><%= number_with_delimiter(work.hits) %></dd>
+                  <% # dt ts("Downloads:") /dt dd work.downloads /dd %>
+                  <dt class="kudos"><%= ts("Kudos:") %></dt>
+                  <dd class="kudos"><%= number_with_delimiter(work.kudos.count) %></dd>
+                  <dt class="comments"><%= ts("Comment Threads:") %></dt>
+                  <dd class="comments"><%= number_with_delimiter(work.comment_thread_count) %></dd>
+                  <dt class="bookmarks"><%= ts("Bookmarks:") %></dt>
+                  <dd class="bookmarks"><%= number_with_delimiter(work.bookmarks.count) %></dd>
+                  <% # dt ts("Newest Link:") /dt %>
+                    <% # dd %>
+                    <% # work.work_links.last.try(:url) || ts("none yet") %>
+                    <% # ( link_to ts("see all"), work_links_path(:work_id => work.id) /a ) %>
+                  <% # /dd %>
+                </dl>
+              </dd>
+            </dl>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>
+<!--/content-->

@@ -1,0 +1,122 @@
+<!-- BEGIN navigation -->
+<h3 class="landmark heading"><%= ts("Actions") %></h3>
+<ul class="work navigation actions" role="menu">
+  <% if logged_in_as_admin? || permit?("tag_wrangler") %>
+    <li class="reindex"><%= link_to ts("Troubleshoot"), work_troubleshooting_path(@work) %></li>
+  <% end %>
+
+  <% if is_author_of?(@work) %>
+    <li class="add"><%= link_to ts("Add Chapter"), new_work_chapter_path(@work) %></li>
+    <li class="edit"><%= link_to ts("Edit"), edit_work_path(@work) %></li>
+    <li class="edit tag"><%= link_to ts("Edit Tags"), edit_tags_work_path(@work) %></li>
+  <% end %>
+
+
+  <% # chapter navigation %>
+  <% if @previous_chapter || @next_chapter %>
+    <li class="chapter entire"><%= link_to ts("Entire Work"), work_path(@work, :view_full_work => 'true') %></li>
+
+    <% if @previous_chapter %>
+      <li class="chapter previous"><%= link_to '&#8592; '.html_safe + ts("Previous Chapter"), [@work, @previous_chapter, :anchor => "workskin"] %></li>
+    <% end %>
+
+    <% if @next_chapter %>
+      <li class="chapter next"><%= link_to h(ts("Next Chapter")) + ' &#8594;'.html_safe, [@work, @next_chapter, :anchor => "workskin"] %></li>
+    <% end %>
+
+    <li class="chapter" aria-haspopup="true">
+      <noscript>
+        <%= link_to ts('Chapter Index'), navigate_work_path(@work) %>
+      </noscript>
+      <a class="hidden" href="#"><%= ts('Chapter Index') %></a>
+      <ul id="chapter_index" class="expandable secondary hidden">
+        <li>
+          <%= form_tag url_for({:controller => :chapters, :action => :show, :work_id => @work}), :method => :get do %>
+            <p>
+              <% options = @chapters.map{|c| [c.abbreviated_display_title.html_safe, c.id] } %>
+              <%= select_tag :selected_id, options_for_select(options, params[:id].to_i) %>
+              <span class="submit actions"><%= submit_tag ts("Go") %></span>
+            </p>
+          <% end %>
+        </li>
+        <li><%= link_to ts("Full-page index"), navigate_work_path(@work) %></li>
+      </ul>
+    </li>
+  <% elsif @chapters && @chapters.length > 1 %>
+    <li class="chapter bychapter"><%= link_to ts("Chapter by Chapter"), [@work, @chapter] %></li>
+  <% end %>
+
+
+  <% # for users, bookmark and mark to read later %>
+  <% if current_user.is_a?(User) %>
+    <% @bookmark ||= bookmark_if_exists(@work) %>
+    <li class="bookmark">
+      <%= link_to (@bookmark ? ts("Edit Bookmark") : ts("Bookmark")), "#bookmark-form", :class => "bookmark_form_placement_open" %>
+      <%= link_to ts("Cancel Bookmark"), "#", :class => "hidden bookmark_form_placement_close" %>
+    </li>
+
+    <% unless current_user.is_author_of?(@work) || current_user.try(:preference).try(:history_enabled) == false %>
+    <li class="mark">
+      <% if marked_for_later?(@work) %>
+        <%= mark_as_read_link(@work) %>
+      <% else %>
+        <%= mark_for_later_link(@work) %>
+      <% end %>
+    </li>
+    <% end %>
+  <% end %>
+
+  <li class="comments" id="show_comments_link_top">
+    <% # If in single chapter view, show comments for the chapter; otherwise, show the comments for the entire work %>
+    <% @previous_chapter || @next_chapter ? commentable = @chapter : commentable = @work %>
+    <% if commentable.count_visible_comments > 0 %>
+      <%= show_hide_comments_link(commentable) %>
+    <% else %>
+      <%= link_to ts("Comments"), "#comments" %>
+    <% end %>
+  </li>
+
+  <% # for author or admin, review comments if moderating them %>
+  <% if (logged_in_as_admin? || (current_user && current_user.is_author_of?(@work))) && @work.find_all_comments.unreviewed_only.exists? %>
+    <li class="comments" id="review_comments">
+      <%= link_to ts("Unreviewed Comments") + " (" + @work.find_all_comments.unreviewed_only.count.to_s + ")" , unreviewed_work_comments_path(@work) %>
+    </li>
+  <% end %>
+
+  <% # allow user to disable style on work if it has been customized %>
+  <% if @work.work_skin %>
+    <li class="style">
+      <% if Preference.disable_work_skin?(params[:style]) %>
+        <%= link_to(ts("Show Creator's Style"),
+          params[:view_full_work] == 'true' ? url_for(:style => 'creator', :view_full_work => 'true') : url_for(:style => 'creator')) %>
+      <% else %>
+        <%= link_to(ts("Hide Creator's Style"),
+          params[:view_full_work] == 'true' ? url_for(:style => 'disable', :view_full_work => 'true') : url_for(:style => 'disable')) %>
+      <% end %>
+    </li>
+  <% end %>
+
+  <% unless @work.unrevealed? || @work.users.all? {|u| u.preference.disable_share_links?} %>
+    <li class="share hidden">
+      <%= link_to_modal ts("Share"), :for => share_work_path(@work), :title => ts("Share Work") %>
+    </li>
+  <% end %>
+
+  <% if current_user && @subscription %>
+    <li class="subscribe">
+      <%= render 'subscriptions/form', :subscription => @subscription %>
+    </li>
+  <% end %>
+
+  <% if downloadable? && @admin_settings.downloads_enabled? %>
+    <li class="download" aria-haspopup="true">
+      <a href="#"><%= ts("Download") %></a>
+      <ul class="expandable secondary">
+        <% ArchiveConfig.DOWNLOAD_FORMATS.each do |format| %>
+          <li><%= link_to ts(format.upcase), download_url_for_work(@work, format) %></li>
+        <% end %>
+      </ul>
+    </li>
+  <% end %>
+</ul>
+<!-- END navigation -->

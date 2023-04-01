@@ -1,0 +1,12 @@
+<% creation_type = @creation.class.name.underscore %>
+<% content_for :message do %>
+<%= t(".intro_#{creation_type}", adding_user: @adding_user.login, pseud: @creatorship.pseud.name) %>
+
+<%= t ".text.creation", title: creation_title(@creation),
+  url: polymorphic_url(@creation),
+  pseuds: @creation.pseuds.map(&:byline).to_sentence %>
+
+<%= t ".explanation" %>
+
+<%= t(".text.remove_#{creation_type}", url: edit_polymorphic_url(@creation)) %>
+<% end %>

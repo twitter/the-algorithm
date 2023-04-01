@@ -1,0 +1,86 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Archive FAQ") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><%= render 'filters' %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<p class="notice">
+  <%= ts("The FAQs are currently being updated and translated by our volunteers. This is a work in progress and not all information will be up to date or available in languages other than English at this time. If your language doesn't list all FAQs yet, please consult the English list and check back later for updates.") %>
+</p>
+<p class="notes">
+  <%= ts("Some commonly asked questions about the Archive are answered here.
+  Questions and answers about our Terms of Service can be found in the") %> <%= link_to ts("TOS FAQ"), tos_faq_path %>.
+  <%= ts("You may also like to check out our") %> <%= link_to ts("Known Issues"), known_issues_path %>.
+  <%= ts("If you need more help, please ") %> <%= link_to ts("contact Support"), feedbacks_path %>.
+</p>
+
+<% if @archive_faqs.blank? %>
+  <p class="notice"><%= ts("We're sorry, there are currently no entries in the FAQ System.") %></p>
+<% else %>
+  <% if rtl? %>
+    <div dir="rtl" class="categories">
+  <% else %>
+    <div class="categories">
+  <% end %>
+    <h3 class="heading"><%= ts("Available Categories") %>
+      <ul class="showme hidden actions">
+        <li id="expand-categories"><%= link_to ts("Expand Categories"), "#" %></li>
+        <li id="collapse-categories"><%= link_to ts("Collapse Categories"), "#" %></li>
+      </ul>
+    </h3>
+
+    <div class="userstuff">
+      <ul class="faq index group" role="navigation">
+        <% for faq in @archive_faqs %>
+          <li class="category" aria-haspopup="true">
+            <%= link_to faq.title, archive_faq_path(faq) %>
+            <ul class="questions">
+              <% english? ? questions = faq.questions : questions = translated_questions(faq.questions) %>
+              <% if questions.blank? %>
+                <li><%= ts("There are no questions in this category yet.") %></li>
+              <% else %>
+                <% for q in questions %>
+                  <li>
+                    <%= link_to q.question, archive_faq_path(faq, :anchor => q.anchor) %>
+                    <% unless q.screencast.to_s.empty? %>
+                      <span class="screencast">
+                        <%= ts("(Screencast available)") %>
+                      </span>
+                    <% end %>
+                  </li>
+                <% end %>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    
+  </div>
+  
+  <%= content_for :footer_js do %>
+    <%= javascript_tag do %>
+      $j(document).ready(function() {
+        $j(".category").children("a").click(function(e) {
+          $j(this).next().toggle();
+          e.preventDefault();
+        }).next().hide();
+ 
+        $j("#expand-categories").find("a").click(function(e) {
+          $j(".category").children("ul").show();
+          e.preventDefault();
+        });
+
+        $j("#collapse-categories").find("a").click(function(e) {
+          $j(".category").children("ul").hide();
+          e.preventDefault();
+        });
+      });
+    <% end %>
+  <% end %>
+<% end %>

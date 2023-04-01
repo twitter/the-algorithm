@@ -1,0 +1,43 @@
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <%= ts("Works in Challenges/Collections") %>
+</h2>
+<!-- /end descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <% if @user == current_user %>
+    <li id="edit_multiple"><%= link_to ts('Edit Works'), show_multiple_user_works_path(@user) %></li>
+  <% end %>
+  <li><%= span_if_current ts('Works in Collections'), collected_user_works_path(@user) %></li>
+  <li><%= span_if_current ts('Works'), user_works_path %></li>
+  <% if @facets.present? %>
+    <% # Filters button for narrow screens jumps to filters when JavaScript is disabled and opens filters when JavaScript is enabled %>
+    <li class="narrow-shown hidden"><a href="#works-in-collections-filters" id="go_to_filters"><%= ts("Filters") %></a></li>
+  <% end %>
+</ul>
+<!--/subnav-->
+
+<% if @works.respond_to?(:total_pages) %>
+  <%= will_paginate @full_results %>
+<% end %>
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("Listing Works") %></h3>
+<ol class="work index group">
+  <% for work in @works %>
+    <% if work %><%= render 'work_blurb', :work => work %><% end %>
+  <% end %>
+</ol>
+  
+<!--/content-->
+
+<!--filters subnav-->
+<% if @facets.present? %>
+  <%= render 'collection_filters' %>
+<% end %>
+<!---/subnav-->
+
+<% if @works.respond_to?(:total_pages) %>
+  <%= will_paginate @full_results %>
+<% end %>

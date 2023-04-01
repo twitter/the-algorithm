@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Dewplayer</title>
+<link rel="stylesheet" type="text/css" href="styles.css" />
+
+<!-- Appel à la librairie SWFObject (fichier à placer également sur le serveur) -->
+<script type="text/javascript" src="swfobject.js"></script>
+
+</head>
+
+<body id="dewbody">
+
+	<div id="content">
+	
+		<h1>Dewplayer &amp; JavaScript</h1>
+		
+		<div id="players">
+
+			<h2>SWFObject</h2>
+			<div id="dewplayer_content">
+				<object data="dewplayer.swf" width="200" height="20" name="dewplayer" id="dewplayer" type="application/x-shockwave-flash">
+				<param name="movie" value="dewplayer.swf" />
+				<param name="flashvars" value="mp3=mp3/test1.mp3" />
+				<param name="wmode" value="transparent" />
+				</object>
+			</div>
+			
+			<!-- SwfObject -->
+			<script type="text/javascript" src="swfobject.js"></script>
+			
+			<!-- SwfObject + Dewplayer -->
+			<script type="text/javascript">
+			var flashvars = {
+			  mp3: "mp3/test1.mp3"
+			};
+			var params = {
+			  wmode: "transparent"
+			};
+			var attributes = {
+			  id: "dewplayer"
+			};
+			swfobject.embedSWF("dewplayer.swf", "dewplayer_content", "200", "20", "9.0.0", false, flashvars, params, attributes);
+			</script>
+
+			<h2>JavaScript Interface</h2>
+
+			<p class="hint">Si vous obtenez des avertissements JavaScript, ne testez pas en local (file://) mais à distance sur votre serveur (http://)</p>
+			<p class="hint">If you get a JavaScript warning, remember to try online (http://) and not with local stored html (file://)</p>
+			
+			<div id="dewplayer_content_js">
+			<object data="dewplayer.swf" width="200" height="20" name="dewplayer" id="dewplayerjs" type="application/x-shockwave-flash">
+			<param name="movie" value="dewplayer.swf" />
+			<param name="flashvars" value="mp3=mp3/test1.mp3|mp3/test2.mp3|mp3/test3.mp3&javascript=on" />
+			<param name="wmode" value="transparent" />
+			</object>
+			</div>
+
+			<p>
+			<input type="button" onclick="play();" value="Play" />
+			<input type="button" onclick="stop();" value="Stop" />
+			<input type="button" onclick="pause();" value="Pause" />
+			<input type="button" onclick="next();" value="Next" />
+			<input type="button" onclick="prev();" value="Prev" />
+			<input type="button" onclick="go(2);" value="Go(2)" />
+			<input type="button" onclick="set('mp3/test2.mp3');" value="Set mp3" />
+			<input type="button" onclick="set('mp3/test3.mp3');" value="Set another mp3" />
+			<input type="button" onclick="setpos(10000);" value="Set position 10 sec" />
+			<input type="button" onclick="getpos();" value="Get position" />
+			<input type="button" onclick="volume(50);" value="Set volume 50%" />
+			</p>
+			
+			<script type="text/javascript">
+			// Custom JavaScript calls
+			var dewp = document.getElementById("dewplayerjs");
+			function play() {
+			  if(dewp!=null) dewp.dewplay();
+			}
+			function stop() {
+			  if(dewp!=null) dewp.dewstop();
+			}
+			function pause() {
+			  if(dewp!=null) dewp.dewpause();
+			}
+			function next() {
+			  if(dewp!=null) dewp.dewnext();
+			}
+			function prev() {
+			  if(dewp!=null) dewp.dewprev();
+			}
+			function set(file) {
+			  if(dewp!=null) dewp.dewset(file);
+			}
+			function go(index) {
+			  if(dewp!=null) dewp.dewgo(index);
+			}
+			function setpos(ms) {
+			  if(dewp!=null) dewp.dewsetpos(ms);
+			}
+			function getpos() {
+			  if(dewp!=null) alert(dewp.dewgetpos());
+			}
+			function volume(val) {
+			  if(dewp!=null) alert(dewp.dewvolume(val));
+			}
+
+			</script>
+
+		</div> <!-- #players -->
+
+	</div> <!-- #content -->
+
+</body>
+</html>

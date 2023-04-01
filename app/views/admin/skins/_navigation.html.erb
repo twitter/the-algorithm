@@ -1,0 +1,6 @@
+<h3 class="landmark heading">Navigation</h3>
+<ul class="navigation actions" role="navigation">
+  <li><%= span_if_current t("skins.approval_queue", :default => "Approval Queue"), admin_skins_path %></li>
+  <li><%= span_if_current t("skins.approved_skins", :default => "Approved Skins"), index_approved_admin_skins_path %></li>
+  <li><%= span_if_current t("skins.rejected_skins", :default => "Rejected Skins"), index_rejected_admin_skins_path %></li>
+</ul>

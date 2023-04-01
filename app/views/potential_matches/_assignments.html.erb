@@ -1,0 +1,32 @@
+<%= form_tag set_collection_assignments_path, :method => :put do %>
+  <% if @assignments.blank? %>
+    <p><%= ts("None here! Please check the other tabs.") %></p>
+  <% else %>
+
+    <!-- list all the requesters with their potential matches -->
+    <!--TABLEWATCH!!-->   
+    <table summary="<%= ts("Lists assignments and provides options to reassign.") %>">
+      <caption><%= ts("Assignments") %></caption>
+      <thead>
+        <tr>
+          <th scope="col"><%= ts("Assignment ID") %></th>
+          <th scope="col"><%= ts("Recipient") %></th>
+          <th scope="col"><%= ts("Giver") %></th>
+          <% unless params[:no_recipient] %>
+            <th scope="col"><%= ts("Write-In Giver") %> <%= link_to_help "challenge-pinch-hitter" %></th>
+          <% end %>
+        </tr>
+      </thead>
+
+      <% @assignments.each do |assignment| %>
+        <%= render "potential_matches/assignment_with_request", :assignment => assignment %>
+      <% end %>
+    </table>
+
+    <% unless @assignments.is_a?(Array) %>
+      <% # if these are bad assignments with errors then it's an array and can't be paginated %>
+      <%= will_paginate @assignments %>
+    <% end %>
+  <% end %>
+  <%= render "potential_matches/match_navigation" %>
+<% end %>

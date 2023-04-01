@@ -1,0 +1,76 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts("Find Users") %></h2>
+  <!--/descriptions-->
+
+  <!--main content-->
+  <%= form_tag url_for(controller: "admin/admin_users", action: "index"), method: :get, class: "search", role: "search" do %>
+    <dl>
+      <dt><%= label_tag "name", ts("Name") %></dt>
+      <dd>
+        <%= text_field_tag "name", params[:name], "aria-describedby": "name-field-description" %>
+        <p class="footnote" id="name-field-description">
+          <%= ts("Search for users with matching usernames or pseuds.") %>
+        </p>
+      </dd>
+      <dt><%= label_tag "email", ts("Email") %></dt>
+      <dd><%= text_field_tag "email", params[:email] %></dd>
+      <dt><%= label_tag "user_id", ts("User ID") %></dt>
+      <dd>
+        <%= text_field_tag "user_id", params[:user_id], "aria-describedby": "user-id-field-description" %>
+        <p class="footnote" id="user-id-field-description">
+          <%= ts("Search for user with exact ID.") %>
+        </p>
+        </dd>
+      <dt><%= label_tag "role", ts("Role") %></dt>
+      <dd><%= select_tag "role", "<option></option>".html_safe + options_for_select(@role_values, @role.try(:name)) %></dd>
+      <dt><%= label_tag "status", ts("Status") %></dt>
+      <dd>
+        <%= check_box_tag "inactive", "1", params[:inactive].present? %>
+        <%= label_tag "inactive", ts("Not yet activated") %>
+      </dd>
+      <dt><%= label_tag "settings", ts("Search settings") %></dt>
+      <dd>
+        <%= check_box_tag "exact", "1", params[:exact].present? %>
+        <%= label_tag "exact", ts("Exact match only") %>
+      </dd>
+    </dl>
+    <p class="submit"><%= submit_tag ts("Find") %></p>
+  <% end %>
+
+  <% if @users %>
+    <h3 class="heading"><%= ts("#{pluralize(@users.total_entries, 'user')} found") %></h3>
+    <% if @users.size > 0 %>
+      <div class="wrapper">
+        <table id="admin_users_table" summary="<%= ts("Users matching your search criteria, as well as options for updating the user's roles and viewing more information.") %>">
+          <caption><%= ts("List of Users") %></caption>
+          <colgroup>
+            <col class="name"/>
+            <col span="6" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col"><%= ts("Username") %></th>
+              <th scope="col"><%= ts("Email") %></th>
+              <% for role in @roles %>
+                <th scope="col"><%= role.name.try(:titleize) %></th>
+              <% end %>
+              <th scope="col"><%= ts("Fannish Next of Kin") %></th>
+              <th scope="col"><%= ts("Update") %></th>
+              <th scope="col"><%= ts("Details") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each do |user| %>
+              <tr id="user_<%= user.id %>">
+                <%= render "user_form", user: user %>
+              </tr>
+            <% end %>
+          </tbody>
+        <% end %>
+      </table>
+    </div>
+    <%= will_paginate @users %>
+  <% end %>
+  <!--/content-->
+</div>

@@ -1,0 +1,62 @@
+#header ul.primary,
+#footer,
+.autocomplete .dropdown ul li:hover,
+.autocomplete .dropdown li.selected,
+a.tag:hover {
+  background: #4295BC;
+}
+
+#header .heading a,
+#header .actions a:hover,
+#header .actions a:focus,
+#header .dropdown:hover a,
+#header .open a,
+#header fieldset,
+#header form,
+#header p,
+#dashboard a:hover,
+.actions a:hover,
+.actions input:hover,
+.delete a,
+span.delete,
+span.unread,
+.replied,
+span.claimed,
+.draggable,
+.droppable,
+span.requested,
+a.work,
+.blurb h4 a:link,
+.blurb h4 img,
+.system .latest h3,
+.system div.news h3,
+.system .tweets h3,
+.required,
+.error,
+a.cloud7,
+a.cloud8 {
+  color: #347391;
+}
+
+#dashboard,
+#dashboard.own,
+.error,
+.comment_error,
+.kudos_error,
+#header ul.primary,
+.LV_invalid,
+.LV_invalid_field,
+input.LV_invalid_field:hover,
+input.LV_invalid_field:active,
+textarea.LV_invalid_field:hover,
+textarea.LV_invalid_field:active,
+#header .primary a,
+#header .primary input,
+#header .search input {
+  border-color: #347391 !important;
+}
+
+#header .menu a,
+#header .dropdown:hover .menu a {
+  color: #111;
+}

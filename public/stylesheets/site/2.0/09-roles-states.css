@@ -1,0 +1,99 @@
+/*==ROLES AND STATES
+http://otwcode.github.com/docs/front_end_coding/patterns/modifiers
+*/
+
+.own, .draft, .draft .wrapper, .unread, .child, .unwrangled, .unreviewed {
+  background: #ededed;
+    opacity: 0.95;
+}
+
+.draft {
+  border: 2px dashed #aaa;
+  padding: 0.643em;
+    border-radius: 0.5em;
+}
+
+/*(these states spoof the ".navigation .current" style)*/
+
+span.unread, .replied, span.claimed, .actions span.defaulted {
+  background: #ccc;
+  color: #900;
+  width: auto;
+  font: 100 100%/1.286 'Lucida Grande', 'Lucida Sans Unicode', 'GNU Unifont', Verdana, Helvetica, sans-serif;
+  height: 1.286em;
+  vertical-align: middle;
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  white-space: nowrap;
+  overflow: visible;
+  position: relative;
+  text-decoration: none;
+  border: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+    border-radius: 0.25em;
+}
+
+.actions span.defaulted {
+  color: #111;
+}
+
+.canonical, li.requested {
+  font-weight: 700;
+}
+
+.hidden, body .hidden, .actions .hidden, .actions a.hidden, #dashboard .hidden {
+  display: none;
+}
+
+.draggable, .droppable, span.requested, .nominations .rejected {
+  color: #900;
+}
+
+span.offered, .replied, .nominations .approved {
+  color: #008000;
+}
+
+.nominations .approved {
+  background: #d1f0d1;
+}
+
+.nominations .rejected {
+  background: #efd1d1;
+}
+
+span.offered.requested {
+  color: #876714;
+}
+
+/* Arrows for the accordion widget */
+
+.collapsed:after {
+  content: " \2193";
+}
+
+.expanded:after {
+  content: " \2191";
+}
+
+/*This is a helper for Back End and can be overridden contextually anywhere*/
+
+.commas li:after {
+  content: ", ";
+}
+
+.commas li {
+  display: inline;
+}
+
+.commas li:last-child:after, .commas li:only-child:after {
+  content: none;
+}
+
+/* CONTEXTS */
+
+.dashboard .own, .comment span.unreviewed {
+  background: transparent;
+    opacity: 1.0;
+}
+
+/*END== */

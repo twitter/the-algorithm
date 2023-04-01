@@ -1,0 +1,70 @@
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= ts("Tag Nominations for %{title}", :title => @tag_set_nomination.owned_tag_set.title) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+	<li><%= link_to h(ts("Back To ")) + @tag_set_nomination.owned_tag_set.title, tag_set_path(@tag_set_nomination.owned_tag_set) %></li>
+  <li><%= link_to ts("Tag Sets"), tag_sets_path %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->  
+<ul class="notes">
+  <li><%= ts('The autocomplete lists canonical tags for you. Please choose the canonical version of your tag if there is one.') %></li>
+  <li><%= ts('The tag set moderators might change or leave out your nominations (sometimes just because a different form of your nomination was included).') %></li>
+  <li><%= ts('Nominations are not forever! Don\'t be confused if you come back in a few months and they are gone: they may have been cleaned up.') %></li>
+</ul>
+
+<h3 class="landmark heading"><%= ts("Nominate Tags Form") %></h3>
+
+<%= error_messages_for :tag_set_nomination %>
+
+<%= form_for(@tag_set_nomination, :url => (@tag_set_nomination.new_record? ? tag_set_nominations_path(@tag_set) : tag_set_nomination_path(@tag_set, @tag_set_nomination)), :html => {:method => (@tag_set_nomination.new_record? ? :post : :put), :id => "tag_set_nomination_form", :class => "tagset"}) do |f| %>
+  <fieldset>
+    <legend>Basic Information</legend>
+    <dl>
+      <dt><%= ts("Nominating For: ") %></dt>
+      <dd><%= link_to @tag_set_nomination.owned_tag_set.title, tag_set_path(@tag_set_nomination.owned_tag_set) %></dd>
+        
+      <dt><%= f.label :pseud_id, ts("Pseud: ") %></dt>
+      <dd><%= f.select :pseud_id, current_user.pseuds.collect {|p| [p.name, p.id] } %></dd>
+    </dl>
+  </fieldset>
+<fieldset>
+  <h4 class="heading"><%= ts("Tag Nominations") %></h4>
+  <p class="notes"><%= nomination_notes(@limit) %></p>
+  <% if @limit[:relationship] > 0 && @limit[:fandom] > 1 %>
+    <p class="notes"><%= ts("If crossover relationships are allowed, you can enter them under either fandom.") %></p>
+  <% end %>
+
+  <% if @limit[:fandom] > 0 %>
+
+    <% # char and relationship nominations grouped with fandom %>
+    <%= render 'tag_nominations_by_fandom', :f => f %>
+    
+    <% # freeforms on their own %>
+    <% if @limit[:freeform] > 0 %>
+      <%= render 'tag_nominations', :f => f, :tag_type => "freeform" %>
+    <% end %>
+
+  <% else %>
+  
+    <% # nominations all on same level in fieldset/dls %>
+    <% %w(character relationship freeform).each do |tag_type| %>
+      <% if @limit[tag_type] > 0 %>
+        <%= render 'tag_nominations', :f => f, :tag_type => tag_type %>
+      <% end %>
+    <% end %>
+    
+  <% end %>
+</fieldset>
+
+  <fieldset>
+  	<legend><%= ts('Submit') %></legend> 
+    <p class="submit">
+      <%= f.submit ts('Submit') %>
+    </p>
+  </fieldset>
+<% end %>
+<!--/content-->

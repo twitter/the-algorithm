@@ -1,0 +1,12 @@
+<% # not too many, so just show them in a single group %>
+<li class="<%= tag_type_css_class(tag_type) %> listbox group">
+  <h3 class="expander_parent heading">
+    <%= ts("%{tag_type}", tag_type: tag_type_label_name(tag_type).pluralize) %>
+
+    (<%= @tag_set.with_type(tag_type).count %>)
+    <%= expand_contract_shuffle("list_for_#{tag_type}") %>
+  </h3>
+  <ol id="list_for_<%= tag_type %>" class="commas tags index group">
+    <%= tag_relation_to_list @tag_set.with_type(tag_type) %>
+  </ol>
+</li>

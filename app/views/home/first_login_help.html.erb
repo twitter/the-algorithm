@@ -1,0 +1,233 @@
+<% # Expects current_user %>
+<div class="userstuff">
+  <h2 class="heading">
+    <%= ts('Welcome to the %{app_name}!', app_name: ArchiveConfig.APP_NAME) %>
+  </h2>
+  <p><%= ts('Here are some tips to help you get started.') %></p>
+
+  <h3 class="landmark heading"><%= ts('Table of Contents') %></h3>
+  <ul id="toc" class="toc" role="directory">
+    <li><%= link_to ts('Logging In and Logging Out'), '#logging_in' %></li>
+    <li>
+      <%= link_to ts('Editing Your Profile, Password, and Preferences'),
+                  '#edit_profile' %>
+    </li>
+    <li><%= link_to ts('Pseuds'), '#pseuds' %></li>
+    <li><%= link_to ts('Posting Works'), '#posting' %></li>
+    <li><%= link_to ts('Browsing'), '#browsing' %></li>
+    <li><%= link_to ts('Tags'), '#tags' %></li>
+    <li><%= link_to ts('Warnings'), '#warnings' %></li>
+    <li><%= link_to ts('Bookmarking Works'), '#bookmarking' %></li>
+    <li><%= link_to ts('Preferences'), '#preferences' %></li>
+    <li>
+      <%= link_to ts('Additional Browsing Information'), '#additional' %>
+      <ul>
+        <li><%= link_to ts('History and Mark for Later'), '#history' %></li>
+        <li><%= link_to ts('Subscriptions'), '#subscriptions' %></li>
+      </ul>
+    </li>
+    <li><%= link_to ts('Terms of Service'), '#legal_stuff' %></li>
+    <li><%= link_to ts('Support and Feedback'), '#support' %></li>
+  </ul>
+
+  <h3 class="heading" id="logging_in">
+    <%= ts('Logging In and Logging Out') %>
+  </h3>
+  <p><%= ts('To log in, locate the login link and fill in your Username and 
+  Password. The link will be located at the top right of the screen and as 
+  indicated by your screenreader if you\'re using one. If you forget your 
+  password, then select "%{forgot_password}". To log out, select "Log Out" on 
+  the top right corner in the default browser skin.',
+  forgot_password: (link_to ts('forgot your password'), new_user_password_path)
+  ).html_safe %></p>
+
+  <h3 class="heading" id="edit_profile">
+    <%= ts('Editing Your Profile, Password, and Preferences') %>
+  </h3>
+  <p><%= ts('To add your info, go to %{dashboard}, select the 
+  "%{profile}" tab, and select "%{edit_profile}" from the range of 
+  options at the end of the page. Here, you can enter some basic personal 
+  information. It\'s also where to go to change your password. Refer to the 
+  %{profile_faq} for more information.',
+  dashboard: (link_to ts('your Dashboard'), user_path(current_user)),
+  profile: (link_to ts('Profile'), user_profile_path(current_user)),
+  edit_profile: (link_to ts('Edit My Profile'), edit_user_path(current_user)), 
+  profile_faq: (link_to ts('Profile FAQ'), archive_faqs_path + '/profile')
+  ).html_safe %></p>
+
+  <h3 class="heading" id="pseuds">
+    <%= ts('Pseuds') %>
+  </h3>
+  <p><%= ts('Pseuds are like pen names linked to your account. You can use 
+  different pseuds to post your works under the appropriate name while still 
+  managing them through the same account. You can %{manage_pseuds} through 
+  your profile page. For more information, please visit the 
+  %{pseuds_faq}.',
+  manage_pseuds: (link_to ts('manage your pseuds'), 
+                          user_pseuds_path(current_user)),
+  pseuds_faq: (link_to ts('Pseuds FAQ'), archive_faqs_path + '/pseuds'),
+  ).html_safe %></p>
+
+  <h3 class="heading" id="posting">
+    <%= ts('Posting Works') %>
+  </h3>
+  <p><%= ts('To open the Post New Work page, just select the %{post} link 
+  from the menu of the Post tab located at the top right of the page in the 
+  default browser skin. Visit the %{posting_faq} or check out our 
+  %{post_tutorial} for more information.',
+  post: (link_to ts('Post New'), new_work_path),
+  posting_faq: (link_to ts('Posting and Editing FAQ'), 
+                        archive_faqs_path + '/posting-and-editing'),
+  post_tutorial: (link_to ts('Tutorial: Posting a Work on AO3'), 
+                          archive_faqs_path + '/tutorial-posting-a-work-on-ao3')
+  ).html_safe %></p>
+
+  <h3 class="heading" id="browsing">
+    <%= ts('Browsing') %>
+  </h3>
+  <p><%= ts('You can start browsing works by going to the "%{fandoms}" tab at 
+  the top of any Archive page in the default skin and selecting either 
+  "%{all_fandoms}" or one of the subsets such as "%{movies}". Alternatively, you 
+  can use the %{search} to look for specific fandoms, works, or users. You can 
+  use the "Sort and Filter" form to narrow down the results in any fandom page. 
+  For more instructions, please visit %{search_faq} and the 
+  %{search_tutorial}.',
+  fandoms: (link_to ts('Fandoms'), menu_fandoms_path),
+  all_fandoms: (link_to ts('All Fandoms'), media_path),
+  movies: Media.find_by_name('Movies') ? (link_to ts('Movies'), 
+                                         medium_fandoms_path(
+                                           Media.find_by_name('Movies'))) :
+                                         ts('Movies'),
+  search: (link_to ts('search feature'), search_works_path),
+  search_faq: (link_to ts('Search and Browse FAQ'), 
+                       archive_faqs_path + '/search-and-browse'),
+  search_tutorial: (link_to ts('Searching and browsing tutorial'), 
+                            admin_posts_path + '/259'),
+  ).html_safe %></p>
+
+  <h3 class="heading" id="tags">
+    <%= ts('Tags') %>
+  </h3>
+  <p><%= ts('All tags on the Archive—including those for fandoms, relationships, 
+  and characters—start out user-created. You can always use the existing tags by 
+  selecting from the autocomplete list. If you cannot find the tags you want to 
+  use, feel free to create new tags for your works. Behind the scenes, our tag 
+  wrangling team will match the tags up with their synonyms, so that people can 
+  find your work whether you tag it "<abbr>AMTDI</abbr>", "Aliens Made Them Do 
+  It", or "Sex Pollen". Refer to the %{tags_faq} to learn more.',
+  tags_faq: (link_to ts('Tags FAQ'), archive_faqs_path + '/tags')
+  ).html_safe %></p>
+
+  <h3 class="heading" id="warnings">
+    <%= ts('Warnings') %>
+  </h3>
+  <p><%= ts('The Archive defines four "primary" %{warnings_tos}: "Graphic 
+  Depictions Of Violence", "Major Character Death", "Rape/Non-Con", and 
+  "Underage". When posting a work, you have the option to explicitly select 
+  warnings for this content, deny the presence of such content ("No Archive 
+  Warnings Apply"), or choose not to apply warnings regardless of whether or not 
+  these warnings are applicable ("Creator Chose Not To Use Archive Warnings"). 
+  Remember, "No Archive Warnings Apply" only refers to the listed primary 
+  warnings.',
+  warnings_tos: (link_to ts('Archive-specific warnings'), tos_path + '#IV.K.3')
+  ).html_safe %></p>
+  <p><%= ts('When browsing the Archive, warnings will be displayed in the blurb 
+  of each work. Official warning tags are displayed in bold. A four square grid 
+  in the top left corner of each work\'s blurb indicates the work\'s rating, 
+  completion status, pairing category, and any Archive warnings that apply to 
+  it. Refer to the %{symbols_key} for more information.',
+  symbols_key: (link_to ts('Symbols Key Chart'), '/help/symbols-key.html')
+  ).html_safe %></p>
+
+  <h3 class="heading" id="bookmarking">
+    <%= ts('Bookmarking Works') %>
+  </h3>
+  <p><%= ts('You can bookmark works on the Archive as well as works hosted on 
+  other sites. You can choose to make your bookmarks public or private. You can 
+  also mark a public bookmark as a rec (recommendation). Additionally, you can 
+  add notes and tags to the bookmark, and/or add it to a collection. For more 
+  instructions on managing your Bookmarks, please visit the %{bookmarks_faq}.',
+  bookmarks_faq: (link_to ts('Bookmarks FAQ'), archive_faqs_path + '/bookmarks') 
+  ).html_safe %></p>
+
+  <h3 class="heading" id="preferences">
+    <%= ts('Preferences') %></h3>
+  <p><%= ts('"%{set_preferences}" is located next to the "%{edit_profile}" 
+  button, and allows you to adjust certain settings to personalize your 
+  experience on the site. The Preferences area controls both the Archive\'s 
+  behavior (such as whether your history is saved) and the Archive\'s 
+  appearance. Go to the %{preferences_faq} for more details.',
+  set_preferences: (link_to ts('Set My Preferences'),     
+                            user_preferences_path(current_user)),
+  edit_profile: (link_to ts('Edit My Profile'), edit_user_path(current_user)),
+  preferences_faq: (link_to ts('Preferences FAQ'),
+                            archive_faqs_path + '/preferences') 
+  ).html_safe %></p>
+  <p><%= ts('For more information on how to customize the skins and interface of 
+  the Archive, refer to the %{skins_faq} and %{tutorial_list}.',
+  skins_faq: (link_to ts('Skins and Archive Interface FAQ'), 
+                      archive_faqs_path + '/skins-and-archive-interface'),
+  tutorial_list: (link_to ts('List of Tutorials'), 
+                          archive_faqs_path + '/tutorials')
+  ).html_safe %></p>
+
+  <h3 class="heading" id="additional">
+    <%= ts('Additional Browsing Information') %>
+  </h3>
+  <h4 class="heading" id="history">
+    <%= ts('History and Mark for Later') %></h4>
+  <p><%= ts('You can access and manage your history by going to %{dashboard} and 
+  selecting the "%{history}" link in the side menu in the default browser skin 
+  or on top of the page in mobile devices. You can clear your history, or delete 
+  individual entries if you don\'t want these entries to show up in your 
+  history. You can also add works to the "Marked for Later" list in your 
+  history. For more information on History, please visit the %{history_faq}.',
+  dashboard: (link_to ts('your Dashboard'), user_path(current_user)),
+  history: (link_to ts('History'), user_readings_path(current_user)),
+  history_faq: (link_to ts('History and Mark for Later FAQ'), 
+                        archive_faqs_path + '/History-and-mark-for-later')
+  ).html_safe %></p>
+
+  <h4 class="heading" id="subscriptions">
+    <%= ts('Subscriptions') %>
+  </h4>
+  <p><%= ts('You can subscribe to a work, collection, series of works, or user 
+  by selecting the "Subscribe" link at the top or bottom of a work, or at the 
+  top or bottom of a collection or series page, or the user\'s profile page. You 
+  can check your subscriptions from %{dashboard} by selecting the 
+  "Subscriptions" link. For more information on Subscriptions, please visit the 
+  %{subscription_faq}.',
+  dashboard: (link_to ts('your Dashboard'), user_path(current_user)),
+  subscription_faq: (link_to ts('Subscriptions and Feeds FAQ'), 
+                             archive_faqs_path + '/subscriptions-and-feeds')
+  ).html_safe %></p>
+
+  <h3 class="heading" id="legal_stuff">
+    <%= ts('Terms of Service') %>
+  </h3>
+  <p><%= ts('You can keep up to date with the policies and procedures for the 
+  site listed in the current %{tos}, and find explanations for some of the more 
+  common questions in the %{tos_faq}. If you still have questions about a 
+  specific work, please %{contact_abuse}. If you have general policy questions, 
+  you can either contact Abuse or %{contact_support}.',
+  tos: (link_to ts('Terms of Service'), tos_path),
+  tos_faq:(link_to ts('Terms of Service FAQ'), tos_faq_path),
+  contact_abuse: (link_to ts('contact Abuse'), new_abuse_report_path),
+  contact_support: (link_to ts('contact Support'), new_feedback_report_path)
+  ).html_safe %></p>
+
+  <h3 class="heading" id="support">
+    <%= ts('Support and Feedback') %>
+  </h3>
+  <p><%= ts('Some frequently asked questions about the Archive are answered in 
+  the broader %{faq}. You may also like to check out our %{known_issues}. If you 
+  need more help, please %{contact_support}. If you want to know more about some 
+  user-created tools that work with the Archive, please visit the 
+  %{tools_faq}.',
+  faq: (link_to ts('Archive FAQ'), archive_faqs_path),
+  known_issues: (link_to ts('Known Issues'), known_issues_path),
+  contact_support: (link_to ts('contact Support'), new_feedback_report_path),
+  tools_faq: (link_to ts('Unofficial Browser Tools FAQ'), 
+                      archive_faqs_path + '/unofficial-browser-tools')
+  ).html_safe %></p>
+</div>

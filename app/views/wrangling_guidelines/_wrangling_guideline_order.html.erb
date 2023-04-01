@@ -1,0 +1,33 @@
+<div id="manage-wrangling-guidelines">
+  <%= form_tag url_for(:action => 'update_positions') do %>
+  <ul id="sortable_wrangling_guideline_list">
+    <% for wrangling_guideline in @wrangling_guidelines %>
+      <li id="wrangling_guideline_<%= wrangling_guideline.id %>" class="wrangling_guideline-position-list">
+        <%= text_field_tag "wrangling_guidelines[]", nil, :size => 3, :maxlength => 3, :id => "wrangling_guidelines_#{wrangling_guideline.id}", :class => "number" %>
+        <span id='position-for-<%= wrangling_guideline.id %>'><%= wrangling_guideline.position %></span>.
+        <h3 class="heading"><%=h wrangling_guideline.title %></h3>
+      </li>
+    <% end %>
+  </ul>
+  <p class="submit actions"><%= submit_tag ts('Update Positions') %></p>
+  <% end %>
+</div>
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+     $j("#sortable_wrangling_guideline_list").sortable({
+            delay: 300,
+            update: function(event, ui) {
+                $j(".wrangling_guideline-position-list").each(function(index, li){
+                    var faqId = $j(li).attr("id").replace("wrangling_guideline_","");
+                    $j("#position-for-"+faqId).html(index+1);
+                  });
+                $j.ajax({
+                  type: 'post',
+                  data: $j("#sortable_wrangling_guideline_list").sortable("serialize"),
+                  dataType: 'script',
+                  url: "<%= url_for(:action => :update_positions) %>"})
+              }
+      })
+  <% end %>
+<% end %>

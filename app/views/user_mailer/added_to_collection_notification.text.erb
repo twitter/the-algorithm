@@ -1,0 +1,10 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+The collection maintainers of "<%= @collection.title %>" (<%= collection_url(@collection) %>) have added your work "<%= @work.title.html_safe %>" (<%= work_url(@work) %>) to their collection!
+
+You are receiving this notification because you have previously elected to allow automatic inclusion of your works into collections on the Archive of Our Own.
+
+If you would like to remove your work from this collection, please visit your "Approved Collection Items" page: <%= user_collection_items_url(@user) + "?approved=true" %>.
+
+<% end %>

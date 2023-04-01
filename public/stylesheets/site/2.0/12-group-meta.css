@@ -1,0 +1,94 @@
+/*==GROUP: META 
+http://otwcode.github.com/docs/front_end_coding/patterns/meta 
+*/
+
+dl.meta {
+  border: 1px solid #ccc;
+  clear: right;
+  padding: 1.286em 0.75em;
+  position: relative;
+  overflow: hidden;
+}
+
+.meta dt {
+  min-width: 10.5em;
+  width: 25%;
+  float: left;
+  clear: left;
+}
+
+.meta dd {
+  width: 72.5%;
+  float: left;
+  margin: 0 0 0.643em;
+}
+
+.meta .stats dl {
+  float: left;
+  margin-top: 0;
+}
+
+.meta .stats dl dd, .meta .stats dl dt {
+  margin: 0 0.375em auto 0;
+  width: auto;
+  min-width: 0;
+  clear: none;
+  float: left;
+}
+
+.meta .stats dl, .meta .stats dl dt:first-child, dl.meta dd ul li:first-child {
+  padding-left: 0;
+}
+
+.meta p {
+  display: block;
+  margin-top: 0;
+}
+
+.meta dd ul li {
+  display: inline;
+  margin: auto;
+}
+
+.meta dd blockquote {
+  margin: 0;
+}
+
+/* CONTEXTS */
+
+.dashboard .meta .clear {
+  clear: none;
+  clear: right;
+}
+
+.news .wrapper {
+    box-shadow: none;
+}
+
+.news dl.meta {
+  border: none;
+  padding: 0;
+}
+
+.news .meta dt, .news .meta dd, .news .meta ul {
+  display: inline;
+  float: none;
+  margin-left: 0;
+}
+
+.news .meta dd:after {
+  content: " ";
+  display: block;
+  height: 0.643em;
+}
+
+/* TODO the post new work form needs its classes changed so these overrides are no longer needed */
+.post .meta dd ul li {
+  display: block;
+}
+
+.post .meta dd ul li:after {
+  content: none;
+}
+
+/*END== */

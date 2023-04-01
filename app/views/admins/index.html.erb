@@ -1,0 +1,29 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".page_title", login: current_admin.login) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<div class="admin userstuff">
+  <p><%= t(".confidentiality_reminder") %></p>
+
+  <p class="important"><%= t(".responsibility") %></p>
+
+  <h3 class="heading"><%= t(".roles.heading") %></h3>
+  <% if current_admin.roles.any? %>
+    <ul>
+      <% current_admin.roles.each do |role| %>
+        <li><%= t("activerecord.attributes.admin/role.#{role}") %></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p><%= t(".roles.none") %></p>
+  <% end %>
+
+  <hr />
+
+  <p><%= t(".log_out_reminder") %></p>
+</div>
+<!--/content-->

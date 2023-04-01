@@ -1,0 +1,8 @@
+$j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').html('<%= escape_javascript(render "bookmarks", :params => {:show_recent => true}) %>').slideDown();
+<% if @bookmark.bookmarkable.bookmarks.size > 5 %>
+  $j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').append('<%= escape_javascript(link_to(ts("All Bookmarks"), eval(@bookmark.bookmarkable.class.to_s.underscore + "_bookmarks_path(@bookmark.bookmarkable)"), :class => "action")) %>');
+  $j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').append(" ");
+<% end %>
+$j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').append('<%= escape_javascript(link_to(ts("Hide Most Recent Bookmarks"), hide_recent_bookmarks_path(@bookmark), :method => :get, :remote => true, :class => "action")) %>');
+$j('#recent_link_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').html('<%= escape_javascript(link_to(ts("Hide Most Recent Bookmarks"), hide_recent_bookmarks_path(@bookmark), :method => :get, :remote => true, :class => "action")) %>');
+$j('#recent_<%= "#{@bookmark.bookmarkable_type.underscore}_#{@bookmark.id}"%>').slideDown();

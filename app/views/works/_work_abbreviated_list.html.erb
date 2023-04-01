@@ -1,0 +1,17 @@
+<% # this partial is intended to be used wherever an abbreviated list of works is desired instead of the full listing with blurbs %>
+<% # expects local "works" %>
+
+<dl class="work index group">
+  <% works.each do |work| tag_groups = work.tag_groups %>
+    <dt>
+      <%= link_to work.title.html_safe, work %>
+      (<%= tag_groups["Fandom"].collect {|tag| link_to_tag_works(tag) }.join(', ').html_safe %>)
+    </dt>
+    <dd>
+    	<ul class="tags commas">
+    	  <%= blurb_tag_block(work) %>
+  	  </ul>
+    </dd>
+  <% end %>
+</dl>
+

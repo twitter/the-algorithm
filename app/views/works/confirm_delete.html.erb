@@ -1,0 +1,19 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= @work.posted? ? ts("Delete Work") : ts("Delete Draft") %></h2>
+
+<!--main content-->
+<%= form_for(@work, :html => {:method => :delete, :class => "simple destroy"}) do |f| %>
+  <p class="caution notice">
+    <%= ts('Are you sure you want to <strong><em>delete</em></strong> "%{work_title}" <strong><em>permanently</em></strong>? This <strong>cannot be undone</strong>.', :work_title => @work.title).html_safe %>
+    <% if @work.posted? %>
+      <%= ts("All bookmarks, comments, and kudos will be lost. If you just want to remove your association with the work, you could Orphan it instead.") %>
+    <% end %>
+  </p>
+  <p class="actions">
+    <%= f.submit (@work.posted? ? ts("Yes, Delete Work") : ts("Yes, Delete Draft")) %>
+    <% if @work.posted? %>
+      <%= link_to ts("Orphan Work Instead"), new_orphan_path(:work_id => @work.id) %>
+    <% end %>
+  </p>
+<% end %>
+<!--/content-->

@@ -1,0 +1,10 @@
+<% # expects "work" and "gift" %>
+<li id="work_<%= work.id %>" class="<% if is_author_of?(work) %>own <% end %>gift work <%= css_classes_for_creation_blurb(work) %>" role="article">
+  <%= render "works/work_module", work: work %>
+  <% if @user && @user == current_user && (gift = work.gifts.where(:pseud_id => current_user.pseuds.pluck(:id)).first) %>
+    <h6 class="landmark heading"><%= ts("Recipient Actions") %></h6>
+    <p class="actions">
+      <%= link_to (gift.rejected? ? ts("Accept Gift") : ts("Refuse Gift")), toggle_rejected_gift_path(gift), method: :post %>
+    </p>
+  <% end %>
+</li>

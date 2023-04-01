@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="keywords" content="fanfiction, transformative works, otw, fair use, archive" />
+    <meta name="language" content="en-US" />
+    <meta name="subject" content="fandom" />
+    <meta name="description" content="An Archive of Our Own, a project of the
+    Organization for Transformative Works" />
+    <meta name="distribution" content="GLOBAL" />
+    <meta name="classification" content="transformative works" />
+    <meta name="author" content="Organization for Transformative Works" />
+    <%= phraseapp_in_context_editor_js %>
+    <title>
+      <% if defined?(@page_title) %>
+        <%= @page_title %>
+      <% else %>
+        <% if defined?(@page_subtitle) %>
+          <%= @page_subtitle %>
+        <% else %>
+          <%= controller.action_name=="index" ? "" : controller.action_name.humanize.titleize %>
+          <%= controller.action_name=="index" ? controller.controller_name.humanize.titleize : controller.controller_name.singularize.humanize.titleize %>
+        <% end %>
+        |
+        <%= ArchiveConfig.APP_NAME  %>
+      <% end %>
+    </title>
+
+    <%= render 'layouts/includes' %>
+  </head>
+
+  <body id="home" <%= PhraseApp::InContextEditor.enabled? ? "data-no-turbolink" : "" %>>
+      <div id="outer" class="wrapper">
+        <ul id="skiplinks"><li><a href="#main"><%= ts("Main Content") %></a></li><li><a href="#signup"><%= ts("Sign Up") %></a></li></ul>
+  
+  <!-- BEGIN main -->
+
+    <%= yield  %>
+
+  <!-- END main -->
+  
+  <%= render 'layouts/footer' %>
+</div>
+<%= render 'layouts/javascripts' %>
+  </body>
+</html>

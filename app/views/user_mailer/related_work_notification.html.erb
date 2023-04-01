@@ -1,0 +1,11 @@
+<% content_for :message do %>
+  <p>
+    Your work <i><b><%= style_link(@related_work.parent.title.html_safe, @related_parent_link) %></b></i> was listed as the inspiration of <i><b><%= style_link(@related_work.work.title.html_safe, @related_child_link) %></b></i> by <%= @related_work.work.anonymous? ? "an anonymous author" : (@related_work.work.pseuds.map{|p| style_pseud_link(p)}.to_sentence.html_safe) %>.
+  </p>
+
+  <p>
+    <%= style_link("Approve relationship and link back to this work from your work", related_work_url(@related_work)) %>
+  </p>
+  
+  <p>(You can come back to this page if you change your mind.)</p>
+<% end %>

@@ -1,0 +1,57 @@
+/*==REGION: MAIN is #3 of the 4 regions shown on every page 
+http://otwcode.github.com/docs/front_end_coding/patterns/supertypes
+*/
+
+#main {
+  font-size: 0.875em;
+  line-height: 1.286;
+  margin: auto;
+  padding: 0.5em 2.5em 3.5em;
+  position: relative;
+  min-height: 450px;
+}
+
+#main:after {
+  content: " ";
+  display: block;
+  height: 0;
+  font-size: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+#main.dashboard {
+  padding-left: 2em;
+  margin: 0.5em auto 1em 14em;
+}
+
+#main.home {
+  padding: 2em 7.5em 3.5em;
+}
+
+#main.errors {
+  background: url("/images/ao3_logos/sadface.png") top right no-repeat;
+}
+
+#main.error-502 {
+  background: url("/images/ao3_logos/ao3-502.png") top right no-repeat;
+}
+
+#main.error-503-maintenance {
+  background: url("/images/ao3_logos/logo-ruby.png") top right no-repeat;
+}
+
+#main.session {
+  background: url("/images/logo.png") 0.5em 3em no-repeat;
+}
+
+#main.errors h2 {
+  display: block;
+  margin-top: 0;
+}
+
+#main.errors p, #main.errors .heading {
+  margin-right: 325px;
+}
+
+/*END== */

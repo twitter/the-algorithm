@@ -1,0 +1,8 @@
+<ul class="navigation actions">
+  <li><%= span_if_current ts('Banners'), admin_banners_path %></li>
+  <li><%= span_if_current ts('New Banner'), new_admin_banner_path %></li>
+  <% if params[:id] %>
+    <li><%= span_if_current ts('Edit Banner'), edit_admin_banner_path(@admin_banner) %></li>
+    <li><%= link_to ts('Delete Banner'), confirm_delete_admin_banner_path(@admin_banner), data: {confirm: ts('Are you sure you want to delete this banner?')} %></li>
+  <% end %>
+</ul>

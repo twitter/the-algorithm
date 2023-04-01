@@ -1,0 +1,57 @@
+<%= form_for @search, 
+  url: collected_user_works_path(@user), 
+  html: { 
+    method: :get, 
+    class: 'narrow-hidden filters', 
+    id: 'works-in-collections-filters'
+  } do |f| %>
+  <h3 class="landmark heading"><%= ts("Filters") %></h3>
+  <%= field_set_tag (ts('Filter results:') + link_to_help("filters")).html_safe do %>
+    <dl class="filters" role="menu">
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= f.submit ts("Sort and Filter") %></dd>
+      <dt>
+        <%= f.label :sort_column, ts("Sort by") %>
+      </dt>
+      <dd>
+        <%= f.select :sort_column, options_for_select(@search.sort_options, @search.sort_column) %>
+      </dd>
+      <% if @facets.present? && @facets['collections'].present? %>
+        <dt>
+          <%= ts("Collection") %>
+        </dt>
+        <dd class="tags">
+          <ul>              
+            <% @facets['collections'].each do |collection| %>
+              <li>
+                <%= label_tag "work_search_collection_ids_#{collection.id}" do %> 
+                  <%= check_box_tag "work_search[collection_ids][]", 
+                    collection.id,
+                    @search.collection_ids.present? && @search.collection_ids.include?(collection.id.to_s), 
+                    id: "work_search_collection_ids_#{collection.id}" %>
+                  <% text = "#{collection.name} (#{collection.count})" %>
+                  <%= label_indicator_and_text(text) %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </dd>
+      <% end %>
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= f.submit ts("Sort and Filter") %></dd>
+    </dl>
+    <p class="footnote">
+      <%= link_to ts("Clear Filters"), collected_user_works_path(@user) %>
+    </p>
+    <div>
+      <%= hidden_field_tag("user_id", @user.login) if @user %>
+    </div>
+  <% end %>
+  <% # On narrow screens, link jumps to top of index when JavaScript is disabled and closes filters when JavaScript is enabled %>
+  <p class="narrow-shown hidden">
+    <a href="#main" id="leave_filters" class="close">
+      <%= ts("Top of Work Index") %>
+    </a>
+  </p>
+<% end %>
+

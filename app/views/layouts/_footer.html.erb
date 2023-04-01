@@ -1,0 +1,48 @@
+<!-- BEGIN footer -->
+<div id="footer" role="contentinfo" class="region">
+	<h3 class="landmark heading"><%= ts('Footer', key: 'footer') %></h3>
+  <ul class="navigation actions" role="navigation">
+    <% if logged_in? || logged_in_as_admin? %>
+      <% cache(skin_chooser_key, skip_digest: true) do %>
+        <% unless Skin.in_chooser.empty? %>
+          <li class="module group">
+            <h4 class="heading"><%= ts('Customize', key: 'footer') %></h4>
+            <ul class="menu">
+              <li><%= link_to ts('Default', key: 'footer'), unset_skins_path %></li>
+              <% Skin.in_chooser.order(:title).each do |s| %>
+                <li><%= link_to s.title, set_skin_path(s) %></li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      <% end %>
+    <% end %>
+    <li class="module group">
+      <h4 class="heading"><%= ts('About the Archive', key: 'footer') %></h4>
+      <ul class="menu">
+        <li><%= link_to ts('Site Map', key: 'footer'), site_map_path %></li>
+        <li><%= link_to ts('Diversity Statement', key: 'footer'), diversity_path %></li>
+        <li><%= link_to ts('Terms of Service', key: 'footer'), tos_path %></li>
+        <li><%= link_to ts('DMCA Policy', key: 'footer'), dmca_path %> </li>
+      </ul>
+    </li>
+    <li class="module group">
+      <h4 class="heading"><%= ts('Contact Us', key: 'footer') %></h4>
+      <ul class="menu">
+        <li><%= link_to ts('Policy Questions & Abuse Reports', key: 'footer'), new_abuse_report_path %></li>
+        <li><%= link_to ts('Technical Support & Feedback', key: 'footer'), new_feedback_report_path %></li>
+      </ul>
+    </li>
+    <li class="module group">
+      <h4 class="heading"><%= ts('Development', key: 'footer') %></h4>
+      <ul class="menu">
+        <% unless ArchiveConfig.REVISION.blank? %>
+          <li><%= link_to ts('otwarchive %{rev_number}', :rev_number => ArchiveConfig.REVISION), "https://github.com/otwcode/otwarchive/commits/#{ArchiveConfig.REVISION}" %></li>
+        <% end %>
+        <li><%= link_to ts('Known Issues', key: 'footer'), known_issues_path %></li>
+        <li><a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html" title="<%= ts('View License', key: 'footer') %>">GPL</a> <%= ts('by the', key: 'footer') %> <a href="https://transformativeworks.org/" title="<%= ts('The Organization for Transformative Works', key: 'footer') %>"><%= ts('OTW', key: 'footer') %></a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<!-- END footer -->

@@ -1,0 +1,12 @@
+<% # expects "bookmark" %>
+<% bookmark_form_id = (bookmark.bookmarkable.blank? ? "#{bookmark.id}" : "#{bookmark.bookmarkable.id}") %>
+<ul class="actions" role="menu">
+  <li><%= link_to ts("Edit"), edit_bookmark_path(bookmark), id: "bookmark_form_trigger_for_#{bookmark_form_id}", remote: true %></li>
+  <li><%= link_to ts("Delete"), confirm_delete_bookmark_path(bookmark), data: {confirm: ts('Are you sure you want to delete this bookmark?')} %></li>
+  <li id="add_collection_link"><%= collection_link(bookmark) %></li>
+  <% if bookmark.bookmarkable.is_a?(Work) && !bookmark.bookmarkable.unrevealed? %>
+    <li class="share hidden">
+      <%= link_to_modal ts("Share"), for: share_bookmark_path(bookmark), title: ts("Share Bookmark") %>
+    </li>
+  <% end %>
+</ul>

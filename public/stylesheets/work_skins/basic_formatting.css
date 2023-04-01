@@ -1,0 +1,55 @@
+/* NOTE: all class names must start with a letter and can only
+ * contain alphanumeric characters, dashes, and underscores.
+ */
+
+#workskin .indent { padding: 0 5em 0 5em; }
+#workskin .dropcap { font-family: Georgia, serif; font-size: 3em;}
+#workskin .flashback { font-style: italic; }
+#workskin .caps { font-variant: small-caps; }
+#workskin .spoiler { background:#333; color:#333; }
+#workskin .border {border:1px solid;}
+
+#workskin .font-serif { font-family: Cambria, Constantia, Palatino, Georgia, serif; }
+#workskin .font-sansserif {font-family: 'Lucida Grande', Verdana, Helvetica, Arial, sans-serif;}
+#workskin .font-monospace {font-family: consolas, courier, monospace;}
+#workskin .font-big { font-size: 120%; }
+#workskin .font-small { font-size: 80%; }
+
+#workskin .align-right { text-align: right; }
+#workskin .align-center { text-align: center; }
+#workskin .align-justify { text-align: justify; }
+
+#workskin hr.third { width:33%; margin:auto;}
+#workskin hr.full { width:auto; margin:auto;}
+
+/* colours */
+#workskin .font-red { color: red; }
+#workskin .font-orange { color: orange; }
+#workskin .font-yellow { color: yellow; }
+#workskin .font-green { color: green; }
+#workskin .font-blue { color: blue; }
+#workskin .font-purple {color: purple; }
+#workskin .font-white { color: white; }
+#workskin .font-black { color: black; }
+#workskin .font-pink { color: pink; }
+#workskin .font-teal { color: #008282; }
+#workskin .font-redbrown { color: #a15000; }
+#workskin .font-cherryred { color: #e00707; }
+#workskin .font-brickred { color: #a10000; }
+#workskin .font-dimorange { color: #f2a400; }
+#workskin .font-murkyyellow { color: #a1a100; }
+#workskin .font-jade { color: #4ac925; }
+#workskin .font-dimgreen { color: #008141; }
+#workskin .font-leafgreen { color: #1f9400; }
+#workskin .font-darkolive { color: #416600; }
+#workskin .font-dimblue { color: #005682; }
+#workskin .font-midblue { color: #0715cd; }
+#workskin .font-mediumskyblue { color: #00d5f2; }
+#workskin .font-darknavy { color: #000056; }
+#workskin .font-lightpurple { color: #f141ef; }
+#workskin .font-midviolet { color: #b536da; }
+#workskin .font-verydarkpurple { color: #2b0057; }
+#workskin .font-darkplum { color: #6a006a; }
+#workskin .font-darkmaroon { color: #77003c; }
+#workskin .font-reallydarkgray { color: #626262; }
+

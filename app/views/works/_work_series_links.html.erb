@@ -1,0 +1,10 @@
+<!--series links, backwards and forwards-->
+<div id="series" class="series module">
+  <h3 class="heading"><%= ts('Series this work belongs to:') %></h3>
+  <ul>
+    <% series_data_for_work(@work).each do |series_info| %>
+      <li><%= series_info %></li>
+    <% end %>
+  </ul>
+</div>
+<!--/series links-->

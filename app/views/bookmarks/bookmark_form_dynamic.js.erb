@@ -1,0 +1,22 @@
+<% # Use the bookmarkable item's id unless we're dealing with a bookmark of a deleted item %> 
+<% bookmark_form_id = (@bookmarkable.blank? ? "#{@bookmark.id}" : "#{@bookmarkable.id}") %>
+
+var bookmark_div = $j('#bookmark_form_placement_for_<%= bookmark_form_id %>');
+var bookmark_close = $j('#bookmark_form_close_for_<%= bookmark_form_id %>');
+var bookmark_open = $j('#bookmark_form_trigger_for_<%= bookmark_form_id %>');
+
+bookmark_div.html("<%= escape_javascript(render "bookmarks/bookmark_form", :bookmarkable => @bookmarkable, :bookmark => @bookmark, :button_name => @button_name, :action => @action, :in_page => true, :dynamic => true) %>");
+bookmark_open.hide();
+
+$j('#bookmark_form_close_for_<%= bookmark_form_id %>').click(function(){ 
+  bookmark_div.hide();
+  bookmark_open.show();
+});
+
+// if canceled we don't want to generate the form a second time, just reopen it
+bookmark_open.attr('href', '#');
+$j("#bookmark_form_trigger_for_<%= bookmark_form_id %>").click(function(event){
+  bookmark_div.show();
+  bookmark_open.hide();
+  event.preventDefault();
+});

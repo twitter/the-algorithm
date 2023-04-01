@@ -1,0 +1,8 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.informal.addressed", name: @user.login) %>
+
+<%= t(".text.body", count: @total, invitation_page_url: user_invitations_url(@user)) %>
+
+<%= t("mailer.general.closing.informal") %>
+<%= t("mailer.general.signature.app_short_name") %>
+<% end %>

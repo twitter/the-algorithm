@@ -1,0 +1,7 @@
+<% content_for :message do %>
+Your work "<%= @related_work.parent.title.html_safe %>" (<%= @related_parent_link %>) was listed as the inspiration of "<%= @related_work.work.title.html_safe %>" (<%= @related_child_link %>) by <%= @related_work.work.anonymous? ? "an anonymous author" : (@related_work.work.pseuds.map{|p| text_pseud(p)}.to_sentence) %>.
+
+Approve relationship and link back to this work from your work: <%= related_work_url(@related_work) %>
+
+(You can come back to this page if you change your mind.)
+<% end %>

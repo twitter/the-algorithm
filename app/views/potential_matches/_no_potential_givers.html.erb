@@ -1,0 +1,20 @@
+<% if @assignments_with_no_potential_givers.present? %>
+  <div class="matching listbox group">
+    <h3 class="heading"><%= ts("Participants with No Potential Givers") %></h3>
+    <dl class="index group">
+      <% @assignments_with_no_potential_givers.each do |assignment| %>
+        <dt class="byline" title="<%= ts("pseud") %>"><%= link_to assignment.request_byline, collection_signup_path(@collection, assignment.request_signup) %></dd>
+        <dd>
+          <ul class="actions" role="menu">
+            <li title="<%= ts("email") %>"><%= mailto_link assignment.request_signup.pseud.user,  :subject => "[#{h(@collection.title)}] Message from Collection Maintainer" %></li>
+            <li><%= link_to ts("Edit"), edit_collection_signup_path(@collection, assignment.request_signup) %></li>
+            <li role="button"><%= link_to ts("Regenerate Matches For %{name}", :name => assignment.request_byline), regenerate_for_signup_collection_potential_matches_path(@collection, :signup_id => assignment.request_signup.id) %></li>
+            <li role="button"><%= link_to ts("Delete"),
+                collection_signup_path(@collection, assignment.request_signup), data: {confirm: ts('Are you sure?')}, :method => :delete %></li></ul>
+        </dd>
+      <% end %>
+    </dl>
+  </div>
+<% else %>
+  <p><%= ts("All participants have at least one potential giver!")%></p>
+<% end %>

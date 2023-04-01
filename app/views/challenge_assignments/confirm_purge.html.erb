@@ -1,0 +1,19 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= ts("Purge Assignments for %{collection_title}",
+         collection_title: @collection.title) %>
+</h2>
+
+<!--main content-->
+<%= form_tag purge_collection_assignments_path(@collection), class: "simple destroy" do %>
+  <p class="caution notice">
+    <%= ts("Are you sure you want to <strong><em>purge</em></strong> all assignments for
+           %{collection_title}? This <strong>cannot be undone</strong>. Please only do 
+           this if you absolutely must!",
+           collection_title: @collection.title).html_safe %>
+  </p>
+  <p class="actions">
+    <%= submit_tag ts("Yes, Purge Assignments") %>
+  </p>
+<% end %>
+<!--/content-->

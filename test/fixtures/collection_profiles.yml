@@ -1,0 +1,1378 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  intro: This is the first collection. It's really important. Wheee. 
+  faq: |
+      <div align="center">
+        <p><strong><a name="top"></a>The Yuletide FAQ</strong> </p>
+
+      <p>
+      <p><p><a href="#schedule"><strong>Yuletide Schedule</strong></a>
+      <p>
+
+        <p><a href="#sub1">Basics</a> | <a href="#sub2">Assembling the Challenge</a> 
+          | <a href="#sub3">Signing Up for Yuletide</a> | <a href="#sub4">Pinch Hitting</a></p>
+
+        <p><a href="#sub5">After You Get Your Assignment</a> | <a href="#sub6">The 
+          stories</a> | <a href="#sub8">After the Reveal: Authors</a> | <a href="#sub9">After the Reveal: 
+          Recipients</a> | <a href="#sub10">Leaving Comments on Stories</a> | <a href=#sub11>So You Want Your Contact Info Changed</a>
+
+      </p>
+
+        <p><a href="#sub12">Yuletide Madness</a> | <a href="#sub13">Yuletide Etiquette</a> | <a href="#sub14">Official Yuletide 
+          Livejournal Rules</a> | <a href="#sub15">Yuletide IRC Chat</a> </p>
+        <p><a href="#sub16">What is the New Year's Resolution Challenge?</a> | <a href="#sub17">What is the Yuletide Story 
+      	of the Day?</a> | <a href="#sub18">What is the Roll-Your-Own Challenge?</a></p>
+
+        <p>&nbsp; </p>
+        </div>
+
+
+      <p><a name="sub1"></a><a href="#basics"><strong>Basics</strong></a>
+      <ul>
+        <li><a href="#1">What is While We Tell of Yuletide Treasure/Yuletide/The 
+          Obscure Fandom Fiction Exchange Project?</a> 
+        <li><a href="#2">Who runs the project?</a> 
+        <li><a href="#3">Who can participate?</a> 
+        <li><a href="#4">Do I have to have a livejournal to participate 
+          in Yuletide?</a> 
+        <li><a href="#5">What is the Yuletide schedule?</a> 
+        <li><a href="#6">How do I contact the moderators?</a> 
+        <li><a href="#policy">What is Yuletide's policy when a professional creator/author has asked that there be no fanfiction written
+      for their work?</a>
+
+      <p><a href="#top">Top</a> 
+
+      </ul><p><a name="sub2"></a>
+      <a href="#assemble"><strong>Assembling the Challenge</strong></a> 
+      <ul>
+        <li><a href="#7">What constitutes a rare/obscure/inactive fandom?</a> 
+        <li><a href="#8">Who decides whether a fandom is included, 
+          or not?</a>  
+        <li><a href="#9">Can I suggest rare/obscure/inactive fandoms even 
+          if I don't write/am not going to sign up for Yuletide?</a> 
+        <li><a href="#tags">How do I nominate a fandom for the challenge? Do I need to use a qualifier on the name?</a>
+        <li><a href="#char">How do I add new characters to a fandom? What if they have more than one name?</a>
+
+        <li><a href="#10">A fandom I suggested isn't in the final 
+          list/one fandom is listed under multiple names.</a> 
+
+      <p><a href="#top">Top</a> 
+
+      </ul><p><a name="sub3"></a>
+      <a href="#signing"><strong>Signing Up for Yuletide</strong></a> 
+      <ul>
+        <li><a href="#11">How do I sign up?</a> 
+        <li><a href="#12">How many fandoms/characters can I request?</a> 
+        <li><a href="#13">How do I pick multiple characters?</a> 
+        <li><a href="#14">What can I put in the additional details 
+          field? How specific can I get? </a> 
+        <li><a href="#15">How many fandoms can I/do I have to offer 
+          to write?</a> 
+        <li><a href="#16">How many characters can I offer to write?</a> 
+        <li><a href="#17">I already signed up, but I saw another fandom that I'd rather 
+          write/request. Can I change my submission before the deadline?</a> 
+        <li><a href="#18">Can I talk about what I offered to write?</a> 
+        <li><a href="#19">When will I get my assignment?</a> 
+        <li><a href="#20">How are writers and recipients matched 
+          up?</a> 
+        <li><a href="#21">What happens if nobody matches to any 
+          of my requests or offers?</a> 
+        <li><a href="#22">When is the deadline for uploading my 
+          story?</a> 
+        <li><a href="#23">When are the stories available?</a> 
+
+
+      <p><a href="#top">Top</a> 
+
+      </ul>
+      <p><a name="sub4"></a><a href="#pinch"><strong>Pinch Hitting</strong></a> 
+      <ul>
+        <li><a href="#24">What is "pinch hitting"? Do I have to be a Yuletide participant? How do I volunteer?</a> 
+
+      <p><a href="#top">Top</a>   
+
+      </ul><p>
+      <a name="sub5"></a><a href="#assignment"><strong>After You Get Your Assignment</strong></a> 
+
+      <ul>
+        <li><a href="#25">I can't get into the archive/upload my NYR! What happened?</a> 
+        <li><a href="#26">I received four different fandom possibilities, 
+          do I have to write all of them?</a> 
+        <li><a href="#27">Can I request a reassignment?</a> 
+        <li><a href="#28">I don't recognize any of the fandoms on 
+          my recipient's list.</a> 
+        <li><a href="#29">Can I find out more about my recipient's 
+          request/tastes/opinions?</a> 
+        <li><a href="#30">Do I have to write the specific characters/relationships/situations 
+          they ask for?</a> 
+        <li><a href="#31">Can I talk about my assignment with other 
+          people?</a> 
+        <li><a href="#32">I don't really know any of the fandoms 
+          my recipient asked for very well. I didn't think I'd get assigned any of those. 
+          What do I do?</a> 
+        <li><a href="#33">My recipient listed a fandom that I didn't 
+          sign up for, but I have an idea. Can I write in that fandom, instead?</a> 
+        <li><a href="#34">I'm not comfortable with 
+          the fandoms I offered that my recipient wanted, but I have this other fandom 
+          I like/there's this other fandom I see she likes on her LJ/website that I 
+          could write. Can I do that? </a> 
+        <li><a href="#35">How can I provide my author with more 
+          information?</a> 
+        <li><a href="#36">Defaulting: I'm not going to be able to complete 
+          my assignment, what do I do? Can I have an extension?</a>  
+        <li><a href="#37">I need a beta, what do I do?</a>  
+
+
+      <p><a href="#top">Top</a> 
+
+      </ul><p>
+      <a name="sub6"></a><a href="#stories"><strong>The Stories</strong></a>
+      <ul>
+        <li><a href="#38">What are the minimum requirements for 
+          my story?</a> 
+        <li><a href="#39">Does my story have to be a holiday 
+          story?</a> 
+        <li><a href="#40">What if my story isn't 1,000 words?</a> 
+
+        <li><a href="#41">How do I upload my story?</a> 
+        <li><a href="#42">I uploaded the wrong version/made a mistake 
+          in my story, can you redo it/edit it for me?</a> 
+        <li><a href="#43">Can I thank my beta/include author notes 
+          in my story?</a></ul>
+
+      <p><a href="#top">Top</a> 
+
+      <p><a name="sub8"></a><strong><a href="#author">After the Reveal: Authors</strong></a></p>
+      <ul>
+        <li><a href="#44">When/how can I reply to comments on my story?</a>
+        <li><a href="#45">Can I post my story to my LJ/website/another archive?</a></ul>
+
+      <p><a href="#top">Top</a> 
+
+      <p><a name="sub9"></a><strong><a href="#recip">After the Reveal: Recipients</a> </strong></p>
+
+      <ul>
+        <li><a href="#46">I think the story I got really sucks/doesn't 
+          do what I asked for, what do I do?</a> 
+        <li><a href="#47">It's December 25th, and I don't have a story in the archive, why is that?</a> 
+        <li><a href="#48">It's January 1st and I still don't have a story in the archive. What do I do?</a></ul>
+
+      <p><a href="#top">Top</a> 
+
+
+      <p><a name="sub10"></a><strong><a href="#comment">Leaving Comments on Stories</strong></a>
+        </p>
+
+      <p><a name="sub11"></a><strong><a href="#change">So You Want Your Contact Info Changed </strong></p>
+
+      <p><a name="sub12"></a> <a href="#madness"> <strong>Yuletide Madness</strong></a> 
+        </p>
+      <p><a name="sub13"></a> <a href="#etiquette"> <strong>Yuletide Etiquette</strong></a> 
+        </p>
+      <p><a name="sub14"></a><a href="#rules"><strong>Official Yuletide Livejournal 
+        Rules</strong></a> </p>
+      <p><a name="sub15"></a><a href="#irc"><strong>Yuletide IRC Chat</strong></a> 
+        </p>
+
+      <p><a name="sub16"></a><a href="#nyr"><strong>What is the New Year's Resolution 
+        Challenge?</strong></a> </p>
+      <p><a name="sub17"></a><a href="#story"><strong>What is the Yuletide Story of the Day?</strong></a> 
+        </p>
+      <p><a name="sub18"></a><a href="#roll"><strong>What is the Roll-Your-Own Challenge?</strong></a> 
+        </p>
+
+      <p><a href="#top">Top</a> 
+
+
+      <p><h2><a name="basics"></a><strong>The Basics </strong></p></h2>
+
+      <p><a name="1"></a><strong>What is While We Tell of Yuletide 
+        Treasure/Yuletide/The Obscure Fandom Fiction Exchange Project? </strong></p>
+
+      <p>Yuletide is a gen, het, and slash multifandom secret fiction exchange for obscure or rarely 
+      written fandoms. Begun in 2003 by astolat and tzikeh, it was inspired by <a href="http://www.juppy.org/santa/">don 
+        we now our gay apparel</a> (the popslash secret santa project).
+
+      <p>Each participant signs up in advance, choosing the fandoms she's willing to write and the fandoms she 
+      would be most happy to receive from a very large list of options. After signups, assignments go out; each participant must write one 
+      1,000-word (minimum) story, and each will receive one 1,000-word (minimum) story in return. All stories are due by mid-December. 
+      On December 25, the stories go live with no author names attached; on January 1, the 
+      author names go live.
+
+      <p>If you're new to Yuletide and would like a more expanded overview of the basics, 
+      <a href="http://community.livejournal.com/yuletide/216928.html">go here</a>!
+
+      <p><b>Note: by signing up for Yuletide and uploading a story, you are agreeing to let us keep that story 
+      in the archive, for good.</b> We will not delete it at a later date <a href=#45>even at your request</a>. 
+
+      <p><a href="#top">Top</a> | <a href="#basics">Basics</a>
+
+      <p><a name="2"></a><strong>Who runs the project?</strong> 
+       <p>elynross currently runs the more visible aspects of the challenge, and astolat coordinates the
+        fancy scripting necessary to accomplish the matching, with geeklite assisting as needed. Collectively,
+        the current team can be reached at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>. 
+
+      <p><a href="#top">Top</a> | <a href="#basics">Basics</a>
+
+      <p><a name="3"></a><strong>Who can participate? </strong> 
+
+        <p>
+        1) <b>NOTE: You must be at least 18 to participate in the Yuletide Challenge.</b> 
+
+      <br>
+      <br>
+        2) For Yuletide 2009, there is a general amnesty for anyone who previously defaulted or was banned! The record of your default/ban is maintained,
+      however, and if you default again in 2009, you may be banned. You can check your <a href="http://www.yuletidetreasure.org/defaulter_check.cgi">default status here</a>.
+      <br>
+      <br>
+       3) If you default in any year without notifying the moderators, or if you default two years in a row,
+      then you are banned from further Yuletide participation.
+
+      <p><a href="#top">Top</a> | <a href="#basics">Basics</a>
+
+      <p><a name="4"></a><strong>Do I have to have a livejournal to participate in Yuletide? </strong> 
+      <p>No! However, while the Yuletide challenge itself is website-based, the planning 
+      and discussion relating to it takes place on Livejournal, in two LJs. You can read both of these without an LJ account,
+      but it may make things easier for you to have one of your own.
+
+      <p>All news and official announcements are posted to the <a href="http://community.livejournal.com/yuletide_admin">Yuletide_Admin</a> community. 
+        Only the moderators may post to the admin community, although anyone may comment on an admin post. 
+      <br>
+      <br>
+        The broader <a href="http://community.livejournal.com/yuletide">Yuletide</a> LJ is available for Yuletide participants to post their Yuletide experiences, discussions, and recommendations. Please
+      see <a href="http://community.livejournal.com/yuletide/profile">the community info</a> for eligible topics. You will not 
+      be able to post directly to the Yuletide LJ if you do not have an LJ of your own, although you will be able to make comments 
+        to posts made by others. 
+
+
+      <p>With an LJ, you can join or watch the community and more easily keep track of announcements on your Friends list,
+       instead of having to remember to check back regularly. If you don't have an LJ but want to comment on a post to 
+      either Yuletide community, please sign your comment. Any anonymous comments will be deleted.
+
+      <p>If you maintain your journal at a non-LJ site, or if you prefer to get your Admin posts through a syndicated
+      feed, the Admin LJ is available as both an <a href="http://community.livejournal.com/yuletide_admin/data/rss">RSS feed</a>
+      and as an <a href="http://community.livejournal.com/yuletide_admin/data/atom">Atom feed</a>. 
+
+      <p>Note: If you want to be <a href="#pinch">a pinch hitter</a>, you should join <a href="http://groups.yahoo.com/group/yuletide_pinch_hit/">the Yahoogroups list</a>. 
+      All pinch-hitting assignments will be sent there.
+
+      <p><a href="#top">Top</a> | <a href="#basics">Basics</a>
+
+      <p><a name="5"></a><strong>What is the Yuletide schedule? 
+        </strong> 
+      <p>We start assembling the fandom listings as early as mid-September, but no later than early to mid-October, 
+        with a goal of opening sign-ups no later than mid- to late October. Sign-ups remain open for a week, 
+      and then assignments go out as soon as the scripts to match 
+        authors and recipients can be run and any problems handled. For 2009 The deadline for defaulting with notification and without
+      penalty is December 7th. Stories are due December 21st, 9:00 p.m. <a href="http://www.worldtimezone.com/">Eastern Time (ET)</a>. The archive is opened on December 25th, and authors 
+        are revealed on January 1st. 
+      <blockquote> 
+
+      <p><a name="schedule"></a><strong>Yuletide Schedule </strong></p>
+      <p>Note: Actual schedule may vary, depending on our schedules.
+
+        <p> <strong>Early to mid-October</strong>: Yuletide takes nominations for fandoms from those planning on participating in the challenge.<br>
+      <p><strong>Mid to late October</strong>: Yuletide accepts reports of corrections and duplications, and requests for additional character listings.<br>
+
+          <p><strong>Late October to early November</strong>: official signup runs for 1-2 weeks; the archive search engine is closed, although <a href="http://www.yuletidetreasure.org/archive/quicksearch.html">Quicksearch</a> remains available.<br>
+          <p><strong>Early November</strong>: signup ends. Quicksearch is closed as uploading is made available.<br>
+          <p><strong>No later than November 10th</strong>: assignments are sent out. <br>
+          <p><strong>Monday, December 7th</strong>:  2009 deadline for defaulting with notification but without penalty. <br>
+
+      <p><strong>December 21st</strong>: stories are due by 9:00 p.m. <a href="http://www.worldtimezone.com/">Eastern Time (ET)</a>;  last-minute <a href="#pinch">pinch-hits</a> are assigned <a href="http://groups.yahoo.com/group/yuletide_pinch_hit">through the Yahoogroups list</a>.<br>
+          <p><strong>December 23rd</strong>: pinch hits are due if at all possible; <a href="#madness">Yuletide Madness</a> opens (with no word count limit).<br>
+
+          <p><strong>December 24th</strong>: Yuletide Madness runs all day to get something up for everyone.<br>
+          <p><strong>December 25th</strong>: archive goes live with anonymous stories! <br>
+          <p><strong>January 1</strong>: authors are revealed. </p>
+      </blockquote>
+
+      <p><a href="#top">Top</a> | <a href="#basics">Basics</a>
+
+      <p><a name="6"></a><strong>How do I contact the moderators? 
+        </strong> 
+      <p>Email us at: <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>. 
+      <p>If you don't hear from us within a day, you can try:  
+      <p>
+        elynross: <a href="mailto:elynross@gmail.com">elynross@gmail.com</a>
+      <br>astolat: <a href="mailto:shalott@intimations.org">shalott@intimations.org</a>
+        <br>geeklite: <a href="mailto:geeklite@livejournal.com">geeklite@livejournal.com</a> 
+
+
+      <p><a href="#top">Top</a> | <a href="#basics">Basics</a>
+
+      <p><a name="policy"</a><strong>What is Yuletide's policy concerning fandoms where the professional creator/author
+      has asked that no fanfiction be written?</strong>
+
+      <p>Yuletide does not prevent these fandoms from being nominated or written. However, if we receive official notice from
+      representatives of these creators/authors asking us to remove fanfiction for their works, we will do so. At this
+      point, only Chelsea Quinn Yarbro's <i>Saint-Germain</i> series is ineligible for this reason.
+
+      <p align="center">
+      <div align="center"> 
+      <p><a href="#top">Top</a> 
+
+      <p><a href="#basics">Basics</a> | <a href="#assemble">Assembling the fandoms </a> | <a href="#signing">Signing up for Yuletide</a> | <a href="#pinch">Pinch Hitting</a>
+      <p>&nbsp; </p>
+        </div>
+
+      <p> <h2><a name="assemble"></a><strong>Assembling the fandoms   </strong> </h2>
+
+      <p>Each year we compile a new list of fandom/character nominations from potential participants, up to six 
+      fandoms per person. While we maintain a list of all previously nominated fandoms/characters, this is strictly 
+      for inspiration and minimizing work (when you select a previous fandom, it will retain the previously entered
+      character lists). For a fandom to be included in the current year, it must be newly nominated by 
+      at least one person.
+
+      Nominations will be held for at least one week during the month prior to the opening of signups. The <a href="http://yuletidetreasure.org/nominations/nominate_fandoms.cgi">Nomination
+      Form</a> can be found here, but it is only available during this one-week period. 
+
+
+      <p><a name="7"></a><strong>What constitutes a rare/obscure/inactive fandom? </strong> 
+      <p> The challenge includes only fandoms that are determined to be relatively obscure/inactive. This is 
+      decided using an arcane geometry involving but not limited to current fiction-related activity levels in places 
+      like LJ, Yahoogroups, and fiction archives, taking into account Google searches, LJ interests, and the 
+      recommendations of those who know the fandoms. TV shows that were once very active but went off-air at 
+      least ten years ago are eligible for consideration. Brand-new shows that are already active may still be
+      eligible for at least a year.
+
+      <p>Some "umbrella" fandoms are currently ineligible, along with related fandoms that may of 
+      themselves be relatively rare. Whether a related title is ineligible is at the discretion
+      of the moderators. Some umbrella titles are Batman, Doctor Who, Final Fantasy, Law and Order, Mario, 
+      Power Rangers, Sailor Moon, Spiderman, Superman, Transformers, X-Men.
+
+      <p>There is no hard and fast rule, and there may well be fandoms available that you don't consider obscure. 
+        Please <b>do</b> suggest absolutely anything you think of as truly underrepresented.
+
+      <p><a href="#top">Top</a> | <a href="#assemble">Assembling the fandoms </a>
+
+      <p><a name="8"></a><strong>Who decides whether a fandom is included, or not? </strong> 
+      <p>The ultimate decision lies with the moderators, and their decisions, however misguided they may be, are final. 
+
+      <p><a href="#top">Top</a> | <a href="#assemble">Assembling the fandoms </a>
+
+      <p><a name="9"></a><strong>Can I suggest rare/obscure/inactive fandoms 
+        even if I don't write/am not going to sign up for Yuletide? </strong> 
+      <p>We prefer that suggestions come from those planning to sign up, as this brings the fandoms offered 
+      and the fandoms requested closer together. However, each year we have a brainstorming post in the <a href="http://community.livejournal.com/yuletide/">Yuletide 
+      community LJ</a> that we encourage anyone to post to, to get the ideas flowing! 
+
+
+      <p><a href="#top">Top</a> | <a href="#assemble">Assembling the fandoms </a>
+
+      <p><a name="tags"></a><strong>How do I nominate a fandom for the challenge? How do I designate the fandom? Do I need to use a qualifier on the name?</strong>
+
+      <p>Nominations will run for at least one week during the month preceding the opening of signups, followed by roughly a week
+      of adding of characters/making corrections/merging duplicates/removing duplicates from character lists.
+
+       The <a href="http://yuletidetreasure.org/nominations/nominate_fandoms.cgi">Yuletide Fandom 
+      Nominations</a> form is only open during that period. Through this form you can select a fandom from the <a href="http://www.yuletidetreasure.org/master.shtml">Master
+      Fandom List</a> (note: not all fandoms in the Master Fandom List are still eligible, but only the eligible fandoms will
+      display in the Nomination form's drop-down menus), or add a new fandom, for up to six fandoms. Please limit
+      your nominations to only those fandoms you're seriously considering requesting at Yuletide, to keep the list smaller. This
+      will hopefully help keep the fandoms offered and the fandoms requested fairly similar.
+
+      <p>Then you will be able to input characters for a new fandom, or add them to a previously available fandom.
+
+
+      <p>If you change your mind during the nominations period, or want to nominate additional fandoms/add additional
+      characters, you can do
+      so by filling out the form again, <b>using exactly the same name and e-mail address</b>. Make sure to fill out 
+      the form again completely -- don't just correct your error.  The new nomination form will overwrite the 
+      previous one, and any fandom you nominated the first time, but not the second, will be removed from the
+      list of currently nominated fandoms -- unless someone else has nominated it. 
+
+      <p>Note: Crossovers are not eligible for nomination for Yuletide, even if both the fandoms are rare, 
+      so please do not nominate a fandom such as:
+
+      <ul><li>[RPF - 30 Rock/Studio 60 on the Sunset Strip]
+      <li>[Brimstone/Reaper]</ul>
+
+      <p>If someone asks for a crossover in their details, then it's up to the author whether they feel they can/want 
+      to do that, or not, however.
+
+      <p>Our goal is that each fandom be uniquely identifiable. If your fandom has a unique name, then
+      it won't need a qualifier. If it might be confused with a very similar title in another medium or another
+      year, or if your fandom draws from multiple
+      sources (for example, anime <i>and</i> manga) that aren't distinct enough to warrant separate entries, then you 
+      will want to use a qualifier. Common qualifiers in use are: anime, book, comic, game, manga, movie, musical, opera,
+      play, tv, [year]. These can be combined, if necessary.  e.g.:
+
+      <ul><li>[Bedazzled (1967)]:  this movie has been remade
+      <li>[Blade series (movie)]:  there is a TV series
+      <li> [1984 (1984 movie)]:  the title exists in multiple versions, in multiple mediums
+
+      <li> [300 (comic or movie)]:  knowledge of either version is acceptable</ul>
+
+      <p><b>Books are almost always listed as [AuthorFirst AuthorLast - title]</b> (for one or two authors), with one dash, one space before and after. There is no need to 
+      use the "book" qualifier with this format. When nominating a series of books, use the common collective name, if
+      there is one. If a fandom is found as both a movie and a book, without important variation, it will be listed by the title, with the qualification (book or movie).
+
+      <ul><li>[Daphne du Maurier - Rebecca]
+      <li>[Stephen King and Peter Straub - Black House]
+      <li>[C S Lewis - Out of the Silent Planet series]
+      <li>[Brokeback Mountain (book or movie)]</ul>
+
+      <p>The exception to the [author-title] format is books written by three or more authors, even if they used
+      a common pseudonym, in which case the (book) modifier <i>is</i> used, e.g.:
+
+
+      <ul><li>[The Hardy Boys series (book)]:  qualifier distinguishes it from the Hardy Boys TV show
+      <li>[Nancy Drew mysteries]</ul>
+
+      <p>Only books are listed by author. Comics/graphic novels are listed by title, to keep the category
+      formatting consistent.
+
+      <p>Music videos and songs should be listed by title, with the (song) or (music video) qualifier.
+
+      <p><b>Mythologies are always listed as: Mythology - [area]</b>, e.g. [Mythology - Irish], [Mythology - Greek and Roman].
+
+      <p><b>Real Person Fiction is always listed as: RPF - [title]</b>, e.g. RPF - [RPF - 16th-17th century]. Please make sure
+      that the characters you would like to nominate for RPF fandoms will not fit within an already designated
+      RPF fandom. Musical groups can be listed by group ([RPF - Rolling Stones]), but individual artists should
+      be placed with their genre ([Country Music], [Alt Pop Rock Solo Artists (Asian/Western)], etc.)
+
+      <p>For fandoms with multiple titles/foreign fandoms, please list only the original language title/the title most commonly 
+      used, just as you would with English-language works that have been translated. This is a change in 2009, because the length of some fandom titles was breaking things. 
+
+
+      <p>If you don't know the date of a movie or TV show, try looking at <a href="http://epguides.com/">epguides.com</a> or  
+      the <a href="http://www.imdb.com/">Internet Movie Database</a> to find out? <a href="http://www.wikipedia.org/">Wikipedia</a> and 
+
+      <a href="http://www.amazon.com">Amazon</a> can also be decent sources of information. 
+
+      <p><a href="#top">Top</a> | <a href="#assemble">Assembling the fandoms </a>
+
+      <p><a name="char"></a><strong>How do I add new characters to a fandom? What if they have more than one name?</strong> 
+
+      <p>You will be able to input new characters or add characters to an existing fandom when you fill out the <a href="http://yuletidetreasure.org/nominations/nominate_fandoms.cgi">Yuletide Fandom 
+      </a> form. Special characters/diacritics will be automatically stripped out. 
+
+      If a character is known by more than one name, like a superhero's alter ego, or a nickname, please list the
+      primary name first, followed by "aka [other name or title]," e.g.:
+
+      <ul><li>Clark Kent aka Superman
+      <li> Raymond aka Ray Robertson
+
+      <li>Vlad Tepes aka the Impaler aka Dracula</ul>
+
+      <p>We ask that you please only list characters that you are planning to request, to keep character listings
+      from being so immense as to terrify potential writers out of ever choosing to write "Any" characters in that
+      fandom!
+
+      <p><a href="#top">Top</a> | <a href="#assemble">Assembling the fandoms </a>
+
+      <p><a name="10"></a><strong>A fandom I suggested isn't in 
+        the final list/one fandom is listed under multiple names.</strong> 
+      <p>If something you suggested is missing, it probably didn't make the final cut. Please don't comment or email to tell us; 
+      once the final list is posted, we won't make additions. However, if we have listed one fandom under 
+      multiple names, please do let us know so we can fix that. 
+
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p><a href="#basics">Basics</a> | <a href="#assemble">Assembling the fandoms </a> | <a href="#signing">Signing up for Yuletide</a> | <a href="#pinch">Pinch Hitting</a>
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <a name="signing"></a><strong>Signing up for Yuletide</strong> </h2>
+
+
+      <p><a name="11"></a><strong>How do I sign up? </strong> 
+      <p>The sign-up form is <a href="http://yuletidetreasure.org/signup_page1.cgi">here</a> and will open for business 
+      in October or early November. Please monitor the <a href="http://community.livejournal.com/yuletide_admin/">Yuletide Admin LJ</a>
+       or check the <a href="http://www.yuletidetreasure.org/index.shtml">Yuletide home page</a> for the specific date, 
+      closer to Challenge time. 
+
+      <p>Please read all the instructions carefully! You must fill out every field that 
+        is not labeled "Optional" in order for the form to work. 
+
+      <p>Please make sure you're signing up with a unique name. 
+        Check the list of those authors who have already registered on the main page 
+        to be sure. This will appear on the right side of the page. You also cannot use names that are the same except for spaces/special characters/capitalization -- sorry!
+
+
+      <p>There's no limit on how many people can request a given fandom, so don't worry if you see that your fandom has been picked already. 
+      You can request anything you want. 
+
+      <p>After you hit submit on the form, you will receive an 
+        email copy of your selections. Please check this carefully to be sure that you 
+        didn't accidentally choose the wrong fandom or characters. If you made a mistake, 
+        you can sign up again, <b>using exactly the same name and e-mail address</b>. Make sure to fill out the form 
+      again completely -- don't just correct your error.  The new submission form will overwrite the incorrect one. 
+
+      <p>If you do not receive a copy of your confirmation email within 24 hours, please write to 
+      <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a> to make sure there were no
+      errors in your email address. If there were, your signup will be deleted, and you'll need to sign up again.
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="12"></a><strong>How many fandoms/characters can I request? </strong>  
+      <p>Once the sign-up sheet is live, you will be able to request 
+        three to four fandoms from a pull-down menu consisting of all requested fandoms, 
+        and then choose up to four characters from each fandom. This does not mean the author will be limited to these four characters 
+        -- only that these are characters you'd like to see written about.
+        You will also see an option for 'Any,' which means that you're asking for a story about any of the characters listed in 
+        the pull-down menu. <b>Please note: you must choose at least three different fandoms. Picking one fandom with 
+        three different sets of characters won't count towards your minimum of three different fandoms</b> -- although your fourth fandom can
+      duplicate one of those three, with a different set of characters. 
+
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="13"></a><strong>How do I pick multiple characters? 
+        </strong> 
+      <p>To select multiple characters, hold down the "control" key on Windows machines or the "command (apple)" key 
+        on a Mac <b> while selecting each character</b>. 
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="14"></a><strong>What can I put in the additional 
+        details field? How specific can I get? </strong> 
+      <p>Please remember that the purpose of the While We Tell 
+        of Yuletide Treasure challenge is to give you stories you truly want to read, 
+        not to play “stump the author.” Make your requests based on what you’d really 
+        enjoy, not on how crazy/difficult you think it will be for someone to write. 
+
+       <p> Beyond that, you can be as specific as you'd like in your details, but be aware 
+        that your author is only bound by your fandom and character choices, and may 
+        approach both fandom and characters differently than you do.  If you prefer het or slash, 
+      but enjoy gen as well, it's a good idea to say so in the details, since there's no way to 
+      know if your request is going to a het, slash, or gen writer, and that gives everyone a workable option. 
+
+      <p>We encourage you to include comments about the types of stories you like or don't like, or to 
+        post a "Dear Yuletide Writer" letter to your LJ/website/in the comments of the post made for
+      that purpose in the <a href="http://community.livejournal.com/yuletide">Yuletide LJ</a>, because often 
+      authors will look for additional information of this sort. 
+
+      <p>For some ideas on how to write inspiring prompts, you might look at 
+      <a href="http://thefourthvine.livejournal.com/79251.html?style=mine">this post</a> and 
+      <a href="http://liviapenn.livejournal.com/477788.html?style=mine">this one</a>, both excellent
+      resources.
+
+      <p>Your author may do their best to accommodate your more specific requests, but they are not 
+      bound by them. We hope that all concerned will be generous and gracious in their interactions. 
+      As with the writing half of the challenge, the more flexible you can be as a reader within the 
+      boundaries of what you like, the more enjoyment you're likely to get out of the process. 
+
+      <p>One thing to keep in mind when you add your details is 
+        that these requests go public for the <a href="#nyr">New Year's Resolution</a> (NYR) 
+      challenge after Yuletide is over, and you may want to tailor your requests with that in mind. It's also a good idea 
+        not to say "see above/ditto" if you have the same general parameters for your fandoms, 
+        since the NYR requests are broken out by fandom, not recipient. Put your details 
+        in for each fandom. 
+
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="15"></a><strong>How many fandoms do I have to offer to write? </strong> 
+      <p>You <b>must</b> offer at least three different fandoms (one fandom with three different 
+      relationships doesn't count as three unique fandoms). Beyond that you may select as many fandoms as you want; the more fandoms you 
+      offer, the easier it is for the script to make matches. 
+      <p>That said, please be sure you're genuinely willing to write any of the fandoms you offer -- you have as much 
+      chance of being asked to write the one you're least comfortable with as the one you're most comfortable with! 
+      And you may only have a single match on your recipient's list; you may not even be familiar with her other two 
+      or three options.
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="16"></a><strong>How many characters can I offer to write?</strong>
+      <p>For each fandom you select, you can specify up to four characters, or you can choose 'Any' to indicate that 
+      you're willing to write any available characters. If you want to write more than four characters but fewer than 
+      "Any" for a single fandom, or you're only willing to write/don't want to write certain combinations, you can sign 
+      up multiple times for the same fandom, specifying only combinations you're willing to write together. There is no
+      limit to the number of times you can sign up for the same fandom, with different character combinations.
+
+      <p>For example, if I select the Bob Newhart Show, and I am willing to write Carlin, or Peterson, but not Carlin
+      and Peterson in the same story, I could choose something like this:
+
+      <ul><li>Bob Newhart Show: Bob/Emily/Carol/Carlin
+      <li>Bob Newhart Show: Bob/Emily/Carol/Peterson</ul>
+
+      <p>(slashes here work like commas, so these could be gen, het, or slash, depending on the request). 
+
+      <p>These would match to anyone requesting any combination of the characters named in a single listing (eg, any one, any two, any three, or all four), but not 
+      someone requesting Carlin <i>and</i> Peterson. 
+
+      <p>If you choose "Any," you may be matched to any requests for that fandom with any combination of characters. <b>Please do not choose 'Any' 
+      unless you're genuinely comfortable writing <i>anyone</i> or any combination of two to four characters in the 
+      character list for that fandom</b>. 'Any' does <b>not</b> mean that you'll get to pick which characters go into the 
+      story, unless your recipient also chooses 'Any'; it means you are willing to write any characters your recipient has 
+      requested, in any combination of one to four characters. 
+
+
+      <p>What it boils down to is this: please don't participate unless you are willing to be flexible, both as a reader 
+      and a writer. And if you're assigned something that makes you blink and wonder, remember, that's the "challenge" part
+      of the Yuletide challenge!
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="17"></a><strong>I already signed up, but I saw another fandom that I'd 
+        rather write/request. Can I change my submission before the deadline?</strong> 
+
+      <p>Absolutely. To do this, just fill out the <a href="http://yuletidetreasure.org/signup_page1.cgi">signup form</a> again,
+       but <b>please make sure you use the exact same name and e-mail address </b> so we can tell it's a duplicate, and so the 
+      automatic-updater doesn't add you to the participants list under two names.  
+      You must fill out the form completely, including the fandoms you're keeping the same -- the new form will overwrite your original signup form. 
+      Please keep your confirmation emails so that you have the exact information under which you signed up in case 
+        of any confusion.  
+
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="18"></a><strong>Can I talk about what I offered to write?</strong> 
+      <p>We ask that you limit any discussion to your betas, and that you not publicly discuss what you offered to 
+      write anywhere (including LJs, blogs, chat, etc. This includes posting lists of fandoms you offered). This is a secret challenge, and we don't want to give people hints as 
+      to who is writing what for whom. Authors will be revealed on January 1st.
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>.
+
+      <p><a name="19"></a><strong>When will I get my assignment? 
+        </strong> 
+      <p>Assignments should be sent out within 1-3 days
+        after the close of sign-ups. A post will be made to the <a href="http://community.livejournal.com/yuletide_admin/">Yuletide Admin</a>  
+        LJ after assignments are issued. If you have not received your assignment within 
+        a day of this posting, please email us at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>.
+
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="20"></a><strong>How are writers and recipients 
+        matched up? </strong> 
+      <p><a href="http://www.livejournal.com/community/yuletide/61558.html">Like this.</a> ;) Please make note: In order to make the matching work, sometimes we have to find a pinch hitter right from the start, and occasionally we assign the same recipient to two different writers, in order to guarantee that everyone has a recipient. 
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="21"></a><strong>What happens if nobody matches to any of my requests or offers? </strong> 
+      <p>Your intrepid organizers have contingency plans in the unlikely event of <s>a water landing</s> no 
+      one offering to write <i>anything</i> you request, or requesting anything you offer to write. This may include asking you to add a couple additional options, or finding a pinch hitter from outside the Yuletide ranks. 
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="22"></a><strong>When is the deadline for uploading 
+        my story? </strong> 
+
+      <p>Your story should be uploaded to the archive no later 
+        than 9:00 p.m., <a href="http://www.worldtimezone.com/">Eastern Time (ET)</a>, December 21st. If you finish earlier 
+      than that, you can upload it at any time after you receive your assignment. Note: In 2009, the window for uploading will
+      begin later than usual. 
+
+      <p>In fact, if you finish earlier, we would be delighted if you uploaded before the deadline. The challenge gets bigger every year, which 
+      means the load on the server on the final day is bigger every year. This leads to server crashes and participant panic and the possible loss 
+      of stories, and really, you don't want to be part of that. 
+
+      <p><a href="#top">Top</a> | <a href="#signing">Signing up for Yuletide</a>
+
+      <p><a name="23"></a><strong>When are the stories available? 
+        </strong> 
+      <p>The archive reopens on December 25th, although 
+        the exact time may vary. All stories will be anonymous until New Year's Day, 
+        when author names will be revealed. 
+
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+
+      <p> <a href="#assignment">After You Get Your Assignment </a> | <a href="#stories">The Stories</a>  | <a href="#author">After the Reveal: Authors</a> | <a href="#recip">After the Reveal: Recipients</a> | <a href="#comment">Leaving Comments on Stories</a> | <a href=#change>So You Want Your Contact Info Changed</a> 
+
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p> <h2><a name="pinch"></a><strong>Pinch Hitting</strong></h2> 
+
+
+      <p><a name="24"></a><strong>What is "pinch hitting"? Do I have to be a Yuletide participant? How do I volunteer?</strong> 
+      <p>Every year, for various reasons, some people don't complete their assignments. If we 
+      receive notice that someone will have to default, we find someone to "pinch hit," or write a substitute 
+      story. This author may or may not be a regular Yuletide participant, but they're held to the same 
+      requirements as the original author, unless it's a last-minute pinch hit to cover someone who has no 
+      story as of December 25th.
+
+      <p>You do not have to be a Yuletide participant to be a pinch hitter! Many people prefer to pinch 
+      hit, rather than sign up for Yuletide, because it gives them the opportunity to see the fandom requests and
+      prompts before deciding to volunteer.
+
+      <p>If you want to volunteer, please sign up for the <a href="http://groups.yahoo.com/group/yuletide_pinch_hit">Yuletide Pinch Hitters' List</a>! 
+      When a pinch hit is required, a note will go out on the list containing all the requests for that participant. The first person to respond 
+      is assigned the pinch hit.
+      <ul>
+      <li>Pinch hits that are assigned before December 10th have the regular deadline of December 21st. 
+
+      <li>Pinch hits that go out after December 10th should be uploaded by December 23rd.
+      <li>Any pinch hits that turn up after the deadline of December 21st may have until December 24th, but we ask that they
+      be uploaded as soon as possible.</ul>
+
+      <p>Note: On the 23rd-24th of December, we start <a href="#madness"> Yuletide Madness</a>, where we post
+      the requests of those who do not yet have a story uploaded, even if they have an assigned pinch hitter who
+      hasn't uploaded yet. This does not mean we don't trust those pinch hitters, nor do we want
+      to undercut the response to their stories. We simply want to guarantee that everyone has a story when the
+      archive opens. If you are not comfortable with the possibility that your story may be one of multiple
+      stories your recipient receives, you might want to reconsider pinch hitting on a late request. 
+
+      <p>Even with Yuletide Madness, we depend on our pinch hitters to finish their stories, to ensure that the recipients receive a story that
+      meets the 1,000+ word limit. After December 24th, the Yuletide Madness stories aren't held to
+      the same word limit, as they are written on such extreme short notice. However, we have had pinch hitters default in the past, so this is our safety net.
+
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#assignment">After You Get Your Assignment </a> | <a href="#stories">The Stories</a> | <a href="#author">After the Reveal: Authors</a> | <a href="#recip">After the Reveal: Recipients</a> | <a href="#comment">Leaving Comments on Stories</a> | <a href=#change>So You Want Your Contact Info Changed</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <a name="assignment"></a><strong>After You Get Your Assignment </strong> </h2>
+      <p>Please take your assignment seriously! Please do not talk 
+        about your assignment in specific or negative terms, apart from exceptions indicated 
+        elsewhere. You can express disbelief at your own gall and perhaps foolishness ("Oh my 
+        GOD why did I say I would write this!! AAAAAA,") but please do not identify the 
+        fandom or characters, and <i>please do not complain about your assignment in 
+        public</i>. Your recipient may read your LJ or blog, or may seek it out after 
+        authors are revealed, and it can be a slap in the face to trip across something 
+        like that. Even if you complain in the comments to someone else's post, or on 
+        a list, it can get back to the recipient. Beyond that, other participants in 
+        Yuletide (including the moderators) may well see it, and it will not reflect 
+        well upon you. 
+
+      <p><a name="25"></a><strong>I can't get into the archive/upload my NYR! What happened? </strong> 
+
+      <p>The archive <a href="http://yuletidetreasure.org/cgi-bin/search.cgi">search engine</a> is closed as soon as signups open for the current year's 
+      challenge. The <a href="http://yuletidetreasure.org/archive/quicksearch.html">Quicksearch</a> remains available until signups close and uploading becomes available again,
+      to preserve author anonymity as participants begin writing and uploading new Yuletide stories. Direct links to existing
+      stories will still work, however. 
+
+
+      <p>Opening signups generates new participant and fandom lists, overwriting the old lists used for the previous 
+      year, and closing that year's NYR challenge. 
+
+      <p>All stories again become available when the archive reopens
+      on December 25th, and NYR uploads for the current year's challenge are possible after January 1st.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="26"></a><strong>I received four different 
+        fandom possibilities, do I have to write all of them? </strong> 
+      <p>Nonono! The matching process automatically sends you your recipient's full list of requests, but you only have 
+      to write a single story. However, you can choose to write any one of your recipient's four requests, whether you
+      offered the fandom during sign-ups or not.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="27"></a><strong>Can I request a reassignment? 
+        </strong> 
+      <p>Sorry, but that's just not possible, unless you were somehow assigned a fandom for which you didn't volunteer. We're working with literally 
+        hundreds of participants, and we couldn't reassign one person without shuffling 
+        around dozens of others.  Everyone is paired with someone else who listed at least one request 
+      that matched something they offered to write. That's the best we can do.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="28"></a><strong>I don't recognize any of the fandoms on my recipient's list. </strong> 
+      <p>It's very unlikely that the matching program assigned you something you didn't sign up for, but stranger
+      things have happened! If you get something you don't think you signed up for, email us privately 
+      at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a> as soon as possible. 
+      It's possible that there was a glitch in the program, or that you accidentally chose a fandom 
+        you did not intend to choose. We will do our best to straighten it out. However, if you do know
+      any of the requested fandoms, we would appreciate it if you'd try and fulfill the assignment anyway.
+
+      <p>Note: if we have to assign you a new recipient, it probably means that you'll be writing
+      for someone who already has an assigned writer. This is not unheard of, as the matching process always
+      has a few stray authors that we have to double-assign, as well as recipients that have to immediately
+      go out for a pinch hit, because it's very unlikely that everyone will make requests and offers that
+      match up exactly, with nothing left over.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+
+      <p><a name="29"></a><strong> Can I find out more about my recipient's request/tastes/opinions? </strong> 
+      <p>We ask that you not contact your recipient directly, even in an anonymous LJ comment!
+
+      <p> If you need clarification, or more information, please email us at 
+      <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>, 
+        and we will act as go-between for your questions. This will preserve not only your anonymity, 
+      but conceal any indication of which request you're planning to write, as we will make up questions for
+      each of the requested fandoms to disguise your <i>real</i> intent. 
+
+      <p>Previous writers have also 
+        poked around their recipients' LJs/blogs/websites to see what kinds of things 
+        they seem to like, so feel free to do so (and leave some notes in your own LJ/blog, 
+        if you have one, for your writer!). 
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="30"></a><strong> Do I have to write the 
+        specific characters/relationships/situations they ask for? </strong> 
+      <p>Remember, somewhere out there, someone is asking the very 
+        same questions about <i>your</i> Yuletide request. Please treat their wishes 
+        as seriously as you'd like someone else to treat yours. 
+
+      <p>That said, the minimum requirements for a story are:
+      <ul>
+      <li> It must be 1,000 words in one of the fandoms on your recipient's list.
+      <li> It must use all of the characters they specify, unless their details say otherwise.</ul>
+
+      <p> However, you are not limited to <i>only</i> the characters they specify, nor do you have
+      to include every character on the fandom's character listing, if they choose 'Any.' 
+
+        <p>It is not mandatory that you follow your recipient's optional details; whether they
+      want a particular relationship slashed, name an additional character, ask for a crossover, or spell out 
+      what they want in excruciating detail, you are not required to do as they ask. Think of the details
+      as prompts, fodder for inspiration. If you can incorporate the details into a story, great! If you're not sure, 
+      heck, give it a try (it is a challenge, after all!).  <b>However, if you don't feel that you can 
+      accommodate their specific requests, that's fine, too.</b> 
+
+
+      <p>If your recipient selected 'Any' from the character listing for that fandom, then you can write 
+      whichever character(s) you want, and even include characters specifically not listed. Even if their details say "I really 
+        like Character X and Y," if they asked for 'Any,' then they asked for 'Any.'
+
+      <p>Conversely, if you offered to write 'Any' and your recipient asked for specific 
+        characters, then you must write those specific characters, since you said 
+        you could and would. Unless there was an actual error, please give it your best shot. 
+      If you offered 'Any' in a fandom and got taken up on it in an unexpected way -- them's 
+      the breaks for you. 
+
+      <p>If you fail to write the characters requested, and your recipient contacts us, we may 
+        determine that you failed to fulfill the minimum requirements of the challenge, 
+        and ban you from future participation.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>  
+
+      <p> <a name="31"></a><strong> Can I talk about my assignment with other people? </strong> 
+      <p>While we want assignments to stay as secret as possible, 
+        we do prefer you have your stories betaed, and we know that some authors need 
+        to talk out their story ideas. All we ask is that you do your best to keep your 
+        assignment a secret, only share details with others who are also willing to 
+        keep that secret, and not post anything publicly that will connect you to a 
+        particular fandom or the specifics of any story request. Given that these are 
+        rare fandoms, it's quite possible that only one or two people have requested 
+        the fandom you're writing for, so any identifying information can reveal the 
+        secret. 
+
+      <p>Along these lines, we ask that you not complain publicly 
+        (on lists, blogs, or LJ, even locked, because these things have a way of getting 
+        out) about your assignment in a way that would possibly upset/offend/hurt your 
+        recipient. "Yuletide is kicking my ass!" is okay. "My assignment is so stupid/I 
+        can't believe anyone wants <i>this</i>" is not. Please don't make judgmental remarks 
+        about your recipient's taste or requests because they don't match your own. 
+        You never know who's reading your LJ, or who might remember, even if you delete
+      the post in question.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="32"></a><strong> I don't really know any 
+        of the fandoms my recipient asked for very well. I didn't think I'd get assigned 
+        any of those. What do I do? </strong> 
+      <p><strong>DO NOT SIGN UP FOR ANY FANDOMS YOU AREN'T MORE 
+        THAN HAPPY TO WRITE. </strong>Really, please. The program 
+        assigns any single matches (they're the only one who asked, you're the only 
+        one who offered) first, and anything you sign up for, you might get a chance 
+        to write. 
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="33"></a><strong> My recipient listed a 
+        fandom that I didn't sign up for, but I have an idea. Can I write in that fandom, 
+        instead? </strong> 
+      <p>Absolutely! Once you get your recipient's wishlist, you're 
+        free to write in any of the fandoms on that list, whether you signed up for 
+        it or not. If you luck out and get a recipient who has requested more than one 
+        fandom you could write in, even if you didn't offer them, then you have your 
+        pick! 
+
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="34"></a><strong> I'm not comfortable with the fandoms I offered that my recipient wanted, but I have 
+        this other fandom I like/there's this other fandom I see she likes on her LJ/website 
+        that I could write. Can I do that? </strong> 
+      <p>No. You are limited to the fandoms and characters that your recipient requested, at least one of 
+      which you offered to write. If you fail to do so, we may determine that you failed to fulfill the 
+      requirements of the challenge, and ban you from future participation.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="35"></a><strong> How can I provide my author with more information? </strong> 
+
+      <p>If you want to post a letter to your Yuletide writer in your LJ 
+        or blog, we're all for that!  There will also be a post in the basic Yuletide community where you can
+      comment with a post or link to an entry in your own LJ/blog. The <a href="#14">section on writing prompts</a> might give you
+      some ideas on the kinds of things to include. Keep in mind that general may work better than too specific. 
+      Things like "I love angst! Death for Yuletide!" or "I don't need explicit sex (but it's okay if you want to include it)" 
+      or "my tastes are broad; just write what pleases you!" give your writer something to work with, without dictating exactly
+      what you expect them to do. Laying out a specific plotline you want your writer to follow doesn't really allow for the 
+      flexibility that makes Yuletide work. 
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+      <p><a name="36"></a><strong>Defaulting: I'm not going to be able 
+        to complete my assignment, what do I do? Can I have an extension? </strong> 
+
+      <p>If you aren't going to be able to fulfill your commitment, <b>let us know as soon as possible</b> 
+      at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>, 
+      and include the exact name and email address under which you signed up. 
+
+
+      <p><i>Please</i> don't just disappear without a word to us. The sooner we know, the easier it is 
+      to find a pinch hitter for your recipient, and the more time they have to write. Additionally, defaulting
+      without notification is grounds for a permanent Yuletide ban. 
+
+      <p>Though we know that there can be unavoidable reasons for defaulting, we will not grant
+      any extensions, so please don't ask. Aside from the fact that it's not fair to everyone 
+        else, after 9:00 p.m. December 21st we'll be going through the people who didn't get 
+        a story and trying to assign last-minute pinch hitters, in an effort to make 
+        sure everyone ends up with a story. We will need all the time between then and the 
+      25th to get that done and to make sure everything's working for when we go live. 
+
+      <p><strong>Defaulting deadlines:</strong> 
+      If you default by 11:59 p.m. <a href="http://www.worldtimezone.com/">Eastern Time (ET)</a>, December 7th, and you notify us, you remain eligible for future 
+      Yuletide participation without penalty or qualification, no questions asked. We will still 
+      keep a record of this default for the future, however.
+
+      <p>If you default after December 7th, you may be banned from future participation. We will look at 
+      your past default history when we make our decision, which may include no penalty, a requirement to 
+      write a NYR story before the next year's signups, or banning from future Yuletide participation.
+
+      <p>We are willing to consider extenuating circumstances, but <b>final exams, holiday family commitments, 
+      last-minute shopping  -- these are not extenuating circumstances</b>. Known or anticipated obstacles should already be
+      factored into your decision to sign up or not.
+
+      <p>Defaulting without notifying us or defaulting two years in a row will lead to being banned from future 
+      Yuletide participation.
+
+      <p><a href="#top">Top</a> | <a href="#assignment">After You Get Your Assignment </a>
+
+
+      <p><a name="37"></a><strong> I need a beta, what do I do? </strong> 
+      <p>The problem with soliciting a beta publicly is that you 
+        generally will have to reveal the fandom, and this will interfere with the "secret" 
+        part of the challenge. If you just need a general beta, you can ask in your 
+        LJ, or the Yuletide LJ, and see who offers -- and not choose your recipient, 
+        if they offer. If you need a more fandom-specific beta, you might try advertising 
+        on an LJ or list specific to that fandom, and not specifically identify it as 
+        a Yuletide story. There will also be a "Beta" post on the Yuletide LJ, where people
+      can post saying what fandoms they're able to beta.
+
+      <p>If you don't know anyone who you feel can beta your story 
+        properly because of the obscurity of the fandom, you can contact us and we will 
+        <i>try</i> (we make no promises) to find you someone who volunteered to write 
+        that fandom who is willing to beta. Please use this option as a last resort! 
+
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#assignment">After You Get Your Assignment </a> | <a href="#stories">The Stories</a> | <a href="#author">After the Reveal: Authors</a> | <a href="#recip">After the Reveal: Recipients</a> | <a href="#comment">Leaving Comments on Stories</a> | <a href=#change>So You Want Your Contact Info Changed</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <strong><a name="stories" id="stories"></a>The stories  </strong></h2> 
+
+      <p><a name="38"></a><strong> What are the minimum 
+        requirements for my story? </strong> 
+      <p>You will receive three or four fandom requests from your recipient, with accompanying character requests and 
+        possible specific comments. You are required to write a minimum of 1,000
+        words in one of these fandoms, using all of the requested characters (unless the recipient's
+      details indicate that they don't mind if you don't include them all). You are not bound 
+        by any further comments, although we ask that you try and take your recipient's 
+        wishes into account (are you sensing a theme, here?). 
+
+      <p><a href="#top">Top</a> |  <a href="#stories">The Stories</a> 
+
+
+      <p><a name="39"></a><strong> Does my story have to 
+        be a holiday story? </strong> 
+      <p>Not at all! You don't have to write a holiday story, 
+        nor does it have to be set at this particular time of year -- it can be about 
+        anything at all. Obviously, if it works for your fandom and you have a great 
+        idea (or your recipient specifically asks for it), then by all means have at it. 
+      However, if you do want to write a holiday story, it would be a good idea to write 
+      the mods and ask them to see if your recipient would also enjoy that.
+
+      <p><a href="#top">Top</a> |  <a href="#stories">The Stories</a>
+
+      <p><a name="40"></a><strong> What if my story isn't 
+        1,000 words? </strong> 
+      <p>Then the archive software won't let you upload! If you believe your story is 1,000 words or over, and the software refuses to let you upload, please contact us. 
+
+      <p><a href="#top">Top</a> |  <a href="#stories">The Stories</a>
+
+      <p><a name="41"></a><strong> How do I upload my story? 
+        </strong> 
+      <p>For 2009, uploading will not be available until early December, after the archive
+      has been moved to the <a href="http://archiveofourown.org/">Archive of Our Own (AO3)</a>.
+      More information will be sent out by email and posted to the Admin LJ when it's available. 
+
+      <p><a href="#top">Top</a> |  <a href="#stories">The Stories</a>
+
+      <p><a name="42"></a><strong> I uploaded the wrong 
+        version/made a mistake in my story/summary/author notes, can you redo it/edit it for me? </strong> 
+
+      <p>Once the Yuletide archive is on AO3, you'll be able to make these changes yourselves! \o/ Again,
+      more information on this is forthcoming, but if you already have an account on AO3, you can
+      see how it will work.
+
+
+      <p>Please don't ask us to upload your story for you. If you're not going to be able to upload your story yourself, you
+      can ask a friend, or check the <a href="http://community.livejournal.com/yuletide/">Yuletide LJ</a>; there is generally a post where people have offered to upload stories for other participants. 
+      If there's no such post, you can ask in a post of your own. There are always other participants willing to help; when someone offers, send them your text file
+       and the relevant info: name, email address, LJ and/or website if desired, ratings, summary, author notes. 
+
+      <p><a href="#top">Top</a> |  <a href="#stories">The Stories</a>
+
+      <p><a name="43"></a><strong> Can I thank my beta/include author notes in my story? </strong> 
+      <p>Any author notes, email addresses, beta thank-yous, or other information that may betray your 
+      identity should go in the Author Notes field (NOT the story summary field) when you upload the story. 
+      This information, as well as your email, website, and LJ address, if available, will be hidden from view 
+      on the story until January 1. 
+
+      <p>Please do not include any information that may betray your identity in the story 
+        file itself or in the summary. General story notes on the story itself 
+        are okay, but check out the preview to see how it looks. Including notes at 
+        the bottom of your text file may be preferable. 
+
+      <p>If you're in doubt about whether the content will betray 
+        your anonymity, email <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a> to ask! Once the 
+        authors are revealed on New Year's Day, all participants are free to post their 
+        stories wherever they want and include whatever information they wish. 
+
+
+
+      <p align="center">
+      <div align="center">
+
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#assignment">After You Get Your Assignment </a> | <a href="#stories">The Stories</a> | <a href="#author">After the Reveal: Authors</a> | <a href="#recip">After the Reveal: Recipients</a> | <a href="#comment">Leaving Comments on Stories</a>  | <a href=#change>So You Want Your Contact Info Changed</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <strong><a name="author" id="author"></a>After the Reveal: Authors</strong></h2> 
+
+      <p><a name="44"></a><strong>When/how can I reply to comments on my story?</strong>
+      <p>You will receive emailed copies of all comments left on your stories. Do not delete these if you wish
+      to respond to them, which you may do <b>after the author reveal on January 1st</b>. 
+
+      <p>To prevent spammers from harvesting addresses, the only place a commenter's email address exists (if they
+      chose to include it) is on the copy of the comment emailed to you. If you do not save the comment, you will not 
+      be able to respond.
+
+      <p><b>But don't respond until after the author reveal -- if you respond earlier, you give away your identity!</b>
+
+      <p><a href="#top">Top</a> | <a href="#author">After the Reveal: Authors</a>
+
+      <p><strong><a name="45"></a>Can I post my story to my LJ/website/another archive?</strong>
+
+      <p>You can post your story anywhere you want after the author reveal on January 1st! However, by signing up for Yuletide and uploading a story, 
+      you are agreeing to let us keep that story in the archive, for good. We will not agree to delete the story
+      at any later date, for any reason, although we will remove all identifying information at your request. 
+
+      <p>These are not stories you write in isolation: these are gifts you write for 
+      other people, to their prompts; you get a story of your own in return; and you have taken advantage of 
+      the work done to make the challenge work. Asking us to delete your story after you have gotten a story in 
+      return and collected your feedback is really not fair to your recipient or to the community. Someone spent 
+      their Yuletide requests to get a story created in a rare fandom of their heart, which may have very little 
+      else available or easily found online, and removing the story would rob them of that.
+
+      <p align="center">
+      <div align="center">
+
+      <p><a href="#top">Top</a> 
+      <p> <a href="#assignment">After You Get Your Assignment </a> | <a href="#stories">The Stories</a> | <a href="After the Reveal: ">After the Reveal: Authors</a> | <a href="#recip">After the Reveal: Recipients</a> | <a href="#comment">Leaving Comments on Stories</a> | <a href=#change>So You Want Your Contact Info Changed</a> 
+
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p> <h2> <strong><a name="recip"></a>After the Reveal: Recipients</strong> </h2> 
+
+      <p><strong><a name="46"></a> I think the story I got really 
+        sucks/doesn't do what I asked for, what do I do? </strong> 
+      <p>Smile and say thank you, and read the other stories! Just as we ask the authors not to complain 
+      publicly about the requests they receive, we ask recipients not to complain publicly about the stories 
+      they receive. Your author is bound solely by your fandom and character requests, and while we hope 
+        they'll take other comments into account, they aren't obligated to do so. 
+
+      <p>If your writer failed to write in any of the fandoms you requested and/or did not include characters that
+      you specified, then this is grounds for banning them from future Yuletides -- if you report it to us. Whether
+      you choose to do so, or not, is entirely up to you. 
+
+      <p><a href="#top">Top</a> | <a href="#recip">After the Reveal: Recipients</a>
+
+      <p><strong><a name="47"></a>It's December 25th, I got my own story in on time, 
+        but I don't have a story in the archive/I only have a drabble! </strong> 
+      <p>This is probably because your original author failed to finish their story, 
+        and we had to find a pinch hitter, who wasn't able to get something uploaded 
+        for you in time. We're very sorry.  Please let us know (just in case we somehow
+        missed assigning you a pinch hitter), and then try and enjoy the 
+        rest of the stories in the meantime. We will do our very best to get a story up for 
+        you by New Year's Day.
+
+      <p><a href="#top">Top</a> | <a href="#recip">After the Reveal: Recipients</a>
+
+      <p><a name="48"></a><strong> It's January 1st and I still don't have a story in the archive. What do I do? </strong> 
+      <p>We try very hard to not do the author reveal until we're 
+        sure every person has <i>something</i> to look forward to, even if it's a handful 
+        of drabbles. If the authors are revealed, and you <i>still</i> don't find a 
+        story under your name, please email us at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a> 
+        and we'll try and figure it out! 
+
+
+      <p><a href="#top">Top</a> | <a href="#recip">After the Reveal: Recipients</a>
+
+
+      <p><h2> <strong><a name="comment"></a>Leaving Comments on Stories</strong></h2>  
+      <p>We encourage everyone, participants or not, to leave comments on stories! However, please do not 
+      include any html/URLs/email addresses in the text field of your comments. Any comments containing these 
+      will be rejected, to either prevent harvesting of addresses or to prevent display problems.
+
+      <p>If you want to allow the author to reply to you after the author reveal, please <i>do</i> include
+      your email address in the email field on the comment form. This will not be saved or appear anywhere but on the copy of your comment emailed to the
+      author, to prevent spammers from harvesting the address.
+
+      <p><h2><strong><a name="change"></a>So You Want Your Contact Info Changed </strong></h2>
+
+      <p>If you need us to change your name, email address, journal address (LJ or other), or website address contained in your Yuletide Contact Information,
+      write to us at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>, and include:
+
+      <ul><li>Your story URL (or the URL for one of your stories)
+      <li>The new information
+      <li>The old information</ul>
+
+      <p>We'll get it changed as soon as we can.
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+      <p> <a href="#assignment">After You Get Your Assignment </a> | <a href="#stories">The Stories</a> | <a href="#author">After the Reveal: Authors</a> | <a href="#recip">After the Reveal: Recipients</a> | <a href="#comment">Leaving Comments on Stories</a> | <a href=#change>So You Want Your Contact Info Changed</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <strong><a name="madness" id="madness"></a>Yuletide Madness</strong></h2> 
+      <p>Yuletide Madness is the mods' way of ensuring that everyone has something to read when the Yuletide stories 
+      go live on December 25th. We get nervous on December 23rd when there are still participants without stories, 
+      even if we know that their pinch hitters are still working, because very occasionally one of our pinch hitters defaults. 
+      So sometime on the 23rd or 24th of December, the remaining unfulfilled assignments are made available to our Yuletide participants, 
+      who can then write something for anyone on the list. On the 24th, we remove the word limits on the archive and let our 
+      participants write drabbles or snippets for any of the other participants, little Yuletide follies for sheer fun. Our 
+      view is that it's more for everyone to read!
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#madness">Yuletide Madness</a> | <a href="#etiquette">Yuletide Etiquette</a> | <a href="#rules">Official Yuletide Livejournal Rules</a> | <a href="#irc">Yuletide IRC Chat</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+
+      <p><h2> <strong><a name="etiquette" id="etiquette"></a>Yuletide Etiquette</strong> </h2> 
+      <p>In response to several different incidents, we feel we 
+        need to clarify what we mean when we ask that everyone approach their Yuletide 
+        assignment and story graciously. Basically it boils down to: please be polite!
+
+      <p> In Yuletide terms, this means that if you don't like the requests you receive, please don't 
+      complain in public, or comment negatively on your recipient's taste or requests. If you get something 
+      you didn't sign up for, email privately (<a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>) 
+        and we'll fix it. Otherwise, match the fandom you offered and the characters requested and write the best 
+        story you can, and try to make it something you think your recipient will enjoy. 
+
+      <p> Please leave a thank-you comment for your writer. You aren't obligated to rave publicly 
+      or rec the story if you aren't enthusiastic about it, but an appreciative comment thanking
+      them for their time and effort is simply polite, and will end their Yuletide experience on a positive note.
+      Leave a comment even if you default -- you may feel too embarrassed to say thank you when you didn't give something yourself, 
+      but silence will make your author think you hated the story or couldn't even be bothered to read it.
+
+
+      <p> Please don't complain about your gift in public. If you 
+        get something that doesn't match your fandom/character requests, contact us 
+        in private and we'll handle it. If you get something that matches your fandom/characters 
+        but isn't to your taste, please say thank you anyway and move on to the <i>hundreds</i> of 
+      other stories available to read and enjoy. And maybe someone will pick out one of your unused 
+      requests to write for the NYR challenge!
+
+      <p>If you aren't happy with your Yuletide experience, or comfortable with the gift-exchange atmosphere, 
+      where it really is the thought that counts, then please do not sign up to participate in Yuletide in future. 
+      Join other challenges where stories aren't given as gifts, or pick a NYR request that you can write to your 
+        own taste, without worrying about tailoring it to someone else.
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#madness">Yuletide Madness</a> | <a href="#etiquette">Yuletide Etiquette</a> | <a href="#rules">Official Yuletide Livejournal Rules</a> | <a href="#irc">Yuletide IRC Chat</a> 
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <strong><a name="rules" id="rules"></a>Official Yuletide Livejournal Rules </strong> </h2> 
+      <p>Yuletide maintains two LJs: <a href="http://www.livejournal.com/community/yuletide_admin">Yuletide Admin</a> for all 
+      official notices (only mods can post here), and the <a href="http://www.livejournal.com/community/yuletide">
+        Yuletide community</a> for participant discussion and posting. We do not allow either flames or anonymous 
+      posting in either community. Anonymous comments <i>are</i> enabled, so that people without livejournals can 
+      participate, but if you need to use this option, please sign your name. Any unsigned anonymous comments will 
+      be deleted as soon as we see them. 
+
+
+      <p><strong>I've made some Yuletide story recommendations/have 
+        some comments about Yuletide, can I post them to the Yuletide community? 
+        </strong> 
+      <p>Absolutely! Since many of us have come from vastly different 
+        walks of fandom, we may miss many privately posted reviews/comments about Yuletide. So by all means, 
+      go ahead and post links in the community! 
+
+      <p>See the <a href="http://community.livejournal.com/yuletide/profile">Yuletide community profile</a> for 
+      further explanation of the types of posts allowed.
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#madness">Yuletide Madness</a> | <a href="#etiquette">Yuletide Etiquette</a> | <a href="#rules">Official Yuletide Livejournal Rules</a> | <a href="#irc">Yuletide IRC Chat</a> 
+
+      <p>&nbsp; </p>
+        </div>
+
+
+      <p><h2> <strong><a name="irc" id="irc"></a>Yuletide IRC Chat </strong> </h2> 
+
+      <p>When it gets closer to the deadline, people will start hanging out in an IRC 
+        chat room for last-minute panic, celebration, and socializing: 
+      <p>server: irc.sff.net (standalone server) 
+      <p>room: #yuletide 
+      <p>no password needed 
+      <p>If you need an irc client, Windows users can download 
+      <a href="http://www.mirc.com/">  mIRC</a>, and Mac users can download <a href="http://www.ircle.com/">ircle</a>. Basic how-to guides exist at each site. 
+        Both clients are free for the first 30 days. Additionally, there is also <a href="http://irc.sff.net/">a Java/Web interface</a> provided by sff.net.
+
+
+      <p align="center">
+      <div align="center">
+      <p><a href="#top">Top</a> 
+
+      <p> <a href="#madness">Yuletide Madness</a> | <a href="#etiquette">Yuletide Etiquette</a> | <a href="#rules">Official Yuletide Livejournal Rules</a> | <a href="#irc">Yuletide IRC Chat</a> 
+      <p>&nbsp; </p>
+
+        </div>
+
+      <p><h2> <strong><a name="nyr" id="nyr"></a>What is the New Year's 
+        Resolution Challenge? </strong> </h2> 
+
+      <p>Because of the way the Yuletide challenge is set up, with each 
+        participant requesting several fandoms for their writers to choose from, many 
+        more stories are requested than written. 
+
+      <p>After the authors have been revealed on January 1st, a list of all unfilled requests 
+      is posted to the archive. From then until signups begin for the next year's Yuletide challenge,
+      anyone who wants to can fill one of these requests and upload it to the archive.
+
+      <p>Each new NYR story that is uploaded will be automatically announced to the Yuletide community
+      LJ when the next <a href="#story">Story of the Day</a> post goes out.
+
+      <p>Just like with Yuletide, matching the fandom and characters 
+        of a request and meeting the minimum 1,000-word limit is all we require, although 
+        we prefer that it be reasonably proofread as well. To be posted to the archive, 
+        a story must have a specific recipient, but while we hope you'll take the recipient's 
+        specific requests into consideration, it's not obligatory.
+
+      <p>We will not delete requests as they are filled, but 
+        we do ask that you try and fulfill unanswered ones if you can, rather than one 
+        that's already gotten one or more responses. But if you've already started 
+        a story for a given request, don't give up on it just because someone beat you 
+        to posting it. Or if you just get particularly inspired by a given request -- 
+        go ahead. In the end, it all adds to the richness of the archive. 
+
+      <p align="center">
+
+      <div align="center">
+
+      <p><a href="#top">Top</a> 
+
+      <p><a href="#nry">What is the New Year's Resolution Challenge?</a> | <a href="#story">What is the Yuletide Story of the Day?</a> | <a href="#roll">What is the Roll-Your-Own Challenge?</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2> <a name="story" id="story"></a><strong>What is the Yuletide Story of the Day?</strong></h2> 
+
+      <p>Every day from January 1st to October 1st, a post is automatically made to the Yuletide community LJ
+      containing:
+      <ul>
+      <li>A set number of stories from the most recent Yuletide challenge, posted in order of upload 
+      (This number will vary from year to year, depending on how many stories were uploaded).
+      <li>Any NYR stories posted since the last Story post.
+      <li>One Random Unfilled Request Of The Day.
+      <li>Random Older Story Of The Day, from the years before the current year's challenge.</ul>
+
+      <p>The Story of the Day is also available as an rss feed at 
+      <a href="http://syndicated.livejournal.com/yuletide_daily/">Yuletide Daily</a>, if you want just the
+      daily posts.
+
+      <p align="center">
+      <div align="center">
+
+      <p><a href="#top">Top</a> 
+
+      <p><a href="#nry">What is the New Year's Resolution Challenge?</a> | <a href="#story">What is the Yuletide Story of the Day?</a> | <a href="#roll">What is the Roll-Your-Own Challenge?</a>
+
+      <p>&nbsp; </p>
+        </div>
+
+      <p><h2>  <strong><a name="roll" id="roll"></a>What is the Roll-Your-Own 
+        Challenge? </strong> </h2> 
+      <p>This is not an official Yuletide challenge, but as part 
+        of the 2005 NYR challenge <a href="http://www.livejournal.com/community/yuletide/104727.html">an 
+        insane woman made the suggestion</a> that other crazy people might challenge 
+        themselves by clicking on <a href="http://yuletidetreasure.org/get_random_req.cgi">the 
+        random request link</a> on the <a href="http://yuletidetreasure.org/unfilled.shtml">Unfilled 
+        Requests Page</a>, pledging to write in whatever request turned up. Do you feel 
+        lucky? 
+
+      <p> If the FAQ doesn't answer your question, write us at <a href="mailto:yuletide@yuletidetreasure.org">yuletide@yuletidetreasure.org</a>.
+  
+  rules: here are the fancy rules
+  collection_id: 1
+
+two:
+  collection_id: 2
+  intro: here is an intro
+  faq: lots of faqs
+  rules: whee some rules
+
+three:
+  collection_id: 3
+  intro: only an intro and no faqs or rules
+
+four:
+  collection_id: 4
+  rules: rules but no intro
+  
+five:
+  collection_id: 5
+  
+six:
+  collection_id: 6
+
+seven:
+  collection_id: 7
+
+eight:
+  collection_id: 8
+
+nine:
+  collection_id: 9
+
+  

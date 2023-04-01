@@ -1,0 +1,22 @@
+defaults: &defaults
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  host: db
+  username: root
+  password: change_me
+
+development:
+  database: otwarchive_development
+  <<: *defaults
+
+# Warning: The database defined as 'test' will be erased and
+# re-generated from your development database when you run 'rake'.
+# Do not set this db to the same as development or production.
+test:
+  database: otwarchive_test
+  <<: *defaults
+
+production:
+  database: otwarchive_production
+  <<: *defaults

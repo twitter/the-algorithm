@@ -1,0 +1,157 @@
+<div class="tag wrangling home">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts('Tag Wrangling') %></h2>
+  <% unless params[:show] %>
+    <h4 class="landmark heading"><%= ts('Notes') %></h4>
+    <ul class="notes">
+      <li>Make tags canonical according to the <%= link_to 'wrangling guidelines', wrangling_guidelines_path %>.</li>
+      <li>If you have trouble accessing the wiki, please <a href="mailto:tagwranglers-personnel@transformativeworks.org">email tag wranglers personnel</a>. For any other questions relating to tag wrangling, please <a href="mailto:tagwranglers-staff@transformativeworks.org">email wrangling staff</a>, or for confidential issues please <a href="mailto:tagwranglers-chair@transformativeworks.org">email tag wrangling chairs</a>.</li>
+    </ul>
+    <h3 class="heading">Additional Resources:</h3>
+    <ul>
+      <li><a href="http://wiki.transformativeworks.org/mediawiki/Category:Tag_Wrangling_Committee">Tag Wrangling Committee</a> - Full collection of wiki links &amp; policies</li>
+      <li><a href="http://wiki.transformativeworks.org/mediawiki/Category:Tag_Wrangler_Training">Tag Wrangling Training</a> - New wranglers, start here!</li>
+      <li><a href="http://wiki.transformativeworks.org/mediawiki/Tag_Wrangling_FAQ">Tag Wrangling FAQ</a> - Please check here before emailing Staff</li>
+      <li><a href="https://otwarchive.atlassian.net/issues/?jql=project%20%3D%20AO3%20AND%20component%20%3D%20%22Tag%20Wrangling%22%20AND%20status%20%3D%20%22To%20Do%22">Tag Wrangling Issue Tracker</a> - Known bugs</li>
+      <li><a href="https://secure.transformativeworks.org/mailman/private/tagwranglers/">Tag Wrangler Mailing List Archives</a> (For more information please see <a href="http://wiki.transformativeworks.org/mediawiki/Tag_Wrangler_Mailing_List">Tag Wrangler Mailing List</a>)</li>
+      <li><a href="https://fanarchive.campfirenow.com/">Campfire Chat</a> (For more information please see <a href="http://wiki.transformativeworks.org/mediawiki/How_to_Use_Campfire_-_An_Interactive_Tutorial">Chat Instructions</a>)</li>
+      <li><a href="http://wiki.transformativeworks.org/mediawiki/Fandoms_in_need_of_Cowranglers">Fandoms in need of Cowranglers and fandoms up for grabs</a></li>
+      <li><%= link_to "Unassigned Fandoms", unassigned_fandoms_path(sort: "count") %></li>
+      <li><a href="http://wiki.transformativeworks.org/mediawiki/Category:Fandoms_%26_Megafandoms">Fandom &amp; Megafandom notes</a></li>
+    </ul>
+  <% end %>
+
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <!--/subnav-->
+
+  <!--main content-->
+  <!--Eventually, something less redundant will go here-->
+  <% unless params[:show].blank? %>
+    <h3 class="heading"><%= ts('Mass Wrangle New/Unwrangled Tags') %></h3>
+  <% end %>
+
+  <% if @tags && @tags.empty? %>
+    <p><%= ts('There are no unwrangled tags in this category at the moment.') %></p>
+  <% elsif @tags %>
+    <%= will_paginate @tags %>
+
+    <%= form_tag url_for(controller: 'tag_wranglings', action: 'wrangle'), method: :post, id: 'wrangulator' do %>
+      <fieldset>
+        <legend><%= ts('Assign and Mass Select') %></legend>
+
+        <dl>
+          <% if params[:show] == 'fandoms' %>
+            <dt><%= label_tag :media, ts('Wrangle to Media') %></dt>
+            <dd><%= select_tag :media, options_for_select(@media_names) %></dd>
+          <% else %>
+            <dt><%= label_tag :fandom_string, ts('Wrangle to Fandom(s)') %></dt>
+            <dd title="<%= ts('wrangle to fandom(s)') %>"><%= text_field_tag 'fandom_string', params[:fandom_string], autocomplete_options('fandom') %></dd>
+          <% end %>
+          <dt class="landmark"><%= ts('Submit') %></dt>
+          <dd class="submit"><%= submit_tag ts('Wrangle') %></dd>
+        </dl>
+      </fieldset>
+
+      <fieldset class="table">
+        <legend><%= ts('Choose tags from a table') %></legend>
+
+        <h3 class="landmark heading"><%= ts('Individual Selection Table') %></h3>
+
+        <div class="wrapper">
+          <table summary="<%= ts('A subset of tags listed by name, with options to edit, wrangle, or view works tagged thus. Also listed is when each tag was created, whether each is canonical, and the number of works tagged thus.') %>" id="wrangulise">
+            <caption><%= @tags.first.class.to_s.pluralize %> <%= ts('to be Wrangled') %></caption>
+
+            <colgroup>
+              <col class="name" />
+              <col span="3" />
+            </colgroup>
+            
+            <thead role="navigation">
+              
+              <tr>
+                <th scope="col">
+                  <%= sort_link ts('Tag Name'), :name %>
+                  <ul class="actions" role="menu">
+                    <li><a id="wrangle_all_select" title="<%= ts('select') %>"><%= ts('All') %></a></li>
+                    <li><a id="wrangle_all_deselect" title="<%= ts('select') %>"><%= ts('None') %></a></li>
+                  </ul>
+                </th>
+                <th scope="col" title="<%= ts('sort by') %>">
+                  <%= sort_link ts('Created'), :created_at, {sort_default: true} %>
+                </th>
+                <th scope="col">
+                  <%= ts('Canonical') %>
+                  <ul class="actions" role="menu">
+                    <li><a id="canonize_all_select" title="<%= ts('select') %>"><%= ts('All') %></a></li>
+                    <li><a id="canonize_all_deselect" title="<%= ts('select') %>"><%= ts('None') %></a></li>
+                  </ul>
+                </th>
+                <th scope="col" title="<%= ts('sort by') %>">
+                  <%= sort_link ts('Taggings'), :taggings_count_cache, { desc_default: true } %>
+                </th>
+                <th scope="col"><%= ts('Manage') %></th>
+              </tr>
+            </thead>
+
+            <tfoot>
+              <tr>
+                <th scope="row" colspan="4"><%= ts('Action:') %></th>
+                <td><span class="submit actions"><%= submit_tag ts('Wrangle') %></span></td>
+              </tr>
+            </tfoot>
+
+            <tbody>
+              <% @tags.each do |tag| %>
+                <tr>
+                  <th scope="row" title="<%= ts('tag') %>">
+                    <%= check_box_tag 'selected_tags[]', tag.id, nil, id: "selected_tags_#{tag.id}" %>
+                    <%= label_tag "selected_tags_#{tag.id}", "#{tag.name}" %>
+                  </th>
+
+                  <td title="<%= ts('created') %>"><%= l(tag.created_at.to_date) %></td>
+
+                  <td title="<%= ts('canonical?') %>">
+                    <% if tag.canonical? %>
+                      <%= ts('Yes') %>
+                    <% else %>
+                      <%= check_box_tag 'canonicals[]', tag.id, tag.canonical?, id: "canonicals_#{tag.id}" %>
+                    <% end %>
+                  </td>
+
+                  <td title="<%= ts('taggings') %>"><%= tag.taggings_count %></td>
+
+                  <td>
+                    <ul class="actions" role="navigation">
+                      <li><%= link_to ts('Edit'), {controller: :tags, action: :edit, id: tag} %></li>
+                      <li><%= link_to ts('Wrangle'), {controller: :tags, action: :wrangle, id: tag} %></li>
+                      <li><%= link_to ts('Works'), {controller: :works, action: :index, tag_id: tag} %></li>
+                    </ul>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+
+      <div>
+        <%= hidden_field_tag :show, params[:show] %>
+        <%= hidden_field_tag :sort_column, params[:sort_column] %>
+        <%= hidden_field_tag :sort_direction, params[:sort_direction] %>
+        <%= hidden_field_tag :page, params[:page] %>
+      </div>
+    <% end %>
+    <!--/content-->
+    <div class="clear"><!--presentational, phase me out--></div>
+
+    <!--subnav-->
+    <%= will_paginate @tags %>
+  <% end %>
+  <!--/subnav-->
+</div>
+
+<% content_for :footer_js do %>
+  <%= javascript_include_tag 'select_all', skip_pipeline: true %>
+<% end %>

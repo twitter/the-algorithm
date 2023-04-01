@@ -1,0 +1,74 @@
+<!-- START of single comment -->
+<li class="<%= cycle :odd, :even %> <%= css_classes_for_comment(single_comment) %>" id="comment_<%= single_comment.id %>" role="article">
+  <% if params[:edit_comment_id] && params[:edit_comment_id] == single_comment.id.to_s && can_edit_comment?(single_comment) %>
+    <!-- we're editing this comment -->
+    <%= render 'comments/comment_form',
+        :comment => single_comment,
+        :commentable => single_comment.commentable,
+        :button_name => ts('Update') %>
+  <% else %>
+    <% if single_comment.is_deleted %>
+      <p>
+        <%= ts("(Previous comment deleted.)") %>
+      </p>
+    <% elsif !can_see_hidden_comment?(single_comment) %>
+      <p class="message"><%= ts("(This comment is under review by an admin and is currently unavailable.)") %></p>
+    <% else %>
+      <% cache(single_comment, expires_in: 1.week) do %>
+        <% # FRONT END, update this if a.user comes in %>
+        <h4 class="heading byline">
+          <% if single_comment.by_anonymous_creator? %>
+            <%= ts("Anonymous Creator") %>
+          <% else %>
+            <%= get_commenter_pseud_or_name(single_comment) %>
+          <% end %>
+          <% if single_comment.parent.is_a?(Chapter) && single_comment.ultimate_parent.expected_number_of_chapters != 1 %>
+            <span class='parent'>
+              <%= ts('on Chapter %{position}', :position => single_comment.parent.position) %>
+            </span>
+          <% end %>
+          <% if single_comment.unreviewed? %>
+            <span class="unreviewed status">
+              <%= ts("(Unreviewed)") %>
+            </span>
+          <% end %>
+          <span class="posted datetime">
+            <%= time_in_zone(single_comment.created_at) %>
+          </span>
+        </h4>
+        <div class="icon">
+          <% if !single_comment.pseud.nil? %>
+            <% if single_comment.by_anonymous_creator? %>
+              <span class="anonymous icon"><!-- anonymous creator icon holder --></span>
+            <% else %>
+              <%= icon_display(single_comment.pseud.user, single_comment.pseud) %>
+            <% end %>
+          <% else %>
+            <span class="visitor icon"><!-- visitor icon holder --></span>
+          <% end %>
+        </div>
+        <% unless single_comment.approved? %>
+          <p class="notice"><%= ts("This comment has been marked as spam.") %></p>
+        <% end %>
+        <% if single_comment.hidden_by_admin? %>
+          <p class="notice"><%= ts("This comment has been hidden by an admin.") %></p>
+        <% end %>
+        <blockquote class="userstuff"><%=raw sanitize_field(single_comment, :comment_content) %></blockquote>
+        <% unless single_comment.edited_at.blank? %>
+          <p class="edited datetime">
+            <%= ts("Last Edited") %> <%= time_in_zone(single_comment.edited_at) %>
+          </p>
+        <% end %>
+      <% end %><!-- end caching -->
+
+      <% if policy(single_comment).show_email? && single_comment.email.present? %>
+        <p class="email"><%= ts("Email: %{email}", email: single_comment.email) %></p>
+      <% end %>
+      <% if policy(:user_creation).show_ip_address? %>
+        <p class="ip"><%= ts("IP Address: %{ip_address}", ip_address: single_comment.ip_address.blank? ? "No address recorded" : single_comment.ip_address) %></p>
+      <% end %>
+      <%= render "comments/comment_actions", comment: single_comment %>
+    <% end %>
+  <% end %>
+</li>
+<!-- END of single comment -->

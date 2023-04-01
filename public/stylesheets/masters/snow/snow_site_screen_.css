@@ -1,0 +1,55 @@
+body,
+th,
+tr:hover,
+col.name,
+fieldset fieldset,
+fieldset dl dl,
+form blockquote.userstuff,
+input:focus,
+select:focus,
+textarea:focus,
+.autocomplete div.dropdown ul,
+#ui-datepicker-div,
+#ibox_wrapper,
+#ibox_content,
+.toggled form,
+.dynamic form,
+.secondary,
+.listbox .index,
+.dashboard .listbox .index,
+.nomination dt {
+  background: #fff;
+}
+
+#header h2,
+#footer ul,
+#footer ul.navigation a,
+.autocomplete .dropdown ul li:hover,
+.autocomplete .dropdown li.selected,
+a.tag:hover {
+  color: #fff;
+}
+
+tbody tr,
+thead td,
+#header #small_login,
+fieldset,
+form dl,
+fieldset dl dl,
+fieldset fieldset fieldset,
+fieldset fieldset dl dl,
+dd.hideme,
+form blockquote.userstuff,
+form dt,
+.actions a:active,
+.current,
+a.current,
+.current a:visited,
+.search span.tip {
+  border-color: #fff;
+}
+
+form .notice,
+form ul.notes {
+  box-shadow: 0px 0 3px #fff;
+}

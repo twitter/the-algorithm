@@ -1,0 +1,4 @@
+<% if item.bookmarkable.is_a?(Work) %>
+<%= render "share/embed_link_work", item: item.bookmarkable %>
+<%= render "share/embed_meta_bookmark", bookmark: item %>
+<% end %>

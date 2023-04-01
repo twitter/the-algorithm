@@ -1,0 +1,3 @@
+<% content_for :message do %>
+  <%= t('.part1', login: style_bold(@user.login), email: style_email(@user.email)).html_safe %>
+<% end %>

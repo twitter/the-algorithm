@@ -1,0 +1,100 @@
+<div class="admin">
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Manage Approved Skins') %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render :partial => 'admin/skins/navigation' %>
+<!--/subnav-->
+
+<!--main content-->
+<%=  form_tag update_admin_skin_path, {:method => :put} do %>
+
+  <!-- review of approved skins -->
+  <fieldset>
+    <legend><%= ts('Approved Skins') %></legend>
+    <h3 class="heading"><%= ts('Approved Skins') %></h3>
+
+    <table id="approved_skins" summary="<%= ts('Details and number of users for approved skins, along with administrative notes and actions.') %>">
+      <caption><%= ts('Approved Skins') %></caption>
+      <thead>
+        <tr>
+        <th scope="col"><%= ts('Skin') %></th>
+        <th scope="col"><%= ts('Type') %></th>
+        <th scope="col"><%= ts('Creator') %></th>
+        <th scope="col"><%= ts('Users') %></th>
+        <th scope="col"><%= ts('Admin Note') %></th>
+        <th scope="col"><%= ts('Actions') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @approved_skins.each_with_index do |skin, i| %>
+        <% disabled = !policy(skin).update? %>
+        <tr>
+          <th scope="row"><%= link_to skin.title, skin_path(skin) %></th>
+          <td><%= skin.type == 'WorkSkin' ? 'Work Skin' : 'Site Skin' %></td>
+          <td><%= skin_author_link(skin) %></td>
+          <td><%= skin.preferences.count %></td>
+          <td><%= skin.admin_note %></td>
+          <td class="actions">
+            <% skin_name = skin.title.downcase.gsub(/ +/, '_') %>
+            <%= label_tag "make_unofficial_#{skin_name}", class: ["action", disabled ? "disabled" : ""] do %>
+              <%= ts("Unapprove") %>  
+              <%= check_box_tag "make_unofficial[]", skin.id, false, id: "make_unofficial_#{skin_name}", disabled: disabled %>
+            <% end %>
+
+            <% %w(cached featured in_chooser).each do |type| %>
+              <% if skin.send("#{type}?") %>
+                <%= label_tag "make_un#{type}_#{skin_name}", class: ["action", disabled ? "disabled" : ""] do %>
+                  <%= 
+                    case type 
+                    when "cached"
+                      ts("Uncache")
+                    when "featured"
+                      ts("Unfeature")
+                    when "in_chooser"
+                      ts("Not In Chooser")
+                    end
+                  %>  
+                  <%= check_box_tag "make_un#{type}[]", skin.id, false, id: "make_un#{type}_#{skin_name}", disabled: disabled %>
+                <% end %>
+              <% else %>
+                <%= label_tag "make_#{type}_#{skin_name}", class: ["action", disabled ? "disabled" : ""] do %>
+                  <%= 
+                    case type 
+                    when "cached"
+                      ts("Cache")
+                    when "featured"
+                      ts("Feature")
+                    when "in_chooser"
+                      ts("Chooser")
+                    end
+                  %>  
+                  <%= check_box_tag "make_#{type}[]", skin.id, false, id: "make_#{type}_#{skin_name}", disabled: disabled %>
+                <% end %>
+              <% end %>
+            <% end %>            
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+  </fieldset>
+
+  <% if policy(Skin).set_default? %>
+    <fieldset>
+      <legend><%= ts("Set Default Archive Skin") %></legend>
+      <h3 class="heading"><%= ts("Set Default Archive Skin") %></h3>
+      <p class="note"><%= ts("This will change the default skin FOR ALL USERS! Don't use unless you are REALLY SURE.") %></p>
+      <p>
+        <%= label_tag "set_default", ts("Default Skin Title: ") %>
+        <%= text_field_tag "set_default", AdminSetting.default_skin.try(:title), autocomplete_options("site_skins", data: { autocomplete_token_limit: 1 }) %>
+        <%= hidden_field_tag :last_updated_by, current_admin.id %>
+      </p>
+    </fieldset>
+  <% end %>
+
+  <p class="submit"><%= submit_tag ts("Update") %></p>
+
+<% end %>
+</div>

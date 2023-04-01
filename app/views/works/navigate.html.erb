@@ -1,0 +1,8 @@
+<h2 class="heading"><%= ts("Chapter Index for") %> <%= link_to(@work.title.html_safe, @work) %> <%= ts("by") %> <%= byline(@work) %></h2>
+
+<ol class="chapter index group" role="navigation">
+<% for chapter in @chapters %>
+  <li><%= link_to chapter.display_title.html_safe, [chapter.work, chapter] %> <span class="datetime">(<%= chapter.published_at.to_date %>)</span></li>
+<% end %>
+</ol>
+

@@ -1,0 +1,8 @@
+/*!
+Copyright (c) 2011, 2012 Julien Wajsberg <felash@gmail.com>
+All rights reserved.
+
+Official repository: https://github.com/julienw/jquery-trap-input
+License is there: https://github.com/julienw/jquery-trap-input/blob/master/LICENSE
+This is version 1.2.0.
+*/(function(e,t){function r(e){if(e.keyCode===9){var t=!!e.shiftKey;if(i(this,e.target,t)){e.preventDefault();e.stopPropagation()}}}function i(e,t,n){var r=a(e),i=t,s,o,u,f;do{s=r.index(i);o=s+1;u=s-1;f=r.length-1;switch(s){case-1:return false;case 0:u=f;break;case f:o=0;break}if(n){o=u}i=r.get(o);if(!i||i===t){return true}try{i.focus()}catch(l){return true}}while(r.length>1&&t===t.ownerDocument.activeElement);return true}function s(){return this.tabIndex>0}function o(){return!this.tabIndex}function u(e,t){return e.t-t.t||e.i-t.i}function a(t){var n=e(t);var r=[],i=0;h.enable&&h.enable();n.find("a[href], link[href], [draggable=true], [contenteditable=true], :input:enabled, [tabindex=0]").filter(":visible").filter(o).each(function(e,t){r.push({v:t,t:0,i:i++})});n.find("[tabindex]").filter(":visible").filter(s).each(function(e,t){r.push({v:t,t:t.tabIndex,i:i++})});h.disable&&h.disable();r=e.map(r.sort(u),function(e){return e.v});return e(r)}function f(){this.keydown(r);this.data(n,true);return this}function l(){this.unbind("keydown",r);this.removeData(n);return this}function c(){return!!this.data(n)}var n="trap.isTrapping";e.fn.extend({trap:f,untrap:l,isTrapping:c});var h={};if(e.find.find&&e.find.attr!==e.attr){(function(){function i(e){var r=e.getAttributeNode(n);return r&&r.specified?parseInt(r.value,10):t}function s(){r[n]=r.tabIndex=i}function o(){delete r[n];delete r.tabIndex}var n="tabindex";var r=e.expr.attrHandle;h={enable:s,disable:o}})()}})(jQuery);

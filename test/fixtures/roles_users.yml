@@ -1,0 +1,51 @@
+--- 
+join_00004: 
+  created_at: 2009-06-27 18:59:55
+  updated_at: 2009-06-27 18:59:55
+  role_id: "5"
+  user_id: "2"
+join_00005: 
+  created_at: 
+  updated_at: 
+  role_id: "1"
+  user_id: "1"
+join_00006: 
+  created_at: 
+  updated_at: 
+  role_id: "2"
+  user_id: "1"
+join_00007: 
+  created_at: 2009-06-27 19:53:45
+  updated_at: 2009-06-27 19:53:45
+  role_id: "3"
+  user_id: "15"
+join_00008: 
+  created_at: 2008-11-09 04:26:02
+  updated_at: 2008-11-09 04:26:02
+  role_id: "1"
+  user_id: "15"
+join_00009: 
+  created_at: 2008-11-09 03:26:02
+  updated_at: 2008-11-09 03:26:02
+  role_id: "2"
+  user_id: "7"
+join_00000: 
+  created_at: 2008-11-09 03:26:02
+  updated_at: 2008-11-09 03:26:02
+  role_id: "1"
+  user_id: "7"
+join_00001: 
+  created_at: 2009-06-27 18:59:55
+  updated_at: 2009-06-27 18:59:55
+  role_id: "6"
+  user_id: "1"
+join_00002: 
+  created_at: 2009-06-27 18:53:45
+  updated_at: 2009-06-27 18:53:45
+  role_id: "3"
+  user_id: "1"
+join_00003: 
+  created_at: 2009-06-27 18:59:55
+  updated_at: 2009-06-27 18:59:55
+  role_id: "4"
+  user_id: "1"

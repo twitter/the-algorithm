@@ -1,0 +1,4 @@
+bucket: mybucket
+access_key_id: myaccesskey
+secret_access_key: mysecret
+s3_region: us-east-1

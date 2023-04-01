@@ -1,0 +1,34 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("My Claims") %> <% if @collection %><%= ts("in") %> <%= link_to(@collection.title, @collection) %><% end %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<% unless params[:for_user] %>
+	<ul class="navigation actions" role="navigation">
+    <li id="unposted-link">
+      <%= span_if_current ts("Unfulfilled Claims"), user_claims_path(current_user), params[:posted].blank? %>
+    </li>
+    <li id="posted-link">
+      <%= span_if_current ts("Fulfilled Claims"), user_claims_path(current_user, :posted => true) %>
+    </li>
+	</ul>
+<% end %>
+<!--/subnav-->
+
+<%= will_paginate @claims %>
+
+<!--main content-->
+<% unless @collection %>
+  <p class="note"><%= ts('Looking for assignments you were given for a gift exchange? Try') %> <%= link_to ts("My Assignments"), user_assignments_path(@user) %></p>
+<% end %>
+
+<ol class="prompt index group">
+
+	<% @claims.each do |claim| %>
+		<%= render "prompts/prompt_blurb", :prompt => claim.request_prompt, :claim => claim, :suppress_claims => !params[:posted] %>
+	<% end %>
+  
+</ol>
+<!--/content-->
+
+<%= will_paginate @claims %>

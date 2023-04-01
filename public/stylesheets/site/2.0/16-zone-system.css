@@ -1,0 +1,385 @@
+/*==ZONE: SYSTEM
+SUBSECTIONS:
+  1. SPLASH, 2. SESSIONS, 3. DOCS, 4. COMMS, 5. SUPPORT, 6. FAQ, 7. TOS POPUP,
+  8. PROXY NOTICE
+*/
+
+.system p {
+  line-height: 1.5;
+}
+
+.system .userstuff {
+  max-width: 72em;
+  margin: auto;
+}
+
+.system .userstuff h3 {
+  margin-top: 3em;
+}
+
+/*1. ZONE: SYSTEM: SPLASH PAGE*/
+
+.splash {
+  margin: auto;
+  max-width: 78em;
+}
+
+.splash .module h3 {
+  border-bottom: 1px solid #c8c8c8;
+  color: #900;
+  font-size: 1.714em;
+}
+
+.splash span.link {
+  float: right;
+}
+
+.splash .link a {
+  font-size: 0.583em;
+}
+
+.splash .browse, .splash div.news {
+  width: 36%;
+}
+
+.splash .intro, .splash .tweets {
+  float: right;
+  width: 60%;
+}
+
+.splash .browse ul, .splash .browse li {
+  float: left;
+  width: 100%;
+    box-sizing: border-box;
+}
+
+.splash .browse li a, .splash .favorite a {
+  border-bottom: none;
+  display: block;
+}
+
+/* module: browse */
+
+.splash .browse li {
+  margin: 0.375em 0;
+  padding: 0.375em 0;
+  width: 50%;
+}
+
+.splash .browse li a:before {
+  color: #900;
+  content: "\00BB";
+  padding: 0 0.25em 0 0;
+}
+
+.splash .browse li:nth-of-type(1), .splash .browse li:nth-of-type(2) {
+  margin-top: 0;
+}
+
+.splash .browse li:nth-of-type(odd) {
+  padding-right: 0.375em;
+}
+
+/* module: favorite tags */
+
+.splash .favorite li {
+  margin: 0;
+}
+
+.splash .favorite a {
+  padding: 0.25em 0.375em;
+}
+
+.splash .favorite li:nth-of-type(odd) a {
+  background: #eee;
+}
+
+.splash .favorite li:nth-of-type(odd) a:hover, .splash .favorite li:nth-of-type(odd) a:focus {
+  background: #900;
+}
+
+/* module: intro */
+
+.splash .intro {
+  padding: 1em 0 2em;
+}
+
+.splash .intro h2 {
+  font-size: 2em;
+  line-height: 1.375;
+}
+
+.splash .intro .stats, .splash .parent {
+  text-align: center;
+}
+
+.splash .count {
+  font-weight: 700;
+}
+
+.splash .module div.account {
+  background: #eaeaea;
+  border: 1px solid #ccc;
+    border-radius: 0.5em;
+    box-sizing: border-box;
+}
+
+.splash .account .heading {
+  margin: 1em;
+}
+
+.splash .account p {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.splash .account ul {
+  margin-left: 4em;
+  margin-right: 1em;
+}
+
+.splash .account li {
+  list-style-type: disc;
+}
+
+.splash .account .actions {
+  float: none;
+  font-size: 1.143em;
+}
+
+/* module: news */
+
+.splash .news li {
+  border-bottom: 1px solid #eee;
+}
+
+.splash .news li:last-of-type {
+  border-bottom: none;
+}
+
+.splash .news .meta {
+  font: normal 0.857em 'Monaco', 'Consolas', Courier, monospace;
+}
+
+.splash .news blockquote {
+  float: left;
+}
+
+.splash .jump {
+  text-align: right;
+}
+
+.splash .placeholder {
+  font-style: italic;
+}
+
+/* module: marked for later */
+
+.splash .blurb blockquote {
+  margin: 0.643em auto;
+}
+
+/* module: unread messages */
+
+.splash .comment .userstuff {
+  margin: 1em;
+}
+
+/* module: twitter */
+
+.tweets iframe {
+  display: block !important;
+  margin: 0 auto;
+}
+
+/* mod: logged-in */
+
+.logged-in .splash > .module {
+  float: left;
+  margin: 0 1% 1.571em 1%;
+  width: 48%;
+}
+
+.logged-in .splash > div:nth-of-type(odd) {
+  clear: left;
+}
+
+/* misc */
+
+.splash .module .module, .splash .dynamic, .splash .news blockquote {
+  margin: 0;
+  width: 100%;
+}
+
+/* 2. ZONE: SYSTEM: SESSIONS (login and signup)*/
+
+.session #signin {
+  margin-left: 48%;
+  width: 48%;
+}
+
+.sessions-new #new_admin {
+  width: 75%;
+  margin: auto;
+}
+
+.session dt {
+  min-width: 0;
+}
+
+#tos-partial .tos {
+  height: 36em;
+  overflow: auto;
+}
+
+/*3. ZONE: SYSTEM: DOCS
+For practicality, /home .docs have been given the .userstuff class as well, to save doubling up that sheet or confusing end users. We will just cope with the inconsistency.*/
+
+.docs .userstuff ul, .docs .userstuff ol {
+  margin: 0.643em auto;
+  padding: 0;
+}
+
+.docs .userstuff li {
+  padding: 0 1.5em;
+}
+
+.docs .userstuff .toc li {
+  list-style-type: upper-roman;
+}
+
+.docs .userstuff .toc {
+  margin: 3.215em auto;
+}
+
+/*4. ZONE: SYSTEM: ADMIN COMMS
+admin comms, user facing, are a type of Home Zone, look in zone-home.css
+admin zone, admin facing, has no special rules atm
+admin role is only admin facing, and changes normal views in role-admin.css*/
+
+/*5. ZONE: SYSTEM: SUPPORT*/
+
+.feedbacks h3 {
+  clear: right;
+  padding-top: 1.929em;
+}
+
+.feedbacks form {
+  margin-top: 1.929em;
+}
+
+.feedbacks form .notice {
+  margin: 0.643em;
+}
+
+/* 6. ZONE: SYSTEM: FAQS
+For practicality, /archive_faqs are also .docs and .support and have the .userstuff class on category pages */
+
+.faq .categories {
+  margin: 0 auto;
+  max-width: 72em;
+  float: none;
+}
+
+.faq .categories h3 {
+  border-bottom: 0.25em double #333;
+  margin-top: 1.929em;
+}
+
+.faq .categories li {
+  padding: 0;
+}
+
+.faq .categories .questions li, .faq .userstuff .toc li {
+  list-style-type: circle;
+}
+
+.faq .categories .userstuff {
+  clear: both;
+}
+
+.faq .screencast .label {
+  font-weight: 700;
+}
+
+.faq .userstuff .notice, .faq .userstuff .caution, .faq .example, .guideline .userstuff .notice, .guideline .userstuff .caution, .guideline .example  {
+  margin: 0.643em 3.858em;
+  padding: 0.643em;
+}
+
+.faq .example, .guideline .example {
+  border: 1px solid #c2d2df;
+}
+
+/* 7. ZONE: SYSTEM: TOS POPUP */
+
+#tos_prompt {
+  background: #fff;
+  margin: 0;
+  min-height: 100vh;
+  /* put it on top of the other content so it fades in nicely */
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 999
+}
+
+#tos_prompt .heading {
+  background: #900;
+  color: #fff;
+  display: block;
+  margin: 0;
+  padding: 0.125em 0;
+}
+
+#tos_prompt .heading span {
+  display: block;
+	margin: auto;
+  width: 40rem;
+  max-width: 80%;
+}
+
+#tos_prompt .agreement {
+  margin: auto;
+  overflow: hidden;
+  width: 40rem;
+	max-width: 80%;
+}
+
+#tos_prompt .summary {
+  margin: 2em 0 0.643em 0;
+  line-height: 1.4;
+}
+
+#tos_prompt .confirmation {
+  margin: 2em 0 1em;
+}
+
+#tos_prompt p.submit {
+	margin-bottom: 2em;
+}
+
+#tos_prompt .submit input, #tos_prompt .submit button {
+  white-space: normal;
+  height: 100%;
+}
+
+#tos_prompt [disabled] {
+  background: #ccc;
+    box-shadow: none;
+}
+
+/* 8. ZONE: SYSTEM: PROXY NOTICE */
+#proxy-notice {
+  background: #efd1d1;
+  border-bottom: 1px solid #900;
+  font-size: 0.875em;
+}
+
+#proxy-notice .userstuff {
+  padding: 0.643em 0.875em;
+}
+
+#proxy-notice .submit {
+  margin-bottom: 0;
+}

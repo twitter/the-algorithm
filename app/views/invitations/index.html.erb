@@ -1,0 +1,46 @@
+<!--Descriptive page name, messages and instructions-->
+<% if logged_in_as_admin?  %>
+  <h2 class="heading"><%= ts('Create more invitations for this user') %></h2>
+  <%= form_for :invitation, url: user_invitations_url(@user) do |f| %>
+    <p><%= label_tag "invitation[number_of_invites]", ts('Number of invitations:') %> <%= f.text_field :number_of_invites  %> <%= submit_tag 'Create' %></p>
+  <% end %>
+<% else %>
+
+  <h2 class="heading">Invite a friend</h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <%= render "user_invitations_navigation" %>
+  <!--/subnav-->
+
+  <!--main content-->
+  <div class="module">
+  <% if @unsent_invitations.blank? %>
+    <p>Sorry, you have no unsent invitations right now. <%= link_to ts('Request invitations'), new_user_invite_request_path %></p>
+  <% else %>
+    <p>You have <%= @user.invitations.unsent.count.to_s %> open invitations and <%= @user.invitations.unredeemed.count.to_s %> that have been sent but not yet used.</p>
+    <%= form_tag invite_friend_user_invitations_path(@user) do  %>
+      <dl>
+        <dt><%= label_tag "invitation[invitee_email]", t('.email address', :default => 'Email address') %></dt>
+        <dd><%= text_field_tag "invitation[invitee_email]" %></dd>
+        <dt><%= label_tag :id, t('.choose_invite', :default => 'Choose an invitation') %></dt>
+        <dd>
+          <ul>
+            <% for unsent_invite in @unsent_invitations %>
+            <li>
+              <%= radio_button_tag "invitation[id]", unsent_invite.id, checked: (unsent_invite == @unsent_invitations.first) %>
+              <%= label_tag 'invitation_id_' + unsent_invite.id.to_s, unsent_invite.token %>
+            </li>
+            <% end %>
+          </ul>
+        </dd>
+      </dl>
+      <p class="submit actions"><%= submit_tag t('.submit_invite', :default => 'Send Invitation')  %></p>
+    <% end %>
+  <% end %>
+  </div>
+  <!--/content-->
+
+  <!--subnav-->
+  <!--/subnav-->
+<% end %>

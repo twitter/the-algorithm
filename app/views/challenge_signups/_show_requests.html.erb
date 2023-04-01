@@ -1,0 +1,24 @@
+<% unless challenge_signup.requests.empty? %>
+
+  <!-- expects local variable "challenge_signup" -->
+  <div class="requests listbox group">
+    <h3 class="heading">
+      <%= ts("Requests") %>
+
+      <% if @challenge_assignment %>
+        <%= ts("by %{requester}", :requester => @challenge_assignment.request_byline) %>
+        <% user = @challenge_assignment.try(:request_signup).try(:pseud).try(:user) %>
+        <% if user && @challenge.user_allowed_to_see_assignments?(current_user) %>
+          <%= mailto_link user, :subject => "[#{h(@collection.title)}] Message from Collection Maintainer" %>
+        <% end %>
+      <% end %>
+    </h3>
+
+    <ol class="prompt index group">
+      <% challenge_signup.requests.each_with_index do |request, index| %>
+        <%= render "prompts/prompt_blurb", :prompt => request, :index => index %>
+      <% end %>
+    </ol>
+  </div>
+
+<% end %>
