@@ -1,0 +1,110 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%! 
+    from pylons.i18n import _, ungettext
+    from r2.lib.filters import conditional_websafe
+    from r2.lib.template_helpers import add_sr
+%>
+
+<%namespace file="utils.html" import="plain_link" />
+<%inherit file="printable.mobile" />
+
+<%def name="flair()">
+  %if c.user.pref_show_link_flair:
+    <span class="linkflair">${thing.flair_text}</span>
+  %endif
+</%def>
+
+<%def name="entry()">
+<% 
+   if thing.num_comments:
+       # generates "XX comments" as a noun
+       com_label = "%d %s" % \
+             (thing.num_comments,
+              ungettext("comment", "comments", thing.num_comments))
+   else:
+       # generates "comment" the imperative verb
+       com_label = _("comment") 
+ %>
+  <div class="link">
+     %if c.site.link_flair_position == 'left' and thing.flair_text:
+       ${flair()}
+     %endif
+     %if thing.is_self:
+       <a class="title" href="${add_sr(thing.href_url)}">${thing.title}</a>
+     %else:
+      <a class="title" href="${thing.url}">${thing.title}</a>
+     %endif
+     %if c.site.link_flair_position == 'right' and thing.flair_text:
+       ${flair()}
+     %endif
+    <p class="byline">&#32;${thing.score}&#32;${ungettext("point", "points", thing.score)}
+    %if thing.num_comments or thing.is_self:
+       ## the comments link only shows the link, the selftext, and the
+       ## comments. since the mobile interface offers no way to leave
+       ## comments, so we can save space by not drawing the link if
+       ## are no comments or selftext
+       |&#32;<span class="buttons">${plain_link(com_label, thing.permalink)}</span>
+    %endif
+    &#32;|${tagline()}</p>
+    %if thing.link_child and thing.link_child.expand:
+      <div class="expando">
+        ${unsafe(thing.link_child.content())}
+      </div>
+    %endif
+  </div>
+</%def>
+
+<%def name="domain()" buffered="True">
+  %if thing.is_self:
+    <a class="domain" href="${thing.subreddit.path}.mobile">${thing.subreddit.name}</a>
+  %else:
+    <a class="domain" href="/domain/${thing.domain}/.mobile">${thing.domain}</a>
+  %endif
+</%def>
+
+<%def name="subreddit()" buffered="True">
+  <a href="${thing.subreddit.path}.mobile" class="subreddit">
+    ${thing.subreddit.name}
+  </a>
+</%def>
+
+
+<%def name="tagline()">
+  <% 
+    from r2.lib.utils import timeago
+    from r2.models import FakeSubreddit
+
+    if isinstance(c.site, FakeSubreddit) and thing.is_self:
+        taglinetext = _("%(when)s ago by %(author)s to %(domain)s")
+    elif isinstance(c.site, FakeSubreddit):
+        taglinetext = _("%(when)s ago by %(author)s to %(reddit)s from %(domain)s")
+    else:
+        taglinetext = _("%(when)s ago by %(author)s from %(domain)s")
+    taglinetext = conditional_websafe(taglinetext).replace(" ", "&#32;")
+  %>
+  ${unsafe(taglinetext % dict(reddit = self.subreddit(),
+                              domain = self.domain(),
+                              when = thing.timesince,
+                              author= self.author()))}
+</%def>

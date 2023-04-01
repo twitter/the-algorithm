@@ -1,0 +1,220 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%! 
+   from r2.config import feature
+   from r2.lib.template_helpers import add_sr, static, join_urls, class_dict, get_domain
+   from r2.lib.filters import unsafe, scriptsafe_dumps
+   from r2.lib.pages import (
+      SearchForm,
+      ClickGadget,
+      SideContentBox,
+      Login,
+      ListingChooser,
+      InTimeoutInterstitial,
+   )
+   from r2.lib import tracking
+   from pylons import request
+   from r2.lib.strings import strings
+   from r2.models import make_feedurl
+%>
+<%namespace file="less.html" import="less_js, less_stylesheet"/>
+<%namespace file="utils.html" import="tags, classes"/>
+<%namespace file="adminbar.html" import="adminbar_stylesheet"/>
+<%inherit file="base.html"/>
+
+<%def name="Title()">
+  %if thing.title:
+    ${thing.title}
+  %else:
+    ${parent.Title()}
+  %endif
+</%def>
+
+<%def name="global_stylesheets()">
+  ${less_stylesheet("reddit.less")}
+  %if getattr(thing, "feature_new_expando_icons", False):
+    ${less_stylesheet("expando.less")}
+  %endif
+</%def>
+
+<%def name="sr_stylesheets()">
+  %if thing.subreddit_stylesheet_url:
+    <!--[if gte IE 8]> <!-->
+    <link rel="stylesheet"
+          href="${thing.subreddit_stylesheet_url}"
+          title="applied_subreddit_stylesheet"
+          type="text/css">
+    <!-- <![endif]-->
+  %endif
+</%def>
+
+<%def name="extra_stylesheets()">
+  ${adminbar_stylesheet()}
+  %for extra_stylesheet in getattr(thing, 'extra_stylesheets', ()):
+    ${less_stylesheet(extra_stylesheet)}
+  %endfor
+</%def>
+
+<%def name="pagemeta()">
+  %if hasattr(thing, "shortlink"):
+    <link rel="shorturl" href="https://${thing.shortlink}"/>
+  %endif
+
+  %if hasattr(thing, "og_data"):
+    %for (og_property, og_value) in thing.og_data.iteritems():
+      <meta property="og:${og_property}" content="${og_value}">
+    %endfor
+  %endif
+
+  %if hasattr(thing, "twitter_card"):
+    %for (twitter_card_property, twitter_card_value) in thing.twitter_card.iteritems():
+      <meta property="twitter:${twitter_card_property}" content="${twitter_card_value}">
+    %endfor
+  %endif
+
+  <link rel='icon' href="${static('icon.png')}" sizes="256x256" type="image/png" />
+  <link rel='shortcut icon' href="${static('favicon.ico')}" type="image/x-icon" />
+  <link rel='apple-touch-icon-precomposed' href="${static('icon-touch.png')}" />
+  %if thing.extension_handling:
+    <%
+       rss = add_sr(join_urls(request.path,'.rss'))
+       if thing.extension_handling == "private":
+          rss = make_feedurl(c.user, rss)
+     %>
+    <link rel="alternate" type="application/atom+xml" title="RSS"
+          href="${rss}" />
+  %endif
+</%def>
+
+<%def name="stylesheet()">
+  ${self.global_stylesheets()}
+  ${self.sr_stylesheets()}
+  ${self.extra_stylesheets()}
+</%def>
+
+<%def name="javascript()">
+  <% from r2.lib import js %>
+  <!--[if gte IE 9]> <!-->
+    ${unsafe(js.use('reddit-init'))}
+  <!-- <![endif]-->
+
+  <!--[if lt IE 9]>
+    ${unsafe(js.use('reddit-init-legacy'))}
+  <![endif]-->
+  ${less_js()}
+</%def>
+
+<%def name="javascript_bottom()">
+  <% from r2.lib import js %>
+  ${unsafe(js.use('reddit'))}
+  %if getattr(thing, "feature_expando_nsfw_flow", False):
+    ${unsafe(js.use("expando-nsfw-flow"))}
+  %endif
+  ${unsafe(c.js_preload.use())}
+</%def>
+
+<%def name="bodyContent()">
+  %if thing.header:
+    <%include file="adminbar.html"/>
+    <%include file="redditheader.html"/>
+  %endif
+
+  %if thing.show_sidebar:
+    <div class="side">
+      ${sidebar(content = thing.rightbox())}
+    </div>
+  %endif
+
+  %if thing.show_chooser:
+    ${ListingChooser()}
+  %endif
+
+  %if thing.auction_announcement:
+    <div id="auction-announcement-container">
+      <div id="auction-announcement">
+        <h1>
+          ad auctions are launching monday 2/8
+        </h1>
+        <p>
+          for more details, see our&nbsp;<a href="https://www.reddit.com/r/selfserve/comments/434c0x/the_auction_is_coming/" target="_blank">announcement in /r/selfserve</a>
+        </p>
+      </div>
+    </div>
+  %endif
+
+  <% content = getattr(self, "content", None) or thing.content %>
+  %if content:
+    ##<div class="fixedwidth"></div>
+    ##<div class="clearleft"></div>
+    <a name="content"></a>
+    <div ${tags(id=thing.content_id)} ${classes("content", thing.css_class)} role="main">
+      ${content()}
+    </div>
+  %endif
+
+  ${thing.footer}
+
+  %if not c.user_is_loggedin and not g.read_only_mode:
+    %if thing.enable_login_cover:
+      <script>
+        var BETA_HOST = 'beta.reddit.com';
+        if (location.host === BETA_HOST) {
+          r.config.https_endpoint = 'https://' + BETA_HOST;
+        }
+      </script>
+      <script id="login-popup" type="text/template">
+        ${Login(is_popup=True)}
+      </script>
+    %endif
+    <script id="lang-popup" type="text/template">
+      <%include file="prefoptions.html" />
+    </script>
+  %endif
+  % if c.secure:
+      ## Pixel to pick up HSTS policies from the base domain
+      <img id="hsts_pixel" src="//${g.domain}/static/pixel.png">
+  % endif
+  %if feature.is_enabled("test_https_certs"):
+    <% from r2.lib import js %>
+    ${unsafe(js.use("https-tester"))}
+    <%
+    cur_proto = ("https:" if c.secure else "http:")
+    https_test_config = {
+        "runName": g.live_config.get("https_cert_testing_run_name"),
+        "controlImg": cur_proto + g.live_config.get("https_cert_testing_img_control"),
+        "testImg": g.live_config.get("https_cert_testing_img_test"),
+        "logPixel": cur_proto + g.httpstracker_url,
+    }
+    %>
+    <script type="text/javascript">
+    if(Math.random() < ${scriptsafe_dumps(g.live_config.get("https_cert_testing_probability"))}) {
+        runHTTPSCertTest(${scriptsafe_dumps(https_test_config)});
+    }
+    </script>
+  %endif
+  ${thing.debug_footer}
+</%def>
+
+<%def name="sidebar(content=None)">
+  ${content}
+</%def>

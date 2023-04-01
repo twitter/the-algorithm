@@ -1,0 +1,102 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="plain_link" />
+
+<%def name="flair(user, enabled=None)">
+  %if enabled is None:
+    <% enabled = user.flair_enabled %>
+  %endif
+  %if user.has_flair and enabled:
+    <span class="flair ${user.flair_css_class}" title="${user.flair_text}">${user.flair_text}</span>
+  %endif
+</%def>
+
+<%def name="make_distinguish(distinguish_tuples)">
+<span class="userattrs">
+%if distinguish_tuples:
+  [
+  %for priority, abbv, css_class, label, attr_link in distinguish_tuples:
+    %if attr_link:
+      <a class="${css_class}" title="${label}"
+      %if target:
+         target="${target}"
+      %endif
+         href="${attr_link}">
+        ${unsafe(abbv)}
+      </a>
+    %else:
+      <span class="${css_class}" title="${label}">${abbv}</span>
+    %endif
+
+    ## this is a hack to print a comma after all but the final attr
+    %if priority != distinguish_tuples[-1][0]:
+      ,
+    %endif
+  %endfor
+  ]
+%endif
+</span>
+</%def>
+
+%if context_deleted and not c.user_is_admin:
+  <span class="author">[deleted]</span>
+%else:
+  %if thing.user_deleted:
+    <span class="author">[deleted]</span>
+  %elif thing.name == '[blocked]':
+    <span class="author">${_(thing.thing.original_author.name)}</span>
+  %else:
+    %if thing.flair_position == 'left':
+      ${flair(thing, enabled=thing.force_show_flair)}
+    %endif
+    <%
+      classes = [thing.author_cls, 'may-blank', 'id-%s' % thing.fullname]
+      if thing.include_flair_selector:
+          classes.append('flairselectable')
+    %>
+    ${plain_link(thing.name + thing.karma, "/user/%s" % thing.name,
+                 _class = ' '.join(classes),
+                 _sr_path = False, target=target, title=thing.author_title)}
+    %if thing.flair_position == 'right':
+      ${flair(thing, enabled=thing.force_show_flair)}
+    %endif
+    %if thing.include_flair_selector:
+      (<a class="flairselectbtn access-required"
+          data-name="${thing.name}"
+          data-type="account" data-fullname="${thing.fullname}"
+          data-event-action="editflair" data-event-detail="set"
+          href="javascript://void(0)">${_('edit')}</a>)
+      <div class="flairselector drop-choices"></div>
+    %endif
+    ${make_distinguish(thing.attribs)}
+  %endif
+%endif
+
+%if thing.ip_span:
+  ${unsafe(thing.ip_span)}
+%endif
+
+%if thing.show_details_link and thing.context_thing_fullname:
+  &#32;
+  <a class="adminbox" href="/details/${thing.context_thing_fullname}">voting</a>
+%endif

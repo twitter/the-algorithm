@@ -1,0 +1,104 @@
+@import "colors.less";
+
+@reddit-sidebar-width: 300px;
+
+// States
+
+@brand-success: #6ec02a;
+@brand-danger: #d4473f;
+
+// Shared
+
+@padding-base-vertical: 6px;
+@padding-base-horizontal: 12px;
+
+// Forms
+
+@input-height-base: 34px;
+@input-focus-color: #3c80d3;
+@input-placeholder-color: #a6a6a6;
+
+// Tooltips
+
+@tooltip-max-width: 200px;
+@tooltip-color: #fff;
+@tooltip-bg: #000;
+@tooltip-success-bg: @brand-success;
+@tooltip-success-hover-bg: @tooltip-success-bg;
+@tooltip-danger-bg: @brand-danger;
+@tooltip-danger-hover-bg: rgb(191, 64, 57);
+@tooltip-opacity: 1;
+@tooltip-arrow-width: 8px;
+@tooltip-arrow-color: @tooltip-bg;
+@tooltip-success-arrow-color: @tooltip-success-bg;
+@tooltip-danger-arrow-color: @tooltip-danger-bg;
+
+// Alerts
+
+@alert-danger-bg: lighten(@brand-danger, 40%);
+@alert-danger-color: darken(@brand-danger, 10%);
+@alert-danger-border: lighten(@brand-danger, 38%);
+
+// Screen Sizes
+
+@screen-xs-min:              480px;
+@screen-sm-min:              768px;
+@screen-md-min:              992px;
+@screen-lg-min:              1200px;
+@screen-xs-max:              (@screen-sm-min - 1);
+@screen-sm-max:              (@screen-md-min - 1);
+@screen-md-max:              (@screen-lg-min - 1);
+
+// Throbber
+@throbber-color: #606060;
+
+// Strength meter
+@strength-meter-bg: #efefef;
+@strength-meter-fill-loading: @throbber-color;
+@strength-meter-fill-success: @brand-success;
+@strength-meter-fill-error: @brand-danger;
+
+// Modal
+@zindex-modal: 9999;
+@modal-border-radius: 5px;
+@modal-padding: 60px;
+@modal-title-color: #4270a2;
+@modal-title-line-height: 1.618;
+@modal-content-bg: #f8fbfd;
+@modal-content-border-color: rgba(0,0,0,.2);
+@modal-backdrop-bg: #000;
+@modal-backdrop-opacity: .5;
+@modal-footer-border-color: #e9eef1;
+@modal-footer-bg: #e9f0f7;
+@modal-lg: 758px;
+@modal-md: 728px;
+@modal-sm: 300px;
+
+// Font size and vertical grid
+@base-font-keyword: small;
+@base-font-keyword-size: 13; // small == 13px;
+
+@font-xx-small: 10;
+@font-x-small: 12;
+@font-small: 14;
+@font-medium: 16;
+@font-large: 18;
+@font-x-large: 20;
+@font-xx-large: 24;
+@font-xxx-large: 32;
+
+@line-x-small: 15;
+@line-small: 20;
+@line-medium: 20;
+@line-large: 25;
+@line-x-large: 25;
+@line-xx-large: 30;
+@line-xxx-large: 40;
+
+@margin-x-small: 5;
+@margin-small: 10;
+@margin-medium: 15;
+@margin-large: 20;
+@margin-x-large: 25;
+@margin-xx-large: 30;
+@margin-xxx-large: 40;

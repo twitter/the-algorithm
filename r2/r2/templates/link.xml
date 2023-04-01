@@ -1,0 +1,103 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.template_helpers import add_sr, get_domain
+   from r2.lib.filters import unsafe, safemarkdown, keep_space
+   from r2.lib.template_helpers import html_datetime
+   from r2.lib.template_helpers import make_url_https
+%>
+<%namespace name="utils" file="utils.xml"/>
+<%
+    domain = get_domain(subreddit=False)
+    permalink = add_sr(thing.permalink, force_hostname=True, retain_extension=False)
+    use_thumbs = thing.has_thumbnail and thing.thumbnail and not request.GET.has_key("nothumbs")
+    use_thumbs = use_thumbs and not thing.thumbnail_sprited
+    thumbnail = thing.thumbnail
+    if c.secure:
+        thumbnail = make_url_https(thumbnail)
+    if thing.deleted:
+        title = _('[deleted]')
+    else:
+        title = thing.title
+%>
+<entry>
+    %if not thing.deleted:
+        <%utils:atom_author author="${thing.author}"/>
+    %endif
+
+    <category term="${thing.subreddit.name}" label="/r/${thing.subreddit.name}"/>
+
+    <%utils:atom_content>
+        %if use_thumbs:
+            <table>
+                <tr><td>
+                    <a href="${permalink}">
+                        <img src="${thumbnail}" alt="${title}" title="${title}" />
+                    </a>
+                </td><td>
+        %endif
+
+        %if getattr(thing, 'selftext', None):
+            %if thing.expunged:
+                ${_('[removed]')}
+            %else:
+                ${unsafe(safemarkdown(thing.selftext))}
+            %endif
+        %endif
+
+        %if not thing.author._deleted:
+            ${keep_space(' ')} submitted by ${keep_space(' ')}
+            <a href="${add_sr('/user/'+thing.author.name,
+                              sr_path=False,
+                              retain_extension=False,
+                              force_hostname=True)}">
+                /u/${thing.author.name}
+            </a>
+        %endif
+
+        %if thing.different_sr:
+            ${keep_space(' ')} to ${keep_space(' ')}
+            <a href="${add_sr(thing.subreddit.path,
+                              sr_path=False,
+                              retain_extension=False,
+                              force_hostname=True)}">
+                /r/${thing.subreddit.name}
+            </a>
+        %endif
+
+        <br/>
+
+        <span><a href="${thing.url}">[${_("link")}]</a></span>
+        ${keep_space(' ')}
+        <span><a href="${permalink}">[${_("comments")}]</a></span>
+
+        %if use_thumbs:
+            </td></tr></table>
+        %endif
+    </%utils:atom_content>
+
+    <id>${thing._fullname}</id>
+    <link href="${permalink}" />
+    <updated>${html_datetime(thing._date)}</updated>
+    <title>${title}</title>
+</entry>

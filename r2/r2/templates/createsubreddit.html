@@ -1,0 +1,691 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.config import feature
+   from r2.lib.filters import keep_space
+   from r2.lib.menus import menu
+   from r2.lib.pages import UserText
+   from r2.lib.strings import strings
+%>
+<%namespace file="utils.html" import="_md, error_field, language_tool, plain_link"/>
+<%namespace file="utils.html" import="image_upload"/>
+<%namespace file="printablebuttons.html" import="toggle_button, simple_button" />
+
+<%namespace name="utils" file="utils.html"/>
+ 
+%if not thing.site and not c.user.can_create_subreddit:
+<div class="infobar">${_md("""
+# your account is too new to create a subreddit
+    
+try participating in other communities on reddit for a little while first before creating your own. please post to /r/help if you need more information about this restriction, or if you require a specific exemption you can [contact the admins](/contact) to request one.
+""")}</div>
+%else:
+
+<div class="create-reddit fancy-settings thing"
+     %if thing.site:
+       id="${thing.site._fullname}"
+     %endif
+     >
+
+<div class="pretty-form" id="sr-form">
+
+%if not thing.site:
+    <%utils:line_field title="${_('name')}"
+                        description='${_("no spaces, e.g., \"books\" or \"bookclub\". avoid using solely trademarked names, e.g. use \"FansOfAcme\" instead of \"Acme\". once chosen, this name cannot be changed.")}'>
+      <div class="usertext-edit">
+        <input type="text" name="name" id="name" class="text"
+              value="${thing.name}"/>
+        %if not thing.site:
+          ${error_field("SUBREDDIT_EXISTS", "name")}
+          ${error_field("BAD_SR_NAME", "name")}
+        %endif
+      </div>
+    </%utils:line_field>
+%else:
+  <input type="hidden" name="sr" id="name" value="${thing.site._fullname}"/>
+%endif
+
+  <%utils:line_field title="${_('title')}"
+       description='${_("e.g., books: made from trees or pixels. recommendations, news, or thoughts")}'>
+    <div class="usertext-edit">
+      %if thing.site:
+        <input id="title" type="text" name="title" class="text"
+               value="${thing.site.title}"/>
+      %else:
+        <input id="title" type="text" name="title" class="text" />
+      %endif
+      ${error_field("NO_TEXT", "title")}
+      ${error_field("TOO_LONG", "title")}
+    </div>
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('description')}" css_class="usertext"
+                     description="${_('Appears in search results and social media links. 500 characters max.')}">
+    <div class="usertext-edit md-container">
+      <div class="md">
+        <textarea rows="1" cols="1" name="public_description" class="usertext">
+          %if thing.site and thing.site.public_description:
+            ${keep_space(thing.site.public_description or "")}
+          %endif
+        </textarea>
+        <div class="bottom-area">
+          ${error_field("TOO_LONG", "public_description")}
+        </div>
+      </div>
+    </div>
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('sidebar')}" css_class="usertext"
+                     description="${_('shown in the sidebar of your subreddit. 5120 characters max.')}">
+    %if thing.site and thing.site.description:
+     ${UserText(None, text=thing.site.description or "", editable=True, creating=True, name="description", have_form=False)}
+    %else:
+     ${UserText(None, text="", creating=True, name="description", have_form=False)}
+    %endif
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('submission text')}" css_class="usertext"
+                     description="${_('text to show on submission page. 1024 characters max.')}">
+    %if thing.site and thing.site.submit_text:
+     ${UserText(None, text=thing.site.submit_text or "", editable=True, creating=True, name="submit_text", have_form=False)}
+    %else:
+     ${UserText(None, text="", creating=True, name="submit_text", have_form=False)}
+    %endif
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('language')}">
+    <div class="delete-field">
+      <%
+         default_lang = thing.site and thing.site.lang or c.lang or ''
+         default_lang = default_lang.split('-')[0]
+         default_lang = g.lang if len(default_lang) != 2 else default_lang
+       %>
+      ${language_tool(all_langs = True, default_lang = default_lang)}
+    </div>
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('type')}">
+    <div class="delete-field">
+      <table>
+      ${utils.radio_type('type', "public", _("public"),
+                         _("anyone can view and submit"),
+                         (not thing.site or thing.site.type=='public'))}
+      ${utils.radio_type('type', "restricted", _("restricted"),
+                         _("anyone can view, but only some are approved to submit links"),
+                         (thing.site and thing.site.type=='restricted'))}
+      ${utils.radio_type('type', "private", _("private"),
+                         _("only approved members can view and submit"),
+                         (thing.site and thing.site.type=='private'))}
+
+      <% is_archived = thing.site and thing.site.type == 'archived' %>
+      %if c.user_is_admin or is_archived:
+        ${utils.radio_type('type', "archived", _("archived"),
+                           _("anyone can view, but submissions are no longer accepted"),
+                           is_archived)}
+      %endif
+
+      <% is_gold_restricted = thing.site and thing.site.type == 'gold_restricted' %>
+      %if c.user_is_admin or is_gold_restricted:
+        ${utils.radio_type('type', "gold_restricted", _("gold restricted"),
+                           _("anyone can view, but only reddit gold members can submit or comment"),
+                           is_gold_restricted)}
+      %endif
+
+      <% is_employees_only = thing.site and thing.site.type == 'employees_only' %>
+      %if c.user.employee:
+        ${utils.radio_type('type', "employees_only", _("employees only"),
+                           _("only reddit employees can view; the employee list is pulled from live config"),
+                           is_employees_only)}
+      %endif
+
+      <% 
+          is_gold_only = thing.site and thing.site.type == 'gold_only'
+          can_set_gold_only = (is_gold_only or c.user_is_admin or
+                  (not thing.site and (c.user.gold or c.user.gold_charter)))
+          if is_gold_only:
+              hover_title = "[!]"
+              hover_text = _('If you switch this subreddit to another type, you will not be able to switch back to "gold only" without the assistance of an admin')
+          else:
+              hover_title = "[?]"
+              hover_text = unsafe(capture(_md, 'BETA: Subreddits can be created as "gold only" during creation by a user that has gold. You can find more info about this feature [here](/gold/about#gold-only-subreddits)'))
+      %>
+      ${utils.radio_type('type', "gold_only", _("gold only"),
+              _("only reddit gold members can view and submit"),
+              checked=is_gold_only, disabled=not can_set_gold_only, hover_title=hover_title,
+              hover_text=hover_text)}
+      </table>
+      ${error_field("INVALID_OPTION", "type")}
+      ${error_field("ADMIN_REQUIRED", "type")}
+      ${error_field("GOLD_REQUIRED", "type")}
+      ${error_field("CANT_CONVERT_TO_GOLD_ONLY", "type")}
+    </div>
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('content options')}">
+    <div class="delete-field">
+      <table>
+        ${utils.radio_type('link_type', "any", _("any"),
+                           _("any link type is allowed"),
+                           (not thing.site or thing.site.link_type=='any'))}
+        ${utils.radio_type('link_type', "link", _("links only"),
+                           _("only links to external sites are allowed"),
+                           (thing.site and thing.site.link_type=='link'))}
+        ${utils.radio_type('link_type', "self", _("text posts only"),
+                           _("only text/self posts are allowed"),
+                           (thing.site and thing.site.link_type=='self'))}
+      </table>
+      ${error_field("INVALID_OPTION", "link_type")}
+    </div>
+    <div class="usertext-edit">
+      <div class="delete-field">
+        <label for="submit_link_label">${_('Custom label for submit link button (blank for default):')}</label>
+        <input id="submit_link_label" type="text" name="submit_link_label" maxlength="60" placeholder="${strings.submit_link_label}"
+            %if thing.site:
+                value="${thing.site.submit_link_label}"
+            %endif
+        >
+      </div>
+      <div class="delete-field">
+        <label for="submit_text_label">${_('Custom label for submit text post button (blank for default):')}</label>
+        <input id="submit_text_label" type="text" name="submit_text_label" maxlength="60" placeholder="${strings.submit_text_label}"
+            %if thing.site:
+                value="${thing.site.submit_text_label}"
+            %endif
+        >
+      </div>
+    </div>
+  </%utils:line_field>
+  <%utils:line_field title="${_('wiki')}">
+    <div class="delete-field">
+      <table>
+        ${utils.radio_type('wikimode', "disabled", _("disabled"),
+                           _("Wiki is disabled for all users except mods"),
+                           (not thing.site or thing.site.wikimode == 'disabled'))}
+        ${utils.radio_type('wikimode', "modonly", _("mod editing"),
+                           _("Only mods, approved wiki contributors, or those on a page's edit list may edit"),
+                           (thing.site and thing.site.wikimode == 'modonly'))}
+        ${utils.radio_type('wikimode', "anyone", _("anyone"),
+                           _("Anyone who can submit to the subreddit may edit"),
+                           (thing.site and thing.site.wikimode == 'anyone'))}
+      </table>
+      ${error_field("INVALID_OPTION", "wikimode")}
+    </div>
+    <div class="usertext-edit">
+    <div class="delete-field">
+    <label for="wiki_edit_karma">${_('Subreddit karma required to edit and create wiki pages:')}</label>
+        %if thing.site:
+            <input id="wiki_edit_karma" type="text" name="wiki_edit_karma" 
+                   value="${thing.site.wiki_edit_karma}"/>
+        %else:
+            <input id="wiki_edit_karma" type="text" name="wiki_edit_karma" value="100" />
+        %endif
+        ${error_field("BAD_NUMBER", "wiki_edit_karma")}
+    </div>
+    <div class="delete-field">
+    <label for="wiki_edit_age">${_('Account age (days) required to edit and create wiki pages:')}</label>
+        %if thing.site:
+            <input id="wiki_edit_age" type="text" name="wiki_edit_age" 
+                   value="${thing.site.wiki_edit_age}"/>
+        %else:
+            <input id="wiki_edit_age" type="text" name="wiki_edit_age" value="0" />
+        %endif
+        ${error_field("BAD_NUMBER", "wiki_edit_age")}
+    </div>
+    </div>
+  </%utils:line_field>
+  
+  <%utils:line_field title="${_('spam filter strength')}">
+  	<div class="delete-field">
+        <p class="little gray">${_("high is the standard filter, low disables most filtering, all will filter every post initially and they will need to be approved manually to be visible.")}</p>
+  		<table>
+  			<tr>
+  				<td>${_("links")}:</td>
+  				<td>
+  					${utils.inline_radio_type('spam_links', 'low', _("low"),
+  						checked=thing.site and thing.site.spam_links == 'low')}
+  					${utils.inline_radio_type('spam_links', 'high', _("high"),
+  						checked=not thing.site or thing.site.spam_links == 'high')}
+  					${utils.inline_radio_type('spam_links', 'all', _("all"),
+  						checked=thing.site and thing.site.spam_links == 'all')}
+	  			</td>
+	  		</tr>
+	  		<tr>
+	  			<td>${_("self posts")}:</td>
+	  			<td>
+	  				${utils.inline_radio_type('spam_selfposts', 'low', _("low"),
+  						checked=thing.site and thing.site.spam_selfposts == 'low')}
+  					${utils.inline_radio_type('spam_selfposts', 'high', _("high"),
+  						checked=not thing.site or thing.site.spam_selfposts == 'high')}
+  					${utils.inline_radio_type('spam_selfposts', 'all', _("all"),
+  						checked=thing.site and thing.site.spam_selfposts == 'all')}
+	  			</td>
+	  		</tr>
+	  		<tr>
+	  			<td>${_("comments")}:</td>
+	  			<td>
+	  				${utils.inline_radio_type('spam_comments', 'low', _("low"),
+  						checked=not thing.site or thing.site.spam_comments == 'low')}
+  					${utils.inline_radio_type('spam_comments', 'high', _("high"),
+  						checked=thing.site and thing.site.spam_comments == 'high')}
+  					${utils.inline_radio_type('spam_comments', 'all', _("all"),
+  						checked=thing.site and thing.site.spam_comments == 'all')}
+	  			</td>
+	  		</tr>
+		</table>
+  	</div>
+  </%utils:line_field>
+
+  <%utils:line_field title="${_('other options')}">
+    <div class="delete-field">
+      <ul>
+        <li>
+          <input class="nomargin" type="checkbox"
+                 name="over_18" id="over_18"
+                 %if thing.site and thing.site.over_18:
+                   checked="checked"
+                 %endif
+          >
+          <label for="over_18">
+            ${_("viewers must be over eighteen years old")}
+          </label>
+        </li>
+        %if not thing.site or not thing.site.quarantine:
+        <li>
+          <input class="nomargin" type="checkbox"
+                 name="allow_top" id="allow_top"
+                 %if not thing.site or thing.site.allow_top:
+                   checked="checked"
+                 %endif
+          >
+          <label for="allow_top">
+            ${_("allow this subreddit to be included /r/all as well as the default and trending lists")}
+          </label>
+        </li>
+        <li>
+          <input class="nomargin" type="checkbox"
+                 name="show_media" id="show_media"
+                 %if thing.site and thing.site.show_media:
+                   checked="checked"
+                 %endif
+          >
+          <label for="show_media">
+            ${_("show thumbnail images of content")}
+          </label>
+        </li>
+        %if thing.feature_autoexpand_media_previews:
+          <li>
+            <input class="nomargin" type="checkbox"
+                   name="show_media_preview" id="show_media_preview"
+                   %if thing.site and thing.site.show_media_preview:
+                     checked="checked"
+                   %endif
+            >
+            <label for="show_media_preview">
+              ${_("expand media previews on comments pages")}
+            </label>
+          </li>
+        %endif
+        %endif
+        <li>
+          <input class="nomargin" type="checkbox"
+                 name="exclude_banned_modqueue" id="exclude_banned_modqueue"
+                 %if thing.site and thing.site.exclude_banned_modqueue:
+                   checked="checked"
+                 %endif
+          >
+          <label for="exclude_banned_modqueue">
+            ${_("exclude posts by site-wide banned users from modqueue/unmoderated")}
+          </label>
+        </li>
+        <li>
+          <input class="nomargin" type="checkbox"
+                 name="public_traffic" id="public_traffic"
+                 ${thing.site and thing.site.public_traffic and "checked='checked'" or ""}>
+          <label for="public_traffic">
+            ${_("make the traffic stats page available to everyone")}
+          </label>
+        </li>
+        <li>
+          <input class="nomargin" type="checkbox"
+                 name="collapse_deleted_comments" id="collapse_deleted_comments"
+                 %if thing.site and thing.site.collapse_deleted_comments:
+                   checked="checked"
+                 %endif
+          >
+          <label for="collapse_deleted_comments">
+            ${_("collapse deleted and removed comments")}
+          </label>
+        </li>
+        %if thing.site and thing.site.type == 'gold_only':
+          <li>
+            <input class="nomargin" type="checkbox"
+                   name="hide_ads" id="hide_ads"
+                   %if thing.site.hide_ads:
+                     checked="checked"
+                   %endif
+            >
+            <label class="buygold" for="hide_ads">
+              ${_("hide ads (only available for gold only subreddits)")}
+            </label>
+          </li>
+        %endif
+        ${error_field("GOLD_ONLY_SR_REQUIRED", "hide_ads")}
+      </ul>
+      <div class="usertext-edit">
+        <label for="suggested_comment_sort">${_('suggested comment sort')}&#32;<span class="gray">${_('(all comment threads will use this sorting method by default)')}</span></label>
+        <select class="nomargin" name="suggested_comment_sort" id="suggested_comment_sort">
+           <option value="">${_('none (recommended for most subreddits)')}</option>
+           %for sort in thing.comment_sorts:
+             <option ${'selected="selected"' if thing.site and sort == thing.site.suggested_comment_sort else ''} value="${sort}">${getattr(menu, sort, sort)}</option>
+           %endfor
+        </select>
+      </div>
+    </div>
+    <div class="usertext-edit">
+      <div class="delete-field">
+        <label for="comment_score_hide_mins">${_('Minutes to hide comment scores:')}</label>
+            %if thing.site:
+                <input id="comment_score_hide_mins" type="text" name="comment_score_hide_mins" placeholder="0" 
+                       value="${thing.site.comment_score_hide_mins}" />
+            %else:
+                <input id="comment_score_hide_mins" type="text" name="comment_score_hide_mins" value="0" placeholder="0" />
+            %endif
+            ${error_field("BAD_NUMBER", "comment_score_hide_mins")}
+      </div>
+    </div>
+  </%utils:line_field>
+
+% if thing.site and thing.site.domain != thing.site._defaults['domain']:
+  <%utils:line_field title="${_('domain')}" css_class="usertext">
+    <div class="usertext-edit">
+      %if thing.site:
+        <input id="domain" type="text" name="domain" class="text"
+               value="${getattr(thing.site, 'domain', None) or ""}"/>
+      %else:
+        <input id="domain" type="text" name="domain" class="text" />
+      %endif
+      <div class="bottom-area">
+        ${toggle_button("help-toggle", _("what's this?"), _("hide help"),
+            "helpon", "helpoff")}
+      </div>
+      <div class="infobar markhelp md" style="display: none">
+        ${_("Own a domain?  Enter it here and then go to your DNS provider and add a CNAME record aliasing your domain to rhs.reddit.com. You will be able to access your reddit through your domain.")}
+      </div>
+    </div>
+  </%utils:line_field>
+% endif
+
+%if thing.site:
+    <%utils:line_field title="${_('look and feel')}">
+      <ul class="upload">
+        <li>
+        ${plain_link(_("edit the stylesheet"),
+                      "/about/stylesheet",
+                      _sr_path = True)}
+        &#32;
+        <span class="gray">(${_("leaves this page")})</span>
+        </li>
+        %if thing.allow_image_upload:
+          <li>
+            <label for="header-title">header mouseover text:</label>
+            <input type="text" name="header-title" id="header-title"
+                   value="${thing.site.header_title}"
+                   />
+          </li>
+          <li>
+            <%utils:image_upload post_target="/api/upload_sr_img" 
+                                 current_image="${thing.site.header}"
+                                 label="${_('upload header image')}"
+                                 ask_type="${True}">
+              <br/>
+              <button id="delete-img" class="delete-img"
+                      %if not thing.site.header:
+                         style="display: none;"
+                      %endif
+                      onclick="return post_form(this.form, 'delete_sr_header');">
+                ${_('restore default header')}
+              </button>
+              <div class="clearleft"></div>
+              <input type="hidden" name="uh" value="${c.modhash}" />
+              <input type="hidden" name="r"  value="${c.site.name}" />
+              <input type="hidden" name="header" value="1" />
+    
+              <script type="text/javascript">
+                function on_image_success(img) {
+                   $("#header-img").log().attr("src", img.attr("src"));
+                }
+              </script>
+            </%utils:image_upload>
+          </li>
+        %endif
+      </ul>
+    </%utils:line_field>
+%endif
+
+%if thing.site and feature.is_enabled('related_subreddits'):
+  <%utils:line_field title="${_('related subreddits')}">
+    <div class="delete-field">
+      <p class="little gray">${_('similar or related subreddits.')}</p>
+      <ul id="related-srs" class="subreddits">
+        <li id="sr-template" style="display:none">
+          <a href=""></a>
+          <button class="remove-sr" onclick="remove_related_sr(this.parentNode)">${_('remove')}</button>
+        </li>
+        %for sr in thing.site.related_subreddits:
+          %if sr:
+            <li data-name="${sr.lower()}">
+              <a href="/r/${sr}">/r/${sr}</a>
+              <button class="remove-sr" onclick="remove_related_sr(this.parentNode)">${_('remove')}</button>
+            </li>
+          %endif
+        %endfor
+      </ul>
+      %if hasattr(thing, 'subreddit_selector'):
+      <form id="add-related-sr" onsubmit="return add_related_sr(this)">
+        ${thing.subreddit_selector}
+      </form>
+      %endif
+      <textarea id="related_subreddits" name="related_subreddits" style="display:none;">
+        ${keep_space('\n'.join(thing.site.related_subreddits))}
+      </textarea>
+      ${error_field("BAD_SR_NAME", "related_subreddits")}
+      ${error_field("TOO_MANY_SUBREDDITS", "related_subreddits")}
+      ${error_field("SUBREDDIT_NOEXIST", "related_subreddits")}
+      <script type="text/javascript">
+        function add_related_sr(form) {
+          $('.SUBREDDIT_NOEXIST.field-sr').hide();
+
+          var sr_name = form.sr.value.trim();
+          if (sr_name) {
+            $.post('/api/search_reddit_names.json', { query: sr_name, exact: true }, 'json')
+            .done(function(r) {
+              var sr_name = r.names[0];
+              var sr_path = '/r/' + sr_name;
+
+              var $sr_list = $('#related-srs');
+              var $sr_item = $sr_list.find('[data-name=' + sr_name.toLowerCase() + ']');
+              if (!$sr_item.length) {
+                $sr_item = $('#sr-template').clone().removeAttr('id');
+                $sr_item.data('name', sr_name.toLowerCase()).show();
+                $sr_item.find('a').attr('href', sr_path).text(sr_path);
+              }
+              $sr_item.appendTo($sr_list);
+
+              var re = new RegExp('(^|\n)' + sr_name + '(\n|$)', 'gim');
+              var $input = $('#related_subreddits');
+              $input.val($input.val().replace(re, '').trim() + '\n' + sr_name);
+
+              $('#sr-autocomplete').val('');
+            })
+            .fail(function() {
+              $('.SUBREDDIT_NOEXIST.field-sr').text(r._("that subreddit doesn't exist")).show();
+            });
+          }
+
+          return false;
+        }
+
+        function remove_related_sr(item) {
+          var $sr_item = $(item);
+          var sr_name = $sr_item.data('name');
+
+          $sr_item.remove();
+
+          var re = new RegExp('(^|\n)' + sr_name + '(\n|$)', 'gim');
+          var $input = $('#related_subreddits');
+          $input.val($input.val().replace(re, '\n').trim());
+        }
+      </script>
+    </div>
+  </%utils:line_field>
+%endif
+
+%if feature.is_enabled('mobile_settings'):
+  <%utils:line_field title="${_('mobile look and feel')}" css_class="mobile">
+    <ul class="upload">
+      %if thing.site:
+      <li>
+        <p><label>${_('icon image')}</label> <span class="gray">${_('icon must be 256x256 pixels. PNG or JPG only.')}</span></p>
+        <%utils:image_upload post_target="/api/upload_sr_img"
+                             current_image="${thing.site.icon_img}"
+                             form_id='icon-upload'>
+          <button id="delete-icon" class="delete-img"
+                  %if not thing.site.icon_img:
+                    style="display: none;"
+                  %endif
+                  onclick="return post_form(this.form, 'delete_sr_icon');">
+            ${_('remove custom icon image')}
+          </button>
+          <div class="clearleft"></div>
+          <input type="hidden" name="uh" value="${c.modhash}">
+          <input type="hidden" name="r"  value="${c.site.name}">
+          <input type="hidden" name="upload_type" value="icon">
+        </%utils:image_upload>
+      </li>
+      <li>
+        <p><label>${_('header image')}</label> <span class="gray">${_('header should have 10:3 aspect ratio. PNG or JPG only.')}</span></p>
+        <p class="little gray">${_('minimum size: 640x192px')} / ${_('maximum size: 1280x384px')}</span></p>
+        <%utils:image_upload post_target="/api/upload_sr_img"
+                             current_image="${thing.site.banner_img}"
+                             form_id='banner-upload'>
+          <button id="delete-banner" class="delete-img"
+                  %if not thing.site.banner_img:
+                    style="display: none;"
+                  %endif
+                  onclick="return post_form(this.form, 'delete_sr_banner');">
+            ${_('remove custom header image')}
+          </button>
+          <div class="clearleft"></div>
+          <input type="hidden" name="uh" value="${c.modhash}">
+          <input type="hidden" name="r"  value="${c.site.name}">
+          <input type="hidden" name="upload_type" value="banner">
+        </%utils:image_upload>
+      </li>
+      %endif
+      <li>
+        <p><label>${_('color')}</label> <span class="gray">${_('used as a thematic color for your subreddit on mobile')}</span></p>
+        <ul class="colors">
+          %for color, color_name in thing.color_options.iteritems():
+            %if color:
+            <li>
+              <label>
+                <input type="radio" name="key_color" value="${color}"
+                       %if c.site.key_color.lower() == color.lower():
+                         checked="checked"
+                       %endif
+                >
+                <div class="swatch" style="background-color: ${color}"></div>
+                ${_(color_name)}
+              </label>
+            </li>
+            %endif
+          %endfor
+        </ul>
+      </li>
+    </ul>
+  </%utils:line_field>
+%endif
+
+%if not thing.site:
+  ${thing.captcha}
+%endif
+
+  <div class="save-button">
+  <%
+     if thing.site:
+         name = "edit"
+         text = _("save options")
+     else:
+         name = "create"
+         text = _("create")
+  %>
+  <button name="${name}" class="btn" type="button"
+          onclick="return post_pseudo_form('#sr-form', 'site_admin')">
+    ${text}
+  </button>
+  &#32;
+  <span class="status error" style="display:none"></span>
+  ${error_field("RATELIMIT", "ratelimit")}
+  ${error_field("CANT_CREATE_SR", "")}
+  </div>
+</div>
+</div>
+
+%endif
+
+%if thing.site:
+<script type="text/javascript">
+(function(){
+  var dirty = {};
+
+  $(window).on('beforeunload', function(e) {
+    if ($('#sr-form .status:visible').length) {
+      return;
+    }
+    for (field in dirty) {
+      if (dirty[field]) {
+        return r._('There are unsaved changes. Are you sure you want to leave this page?');
+      }
+    }
+  });
+
+  $('#sr-form').on('change', function(e) {
+    var input = e.target;
+    if (input.tagName == 'SELECT') {
+      var $default = $('option[selected]', input);
+      var $current = $('option:selected', input);
+      dirty[input.name] = !$default.is($current);
+    } else if (input.type == 'checkbox' || input.type == 'radio') {
+      dirty[input.name] = input.checked ? !input.defaultChecked : input.defaultChecked;
+    } else if (input.type == 'file') {
+      /* ignore */
+    } else {
+      dirty[input.name] = input.value != input.defaultValue;
+    }
+    if (!dirty[input.name]) {
+      delete dirty[input.name];
+    }
+  });
+})();
+</script>
+%endif

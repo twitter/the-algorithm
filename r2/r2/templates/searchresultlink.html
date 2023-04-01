@@ -1,0 +1,140 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%inherit  file="searchresultbase.html"/>
+
+<%namespace file="utils.html" import="plain_link, thing_timestamp, md, nsfw_stamp, quarantine_stamp, thumbnail_img" />
+<%namespace file="link.html" import="thumbnail" />
+
+<%!
+  from r2.lib.template_helpers import (
+      format_html,
+      format_number,
+      get_linkflair_css_classes,
+  )
+  from r2.lib.pages import WrappedUser
+%>
+
+<%def name="search_result_css_class()">
+  <%
+    has_thumbnail_class = "has-thumbnail" if thing.thumbnail else ""
+    linkflair_classes = get_linkflair_css_classes(thing)
+    visited_class = 'visited' if thing.visited else ''
+  %>
+  ${parent.search_result_css_class()} search-result-link ${has_thumbnail_class} ${linkflair_classes} ${visited_class}
+</%def>
+
+<%def name="search_result_content()">
+  %if thing.thumbnail:
+    <a href="${thing.permalink}"
+       class="may-blank thumbnail ${thing.thumbnail if thing.thumbnail_sprited else ''}">
+      ${thumbnail_img(thing)}
+    </a>
+  %endif
+  <div>
+    ${parent.search_result_content()}
+  </div>
+</%def>
+
+<%def name="search_result_header()">
+  <%parent:search_result_header>
+    %if c.site.link_flair_position == 'left':
+      ${self.flair()}
+    %endif
+    ${plain_link(
+        thing.title,
+        thing.permalink,
+        _sr_path=False,
+        _class='search-title may-blank',
+      )}
+    %if c.site.link_flair_position == 'right':
+      ${self.flair()}
+    %endif
+  </%parent:search_result_header>
+</%def>
+
+<%def name="flair()">
+  %if c.user.pref_show_link_flair and thing.flair_text:
+    <span class="linkflairlabel" title="${thing.flair_text}">${thing.flair_text}</span>
+  %endif
+</%def>
+
+<%def name="search_result_meta()">
+  <%parent:search_result_meta>
+    %if thing.quarantine:
+      <span class="quarantine-stamp stamp bold-stamp">${quarantine_stamp()}</span>&#32;
+    %endif
+    %if thing.over_18:
+      <span class="stamp nsfw-stamp">${nsfw_stamp()}</span>&#32;
+    %endif
+    %if not thing.hide_score:
+      ${self.search_result_icon('score')}
+      <span class="search-score">${format_number(thing.score)} ${ungettext('point', 'points', thing.score)}</span>&#32;
+    %endif
+    ${plain_link(
+        '%s %s' % (format_number(thing.num_comments), ungettext('comment', 'comments', thing.num_comments)),
+        thing.permalink,
+        _sr_path=False,
+        _class="search-comments may-blank",
+      )}&#32;
+    <span class="search-time">${_("submitted")}&#32;${thing_timestamp(thing, thing.timesince, include_tense=True)}</span>&#32;
+    <span class="search-author">${_("by")}&#32;${WrappedUser(thing.author, thing.attribs, thing)}</span>&#32;
+    <%
+      subreddit_link_fmt = format_html('<span>%s</span>', _('to %s')).replace(' ', '&#32;')
+    %>
+    ${plain_link(
+        '/r/%s' % thing.subreddit.name,
+        '/r/%s' % thing.subreddit.name,
+        _sr_path=False,
+        fmt=subreddit_link_fmt,
+        _class='search-subreddit-link may-blank',
+      )}
+  </%parent:search_result_meta>
+</%def>
+
+<%def name="search_result_body()">
+  %if thing.selftext:
+    <div class="search-expando collapsed">
+      <%parent:search_result_body>
+        ${md(thing.selftext, wrap=True)}
+      </%parent:search_result_body>
+    </div>
+    <div class="search-expando-button collapsed">
+      <span class="search-expando-button-label-collapsed">${_("more")}</span>
+      <span class="search-expando-button-label-expanded">${_("less")}</span>
+    </div>
+  %endif
+</%def>
+
+<%def name="search_result_footer()">
+  %if not thing.is_self:
+    <%parent:search_result_footer>
+      ${self.search_result_icon('external')}
+      ${plain_link(
+          thing.url,
+          thing.url,
+          _sr_path=False,
+          _class='search-link may-blank',
+        )}
+    </%parent:search_result_footer>
+  %endif
+</%def>

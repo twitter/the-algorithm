@@ -1,0 +1,34 @@
+.c-hidden {
+  display: none;
+}
+
+.c-clearfix {
+    .clearfix();
+}
+
+.c-pull-right {
+    float: right;
+}
+
+.c-pull-left {
+    float: left;
+}
+
+.c-hide-text {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.c-hidden {
+    display: none;
+}
+
+.fade {
+    opacity: 0;
+    .transition-shorthand(opacity .15s linear);
+
+    &.in {
+        opacity: 1;
+    }
+}

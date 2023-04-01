@@ -1,0 +1,27 @@
+#!/bin/bash
+
+command=${UPSTART_JOB#reddit-consumers-}
+for consumerpath in $REDDIT_CONSUMER_CONFIG/*; do
+    consumer=$(basename $consumerpath)
+
+    # allow targeting which consumer the event is meant for (defaulting to 'all')
+    if [ ! -z "$TARGET" -a "x$TARGET" != "xall" -a "x$TARGET" != "x$consumer" ]; then
+        continue
+    fi
+
+    if [ -d $consumerpath ]; then
+        types=$consumerpath/*
+    else
+        types=$consumerpath
+    fi
+
+    for typepath in $types; do
+        instance_count=$(cat $typepath)
+        type_=$(basename $typepath)
+
+        for i in $(seq 1 "$instance_count"); do
+            "/sbin/$command" "reddit-consumer-$consumer" "type=$type_" "x=$i"
+        done
+    done
+done
+

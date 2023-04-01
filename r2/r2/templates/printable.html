@@ -1,0 +1,255 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.filters import jssafe
+   from r2.lib.template_helpers import add_sr, static
+   from r2.lib.strings import strings
+   from r2.lib.pages.things import BanButtons
+   from r2.lib.utils import long_datetime
+%>
+
+<%namespace file="utils.html" import="classes, plain_link" />
+
+${self.RenderPrintable()}
+
+<%def name="admintagline()">
+  %if thing.show_spam:
+      %if thing.banned_at:
+        <li title="${_("removed at %(time)s") % dict(time=long_datetime(thing.banned_at))}">
+      %else:
+        <li>
+      %endif
+      <b>[
+        %if c.user_is_admin:
+          ${"auto" if thing.autobanned else ""}${strings.banned} 
+          ${("by %s" % thing.banner) if thing.banner else ""}
+        %elif thing.moderator_banned and thing.banner:
+          ${strings.banned_by % thing.banner}
+        %else:
+          ${strings.banned}
+        %endif
+      ]</li></b>
+  %endif
+</%def>
+
+<%def name="approval_checkmark()">
+  %if getattr(thing, "approval_checkmark", None):
+      <img class="approval-checkmark" title="${thing.approval_checkmark}"
+           src="${static('green-check.png')}"
+           onclick="alert('${thing.approval_checkmark}\n\n${jssafe(_("(no need to click for this info; just hover over the checkmark next time)"))}')"
+         >
+  %endif
+</%def>
+
+<%def name="gildings()">
+  % if thing.gilded_message:
+  <a href="${thing.subreddit_path}gilded">
+    <span class="gilded-icon" title="${thing.gilded_message}" data-count="${thing.gildings}">
+      % if thing.gildings > 1:
+        x${thing.gildings}
+      % endif
+    </span>
+  </a>
+  % endif
+</%def>
+
+<%def name="thing_css_class(what)">
+  <%
+    cssclass = "thing"
+    if (not getattr(what, 'deleted', False) or
+            getattr(what, 'can_ban', False) or
+           (getattr(what, 'promoted', False) and c.user_is_sponsor)):
+      cssclass += " id-" + what._fullname
+  %>
+  ${cssclass}
+</%def>
+
+<%def name="thing_css_rowclass(what)">
+  <%
+    rowstyle = getattr(what, "rowstyle", "")
+
+    if what.show_spam:
+      rowclass = "spam"
+      if what.show_spam == "author":
+        rowclass += " banned-user"
+    elif what.show_reports:
+      rowclass = "reported"
+    else:
+      rowclass = ""
+
+    if getattr(what, "deleted", False):
+      rowclass += " deleted"
+    if hasattr(what, "saved") and what.saved:
+      rowclass += " saved"
+    if hasattr(what, "hidden") and what.hidden:
+      rowclass += " hidden"
+    if hasattr(what, "gildings") and what.gildings > 0:
+      rowclass += " gilded"
+    if hasattr(what, "user_gilded") and what.user_gilded:
+      rowclass += " user-gilded"
+    if not getattr(what, "archived", False) and getattr(what, "locked", False):
+      rowclass += " locked"
+    if getattr(what, "use_sticky_style", False):
+      rowclass += " stickied"
+    if getattr(what, "is_controversial", False):
+      rowclass += " controversial"
+  %>
+  ${rowstyle}&#32;${rowclass}
+</%def>
+
+<%def name="thing_data_attributes(what)">
+    % if not getattr(what, 'deleted', False):
+      <% cls = thing.lookups[0].__class__.__name__.lower() %>
+      data-fullname="${what._fullname}"
+      data-type="${unsafe(cls)}"
+    % endif
+
+    % if hasattr(what, 'campaign'):
+      data-cid="${what.campaign}"
+    % endif
+
+    % if hasattr(what, 'imp_pixel'):
+      data-imp-pixel="${what.imp_pixel}"
+    % endif
+
+    % if hasattr(what, 'adserver_imp_pixel'):
+      data-adserver-imp-pixel="${what.adserver_imp_pixel}"
+    % endif
+
+    % if hasattr(what, 'adserver_click_url'):
+      data-adserver-click-url="${what.adserver_click_url}"
+    % endif
+
+    % if hasattr(what, 'third_party_tracking_url'):
+      data-third-party-tracking-url="${what.third_party_tracking_url}"
+    % endif
+
+    % if hasattr(what, 'third_party_tracking_url_2'):
+      data-third-party-tracking-two-url="${what.third_party_tracking_url_2}"
+    % endif
+</%def>
+
+<%def name="RenderPrintable()">
+<% cls = thing.lookups[0].__class__.__name__.lower() %>
+<%
+   if hasattr(thing, 'render_css_class'):
+      cls = thing.render_css_class
+   elif hasattr(thing, 'render_class'):
+      cls = thing.render_class.__name__.lower()
+   else:
+      cls = thing.lookups[0].__class__.__name__.lower()
+
+   cls += ' ' + getattr(thing, 'extra_css_class', '')
+
+   if getattr(thing, "is_self", False):
+      selflink = "self"
+   else:
+      selflink = ""
+ %>
+<div class="${self.thing_css_class(thing)} ${self.thing_css_rowclass(thing)} ${unsafe(cls)} ${selflink}"
+    %if not getattr(thing, 'deleted', False) or getattr(thing, 'can_ban', False):
+      id="thing_${thing._fullname}"
+    %endif
+    ${thing.display} onclick="click_thing(this)"
+    ${unsafe(self.thing_data_attributes(thing))}>
+  <p class="parent">
+    ${self.ParentDiv()}
+  </p>
+  ${self.numcol()}
+  <%
+     like_cls = "unvoted"
+     if getattr(thing, "likes", None):
+         like_cls = "likes"
+     elif getattr(thing, "likes", None) is False:
+         like_cls = "dislikes"
+   %>
+  ${self.midcol(cls = like_cls)}
+  <div class="entry ${like_cls}">
+    ${self.entry()}
+  </div>
+  ${self.Child()}
+  <div class="clearleft"></div>
+</div>
+<div class="clearleft"></div>
+</%def>
+
+<%def name="buttons(ban=True)">
+  ${BanButtons(thing)}
+</%def>
+
+<%def name="ParentDiv()">
+</%def>
+
+<%def name="numcol()">
+</%def>
+
+<%def name="entry()">
+</%def>
+
+<%def name="Child(display=True)">
+<div class="child" ${(not display and "style='display:none'" or "")}>
+  %if thing.childlisting:
+    ${thing.childlisting}
+  %endif
+</div>
+</%def>
+
+<%def name="arrow(this, dir, mod)">
+<% 
+   arrow_type = "up" if dir > 0 else "down"
+   arrow_class = arrow_type + ("mod" if mod else "")
+   login_class = "login-required" if not g.read_only_mode else ""
+   archived_class = "archived" if not getattr(thing, 'votable', True) else ""
+   access_class = "access-required"
+%>
+  <div ${classes("arrow", arrow_class, login_class, archived_class, access_class)}
+    data-event-action="${arrow_type}vote"
+    %if not g.read_only_mode:
+       role="button"
+       % if dir > 0:
+       aria-label="${_("upvote")}"
+       % else:
+       aria-label="${_("downvote")}"
+       % endif
+       tabindex="0"
+    %endif
+    >
+  </div>
+</%def>
+
+<%def name="score(thing, tag='span')" >
+  %for cls, score in zip(["dislikes", "unvoted", "likes"], thing.display_score):
+    <${tag} class="score ${cls}">
+      ${score}
+    </${tag}>
+  %endfor
+</%def>
+
+
+<%def name="midcol(display=True, cls = '')">
+  <div class="midcol ${cls}" 
+       ${not display and "style='display:none'" or ''}>
+    ${self.arrow(thing, 1, thing.likes)}
+    ${self.arrow(thing, 0, thing.likes == False)}
+  </div>
+</%def>

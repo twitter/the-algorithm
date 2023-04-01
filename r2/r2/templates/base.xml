@@ -1,0 +1,118 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+<%!
+    from pylons import app_globals as g
+    from datetime import datetime
+    from r2.lib.template_helpers import add_sr, header_url
+    from r2.lib.template_helpers import static
+    from r2.lib.template_helpers import html_datetime
+    from r2.lib.utils import UrlParser
+    # atom rfc: https://tools.ietf.org/html/rfc4287
+%>
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    ${self.Category()}
+    ${self.Updated()}
+
+    %if c.can_apply_styles and not c.css_killswitch:
+        ${self.Icon()}
+    %endif
+
+    ${self.Id()}
+    ${self.Link()}
+
+    %if c.can_apply_styles and not c.css_killswitch:
+        ${self.Logo()}
+    %endif
+
+    ${self.Subtitle()}
+    ${self.Title()}
+
+    ## will be a list of <entry>s
+    ${next.body()}
+</feed>
+
+## these can all be controlled by the type of listing, but they default to
+## c.site's info
+
+<%def name="Category()">
+    <category term="${c.site.name}" label="/r/${c.site.name}"/>
+</%def>
+
+<%def name="Updated()">
+    <updated>${html_datetime(datetime.now(g.tz))}</updated>
+</%def>
+
+<%def name="Title()">
+    %if getattr(thing, 'title', None):
+        <title>${thing.title}</title>
+    %elif c.site.title:
+        <title>${c.site.title}</title>
+    %elif c.site.name:
+        <title>${c.site.name}</title>
+    %endif
+</%def>
+
+<%def name="Link()">
+    <link rel="self" href="${add_sr(request.fullpath,
+                                    sr_path=False,
+                                    force_hostname=True)}"
+     type="application/atom+xml" />
+    <link rel="alternate" href="${add_sr(request.fullpath,
+                                         sr_path=False,
+                                         force_hostname=True,
+                                         force_extension='')}"
+     type="text/html" />
+</%def>
+
+<%def name="Id()">
+    ## the feed <id>, not the entry one
+    ## https://tools.ietf.org/html/rfc4287#section-4.2.6
+
+    <id>
+        %if hasattr(thing, '_fullname'):
+            ${thing._fullname}
+        %else:
+            ${request.fullpath}
+        %endif
+    </id>
+</%def>
+
+<%def name="Subtitle()">
+    %if c.site.public_description:
+        <subtitle>${c.site.public_description}</subtitle>
+    %endif
+</%def>
+
+<%def name="Icon()">
+    ## a 1x1 aspect image
+    ## https://tools.ietf.org/html/rfc4287#section-4.2.5
+    <icon>${static("icon.png", absolute=True)}/</icon>
+</%def>
+
+<%def name="Logo()">
+    ## a 2x1 aspect image
+    ## https://tools.ietf.org/html/rfc4287#section-4.2.8
+    %if c.site.header:
+        <logo>${header_url(c.site.header, absolute=True)}</logo>
+    %endif
+</%def>

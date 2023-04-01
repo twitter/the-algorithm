@@ -1,0 +1,109 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="printablebuttons.html" import="ynbutton"/>
+<%namespace file="utils.html" import="tags, text_with_links, classes"/>
+<%
+   import json
+   from r2.lib.template_helpers import static, format_html
+   from r2.lib.wrapped import Templated
+%>
+
+<%!
+   from babel.numbers import format_currency
+%>
+
+<div id="siteTable_organic" ${classes('organic-listing', 'loading',
+    'show-placeholder' if thing.show_placeholder else None,
+  )}>
+  %if thing.things:
+    %for link in thing.things:
+      ${unsafe(link.render(display=False))}
+    %endfor
+  %endif
+
+  %if thing.interestbar:
+    <div class="thing interestbar" style="display:none">
+      ${unsafe(thing.interestbar.render())}
+    </div>
+  %endif
+
+  %if thing.navigable:
+    <div class="nextprev">
+      <div class="throbber"></div>
+      <button class="arrow prev">${_("prev")}</button>
+      <button class="arrow next">${_("next")}</button>
+    </div>
+  %endif
+
+  <div class="help help-hoverable">
+    ${_("what's this?")}
+    <div id="spotlight-help" class="hover-bubble help-bubble anchor-top">
+      <div class="help-section help-promoted">
+        <p>
+          ${text_with_links(
+            _("This sponsored link is an advertisement generated with our %(self_serve_advertisement_tool)s."),
+              self_serve_advertisement_tool=dict(link_text=_("self-serve advertisement tool"), path="https://www.reddit.com/wiki/selfserve")
+          )}
+        </p>
+        <p>
+          ${text_with_links(
+            _("Use of this tool is open to all members of reddit.com, and for as little as %(price)s you can advertise in this area. %%(get_started)s") % dict(price=format_currency(g.min_total_budget_pennies / 100., 'USD', locale=c.locale)),
+              get_started=dict(link_text=format_html("%s &rsaquo;", _("Get started")), path="/advertising")
+          )}
+        </p>
+      </div>
+      <div class="help-section help-organic">
+        <p>
+          ${_("This area shows new and upcoming links. Vote on" +
+                " links here to help them become popular, and click" +
+                " the forwards and backwards buttons to view more. ")}
+        </p>
+        %if c.user_is_loggedin:
+          ${ynbutton(_("here"), _("This element has been disabled."),
+                     "disable_ui",
+                     format = _("Click %(here)s to disable this feature."),
+                     format_arg = "here",
+                     hidden_data = dict(id="organic"))}
+        %endif
+      </div>
+      <div class="help-section help-interestbar">
+        <p>${_("Enter a keyword or topic to discover new subreddits around your interests. Be specific!")}</p>
+        <p>
+          ${text_with_links(
+            _("You can access this tool at any time on the %(reddits)s page."),
+              reddits=dict(link_text="/subreddits/", path="/subreddits/")
+          )}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  r.spotlight.setup(
+    ${unsafe(json.dumps([link._fullname for link in thing.things]))},
+    ${unsafe(json.dumps(thing.interestbar_prob))},
+    ${unsafe(json.dumps(thing.show_promo))},
+    ${unsafe(json.dumps(thing.keywords))}
+  )
+</script>
+

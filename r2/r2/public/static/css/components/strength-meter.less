@@ -1,0 +1,34 @@
+.strength-meter {
+    background-color: @strength-meter-bg;
+    border-radius: 5px;
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -4px;
+    width: 50px;
+    height: 8px;
+    overflow: hidden;
+    pointer-events: none;
+
+    .c-has-feedback & {
+        display: block;
+    }
+}
+
+.strength-meter-fill {
+    height: 100%;
+    width: 0;
+
+    .c-has-success & {
+        background-color: @strength-meter-fill-success;
+    }
+
+    .c-has-error & {
+        background-color: @strength-meter-fill-error;
+    }
+
+    .c-has-throbber & {
+        background-color: @strength-meter-fill-loading;
+    }
+}

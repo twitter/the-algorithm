@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <style type="text/css">
+    html, body, div, span {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 69px;
+      width: 51px;
+      white-space: nowrap;
+      font-size: 10px;
+      font-family: verdana, arial, sans-serif;
+      overflow: hidden;
+      position: absolute;
+    }
+
+    .wrap {
+      position: absolute;
+      width: 49px;
+      height: 67px;
+      border-radius: 2px;
+      border: 1px solid #C7DEF7;
+      background-color: white;
+    }
+
+    .logo {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      background-color: #c7def7;
+      font-size: 13px;
+    }
+
+    .votebox {
+      height: 57px;
+      background-color: white;
+      text-align: center;
+    }
+
+    .vote {
+      text-indent: -9999px;
+      display: block;
+      width: 0;
+      height: 0;
+      border: 8px solid transparent;
+      position: absolute;
+      left: 17px;
+    }
+
+    .vote.up {
+      top: -6px;
+      border-bottom-color: #c6c6c6;
+    }
+
+    .vote.down {
+      top: 40px;
+      border-top-color: #c6c6c6;
+    }
+
+    .vote:before {
+      width: 6px;
+      height: 8px;
+      right: -3px;
+      content: "";
+      position: absolute;
+      display: block;
+    }
+
+    .vote.up:before {
+      top: 7px;
+      background-color: #c6c6c6;
+      background: linear-gradient(to bottom, #c6c6c6 0%, rgba(198, 198, 198, .9), rgba(198, 198, 198, 0) 100%);
+      background: -webkit-linear-gradient(to bottom, #c6c6c6 0%, rgba(198, 198, 198, .9), rgba(198, 198, 198, 0) 100%);
+      background: -o-linear-gradient(to bottom, #c6c6c6 0%, rgba(198, 198, 198, .9), rgba(198, 198, 198, 0) 100%);
+    }
+
+    .vote.down:before {
+      top: -14px;
+      background-color: #c6c6c6;
+      background: linear-gradient(to top, #c6c6c6 0%, rgba(198, 198, 198, .9), rgba(198, 198, 198, 0) 100%);
+      background: -webkit-linear-gradient(to top, #c6c6c6 0%, rgba(198, 198, 198, .9), rgba(198, 198, 198, 0) 100%);
+      background: -o-linear-gradient(to top, #c6c6c6 0%, rgba(198, 198, 198, .9), rgba(198, 198, 198, 0) 100%);
+    }
+
+    .vote.up.active {
+     border-bottom-color: #ff8b60;
+    }
+
+    .vote.down.active {
+     border-top-color: #9494ff;
+    }
+
+    .vote.down.active:before {
+      background-color: #9494ff;
+      background: linear-gradient(to top, #9494ff 0%, rgba(148, 148, 255, .9), rgba(148, 148, 255, 0) 100%);
+      background: -webkit-linear-gradient(to top, #9494ff 0%, rgba(148, 148, 255, .9), rgba(148, 148, 255, 0) 100%);
+      background: -o-linear-gradient(to top, #9494ff 0%, rgba(148, 148, 255, .9), rgba(148, 148, 255, 0) 100%);
+    }
+
+    .vote.up.active:before {
+      background-color: #ff8b60;
+      background: linear-gradient(to bottom, #ff8b60 0%, rgba(255, 139, 96, .9), rgba(255, 139, 96, 0) 100%);
+      background: -webkit-linear-gradient(to bottom, #ff8b60 0%, rgba(255, 139, 96, .9), rgba(255, 139, 96, 0) 100%);
+      background: -o-linear-gradient(to bottom, #ff8b60 0%, rgba(255, 139, 96, .9), rgba(255, 139, 96, 0) 100%);
+    }
+
+    a {
+      color: #369;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .submission-details {
+      position: absolute;
+      top: 17px;
+      left: 0;
+      width: 49px;
+      height: 18px;
+      line-height: 18px;
+      text-align: center;
+    }
+
+    .submission-details.has-points {
+      color: #888;
+      font-size: 13px;
+    }
+
+    .points-label {
+      display: none;
+    }
+
+    </style>
+  </head>
+  <body><div class="wrap"><a class="logo" href="#">reddit</a><div class="votebox"><a class="vote up" href="#">Upvote</a><a class="vote down" href="#">Downvote</a><a class="submission-details" href="#"></a></div></div>
+  <script type="text/javascript" src="button-embed.js"></script>
+  </body>
+</html>

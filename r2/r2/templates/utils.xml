@@ -1,0 +1,44 @@
+<%!
+    from r2.lib.filters import websafe, keep_space
+    from r2.lib.template_helpers import add_sr
+%>
+<%def name="atom_content(type='html', tag_name='content')">
+    ## Atom supports 3 types of <content> tags: xhtml, html, and text. here we
+    ## try to support all 3
+    ## https://tools.ietf.org/html/rfc4287#section-3.1
+    %if type == 'xhtml':
+        <${tag_name} type="xhtml" xml:base="${request.fullpath}">
+            ## this <div> switches them into the xhtml namespace so they can say
+            ## <b> instead of <xhtml:b>, which is necessary for the output from
+            ## safemarkdown
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                ${caller.body()}
+            </div>
+        </${tag_name}>
+    %elif type == 'html':
+        <${tag_name} type="html">
+            <%
+                # this must be double escaped
+                full_body = capture(caller.body)
+                full_body = websafe(full_body)
+            %>
+            ${full_body}
+        </${tag_name}>
+    %elif type == 'text':
+        <${tag_name}>${keep_space(caller.body())}</${tag_name}>
+    %else:
+        <% raise Exception("Unknown html type %r" % (type,)) %>
+    %endif
+</%def>
+
+<%def name="atom_author(author)">
+    %if not author._deleted:
+        <author>
+            <name>/u/${author.name}</name>
+            <uri>${add_sr('/user/'+author.name,
+                          sr_path=False,
+                          force_hostname=True,
+                          retain_extension=False)}</uri>
+        </author>
+    %endif
+</%def>

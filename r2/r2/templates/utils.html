@@ -1,0 +1,720 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    import json
+    from datetime import datetime
+
+    from r2.lib import tracking
+    from r2.lib.filters import spaceCompress, unsafe, safemarkdown, jssafe, scriptsafe_dumps
+    from r2.lib.template_helpers import (
+        add_sr,
+        html_datetime,
+        js_config,
+        make_url_protocol_relative,
+        simplified_timesince,
+        static,
+    )
+    from r2.lib.utils import long_datetime
+%>
+<%def name="tags(**kw)">
+%for k, v in kw.iteritems():
+  %if v:
+    %if k == "data":
+      ${data(**v)}
+    %else:
+      ${k.strip('_')}="${v}" \
+    %endif
+  %endif
+%endfor
+</%def>
+
+## override the link _class so that we can globally update
+## the way links are handled (if need be)
+<%def name="_a(**kw)">
+<a ${tags(**kw)}>${caller.body()}</a>
+</%def>
+
+<%def name="_a_buffered(body, **kw)" buffered="True">
+<a ${tags(**kw)}>${body}</a>
+</%def>
+
+
+## thing should be global
+<%def name="_id(arg)">
+id="${arg}_${thing and thing._fullname or ''}"
+</%def>
+
+<%def name="classes(*class_names)">
+class="${" ".join(filter(None, class_names))}"
+</%def>
+
+<%def name="data(**data_attrs)">
+%for name, value in data_attrs.iteritems():
+data-${name}="${value}"
+%endfor
+</%def>
+
+<%def name="submit_form(onsubmit='', action='', _class='', method='post', _id='', **params)">
+<form class="${_class or ''}" onsubmit="${onsubmit or ''}" 
+      action="${action or ''}" ${_id and "id='" + _id + "'" or ""} method="${method}"
+      >
+  %if c.user_is_loggedin:
+     <input type="hidden" name="uh" value="${c.modhash}">
+  %endif
+  %for key, value in params.iteritems():
+  <input type="hidden" name="${key}" value="${value}" />
+  %endfor
+  ${caller.body()}
+</form>
+</%def>
+
+<%def name="first_defined(*kw)">
+%if not kw or kw[0] == UNDEFINED or not kw[0]:
+${first_defined(kw[1:])}
+%endif
+</%def>
+
+<%def name="form_group(field_name, *args, **kwargs)">
+  <% error = c.errors.get_first(field_name, *args) %>
+  <div class="c-form-group ${'c-has-feedback c-has-error' if (error and kwargs['show_errors']) else ''}">
+    ${caller.body()}
+    %if kwargs['show_errors']:
+      <div class="c-form-control-feedback-wrapper ${'inside-input' if kwargs.get('feedback_inside_input') else ''}">
+        <span class="c-form-control-feedback c-form-control-feedback-throbber"></span>
+        <span class="c-form-control-feedback c-form-control-feedback-error" title="${_(error.message) if error else ''}"></span>
+        <span class="c-form-control-feedback c-form-control-feedback-success"></span>
+      </div>
+    %endif
+  </div>
+</%def>
+
+<%def name="error_field(error_name, field_name, kind='span')">
+  <% error_key = (error_name, field_name) %>
+  <${kind} class="error ${error_name} field-${field_name}" 
+  style="${'' if error_key in c.errors else 'display:none'}">
+   %if error_key in c.errors:
+     ${c.errors[error_key].message}
+   %endif
+  </${kind}>
+</%def>
+
+<%def name="img_link(link_text, img, path, _id='', target='', img_id=None, size=None, **kw)">
+  <% 
+     if target:
+         kw['target'] = target
+
+     path = add_sr(path, sr_path = False)
+     kw['target'] = target
+     
+     if size is None:
+         size_str = ""
+     else:
+         size_str = "width='%d' height='%d'" % (size[0], size[1])
+  %>
+  <%call expr="_a(href=path, _id=_id, **kw)">
+    <img ${("id='%s'" % img_id) if img_id else ''} src="${img}" ${size_str} alt="${link_text}"/>
+  </%call>
+</%def>
+
+<%def name="plain_link(link_text, path, _sr_path = True, nocname=False, fmt='', target='', **kw)">
+  ## caching comment: 
+  ##  in addition to the args, this function also makes use of
+  ##  both c.site.name and c.render_style via add_sr.
+  ##
+  ##  This function is called by (among other places) NavMenu as the
+  ##  primary rendering view.  Any changes to the c-usage of this function 
+  ##  will have to be propagated up. 
+  <% 
+     if target:
+         kw['target'] = target
+
+     link = _a_buffered(link_text, 
+                        href=path and add_sr(path, sr_path=_sr_path),
+                        **kw) 
+  %>
+
+  ${unsafe((fmt % link) if fmt else link)}
+</%def>
+
+<%def name="post_link(link_text, post_path, redir_path, params, _sr_path=True,
+                      nocname=False, fmt='', target='', **kw)">
+  <%
+    action = add_sr(post_path, sr_path=_sr_path)
+    href = add_sr(redir_path, sr_path=_sr_path)
+    if target:
+        kw['target'] = target
+    onclick = "$(this).parent().submit(); return false;"
+    link = _a_buffered(link_text, href=href, onclick=onclick, **kw)
+  %>
+  <form method="POST" action="${action}">
+    %for k, v in params.iteritems():
+      <input type="hidden" name="${k}" value="${v}">
+    %endfor
+    ${unsafe((fmt % link) if fmt else link)}
+  </form>
+</%def>
+
+
+<%def name="text_with_links(txt, _sr_path = False, nocname=False, **kw)">
+<%
+   from r2.lib.filters import conditional_websafe
+   for key, link_args in kw.iteritems():
+      link_args.setdefault("_sr_path", _sr_path)
+      kw[key]=spaceCompress(capture(plain_link, **link_args))
+   txt = conditional_websafe(txt) % kw
+   txt = txt.replace(" <", "&#32;<").replace("> ", ">&#32;")
+
+%>
+${unsafe(txt)}
+</%def>
+
+<%def name="language_tool(name='lang', allow_blank = False, 
+                          default_lang = g.lang,
+                          show_regions = False, 
+                          all_langs = False)">
+<% 
+   langs = g.all_languages if all_langs else g.languages 
+   if not show_regions:
+       langs = [x for x in langs if len(x) == 2]
+%>
+%if langs:
+<select id="${name}" name="${name}">
+  %if allow_blank:
+  <option ${(not default_lang) and "selected='selected'" or ""}>
+  </option>
+  %endif
+  %for x in langs:
+  <option ${x == default_lang  and "selected='selected'" or ""} value="${x}">
+    ${g.lang_name[x][0]} [${x}] ${g.lang_name[x][1]}
+  </option>
+  %endfor
+</select>
+%endif
+</%def>
+
+<%def name="separator(separator_char)">
+  <span class="separator">${separator_char}</span>
+</%def>
+
+<%def name="optionalstyle(style)">
+  %if request.GET.get('style') != "off":
+    style="${style}"
+  %endif
+</%def>
+
+<%def name="checkbox(name, text, val)">
+  <input type="checkbox" ${'checked="checked"' if val else ''}
+    name="${name}">
+    ${text}
+  </input>
+</%def>
+
+<%def name="ajax_upload(target, form_id)">
+  <form method="post" enctype="multipart/form-data" target="${form_id}-iframe"
+        id="${form_id}" class="ajax-upload-form pretty-form" action="${target}"
+        onsubmit="return post_multipart_form(this, '${target}')">
+    <input type="hidden" name="id" value="#${form_id}" />
+    <input type="hidden" name="uh" value="${c.modhash}" />
+    <input type="file" name="file" />
+    <button type="submit">
+      ${_('upload')}
+    </button>
+    ${error_field('IMAGE_ERROR', '')}
+    %if caller:
+      ${caller.body()}
+    %endif
+    <span class="status"></span>
+    <script type="text/javascript">
+      function completedUploadImage (status, img_src, name, errors, form_id) {
+        /* should only be called when the uploaded file is too large */
+        form_id = $.with_default(form_id, "${form_id}");
+        if (status == "failed") {
+          $("#${form_id}").find(".status").html("");
+          for (var i in errors) {
+            $("#${form_id}").find(".error." + errors[i][0])
+                .show().text(errors[i][1]);
+          }
+        }
+      }
+    </script>
+    <iframe src="about:blank" name="${form_id}-iframe" id="${form_id}-iframe">
+    </iframe>
+  </form>
+</%def>
+
+
+<%def name="image_upload_inline(form_id='file', field_id='inline-file')">
+  <div id="${field_id}">
+    <input type="file" name="${form_id}" id="${form_id}">
+    ${error_field("IMAGE_ERROR", "span")}
+    <script>
+      function completedUploadImage (status, img_src, name, errors, form_id) {
+        if (status == 'failed') {
+          var $form = $('#${field_id}');
+          $form.find('.status').html('');
+          for (var i in errors) {
+            $form.find('.error.' + errors[i][0])
+                .show().text(errors[i][1]);
+          }
+          var top = $form.position().top;
+          $(window).scrollTop(top);
+        }
+      }
+    </script>
+  </div>
+</%def>
+
+<%def name="s3_image_upload(id, width, height, src=None, data=None)">
+  <form
+      id="${id}"
+      class="c-image-upload"
+      method="POST"
+      enctype="multipart/form-data"
+      target="${id}-frame"
+      ${tags(**dict(data=data))}
+    >
+    <div class="c-image-upload-preview-container">
+      <img
+        alt="${id} preview"
+        class="c-image-upload-preview"
+        style="width: ${width}px; max-height: ${height}px"
+        %if src:
+          src="${make_url_protocol_relative(src)}"
+        %else:
+          src="${static(width + 'x' + height + '-placeholder.png')}"
+        %endif
+      >
+      <input type="file" name="file" id="${id}-input" class="c-image-upload-input" title="${_("click to upload")}">
+      <div class="c-progress">
+        <div class="c-progress-bar"></div>
+      </div>
+    </div>
+    <button class="c-image-upload-btn" type="button">${_("select")}</button>
+  </form>
+  <iframe id="${id}-frame" name="${id}-frame" src="about:blank" style="display:none;"></iframe>
+  %if caller:
+    ${caller.body()}
+  %endif
+</%def>
+
+<%def name="image_upload(post_target, current_image = None, onsubmit = '', 
+                         onchange = '', label = '', form_id = 'image-upload',
+                         ask_type = False, hidden_data=None)">
+  <form id="${form_id}" enctype="multipart/form-data"
+        class="image-upload"
+        target="upload-iframe"
+        %if onsubmit:
+           onsubmit="${onsubmit}"
+        %endif
+        action="${post_target}" method="post">
+      %if label:
+         <label for="file">${label}</label>
+         <br>
+      %endif
+          <input type="hidden" name="uh" value="${c.modhash}" />
+          %if not c.default_sr:
+            <input type="hidden" name="r"  value="${c.site.name}" />
+          %endif
+          <input type="hidden" name="formid" value="${form_id}" />
+          %if hidden_data:
+            %for name, value in hidden_data.iteritems():
+              <input type="hidden" name="${name}" value="${value}" />
+            %endfor
+          %endif
+          %if ask_type:
+            <label for="img_type">${_("Type: ")}</label>
+            <label><input type="radio" name="img_type" value="jpg" />JPEG</label>
+            &nbsp;&nbsp;
+            <label><input type="radio" name="img_type" checked value="png" />PNG</label>
+            <br/>
+          %endif
+          <input type="file" name="file" id="file" 
+                 onchange="$(this).next().prop('disabled', false); ${onchange}"/>
+          <button id="submit-img" class="submit-img primary-button"
+                  type="submit" name="upload" 
+                  onclick="$(this).parent().addClass('uploading').find('.img-status').show().text('${jssafe(_('uploading'))}'); return true;"
+                  disabled>
+            ${_('upload')}
+          </button>
+
+          <span style="display: none;" class="error img-status"></span>
+          ${error_field("IMAGE_ERROR", "span")}
+          <script type="text/javascript">
+       function on_image_success(img) {}
+       function create_new_image(name) {}
+
+       function completedUploadImage(status, img_src, name, errors, form_id) {
+           var form = form_id ? $("#" + form_id) : $('form.image-upload.uploading');
+           form.removeClass('uploading');
+
+           if (status) 
+               form.find(".img-status").show().html(status);
+           else
+               form.find(".img-status").hide().html("");
+           $.map(errors, function(e) {
+                   if(e[1]) 
+                       form.find("." + e[0]).html(e[1]).show();
+                   else
+                       form.find("." + e[0]).html('').hide();
+               });
+           if(img_src) {
+              form.get(0).reset();
+              var img = (name) ? $("#img-preview-" + name) :
+                  form.find("img.img-preview:first");
+              if(!$.defined(img) || img.length == 0) 
+                  img = create_new_image(name);
+              if(img)
+                  img.attr("src", "").attr("src", img_src);
+              img.show().parent().show();
+              form.find(".delete-img").show();
+              on_image_success(img);
+          }
+       }
+          </script>
+          
+          <iframe src="about:blank" width="600" height="200" 
+                  style="display: none;"
+                  name="upload-iframe" id="upload-iframe"></iframe>
+
+          <div id="img-preview-container" class="img-preview-container"
+               style="${'' if current_image else 'display:none;'}">
+            <img id="img-preview-upload" alt="header preview" 
+                 class="img-preview"
+                 %if current_image:
+                   src="${make_url_protocol_relative(current_image)}"
+                 %else:
+                   src="${static('kill.png')}"
+                 %endif
+                 /><br />
+          </div>
+     %if caller:
+       ${caller.body()}
+     %endif
+  </form>
+  <script type="text/javascript">
+    $(function() {
+      var max_width = 0;
+      $(".preftable th *").each(function() {
+        max_width = Math.max(max_width, $(this).width());
+      }).each(function() {
+        $(this).width(max_width);
+      });
+    });
+       
+  </script>
+</%def>
+
+
+<%def name="js_setup(extra_config=None)">
+  <script type="text/javascript" id="config">
+    r.setup(${scriptsafe_dumps(js_config(extra_config))})
+  </script>
+</%def>
+
+<%def name="googletagmanager()">
+  %if g.googletagmanager and thing.site_tracking and thing.dnt_enabled:
+    <script>
+      if (!window.DO_NOT_TRACK) {
+        var frame = document.createElement('iframe');
+
+        frame.style.display = 'none';
+        frame.referrer = 'no-referrer';
+        frame.id = 'gtm-jail';
+        frame.name = JSON.stringify({ subreddit: r.config.post_site });
+        frame.src = '//' + ${scriptsafe_dumps(g.media_domain)} + '/gtm/jail';
+
+        document.body.appendChild(frame);
+      }
+    </script>
+  %endif
+</%def>
+
+<%def name="googleanalytics(uitype, is_gold_page=False)">
+  %if (g.googleanalytics or g.googleanalytics_gold) and thing.site_tracking:
+    <script type="text/javascript">
+      %if thing.dnt_enabled:
+      if (!window.DO_NOT_TRACK) {
+      %endif
+        window.user_type = '${"guest" if not c.user_is_loggedin else "goldloggedin" if c.user.gold else "loggedin"}';
+        window.is_gold_page = '${is_gold_page}'.toLowerCase() === 'true';
+      %if thing.dnt_enabled:
+      }
+      %endif
+    </script>
+  %endif
+
+  %if g.googleanalytics and thing.site_tracking:
+  ## it uses old ga.js
+  <script type="text/javascript">
+    %if thing.dnt_enabled:
+    if (!window.DO_NOT_TRACK) {
+    %endif
+      var _gaq = _gaq || [];
+      _gaq.push(
+          ['_require', 'inpage_linkid', '//www.google-analytics.com/plugins/ga/inpage_linkid.js'],
+          ['_setAccount', '${g.googleanalytics}'],
+          ['_setDomainName', '${g.domain}'],
+          ['_setCustomVar', 1, 'site', '${tracking.get_site()}', 3],
+          ['_setCustomVar', 2, 'srpath', '${tracking.get_srpath()}', 3],
+          ['_setCustomVar', 3, 'usertype', user_type, 2],
+          ['_setCustomVar', 4, 'uitype', '${uitype}', 3],
+          ['_setCustomVar', 5, 'style_override', '${jssafe(c.user.pref_default_theme_sr)}', 2],
+          %if g.googleanalytics_sample_rate:
+          ['_setSampleRate', '${g.googleanalytics_sample_rate}'],
+          %endif
+          ['_trackPageview']
+      );
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    %if thing.dnt_enabled:
+    }
+    %endif
+  </script>
+  %endif
+
+  %if g.googleanalytics_gold and thing.site_tracking:
+  ## it uses new analytics.js
+  <script type="text/javascript">
+    %if thing.dnt_enabled:
+    if (!window.DO_NOT_TRACK) {
+    %endif
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','_ga');
+
+      window._ga('create', '${g.googleanalytics_gold}', {
+        'name': 'goldTracker',
+        'cookieDomain': '${g.domain}',
+        '1': '${tracking.get_site()}',
+        '2': '${tracking.get_srpath()}',
+        '3': window.user_type,
+        '4': '${uitype}',
+        'sampleRate': ${g.googleanalytics_sample_rate_gold}
+      });
+
+      if (window.is_gold_page) {
+        window._ga('goldTracker.send', 'pageview');
+      }
+    %if thing.dnt_enabled:
+    }
+    %endif
+  </script>
+  %endif
+</%def>
+
+<%def name="logout(top=False,dest=None,a_class='')">
+  <form method="post" action="${add_sr('/logout', sr_path=False)}" class="logout hover"
+    %if top:
+      target="_top"
+    %endif
+    >
+    <input type="hidden" name="uh" value="${c.modhash}"/>
+    <input type="hidden" name="top" value="${'on' if top else 'off'}"/>
+    %if dest:
+      <input type="hidden" name="dest" value="${dest}"/>
+    %endif
+    
+    <a href="javascript:void(0)" onclick="$(this).parent().submit()"
+       %if a_class:
+         class="${a_class}" 
+       %endif
+    >
+      ${_("logout")}
+    </a>
+  </form>
+</%def>
+
+<%def name="block_field(kind, title, description = '', css_class= '', **kw)">
+  <div class="${kind} ${css_class}"
+       %for k, v in kw.iteritems():
+         ${k}="${v}"
+       %endfor
+       >
+    <span class="title">${title}</span>
+    &#32;
+    %if description:
+      <span class="little gray ${kind}-description">${description}</span>
+    %endif
+    <div class="${kind}-content">
+      ${caller.body()}
+    </div>
+  </div>
+</%def>
+
+<%def name="round_field(title, description = '', css_class= '', **kw)">
+  <%call expr="block_field('roundfield', title, description = description, css_class= css_class, **kw)">
+     ${caller.body()}
+  </%call>
+</%def>
+
+<%def name="line_field(title, description = '', css_class= '', **kw)">
+  <%call expr="block_field('linefield', title, description = description, css_class= css_class, **kw)">
+     ${caller.body()}
+  </%call>
+</%def>
+
+<%def name="radio_type(field_name, val_name, title, text=None, checked=False, disabled=False, hover_title='[?]', hover_text=None)">
+  <% full_name = field_name + "_" + val_name %>
+  <tr>
+    <td class="nowrap nopadding">
+      <input name="${field_name}" type="radio" id="${full_name}"
+             value="${val_name}" class="nomargin"
+             %if checked:
+               checked="checked"
+             %endif
+             %if disabled:
+               disabled="disabled"
+             %endif
+             />
+      <label for="${full_name}">${title}</label>
+    %if hover_text:
+      <span class="help help-hoverable">
+        <sup>${hover_title}</sup>
+        <div class="hover-bubble help-bubble anchor-top-left">
+          <p>${hover_text}</p>
+        </div>
+      </span>
+    %endif
+    </td>
+    %if text:
+      <td class="leftpad"><span class="gray">${text}</span></td>
+    %endif
+  </tr>
+</%def>
+
+<%def name="inline_radio_type(field_name, val_name, text=None, checked=False)">
+	<% full_name = field_name + "_" + val_name %>
+	<label>
+	<input class="nomargin" type="radio" name="${field_name}"
+		id="${full_name}" value="${val_name}"
+		%if checked:
+			checked="checked"
+		%endif
+	>
+	%if text:
+		${text}
+	%endif
+	</label>
+</%def>
+
+<%def name="timestamp(date, since=None, live=False, include_tense=False)">
+  ## todo: use pubdate attribute once things are <article> tags.
+  ## note: comment and link templates will pass a CachedVariable stub as since.
+  <%
+    timestamp_class = unsafe(' class="live-timestamp"') if live else ''
+  %>
+  <time title="${long_datetime(date)}" datetime="${html_datetime(date)}"${timestamp_class}>
+    ${(since or simplified_timesince(date, include_tense))}
+  </time>
+</%def>
+
+<%def name="buffered_timestamp(date, since=None, live=False, include_tense=False)" buffered="True">
+  ${timestamp(date, since, live, include_tense)}
+</%def>
+
+<%def name="thing_timestamp(thing, since=None, live=False, include_tense=False)">
+  ## todo: use pubdate attribute once things are <article> tags.
+  ## note: comment and link templates will pass a CachedVariable stub as since.
+  ${timestamp(thing._date, since=since, live=live, include_tense=include_tense)}
+</%def>
+
+<%def name="percentage(slice, total)">
+  %if total is None or total == "" or total == 0 or slice is None or slice == "":
+    --
+  %else:
+    ${int(100 * slice / total)}%
+  %endif
+</%def>
+
+<%def name="pretty_button(label, func=None, func_vars='', extra_class='', event_action=None)">
+  <a class="pretty-button access-required ${extra_class}" href="#"
+     %if func is None:
+       onclick="alert('please don\'t do that again');return false;"
+     %elif func_vars:
+       onclick="return ${func}($(this), ${func_vars})"
+     %else:
+       onclick="return ${func}($(this))"
+     %endif
+     %if event_action:
+       data-event-action="${event_action}"
+     %endif
+     >
+       ${label}
+  </a>
+</%def>
+
+<%def name="edited(thing, lastedited=None)">
+  %if isinstance(thing.editted, datetime):
+    <time class="edited-timestamp" title="${_('last edited')} ${unsafe(lastedited or simplified_timesince(thing.editted))}" datetime="${html_datetime(thing.editted)}">*</time>
+  %elif thing.editted:
+    <em>*</em>
+  %endif
+</%def>
+
+<%def name="md(text, wrap=False, **kwargs)">
+  ${unsafe(safemarkdown(text, wrap=wrap, **kwargs))}
+</%def>
+
+<%def name="_md(text, wrap=False)">
+  ${md(_(text), wrap=wrap)}
+</%def>
+
+<%def name="_mdf(text, wrap=False, **kwargs)">
+  ${md(_(text) % kwargs, wrap=wrap)}
+</%def>
+
+<%def name="nsfw_stamp()">
+  <acronym title="${_('Adult content: Not Safe For Work')}">
+    ${_("NSFW")}
+  </acronym>
+</%def>
+
+<%def name="quarantine_stamp()">
+  <span title="${_('Quarantined content: Content may be highly offensive')}">
+    ${_("Quarantined")}
+  </span>
+</%def>
+
+<%def name="thumbnail_img(thing)">
+  %if thing.thumbnail and not thing.thumbnail_sprited:
+    <%
+        if hasattr(thing, 'thumbnail_size'):
+            scaling_factor = 1
+            if thing.thumbnail_size[0] > g.thumbnail_size[0]:
+              # hidpi scaling, calculate in case hidpi changes definition in the future and
+              # we have multiple sets of image dimensions. Currently should always be 1 or 2.
+              # Width is always the maximum allowed, so we don't need to check height.
+              scaling_factor = thing.thumbnail_size[0] // g.thumbnail_size[0]
+
+            size_str = "width='%d' height='%d'" % (thing.thumbnail_size[0] // scaling_factor, thing.thumbnail_size[1] // scaling_factor)
+        else:
+            size_str = ""
+    %>
+    <img src="${make_url_protocol_relative(thing.thumbnail)}" ${size_str} alt="">
+  %endif
+</%def>

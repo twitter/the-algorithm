@@ -1,0 +1,47 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+<%!
+    from r2.lib.template_helpers import add_sr
+    from r2.lib.template_helpers import html_datetime
+%>
+<%namespace name="utils" file="utils.xml"/>
+<%
+    link = add_sr(('/%(wiki_base_url)s/%(page)s?v=%(thing_id)s'
+                   % dict(wiki_base_url=c.wiki_base_url,
+                          page=thing.page,
+                          thing_id=thing._id)),
+                  force_hostname=True,
+                  retain_extension=False,
+                  sr_path=False)
+    category = ('%(sr)s/%(page)s'
+                % dict(sr=thing.sr,
+                       page=thing.page))
+%>
+<entry>
+    <author><name>${thing.printable_author}</name></author>
+    <category term="${category}" label="${category}" />
+    <%utils:atom_content type="text">${thing._get('reason')}</%utils:atom_content>
+    <id>${thing._fullname}</id>
+    <link href="${link}" />
+    <updated>${html_datetime(thing.date)}</updated>
+    <title>${thing._id}</title> ## is this really the best title?
+</entry>

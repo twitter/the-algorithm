@@ -1,0 +1,49 @@
+.c-btn {
+    .box-sizing(border-box);
+    display: inline-block;
+    margin-bottom: 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    vertical-align: middle;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    .button-size(4px; @padding-base-horizontal; 12px; 20px; 3px);
+    .no-select();
+
+    &:hover,
+    &:focus {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    &:active,
+    &.active {
+        outline: 0;
+        background-image: none;
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        cursor: not-allowed;
+        pointer-events: none;
+        .opacity(.65);
+        box-shadow: none;
+    }
+
+}
+
+.c-btn-primary {
+    .button-variant(@text-color: #fff; @bg-color: #4f86b5; @bevel-color: #4270a2);
+}
+
+.c-btn-secondary {
+    .button-variant(@text-color: #fff, @bg-color: #c6c6c6, @bevel-color: #b8b8b8);
+}
+
+.c-btn-highlight {
+    .button-variant(@text-color: #fff; @bg-color: #DC6431; @bevel-color: #C9532B);
+}

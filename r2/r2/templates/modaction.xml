@@ -1,0 +1,65 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    from r2.lib.filters import _force_unicode
+    from r2.lib.template_helpers import add_sr
+    from r2.models import Account, Comment, Link
+    from r2.lib.template_helpers import html_datetime
+%>
+<%namespace name="utils" file="utils.xml"/>
+<%
+    title = '%(subreddit)s: %(mod)s %(action)s'
+    title %= {
+        'subreddit': thing.subreddit.name,
+        'mod': thing.moderator.name,
+        'action': thing.text,
+    }
+
+    if hasattr(thing, "target") and isinstance(thing.target, Comment):
+        title += ' "%s"' % _force_unicode(thing.parent_link.title)
+    elif hasattr(thing, "target") and isinstance(thing.target, Link):
+        title += ' "%s"' % _force_unicode(thing.target.title)
+    elif hasattr(thing, "target") and isinstance(thing.target, Account):
+        title += ' %s' % thing.target.name
+
+    if thing.details_text:
+        title += ' (%s)' % thing.details_text
+
+    if isinstance(thing, Comment):
+        permalink = thing.target.make_permalink(thing.parent_link, thing.subreddit)
+    elif isinstance(thing, Link):
+        permalink = thing.target.make_permalink(thing.subreddit)
+    else:
+        permalink = None
+%>
+
+<entry>
+    <%utils:atom_author author="${thing.moderator}" />
+    <category term="${thing.subreddit.name}" label="/r/${thing.subreddit.name}" />
+    <id>${thing._fullname}</id>
+    %if permalink:
+        <link href="${add_sr(permalink)}"/>
+    %endif
+    <updated>${html_datetime(thing.date)}</updated>
+    <title>${title}</title>
+</entry>

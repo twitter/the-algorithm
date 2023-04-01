@@ -1,0 +1,209 @@
+.subreddit-rule-item {
+    margin-bottom: 10px;
+    margin-left: -10px;
+    margin-top: 10px;
+    padding: 10px;
+
+    &:hover {
+        background: #F7F7F7;
+    }
+
+    .subreddit-rule-delete-confirmation {
+        text-align: right;
+    }
+}
+
+.subreddit-rule-item .editable .subreddit-rule-contents,
+.subreddit-rule-form {
+    .display-flex();
+}
+
+.subreddit-rule-item .editable .subreddit-rule-contents-display,
+.subreddit-rule-form .form-inputs {
+    .flex(1 1);
+}
+
+.subreddit-rule-item .editable .subreddit-rule-buttons,
+.subreddit-rule-form .form-buttons {
+    .flex(0 0 41px);
+
+    > button {
+        margin-bottom: 5px;
+        margin-left: 5px;
+
+        .mod-action-icon {
+            padding: 5px 10px;
+        }
+    }
+}
+
+.subreddit-rule-form .form-buttons {
+    .display-flex();
+    .flex-direction(column);
+    .justify-content(flex-end);
+}
+
+.subreddit-rule-form {
+    .c-form-group {
+        position: relative;
+        margin-bottom: unit(@margin-medium, px);
+
+        .label {
+            color: @color-grey;
+        }
+
+        .label.required:after {
+            color: @color-warning-red;
+            content: ' *';
+            display: inline;
+        }
+
+        .text-counter {
+            color: @color-grey;
+            position: absolute;
+            right: 0;
+            top: 0;
+
+            &.has-error {
+                color: @color-warning-red;
+            }
+        }
+    }
+
+    .form-group-kind label {
+        margin-right: unit(@margin-large, px);
+    }
+}
+
+.subreddit-rule-add-form-buttons .subreddit-rule-edit-button {
+    color: @color-light-blue;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 15px;
+    text-transform: uppercase;
+
+    &[disabled] {
+        color: @color-grey;
+    }
+
+    .mod-action-icon {
+        margin-right: 5px;
+        vertical-align: bottom;
+    }
+}
+
+.error-fields {
+    color: @color-warning-red;
+    margin-top: unit(@margin-x-small, px);
+    text-align: right;
+
+    > .error {
+        display: block;
+    }
+}
+
+.subreddit-rule-too-many-notice {
+    color: @color-dark-teal;
+    margin-top: unit(@margin-x-small, px);
+}
+
+.subreddit-rule-delete-confirmation {
+    color: @color-warning-red;
+
+    button {
+        background: transparent;
+        border: none;
+        padding: 0 3px;
+        color: @color-light-blue;
+        font-size: 1em;
+    }
+
+    .separator {
+        color: @color-grey;
+    }
+}
+
+.subreddit-rules-page {
+    @icon-size: 52px;
+
+    max-width: 700px;
+    padding-left: @icon-size + 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    position: relative;
+    
+    &:before {
+        .hdpi-bg-image(@1x: url(../modtools-page-icon-rules.png),
+                       @2x: url(../modtools-page-icon-rules_2x.png));
+
+        content: '';
+        display: block;
+        height: @icon-size;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: @icon-size;
+    }
+
+    .subreddit-rule-buttons,
+    .subreddit-rule-add-form-buttons,
+    .form-buttons {
+        button {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+    }
+
+    > header {
+      margin-bottom: @margin-xx-large * 1px;
+
+      p {
+        font-weight: 500;
+      }
+    }
+
+    > footer {
+        margin-top: unit(@margin-xx-large, px);
+    }
+
+    .md {
+        p:first-child {
+            margin-top: 0;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .md-container .md {
+        @font-base: @font-small;
+        @line-base: @line-small;
+
+        h2 {
+            .md-font-size(@font-base, @font-xx-large, @line-xx-large);
+            .md-margins(@font-xx-large, 0, 0);
+            font-weight: 300;
+        }
+
+        .subreddit-rule-title {
+            .md-font-size(@font-base, @font-medium, @line-medium);
+            margin-top: 0;
+            margin-bottom: unit(@margin-x-small, px);
+            font-weight: 500;
+        }
+
+        .subreddit-rule-kind {
+            .md-font-size(@font-base, @font-x-small, @line-medium);
+            margin-bottom: unit(@margin-x-small, px);
+            font-weight: 500;
+            color: @color-dark-grey;
+        }
+
+        .subreddit-rule-description {
+            color: @color-text-grey;
+        }
+    }
+}
+

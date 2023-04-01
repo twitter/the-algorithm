@@ -1,0 +1,93 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.filters import safemarkdown, jssafe
+%>
+<%namespace file="utils.html" import="error_field, text_with_links"/>
+<%namespace name="utils" file="utils.html"/>
+
+<h1>${_("deactivate your reddit account")}</h1>
+
+<form action="javascript:;" method="post"
+  onsubmit="${"return post_form(this, 'deactivate_user', function(x) {return '%s'})" % jssafe(_("deactivating..."))}" id="pref-deactivate">
+
+<div class="spacer">
+  <%utils:round_field title="${_('sorry to see you go!')}">
+    <div class="rounded white-field">
+      ${unsafe(safemarkdown(_(
+        " * if you're having a problem on reddit, please consider [contacting us](/message/compose?to=%2Fr%2Freddit.com) about it before deactivating your account.\n"
+        " * deactivating your account will not delete the content of posts and comments you've made on reddit. to do so, please delete them individually."
+      )))}
+    </div>
+  </%utils:round_field>
+</div>
+
+%if thing.has_paypal_subscription:
+  <div class="spacer">
+    <%utils:round_field title="${_('please cancel your gold subscription!')}">
+      <div class="rounded white-field">
+        <div class="gold-subscription">
+          ${text_with_links(
+            _("log in to %%(paypal_link)s to cancel your subscription (%(subscr_id)s).") % dict(subscr_id=thing.paypal_subscr_id),
+            paypal_link=dict(link_text="paypal", path=thing.paypal_url)
+          )}
+        </div>
+      </div>
+    </%utils:round_field>
+  </div>
+%endif 
+
+<div class="spacer">
+  <%utils:round_field title="${_('why are you deactivating this account?')}" description="(${_('optional')})">
+    <textarea name="deactivate_message" id="deactivate-message"></textarea>
+    ${error_field("TOO_LONG", "deactivate_message")}
+  </%utils:round_field>
+</div>
+
+<div class="spacer">
+  <%utils:round_field title="${_('account credentials')}" description="(${_('for security purposes')})" css_class="credentials">
+    <label for="deactivate-user">${_("username")}</label>
+    ${error_field("NOT_USER", "user")}
+    <input name="user" id="deactivate-user" type="text" />
+    <label for="deactivate-password">${_("password")}</label>
+    ${error_field("WRONG_PASSWORD", "passwd")}
+    <input name="passwd" id="deactivate-password" type="password" />
+  </%utils:round_field>
+</div>  
+
+<div class="spacer">
+  <%utils:round_field title="${_('confirmation')}">
+    <div class="rounded white-field">
+      <input name="confirm" id="confirm-deactivate" type="checkbox"/>
+      <label for="confirm-deactivate">${_("I understand that deactivated accounts are not recoverable.")}</label>
+    </div>
+    ${error_field("CONFIRM", "confirm")}
+  </%utils:round_field>
+</div>
+
+<div class="spacer">
+  <button type="submit" class="btn">${_("deactivate account")}</button>
+  <span class="status"></span>
+  ${error_field("RATELIMIT", "vdelay")}
+</div>
+</form>

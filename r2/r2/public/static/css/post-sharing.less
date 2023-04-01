@@ -1,0 +1,245 @@
+@post-sharing-icon-size: 26px;
+@post-sharing-max-width: 550px;
+@post-sharing-shareplane-width: 50px;
+@post-sharing-shareplane-height: 32px;
+
+@post-sharing-shareplane-image: '../share-paper-airplane.png';
+@post-sharing-facebook-image: '../share-to-facebook.png';
+@post-sharing-twitter-image: '../share-to-twitter.png';
+@post-sharing-tumblr-image: '../share-to-tumblr.png';
+@post-sharing-email-image: '../share-to-email.png';
+@post-sharing-reddit-pm-image: '../share-to-reddit-pm.png';
+
+@post-sharing-color-success: @color-green;
+@post-sharing-color-button-focus: @color-white;
+@post-sharing-color-background: #fbfbfb;
+@post-sharing-color-border: darken(@post-sharing-color-background, 10%);
+@post-sharing-color-tooltip: @color-white;
+@post-sharing-color-tooltip-border: darken(@color-white, 10%);
+@post-sharing-color-tooltip-text: @color-semi-black;
+
+@post-sharing-font-base: @font-small;
+@post-sharing-font-small: @font-x-small;
+@post-sharing-line-base: @line-small;
+
+.post-sharing-font-size(@font:@post-sharing-font-base, @line:@post-sharing-line-base) {
+  .md-font-size(@post-sharing-font-base, @font, @line);
+}
+
+.post-sharing {
+  background: @post-sharing-color-background;
+  border: 1px solid @post-sharing-color-border;
+  box-sizing: border-box;
+  display: none;
+  font-size: @base-font-keyword;
+  max-width: @post-sharing-max-width;
+  padding: (@margin-large * 1px);
+  position: relative;
+
+  .c-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: @margin-x-small * 1px;
+  }
+
+  .post-sharing-form {
+    .md-base-font-size(@post-sharing-font-base);
+    display: none;
+  }
+
+  .post-sharing-main {
+    display: block;
+
+    .c-form-group {
+      .align-items(center);
+      .display-flex();
+
+      > * {
+        .flex(1 1 100%);
+      }
+
+      > .post-sharing-label {
+        .flex(0 0 83px);
+        padding-right: @margin-small * 1px;
+        text-align: right;
+      }
+
+      &:last-child {
+        margin-bottom: 0px;
+      }
+    }
+  }
+
+  .post-sharing-email-form {
+    .c-form-group {
+      margin-bottom: @margin-small * 1px;
+      margin-top: @margin-small * 1px;
+    }
+
+    &.shared {
+      .post-sharing-shareplane {
+        display: block;
+
+        &:before {
+          .animation(post-sharing-shareplane .7s forwards);
+        }
+      }
+
+      .post-sharing-buttons {
+        .c-btn {
+          opacity: 0;
+        }
+      }
+    }
+  }
+
+  .post-sharing-label {
+    .post-sharing-font-size();
+    color: @color-dark-grey;
+  }
+
+  .post-sharing-option {
+    background-size: @post-sharing-icon-size @post-sharing-icon-size;
+    cursor: pointer;
+    display: inline-block;
+    height: @post-sharing-icon-size;
+    margin-right: @margin-x-small * 1px;
+    margin-top: @margin-x-small * 1px;
+    position: relative;
+    width: @post-sharing-icon-size;
+
+    &:hover .c-tooltip {
+      bottom: 100%;
+      opacity: 1;
+    }
+
+    .c-tooltip {
+      .transform(translate(-50%, @tooltip-arrow-width * -1));
+      .transition(all, 0.15s);
+      bottom: 50%;
+      left: 50%;
+      pointer-events: none;
+
+      .tooltip-inner {
+        .box-shadow(0 1px 3px rgba(0, 0, 0, 0.08));
+        background: @post-sharing-color-tooltip;
+        border: 1px solid @post-sharing-color-tooltip-border;
+        color: @post-sharing-color-tooltip-text;
+        padding: @margin-small * 1px;
+        white-space: nowrap;
+      }
+
+      .tooltip-arrow {
+        .transform(translate(-50%, -1px));
+        border-top-color: @post-sharing-color-tooltip;
+        left: 50%;
+        top: 100%;
+      }
+    }
+  }
+
+  .post-sharing-option-facebook {
+    background-image: data-uri(@post-sharing-facebook-image);
+  }
+
+  .post-sharing-option-twitter {
+    background-image: data-uri(@post-sharing-twitter-image);
+  }
+
+  .post-sharing-option-tumblr {
+    background-image: data-uri(@post-sharing-tumblr-image);
+  }
+
+  .post-sharing-option-email {
+    background-image: data-uri(@post-sharing-email-image);
+  }
+
+  .post-sharing-option-reddit-pm {
+    background-image: data-uri(@post-sharing-reddit-pm-image);
+  }
+
+  .post-sharing-shareplane {
+    .post-sharing-font-size(@post-sharing-font-small);
+    bottom: 0;
+    color: @post-sharing-color-success;
+    display: none;
+    font-weight: bold;
+    padding: (@margin-x-small* 1px) (@margin-medium * 1px);
+    position: absolute;
+    right: 0;
+    text-transform: uppercase;
+
+    &:before {
+      background-image: data-uri(@post-sharing-shareplane-image);
+      background-size: @post-sharing-shareplane-width @post-sharing-shareplane-height;
+      content: '';
+      height: @post-sharing-shareplane-height;
+      position: absolute;
+      transform: translate(0, 0);
+      width: @post-sharing-shareplane-width;
+    }
+  }
+
+  .post-sharing-buttons {
+    overflow: auto;
+
+    .c-btn {
+      .no-select();
+      margin-left: @margin-x-small * 1px;
+      margin-right: 0;
+      padding: (@margin-x-small * 1px) (@margin-medium * 1px);
+
+      &:focus {
+        box-shadow: 0 0 0 1px @post-sharing-color-button-focus inset;
+        outline: none;
+      }
+    }
+  }
+}
+
+.post-sharing-shareplane-animation() {
+  @keyframe-0-translate-x: 0px;
+  @keyframe-0-translate-y: 0px;
+  @keyframe-0-opacity: 0;
+
+  @keyframe-1-translate-x: 20px;
+  @keyframe-1-translate-y: -10px;
+  @keyframe-1-opacity: 1;
+
+  @keyframe-2-translate-x: -50px;
+  @keyframe-2-translate-y: -60px;
+  @keyframe-2-opacity: 0;
+
+  0% {
+    opacity: @keyframe-0-opacity;
+    transform: translate(@keyframe-0-translate-x, @keyframe-0-translate-y);
+  }
+
+  50% {
+    opacity: @keyframe-1-opacity;
+    transform: translate(@keyframe-1-translate-x, @keyframe-1-translate-y);
+  }
+
+  60% {
+    opacity: @keyframe-1-opacity;
+    transform: translate(@keyframe-1-translate-x, @keyframe-1-translate-y);
+  }
+
+  100% {
+    opacity: @keyframe-2-opacity;
+    transform: translate(@keyframe-2-translate-x, @keyframe-2-translate-y);
+  }
+}
+
+@keyframes post-sharing-shareplane {
+  .post-sharing-shareplane-animation()
+}
+
+@-o-keyframes post-sharing-shareplane {
+  .post-sharing-shareplane-animation()
+}
+
+@-webkit-keyframes post-sharing-shareplane {
+  .post-sharing-shareplane-animation()
+}

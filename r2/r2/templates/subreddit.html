@@ -1,0 +1,109 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.template_helpers import static
+   from r2.lib.strings import strings
+   from r2.lib.utils import timesince
+   from r2.lib.pages import SubscribeButton
+   %>
+<%inherit  file="printable.html"/>
+
+<%namespace file="utils.html" import="plain_link"/>
+
+<%def name="numcol()">
+</%def>
+
+<%def name="entry()">
+<% fullname = thing._fullname %>
+<p class="titlerow">
+  ${plain_link('%s: %s' % (thing.path.rstrip('/'), thing.title), thing.path, _class="title")}
+  %if c.user_is_admin:
+  ${self.admintagline()}
+  %endif
+</p>
+%if thing.public_description_usertext:
+  <div class="description">
+    ${thing.public_description_usertext}
+  </div>
+%endif
+<p class="tagline">
+  ${self.tagline()}
+</p>
+<ul class="flat-list buttons">
+  ${self.buttons()}
+</ul>
+<div class="reportform report-${thing._fullname}"></div>
+</%def>
+
+<%def name="tagline()">
+  %if not thing.score_hidden:
+    ${self.score(thing)},
+  %endif
+  ${_("a community for %(time)s") % dict(time=timesince(thing._date))}
+</%def>
+
+<%def name="sr_type_icon(name, title)">
+  <span class="sr-type-icon sr-type-icon-${name}"
+       title="${title}"
+       alt="${title}"></span>
+</%def>
+
+##this function is used by subscriptionbox.html
+<%def name="permission_icons(sr)">
+  %if sr.spammy():
+    ${self.sr_type_icon("banned", _("banned"))}
+  %else:
+    %if sr.moderator:
+      ${self.sr_type_icon("moderator", _("moderator"))}
+    %elif sr.type in ("restricted", "private"):
+      %if sr.contributor:
+        ${self.sr_type_icon("approved", _("approved submitter"))}
+      %else:
+        ${self.sr_type_icon("restricted", _("not approved"))}
+      %endif
+    %endif 
+
+    %if sr.type in sr.private_types:
+      ${self.sr_type_icon("private", _("private"))}
+    %endif
+
+    %if sr.quarantine:
+      ${self.sr_type_icon("quarantined", _("quarantined"))}
+    %endif
+
+    %if sr.over_18:
+      ${self.sr_type_icon("nsfw", _("NSFW"))}
+    %endif
+  %endif
+</%def>
+
+<%def name="midcol(display=True, cls='')">
+  <div class="midcol">
+    ${SubscribeButton(thing)}
+    ${permission_icons(thing)}
+  </div>
+</%def>
+
+<%def name="child()">
+</%def>
+

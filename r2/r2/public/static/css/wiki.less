@@ -1,0 +1,184 @@
+.transition (@prop: all, @time: 1s, @ease: linear) {
+    -webkit-transition: @prop @time @ease;
+    -moz-transition: @prop @time @ease;
+    -o-transition: @prop @time @ease;
+    -ms-transition: @prop @time @ease;
+    transition: @prop @time @ease;
+}
+
+.wiki-page {
+    // Main content portion of the wiki pages
+    .wiki-page-content {
+        margin: 15px;
+        margin-right: 325px;
+
+        // Wiki page listing 
+        .pagelisting {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: black;
+            padding-left: 25px;
+            ul {
+                list-style: disc;
+                padding: 2px;
+                padding-left: 10px;
+            }
+        }
+
+        // Page action subtitle 
+        .description {
+            padding-bottom: 5px;
+            h2 {
+                color: #222;
+            }
+        }
+
+        // Revision listing 
+        .wikirevisionlisting {
+            .generic-table {
+                width: 100%;
+            }
+            table tr td {
+                padding-right: 15px;
+            }
+            .revision {
+                .transition(opacity, 500ms);
+            }
+            .revision.deleted {
+                opacity: .5;
+                text-decoration: line-through;
+            }
+            .revision.hidden {
+                opacity: .5;
+            }
+            // Opera does not inherit the opacity to the td
+            .revision.hidden td {
+                opacity: inherit;
+            }
+        }
+
+        // Wiki markdown 
+        .wiki.md {
+            max-width: none;
+        }
+
+        // Wiki table of contents 
+        .wiki > .toc > ul {
+            float: right;
+            padding: 11px 22px;
+            margin: 0 0 11px 22px;
+            border: 1px solid #8D9CAA;
+            list-style: none;
+            max-width: 300px;
+        }
+        .wiki > .toc > ul ul {
+            margin: 4px 0;
+            padding-left: 22px;
+            border-left: 1px dotted #cce;
+            list-style: none;
+        }
+        .wiki > .toc > ul li {
+            margin: 0;
+        }
+
+        // Page settings 
+        .fancy-settings .toggle {
+            display: inline-block;
+            padding-right: 15px;
+        }
+
+        // Reason for revision field 
+        #wiki_revision_reason {
+            padding: 2px;
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        // Save page button, save settings button, etc
+        .wiki_button {
+            padding: 2px;
+        }
+
+        .throbber {
+            margin-bottom: -5px;
+        }
+
+        // Submit Discussion button 
+        .discussionlink {
+            display: inline-block;
+            margin-left: 15px;
+            padding-right: 50px;
+            margin-top: 5px;
+            a {
+                padding-left: 15px;
+            }
+        }
+
+        .markhelp {
+            max-width: 500px;
+            font-size: 1.2em;
+            padding: 4px;
+            margin: 5px 0;
+        }
+
+    }
+
+    // Page title 
+    .wikititle {
+        margin-left: 15px;
+        color: #666;
+        display: inline;
+        vertical-align: middle;
+        strong {
+            font-weight: bold;
+        }
+    }
+
+    // Wiki tabs 
+    .pageactions {
+        display: inline-block;
+        font-size: larger;
+        margin-left: 25px;
+        border-radius: 5px;
+        border: 1px solid #8D9CAA;
+        vertical-align: middle;
+        .wikiaction {
+            display: inline-block;
+            margin: 2px;
+            padding-top: 2px;
+            padding-bottom: 3px;
+            border-radius: 3px;
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+        .wikiaction:hover {
+            background-color: #CEE3F8;
+        }
+        .wikiaction-current:hover {
+            background-color: #5F99CF;
+        }
+        .wikiaction-current {
+            color: white;
+            background-color: #5F99CF;
+        }
+    }
+    .source {
+        width: 100%;
+        display: none;
+    }
+    .toggle-source {
+        float: right;
+    }
+}
+
+// Specific wiki page styles
+.wiki-page-config-automoderator {
+  #editform textarea {
+    font-family: "Bitstream Vera Sans Mono", Consolas, monospace;
+  }
+
+  .wiki-page-content pre {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+}

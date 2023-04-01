@@ -1,0 +1,262 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+<%!
+   from r2.lib.filters import websafe
+   from r2.lib.template_helpers import _ws
+ %>
+<%namespace file="utils.html" import="md,_md"/>
+<%
+   clone_class = ''
+   if thing.clone_template:
+     if thing.thing_type == 'comment':
+       clone_class = 'cloneable-comment'
+     else:
+       clone_class = 'cloneable-link'
+%>
+
+<div class="gold-wrap ${clone_class}">
+  <h1 class="gold-banner"><a href="${'/gold' if thing.goldtype != 'creddits' else '/creddits'}">${_('reddit gold')}</a></h1>
+
+  <div class="fancy">
+    <div class="fancy-inner">
+      <div class="fancy-content">
+        <div class="gold-form gold-payment">
+          %if thing.clone_template:
+            <button class="close-button">${_('close')}</button>
+          %endif
+          <div class="container">
+            <h2 class="sidelines"><span>${_('In Summation')}</span></h2>
+
+            <div class="transaction-summary">
+              ${md(thing.summary)}
+
+              <div>
+                ${_md('> By purchasing Reddit Gold, you agree to the [Reddit User Agreement.](/help/useragreement)')}
+              </div>
+
+              %if thing.thing and not thing.clone_template:
+                <div class="gift-message">
+                  ${md(thing.description, wrap=True)}
+                </div>
+              %endif
+
+              %if thing.giftmessage:
+                <p>${_('The following gift note will be attached:')}</p>
+                <div class="gift-message">
+                  ${md(thing.giftmessage, wrap=True)}
+                </div>
+              %endif
+            </div>
+          </div>
+
+          %if thing.clone_template:
+            <ul class="indent">
+              <li>
+                <input type="checkbox" id="signed-false" name="signed" ${'checked' if not c.user.gild_reveal_username else ''}>${_('make my gift anonymous')}
+              </li>
+              <li>
+                <input type="checkbox" id="message" name="message">${_('include a message')}
+              </li>
+              <li>
+                <textarea rows="3" cols="50" id="giftmessage" name="giftmessage" placeholder="${_('enter your message')}" class="hidden giftmessage" maxlength="500">${thing.giftmessage}</textarea>
+              </li>
+            </ul>
+          %endif
+            <div class="buttons">
+              <p>${_("Please select a payment method.")}</p>
+
+              %if thing.can_use_creddits:
+                ${self.creddits_button()}
+              %endif:
+
+              %if thing.paypal_buttonid:
+                ${self.paypal_button()}
+              %endif
+
+              %if thing.coinbase_button_id:
+                ${self.coinbase_button()}
+              %endif
+
+              %if thing.stripe_key:
+                ${self.stripe_button()}
+              %endif
+
+              %if thing.stripe_key and not thing.clone_template:
+                ${self.stripe_form()}
+              %endif
+
+              %if thing.clone_template:
+                <div class="note">
+                  %if not thing.user_creddits:
+                    ${_md("Give gold often? Consider [buying creddits to use](/creddits), they're 40% cheaper if purchased in a set of 12.")}
+                  %endif
+                  ${_md("Would you like to [learn more about giving gold](/gilding)?")}
+                </div>
+              %endif
+          </div>
+          <div class="throbber"></div>
+          <span role="presentation" class="gold-snoo" title="${_('Felicitations on this momentous occasion!')}"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%def name="creddits_button()">
+  <form id="giftgold" action="/api/spendcreddits" method="post"
+        class="gold-checkout creddits-gold"
+        data-vendor="creddits">
+    <input type="hidden" name="months" value="${thing.months}">
+    <input type="hidden" name="passthrough" value="${thing.passthrough}" class="passthrough">
+    <button class="btn gold-button" type="button"><span class="snoo-head"></span>${_("creddits")}</button>
+    <span class="status">
+      <span class="remaining" data-current="${thing.months}" data-total="${thing.user_creddits}" data-template="${websafe(_ws('(use %(current)s of your %(total)s creddits)')) % dict(current='<%- current %>', total='<%- total %>')}">
+      </span>
+    </span>
+  </form>
+</%def>
+
+<%def name="paypal_button()">
+  <form action="https://www.paypal.com/cgi-bin/webscr" method="post"
+        class="gold-checkout"
+        data-vendor="paypal" target="${'_blank' if thing.clone_template else '_top'}">
+    <input type="hidden" name="cmd" value="_s-xclick">
+    <input type="hidden" name="custom" value="${thing.passthrough}" class="passthrough">
+    %if thing.quantity:
+      <input type="hidden" name="quantity" value="${thing.quantity}">
+    %endif
+    <input type="hidden" name="hosted_button_id" value="${thing.paypal_buttonid}">
+    <button type="submit" class="btn gold-button" type="button">${_("PayPal")}</button>
+  </form>
+</%def>
+
+<%def name="stripe_button()">
+  <span class="gold-checkout">
+    <button data-vendor="credit card" class="btn stripe-gold gold-button">${_('Credit Card')}</button>
+    <input type="hidden" name="custom" value="${thing.passthrough}" class="passthrough">
+  </span>
+</%def>
+
+<%def name="base_stripe_form()">
+  <script type="text/javascript" src="https://js.stripe.com/v1/"></script>
+
+  <div id="base-stripe-form"
+        class="gold-checkout"
+        data-vendor="stripe">
+    <div class="stripe-note">
+      <a class="icon" href="https://stripe.com/help/security">powered by stripe</a>
+      <div>${_('Stripe is PCI compliant and your credit card information is sent directly to them.')}</div>
+    </div>
+    <table class="credit-card-input">
+      <tr>
+        <th><label>${_('name')}</label></th>
+        <td><input type="text" autocomplete="off" class="card-name"></td>
+      </tr>
+      <tr>
+        <th><label>${_('card number')}</label></th>
+        <td><input type="text" autocomplete="off" class="card-number"></td>
+      </tr>
+      <tr>
+        <th><label>${_('cvc')}</label></th>
+        <td><input type="text" autocomplete="off" class="card-cvc"></td>
+      </tr>
+      <tr>
+        <th><label>${_('expiration date')}</label></th>
+        <td>
+          <% 
+             import datetime
+             months = ['%02d' % m for m in xrange(1, 13)]
+             years = ['%04d' % y for y in xrange(datetime.datetime.now().year,
+                                                 datetime.datetime.now().year + 25)]
+           %>
+          <select class="card-expiry-month" title=${_('month')}>
+            %for m in months:
+              <option value="${m}">${m}</option>
+            %endfor
+          </select>
+          <select class="card-expiry-year" title=${_('year')}>
+            %for y in years:
+              <option value="${y}">${y}</option>
+            %endfor
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th><label>${_('address line 1')}</label></th>
+        <td><input type="text" class="card-address_line1"></td>
+      </tr>
+      <tr>
+        <th><label>${_('address line 2')}</label></th>
+        <td><input type="text" class="card-address_line2"></td>
+      </tr>
+      <tr>
+        <th><label>${_('city')}</label></th>
+        <td><input type="text" class="card-address_city"></td>
+      </tr>
+      <tr>
+        <th><label>${_('state/province')}</label></th>
+        <td><input type="text" class="card-address_state"></td>
+      </tr>
+      <tr>
+        <th><label>${_('country')}</label></th>
+        <td><input type="text" class="card-address_country"></td>
+      </tr>
+      <tr>
+        <th><label>${_('zip')}</label></th>
+        <td><input type="text" class="card-address_zip" length="12"></td>
+      </tr>
+    </table>
+    <input type="hidden" name="stripePublicKey" value="${thing.stripe_key}">
+    <input type="hidden" name="stripeToken" value="">
+    <button class="btn gold-button stripe-submit">${_('Submit')}</button>
+    <span class="status"></span>
+  </div>
+</%def>
+
+<%def name="stripe_form(display=False)">
+<div id="stripe-payment"
+     class="charge"
+     ${not display and "style='display:none'" or ''}>
+  <input type="hidden" name="pennies" value="${thing.price.pennies}">
+  <input type="hidden" name="months" value="${thing.months}">
+  <input type="hidden" name="period" value="${thing.period}">
+  <input type="hidden" name="passthrough" value="${thing.passthrough}">
+  ${base_stripe_form()}
+</div>
+</%def>
+
+<%def name="coinbase_button()">
+  <button class="btn coinbase-gold gold-button gold-checkout"
+          data-vendor="coinbase"
+          %if not thing.clone_template:
+            onclick="window.open('https://coinbase.com/checkouts/${thing.coinbase_button_id}?c=${thing.passthrough}')"
+          %endif
+          >${_('Bitcoin')}</button>
+  <input type="hidden" name="cbbaseurl" value="https://coinbase.com/checkouts/${thing.coinbase_button_id}">
+  <input type="hidden" name="custom" value="${thing.passthrough}" class="passthrough">
+</%def>
+
+% if not thing.clone_template:
+<script src="//checkout.google.com/files/digital/ga_post.js"
+  type="text/javascript"></script>
+% endif
+

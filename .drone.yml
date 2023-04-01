@@ -1,0 +1,72 @@
+# This file is used by the Drone CI Server and Agents to determine what
+# should happen (if anything) in response to git pushes and pull requests.
+clone:
+  depth: 50
+  recursive: false
+  tags: false
+  # This is explicitly set so that forks retain a constant path.
+  path: /drone/src/github.com/reddit/reddit-public
+
+compose:
+  # Some of these aren't actively used, but are required in that import
+  # side-effects cause connections to services (regardless of whether
+  # the services are interacted with in the tests). Each service is addressable
+  # via 'localhost' through whatever ports the image exposes.
+  postgres:
+    # Temporarily needed for this image + Docker-in-Docker. Expected to
+    # be removed when we upgrade to Drone 0.5.
+    # https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
+    privileged: true
+    image: postgres:9.3.12
+    environment:
+      POSTGRES_USER: reddit
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: reddit
+
+  cassandra:
+    privileged: true
+    # Cassandra 1.x is old enough not to have any official Docker images.
+    # In the meantime, we've got a custom image configured specifically for r2:
+    # https://github.com/reddit/docker-cassandra
+    # We'll move over to the official images when we upgrade to C* 2.x.
+    image: reddit/cassandra:single-1.2.19-v1
+
+  rabbitmq:
+    # NOTE: Using 3.4.x instead of 3.2.4 due to tag availability.
+    image: rabbitmq:3.4
+    environment:
+      RABBITMQ_DEFAULT_VHOST: /
+      RABBITMQ_DEFAULT_USER: reddit
+      RABBITMQ_DEFAULT_PASS: reddit
+
+  memcached:
+    # NOTE: Using 1.4.21 instead of 1.4.17 due to tag availability.
+    image: memcached:1.4.21
+
+  zookeeper:
+    image: jplock/zookeeper:3.4.6
+
+# Build steps are where the setup, compilation, and tests happen.
+build:
+  # This is a fat Docker image with the apt dependencies pre-installed.
+  # https://github.com/reddit/docker-reddit-py
+  # Dependency changes in the install scripts can be optionally mirrored to the
+  # image for speedups, but abstaining from doing so won't break the builds.
+  image: reddit/reddit-py:latest
+  # Always re-pull the image, since we're re-using the same tag.
+  pull: true
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  commands:
+    # Prepares the environment for the test run.
+    - install/drone.sh
+    - cd r2
+    - nosetests -v .
+    - cd ..
+    - ./scripts/stylecheck_git_diff.sh
+
+# These plugins are triggered after a build failure/success.
+notify:
+  slack:
+    webhook_url: $$CI_SLACK_WEBHOOK_URL
+    channel: ci-notifications

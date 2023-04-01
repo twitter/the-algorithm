@@ -1,0 +1,157 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="error_field"/>
+<%namespace name="utils" file="utils.html"/>
+
+
+%if thing.email:
+<form action="/post/update_email" method="post" 
+      onsubmit="return post_form(this, 'update_email')" id="pref-update-email">
+
+  <h1>
+  %if thing.verify:
+    ${_("verify your email")}
+  %else:
+    ${_("update your email")}
+  %endif
+  </h1>
+
+  <div class="spacer">
+    <%utils:round_field title="${_('current password')}" description="${_('(required)')}">
+      <input type="password" name="curpass">
+      ${error_field("WRONG_PASSWORD", "curpass")}
+    </%utils:round_field>
+  </div>
+
+  <%
+     if not c.user.email:
+       description = _("not set")
+       v_link = None
+     elif c.user.email_verified:
+       description = _("verified")
+       v_link = None
+     elif c.user.email_verified is False:
+       description = _("verification pending")
+       v_link = _("click to resend")
+     else:
+       description = _("unverified")
+       v_link = _("click to verify")
+
+     if v_link and not thing.verify:
+       description = "(%s;&#32;<a href='/verify'>%s</a>)" % (description, v_link)
+       description = unsafe(description)
+     else:
+       description = "(%s)" % description
+  %>
+
+  <div class="spacer">
+    <%utils:round_field title="${_('email')}" description="${description}">
+      <input type="text" name="email" value="${getattr(c.user, 'email', '')}">
+      ${error_field("BAD_EMAILS", "email")}
+    </%utils:round_field>
+  </div>
+
+  %if thing.verify and not c.user.email_verified:
+    <div class="spacer">
+      <div class="roundfield-actions">
+        <input type="hidden" name="verify" value="1"/>
+        <input type="hidden" name="dest" value="${thing.dest}">
+        <button type="submit" class="btn">${_('send verification email')}</button>
+        %if thing.subscribe:
+           <a id="subscribe"
+              href="http://reddit.us2.list-manage1.com/subscribe?u=8dd663d8559f5530305877239&amp;id=42fb5066f2&amp"
+              class="c-pull-right">
+             subscribe to our advertising newsletter
+           </a>
+         </div>
+         <script>
+           $('#subscribe').on('click', function(e) {
+             e.preventDefault();
+
+             var $subscribe = $(this);
+             var $email = $subscribe.parents('form').find('[name=email]');
+             var href = $subscribe.attr('href');
+
+             window.open(href + '&MERGE0=' + encodeURIComponent($email.val()), '_blank');
+           });
+         </script>
+        %endif
+      </div>
+  %else:
+    <button type="submit" class="btn">${_('save')}</button>
+  %endif
+  <span class="status error"></span>
+</form>
+%endif
+
+%if thing.email and thing.password:
+<br>
+%endif
+
+%if thing.password:
+<form action="/post/update_password" method="post" 
+      onsubmit="return post_form(this, 'update_password')" id="pref-update-password">
+
+  <h1>${_("update your password")}</h1>
+
+  <div class="spacer">
+    <%utils:round_field title="${_('current password')}" description="${_('(required)')}">
+      <input type="password" name="curpass">
+      ${error_field("WRONG_PASSWORD", "curpass")}
+    </%utils:round_field>
+  </div>
+
+  <div class="spacer">
+    <%utils:round_field title="${_('new password')}">
+      <input type="password" name="newpass">
+      ${error_field("BAD_PASSWORD", "newpass")}
+    </%utils:round_field>
+  </div>
+
+  <div class="spacer">
+    <%utils:round_field title="${_('verify password')}">
+      <input type="password" name="verpass">
+      ${error_field("BAD_PASSWORD_MATCH", "verpass")}
+    </%utils:round_field>
+  </div>
+  <div class="spacer">
+    <%utils:round_field title=''>
+      <input type="checkbox" name="invalidate_oauth" id="invalidate_oauth">
+      <label for="invalidate_oauth">
+        log me out everywhere&nbsp;
+        <sup class="help help-hoverable">?</sup>
+      </label>
+      <div class="hover-bubble help-bubble anchor-top">
+        <p>
+          Changing your password logs you out of all browsers on your computer(s).
+          Checking this box also logs you out of all&nbsp; 
+          <a href="/prefs/apps">apps you have authorized</a>
+          .
+        </p>
+      </div>
+    </%utils:round_field>
+  </div>
+  <button type="submit" class="btn">${_('save')}</button>
+  <span class="status error"></span>
+</form>
+%endif

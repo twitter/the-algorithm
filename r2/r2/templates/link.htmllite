@@ -1,0 +1,127 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="optionalstyle, nsfw_stamp, quarantine_stamp"/>
+
+<%!
+   from pylons.i18n import _, ungettext
+   from r2.lib.template_helpers import get_domain
+%>
+<%inherit file="printable.htmllite" />
+
+<%def name="flair()">
+  %if c.user.pref_show_link_flair:
+    <span class="linkflairlabel"
+        ${optionalstyle("color: #545454; background-color: #f5f5f5; border: 1px solid #dedede; display: inline-block; font-size: x-small; margin-right: 0.5em; padding: 0 2px; max-width: 10em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;")}>
+      ${thing.flair_text}
+    </span>
+  %endif
+</%def>
+
+<%def name="hide_if_appropriate(state)">
+  %if thing.like_cls != state:
+   ${optionalstyle("display: none;")}
+  %endif
+</%def>
+
+<%def name="entry()">
+<% 
+   from r2.lib.strings import Score
+   domain = get_domain(subreddit=False)
+   permalink = "%s://%s%s" % (g.default_scheme, domain, thing.permalink)
+   expanded = request.GET.get("expanded")
+   two_col = request.GET.has_key("twocolumn") if l else False
+ %>
+  ${self.arrows(thing)}
+  <div class="reddit-entry entry ${thing.like_cls}" 
+       %if expanded:
+         ${optionalstyle("margin-left: 58px;")}
+       %else:
+         ${optionalstyle("margin-left: 28px; min-height:32px;")}
+       %endif
+       >
+    %if c.site.link_flair_position == 'left' and thing.flair_text:
+      ${flair()}
+    %endif
+    <a class="reddit-link-title may-blank"
+      ${optionalstyle("text-decoration:none;color:#336699;font-size:small;")}
+       %if thing.is_self:
+         href="${permalink}"
+       %else:
+         href="${thing.href_url}"
+       %endif
+       %if thing.nofollow:
+         rel="nofollow"
+       %endif
+       %if c.link_target:
+         target="${c.link_target}"
+       %endif
+       >
+      ${thing.title}
+    </a>
+    %if c.site.link_flair_position == 'right' and thing.flair_text:
+      ${flair()}
+    %endif
+    %if not expanded:
+      <br />
+    %endif
+    <small 
+       %if expanded:
+         ${optionalstyle("color:gray;margin-left:5px;")}
+       %else:
+         ${optionalstyle("color:gray;")}
+       %endif
+       >
+      %if thing.quarantine:
+        <span class="quarantine-stamp stamp">${quarantine_stamp()}</span>
+      %endif
+      %if thing.nsfw:
+        <span class="nsfw-stamp stamp">${nsfw_stamp()}</span>
+      %endif
+      %if not expanded:
+      <%
+       if thing.hide_score:
+           score_dislikes = score_unvoted = score_likes = unsafe('&bull; points')
+       else:
+           score_dislikes, score_unvoted, score_likes = thing.display_score
+       %>
+      <span class="score dislikes" ${hide_if_appropriate('dislikes')}>
+         ${score_dislikes}
+      </span>
+      <span class="score unvoted" ${hide_if_appropriate('unvoted')}>
+         ${score_unvoted}
+      </span>
+      <span class="score likes" ${hide_if_appropriate('likes')}>
+         ${score_likes}
+      </span>
+      &#32;|&#32;
+      %endif
+      <a class="reddit-comment-link may-blank"
+         ${optionalstyle("color:gray")}
+         %if c.link_target:
+           target="${c.link_target}"
+         %endif
+         href="${permalink}">${thing.comment_label}</a>
+    </small>
+  </div>
+  <div class="reddit-link-end" ${optionalstyle("clear:left; padding:3px;")}></div>
+</%def>

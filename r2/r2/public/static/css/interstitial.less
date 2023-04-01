@@ -1,0 +1,76 @@
+@margin-interstitial-top: 60;
+
+.interstitial {
+  font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  margin: auto;
+  text-align: center;
+  width: 650px;
+}
+
+.modal .interstitial {
+  width: auto;
+
+  .interstitial-image {
+    margin-top: @margin-large * 1px;
+  }
+}
+
+.interstitial-image {
+  margin-bottom: @margin-large * 1px;
+  margin-top: @margin-interstitial-top * 1px;
+}
+
+.interstitial-message .note {
+  color: #a5a4a4;
+  font-size: @font-small;
+}
+
+.interstitial .md {
+  h3 {
+    .md-font-size(@font-small, @font-x-large, @line-x-large);
+    .md-margins(@font-x-large, @margin-large, @margin-large);
+  }
+
+  h5,
+  p {
+    .md-font-size(@font-small, @font-large, @line-large);
+  }
+
+  p { 
+    font-weight: 300;
+  }
+}
+
+.interstitial-subreddit-description {
+  background-color: lighten(@color-pale-grey, 5%);
+  margin-bottom: @margin-large * 1px;
+  padding: (@margin-small * 1px) (@margin-large * 1px);
+
+  h5 {
+    margin-bottom: @margin-large * 1px;
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0;
+    text-align: left;
+  }
+}
+
+.interstitial .buttons {
+  .display-flex();
+  .justify-content(center);
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: @margin-xx-large * 1px;
+  width: 400px;
+
+  .c-btn {
+    .flex(0 1 75%);
+    font-weight: 500;
+    margin-left: @margin-x-small * 1px;
+    margin-right: @margin-x-small * 1px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+}

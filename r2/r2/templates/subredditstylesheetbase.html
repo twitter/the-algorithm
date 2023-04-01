@@ -1,0 +1,51 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="printablebuttons.html" import="ynbutton"/>
+
+<%def name="make_li(name='', img=None, prototype=False, mod=True)">
+  <li ${"style='display:none'" if img is None else ""}>
+    <a href="${img}" class="preview">
+      <img id="img-preview-${name}" src="${img}" 
+           alt="Image ${name}" title="click to preview"/>
+    </a>
+    <div class="description">
+      <b class="img-name">
+        ${name}
+      </b>
+      <br/>
+      <span>link:</span>
+      <pre class="img-url">url(%%${name}%%)</pre>
+      %if mod:
+        <br/>
+        <a href="javascript:void(0)" onclick="return paste_url(this)">
+          ${_("paste into stylesheet")}
+        </a>
+        <br/>
+        ${ynbutton(_("delete this image"), _("deleted"),
+                   "delete_sr_img", callback = "delete_img",
+                    hidden_data = dict(img_name = name))}
+      %endif
+    </div>
+  </li>
+</%def>
+

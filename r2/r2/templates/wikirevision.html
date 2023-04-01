@@ -1,0 +1,96 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="timestamp"/>
+<%namespace file="printablebuttons.html" import="ynbutton" />
+
+<%!
+   from urllib import quote
+%>
+
+<tr class="revision
+    %if thing._hidden:
+       hidden
+    %endif
+    %if thing.admin_deleted:
+        deleted
+    %endif
+    ">
+    
+        %if thing.show_compare:
+            <td style="white-space: nowrap;">
+                <input type="radio" name="v1" value="${thing._id}" checked="yes">
+                <input type="radio" name="v2" value="${thing._id}" checked="yes">
+            </td>
+        %endif
+    
+    <td style="white-space: nowrap;">
+        ${timestamp(thing.date, live=True, include_tense=True)}
+    </td>
+    
+    %if not thing.show_extended:
+        <td>
+            <a href="${c.wiki_base_url}/${thing.page}">${thing.page}</a>
+        </td>
+    %endif
+    
+    <td>
+        <a href="${c.wiki_base_url}/${thing.page}?v=${thing._id}">view</a>
+    </td>
+    
+    <td>
+        ${thing.printable_author}
+    </td>
+    
+    <td style="font-style: italic;">
+        ${thing._get('reason')}
+    </td>
+   
+    %if thing.show_extended:
+        <td>
+            <a href="#" class="revision_hide access-required"
+               data-revision="${thing._id}"
+               data-type="wikipage"
+               data-event-action="wikirevise"
+               data-event-detail="hide"
+               >hide</a>
+        </td>
+        <td class="wiki_revert" style="white-space: nowrap;">
+            ${ynbutton(_("revert here"), 
+                       _("done"),
+                       quote("..%s/revert" % c.wiki_api_url), 
+                       hidden_data=dict(revision=thing._id, page=thing.page), 
+                       post_callback="$.refresh",
+                       event_target='wikipage',
+                       event_action='wikirevise',
+                       event_detail='revert'
+                      )
+             }
+        </td>
+    %endif
+
+    %if c.user_is_admin:
+        <td>
+            <a href="#" class="revision_delete" data-revision="${thing._id}">delete</a>
+        </td>
+    %endif
+</tr>

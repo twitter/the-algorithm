@@ -1,0 +1,99 @@
+@infobar-legacy-color: #f6e69f;
+@infobar-legacy-color-border: orange;
+@infobar-color: #fff7d7;
+@infobar-color-border: darken(@infobar-color, 32%);
+@infobar-color-text: @color-semi-black;
+@infobar-padding: unit(@margin-small, px);
+@infobar-min-text-height: unit(@line-x-small, px) + unit(2 * @margin-x-small, px);
+@infobar-icon-size: 2 * @infobar-padding + @infobar-min-text-height;
+
+.infobar {
+  background-color: @infobar-legacy-color;
+  border-color: @infobar-legacy-color-border;
+  border-style: solid;
+  border-width: 1px;
+  font-size: small;
+  margin: 5px 305px 5px 0px;
+  padding: 5px 10px;
+
+  img {
+    display: inline;
+    vertical-align: middle;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+}
+
+.reddit-infobar {
+  .box-sizing(border-box);
+  background-color: @infobar-color;
+  border-color: @infobar-color-border;
+  border-style: solid;
+  border-width: 1px;
+  margin-bottom: @infobar-padding;
+  margin-left: 0;
+  margin-top: unit(@margin-x-small, px);
+  overflow: auto;
+  padding: @infobar-padding;
+  position: relative;
+
+  .md {
+    color: @infobar-color-text;
+  }
+
+  &.with-icon {
+    min-height: @infobar-icon-size;
+    padding-left: @infobar-padding + @infobar-icon-size;
+
+    &:before {
+      content: '';
+      display: block;
+      width: @infobar-icon-size;
+      height: 100%;
+      background-color: @infobar-color-border;
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-position: center;
+    }
+  }
+}
+
+.locked-infobar:before {
+  @1x: url('../infobar-icon-lock.png');
+  @2x: url('../infobar-icon-lock_2x.png');
+  @2x-bg-size: 20px 25px;
+  .hdpi-bg-image(@1x: @1x, @2x: @2x, @2x-bg-size);
+}
+
+.archived-infobar {
+  @archived-infobar-color: #FCFCFB;
+  @archived-infobar-color-border: @color-grey;
+  background-color: @archived-infobar-color;
+  border-color: @archived-infobar-color-border;
+
+  &.with-icon:before {
+    background-color: @archived-infobar-color-border;
+    @1x: url('../infobar-icon-archived.png');
+    @2x: url('../infobar-icon-archived_2x.png');
+    @2x-bg-size: 25px 24px;
+    .hdpi-bg-image(@1x: @1x, @2x: @2x, @2x-bg-size);
+  }
+}
+
+.timeout-infobar {
+  @timeout-infobar-color: #fff0f0;
+  @timeout-infobar-color-border: #e70028;
+  background-color: @timeout-infobar-color;
+  border-color: @timeout-infobar-color-border;
+
+  &.with-icon:before {
+    @1x: url('../infobar-icon-banhammer.png');
+    @2x: url('../infobar-icon-banhammer_2x.png');
+    @2x-bg-size: 20px 27px;
+    .hdpi-bg-image(@1x: @1x, @2x: @2x, @2x-bg-size);   
+    background-color: @timeout-infobar-color-border;
+  }
+}

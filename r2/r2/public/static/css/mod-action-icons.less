@@ -1,0 +1,51 @@
+@mod-action-icon-size: 16px;
+
+.mod-action-icon {
+    display: inline-block;
+    width: @mod-action-icon-size;
+    height: @mod-action-icon-size;
+    background-position: center;
+}
+
+.mod-action-icon-delete {
+    .hdpi-bg-image(@1x: url(../mod-action-icon-delete.png),
+                   @2x: url(../mod-action-icon-delete_2x.png),
+                   @2x-bg-size: @mod-action-icon-size);
+    
+    &:hover,
+    .mod-action-deleting & {
+        .hdpi-bg-image(@1x: url(../mod-action-icon-delete-active.png),
+                       @2x: url(../mod-action-icon-delete-active_2x.png),
+                       @2x-bg-size: @mod-action-icon-size);
+    }
+}
+
+.mod-action-icon-edit {
+    .hdpi-bg-image(@1x: url(../mod-action-icon-edit.png),
+                   @2x: url(../mod-action-icon-edit_2x.png),
+                   @2x-bg-size: @mod-action-icon-size);
+
+    &:hover {
+        .hdpi-bg-image(@1x: url(../mod-action-icon-edit-active.png),
+                       @2x: url(../mod-action-icon-edit-active_2x.png),
+                       @2x-bg-size: @mod-action-icon-size);
+    }
+}
+
+.mod-action-icon-add {
+    .hdpi-bg-image(@1x: url(../mod-action-icon-add.png),
+                   @2x: url(../mod-action-icon-add_2x.png),
+                   @2x-bg-size: @mod-action-icon-size);
+}
+
+.mod-action-icon-cancel {
+    .hdpi-bg-image(@1x: url(../mod-action-icon-cancel.png),
+                   @2x: url(../mod-action-icon-cancel_2x.png),
+                   @2x-bg-size: @mod-action-icon-size);
+}
+
+.mod-action-icon-confirm {
+    .hdpi-bg-image(@1x: url(../mod-action-icon-confirm.png),
+                   @2x: url(../mod-action-icon-confirm_2x.png),
+                   @2x-bg-size: @mod-action-icon-size);
+}

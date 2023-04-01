@@ -1,0 +1,91 @@
+.c-form-control {
+    .box-sizing(border-box);
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    height: @input-height-base;
+    line-height: (@input-height-base - (@padding-base-vertical * 2 + 2));
+    padding: @padding-base-vertical @padding-base-horizontal;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 1px 1px 2px -1px rgba(0,0,0,0.15);
+    .transition-shorthand(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+    &:focus {
+        border-color: @input-focus-color;
+        outline: 0;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 4px @input-focus-color;
+    }
+
+    .input-placeholder();
+
+    textarea& {
+        height: auto;
+        resize: vertical;
+    }
+}
+
+.c-form-group {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.c-form-inline {
+    .c-form-group {
+        display: inline-block;
+        vertical-align: top;
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    .c-form-control {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
+.c-submit-group {
+    margin-top: @input-height-base;
+}
+
+.c-radio,
+.c-checkbox {
+    position: relative;
+    display: block;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+    label {
+        font-weight: normal;
+        cursor: pointer;
+    }
+
+    &.c-input-height {
+        min-height: @input-height-base;
+    }
+}
+
+.c-radio input[type="radio"],
+.c-checkbox input[type="checkbox"] {
+    margin-right: .5em;
+    line-height: normal;
+
+    &:focus {
+        outline: thin dotted;
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+    }
+}
+
+.c-help-block {
+    display: block;
+
+    .c-checkbox & {
+        margin-top: 5px;
+    }
+
+    &.c-help-block-toggle {
+        display: none;
+    }
+}

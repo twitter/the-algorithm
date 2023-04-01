@@ -1,0 +1,203 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+  from r2.lib.filters import keep_space
+  from r2.lib.template_helpers import add_sr, static
+  import os
+
+%>
+<%namespace file="utils.html" import="error_field, image_upload"/>
+<%namespace file="subredditstylesheetbase.html" import="make_li"/>
+
+<div class="stylesheet-customize-container">
+  <form
+     onsubmit="return post_form(this, 'subreddit_stylesheet')"
+     name="subreddit_stylesheet" id="subreddit_stylesheet"
+     class="pretty-form sr-form"
+     action="/post/subreddit_stylesheet" method="post" >
+    
+  <input type="hidden" name="r"  value="${thing.site.name}" />
+  <input type="hidden" name="op"  value="" />
+
+  <h2>${_("stylesheet")}</h2>
+  <div class="sheets">
+    <div class="col">
+      <div>
+        <textarea
+           rows="20"
+           cols="20"
+           id="stylesheet_contents"
+           name="stylesheet_contents"
+           >
+          ${keep_space(thing.stylesheet_contents) or ''}
+        </textarea>
+        <div>
+            <label for="reason">${_('reason for revision')}</label>
+            <input type="text" name="reason" maxlength="256">
+            % if thing.site.prev_stylesheet:
+                <span class="btn right"><a target="_blank" href="${add_sr("/wiki/revisions/config/stylesheet/")}">${_("see previous versions")}</a></span>
+            % endif
+        </div>
+      </div>
+    </div>
+    <div class="clearleft"></div>
+    <div class="buttons">
+      <button class="btn" name="save" type="submit" 
+             onclick="this.form.op.value='save'; return true;">
+        ${_('save')}
+      </button>
+      <button class="btn" name="preview" type="submit" 
+             onclick="this.form.op.value='preview'; return true;">
+        ${_('preview')}
+      </button>
+      <span class="status error"></span>
+    </div>
+  </div>
+  <div class="errors" style="display:none">
+    <h2>${_("errors")}</h2>
+    <ul><li></li>
+      <!-- populated from AJAX requests to /api/subreddit_stylesheet -->
+    </ul>
+  </div>
+  
+  </form>
+
+  <div id="preview-table" style="display:none">
+    <h2><a name="preview">${_("preview")}</a></h2>
+    <table>
+      <tr>
+        <th>${_("normal link")}</th>
+        <td id="preview_link_normal"></td>
+      </tr>
+      <tr>
+        <th>${_("compressed link")}</th>
+        <td id="preview_link_compressed"></td>
+      </tr>
+      <tr>
+        <th>${_("link with thumbnail")}</th>
+        <td id="preview_link_media"></td>
+      </tr>
+      <tr>
+        <th>${_("stickied link")}</th>
+        <td id="preview_link_stickied"></td>
+      </tr>
+      <tr>
+        <th>${_("comment")}</th>
+        <td id="preview_comment"></td>
+      </tr>
+      <tr>
+        <th>${_("gilded comment")}</th>
+        <td id="preview_comment_gilded"></td>
+      </tr>
+    </table>
+  </div>
+
+  %if thing.allow_image_upload:
+    <div id="images">
+      <h2><a name="images">${_("images")}</a></h2>
+
+    <%call expr="image_upload('/api/upload_sr_img', '', 
+                                onchange='return file_changed(this)',
+                                label = _('image file'), ask_type=True)">
+      
+      <br/>
+      <label for="img-name">${_("new image name:")}</label>
+      <input id="img-name" name="name" value="" type="text"/>
+      ${error_field("BAD_CSS_NAME", "name")}
+      <br/>
+      <span class="little gray">
+        ${_("(image names should consist of alphanumeric characters and '-' only)")}
+      </span>
+    </%call>
+  <p class="error">
+    ${_("Note: any changes to images here will be reflected immediately on reload and cannot be undone.")}
+  </p>
+      <script type="text/javascript">
+        /* <![CDATA[ */
+          function create_new_image(name) {
+                var list = $(".image-list:first");
+                var new_li = list.children("li:first")
+                    .clone(true).attr("id", "")
+                    .find(".img-name").html(name).end()
+                    .find(".img-url").html("url(%%" + name + "%%)").end()
+                    .find("form input[name=img_name]").val(name).end()
+                    .find("img").attr("id", "img-preview-" + name).end();
+                
+                list.append(new_li);
+                img = new_li.find("img");
+                
+                $("#old-names").append("<option>" + name + "</option>");
+                return img;           
+          }
+
+          function on_image_success(img) {
+             $(img).parents("li:first").fadeIn();
+             $(img).parent("a").attr("href", $(img).attr("src"));
+          }
+
+          function paste_url(source) {
+              var txt = $(source).siblings("pre:first").html();
+              $("#stylesheet_contents").insertAtCursor(txt);
+              return false; 
+          }
+          function delete_img(button) {
+              $(button).parents("li:first").fadeOut(function() {
+                  $(this).remove();
+              })
+          }
+          function file_changed(file_input) {
+              $("#submit-header-img").show();
+              $(".img-status").html("");
+              if(file_input.value) {
+                  if(! $('#img-name').val()) {
+                     var f = file_input.value
+                          .replace(/.*[\/\\]/, "").split('.')[0]
+                          .replace(/[ _]/g, "-");
+                      $('#img-name').val(f);
+                  }
+
+                  var ext = file_input.value
+                      .split('.').pop().toLowerCase()
+                      .replace("jpeg", "jpg");
+                  if (ext == 'png' || ext == 'jpg') {
+                      $('input:radio[name=img_type]').attr('checked', false);
+                      $('input:radio[name=img_type][value="' + ext + '"]').attr('checked', true);
+                  }
+              }
+          }
+      /* ]]> */
+      </script>
+      <ul id="image-preview-list" class="image-list">
+        ${make_li(prototype=True)}
+        %for name, url in thing.images.iteritems():
+           ${make_li(name=name, img=url)}
+        %endfor
+      </ul>
+
+      <iframe src="about:blank" width="600" height="200" style="display: none;"
+              name="upload-iframe" id="upload-iframe"></iframe>
+      
+    </div>
+  %endif
+</div>
+

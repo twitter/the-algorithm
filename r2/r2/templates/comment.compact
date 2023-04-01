@@ -1,0 +1,128 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    from r2.config import feature
+    from r2.lib.pages import WrappedUser
+    from r2.lib.template_helpers import add_sr, _wsf
+%>
+<%namespace file="printable.compact" import="delete_report_buttons"/>
+<%namespace file="printable.html" import="arrow, score, thing_css_rowclass"/>
+<%namespace file="utils.html" import="plain_link, nsfw_stamp, quarantine_stamp" />
+<%namespace file="utils.compact" import="icon_button" />
+<%namespace file="printablebuttons.html" import="simple_button"/>
+
+<div class="thing comment id-${thing._fullname} ${thing_css_rowclass(thing)}">
+  %if not thing.deleted:
+    <p class="parent"><a name="${thing._id36}"></a></p>
+  %endif
+  %if c.profilepage:
+    %if thing.link: 
+      %if thing.link.title:
+           %if thing.link.is_self:
+             <a href="${add_sr(thing.link.url)}" class="title">
+           %else:
+             <a href="${thing.link.url}" class="title">
+           %endif
+          ${thing.link.title}
+        </a>
+      %else:
+          ${thing.link.url}
+      %endif
+    %endif
+    %if thing.subreddit.quarantine:
+      <span class="quarantine-warning">
+        ${quarantine_stamp()}
+      </span>
+    %endif
+    %if thing.nsfw:
+      <span class="nsfw-warning">
+        ${nsfw_stamp()}
+      </span>
+    %endif
+  %endif
+  <Div class="midcol">
+    ${arrow(thing, 1, thing.likes)}
+    ${arrow(thing, 0, thing.likes == False)}
+  </div>
+  <% 
+     like_cls = "unvoted"
+     if getattr(thing, "likes", None):
+         like_cls = "likes"
+     elif getattr(thing, "likes", None) is False:
+         like_cls = "dislikes"
+   %>
+  <div class="entry ${like_cls}">
+    <div class="tagline">
+     ${WrappedUser(thing.author, thing.attribs, thing, gray=collapse)}&#32;
+     %if thing.score_hidden:
+       [${_("score hidden")}]
+     %else:
+       ${score(thing, tag='span')}
+     %endif
+     &#32;
+     ## thing.timesince is a cache stub
+     ${_wsf("%(timeago)s", timeago=thing.timesince)}
+     % if thing.gilded_message:
+       <span class="gilded-icon" title="${thing.gilded_message}" data-count="${thing.gildings}">
+         % if thing.gildings > 1:
+           x${thing.gildings}
+         % endif
+       </span>
+     % endif
+    </div>
+    <a href="javascript:void(0)" class="options_link"></a>
+    ${thing.usertext}
+        <div class="clear options_expando hidden">
+            <%
+                is_author = (c.user_is_loggedin and thing.author and c.user.name == thing.author.name)
+            %>
+            %if c.user_is_loggedin:
+                ${icon_button("Reply", "reply-icon", onclick="return reply(this)", outer_class="reply-button")}
+            %endif
+            ${icon_button("Collapse", "collapse-icon", outer_class="collapse-button")}
+            ${icon_button("Permalink", "permalink-icon", thing.permalink + ".compact")}
+            %if c.profilepage:
+                ${icon_button("Context", "context-icon", thing.permalink + ".compact?context=3")}
+            %elif thing.parent_permalink:
+                ${icon_button("Parent", "parent-icon", thing.parent_permalink)}
+            %endif
+            %if thing.is_author:
+                ${icon_button("Edit", "edit-icon", onclick="return edit_usertext(this)", outer_class="edit-button")}
+            %endif
+        </div>
+  </div>
+  <div class="commentspacer"></div>
+  %if thing.link.contest_mode and hasattr(thing, "child") and not thing.parent_id:
+    <button class="showreplies newbutton"
+        onclick="$(this).hide();$(this).parent().find('.noncollapsed').show();return false;">
+        ${_("show replies")}
+    </button>
+    <div class="child noncollapsed" style="display:none">
+  %else:
+    <div class="child">
+  %endif
+  %if thing.childlisting:
+    ${thing.childlisting}
+  %endif
+  </div>
+</div>

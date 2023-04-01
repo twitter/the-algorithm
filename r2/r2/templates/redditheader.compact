@@ -1,0 +1,126 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.template_helpers import display_link_karma, header_url
+   from r2.models.subreddit import DefaultSR, FakeSubreddit
+   
+ %>
+<%namespace file="utils.html" import="plain_link, img_link, separator, logout"/>
+
+<%
+    from r2.lib.menus import PageNameNav
+    toolbars = thing.toolbars
+    nav = "mobile"
+    if toolbars and isinstance(toolbars[0], PageNameNav):
+        nav = toolbars[0]
+        toolbars = toolbars[1:]
+    nav = thing.short_title or nav
+ %>
+<div id="preload">
+    <div class="commentcount"><div class="comments"></div><div class="comments preloaded"></div></div>
+</div>
+<div id="topbar">
+  <div class="left">
+   <%
+        d = DefaultSR()
+        if c.site.header and c.allow_styles and not c.site.quarantine:
+            header_img = header_url(c.site.header)
+            header_size = c.site.header_size
+            header_title = c.site.header_title
+        else:
+            header_img = header_url(d.header)
+            header_size = None
+            header_title = d.header_title
+    %>
+    ${img_link(c.site.name, header_img, '/', _id = "header-img-a", img_id = 'header-img', title = header_title, size = header_size)}
+  </div>
+  <h1>${nav}</h1>
+  <div class="right">
+    %if c.user_is_loggedin:
+      <%
+         if c.have_messages:
+           mail_img_class = 'havemail'
+           mail_path = '/message/unread/'
+         else:
+           mail_img_class = 'nohavemail'
+           mail_path = '/message/inbox/'
+      %>
+      ${plain_link('', mail_path, _sr_path=False, _class=mail_img_class, _id='mail')}
+      %if c.user_is_loggedin and c.user.is_moderator_somewhere:
+        <%
+            mail_path = '/message/moderator/'
+            if c.have_mod_messages:
+                mail_img_class = 'havemail'
+            else:
+                mail_img_class = 'nohavemail'
+        %>
+        ${plain_link('', mail_path, _sr_path=False, _class=mail_img_class, _id='modmail')}
+      %endif
+    %endif
+    <a class="topbar-options" href="#" id="topmenu_toggle"></a>
+  </div>
+  <div id="top_menu">
+    %if c.user_is_loggedin:
+    <div class="menuitem">
+      ${plain_link(c.user.name, "/user/%s/" % c.user.name, _sr_path=False)}
+      &nbsp;(<b>${display_link_karma(c.user.link_karma)}</b>)
+    </div>
+    <div class="menuitem">
+      ${plain_link("subreddits", "/subreddits/mine", _sr_path=False)}
+    </div>
+    <div class="menuitem">
+      ${plain_link("submit", "/submit", _sr_path=False)}
+    </div>
+    %if g.auth_provider.is_logout_allowed():
+    <div class="menuitem bottm-bar">
+      ${logout(dest=request.fullpath)}
+    </div>
+    % endif
+   %else:
+    <div class="menuitem">
+      ${plain_link("log in", "/login", _sr_path=False)}
+    </div>
+    <div class="menuitem bottm-bar">
+      ${plain_link("sign up", "/register", _sr_path=False)}
+    </div>
+    <div class="menuitem">
+      ${plain_link("subreddits", "/subreddits/", _sr_path=False)}
+    </div>
+   %endif
+    <div class="menuitem">
+      ${plain_link("search", "/search")}
+    </div>
+    %if not isinstance(c.site, FakeSubreddit):
+    <div class="menuitem">
+      ${plain_link("sidebar", "/about/sidebar")}
+    </div>
+    %endif
+  </div>
+</div>
+%if toolbars:
+  <div class="subtoolbar">
+    %for toolbar in toolbars:
+      ${toolbar}
+    %endfor
+  </div>
+%endif

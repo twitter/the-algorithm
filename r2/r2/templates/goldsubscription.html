@@ -1,0 +1,73 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="goldpayment.html" import="base_stripe_form"/>
+
+%if not (thing.has_stripe_subscription or thing.has_paypal_subscription):
+<div class="error">
+    ${_("your account doesn't have a gold subscription.")}
+</div>
+%endif
+
+%if thing.has_stripe_subscription:
+<div class="gold-subscription">
+  ${thing.text}
+
+  <div class="buttons">
+    <button class="edit-button" onclick="$('#stripe-payment').toggle()">
+      ${_("use different card")}
+    </button>
+
+    <button class="cancel-button" onclick="$('#stripe-cancel').toggle()">
+        ${_("cancel subscription")}
+    </button>
+
+    <span id="stripe-cancel" style='display:none'>
+      <input type="hidden" name="user" value="${thing.user_fullname}">
+      <span class="option error">
+        ${_("are you sure?")}
+        &#32;<a href="javascript:void(0)" class="yes"
+           onclick="post_form('#stripe-cancel', 'cancel_subscription')">
+          ${_("yes")}
+        </a>&#32;/&#32;
+        <a href="javascript:void(0)" class="no"
+           onclick="$('#stripe-cancel').hide()">${_("no")}</a>
+      </span>
+      <span class="status"></span>
+    </span>
+  </div>
+
+  <div class="gold-form">
+    <div class="modify" id="stripe-payment" style='display:none'>
+      <div class="roundfield">
+        ${base_stripe_form()}
+      </div>
+    </div>
+  </div>
+</div>
+%endif
+
+%if thing.has_paypal_subscription:
+<div class="gold-subscription">
+    ${_("you have a paypal gold subscription. go to %(paypal)s to manage it.") % dict(paypal=thing.paypal_url)}
+</div>
+%endif

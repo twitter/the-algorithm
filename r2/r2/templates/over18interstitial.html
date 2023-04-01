@@ -1,0 +1,58 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+  from r2.lib.template_helpers import static 
+%>
+
+<%namespace file="utils.html" import="submit_form"/>
+<%namespace name="utils" file="utils.html"/>
+
+<%inherit file="interstitial.html"/>
+
+<%def name="interstitial_image_attrs()">
+  src="${static('interstitial-image-over18.png')}"
+  alt="${_('over 18')}"
+</%def>
+
+<%def name="interstitial_title()">
+  ${_("You must be 18+ to view this community")}
+</%def>
+
+<%def name="interstitial_message()">
+  <p>
+    ${_("You must be at least eighteen years old to view this content. Are you over eighteen and willing to see adult content?")}
+  </p>
+</%def>
+
+<%def name="interstitial_buttons()">
+  <%utils:submit_form _class="pretty-form">
+    <div class="buttons">
+      <button class="c-btn c-btn-primary" type="submit" name="over18" value="no">
+        ${_("no thank you")}
+      </button>
+      <button class="c-btn c-btn-primary" type="submit" name="over18" value="yes">
+        ${_("continue")}
+      </button>
+    </div>
+  </%utils:submit_form>
+</%def>

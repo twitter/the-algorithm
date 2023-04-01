@@ -1,0 +1,173 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.config import feature
+   from r2.lib.strings import strings, Score
+   from r2.lib.pages import WrappedUser, UserText
+   from r2.lib.template_helpers import _ws, _wsf, format_html
+ %>
+
+<%namespace file="utils.html" import="plain_link, thing_timestamp, text_with_links"/>
+<%namespace file="printablebuttons.html" import="ynbutton, state_button" />
+<div class="titlebox multi-details" data-path="${thing.multi.path}">
+  <h1 class="hover redditname">
+    <a href="${thing.multi.path}">${_('%s subreddits') % thing.multi.name}</a><div class="throbber"></div>
+  </h1>
+  <h2><a href="/user/${thing.multi.owner.name}">${_('curated by /u/%s') % thing.multi.owner.name}</a></h2>
+  <div class="gray-buttons settings">
+    %if thing.can_edit:
+      <div class="visibility-group">
+        <label><input type="radio" name="visibility" value="private" ${'checked' if thing.multi.visibility == 'private' else ''}>${_('private')}</label>
+        <label><input type="radio" name="visibility" value="public" ${'checked' if thing.multi.visibility == 'public' else ''}>${_('public')}</label>
+        %if feature.is_enabled('multireddit_customizations') or thing.multi.visibility == 'hidden':
+          <label><input type="radio" name="visibility" value="hidden" ${'checked' if thing.multi.visibility == 'hidden' else ''}>${_('hidden')}</label>
+        %endif
+      </div>
+      <div class="spacer gray-buttons settings">
+        %if thing.can_copy:
+          <button class="show-copy">${_('copy')}</button>
+        %endif
+        %if thing.can_rename:
+          <button class="show-rename">${_('rename')}</button>
+        %endif
+        <button class="delete">${_('delete')}</button>
+      </div>
+      %if feature.is_enabled('multireddit_customizations'):
+      <div>
+        <select name="key_color">
+          %if thing.multi.key_color not in thing.color_options:
+            <option selected value="${thing.multi.key_color}">${_('custom')}</option>
+          %endif
+          %for color, name in thing.color_options.iteritems():
+            <option ${'selected' if color == thing.multi.key_color else ''} value="${color}">${_(name)}</option>
+          %endfor
+        </select>
+        <select name="icon_name">
+          <option ${'' if thing.multi.icon_id else 'selected'} value="">${_('default')}</option>
+          %for icon_name in thing.icon_options:
+            <option ${'selected' if icon_name == thing.multi.icon_id else ''} value="${icon_name}">${icon_name}</option>
+          %endfor
+        </select>
+      </div>
+      %endif
+    %else:
+      %if thing.can_copy:
+        <button class="show-copy">${_('create a copy')}</button>
+      %endif
+    %endif
+  </div>
+
+  %if thing.can_copy:
+    <form class="copy-multi">
+      <input type="text" class="multi-name" placeholder="${_('copy name')}"><button class="copy">${_('copy')} &rsaquo;</button>
+      <div class="throbber"></div>
+      <div class="error copy-error"></div>
+    </form>
+  %endif
+
+  %if thing.can_rename:
+    <form class="rename-multi">
+      <p class="warning">${_('warning: renaming a multi will break any links and references to the old name.')}</p>
+      <input type="text" class="multi-name" placeholder="${_('new name')}"><button class="rename">${_('rename')} &rsaquo;</button>
+      <div class="throbber"></div>
+      <div class="error rename-error"></div>
+    </form>
+  %endif
+
+  <div class="description">
+    ${UserText(None, text=thing.description_md, post_form=None, editable=True, include_errors=False)}
+    %if thing.can_edit:
+      <div class="gray-buttons settings">
+        <button class="edit-description">${_('edit description')}</button>
+
+        %if thing.share_url:
+          <a class="share-in-sr" href="${thing.share_url}">${_('share')} &rsaquo;</a>
+        %endif
+      </div>
+    %endif
+  </div>
+
+  <% sr_count = format_html('<span class="count">%s</span>&#32;', len(thing.srs)) %>
+  <h3>${_wsf('%(count)s subreddits in this multi:', count=sr_count)}</h3>
+  <ul class="subreddits">
+  %for sr in thing.srs:
+    <li data-name="${sr.name}">
+      <a href="/r/${sr.name}">/r/${sr.name}</a>
+      <button class="remove-sr">${_('remove')}</button>
+    </li>
+  %endfor
+  </ul>
+
+  %if thing.can_edit:
+    <form class="add-sr">
+      ${thing.subreddit_selector}
+      <div class="error add-error"></div>
+    </form>
+  %endif
+
+  <div class="bottom">
+    %if thing.multi.owner:
+      ${_wsf("created by %(user)s", user=WrappedUser(thing.multi.owner))}
+    %endif
+
+    <span class="age">
+      ${_("a multireddit for")}&#32;${thing_timestamp(thing.multi)}
+    </span>
+  </div>
+
+  <div id="multi-recs" class="recommend-box">
+
+    <div class="recs">
+      <div>
+        <h1>
+          ${_("people also added:")}
+        </h1>
+      </div>
+      <ul class="recommendations"></ul>
+      <span class="more">${_("more suggestions")}</span>
+    </div>
+
+    <div class="endoflist">
+      <h1>${_("no more suggestions!")}</h1>
+      <div class="heading">${_("would you like to...")}</div>
+      <ul>
+        <li>
+          <a href="/r/ModeratorDuck/wiki/subreddit_classification" target="_blank">
+            ${_("check out subreddits by category")}
+          </a>
+        </li>
+        <li>
+          <a href="/r/random" target="_blank">
+            ${_("explore a random subreddit")}
+          </a>
+        </li>
+        <li>
+          <a class="reset">
+            ${_("see the suggestions again")}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

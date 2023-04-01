@@ -1,0 +1,150 @@
+.c-has-feedback {
+    position: relative;
+}
+
+.c-has-error {
+
+    .c-tooltip.right .tooltip-arrow {
+        border-right-color: @tooltip-danger-arrow-color;
+    }
+
+    .c-tooltip.left .tooltip-arrow {
+        border-left-color: @tooltip-danger-arrow-color;
+    }
+
+    .c-tooltip.top-right .tooltip-arrow,
+    .c-tooltip.top .tooltip-arrow {
+        border-top-color: @tooltip-danger-arrow-color;
+    }
+
+    .c-tooltip.bottom .tooltip-arrow {
+        border-bottom-color: @tooltip-danger-arrow-color;
+    }
+
+    .tooltip-inner {
+        background-color: @tooltip-danger-bg;
+    }
+
+}
+
+.c-has-success {
+
+    .c-tooltip.right .tooltip-arrow {
+        border-right-color: @tooltip-success-arrow-color;
+    }
+
+    .c-tooltip.left .tooltip-arrow {
+        border-left-color: @tooltip-success-arrow-color;
+    }
+
+    .c-tooltip.top-right .tooltip-arrow,
+    .c-tooltip.top .tooltip-arrow {
+        border-top-color: @tooltip-success-arrow-color;
+    }
+
+    .c-tooltip.bottom .tooltip-arrow {
+        border-bottom-color: @tooltip-success-arrow-color;
+    }
+
+    .tooltip-inner {
+        background-color: @tooltip-success-bg;
+    }
+
+}
+
+.c-form-control-feedback-wrapper {
+    width: calc(100% + 25px);
+    width: 110%;
+    position: absolute;
+    left: 100%;
+    top: 0;
+
+    &.inside-input {
+        margin-left: -30px;
+    }
+}
+
+.c-form-control-feedback {
+    @vertical-space: ((@input-height-base - 20px) / 2);
+    display: none;
+    position: absolute;
+    left: 5px;
+    top: @vertical-space;
+    height: 20px;
+    width: 20px;
+    vertical-align: middle;
+}
+
+.c-form-control-feedback-throbber,
+.c-form-throbber:after {
+    .hdpi-bg-image(@1x: data-uri('../throbber_v2.gif'); @2x: data-uri('../throbber_v2_2x.gif'));
+
+    .cssanimations & {
+        background: none;
+        .box-sizing(border-box);
+        .animation(spin .75s linear infinite);
+        border: 2px solid @throbber-color;
+        border-bottom-color: transparent;
+        border-left-color: transparent;
+        border-radius: 100%;
+    }
+}
+
+.c-form-control-feedback-success {
+    .hdpi-bg-image(@1x: data-uri('../check.png'); @2x: data-uri('../check_2x.png'));
+}
+
+.c-form-control-feedback-error {
+    .hdpi-bg-image(@1x: data-uri('../alert.png'); @2x: data-uri('../alert_2x.png'));
+
+    &:hover {
+        .hdpi-bg-image(@1x: data-uri('../alert_mouseover.png'); @2x: data-uri('../alert_mouseover_2x.png'));
+
+        + .c-tooltip {
+            .tooltip-inner {
+                background-color: @tooltip-danger-hover-bg;
+            }
+
+            &.right .tooltip-arrow {
+                border-right-color: @tooltip-danger-hover-bg
+            }
+
+            &.left .tooltip-arrow {
+                border-left-color: @tooltip-danger-hover-bg
+            }
+
+            &.top-right .tooltip-arrow,
+            &.top .tooltip-arrow {
+                border-top-color: @tooltip-danger-hover-bg
+            }
+
+            &.bottom .tooltip-arrow {
+                border-bottom-color: @tooltip-danger-hover-bg
+            }
+        }
+    }
+}
+
+.c-has-throbber .c-form-control-feedback-throbber,
+.c-has-success .c-form-control-feedback-success,
+.c-has-error .c-form-control-feedback-error {
+    display: block;
+}
+
+.c-form-throbber {
+    display: none;
+    float: right;
+    padding: 5px 0;
+    margin-right: -25px;
+
+    &:after {
+        content: '';
+        height: 20px;
+        width: 20px;
+        display: block;
+    }
+
+    .working & {
+        display: block;
+    }
+}

@@ -1,0 +1,69 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2014
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    import json
+
+    from r2.lib.filters import unsafe
+    from r2.lib import js
+    from r2.lib.template_helpers import add_sr, get_domain, static
+%>
+<%namespace file="less.html" import="less_js, less_stylesheet"/>
+<%namespace file="utils.html" import="text_with_links, plain_link"/>
+
+<%
+    link_data = {"redirect-type": "link", "redirect-thing": thing.link._id}
+    sr_data = {"redirect-type": "subreddit"}
+    reddit_data = {"redirect-type": "logo"}
+%>
+
+<!doctype html>
+<html>
+    <head>
+        <meta charset=utf-8>
+        <base target="_blank" href="${add_sr("/", sr_path=False, force_hostname=True)}">
+        <title></title>
+        ${less_stylesheet("reddit-embed.less")}
+    </head>
+    <body>
+        <div class="reddit-embed">
+          <div class="reddit-embed-content">
+            ${next.body()}
+          </div>
+          <footer class="reddit-embed-footer" role="contentinfo">
+            <p>
+                ${text_with_links(
+                    _("from discussion %(link)s on %(subreddit)s"),
+                    link=dict(link_text=thing.link.title, path=thing.link.permalink, data=link_data),
+                    subreddit=dict(link_text=("/r/%s" % c.site.name), path=c.site.path, data=sr_data),
+                )}
+            </p>
+            ${plain_link("reddit", "/", _sr_path=False, _class="reddit-embed-footer-img", data=reddit_data)}
+          </footer>
+        </div>
+        <script>
+            window.REDDIT_EMBED_CONFIG = ${unsafe(json.dumps(c.embed_config))};
+        </script>
+        ${unsafe(js.use('reddit-embed'))}
+        ${less_js()}
+    </body>
+</html>

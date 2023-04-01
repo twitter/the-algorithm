@@ -1,2 +1,39 @@
+*~
+.*.sw?
+*.pyc
+*.pyo
 .DS_Store
 
+# mako
+r2/data/
+*.html.py
+
+# build outputs
+*.so
+build/
+dist/
+r2/r2.egg-info/
+r2/r2/lib/generated_strings.py
+
+# ini files
+*.ini
+*.update
+
+# static files
+r2/r2/public/static/names.json
+r2/r2/public/static/*.js
+r2/r2/public/static/*.css
+r2/r2/public/static/sprite*.png
+r2/r2/public/static/*.gzip
+r2/r2/public/static/js/lib/*.gzip
+
+# cython
+r2/r2/lib/mr_tools/_mr_tools.c
+r2/r2/lib/db/_sorts.c
+r2/r2/lib/sgm.c
+r2/r2/lib/utils/_utils.c
+r2/r2/lib/wrapped.c
+r2/r2/lib/utils/comment_tree_utils.c
+
+# vagrant
+.vagrant/

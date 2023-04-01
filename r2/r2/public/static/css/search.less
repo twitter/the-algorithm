@@ -1,0 +1,455 @@
+@color-body: @color-text-grey;
+@color-meta: @color-dark-grey;
+@color-link: darken(@color-alien-blue, 5%);
+@color-link-visited: @color-link-purple;
+
+@color-unsubscribe: darken(@color-warning-red, 10%);
+@color-subscribe: darken(@color-green, 10%);
+@color-subscribe-button-focus: @color-white;
+@color-group-header-border: @color-pale-grey;
+
+@color-subreddit: @color-meta;
+
+@max-width: 750px;
+@min-width: 600px;
+
+@search-font-large: @font-medium;
+@search-font-medium: @font-small;
+@search-font-base: @font-x-small;
+@search-font-small: @font-xx-small;
+@search-line-base: @line-medium;
+@search-line-small: @line-x-small;
+
+.search-font-size(@font:@search-font-base, @line:@search-line-base, @base:@search-font-base) {
+  .md-font-size(@base, @font, @line);
+}
+
+.combined-search-page {
+  > .content {
+    font-size: @base-font-keyword;
+  }
+
+  // needs the extra selector to override the default styles :/
+  .search-subscribe-button {
+    display: inline-block;
+    margin: 0;
+    margin-right: @margin-x-small * 1px;
+
+    .remove {
+      @color: @color-unsubscribe;
+      @color2: darken(@color, 10%);
+
+      background: @color;
+      border-color: @color2;
+
+      &:active {
+        background: @color2;
+      }
+    }
+
+    .add {
+      @color: @color-subscribe;
+      @color2: darken(@color, 10%);
+
+      background: @color;
+      border-color: @color2;
+
+      &:active {
+        background: @color2;
+      }
+    }
+
+    .add, .remove {
+      color: @color-white;
+      text-align: center;
+      transform: scale(1, 1);
+      transition: all 0.15s;
+      width: 90px;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 1px @color-subscribe-button-focus inset;
+      }
+
+      &.active {
+        display: inline-block;
+        line-height: 13px;
+      }
+    }
+  }
+
+  .searchfacets {
+    .search-font-size();
+    border: 1px solid @color-meta;
+    margin: 0;
+    margin-left: @margin-xx-large * 1px;
+    margin-top: @margin-large * 1px;
+    max-width: @max-width;
+    min-width: @min-width;
+    overflow: auto;
+    padding: @margin-medium * 1px;
+    white-space: pre-wrap;
+
+    > h4.title {
+      color: @color-dark-grey;
+      margin-bottom: @margin-x-small * 1px;
+    }
+
+    .facet:hover {
+      text-decoration: underline;
+    }
+  }
+
+  li.searchfacet {
+    display: inline-block;
+    line-height: 20px;
+    min-width: 32%;
+  }
+
+  .facet.count {
+    color: @color-meta;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .searchpane {
+    background: none;
+    border: none;
+    padding: @margin-small * 1px;
+    padding-left: @margin-xx-large * 1px;
+  }
+
+  #search {
+    padding-right: 120px;
+  }
+
+  #search input[type=text] {
+    .search-font-size(@search-font-medium);
+    border-color: @color-dark-grey;
+    border-radius: 2px;
+    box-sizing: border-box;
+    max-width: @max-width;
+    min-width: @max-width / 2;
+    padding: @margin-x-small * 1px;
+    padding-left: @margin-small * 1px;
+    padding-right: @margin-x-large * 1px;
+    vertical-align: middle;
+    width: 100%;
+  }
+
+  .search-submit-button {
+    margin-left: @margin-small * 1px;
+    .search-font-size(@search-font-base);
+    padding: (@margin-x-small * 1px) (@margin-medium * 1px);
+    vertical-align: middle;
+  }
+
+  .menuarea {
+    font-size: 1em;
+    margin-left: @margin-large * 1px;
+  }
+
+  .linkflairlabel {
+    line-height: 17px;
+  }
+
+  // undo old styles, remove when unflagged
+  .searchfacets {
+    background: transparent;
+    box-shadow: none;
+
+    .list {
+      margin: 0;
+    }
+  }
+
+  .facet.count {
+    font-weight: normal;
+  }
+
+  .search-icon {
+    background-image: data-uri('../search-button-icon.png');
+    background-size: 20px 20px;
+    display: inline-block;
+    height: 20px;
+    transform: translateY(-1px);
+    vertical-align: middle;
+    width: 20px;
+  }
+}
+
+.search-result-listing {
+  .md-base-font-size(@search-font-base);
+}
+
+.search-result.visited {
+  .search-title,
+  .search-link {
+    &, > mark {
+      color: @color-link-visited;
+    }
+  }
+}
+
+.search-result {
+  margin-bottom: @margin-x-large * 1px;
+  margin-top: @margin-small * 1px;
+
+  :link {
+    &, > mark {
+      color: @color-link;
+    }
+  }
+
+  :visited {
+    &, > mark {
+      color: @color-link-visited;
+    }
+  }
+
+  &.has-thumbnail {
+    .display-flex();
+
+    > * {
+      .flex(1 1);
+    }
+
+    > .thumbnail {
+      .flex(0 0 70px);
+      margin-right: @margin-small * 1px;
+      width: 70px;
+
+      img {
+        display: block;
+        height: auto;
+        width: 100%;
+      }
+    }
+  }
+
+
+  mark {
+    background-color: transparent;
+    color: inherit;
+    font-weight: bold;
+    line-height: 1em;
+  }
+}
+
+.search-result-meta,
+.search-result-footer {
+  .search-font-size();
+  vertical-align: baseline;
+
+  > * {
+    // prevent unstyled children (e.g. spans) from adding to line-height
+    line-height: 1em;
+  }
+}
+
+.search-result-header {
+  .search-font-size();
+
+  > * {
+    vertical-align: top;
+  }
+
+}
+
+.search-title {
+  font-size: @search-font-large * 1px;
+  margin-right: @margin-x-small * 1px;
+}
+
+.search-result-meta {
+  // let this element inherit the same styles as the 'tagline' class
+  // we don't want to add the extra class to the markup because it will cause
+  // the line to potentially inherit a bunch of unwanted styles from subreddit
+  // stylesheets
+  &:extend(.tagline all);
+
+  .search-font-size(@search-font-small, @search-line-base);
+  color: @color-meta;
+
+  .search-result-icon {
+    vertical-align: text-bottom;
+  }
+}
+
+.search-score {
+  .search-font-size(@search-font-base, @search-font-base, @search-font-small);
+
+  &:after {
+    content: ' •';
+  }
+}
+
+.search-comments {
+  font-weight: bold;
+  color: @color-meta;
+}
+
+.search-result-body {
+  .search-font-size(@search-font-base, @search-line-small);
+  color: @color-body;
+  padding-right: @margin-xxx-large * 1px;
+}
+
+.search-expando {
+  overflow: hidden;
+
+  &.collapsed {
+    max-height: 45px;
+    position: relative;
+
+    &:before {
+      bottom: 0;
+      content:'';
+      height: 15px;
+      left: 0;
+      position: absolute;
+      width: 100%;
+
+      .linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+    }
+  }
+}
+
+.search-expando-button {
+  color: @color-link;
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  > span {
+    display: none;
+  }
+
+  &.expanded .search-expando-button-label-expanded,
+  &.collapsed .search-expando-button-label-collapsed {
+    display: inline;
+  }
+}
+
+.search-result-footer {
+  .search-font-size();
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  .search-link {
+    margin-left: @margin-x-small * 1px;
+  }
+}
+
+.search-result-group {
+  max-width: @max-width;
+  min-width: @min-width;
+  padding-left: @margin-xx-large * 1px;
+  padding-right: @margin-large * 1px;
+
+
+  footer .nav-buttons {
+    .search-font-size(@search-font-base);
+    margin-top: @margin-small * 1px;
+    margin-bottom: @margin-xx-large * 1px;
+
+    * { 
+      font-size: inherit;
+    }
+  }
+
+  footer .info {
+    color: @color-meta;
+  }
+}
+
+.search-result-group-header {
+  border-bottom: 2px solid @color-group-header-border;
+  color: @color-dark-grey;
+  margin-bottom: @margin-large * 1px;
+  margin-top: @margin-xx-large * 1px;
+}
+
+.search-header-label {
+  .search-font-size(@search-font-medium);
+  font-weight: bold;
+}
+
+.search-header-menus {
+  float: right;
+}
+
+.search-menu {
+  .search-font-size(@search-font-base);
+  display: inline-block;
+  margin-left: @margin-large * 1px;
+}
+
+.search-result-icon {
+  background-position: center;
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 15px;
+  vertical-align: middle;
+  width: 16px;
+}
+
+.search-result-icon-score {
+  background-image: data-uri('../ambivote-icon.png');
+  background-size: 10px 14px;
+}
+
+.search-result-icon-external {
+  background-image: data-uri('../external-link-icon.png');
+  background-size: 15px 7px;
+}
+
+.search-result-icon-filter {
+  background-image: data-uri('../search-icon.png');
+  background-size: 11px 12px;
+}
+
+.search-result-icon-internal {
+  background-image: data-uri('../internal-link-icon.png');
+  background-size: 11px 10px;
+}
+
+
+// old styles, remove when unflagged
+.searchfacets {
+  overflow: auto;
+  font-size: small;
+  white-space: pre-wrap;
+  border: 1px solid gray;
+  padding: 10px;
+  margin-top: -6px;
+  box-shadow: 0 4px 6px -1px #ccc inset;
+  background: #fefefe;
+}
+
+.searchfacets .title {
+  margin: 5px;
+}
+
+.searchfacets .facet:hover {
+  text-decoration: underline;
+}
+
+.searchfacets .list {
+  margin: 0px 0px 0px 10px;
+}
+
+li.searchfacet {
+  display: inline-block;
+  width: 15em;
+}
+
+.facet.count {
+  color: #888888;
+  font-weight: bold;
+}

@@ -1,0 +1,12 @@
+.c-close {
+  display: block;
+  width: 12px;
+  height: 12px;
+  .hdpi-bg-image(@1x: data-uri('../close_x.png'); @2x: data-uri('../close_x_2x.png'));
+  background-size: 12px;
+  background-position: center;
+
+  &:hover {
+    .hdpi-bg-image(@1x: data-uri('../close_x_hover.png'); @2x: data-uri('../close_x_hover_2x.png'));
+  }
+}

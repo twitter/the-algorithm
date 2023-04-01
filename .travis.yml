@@ -1,0 +1,26 @@
+sudo: required
+dist: trusty
+
+language: python
+
+python:
+    - "2.7"
+
+virtualenv:
+    system_site_packages: true
+
+services:
+    - postgres
+    - memcached
+    - rabbitmq
+
+install:
+    - sudo install/travis.sh travis .
+
+before_script:
+    - install/setup_rabbitmq.sh
+    - install/setup_postgres.sh
+    - install/setup_cassandra.sh
+
+script:
+    - cd r2 && nosetests

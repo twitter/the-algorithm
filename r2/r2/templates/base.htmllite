@@ -1,0 +1,90 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="optionalstyle"/>
+
+<%!
+   from pylons.i18n import _
+   from r2.lib.template_helpers import get_domain, style_line, format_html, _wsf
+   from r2.models.subreddit import FakeSubreddit, DefaultSR
+%>
+
+<div class="rembeddit"
+     ${optionalstyle("font-family:verdana,arial,helvetica,sans-serif;" + 
+                     style_line(bgcolor="FFFFFF", bordercolor="336699"))}>
+  %if not request.GET.get("nobranding"):
+  <div class="reddit-header" 
+       ${optionalstyle("padding: 5px; padding-bottom:1px;" + 
+                    ("background-color:#CEE3F8" if not c.bgcolor else ""))}>
+  <h4 class="reddit-title" 
+      ${optionalstyle("margin:0;" + 
+                      "padding-bottom:3px")}
+      >
+    <a href="${g.default_scheme}://${get_domain()}/" ${optionalstyle("margin:5px;")}
+      %if c.link_target:
+         target="${c.link_target}"
+      %endif
+       >
+      <img src="${g.default_scheme}://${get_domain(subreddit=False)}/static/spreddit1.gif"
+           alt="" 
+           ${optionalstyle("border:none")} />
+    </a>
+    <%
+       style = unsafe(capture(optionalstyle, "text-decoration:none;color:#336699"))
+       name = c.site.name
+       if not isinstance(c.site, FakeSubreddit):
+           name += ".%s" % g.domain
+       if c.link_target:
+          link = format_html('<a %s href="%s://%s/" target="%s">%s</a></h3>',
+                             style, g.default_scheme, get_domain(), c.link_target, name)
+       else:
+          link = format_html('<a %s href="%s://%s/">%s</a></h3>',
+                             style, g.default_scheme, get_domain(), name)
+     %>
+    ${self.titlebar(link)}
+  </h4>
+  %if g.domain != "reddit.com":
+  <p ${optionalstyle("margin: 0px 30px 5px 30px; color: gray;")}
+     class="powered-by-reddit">
+    <small>
+      powered by&#32; 
+      <a href="${g.default_scheme}://${g.domain}"
+         ${optionalstyle("text-decoration:none;color:#336699")}
+        %if c.link_target:
+          target="${c.link_target}"
+        %endif
+      >
+        ${DefaultSR.name}
+      </a>
+    </small>
+  </p>
+  %endif
+  </div>
+  %endif
+  <div class="rembeddit-content" ${optionalstyle("padding:5px;")}>
+    ${next.body()}
+  </div>
+</div>
+
+<%def name="titlebar(site)">
+  ${_wsf("links from %(site)s", site=site)}
+</%def>

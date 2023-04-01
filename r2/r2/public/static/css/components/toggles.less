@@ -1,0 +1,21 @@
+.c-toggle {
+
+    &:after {
+        content: ' [+]';
+        font-family: monospace;
+        font-size: 10px;
+        vertical-align: 1px;
+    }
+
+    &.c-toggle-toggled:after {
+        content: ' [-]';
+    }
+}
+
+.c-toggle-content {
+    display: none;
+
+    &.c-toggle-content-toggled {
+        display: block;
+    }
+}

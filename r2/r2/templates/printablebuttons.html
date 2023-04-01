@@ -1,0 +1,783 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="plain_link, pretty_button, data, error_field" />
+
+<%!
+   from r2.config import feature
+   from r2.lib.filters import conditional_websafe, jssafe
+   from r2.lib.strings import strings
+   from r2.models import Link
+   from r2.models.promo import PROMOTE_STATUS
+ %>
+
+<%def name="banbuttons()">
+  %if thing.show_delete:
+    <li>
+      ${ynbutton(_("delete"), _("deleted"), "del", "hide_thing", access_required=False, event_action="delete")}
+    </li>
+  %endif
+  %if thing.can_ban:
+    %if not getattr(thing.thing, "use_big_modbuttons", False):
+      %if not thing.show_spam:
+        <li>
+           ${ynbutton(_("spam"), _("spammed"), "remove", event_action='spam')}
+        </li>
+        <li>
+           ${ynbutton(_("remove"), _("removed"), "remove", hidden_data=dict(spam=False),
+             event_action='remove')}
+        </li>
+      %endif
+
+      %if thing.show_approve:
+        <li>
+           ${self.state_button("approve", _("approve"),
+              "return change_state(this, 'approve');", _("approved"),
+              event_action="approve")}
+        </li>
+      %endif
+    %endif
+  %endif
+
+  %if thing.show_report:
+    <li class="report-button">
+      %if feature.is_enabled("new_report_dialog"):
+        <a href="javascript:void(0)" class="reportbtn access-required"
+           data-event-action="report">
+      %else:
+        <a href="javascript:void(0)" class="action-thing reportbtn access-required"
+           data-event-action="report">
+      %endif
+        ${_("report")}
+      </a>
+    </li>
+  %endif
+  %if thing.show_lock:
+    <li>${ynbutton(_("lock"), _("locked"), "lock", event_action='lock')}</li>
+  %endif
+  %if thing.show_unlock:
+    <li>${ynbutton(_("unlock"), _("unlocked"), "unlock", event_action='unlock')}</li>
+  %endif
+  %if thing.show_marknsfw:
+    <li>${ynbutton(_("nsfw"), _("marked"), "marknsfw", event_action='marknsfw')}</li>
+  %endif
+  %if thing.show_unmarknsfw:
+    <li>${ynbutton(_("un-nsfw"), _("unmarked"), "unmarknsfw", event_action='unmarknsfw')}</li>
+  %endif
+  %if not getattr(thing, 'promoted', None) and thing.show_flair:
+    <li>
+      <a class="flairselectbtn access-required" href="javascript://void(0)"
+         data-event-action="editflair" data-event-detail="set">${_('flair')}</a>
+      <div class="flairselector drop-choices"></div>
+    </li>
+  %endif
+  %if thing.show_rescrape:
+    <li>${ynbutton(_("retry thumb"), _("check back in a few minutes"), "rescrape",
+            event_action="retry_thumbnail")}</li>
+  %endif
+</%def>
+
+<%def name="distinguish_setter(name, value=None, event_action='distinguish')">
+  <a class="access-required"
+     href="javascript:void(0)"
+     data-event-action="${event_action}"
+     onclick="return set_distinguish(this, '${jssafe(value or name)}')">${_(name)}</a>
+</%def>
+
+<%def name="distinguish_noop(text)">
+  <a class="access-required"
+     href="javascript:void(0)"
+     onclick="return toggle_distinguish_span(this)">${text}</a>
+</%def>
+
+<%def name="distinguish_label(distinguish_clicked)">
+  <%
+    text = _("distinguish") if distinguish_clicked else _("undistinguish")
+  %>
+  <a class="access-required"
+    href="javascript:void(0)"
+    onclick="return toggle_distinguish_span(this)"
+    data-event-action="distinguish">${text}</a>
+</%def>
+
+<%def name="distinguish_help()">
+  <a class="nonbutton" href="/wiki/moderation#wiki_distinguishing">
+    ${_("help")}
+  </a>
+</%def>
+
+<%def name="distinguish_options()">
+  ${_("distinguish this?")}
+
+  ## Note: can_ban is logically equivalent to can_distinguish at this time.
+  %if thing.can_ban:
+    &#32;
+    ${distinguish_setter('yes')}
+    &#32;/
+
+    %if thing.show_sticky_comment:
+      &#32;
+      ${distinguish_setter(_('yes & sticky'), 'yes_sticky', event_action="sticky_distinguish")}
+      &#32;/
+    %endif
+  %endif
+  
+  &#32;
+  ${distinguish_setter('no', event_action="undistinguish")}
+  &#32;
+
+  %if c.user.employee:
+    /&#32;
+    ${distinguish_setter('admin', event_action="admin_distinguish")}
+    &#32;
+  %endif
+  
+  %if c.user_special_distinguish:
+    /&#32;
+    ${distinguish_setter(c.user_special_distinguish['name'], 'special', event_action="special_distinguish")}
+    &#32;
+  %endif
+
+  /&#32;
+  ${distinguish_help()}
+  &#32;
+</%def>
+
+<%def name="undistinguish_options()">
+  ${_("undistinguish this?")}
+
+  &#32;
+  ${distinguish_setter('yes', value="no", event_action="undistinguish")}
+  &#32;/
+
+  &#32;
+  ${distinguish_noop(_("no"))}
+  &#32;
+
+  /&#32;
+  ${distinguish_help()}
+  &#32;
+</%def>
+
+
+<%def name="distinguish()">
+  %if thing.show_distinguish:
+  <li class="toggle">
+    <form method="post" action="/post/distinguish">
+      <input type="hidden" value="${c.profilepage}" name="profilepage">
+      %if thing.show_sticky_comment:
+      <input type="hidden" value="false" name="sticky">
+      %endif
+      %if thing.distinguished:
+        <input type="hidden" value="${_('undistinguishing...')}" name="executed"/>
+      %else:
+        <input type="hidden" value="${_('distinguishing...')}" name="executed"/>
+      %endif
+
+      ${distinguish_label(not thing.distinguished)}
+
+      <span class="option error">
+        %if thing.distinguished:
+          ${undistinguish_options()}
+        %else:
+          ${distinguish_options()}
+        %endif
+      </span>
+    </form>
+  </li>
+  %endif
+</%def>
+
+<%def name="give_gold()">
+  % if thing.show_givegold:
+    <li class="give-gold-button">
+    <a href="/gold?goldtype=gift&months=1&thing=${thing.thing._fullname}"
+        title="${_("give reddit gold in appreciation of this post.")}"
+        class="give-gold login-required access-required"
+        data-event-action="gild"
+        >${_("give gold")}</a>
+    </li>
+  % endif
+</%def>
+
+<%def name="ignore_reports_toggle(thing)">
+  <%
+    label = _("ignore reports")
+    if thing.ignore_reports and thing.reported > 0:
+      label += " ({0})".format(thing.reported)
+    event_action = "unignorereports" if thing.ignore_reports else "ignorereports"
+  %>
+  ${pretty_button(label, "big_mod_toggle", "'ignore_reports', 'unignore_reports'",
+  "neutral" + (" pressed" if thing.ignore_reports else ""),
+  event_action=event_action)}
+</%def>
+
+<%def name="big_modbuttons(thing)">
+  <span class="big-mod-buttons">
+    %if not thing._deleted:
+      <span role="radiogroup">
+        %if not getattr(thing, "moderator_banned", None) or getattr(thing, "autobanned", False):
+          ${pretty_button(_("spam"), "big_mod_action", -2, "negative", event_action="spam")}
+          ${pretty_button(_("remove"), "big_mod_action", -1, "neutral", event_action="remove")}
+        %endif
+
+        %if getattr(thing, "approval_checkmark", None):
+          ${pretty_button(_("reapprove"), "big_mod_action",  1, "positive", event_action="approve")}
+        %else:
+          ${pretty_button(_("approve"), "big_mod_action",  1, "positive", event_action="approve")}
+        %endif
+      </span>
+    %endif
+
+    %if not thing._spam:
+      ${ignore_reports_toggle(thing)}
+    %endif
+
+    &#32;
+    <span class="status-msg spammed">
+      ${_("spammed")}
+    </span>
+    <span class="status-msg removed">
+      ${_("removed")}
+    </span>
+    <span class="status-msg approved">
+      ${_("approved")}
+    </span>
+  </span>
+</%def>
+
+<%def name="show_admin_context()">
+  % if thing.show_admin_context:
+    <li>
+      <form onsubmit="return post_form(this, 'admin/fullcontext');" method="post">
+        <input type="hidden" name="thing" id="thing" value="${thing.thing._fullname}" />
+        <input type="hidden" name="author" id="author" value="${thing.thing.author_slow._fullname}" />
+        <a href="#" onclick="$(this).closest('form').submit(); return false">full context</a>
+       </form>
+    </li>
+  % endif
+</%def>
+
+<%def name="reports_button()">
+<li 
+    %if thing.mod_reports or thing.user_reports:
+      class="rounded reported-stamp stamp has-reasons access-required"
+      title="${_('click to show report reasons')}"
+    %else:
+      class="rounded reported-stamp stamp access-required"
+    %endif
+    data-event-action="viewreports"
+    >
+  ${strings.reports % thing.thing.reported}
+</li>
+</%def>
+
+<%def name="report_reasons()">
+<ul class="report-reasons rounded">
+  %if thing.mod_reports:
+    <li class="report-reason-title">${_("moderator reports:")}</li>
+    %for reason, user in thing.mod_reports:
+      <li class="report-reason mod-report" title="${reason}">${user}:
+      %if reason:
+        ${reason}
+      %else:
+        ${_("<no reason>")}
+      %endif
+      </li>
+    %endfor
+  %endif
+
+  %if thing.user_reports:
+    <li class="report-reason-title">${_("user reports:")}</li>
+    %for reason, count in thing.user_reports:
+      <li class="report-reason" title="${reason}">${count}:
+      %if reason:
+        ${reason}
+      %else:
+        ${_("<no reason>")}
+      %endif
+      </li>
+    %endfor
+  %endif
+</ul>
+</%def>
+
+<%def name="linkbuttons()">
+  %if thing.show_comments:
+    <li class="first">
+    ${self.bylink_button(
+        thing.comment_label,
+        thing.permalink,
+        sr_path=(thing.promoted is None),
+        a_class=unsafe("bylink %s" % thing.commentcls),
+        event_action="comments")}
+    </li>
+  %endif
+  %if thing.editable and not thing.promoted:
+    <li>
+      ${self.simple_button(_("edit"), "edit_usertext", css_class="edit-usertext")}
+    </li>
+  %endif
+  % if thing.show_share:
+    <li class="share">
+      <a class="post-sharing-button" href="javascript: void 0;">${_("share")}</a>
+    </li>
+  % endif
+  %if thing.is_loggedin and not thing.deleted:
+    %if thing.saved:
+      <li class="link-unsave-button save-button"><a href="#">${_("unsave")}</a></li>
+    %else:
+      <li class="link-save-button save-button"><a href="#">${_("save")}</a></li>
+    %endif
+    <li>
+    %if thing.hidden:
+      ${self.state_button("unhide", _("unhide"), \
+        "change_state(this, 'unhide', hide_thing);", _("unhidden"),
+        access_required=False, event_action="unhide")}
+    %else:
+      ${self.state_button("hide", _("hide"), \
+         "change_state(this, 'hide', hide_thing);", _("hidden"),
+         access_required=False, event_action="hide")}
+    %endif
+    </li>
+  %endif
+
+  ${self.distinguish()}
+  ${self.give_gold()}
+  ${self.banbuttons()}
+  %if thing.promoted is not None:
+    %if thing.user_is_sponsor or thing.is_author:
+       <li>
+         ${plain_link(_("edit"), thing.promo_url, _sr_path = False)}
+       </li>
+    %endif
+    %if c.user_is_sponsor:
+      %if thing.show_approval:
+        %if thing.promote_status not in (PROMOTE_STATUS.rejected, PROMOTE_STATUS.finished):
+          <li>
+            <form action="/post/reject" class="rejection-form"
+                 style="display:none"
+                 %if getattr(thing, "hide_after_seen", False):
+                   data-hide-after-seen="true"
+                 %endif
+                 method="post" onsubmit="reject post_form(this, 'unpromote')">
+              <br/>
+              <input type="hidden" name="executed" value="rejected" />
+              <label>Reason:</label><br/>
+              <textarea name="reason" value="" ></textarea>
+              <br/>
+              <a href="javascript: void 0;"
+                onclick="change_state(this, 'unpromote', complete_reject_promo)">
+               submit
+              </a>/
+            </form>
+            ${toggle_button("reject_promo", \
+                           _("reject"), _("cancel"), \
+                           "reject_promo", "cancel_reject_promo")}
+          </li>
+        %endif
+        %if thing.promote_status in (PROMOTE_STATUS.unpaid, PROMOTE_STATUS.unseen, PROMOTE_STATUS.rejected, PROMOTE_STATUS.edited_live):
+          <li>
+            ${ynbutton(_("accept"), \
+                       _("accepted"), "promote", \
+                       callback="hide_thing" if getattr(thing, "hide_after_seen", False) else "null")}
+          </li>
+        %endif
+      %endif
+      %if thing.is_awaiting_fraud_review:
+        <li class="fraud-button">
+          <a href="javascript:void(0)" class="action-thing" data-action-form="#fraud-action-form" title="${thing.payment_flagged_reason}">
+            ${_("fraud")}
+          </a>
+        </li>
+      %endif
+    %endif
+    %if thing.user_is_sponsor or thing.is_author:
+      <li>
+        ${plain_link(_("traffic"), thing.traffic_url, _sr_path = False)}
+      </li>
+    %endif
+  %endif
+
+  %if thing.show_reports and not thing.show_spam:
+    ${reports_button()}
+  %endif
+
+  %if getattr(thing.thing, "use_big_modbuttons", False):
+     ${big_modbuttons(thing.thing)}
+  %elif thing.ignore_reports and thing.can_ban:
+    ${ignore_reports_toggle(thing.thing)}
+  %endif
+
+  %if thing.show_reports and not thing.show_spam and (thing.mod_reports or thing.user_reports):
+    ${report_reasons()}
+  %endif
+
+</%def>
+
+<%def name="commentbuttons()">
+  %if not thing.deleted:
+    <li class="first">
+      ${self.bylink_button(_("permalink"), thing.permalink, event_action="permalink")}
+    </li>
+    %if thing.embed_button:
+      <li>
+        ${thing.embed_button.render()}
+      </li>
+    %endif
+
+    %if thing.saved:
+      <li class="comment-unsave-button save-button">
+        <a href="javascript:void(0)">${_("unsave")}</a>
+      </li>
+    %else:
+      <li class="comment-save-button save-button">
+        <a href="javascript:void(0)">${_("save")}</a>
+      </li>
+    %endif
+
+    %if c.profilepage:
+      <li>
+        ${self.bylink_button(_("context"), thing.permalink + "?context=3", event_action="context")}
+      </li>
+      <li class="first">
+      ${self.bylink_button(
+          _("full comments") + " (%d)" % thing.full_comment_count, 
+          thing.full_comment_path,
+          sr_path=True,
+          a_class="bylink may-blank",
+          event_action="full_comments")}
+      </li>
+    %endif
+
+    %if thing.parent_permalink and not thing.profilepage:
+      <li>
+        ${self.bylink_button(_("parent"), thing.parent_permalink, event_action="parent")}
+      </li>
+    %endif
+
+    %if thing.is_author:
+      %if thing.editable:
+        <li>
+          ${self.simple_button(_("edit"), "edit_usertext", css_class="edit-usertext")}
+        </li>
+      %endif
+      <li>
+        %if thing.thing.inbox_replies_enabled:
+          ${ynbutton(_("disable inbox replies"), _("inbox replies disabled"), "sendreplies",
+            hidden_data=dict(id=thing.thing._fullname, state=False),
+            access_required=False, event_action="disable_inbox_replies")}
+        %else:
+          ${ynbutton(_("enable inbox replies"), _("inbox replies enabled"), "sendreplies",
+            hidden_data=dict(id=thing.thing._fullname, state=True),
+            access_required=False, event_action="enable_inbox_replies")}
+        %endif
+      </li>
+    %endif
+
+    ${self.banbuttons()}
+    ${self.distinguish()}
+    ${self.give_gold()}
+    ${self.show_admin_context()}
+
+    %if not getattr(thing, "suppress_reply_buttons", False) and (thing.can_reply or thing.locked):
+      <li class="reply-button">
+      %if thing.can_reply:
+        ${self.simple_button(_("reply {verb}"), "reply", css_class="access-required", event_action="comment")}
+      %else:
+        ${self.simple_button(_("reply {verb}"), "void", css_class="locked-error access-required", event_action="comment")}
+      %endif
+      </li>
+    %endif
+
+    %if thing.show_reports and not thing.show_spam:
+      ${reports_button()}
+    %endif
+
+    %if getattr(thing.thing, "use_big_modbuttons", False):
+       ${big_modbuttons(thing.thing)}
+    %elif thing.ignore_reports and thing.can_ban:
+      ${ignore_reports_toggle(thing.thing)}
+    %endif
+
+    %if thing.show_reports and not thing.show_spam and (thing.mod_reports or thing.user_reports):
+      ${report_reasons()}
+    %endif
+
+  %endif
+</%def>
+
+
+<%def name="messagebuttons()"> 
+  %if thing.was_comment:
+    <li>
+      ${self.bylink_button(_("context"), thing.permalink + "?context=3", event_action="context")}
+    </li>
+    <li>
+      ${self.bylink_button(
+          _("full comments") + " (%d)" % thing.full_comment_count,
+          thing.full_comment_path,
+          a_class="bylink may-blank full-comments",
+          event_action="full_comments")}
+    </li>
+  %else:
+    <li class="first">
+      ${self.bylink_button(_("permalink"), thing.permalink, sr_path=False, event_action="permalink")}
+    </li>
+    ${self.distinguish()}
+  %endif
+  %if thing.user_is_recipient:
+    ## only allow message deleting on recipient side now
+    %if not (thing.was_comment or thing.thing.del_on_recipient) and thing.thing.to_id == c.user._id:
+      <li>
+        ${ynbutton(_("delete"), _("deleted"), "del_msg", "hide_thing", access_required=False, event_action="delete_message")}
+      </li>
+    %endif
+    %if thing.can_block:
+      ${self.banbuttons()}
+        %if thing.thing.author_id != c.user._id and thing.thing.author_id not in c.user.enemies:
+          %if getattr(thing.thing, "from_sr", False):
+            %if not (thing.thing.user_is_moderator or c.user_is_admin):
+              <li>
+                %if getattr(thing.thing, "sr_blocked", False):
+                  ${ynbutton(_("unblock subreddit"), _("unblocked"), "unblock_subreddit",
+                      access_required=False, event_action="unblock_subreddit")}
+                %else:
+                  ${ynbutton(_("block subreddit"), _("blocked"), "block", "hide_thing",
+                      access_required=False, event_action="block_subreddit")}
+                %endif
+              </li>
+            %endif
+          %else:
+            <li>
+              ${ynbutton(_("block user"), _("blocked"), "block", "hide_thing",
+                  access_required=False, event_action="block_user")}
+            </li>
+          %endif
+          %if thing.can_mute:
+            <li>
+              %if getattr(thing.thing, "sr_muted", False):
+                ${ynbutton(_("unmute user"), _("unmuted"), "unmute_message_author",
+                    event_action="unmute_user")}
+              %else:
+                ${ynbutton(_("mute user"), _("muted"), "mute_message_author",
+                    event_action="mute_user")}
+              %endif
+            </li>
+          %endif
+        %endif
+      %endif
+    <li class="unread">
+     ${self.state_button("unread", _("mark unread"), \
+        "return change_state(this, 'unread_message', unread_thing, true);", \
+         _("unread"), event_action="mark_unread")}
+    </li>
+  %endif
+  %if thing.can_reply:
+    <li>
+       <%
+        css_class = "" if thing.is_admin_message else "access-required"
+       %>
+       ${self.simple_button(_("reply {verb}"), "reply", css_class, event_action='reply')}
+    </li>
+  %endif
+</%def>
+
+##------------
+<%def name="state_button(name, title, onclick, executed,
+                         clicked = False,
+                         a_class = '',
+                         fmt = None,
+                         fmt_param = '',
+                         hidden_data = {},
+                         access_required = True,
+                         event_action=None)">
+  <%def name="_link()" buffered="True">
+    <%
+      access_class = 'access-required' if access_required else ''
+    %>
+    <a href="javascript:void(0)"
+       class="${a_class or ''} ${access_class}"
+       %if event_action:
+         data-event-action="${event_action}"
+       %endif
+       onclick="${onclick}">${title}</a>
+  </%def>
+  <%
+     link = _link()
+     if fmt:
+         link = conditional_websafe(fmt) % {fmt_param: link}
+         ## preserve spaces before and after < & > for space compression
+         link = link.replace(" <", "&#32;<").replace("> ", ">&#32;")
+   %>   
+
+  %if clicked:
+    ${executed}
+  %else:
+    <form action="/post/${name}" method="post" 
+          class="state-button ${name}-button">
+        <input type="hidden" name="executed" value="${executed}" />
+        %for key, value in hidden_data.iteritems():
+          <input type="hidden" name="${key}" value="${value}" />
+        %endfor
+        <span>
+          ${unsafe(link)}
+        </span>
+    </form>
+  %endif
+</%def>
+
+
+<%def name="ajax_ynbutton(title, op, question=None, _class='', hidden_data={})">
+  <form method="post" action="/api/${op}"
+        class="toggle ajax-yn-button ${op}-button ${_class}">
+    <input type="hidden" name="_op" value="${op}" />
+    %for k, v in hidden_data.iteritems():
+      <input type="hidden" name="${k}" value="${v}" />
+    %endfor
+    <span class="option main active">
+      <a href="javascript:void(0)" class="togglebutton">${title}</a>
+    </span>
+    <span class="option error">
+      ${_("are you sure?") if question is None else question}
+      &#32;
+      <a href="javascript:void(0)" class="yes">${_("yes")}</a>
+      &#32;/&#32;
+      <a href="javascript:void(0)" class="no">${_("no")}</a>
+    </span>
+  </form>
+</%def>
+
+<%def name="ynbutton(title, executed, op, callback = 'null', 
+                     question = None,
+                     post_callback = 'null',
+                     format = '%(link)s',
+                     format_arg = 'link',
+                     hidden_data = {},
+                     access_required = True,
+                     event_target = None,
+                     event_action = None,
+                     event_detail = None,
+                     _class = '')">
+  <%
+     if question is None:
+         question = _("are you sure?")
+     access_class = 'access-required' if access_required else ''
+
+     data_attrs = {}
+     if event_target:
+       data_attrs['type'] = event_target
+     if event_action:
+       data_attrs['event-action'] = event_action
+     if event_detail:
+       data_attrs['event-detail'] = event_detail
+
+     link = ('<a href="#" class="togglebutton ' + access_class + '" onclick="return toggle(this)" '
+             + capture(data, **data_attrs) + '>'
+             + conditional_websafe(title) + '</a>')
+     link = conditional_websafe(format) % {format_arg : link}
+     link = unsafe(link.replace(" <", "&#32;<").replace("> ", ">&#32;"))
+   %>
+  <form class="toggle ${op}-button ${_class}" action="#" method="get">
+    <input type="hidden" name="executed" value="${executed}"/>
+    %for k, v in hidden_data.iteritems():
+      <input type="hidden" name="${k}" value="${v}"/>
+    %endfor
+    <span class="option main active">
+      ${link}
+    </span>
+    <span class="option error">
+      ${question}
+      &#32;<a href="javascript:void(0)" class="yes"
+         onclick='change_state(this, "${op}", ${callback}, undefined, ${post_callback})'>
+        ${_("yes")}
+      </a>&#32;/&#32;
+      <a href="javascript:void(0)" class="no"
+         onclick="return toggle(this)">${_("no")}</a>
+    </span>
+  </form>
+</%def>
+
+<%def name="simple_button(title, nameFunc, css_class='', event_action=None)">
+ <a class="${css_class}" href="javascript:void(0)" 
+    %if event_action:
+      data-event-action="${event_action}"
+    %endif
+    onclick="return ${nameFunc}(this)">${title}</a>
+</%def>
+
+<%def name="toggle_button(class_name, title, alt_title, 
+                    callback, cancelback, 
+                    css_class = '', alt_css_class = '',
+                    reverse = False,
+                    login_required = False,
+                    style = '', data_attrs=None)">
+<%
+   if reverse:
+       callback, cancelback = cancelback, callback
+       title, alt_title = alt_title, title
+       css_class, alt_css_class = alt_css_class, css_class
+   extra_class = "login-required" if login_required else ""
+ %>
+<span class="${class_name} toggle" style="${style}" ${data(**data_attrs or dict())}>
+ <a class="option active ${css_class} ${extra_class}" href="#" tabindex="100"
+    %if not login_required or c.user_is_loggedin:
+      onclick="return toggle(this, ${callback}, ${cancelback})"
+    %endif
+    >
+   %if title:
+     ${title}
+   %else:
+     &nbsp;
+   %endif
+ </a>
+ <a class="option ${alt_css_class}" href="#">
+   %if alt_title:
+     ${alt_title}
+   %else:
+     &nbsp;
+   %endif
+ </a>
+</span>
+</%def>
+
+<%def name="bylink_button(title, link, sr_path=True, a_class='bylink', event_action=None)">
+  <%
+    data_attrs = {}
+
+    if event_action:
+      data_attrs["event-action"] = event_action
+
+    inbound_tracking_url = Link.tracking_link(link, thing, element_name=event_action)
+    if inbound_tracking_url != link:
+      data_attrs["href-url"] = link
+      data_attrs["inbound-url"] = inbound_tracking_url
+  %>
+  ${plain_link(
+      title,
+      link,
+      _class=a_class,
+      rel="nofollow",
+      _sr_path=sr_path,
+      data=data_attrs,
+  )}
+</%def>

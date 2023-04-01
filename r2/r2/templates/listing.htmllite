@@ -1,0 +1,58 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="optionalstyle"/>
+<%namespace file="printable.html" import="thing_css_class"/>
+<div ${optionalstyle("margin-left:5px;margin-top:7px;")}>
+  <% 
+     t = thing.things
+     l = len(t)
+     two_col = request.GET.has_key("twocolumn") if l else False
+   %>
+  %for i, a in enumerate(t):
+   <% 
+      cls = "reddit-link "
+      cls += "odd " if i % 2 else "even "
+      cls += "first-half" if i < (l+1)/2 else "second-half"
+    %>
+   %if two_col:
+     %if i == 0:
+       <div class="reddit-listing-left" 
+            ${optionalstyle("float:left;width:47%")}>
+     %elif i - 1 < (l+1)/2 and i >= (l+1)/2:
+       </div>
+       <div class="reddit-listing-right" 
+            ${optionalstyle("float:right; width:49%;")}>
+     %endif
+   %endif
+
+     <div class="${cls} ${thing_css_class(a)}">
+       ${a}
+     </div>
+   %if two_col and i == l - 1:
+   </div>
+   %endif
+  %endfor:
+  %if two_col:
+    <div ${optionalstyle("clear:both")}></div>
+  %endif
+</div>

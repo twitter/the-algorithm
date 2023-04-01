@@ -1,0 +1,58 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.template_helpers import add_sr
+   from r2.lib.utils import UrlParser
+   import random
+%>
+
+<%namespace file="utils.html" import="error_field"/>
+
+<%
+  op = "login-main"
+  base = g.https_endpoint
+%>
+<form method="post"
+      action="${add_sr(base + '/post/login')}"
+      id="login_${op}"
+      class="login-form login-form-side">
+  <input type="hidden" name="op" value="${op}" />
+  <input name="user" placeholder="${_('username')}" type="text" maxlength="20" tabindex="1"/>
+  <input name="passwd" placeholder="${_('password')}" type="password" tabindex="1"/>
+
+  <div class="status"></div>
+
+  <div id="remember-me">
+    <input type="checkbox" name="rem" id="rem-${op}" tabindex="1" />
+    <label for="rem-${op}">${_("remember me")}</label>
+    <a class="recover-password" href="/password">${_("reset password")}</a>
+  </div>
+
+  <div class="submit">
+    <span class="throbber"></span>
+    <button class="btn" type="submit" tabindex="1">${_("login")}</button>
+  </div>
+  
+  <div class="clear"></div>
+</form>
+

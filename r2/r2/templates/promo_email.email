@@ -1,0 +1,220 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    from datetime import datetime, timedelta
+    from pylons.i18n import ungettext
+    from r2.models import Email
+    from r2.lib import promote
+    from r2.lib.template_helpers import get_domain
+ %>
+<%
+    edit_url =  promote.promo_edit_url(thing.link)
+ %>
+
+%if thing.kind == Email.Kind.NEW_PROMO:
+This email is to confirm reddit.com's recognition of your submitted self-serve
+ad. Currently you have not created any campaigns within this ad. To do so, visit
+the following link, select the date range and budget/impression count you want,
+and choose "frontpage" or "targeted" and click "save":
+
+   ${edit_url}
+
+Please note that we can't approve your ad until you have authorized your credit
+card payment, and that your ad must be approved before it goes live on your
+selected dates. We require one business day as a grace period for the approval
+process before the ad can go live. To pay for your campaign, click the "pay"
+button within the campaign dashboard on the link above.
+
+Your credit card will not be charged until 12-24 hours prior to your ad going
+live on reddit.
+
+If you have any questions in regards to advertising on reddit, just reply to
+this email. A reddit team member will get back to you as quickly as they're
+able. Sometimes we're ninja fast, but we need up to 48 hours officially to
+respond to all inquiries.
+
+%elif thing.kind == Email.Kind.BID_PROMO:
+This email is to confirm that your payment of ${thing.printable_total_budget}
+for a self-serve ad on reddit.com has been authorized.  The credit card you
+provided will be charged 12-24 hours prior to the date your self-serve ad is set
+to run.
+
+Having second thoughts about your budget? Need to make any edits? You'll have
+until ${(thing.start_date - timedelta(1)).strftime("%Y-%m-%d")} to change your
+ad here:
+
+    ${unsafe(edit_url + ref_tags % dict(ref="promo_total_budget", campaign="edit_promo"))}
+
+%elif thing.kind == Email.Kind.ACCEPT_PROMO or thing.kind == Email.Kind.EDITED_LIVE_PROMO:
+%if thing.kind == Email.Kind.ACCEPT_PROMO:
+This email is to confirm that your self-serve reddit.com ad has been approved by
+reddit!  The credit card you provided will not be charged until 12-24 hours
+prior to the date you have set your ad to run.
+
+If you edit your copy, URL, or thumbnail after approval and before launch, it'll
+have to be reapproved. If it is near midnight and it is about to go live
+imminently, we can't necessarily guarantee we'll get to it in time, so keep that
+in mind when reviewing your ad.
+%endif
+%if thing.kind == Email.Kind.EDITED_LIVE_PROMO:
+This email is to confirm that your live ad below is scheduled to be re-approved
+by reddit. Until the ad is re-approved, the ad will be paused and will not be
+shown on the site. But don't worry – re-approving live ads is among our highest
+priorities!
+%endif
+
+    ${edit_url}
+
+Please email us, selfservicepromotion@reddit.com, if you need an ad approved
+right away. Sometimes we're ninja fast and can get to you, but we do officially
+request up to 48 hours to respond to all inquiries.
+
+It won't be long now until your ad is being displayed to hundreds of thousands
+of the Internet's finest surfers!
+
+%elif thing.kind == Email.Kind.REJECT_PROMO:
+This email is to inform you that the self-serve ad you submitted to reddit.com
+has been rejected. 
+
+Please review the following link and optional explanation for reasons for
+rejection:
+
+http://www.reddit.com/wiki/selfserve#wiki_why_did_my_ad_get_rejected.3F
+
+%if thing.body:
+Optional note about rejection (for special cases):
+    ${thing.body}
+%endif:
+
+If you have any questions, please reply to this email.
+
+To update your promotion please go to:
+    ${edit_url}
+and we'll reconsider it for submission.
+
+%elif thing.kind == Email.Kind.QUEUED_PROMO:
+This email is to inform you that your self-serve ad on reddit.com is about to go
+live. Please use this email as your receipt.
+
+%if thing.trans_id > 0:
+Your credit card has been successfully charged by reddit. Feel free to reply to
+this email if you have any questions.
+
+
+================================================================================
+TRANSACTION #${thing.trans_id}
+DATE: ${datetime.now(g.tz).strftime("%Y-%m-%d")}
+................................................................................
+
+AMOUNT CHARGED: ${thing.printable_total_budget}
+SPONSORSHIP PERMALINK: ${unsafe(thing.link.make_permalink_slow(force_domain=True) + ref_tags % dict(ref="promo_queued", campaign="view_promo"))}
+
+================================================================================
+%else:
+Your promotion was a freebie in the amount of ${thing.printable_total_budget}.
+%endif
+
+%elif thing.kind == Email.Kind.LIVE_PROMO:
+This email is to inform you that your self-serve ad on reddit.com is now live
+and can be found at the following link:
+
+    ${thing.link.make_permalink_slow(force_domain = True)}
+
+Thank you for your business!  You can track your promotion's traffic here:
+
+    ${promote.promo_traffic_url(thing.link)}
+
+Note that there is a delay on tracking, so at first you may not see any data,
+and completed traffic will be a few hours behind. All traffic should be
+considered preliminary until 24 hours after the ad has ended.
+
+Remember to log in to reddit.com using the username and password you used when
+you bought this self-serve ad. Please let us know if you have any questions by
+responding to this email.
+
+%elif thing.kind == Email.Kind.FINISHED_PROMO:
+This email is to inform you that your self-serve ad on reddit.com has concluded.
+Please visit the following link to view traffic results for your ad, and note
+that traffic stats are to be considered preliminary until 24 hours after your ad
+has concluded.
+
+    ${promote.promo_traffic_url(thing.link)}
+
+Remember to log in to reddit.com using the username and password you used when
+you bought this self-serve ad.
+
+Thanks again for advertising on reddit, we hope you'll come back and do business
+with us again!  To extend your campaign, visit this link and click "+ add new":
+
+    ${edit_url}
+
+We'd love to know how your experience with reddit's self-serve ad platform was,
+so feel free to reply to this email to let us know if you have any feedback.
+We've also set up a community just for self-serve advertisers like yourself to
+discuss the platform with each other:
+
+    http://www.reddit.com/r/selfserve
+
+We're hoping to create a place for you to exchange tips and tricks for getting
+the most out of your sponsored links, as well as to provide support for new
+users.
+
+%elif thing.kind == Email.Kind.REFUNDED_PROMO:
+We're sorry, but we weren't able to deliver as many impressions as you paid for.
+
+  ${edit_url}
+
+We're working to improve the systems to predict our pageview inventory so this
+doesn't happen again. You have been refunded the unspent portion of your budget.
+If you have any questions or concerns please reply to this email.
+
+%elif thing.kind == Email.Kind.VOID_PAYMENT:
+This email is to inform you that your pending payment of ${thing.printable_total_budget} for a self-serve ad on reddit.com has been voided and you will not be charged.
+
+%if thing.reason == 'changed_budget':
+The payment was voided because you changed the campaign's budget. Before the campaign can go live you'll need to authorize the new payment amount:
+
+${promote.pay_url(thing.link, thing.campaign)}
+%elif thing.reason == 'changed_payment':
+The payment was voided because you changed to a different form of payment.
+
+You can edit your ad at the following url:
+
+${edit_url}
+%elif thing.reason == 'deleted_campaign':
+The payment was voided because you deleted the campaign.
+
+You can edit your ad at the following url:
+
+${edit_url}
+%endif
+
+%endif
+
+Thank you,
+
+The reddit team
+selfservicepromotion@reddit.com
+
+_____
+http://www.reddit.com/help/selfservicepromotion

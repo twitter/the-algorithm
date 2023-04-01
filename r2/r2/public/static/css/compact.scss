@@ -1,0 +1,1573 @@
+// Requires Compass and Sass to compile properly
+// [$]> gem install haml compass
+// [$]> cd r2/public/static/css
+// [$]> scss --compass --sourcemap=none --no-cache --style compact --watch compact.scss:compact.css
+
+/* mixins */
+
+@import "compass/css3";
+// TODO: Replace with non-deprecated
+// http://compass-style.org/reference/compass/css3/flexbox/ .
+@import "compass/css3/box";
+
+@mixin vertical_gradient($from, $to) {
+    @include background(linear-gradient(top, $from, $to));
+    background-color: mix($from, $to); //Takes 2 colors, and gives their combination. Looks good on gradual gradients, not on "exciting" gradients
+}
+@mixin sprite($url) {
+    background-image: url($url); /*SPRITE*/
+}
+//Directory for compact static files
+$static: "../compact/";
+
+/* meat */
+
+
+body {
+    background: rgb(197,204,211);
+    font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    width: 100%; height: 100%;
+    -webkit-font-smoothing: antialiased;
+}
+p {
+    margin: 0; padding: 0;
+}
+a {
+    color: #517191; 
+}
+a:visited {
+    color: #4F565B;
+}
+textarea {
+    font-family: inherit;
+}
+/*Preloading*/
+#preload {
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+}
+/*UI stuff*/
+.newbutton {
+    @include appearance(none);
+    border: 8px solid transparent;
+    @include border-image(url($static + 'border-button.png') 8 fill);
+    color: white;
+    font: {
+        family: inherit;
+        size: 12px;
+        weight: bold;
+    }
+    text-decoration: none;
+    text-shadow: 0px 1px 1px rgba(255,255,255,.1), 0px -1px 1px rgba(0,0,0,.4);
+    background: none;
+
+    &:active, &:hover, &[selected], &.expanded, &.active {
+        @include border-image(url($static + 'border-button-active.png') 8 fill);
+        color: white;
+    }
+}
+.button, .button:visited {
+    @include border-radius(6px);
+    @include vertical_gradient(#BFD0E0, #80A2C4);
+
+    height: 30px; line-height: 30px;
+    color: white;
+    font-family: inherit; font-size: 12px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 5px;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: auto;
+    text-shadow: 0px 1px 1px rgba(255,255,255,.1), 0px -1px 1px rgba(0,0,0,.4);
+    border: 1px solid #517191;
+    @include box-shadow(inset 0px 1px 0px hsla(0,0%,100%,.75), 0px 1px 1px rgba(255,255,255,.6), 0px -1px 1px rgba(0,0,0,.1) );
+}
+.button:active, .button[selected], .button.active,
+/*Vote toolbar styles*/.button.upmod, .button.downmod
+ {
+    @include vertical_gradient(#7E8994, #80A2C4);
+}
+button.button {
+    padding: 0 5px;
+}
+.secondary_button {
+    @include vertical_gradient(#ABBBC9, #8393A3);
+    border: 1px solid #626D78;
+}
+.secondary_button:active, .second_button[selected], .second_button.active {
+    background-color: #ABBBC9;
+    @include vertical_gradient(#8393A3, #ABBBC9);
+}
+
+.small_button, .small_button:visited {
+    @include border-radius(6px);
+    @include vertical_gradient(#BFD0E0, #80A2C4);
+
+   line-height: 20px;
+   color: white;
+   font-family: inherit; font-size: 12px;
+   font-weight: bold;
+   margin: 0px;
+   padding: 1px;
+   text-decoration: none;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   width: auto;
+   text-shadow: 0px 1px 1px rgba(255,255,255,.1), 0px -1px 1px rgba(0,0,0,.4);
+   border: 1px solid #517191;
+   @include box-shadow( "0px 1px 1px rgba(255,255,255,.6), 0px -1px 1px rgba(0,0,0,.1) ");
+}
+.small_button:active, .small_button[selected], .small_button.active {
+    @include vertical_gradient(#7E8994, #80A2C4);
+}
+
+
+.group_button {
+    @include border-radius(0);
+    border-left: 1px solid hsl(211, 40%, 75%);
+    border-right: 1px solid hsl(211, 28%, 37%);
+}
+.group_button:first-child {
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-bottomleft: 6px;
+
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+
+    -webkit-border-top-left-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    border-left: 1px solid hsl(210, 28%, 44%);
+}
+.group_button:last-child {
+    -webkit-border-top-left-radius: 0px; -moz-border-radius-topleft: 0px;
+    -webkit-border-bottom-left-radius: 0px; -moz-border-radius-bottomleft: 0px;
+    -webkit-border-top-right-radius: 6px; -moz-border-radius-topright: 6px;
+    -webkit-border-bottom-right-radius: 6px; -moz-border-radius-bottomright: 6px;
+    border-right: 1px solid hsl(210, 28%, 44%);
+}
+
+/*Options popups*/
+.options_link {
+    font-size: x-small;
+    clear: left;
+    margin: 2px 0px 0px 10px;
+    display: inline-block;
+    width: 30px; height: 30px;
+    position: absolute;
+    top: 35px;
+    right: 10px;
+    
+    @include sprite($static + 'options.png');
+
+    &.active {
+        @include sprite($static + 'options-active.png');
+    }
+}
+
+.comment .options_link {
+    top: 10px;
+}
+
+/*Options expando*/
+
+.link, .comment, .message {
+    .options_expando {
+        background: hsl(210,35%,20%);
+        margin:  35px -5px -1px;
+        border-top:  1px solid hsl(210,35%,10%);
+        display: none;
+        @include box-shadow(inset 0px 3px 8px hsla(0,0%,0%,.8));
+        text-shadow: 0px -1px 0px hsla(0,0%,0%,.8);
+        text-align: center;
+        height: 60px;
+        overflow: hidden;
+
+        a {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            font-size: 11px;
+            padding: 10px;
+            width: 50px; height: 40px;
+            text-align: center;
+            border-right:  1px solid hsl(210,35%,10%);
+            border-left:  1px solid hsl(210,35%,30%);
+            @include transition(all 100ms ease-in);
+
+            &:active {
+                background-color: hsl(210,35%,30%);
+                border-left: 1px solid hsl(210,35%,40%);
+            }
+
+            &:hover {
+                background-color: hsl(210,25%,20%);
+                @include box-shadow(inset 0px 3px 8px hsla(0,0%,0%,.8));
+                border-left: 1px solid hsl(210,35%,40%);
+            }
+
+            &:first-child {
+                border-left: none;
+            }
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        &.expanded {
+            display: block;
+        }
+    }
+}
+.comment, .message { //For the funky styles on comments/messages
+    .entry {
+        margin-right: 50px;
+    }
+    .child {
+        .options_link {
+            top: 8px; //Instead of 35px, for normal styles, we want 8px for these, as they are typically much smaller
+        }
+    }
+    .options_expando {
+        margin: 10px -50px 10px 0px; //Overwrite the link styles
+    }
+}
+.message {
+
+    .options_expando {
+        margin: 25px -55px 10px -5px;
+    }
+}
+
+.options_icons {
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin: {
+        left: auto;
+        right: auto;
+        bottom: 5px;
+    }
+}
+.email-icon {
+    @extend .options_icons;
+    @include sprite($static + 'email.png');
+}
+.report-icon {
+    @extend .options_icons;
+    @include sprite($static + 'report.png');
+}
+.save-icon {
+    @extend .options_icons;
+    @include sprite($static + 'save.png');
+}
+.unsave-icon {
+    @extend .options_icons;
+    @include sprite($static + 'unsave.png');
+}
+.domain-icon {
+    @extend .options_icons;
+    @include sprite($static + 'domain.png');
+}
+.edit-icon {
+    @extend .options_icons;
+    @include sprite($static + 'edit.png');
+}
+.reply-icon {
+    @extend .options_icons;
+    @include sprite($static + 'reply.png');
+}
+.permalink-icon {
+     @extend .options_icons;
+    @include sprite($static + 'permalink.png');
+}
+.collapse-icon {
+    @extend .options_icons;
+    @include sprite($static + 'collapse.png');
+}
+.context-icon {
+    @extend .options_icons;
+    @include sprite($static + 'context.png');
+}
+.parent-icon {
+    @extend .options_icons;
+    @include sprite($static + 'context.png');
+}
+.unread-icon {
+    @extend .options_icons;
+    @include sprite($static + 'unread.png');
+}
+.hide-icon {
+    @extend .options_icons;
+    @include sprite($static + 'hide.png');
+}
+.unhide-icon {
+    @extend .options_icons;
+    @include sprite($static + 'unhide.png');
+}
+
+/*Toolbar*/
+#topbar {
+    @include vertical_gradient(#CEE3F8, #A8C4E0);
+    border-bottom: 1px solid #7599BD; border-top: 1px solid #DCEAF7;
+    @include box-sizing(border-box);
+    padding: 0px 10px; //Left and right padding
+    height: 40px;
+    position: relative;
+
+    #header-img {
+        height: 32px;
+        width: auto;
+    }
+
+    .left {
+        position: absolute;
+        left:  0;
+        bottom: 3px;
+        overflow: hidden;
+        max-height: 40px;
+        z-index: 1;
+    }
+    .right {
+        position: absolute;
+        right: 10px;
+        bottom: 1px;
+        z-index: 3;
+    }
+
+    & > h1 {
+        color: #444;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        margin: 0 10px;
+        padding: 0;
+        padding-top: 16px;
+        text-shadow: hsla(0, 100%, 100%, 0.5) 0px 1px 0px, hsla(0, 0%, 0%, 0.1) 0px -1px 0px;
+        @include box-flex(1); //This box will flex to fill avalible space
+    }
+}
+
+#topbar > h1 a {
+    position: relative;
+    color: inherit;
+    text-decoration: inherit;
+    z-index: 2;
+}
+body[orient="landscape"] > #topbar > h1 {
+    margin-left: -125px;
+    width: 250px;
+}
+
+#topbar > .right > .button {
+    padding-top: 8px; padding-bottom: 3px;
+}
+#topbar > .right > .button:first-child {
+	margin-right: 5px;
+}
+#topbar > .right > #mail {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+
+    &.nohavemail {
+        @include sprite($static + 'nomail.png');
+
+        &:active, &:hover {
+            @include sprite($static + 'nomail-active.png');
+        }
+    }
+    &.havemail {
+        @include sprite($static + 'havemail.png');
+
+        &:active, &:hover {
+            @include sprite($static + 'havemail-active.png');
+        }
+    }
+}
+#topbar > .right > #modmail {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+
+    &.nohavemail {
+        @include sprite($static + 'modmail.png');
+
+        &:active, &:hover {
+            @include sprite($static + 'modmail-active.png');
+        }
+    }
+    &.havemail {
+        @include sprite($static + 'newmodmail.png');
+
+        &:active, &:hover {
+            @include sprite($static + 'newmodmail-active.png');
+        }
+    }
+}
+
+.topbar-options {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    @include sprite($static + 'menu-options.png');
+
+    &.active, &:hover, &:active {
+        @include sprite($static + 'menu-options-active.png');
+    }
+}
+#top_menu {
+    position: absolute;
+    right: 5px; top: 44px;
+    background-color: white;
+    border: 1px solid rgba(27,47,94,.4); border-top: 0px;
+    -webkit-border-bottom-left-radius: 10px; -moz-border-radius-bottomleft: 10px;
+    -webkit-border-bottom-right-radius: 10px; -moz-border-radius-bottomright: 10px;
+    border-bottom-left-radius: 10px; 
+    border-bottom-right-radius: 10px;
+    @include box-shadow(0px 0px 8px rgba(0,0,0,.3) );
+    z-index: 5;
+    display: none;
+}
+#top_menu > .menuitem {
+    padding: 5px;
+}
+#top_menu > .menuitem.bottm-bar {
+    border-bottom: 1px solid rgba(27,47,94,.4);
+}
+#top_menu > .menuitem a {
+    text-decoration: none;
+    color: #222;
+    font-weight: bold;
+}
+
+.status { 
+    color: red; 
+    margin-left: 20px; 
+}
+
+/*Subtoolbar (eg hot)*/
+.subtoolbar {
+    @include box-sizing(border-box);
+    height: 32px;
+    @include vertical_gradient(white, #ccc);
+    border-bottom: 1px solid #bbb;
+    padding: 6px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.subtoolbar > ul {
+    list-style-type: none;
+    margin: 0;  padding: 0;
+}
+.subtoolbar > ul > li {
+    display: inline-block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.subtoolbar > ul > li a {
+    color: rgb(76, 86, 108);
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 12px; line-height: 20px;
+    margin: 0;
+    padding: 3px 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.subtoolbar > ul > li.selected a {
+    @include vertical_gradient(#ddd, #aaa);
+    @include border-radius(8px);
+    border: 1px solid #aaa;
+    padding-top: 2px; 
+    padding-bottom: 1px; 
+    @include box-shadow(0px 1px 1px rgba(255,255,255,.8));
+}
+/*Things*/
+/*Arrows*/
+.link , .comment, .message {
+    .arrow {
+        width: 28px; height: 28px;
+        cursor: pointer;
+        display: block;
+        margin: 1px auto 0px;
+        outline: none;
+
+        //Unvoted
+        &.up {
+            @include sprite($static + 'upvote.png');
+        }
+        &.down {
+            @include sprite($static + 'downvote.png');
+        }
+        //Voted
+        &.upmod {
+            @include sprite($static + 'upvote-active.png');
+        }
+        &.downmod {
+            @include sprite($static + 'downvote-active.png');
+        }
+    }
+}
+
+/*Links*/
+.link {
+    min-height: 70px;
+    border-bottom: 1px solid #999; 
+    border-top: 1px solid #ddd;
+    padding: 5px 5px;
+    padding-bottom: 0px; 
+    @include box-sizing(border-box);
+    background: rgba(255,255,255,.6);
+    position: relative;
+    overflow: hidden;
+}
+.link:first-child {
+    border-top: none;
+}
+.link:nth-child(odd) {
+    background: rgba(206, 227, 248, .5);
+}
+/* Voting stuff */
+.link > .rank {
+    float: left;
+    margin-top: 17px;
+    font-size: 12px;
+    color: #aaa;
+}
+.link > .midcol {
+    float: left;
+    width: 25px;
+    margin: 0 10px 1px 0px;
+    padding-bottom: 5px; 
+    position: relative;
+}
+
+.link > .entry .score,
+.link > .entry.likes  .score.unvoted,
+.link > .entry.dislikes  .score.unvoted  {
+    display:none;
+}
+
+.link > .entry  .score.unvoted,
+.link > .entry.likes  .score.likes,
+.link > .entry.dislikes  .score.dislikes
+{
+    display:inline;
+    font-weight: bold;
+}
+.link > .entry.likes  .score.likes {
+    color: #E07A7A;
+}
+.link > .entry.dislikes  .score.dislikes {
+    color: #7272D1;
+}
+
+/* experimental */
+.link .rank { display: none; }
+.link .modcol { float: left; }
+
+.comment { 
+    position: relative; 
+}
+.comment > .entry > .tagline .score {
+    display:none;
+}
+.comment > .entry.unvoted > .tagline .score.unvoted,
+.comment > .entry.likes > .tagline .score.likes,
+.comment > .entry.dislikes > .tagline .score.dislikes
+{
+    display:inline;
+}
+
+
+/** Vote up **/
+.link > .midcol.likes > .score {
+    color: #E07A7A;
+}
+
+/** Vote down **/
+.link > .midcol.dislikes > .score {
+    color: #7272D1;
+}
+/*Image*/
+.link .thumbnail {
+    float: right; 
+    margin: 0 0 5px 5px;
+    overflow: hidden;
+    max-height: 50px; 
+}
+
+.link .thumbnail img {
+    max-width: 50px;
+    max-height: 50px;
+}
+
+/* Entry*/
+
+.link .entry { 
+    margin: 0px 50px 3px 0px; 
+}
+
+.link a { 
+    text-decoration: none;
+    color: #517191;
+    color: #369;
+}
+
+.link  p.title {
+    margin: 0; padding: 0;
+    text-overflow: ellipsis; 
+    word-wrap: break-word;
+    font-size: .8em;
+    font-weight: bold;
+}
+.link  p.title > a {
+    text-overflow: ellipsis; overflow: hidden;
+    color: #25A; 
+}
+.link.stickied p.title > a {
+    color: #228822;
+}
+
+.link .domain {
+    color: hsl(0,0%,45%);
+    font-size: 9px;
+    margin: {
+        left: 5px;
+    }
+
+    a, a:hover {
+        color: inherit;
+
+    }
+}
+
+.link .tagline {
+    margin: 2px 0 5px;
+    padding: 0;
+    padding-top: 2px; 
+    font-size: 10px;
+    color: #333;
+}
+
+.link .tagline > span { 
+    margin-right: 2px;
+}
+
+
+.link .tagline a {
+    font-weight: bold; 
+}
+
+.link .tagline .stickied-tagline {
+    color: #228822;
+}
+
+/*Expando*/
+.link  .expando-button {
+    float: left;
+    display: block;
+    height: auto; line-height: inherit;
+    margin: 3px 10px 2px 0;
+    width: 30px;
+    height: 30px;
+    @include sprite($static + 'selftext.png');
+
+    &.expanded {
+        @include sprite($static + 'selftext-active.png');
+    }
+}
+
+.link > .expando {
+    clear: both;
+    margin: 5px 0; 
+    margin-bottom: 30px;
+    border: 1px solid #999;
+    background: #ddd;
+    padding: 5px;
+    @include border-radius(8px);
+    font-size: 11px;
+}
+
+.link > .thing_options { 
+    font-size: x-small; 
+    margin: none;
+	 display: block;
+	 float: left;
+	 clear: left;
+	 margin: 2px 0px 0px 10px;
+}
+.link > .thing_options a{ 
+}
+
+.nsfw-warning {
+    @include border-radius(3px);
+    color: #ac3939;
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 9px;
+    margin-left: 5px;
+    padding: 0 2px;
+    border: 1px solid #d27979 !important;
+}
+
+/* Comment count */
+.commentcount {
+    float: right;
+    margin: 5px;
+    width: 45px;
+    text-align: right;
+}
+.commentcount > .comments {
+    border: 8px solid transparent;
+    @include border-image(url($static + 'border-button.png') 8 fill);
+
+    color: white; font-family: inherit; font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    text-shadow: 0px 1px 1px rgba(255,255,255,.1), 0px -1px 1px rgba(0,0,0,.4);
+
+    &:active, &:hover, &[selected], &.preloaded {
+        @include border-image(url($static + 'border-button-active.png') 8 fill);
+    }
+}
+/* Comment styles */
+.commentarea > h1 {
+    color: rgb(76,86,108);
+    font-size: 17px;
+    margin: 10px 10px 5px;
+    border-bottom: 1px solid rgba(0,0,0,.2);
+    @include box-shadow( 0px 1px 1px rgba(255,255,255,.4));
+}
+.commentarea > .menuarea {
+	display: none; /*TODO: Make dropdown menu*/
+}
+.commentarea > .main-form-title {
+    color: rgb(76,86,108);
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0 10px;
+}
+.commentarea > .usertext {
+    background: white;
+    margin:  0 10px 5px;
+    border: 1px solid rgb(217,217,217);
+    @include border-radius(8px)
+}
+.commentarea > .usertext textarea {
+    margin: 0; padding: 5px;
+    width: 100%;
+    height: 100px;
+    border: none;
+    @include box-sizing(border-box);
+    @include border-radius(8px);
+    border-bottom: 1px solid rgb(217,217,217);
+
+}
+.cancel,
+.save {
+    float: right;
+    padding: 0 5px !important;
+}
+.save {
+	margin-left: 5px;
+}
+/* Errors */
+.error {
+	color: red;
+}
+.content > .error {
+	color: hsla(0, 100%, 100%, 0.9);
+	font-size: 25px;
+	margin: 10px;
+	text-align: center;
+	text-shadow: hsla(0, 0%, 0%, 0.15) 0px -1px 0px;
+}
+
+.help-toggle {
+    float: left;
+    margin: {
+        top: 3px;
+    }
+}
+.bottom-area {
+padding: 5px;
+}
+.markhelp-parent {
+    display: none;
+}
+.markhelp {
+   width: 100%;
+   border-collapse: collapse;
+}
+.markhelp tbody {
+}
+.markhelp  th {
+    background: rgb(217,217,217);
+}
+.markhelp th:first-child {
+    -webkit-border-top-left-radius: 8px; 
+    -moz-border-radius-topleft: 8px;
+    border-top-left-radius: 8px;
+}
+.markhelp th:last-child {
+    -webkit-border-top-right-radius: 8px; 
+    -moz-border-radius-topright: 8px;
+    border-top-right-radius: 8px;
+}
+.markhelp tr:nth-child(odd) td {
+    background: rgba(0,0,100,.1);
+}
+.markhelp td {
+    border: 1px solid rgb(217,217,217);
+    padding: 5px;
+}
+.markhelp tr:last-child td:first-child {
+    -webkit-border-bottom-left-radius: 8px; 
+    -moz-border-radius-bottomleft: 8px;
+    border-bottom-left-radius: 8px;
+}
+.markhelp tr:last-child td:last-child {
+    -webkit-border-bottom-right-radius: 8px; 
+    -moz-border-radius-bottomright: 8px;
+    border-bottom-right-radius: 8px;
+}
+/*Cloned comment reply */
+.usertext textarea {
+    margin: 0; padding: 5px;
+    border: 1px solid rgb(217,217,217);
+    width: 100%;
+    min-height: 100px;
+    @include border-radius(5px);
+    @include box-sizing(border-box);
+}
+.child form.usertext.cloneable {
+	margin: 5px;
+}
+
+/**Actual comments*/
+.comment {
+    background: white;
+    border: 1px solid rgb(217,217,217);
+    margin: 10px;
+    @include border-radius(8px)
+}
+.comment > .midcol {
+    float: left;
+    margin: 7px;
+    overflow: hidden;
+}
+.comment > .entry > .tagline {
+    font-size: 11px;
+    padding-bottom: 2px; 
+}
+.comment > .admin_takedown {
+    background-color: #F7F7F7;
+    color: #888888;
+    
+    a:link {
+        color: #326699;
+    }
+}
+
+.child .comment { 
+    margin: 4px; 
+    margin-top: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -moz-border-radius-topright: 0px;
+}
+
+
+.comment.collapsed .child,
+.comment.collapsed .usertext,
+.comment.collapsed .midcol,
+.comment.collapsed .button,
+.comment.collapsed .options_link,
+.comment.collapsed .options_expando
+{
+    display: none;
+}
+
+.comment.collapsed { 
+    font-style: italcs;
+}
+
+.comment.collapsed .tagline { 
+    margin-left: 20px; 
+    font-style: italcs;
+    color: #AAA; 
+}
+
+
+/** gilding */
+.gilded-icon {
+    position: relative;
+    display: inline-block;
+    margin: 0 0 -15px 8px;
+    top: -8px;
+    color: #99895F;
+    font-size: .9em;
+    vertical-align: middle;
+}
+
+.gilded-icon:before {
+    display: inline-block;
+    content: '';
+    background-image: url(../gold-coin.png);  /* SPRITE */
+    background-repeat: no-repeat;
+    height: 14px;
+    width: 13px;
+    margin-right: 2px;
+    vertical-align: -3px;
+}
+
+.user-gilded > .entry .gilded-icon:before {
+    width: 23px;
+}
+
+body.post-under-6h-old .gilded-icon {
+    opacity: .55;
+}
+
+
+/** messages and inbox */
+.message {
+    background: white;
+    position: relative; 
+    border: 1px solid rgb(217,217,217);
+    margin: 10px;
+    @include border-radius(8px);
+    padding: 5px;
+}
+.message > .midcol {
+    float: left;
+    margin: 10px;
+    overflow: hidden;
+}
+
+.message.unread {
+    background-color: #FFFFAA;
+}
+
+.message .correspondent {
+    @include vertical_gradient(hsl(210, 75%, 89%), hsl(209, 47%, 74%));
+    /* TODO */
+    margin-right: 10px;
+    padding: 2px 5px;
+    @include border-radius(15px);
+}
+.message .correspondent a {
+    text-decoration: none;
+}
+
+.message .message .subject { 
+    display: none; 
+}
+
+
+.message > .entry > .tagline {
+    font-size: 11px;
+    padding-bottom: 2px; margin-bottom: 2px;
+}
+.message > .entry .usertext-body, .message > .entry .md {
+    font-size: 11px;
+    word-wrap: break-word;
+}
+.message > .metabuttons {
+    float: right;
+    margin: 10px;
+}
+
+.message .subject {
+    font-weight: bold;
+	 font-size: 13px;
+	 border-bottom: 1px solid rgb(217,217,217);
+	 padding: 5px; overflow: hidden; 
+}
+
+.message .subject a {
+    margin-left: 5px;
+}
+.message .subject .correspondent a {
+    margin-left: 0;
+}
+
+/* subreddit */
+
+.link .subreddit { 
+    background-color: transparent;
+    margin: 0px; 
+}
+
+.subreddit { 
+    background-color: white;
+    @include border-radius(5px);
+    margin: 5px; 
+}
+
+.subreddit p.title { 
+    display: block;
+    margin-left: 35px;
+    margin-right: 30px; 
+}
+
+.subreddit  a.title {
+    display: block;
+    margin: 0; padding: 0;
+    text-overflow: ellipsis; 
+    word-wrap: break-word;
+    font-size: small;
+    font-weight: bold;
+    text-overflow: ellipsis; overflow: hidden;
+    color: #25A; 
+    text-decoration: none;
+}
+.subreddit .title a.domain { 
+    font-size: x-small;
+    color: #AAA; 
+    font-style: italic; 
+    display: block; 
+}
+
+.subreddit .tagline { 
+    font-size: x-small;
+    color: #666;
+}
+
+.subreddit .button.active { 
+    @include vertical_gradient(#BFD0E0, #80A2C4);
+}
+
+.subreddit > .entry .score,
+.subreddit > .entry.likes  .score.unvoted,
+.subreddit > .entry.dislikes  .score.unvoted  {
+    display:none;
+}
+
+.subreddit > .entry  .score.unvoted,
+.subreddit > .entry.likes  .score.likes,
+.subreddit > .entry.dislikes  .score.dislikes
+{
+    display:inline;
+}
+
+.subreddit .midcol .button.add,
+.subreddit .midcol .button.remove { 
+    font-family: courier;
+    font-size: small; 
+}
+
+.subreddit .midcol { 
+    float: left; 
+}
+
+.subreddit .midcol .button { 
+    display: none;
+    margin: 4px; 
+}
+.subreddit .midcol .button.active { 
+    display: block;
+    width: auto; 
+    height: auto;
+    padding: 0px 9px; 
+}
+.subreddit .expando-button { 
+    float: right; 
+    height: 100%; 
+}
+
+.subreddit .description { 
+    border-top: 1px solid #AAA;
+    margin-top: 2px;
+    padding-top: 2px; 
+    margin-left: 0px;
+    padding-left: 10px; 
+}
+
+/* Compose */
+#compose-message {
+	background: white;
+	border: 1px solid rgb(217,217,217); border-top: 0px;
+	margin: 10px; margin-top: 0;
+	padding: 10px;
+	-webkit-border-bottom-left-radius: 8px; -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px;
+}
+#compose-message label {
+	display: block;
+	font-size: 17px;
+	font-weight: bold;
+}
+#compose-message input[type="text"] {
+    @include box-sizing(border-box);
+    border: 1px solid rgb(117,117,117);
+    @include border-radius(5px);
+    margin-bottom: 5px;
+    padding: 5px;
+    width: 100%;
+}
+#compose-message textarea {
+	border-color: rgb(117,117,117);
+	height: 200px;
+}
+
+.comment > .entry .usertext-body {
+    font-size: 11px;
+	 word-wrap: break-word;
+}
+.comment > .entry .usertext-edit {
+    margin-left: 42px;
+}
+.comment > .metabuttons {
+    float: right;
+    margin: 10px;
+}
+/*Child comment specific styles*/
+/*Reduce the bottom margin on the last child comment in a thread, to make viewing easier.*/
+.child .comment {
+    margin-right: -1px; 
+}
+.child .comment:last-child {
+    margin-bottom: 2px;
+}
+
+.comment > .morecomments {
+    margin: 5px;
+    text-align: right;
+}
+.comment > .morecomments > a {
+
+}
+/*Link colors*/
+.tagline .submitter {
+    color: blue;
+}
+.tagline .friend {
+    color: orange; /*Why not orangered? Because orangered can look very red on a mobile*/
+}
+.tagline .moderator {
+    color: #282;
+}
+.tagline .admin {
+    color: #F01;
+}
+
+.tagline .userattrs .cakeday {
+    display: inline-block;
+    text-indent: -9999px;
+    width: 11px;
+    height: 8px;
+    background-image: url(../cake.png); /* SPRITE */
+    vertical-align: middle;
+}
+
+/*Loading spinner, yay CSS animation*/
+@-webkit-keyframes rotateThis {
+  from {-webkit-transform:scale(0.75) rotate(0deg);}
+  to {-webkit-transform:scale(0.75) rotate(360deg);}
+} 
+.loading { width: 100%; background-color: white; text-align: center; }
+.loading img {
+	-webkit-animation-name: rotateThis;
+  -webkit-animation-duration: .5s;
+  -webkit-animation-iteration-count:infinite;
+  -webkit-animation-timing-function:linear;
+}
+
+.throbber {
+    display: none;
+    margin: 0 2px;
+    background: url($static + 'throbber.gif') no-repeat;
+    width: 18px;
+    height: 18px;
+}
+.working .throbber { display: inline-block; }
+
+/* Login and Register */
+#login_login, #login_reg {
+    background: white;
+    border: 1px solid rgb(217,217,217);
+    margin: 10px;
+    -webkit-border-bottom-left-radius: 8px; -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto; 
+}
+#login_login > div, #login_reg > div {
+	padding: 10px;
+}
+#login_login > div > ul, #login_reg > div > ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 10px;
+}
+#login_login > div > ul li label, #login_reg > div > ul li label {
+	display: block;
+	font-size: 17px;
+	font-weight: bold;
+}
+#login_login input[type="text"], #login_login input[type="password"], #login_reg input[type="text"], #login_reg input[type="password"] {
+    width: 100%;
+    margin: 0 0 5px;
+    @include border-radius(5px);
+    border: 1px solid rgb(117,117,117); /*It was the coins fault!*/
+    font-size:17px;
+    padding: 5px;
+    @include box-sizing(border-box);
+}
+#login_login > div > ul li input[type="checkbox"] + label, #login_reg > div > ul li input[type="checkbox"] + label {
+	display: inline;
+}
+
+.user-form .submit * {
+    vertical-align: middle;
+}
+
+/* takdown page (sigh) */
+.infobar.red img { 
+    float: left;
+}
+
+.infobar.red { 
+    border: 1px solid red;
+    padding: 10px;
+    margin: 5px;
+    background-color: #FFA177;
+}
+
+.clear { 
+    clear: both; 
+}
+.clearleft { 
+    clear: left; 
+}
+
+.cover {
+    position: fixed;
+    left: 0px;
+    top: 0px; 
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    opacity: .3;
+    z-index: 1000;
+}
+
+.popup {
+    position: absolute;
+    top: 75px;
+    left: 0;
+    @include border-radius(30px);
+    background-color: white;
+    text-align: left;
+    z-index: 1001;
+    padding: 10px;
+    border-color: #B2B2B2 black black #B2B2B2;
+    border-style: solid;
+    border-width: 1px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 350px; 
+}
+
+.popup h1 {
+    text-align: center;
+    font-size: large; 
+    font-weight: normal;
+    color: orangered;
+}
+
+/* Submit links */
+#newlink {
+	background: white;
+	border: 1px solid hsl(0, 0%, 85%);
+	margin: 10px;
+	-webkit-border-bottom-left-radius: 8px;	-webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px;
+}
+#newlink .save {
+	margin: 8px;
+}
+/** Tab switcher **/
+#newlink .tabmenu {
+	display: -webkit-box;
+    display: -moz-box;
+	-webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+	margin: 10px; padding: 0;
+	
+}
+#newlink .tabmenu li {
+    display: block;
+    webkit-box-flex: 1;
+    @include vertical_gradient(hsl(0, 0%, 85%), hsl(0, 0%, 70%));
+    border: 1px solid hsl(0, 0%, 60%);
+    position: relative;
+}
+#newlink .tabmenu li a {
+	width: 100%; height: 100%;
+    @include box-sizing(border-box);
+	display: block;
+	padding: 5px;
+	color: hsl(0, 0%, 30%);
+	text-shadow: hsla(0, 100%, 100%, 0.40) 0px 1px 1px;
+	text-decoration: none;
+	font-weight: bold;
+}
+#newlink .tabmenu li:first-child {
+	-webkit-border-bottom-left-radius: 5px;	-webkit-border-top-left-radius: 5px;
+    -moz-border-radius-bottomleft: 5px; -moz-border-radius-topleft: 5px;
+}
+#newlink .tabmenu li:last-child {
+	-webkit-border-bottom-right-radius: 5px; -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-bottomright: 5px; -moz-border-radius-topright: 5px;
+	border-left-color: hsl(0, 0%, 80%);
+}
+#newlink li.selected {
+    @include vertical_gradient(hsl(0, 0%, 50%), hsl(0, 0%, 70%));
+}
+#newlink li.selected a {
+    text-shadow: hsla(0, 0%, 0%, 0.40) 0px -1px 1px;
+    color: hsl(0, 0%, 95%);
+}
+#newlink .spacer {
+    margin-bottom: 5px;
+}
+#newlink .infobar {
+    margin: 5px;
+}
+/* Fields */
+#newlink textarea, #newlink input[type="text"], #newlink input[type="url"] {
+    border: 1px solid hsl(0, 0%, 60%);
+}
+#newlink .roundfield {
+    position: relative;
+    padding: 0px 5px;
+}
+#newlink .roundfield-content textarea {
+    @include box-sizing(border-box);
+    width: 100%;
+    height: 5em;
+    @include border-radius(5px);
+}
+#newlink .roundfield-content input[type="text"], #newlink .roundfield-content input[type="url"] {
+    @include box-sizing(border-box);
+	width: 100%;
+	height: 2em;
+    @include border-radius(5px);
+}
+#newlink .title {
+	font-weight: bold;
+}
+/* Individual sections */
+#url-field .button {
+	float: right;
+	margin-top: 5px;
+}
+#url-field .title-status {
+	background: hsl(0, 0%, 90%);
+	border: 1px solid hsl(0, 0%, 50%);
+	padding: 2px 4px;
+	margin-top: 5px;
+	display: inline-block;
+}
+
+#suggested-reddits ul {
+    background: hsl(0, 0%, 90%);
+    border: 1px solid hsl(0, 0%, 50%);
+    padding: 8px;
+    @include border-radius(8px);
+}
+#suggested-reddits ul li {
+	display: inline;
+}
+#suggested-reddits ul li a {
+    @include vertical_gradient(hsl(210, 35%, 81%), hsl(210, 37%, 64%));
+    @include border-radius(10px);
+    display: inline-block;
+    margin: 5px;
+    padding: 3px 7px;
+    text-decoration: none;
+    border: 1px solid hsl(210, 37%, 50%);
+    color: hsl(210, 37%, 30%);
+}
+
+/* Autocomplete */
+#sr-autocomplete-area {
+	position: relative;
+	z-index: 50;
+	
+}
+#sr-drop-down {
+	position: absolute;
+    @include vertical_gradient(hsl(0, 0%, 90%), hsl(0, 0%, 75%));
+	border: 1px solid hsl(0,0%,50%);
+	-webkit-border-bottom-left-radius: 5px;	-webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomleft: 5px; -moz-border-radius-bottomright: 5px;
+	border-top: 0px;
+	display: none;
+	left: 5px;
+	margin: 0px;
+	padding: 0px;
+	position: absolute;
+	font-weight: bold; color: hsl(0,0%,20%);
+}
+#sr-drop-down li {
+	display: block;
+	padding: 2px 5px;
+}
+#sr-drop-down li:hover, #sr-drop-down li:active {
+    @include vertical_gradient(hsl(209, 35%, 81%), hsl(210, 37%, 64%));
+    color: white;
+    text-shadow: hsla(0, 100%, 100%, 0.0976563) 0px 1px 1px, hsla(0, 0%, 0%, 0.398438) 0px -1px 1px;
+	-webkit-text-stroke: 1px solid hsl(210, 28%, 44%);
+}
+#sr-drop-down li:last-child {
+	-webkit-border-bottom-left-radius: 5px;	-webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomleft: 5px; -moz-border-radius-bottomright: 5px;	
+}
+
+/* markdown */
+.md { overflow: auto; font-size: small; }
+.md p, .md h1 { margin: 5px 0}
+.md h1 { font-weight: bold; font-size: 100%; }
+.md h2 { font-weight: bold; font-size: 100%; }
+.md > * { margin-bottom: 0px }
+.md strong { font-weight: bold; }
+.md em { font-style: italic; }
+.md strong em { font-style: italic; font-weight: bold }
+.md img { display: none }
+.md ol, .md ul { margin: 10px 2em; }
+.md ul { list-style: disc outside }
+.md ol { list-style: decimal outside }
+.md pre { margin: 10px; }
+.md blockquote, .help blockquote {
+    border-left: 2px solid #369;
+    padding-left: 4px; 
+    margin: 5px;
+    margin-right: 15px;
+}
+.md td, .md th { border: 1px solid #EEE; padding: 1px 3px; }
+.md th { font-weight: bold;  }
+.md table { margin: 5px 10px;  }
+.md center { text-align: left;  }
+
+.tryme { 
+    width: 100%;
+    max-width: 280px;
+    padding: 10px;
+    background-color: white;
+    @include border-radius(10px);
+    margin: 10px auto; 
+}
+
+.tryme p { 
+    margin: 10px; 
+    font-size: small;
+}
+
+.tryme .choices .button { 
+    width: 260px;
+    display: block;
+    text-align: center;
+    margin: 10px; 
+}
+
+.deepthread {
+    margin-left: 40px;
+}
+
+.morecomments a,
+.deepthread a {
+    text-decoration: none;
+    color: white
+}
+
+.morechildren { 
+    margin: 5px 10px;
+}
+
+.morechildren a { 
+    display: block;
+    text-align: center;
+    max-width: 350px;
+    @warn "Evntually this needs to be swapped out for a more future-proof solution to solve the red text on 'load more->loading; for the morechildren button";
+    color: white !important;
+}
+
+a.author { margin-right: 0.5em; }
+ 
+.flair, .linkflair {
+    margin: {
+        top: 2px;
+        right: 0.5em;
+    }
+    padding: 0px 2px;
+    display: inline-block;
+    background: whiteSmoke;
+    color: hsl(0, 0%, 33%);
+    border: 1px solid hsl(0, 0%, 87%);
+    font-size: 9px;
+    
+    @include border-radius(2px);
+    @include box-shadow(inset 0px 1px 0px hsla(0,0%,100%,.9));
+}
+
+.linkflair {
+    font-weight: normal;
+    max-width: 10em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mobile-web-redirect-bar {
+    background: white;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-size: 14px;
+    padding: 20px;
+    width: 100%;
+    z-index: 1000;
+    
+    a {
+        text-decoration: none;
+    }
+
+    .mobile-web-redirect-header {
+        font-size: 18px;
+        line-height: 25px;
+        margin-bottom: 20px;
+    }
+
+    .mobile-web-redirect-optin {
+        background-color: #4a7fc5;
+        border-radius: 3px;
+        box-shadow: inset 0 -3px 0 0 #3e6ab7;
+        color: white;
+        display: block;
+        font-family: "Verdana", sans-serif;
+        font-weight: bold;
+        line-height: 20px;
+        margin-bottom: 20px;
+        padding: 10px 0;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .mobile-web-redirect-optout {
+        color: #7f7f7f;
+    }
+}
+
+.commentspacer {
+    clear: both;
+}

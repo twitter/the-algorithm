@@ -1,0 +1,303 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    import re
+    from r2.lib.filters import safemarkdown
+    from r2.controllers.api_docs import section_info
+    from r2.models.token import OAuth2Scope
+    from r2.lib.db.thing import thing_types
+%>
+
+<%def name="api_method_id(uri, method)">${method}_${uri.replace('/', '_').strip('_')}</%def>
+<%def name="api_uri(uri)">${unsafe(re.sub(r'{(\w+)}', r'<em class="placeholder">\1</em>', uri))}</%def>
+<%def name="api_uri_with_sr_maybe(uri, in_sr)">${api_uri(("[/r/{subreddit}]" if in_sr else "") + uri)}</%def>
+
+<%def name="mode_selector(current_mode)">
+  <span class="mode-selector">
+    <a class="mode ${'mode-current' if current_mode == 'section' else ''}"
+       href="/dev/api">by section</a>
+    <a class="mode ${'mode-current' if current_mode == 'oauth' else ''}"
+       href="/dev/api/oauth">by oauth scope</a>
+  </span>
+</%def>
+
+<%def name="api_method_toc(api)">
+  <strong>API methods</strong>
+  ${mode_selector('section')}
+  <ul>
+  %for section in sorted(api):
+    <li>
+      <a href="#section_${section}" class="section">${section_info[section]['title']}</a>
+      <ul>
+        %for uri in sorted(api[section]):
+          <%
+             methods = sorted(api[section][uri].keys())
+             has_oauth = any(api[section][uri][method]['oauth_scopes']
+                             for method in methods)
+          %>
+          <li class="${'supports-oauth' if has_oauth else ''}">
+            <a href="#${api_method_id(uri, methods[0])}">${api_uri(uri)}</a>
+          </li>
+        %endfor
+      </ul>
+    </li>
+  %endfor
+  </ul>
+</%def>
+
+<%def name="oauth_toc(api, oauth_index)">
+  <strong>API methods</strong>
+  ${mode_selector('oauth')}
+  <ul>
+  %for scope, keys in sorted(oauth_index.iteritems()):
+    <li>
+      <a href="#scope_${scope}" class="section">${scope}</a>
+      <ul>
+        %for section, uri, method in sorted(keys):
+          <li>
+            <a href="#${api_method_id(uri, method)}">${api_uri(uri)}</a>
+          </li>
+        %endfor
+      </ul>
+    </li>
+  %endfor
+  </ul>
+</%def>
+
+<%def name="section_header(section)">
+  <h2 id="section_${section}">${section_info[section]['title']}</h2>
+  %if 'description' in section_info[section]:
+    <div class="description">
+      ${unsafe(safemarkdown(section_info[section]['description']))}
+    </div>
+  %endif
+</%def>
+
+<%def name="scope_header(scope)">
+  <h2 id="scope_${scope}">
+    ${OAuth2Scope.scope_info[scope]['name']}
+    <span class="scope-id">${scope}</span>
+  </h2>
+  <div class="description">
+    ${unsafe(safemarkdown(OAuth2Scope.scope_info[scope]['description']))}
+  </div>
+</%def>
+
+<%
+  api = thing.api_docs
+%>
+
+<div class="sidebar">
+  <div class="head"></div>
+  <div class="toc">
+    <ul>
+      <li>
+        %if thing.mode == "oauth":
+          ${oauth_toc(thing.api_docs, thing.oauth_index)}
+        %else:
+          ${api_method_toc(thing.api_docs)}
+        %endif
+      </li>
+    </ul>
+  </div>
+  <div class="feet"></div>
+</div>
+
+<div class="contents">
+  <div class="section introduction">
+    <p>This is automatically-generated documentation for the reddit API.</p>
+    <p><strong>Please take care to respect our&#32;<a href="https://github.com/reddit/reddit/wiki/API">API access rules</a>.</strong></p>
+  </div>
+
+  <div class="section overview">
+    <h2>overview</h2>
+
+    <h3 id="listings">listings</h3>
+
+    <%text filter="safemarkdown">
+Many endpoints on reddit use the same protocol for controlling pagination and
+filtering. These endpoints are called Listings and share five common
+parameters: `after` / `before`, `limit`, `count`, and `show`.
+
+Listings do not use page numbers because their content changes so frequently.
+Instead, they allow you to view slices of the underlying data. Listing JSON
+responses contain `after` and `before` fields which are equivalent to the
+"next" and "prev" buttons on the site and in combination with `count` can be
+used to page through the listing.
+
+The common parameters are as follows:
+
+* `after` / `before` - only one should be specified. these indicate the
+[fullname](#fullnames) of an item in the listing to use as the anchor point of
+the slice.
+* `limit` - the maximum number of items to return in this slice of the listing.
+* `count` - the number of items already seen in this listing. on the html site,
+the builder uses this to determine when to give values for `before` and `after`
+in the response.
+* `show` - optional parameter; if `all` is passed, filters such as "hide links
+that I have voted on" will be disabled.
+
+To page through a listing, start by fetching the first page without specifying
+values for `after` and `count`. The response will contain an `after` value
+which you can pass in the next request. It is a good idea, but not required, to
+send an updated value for `count` which should be the number of items already
+fetched.
+    </%text>
+
+    <h3 id="modhashes">modhashes</h3>
+
+    <%text filter="safemarkdown">
+A modhash is a token that the reddit API requires to help prevent
+[CSRF](http://en.wikipedia.org/wiki/CSRF). Modhashes can be obtained via the
+[/api/me.json](#GET_api_me.json) call or in response data of listing endpoints.
+
+The preferred way to send a modhash is to include an `X-Modhash` custom HTTP
+header with your requests.
+
+Modhashes are not required when authenticated with OAuth.
+    </%text>
+
+    <h3 id="fullnames">fullnames</h3>
+
+    <%text filter="safemarkdown">
+A fullname is a combination of a thing's type (e.g. `Link`) and its unique ID
+which forms a compact encoding of a globally unique ID on reddit.
+
+Fullnames start with the type prefix for the object's type, followed by the
+thing's unique ID in [base 36](http://en.wikipedia.org/wiki/Base36).  For
+example, `t3_15bfi0`.
+    </%text>
+
+    <table class="parameters">
+      <caption>type prefixes</caption>
+      % for typeid in sorted(thing_types):
+      <tr>
+        <th scope="row">t${typeid}_</th>
+        <td>${thing_types[typeid].__name__}</td>
+      </tr>
+      % endfor
+    </table>
+
+    <h3 id="response_body_encoding">response body encoding</h3>
+
+    <%text filter="safemarkdown">
+For legacy reasons, all JSON response bodies currently have `<`, `>`, and `&`
+replaced with `&lt;`, `&gt;`, and `&amp;`, respectively. If you wish to opt out
+of this behaviour, add a `raw_json=1` parameter to your request.
+    </%text>
+  </div>
+
+  <div class="section methods">
+    %for section in sorted(api):
+      %if thing.mode == 'oauth':
+        ${scope_header(section)}
+      %else:
+        ${section_header(section)}
+      %endif
+      %for uri in sorted(api[section]):
+        %for method in sorted(api[section][uri]):
+          <%
+            docs = api[section][uri][method]
+            # skip uri variants in the index
+            if docs['uri'] != uri:
+              continue
+
+            in_subreddit = 'in-subreddit' in docs
+
+            extends = docs.get('extends')
+          %>
+          <div class="endpoint" id="${api_method_id(uri, method)}">
+            <div class="links">
+              <a href="#${api_method_id(uri, method)}">#</a>
+            </div>
+            <h3>
+              <span class="method">${method}&nbsp;</span>
+              ${api_uri_with_sr_maybe(uri, in_subreddit)}
+              %if docs['oauth_scopes']:
+                <span class="oauth-scope-list">
+                  %for scope in docs['oauth_scopes']:
+                    <a href="https://github.com/reddit/reddit/wiki/OAuth2">
+                        <span class="api-badge oauth-scope">${scope or "any"}</span>
+                    </a>
+                  %endfor
+                </span>
+              %endif
+              %if docs['supports_rss']:
+                <a href="https://www.reddit.com/wiki/rss">
+                    <span class="api-badge rss-support">rss support</span>
+                </a>
+              %endif
+            </h3>
+            %if 'uri_variants' in docs:
+              <ul class="uri-variants">
+                %for variant in docs['uri_variants']:
+                <li id="${api_method_id(variant, method)}">&rarr; ${api_uri_with_sr_maybe(variant, in_subreddit)}</li>
+                %endfor
+              </ul>
+            %endif
+            <div class="info">
+              ${unsafe(safemarkdown(docs.get('doc')))}
+              <%
+                json_model = docs.get('json_model')
+                if json_model:
+                  params = None
+                  base_params = None
+                else:
+                  params = docs.get('parameters')
+                  base_params = extends.get('parameters') if extends else None
+              %>
+              %if params or base_params or json_model:
+                <table class="parameters">
+                %if params:
+                  %for param in sorted(params):
+                    <tr>
+                      <th scope="row">${param}</th>
+                      <td>${unsafe(safemarkdown(params[param], wrap=False))}</td>
+                    </tr>
+                  %endfor
+                %endif
+                %if base_params:
+                  %for param in sorted(base_params):
+                    %if param not in params:
+                      <tr class="base-param">
+                        <th scope="row">${param}</th>
+                        <td>${unsafe(safemarkdown(base_params[param], wrap=False))}</td>
+                      </tr>
+                    %endif
+                  %endfor
+                %endif
+                %if json_model:
+                  <tr class="json-model">
+                    <th>${_("This endpoint expects JSON data of this format")}</th>
+                    <td>${unsafe(safemarkdown(json_model.docs_model(), wrap=False))}</td>
+                  </tr>
+                %endif
+                </table>
+              %endif
+            </div>
+          </div>
+        %endfor
+      %endfor
+    %endfor
+  </div>
+</div>

@@ -1,0 +1,234 @@
+.transition (@property, @duration, @function: ease, @delay: 0s) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -o-transition: @arguments;
+    -ms-transition: @arguments;
+    transition: @arguments;
+}
+
+.policy-page {
+    position: relative;
+    margin: 0 auto;
+    padding-left: 195px;
+    width: 43em;
+    font-size: 11pt;
+
+    .md {
+        line-height: 1.75em;
+        overflow: visible;
+        margin: 0;
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 1.75em;
+            font-weight: bold;
+            margin: 1.5em 0;
+
+            a {
+                color: black;
+                padding-bottom: 2px;
+
+                &:hover {
+                    // the padding added to the em causes a break in the text-decoration underline
+                    text-decoration: none;
+                    border-bottom: 1px solid #777;
+                }
+            }
+
+            strong {
+                margin-right: .5em;
+            }
+
+            em {
+                font-size: .60em;
+                font-style: normal;
+                color: #777;
+                white-space: nowrap;
+            }
+        }
+
+        h2 {
+            font-size: 1.4em;
+            margin: 1em 0 .75em;
+            padding-top: 1em;
+            color: #336699;
+        }
+
+        h3 {
+            color: #333;
+            font-size: 1.1em;
+            margin-top: 1.5em;
+
+            a {
+                color: black;
+            }
+        }
+
+        h1, h2, h3 {
+            text-transform: lowercase;
+        }
+
+        p {
+            margin-bottom: 1em;
+            color: #222;
+        }
+
+        p em {
+            line-height: 1.5em;
+            font-style: normal;
+            display: block;
+            background: #fcfbd7;
+            padding: .5em .75em;
+            margin: 0 -.75em;
+            margin-top: 1.5em;
+            position: relative;
+            top: -.5em;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px #d1d0bb;
+        }
+
+        a.p-anchor {
+            float: left;
+            font-size: 10pt;
+            font-weight: normal;
+            color: #ddd;
+            margin-left: -3.5em;
+            width: 1.5em;
+            text-align: right;
+            .transition(color, 1.5s);
+        }
+
+        h1:hover > a.p-anchor,
+        h2:hover > a.p-anchor,
+        h3:hover > a.p-anchor,
+        p:hover > a.p-anchor {
+            color: #555;
+            .transition(color, 0.25s, ease, 0.5s);
+
+            &:hover {
+                .transition(color, 0s);
+            }
+        }
+
+        blockquote {
+            margin: .5em 0;
+            padding: 0;
+            border: none;
+            font-size: 1.7em;
+
+            p {
+                line-height: 1.5em;
+                color: #555;
+            }
+        }
+    }
+
+    .doc-info, .md blockquote {
+        top: 2.5em;
+        margin-top: 1.5em;
+        h4 {
+            margin-bottom: .75em;
+        }
+    }
+
+    .doc-info {
+        position: absolute;
+        margin-left: -13em;
+        width: 10em;
+
+        h4 {
+            color: #555;
+            font-size: .9em;
+        }
+
+        .revisions li {
+            font-size: .85em;
+        }
+
+        .toc ul ul li {
+            font-size: .85em;
+        }
+
+        li {
+            margin: .75em 0;
+
+            &.selected {
+                font-weight: bold;
+            }
+        }
+
+        .revisions li {
+            white-space: nowrap;
+        }
+
+        .toc {
+            position: relative;
+            text-transform: lowercase;
+
+            & > ul {
+                margin-bottom: 1.5em;
+
+                // only display h2 sections in toc
+
+                & > li {
+                    display: none;
+                }
+
+                & > li.toc_child {
+                    display: block;
+                }
+
+                ul ul {
+                    display: none;
+                }
+            }
+
+            .location {
+                position: absolute;
+                left: -11px;
+                margin-top: 2px;
+                border: 5px solid transparent;
+                border-left-color: orangered;
+            }
+        }
+    }
+}
+
+@media (max-width: 835px) {
+    .policy-page {
+        padding-left: 0;
+
+        .doc-info.scroll-fixed-standin {
+            display: none;
+        }
+
+        .doc-info {
+            position: static;
+            margin: 2em 0;
+            width: auto;
+
+            &.scroll-fixed {
+                position: static !important;
+            }
+
+            .toc {
+                display: none;
+            }
+
+            .revisions li {
+                display: inline-block;
+                margin: 0 .5em;
+            }
+        }
+    }
+}
+
+@media (max-width: 635px) {
+    .policy-page {
+        margin: 0 1em;
+        width: auto;
+    }
+}

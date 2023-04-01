@@ -1,0 +1,162 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.config import feature
+   from r2.lib.template_helpers import add_sr
+   from r2.lib.template_helpers import make_url_protocol_relative
+   import urllib
+   from r2.lib.filters import _force_unicode, _force_utf8
+ %>
+<%namespace file="printable.compact" import="delete_report_buttons"/>
+<%namespace file="printable.html" import="arrow, score"/>
+<%namespace file="link.html" import="tagline, thumbnail"/>
+<%namespace file="utils.html" import="plain_link, nsfw_stamp, quarantine_stamp" />
+<%namespace file="utils.compact" import="icon_button, toggle_button" />
+<%namespace file="printablebuttons.html" import="state_button" />
+
+<%def name="flair()">
+  %if c.user.pref_show_link_flair:
+    <span class="linkflair">${thing.flair_text}</span>
+  %endif
+</%def>
+
+<%
+    div_class = "thing link id-%s" % thing._fullname
+    if thing.use_sticky_style:
+        div_class += " stickied"
+%>
+<div class="${div_class}">
+  <span class="rank">
+    ${thing.num_text}
+  </span>
+  <% 
+     like_cls = "unvoted"
+     if getattr(thing, "likes", None):
+         like_cls = "likes"
+     elif getattr(thing, "likes", None) is False:
+         like_cls = "dislikes"
+   %>
+  <div class="midcol ${like_cls}">
+    ${arrow(thing, 1, thing.likes)}
+    ${arrow(thing, 0, thing.likes == False)}
+  </div>
+    %if not c.permalink_page:
+      <div class="commentcount">
+        ${plain_link(thing.comment_label, thing.permalink, _class=thing.commentcls)}
+      </div>
+    %endif
+  <div class="entry ${like_cls}">
+  <%
+    if thing.is_self:
+        url = add_sr(thing.href_url)
+    else:
+        url = thing.url
+  %>
+  %if c.site.link_flair_position == 'left' and thing.flair_text:
+    ${flair()}
+  %endif
+    ${thumbnail()}
+    <p class="title">
+    <a href="${url}" class="may-blank">${thing.title}</a>
+    %if c.site.link_flair_position == 'right' and thing.flair_text:
+      ${flair()}
+    %endif
+    <span class="domain">
+    %if thing.is_self:
+        (self)
+    %else:
+        (<a href="${thing.domain_path}.compact">${thing.domain_str}</a>)
+    %endif
+    </span>
+    %if thing.quarantine:
+      <span class="quarantine-warning">
+        ${quarantine_stamp()}
+      </span>
+    %endif
+    %if thing.nsfw:
+      <span class="nsfw-warning">
+        ${nsfw_stamp()}
+      </span>
+    %endif
+    </p>
+    <%
+      video_hide = thing.link_child and thing.link_child.css_style.strip(' ') == 'video'
+      selftext_hide = thing.is_self and not thing.selftext
+    %>
+    %if thing.link_child and not c.permalink_page and not video_hide and not selftext_hide:
+      <a href="javascript:void(0)" class="expando-button collapsed
+                  ${thing.link_child.css_style}"></a>
+    %endif
+    <div class="tagline">
+      ${tagline()}
+    </div>
+    </div>
+    <a href="javascript:void(0)" class="options_link"></a>
+    <%
+       expand = thing.link_child and thing.link_child.expand
+     %>
+  <div class="expando" ${"style='display: none'" if not expand else ""}>
+    %if thing.link_child:
+      ${unsafe(thing.link_child.content())}
+    %endif
+  </div>
+  <div class="clear options_expando hidden">
+    <% 
+       subject = "[reddit] I wanted to share this link with you"
+       body = """%(user)s shared a link with you from reddit (https://www.reddit.com/):
+
+%(link)s
+
+"%(title)s"
+
+there's also a discussion going on here:
+
+%(permalink)s
+""" % dict(user = c.user.name if c.user_is_Loggedin else "A reddit user",
+       link = _force_unicode(thing.url),
+       title = _force_unicode(thing.title),
+       permalink = add_sr(thing.permalink, sr_path = False, force_hostname = True, retain_extension=False))
+       url = "https://reddit.com/%s" % thing._id36
+       title = _force_unicode(thing.title)
+       tweet = "%s %s" % (title[0:(139-len(url))], url)
+       %>
+
+        ${icon_button("Share", "email-icon", "mailto:?subject=" + urllib.quote(_force_utf8(subject)) + "&body=" + urllib.quote(_force_utf8(body)))}
+        ${self.save_button()}
+        ${self.hide_button()}
+        ${icon_button("Report","report-icon",onclick="return change_state(this, 'report', hide_thing)")}
+
+      
+
+  </div>
+</div>
+<%def name="hide_button()">
+    %if c.user_is_loggedin:
+            ${toggle_button("hide", thing.hidden)}
+    %endif
+</%def>
+<%def name="save_button()">
+    %if c.user_is_loggedin:
+        ${toggle_button("save", thing.saved)}
+    %endif
+</%def>

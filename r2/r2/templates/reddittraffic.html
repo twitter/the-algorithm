@@ -1,0 +1,127 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    import babel.dates
+
+    from r2.lib import js
+    from r2.lib.strings import strings
+    from r2.lib.template_helpers import static, js_timestamp, format_number
+
+    import babel.dates
+%>
+
+<%namespace file="utils.html" import="_md"/>
+
+<%def name="load_timeseries_js()">
+  <!--[if lte IE 8]>
+  ${unsafe(js.use('timeseries-ie'))}
+  <![endif]-->
+  <!--[if !(lte IE 8)]><!-->
+  ${unsafe(js.use('timeseries'))}
+  <!--<![endif]-->
+</%def>
+
+<div class="md-container wiki-page-content">
+  % if thing.place:
+    ${_md(("# traffic statistics for %(place)s") % dict(place=thing.place), wrap=True)}
+  % endif
+
+  ${self.preamble()}
+
+  ${self.last_modified_message()}
+
+  ${self.top_content()}
+</div>
+
+<%def name="last_modified_message()">
+    <p id="timeseries-unprocessed" data-last-processed="${js_timestamp(thing.traffic_last_modified)}"
+    % if thing.traffic_lag.total_seconds() > 10800:
+      class="slow">
+      ${strings.traffic_processing_slow % dict(date=babel.dates.format_datetime(thing.traffic_last_modified, format="long", locale=c.locale))}
+    % else:
+      >
+      ${strings.traffic_processing_normal % dict(date=babel.dates.format_datetime(thing.traffic_last_modified, format="long", locale=c.locale))}
+    % endif
+    </p>
+</%def>
+
+<%def name="top_content()"></%def>
+
+<div id="charts"></div>
+
+<div class="traffic-tables-side">
+${self.sidetables()}
+</div>
+
+<div class="traffic-tables">
+${self.tables()}
+</div>
+
+<script type="text/javascript">
+  r.timeseries.init()
+</script>
+
+<%def name="preamble()" />
+
+<%def name="sidetables()">
+  <%
+    day_names = babel.dates.get_day_names(locale=c.locale)
+  %>
+
+  % if thing.dow_summary:
+  <table class="traffic-table">
+  <caption>${_("traffic by day of week")}</caption>
+  <thead>
+  <tr>
+    <th scope="col">${_("day")}</th>
+    <th scope="col">${_("uniques")}</th>
+    <th scope="col">${_("pageviews")}</th>
+  </tr>
+  </thead>
+  <tbody>
+  % for dow, cols in thing.dow_summary:
+  <tr>
+    <th scope="row">${day_names[dow]}</th>
+    % for col in cols:
+    <td>${format_number(col)}</td>
+    % endfor
+  </tr>
+  % endfor
+  </tbody>
+  <tfoot>
+  <tr>
+    <th scope="row">${_("daily mean")}</th>
+    % for col in thing.dow_means:
+    <td>${format_number(col)}</td>
+    % endfor
+  </tr>
+  </tfoot>
+  </table>
+  % endif
+</%def>
+
+<%def name="tables()">
+  % for table in thing.tables:
+  ${table}
+  % endfor
+</%def>

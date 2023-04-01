@@ -1,0 +1,274 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from pylons import app_globals as g
+
+   from r2.config import feature
+   from r2.lib.filters import conditional_websafe
+   from r2.lib.template_helpers import (
+       get_domain,
+       get_linkflair_css_classes,
+       js_timestamp,
+       make_url_protocol_relative,
+   )
+   from r2.lib.pages.things import LinkButtons
+   from r2.lib.pages import WrappedUser
+   from r2.lib.strings import Score, strings
+%>
+ 
+<%inherit  file="printable.html"/>
+<%namespace file="utils.html" import="plain_link, thing_timestamp, edited, nsfw_stamp, quarantine_stamp, thumbnail_img" />
+<%namespace file="printablebuttons.html" import="toggle_button" />
+ 
+<%def name="numcol()">
+  <span class="rank">
+    ${thing.num_text}
+  </span>
+</%def>
+
+<%def name="make_link(name, css_class, tabindex=0)">
+  <%
+    media_override = thing.link_child and getattr(thing, 'media_override', False)
+    if thing.is_self:
+      url = thing.href_url
+      inbound_tracking_url = thing.tracking_link(url, thing, name)
+    else:
+      url = thing.href_url
+      inbound_tracking_url = None
+  %>
+  <a class="${css_class} may-blank ${ c.user_is_loggedin and 'loggedin' or ''}
+            ${ media_override and 'open-expando' or '' }"
+     href="${url}"
+     %if tabindex:
+       tabindex="${tabindex}"
+     %endif
+     %if thing.nofollow:
+       rel="nofollow"
+     %endif
+     %if inbound_tracking_url and inbound_tracking_url != url:
+       data-href-url="${url}"
+       data-inbound-url="${inbound_tracking_url}"
+     %endif
+     >
+     ${caller.body()}
+  </a>
+</%def>
+
+<%def name="bottom_buttons()">
+  <ul class="flat-list buttons">
+    %if thing.quarantine:
+      <li>
+        <span class="quarantine-stamp stamp">${quarantine_stamp()}</span>
+      </li>
+    %endif
+    %if thing.nsfw:
+     <li>
+       <span class="nsfw-stamp stamp">${nsfw_stamp()}</span>
+     </li>
+    %endif
+    ${self.buttons()}
+    ${self.admintagline()}
+  </ul>
+  <div class="reportform report-${thing._fullname}"></div>
+ </%def>
+
+<%def name="flair()">
+  %if c.user.pref_show_link_flair and thing.flair_text:
+    <span class="linkflairlabel" title="${thing.flair_text}">${thing.flair_text}</span>
+  %endif
+</%def>
+
+<%def name="entry()">
+  <p class="title">
+    %if c.site.link_flair_position == 'left':
+      <%call expr="flair()" />
+    %endif
+    <%call expr="make_link('title', 'title', tabindex=1)">
+      ${thing.title}
+    </%call>
+    %if c.site.link_flair_position == 'right':
+      <%call expr="flair()" />
+    %endif
+    ${self.approval_checkmark()}
+    &#32;
+
+    ${self.domain()}
+
+    %if c.user_is_admin:
+        %for link_note in thing.link_notes:
+           &#32;<span class="link-note">[${link_note}]</span>
+        %endfor
+    %endif
+  </p>
+
+  ##the expando button
+  <% selftext_hide = thing.is_self and not thing.selftext %>
+  %if thing.link_child:
+    %if not thing.link_child.expand and not selftext_hide:
+      <div class="expando-button collapsed
+                  ${thing.link_child.css_style}"></div>
+    %elif thing.link_child.expand and not thing.link_child.position_inline:
+      <div class="expando-button expanded
+                  ${thing.link_child.css_style}"></div>
+    %endif
+  %endif
+
+  <p class="tagline">
+    ${self.tagline()}
+  </p>
+
+  <% 
+     child_content = ""
+     if thing.link_child and thing.link_child.load:
+       child_content = unsafe(thing.link_child.content())
+     expand = thing.link_child and thing.link_child.expand
+     position_inline = thing.link_child and thing.link_child.position_inline
+  %>
+
+  ## if we're not on a permalink page we'll render the buttons on top
+  %if not position_inline:
+    ${bottom_buttons()}
+  %endif
+
+  <div class="expando expando-uninitialized" ${"style='display: none'" if not expand else ""}
+    %if not expand and child_content:
+      data-cachedhtml="${websafe(child_content)}"
+    %endif
+  >
+    %if expand:
+      ${child_content}
+    %else:
+      <span class="error">loading...</span>
+    %endif
+  </div>
+
+  ##if we are on a permalink page, we'll render the buttons below
+  %if position_inline:
+    ${bottom_buttons()}
+  %endif
+</%def>
+
+<%def name="thing_css_class(what)" buffered="True">
+  ${parent.thing_css_class(what)} ${"over18" if thing.over_18 else ""} ${thing.visited and 'visited' or ''}
+  ${get_linkflair_css_classes(thing, on_class="linkflair", off_class="")}
+</%def>
+
+<%def name="thing_data_attributes(what)">
+  ${parent.thing_data_attributes(what)}
+
+  %if not getattr(what, 'deleted', False):
+    data-author="${what.author.name}"
+    data-author-fullname="${what.author._fullname}"
+  %endif
+
+  data-subreddit="${what.subreddit.name}"
+  data-subreddit-fullname="${what.subreddit._fullname}"
+
+  data-timestamp="${js_timestamp(what._date)}"
+
+  data-url="${thing.href_url}"
+  data-domain="${what.domain}"
+  data-rank="${what.num_text}"
+
+  %if getattr(what, 'can_ban', False):
+    data-can-ban="true"
+  %endif
+</%def>
+
+<%def name="subreddit()" buffered="True">
+  ${plain_link('/r/' + thing.subreddit.name, thing.subreddit_path, _sr_path=False,
+               _class="subreddit hover may-blank")}
+</%def>
+
+<%def name="midcol(display=True, cls = '')">
+    <div class="midcol ${cls}"
+       ${not display and "style='display:none'" or ''}>
+    ${self.arrow(thing, 1, thing.likes)}
+    %if thing.pref_compress:
+      <div class="score-placeholder"></div>
+    %elif thing.hide_score:
+      <div class="score likes">&bull;</div> 
+      <div class="score unvoted">&bull;</div> 
+      <div class="score dislikes">&bull;</div> 
+    %else:
+      ${self.score(thing, tag='div')}
+    %endif
+    ${self.arrow(thing, 0, thing.likes == False)}
+  </div>
+ ${self.thumbnail()}
+</%def>
+
+
+<%def name="domain(link=True)">
+  <span class="domain">
+    %if link:
+      (<a href="${thing.domain_path}">${thing.domain_str}</a>)
+    %else:
+      (${thing.domain_str})
+    %endif
+    %if c.user_is_admin:
+      &#32;
+      <a class="adminbox" href="/admin/domain/${thing.domain}">d</a>
+    %endif
+  </span>
+</%def>
+
+<%def name="tagline()">
+  <%
+    taglinetext = conditional_websafe(thing.taglinetext).replace(" ", "&#32;")
+  %>
+  ${unsafe(taglinetext % dict(reddit=self.subreddit(),
+                              score=capture(self.score, thing, tag='span'),
+                              when=capture(thing_timestamp, thing, thing.timesince, live=True, include_tense=True),
+                              author=WrappedUser(thing.author, thing.attribs, thing).render(),
+                              lastedited=capture(edited, thing, thing.lastedited)
+                              ))}
+  ${self.gildings()}
+  %if thing.use_sticky_style:
+    &#32;-&#32;<span class="stickied-tagline" title="selected by this subreddit's moderators">announcement</span>
+  %endif
+
+  %if getattr(thing, 'savedcategory', None) is not None:
+    ${plain_link(_('category: %s') % thing.savedcategory,
+                 '/user/%s/saved/%s' % (c.user.name, thing.savedcategory),
+                 _class='save-category' + ('' if thing.savedcategory else ' hidden')
+                )}
+  %endif
+</%def>
+
+<%def name="child()">
+</%def>
+
+<%def name="buttons(comments=True, delete=True, report=True, additional='')">
+  ${LinkButtons(thing, comments = comments, delete = delete,
+                report = report,
+               )}
+</%def>
+
+<%def name="thumbnail()">
+  %if thing.thumbnail:
+  <%call expr="make_link('thumbnail', 'thumbnail ' + (thing.thumbnail if thing.thumbnail_sprited else ''))">
+    ${thumbnail_img(thing)}
+  </%call>
+  %endif
+</%def>

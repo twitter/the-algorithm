@@ -1,0 +1,81 @@
+#!/usr/bin/python
+"""
+Wrap a command, setuid/setgid, change directory to the reddit
+code, and send output to syslog.
+
+The following environment variables may be used to control
+the environment the wrapped command runs in:
+
+REDDIT_USER
+
+    The user to run the job as. Defaults to "reddit".
+
+REDDIT_GROUP
+
+    The group to run the job as. Defaults to $REDDIT_USER.
+
+REDDIT_ROOT
+
+    The root directory of the reddit package. It's where the makefile lives.
+
+REDDIT_LOG_FACILITY
+
+    The syslog facility to write messages to.
+"""
+
+import os
+import sys
+import grp
+import pwd
+import syslog
+import subprocess
+
+
+CONSUMER_PREFIX = "reddit-consumer-"
+
+
+# drop permissions
+user = os.environ.get("REDDIT_USER", "reddit")
+group = os.environ.get("REDDIT_GROUP", user)
+uid = pwd.getpwnam(user).pw_uid
+gid = grp.getgrnam(group).gr_gid
+os.setgroups([])
+os.setgid(gid)
+os.setuid(uid)
+
+# change directory to the reddit code root
+root = os.environ.get("REDDIT_ROOT", "/opt/reddit/lib/public/r2")
+os.chdir(root)
+
+# configure syslog
+job_name = os.environ.get("UPSTART_JOB", "-".join(sys.argv[1:]))
+if job_name.startswith(CONSUMER_PREFIX):
+    # consumers are a bit different from crons, while crons want an
+    # ident of reddit-job-JOBNAME, we want consumers to have an ident
+    # of CONSUMERNAME_INSTANCE
+    job_name = (job_name[len(CONSUMER_PREFIX):] +
+                "_" +
+                os.environ.get("UPSTART_INSTANCE", ""))
+facility = getattr(syslog, "LOG_" + os.environ.get("REDDIT_LOG_FACILITY", "CRON"))
+syslog.openlog(ident=job_name, facility=facility)
+
+# run the wrapped command
+child = subprocess.Popen(sys.argv[1:],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT,
+                         bufsize=1)
+
+# write out to syslog
+while True:
+    line = child.stdout.readline()
+
+    if not line:
+        break
+
+    line = line.rstrip('\n')
+    syslog.syslog(syslog.LOG_NOTICE, line)
+    print line
+
+# our success depends on our child's success
+child.wait()
+sys.exit(child.returncode)

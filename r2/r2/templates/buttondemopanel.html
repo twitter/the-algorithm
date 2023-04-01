@@ -1,0 +1,202 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from pylons import app_globals as g
+
+   from r2.lib.template_helpers import get_domain
+ %>
+
+<% domain = get_domain(subreddit=False) %>
+
+<div class="instructions">
+  <h1>${_("put %(site)s buttons on your site") % dict(site=c.site.name)}</h1>
+    <p>${_('the reddit button is the smart way to get your content submitted to\
+      and discussed on reddit.  pick the button you like from below, and then\
+      copy/paste the code into your HTML editor.')}</p>
+
+    <h2>${_("commonly used buttons")}</h2>
+    <p>${_('use one of these buttons to quickly add reddit links to your site, or \
+      see below for more options.')}</p>
+    <ul class="buttons">
+      ${demo(capture(drawbadge, 1))}
+      ${demo(capture(drawbadge, 7))}
+      ${demo(capture(draw_point_button, 0))}
+      ${demo(capture(draw_point_button, 1))}
+      ${demo(capture(draw_interactive, 1))}
+    </ul>
+      
+
+    <h2>${_("buttons with points")}</h2>
+    <ul class="buttons">
+    %for x in xrange(0,6):
+       ${demo(capture(draw_point_button, x))}
+    %endfor
+    </ul>
+    <h2>${_("customizing the look of your buttons")}</h2>
+    <p>${_('the buttons with points have three additional options.')}</p>
+    <ul class="buttons" >
+      <li><strong>styled=off</strong><br />
+        ${_('no styles will be added, so you can style it yourself')}</li>
+      <li><strong>url=[URL]</strong><br />
+        ${_('specify a url to use instead of the current url')}</li>
+      <li><strong>newwindow=1</strong><br />
+        ${_('opens links in a new window')}</li>
+    </ul>
+    <p>${_('Example:')}</p>
+    <code>
+      ${point_option_example()}
+    </code>
+
+
+    <h2>${_('simple interactive button')}</h2>
+    <p>${_('put this code on your page:')}</p>
+    <code>
+      ${capture(draw_interactive,False)}
+    </code>
+      <p>${_("and you'll get something like this:")}</p>
+        <span style="margin-left: 10px;">
+          ${draw_interactive(False)}
+        </span>
+
+    <h2>${_("more interactive buttons")}</h2>
+    <ul class="buttons">
+      %for x in xrange(1,4):
+        ${demo(capture(draw_interactive, x))}
+      %endfor
+    </ul>
+
+    <h2>${_('interactive button advanced settings')}</h2>
+    <div class="box buttonsettings">
+      <ul>
+        <li>
+          <p><strong>${_("specify a url")}</strong><br />
+            ${_("useful in places like blogs, where you want to link to the post's permalink")}</p>
+          <code>${drawoption('url','[URL]')}</code>
+        </li>
+        <li>
+          <p><strong>${_("specify a community to target")}</strong></p>
+          <code>${drawoption('target','[COMMUNITY]')}</code>
+        </li>
+        <li>
+          <p><strong>${_("specify a title")}</strong></p>
+          <code>${drawoption('title','[TITLE]')}</code>
+        </li>
+        <li>
+          <p><strong>${_("open links in a new window")}</strong></p>
+          <code>${drawoption('newwindow','1')}</code>
+        </li>
+        <li>
+          <p><strong>${_("specify the color")}</strong></p>
+          <code>${drawoption('bgcolor','[COLOR]')}</code>
+        </li>
+        <li>
+          <p><strong>${_("specify a border color")}</strong></p>
+          <code>${drawoption('bordercolor','[COLOR]')}</code>
+        </li>
+      </ul>
+      <p style="font-weight: bold">${_('Example:')}</p>
+      <p>${_('to make this button:')}</p>
+      <span style="margin-left: 10px;">${draw_interactive_example()}</span>
+      <p>${_('use this code:')}</p>
+      <code>
+        <%
+           ex = websafe(capture(draw_interactive_example))
+           ex = ex.replace("\n", "<br/>").replace(" ", "&nbsp;")
+         %>
+      ${unsafe(ex)}
+      </code>
+    </div>
+
+    <h2>${_("more badges and buttons")}</h2>
+    <ul class="buttons">
+      %for x in xrange(1,15):
+        ${demo(capture(drawbadge, x))}
+      %endfor
+    </ul>
+
+
+</div>
+
+<script type="text/javascript">
+$(function() {
+ $(".view-code").click(function(evt) { 
+    $(this).parent().addClass("show-demo"); 
+ });
+ $(".hide-code").click(function(evt) { 
+    $(this).parent().removeClass("show-demo"); 
+ });
+});
+</script>
+
+<%def name="drawbadge(image)">
+  <a href="//${domain}/submit"
+    onclick="window.location = '//${domain}/submit?url=' + encodeURIComponent(window.location); return false">
+   <img src="//${g.static_domain}/spreddit${image}.gif"
+        alt="submit to reddit" border="0" />
+   </a>
+</%def>
+
+<%def name="demo(content)">
+<li class="button-demo">
+  <a class="view-code" href="javascript:void(0)">${_("view code")}</a>
+  <a class="hide-code" href="javascript:void(0)">${_("hide code")}</a>
+  ${unsafe(content)}
+  <br />
+  <code>
+    ${content}
+  </code>
+</li>
+</%def>
+
+<%def name="draw_point_button(image)">
+  <script type="text/javascript" 
+          src="//${domain}/buttonlite.js?i=${image}"></script>
+</%def>
+
+<%def name="point_option_example()" buffered="True">
+   <script type="text/javascript" 
+        src="//${domain}/buttonlite.js?i=1&styled=off&url=foo.com&newwindow=1"></script>
+</%def>
+
+<%def name="draw_interactive(type)">
+%if type:
+  <script type="text/javascript" 
+          src="//${g.static_domain}/button/button${type}.js"></script>
+%else:
+  <script type="text/javascript" src="//${g.static_domain}/button/button1.js"></script>
+%endif
+</%def>
+
+<%def name="drawoption(option, val)" buffered="True">
+  <script type="text/javascript">reddit_${option}='${val}'</script>
+</%def>
+
+<%def name="draw_interactive_example()"><script type="text/javascript">
+  reddit_url = "//${domain}/buttons";
+  reddit_title = "Buttons!";
+  reddit_bgcolor = "FF3";
+  reddit_bordercolor = "00F";
+</script>
+<script type="text/javascript" src="//${g.static_domain}/button/button3.js"></script>
+</%def>
+

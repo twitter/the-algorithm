@@ -1,0 +1,84 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="printablebuttons.html" import="ynbutton" />
+<%namespace name="utils" file="utils.html"/>
+
+<%!
+   from urllib import quote
+   from r2.lib.pages import WrappedUser
+%>
+
+<div class="fancy-settings">
+    %if thing.show_settings:
+        <form id="pagesettings" method="post">
+            <input type="hidden" name="uh" value="${c.modhash}" />
+            <%utils:line_field title=" ${_('who can edit this page?')}">
+                <input type="radio" name="permlevel" id="permlevel0" value="0"
+                    %if thing.permlevel == 0:
+                        checked
+                    %endif
+                /><label for="permlevel0">${_('use subreddit wiki permissions')}</label><br/>
+                <input type="radio" name="permlevel" id="permlevel1" value="1"
+                %if thing.permlevel == 1:
+                    checked
+                %endif
+                /><label for="permlevel1">${_('only approved wiki contributors for this page may edit')}</label><br/>
+                <input type="radio" name="permlevel" id="permlevel2" value="2"
+                %if thing.permlevel == 2:
+                    checked
+                %endif
+                /><label for="permlevel2">${_('only mods may edit and view')}</label><br/>
+            </%utils:line_field>
+
+            <%utils:line_field title=" ${_('show this page on the listing?')}">
+                <input type="checkbox" name="listed" id="listed"
+                    %if thing.listed:
+                        checked
+                    %endif
+                /><label for="listed">${_('show this page on the list of wiki pages')}</label><br/>
+            </%utils:line_field>
+        </form>
+    %endif
+    %if thing.show_editors and thing.permlevel != 2:
+    <br/>
+    <%utils:line_field title="${_('allow users to edit page')}">
+        <form id="WikiAllowEditor" onsubmit="r.wiki.addUser(event)">
+            <input name="username" maxlength="20" type="text" style="width: 430px;" />
+            <button type="submit" style="font-size: 100%;">${_('add')}</button>
+            <h3 class="error" style="display:none" id="usereditallowerror">${_('username does not exist')}</h2>
+        </form>
+        <br/>
+        <ul>
+        %for user in thing.mayedit:
+            <li>
+                ${WrappedUser(user)}
+                &mdash;&nbsp;
+                ${ynbutton(_("delete"), _("done"), quote("..%s/alloweditor/del" % (c.wiki_api_url)), hidden_data=dict(username=user.name, page=thing.page), post_callback="$.refresh")}
+            </li>
+        %endfor
+        </ul>
+    </%utils:line_field>
+    %endif
+
+    <input type="submit" class="wiki_button" onclick="$('#pagesettings').submit()" value="${_('save settings')}" />
+</div>

@@ -1,0 +1,166 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="reddittraffic.html" import="load_timeseries_js, last_modified_message"/>
+<%namespace file="utils.html" import="plain_link" />
+
+<%!
+    from r2.lib.strings import strings
+    from r2.lib.filters import safemarkdown
+    from r2.lib.template_helpers import format_number, js_timestamp, format_html
+%>
+
+<%def name="make_traffic_table()">
+<div class="traffic-tables">
+  <h1>detailed traffic for ${thing.detail_name}</h1>
+  <div id="charts"></div>
+  <table id="promotion-history" class="traffic-table timeseries" data-interval="hour" data-max-points="${len(thing.history)}">
+  <thead>
+  <tr>
+    <th scope="col">${_("date")}</th>
+    <th scope="col" title="${_("impressions")}" data-color="#ff5700">${_("impressions")}</th>
+    <th scope="col" title="${_("clicks")}" data-color="#9494ff">${_("clicks")}</th>
+    <th scope="col" title="${_("click-through (%)")}">${_("click-through (%)")}</th>
+  </tr>
+  </thead>
+  <tbody>
+  % for date, datestr, data in thing.history:
+  <tr>
+    <th scope="col" data-value="${js_timestamp(date)}">${datestr}</th>
+    % for datum in data:
+    <td data-value="${datum}">${format_number(datum)}</td>
+    % endfor
+  </tr>
+  % endfor
+  </tbody>
+  <tfoot>
+  <tr>
+    <th scope="row">
+      ${_("total")}
+      % if thing.is_preliminary:
+      *
+      % endif
+    </th>
+    <td>${format_number(thing.total_impressions)}</td>
+    <td>${format_number(thing.total_clicks)}</td>
+    % if thing.total_impressions != 0:
+    <td>${format_number(thing.total_ctr)}%</td>
+    % else:
+    <td>--</td>
+    % endif
+  </tr>
+  </tfoot>
+  </table>
+
+  % if thing.is_preliminary:
+  <p class="totals-are-preliminary">* ${_("totals are preliminary until 24 hours after the end of the promotion.")}</p>
+  % endif
+
+  ${nextprev()}
+</div>
+</%def>
+
+<%def name="nextprev()">
+  %if thing.prev or thing.next:
+    <p class="nextprev"> ${_("view more:")}&#32;
+    %if thing.prev:
+      ${plain_link(format_html("&lsaquo; %s", _("prev")), thing.prev, _sr_path=False, rel="nofollow prev")}
+    %endif
+    %if thing.prev and thing.next:
+      <span class="separator"></span>
+    %endif
+    %if thing.next:
+      ${plain_link(format_html("%s &rsaquo;", _("next")), thing.next,  _sr_path=False, rel="nofollow next")}
+    %endif
+    </p>
+  %endif
+</%def>
+
+
+<%def name="make_campaign_table()">
+    <h1>campaigns</h1>
+    %if thing.has_early_campaign:
+    <div class="promo-traffic-help">
+        ${_("Campaigns created before September 12, 2012 don't have traffic data")}
+    </div>
+    %endif
+
+    <table class="traffic-table promocampaign-table">
+      <thead>
+        <th>${_("id")}</th>
+        <th></th>
+        <th></th>
+        <th>${_("start")}</th>
+        <th>${_("end")}</th>
+        <th>${_("target")}</th>
+        <th>${_("location")}</th>
+        <th>${_("budget")}</th>
+        <th>${_("spent")}</th>
+        <th>${_("imps purchased")}</th>
+        <th>${_("imps delivered")}</th>
+        <th>${_("cpm")}</th>
+        <th>${_("clicks")}</th>
+        <th>${_("ctr")}</th>
+        <th>${_("cpc")}</th>
+      </thead>
+
+      %for camp in thing.campaign_table:
+          <tr class="${'promo-traffic-live' if camp['live'] else ''} ${'active' if camp['active'] else ''} ${'total' if camp['total'] else ''}">
+              <td>${camp['id']}</td>
+              <td>${plain_link(_("detail"), camp['url'])}</td>
+              <td>${plain_link(_("csv"), camp['csv'])}</td>
+              <td>${camp['start']}</td>
+              <td>${camp['end']}</td>
+              <td>${camp['target']}</td>
+              <td title="${camp['location']}">${camp['location']}</td>
+              <td>${camp['budget']}</td>
+              <td>${camp['spent']}</td>
+              <td>${camp['impressions_purchased']}</td>
+              <td>${camp['impressions_delivered']}</td>
+              <td>${camp['cpm']}</td>
+              <td>${camp['clicks']}</td>
+              <td>${camp['ctr']}</td>
+              <td>${camp['cpc']}</td>
+          </tr>
+      %endfor
+    </table>
+</%def>
+
+
+${load_timeseries_js()}
+
+${unsafe(safemarkdown(strings.traffic_promoted_link_explanation))}
+
+%if thing.has_live_campaign:
+    ${last_modified_message()}
+%endif
+
+${unsafe(safemarkdown(strings.traffic_help_email % dict(email=g.selfserve_support_email)))}
+
+${make_campaign_table()}
+
+${make_traffic_table()}
+
+<script type="text/javascript">
+  r.timeseries.init()
+</script>
+

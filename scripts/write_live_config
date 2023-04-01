@@ -1,0 +1,245 @@
+#!/usr/bin/env python
+# The contents of this file are subject to the Common Public Attribution
+# License Version 1.0. (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+# License Version 1.1, but Sections 14 and 15 have been added to cover use of
+# software over a computer network and provide for limited attribution for the
+# Original Developer. In addition, Exhibit A has been modified to be consistent
+# with Exhibit B.
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+# the specific language governing rights and limitations under the License.
+#
+# The Original Code is reddit.
+#
+# The Original Developer is the Initial Developer.  The Initial Developer of
+# the Original Code is reddit Inc.
+#
+# All portions of the code written by reddit are Copyright (c) 2006-2015 reddit
+# Inc. All Rights Reserved.
+###############################################################################
+"""Read config from an INI file and put it in ZooKeeper for instant use."""
+
+from difflib import SequenceMatcher
+import itertools
+import os
+from pprint import PrettyPrinter
+import sys
+import json
+import getpass
+import ConfigParser
+import zlib
+
+import kazoo.client
+from kazoo.security import make_acl, make_digest_acl
+from kazoo.exceptions import NoAuthException
+
+from r2.lib.zookeeper import LiveConfig, connect_to_zookeeper
+from r2.lib.app_globals import extract_live_config, LIVE_CONFIG_NODE
+from r2.lib.configparse import ConfigValue
+from r2.lib.plugin import PluginLoader
+from r2.lib.utils import parse_ini_file
+
+
+USERNAME = "live-config"
+
+
+def write_config_to_zookeeper(node, username, password, config, live_config):
+    """Write given configuration to ZooKeeper with correct security etc."""
+
+    # read the zk configuration from the app's config
+    zk_hostlist = config.get("DEFAULT", "zookeeper_connection_string")
+    app_username = config.get("DEFAULT", "zookeeper_username")
+    app_password = config.get("DEFAULT", "zookeeper_password")
+
+    # connect to zk!
+    client = connect_to_zookeeper(zk_hostlist, (username, password))
+
+    # ensure that the path leading up to the config node exists. if it doesn't,
+    # create it with ACLs such that new stuff can be added below it, but no one
+    # but we can delete nodes.
+    parent_path = os.path.dirname(node)
+    client.ensure_path(parent_path, acl=[
+        # only we can delete children
+        make_digest_acl(username, password, delete=True),
+
+        # anyone authenticated can read/list children/create children
+        make_acl("auth", "", read=True, create=True),
+    ])
+
+    # create or update the config node ensuring that only we can write to it.
+    json_data = json.dumps(live_config)
+    compressed_data = "gzip" + zlib.compress(json_data)
+
+    try:
+        client.create(node, compressed_data, acl=[
+            make_digest_acl(username, password, read=True, write=True),
+            make_digest_acl(app_username, app_password, read=True),
+        ])
+    except kazoo.exceptions.NodeExistsException:
+        client.set(node, compressed_data)
+
+
+def get_comparable_repr(obj):
+    """Return a representation of the object that can be string-compared."""
+
+    # If the object is a dict, we'll use the pprint module, because it
+    # automatically sorts by key when generating its output for dicts
+    if isinstance(obj, dict):
+        # specify a huge width so it never tries to wrap the output
+        printer = PrettyPrinter(width=1000000)
+        return printer.pformat(obj)
+
+    # Otherwise, just use the standard repr for that object type
+    return repr(obj)
+
+
+def print_dict_diff(old, new):
+    """Output changes between two dicts."""
+
+    old_keys = set(old.keys())
+    new_keys = set(new.keys())
+
+    # figure out which keys are interesting that we need to output
+    removed_keys = old_keys - new_keys
+    added_keys = new_keys - old_keys
+    both_keys = old_keys & new_keys
+    changed_keys = [key for key in both_keys if new[key] != old[key]]
+
+    for key in changed_keys[:]:
+        # if the value type changed, or it's a type with short values,
+        # just display it as a removal and addition
+        if (type(new[key]) != type(old[key]) or
+                isinstance(new[key], (int, float, bool))):
+            added_keys.add(key)
+            removed_keys.add(key)
+            changed_keys.remove(key)
+            continue
+
+        # otherwise, see how similar the reprs are, and if it's less
+        # than 50% similar, just display it as a removal and addition
+        old_repr = get_comparable_repr(old[key])
+        new_repr = get_comparable_repr(new[key])
+        matcher = SequenceMatcher(a=old_repr, b=new_repr)
+
+        if matcher.ratio() < 0.5:
+            added_keys.add(key)
+            removed_keys.add(key)
+            changed_keys.remove(key)
+            continue
+
+    keys = sorted(set(itertools.chain(removed_keys, added_keys, changed_keys)))
+    if not keys:
+        print "No changes found. Did you forget to deploy the INI change?"
+        return
+
+    max_key_length = max(len(key) for key in keys)
+
+    for key in keys:
+        if key in removed_keys:
+            print "- {key:<{length}s} = {value!r}".format(
+                key=key, value=old[key], length=max_key_length)
+
+        if key in added_keys:
+            print "+ {key:<{length}s} = {value!r}".format(
+                key=key, value=new[key], length=max_key_length)
+            
+        if key in changed_keys:
+            print "! {key:<{length}s} :".format(key=key, length=max_key_length)
+
+            old_repr = get_comparable_repr(old[key])
+            new_repr = get_comparable_repr(new[key])
+            matcher = SequenceMatcher(a=old_repr, b=new_repr)
+
+            for tag, i, j, m, n in matcher.get_opcodes():
+                if tag == "equal":
+                    continue
+                elif tag == "replace":
+                    print '    ! "{}" to "{}"'.format(
+                        matcher.a[i:j], matcher.b[m:n])
+                elif tag == "insert":
+                    print '    + "{}"'.format(matcher.b[m:n])
+                elif tag == "delete":
+                    print '    - "{}"'.format(matcher.a[i:j])
+
+
+def get_current_live_config(config):
+    """Return the current live config values as a dict."""
+
+    # read the zk configuration from the app's config
+    zk_hostlist = config.get("DEFAULT", "zookeeper_connection_string")
+    username = config.get("DEFAULT", "zookeeper_username")
+    password = config.get("DEFAULT", "zookeeper_password")
+
+    client = connect_to_zookeeper(zk_hostlist, (username, password))
+    return LiveConfig(client, LIVE_CONFIG_NODE).data
+
+
+def confirm_config(old_config, new_config):
+    """Display the changes and confirm that we should continue."""
+
+    # we need to convert the new config to json and back so values like
+    # tuples are converted to the same format as the existing config
+    new_config = json.loads(json.dumps(new_config))
+
+    print ("Updates (a line starting with + is a new setting, - is removed, "
+        "and ! is changed, with additions/removals/replacements indented):\n")
+    print_dict_diff(old_config, new_config)
+    answer = raw_input("\nContinue? [y|N] ")
+    return answer.lower() == "y"
+
+
+def main():
+    """Get and validate input from the user via CLI then write to ZK."""
+
+    progname = os.path.basename(sys.argv[0])
+
+    try:
+        ini_file_name = sys.argv[1]
+    except IndexError:
+        print >> sys.stderr, "USAGE: %s INI" % progname
+        return 1
+
+    try:
+        with open(ini_file_name) as ini_file:
+            config = parse_ini_file(ini_file)
+    except (IOError, ConfigParser.Error), e:
+        print >> sys.stderr, "%s: %s: %s" % (progname, ini_file_name, e)
+        return 1
+
+    try:
+        plugin_config = config.get("DEFAULT", "plugins")
+        plugin_names = ConfigValue.tuple(plugin_config)
+        plugins = PluginLoader(plugin_names=plugin_names)
+        live = extract_live_config(config, plugins)
+    except ValueError as e:
+        print >> sys.stderr, "%s: %s" % (progname, e)
+        return 1
+    else:
+        current_config = get_current_live_config(config)
+        if not confirm_config(current_config, live):
+            print "Oh, well, never mind then. Bye :("
+            return 1
+
+    password = getpass.getpass("Password: ")
+
+    try:
+        write_config_to_zookeeper(LIVE_CONFIG_NODE,
+                                  USERNAME, password,
+                                  config, live)
+    except NoAuthException:
+        print >> sys.stderr, "%s: incorrect password" % progname
+        return 1
+    except Exception as e:
+        print >> sys.stderr, "%s: %s" % (progname, e)
+        return 1
+
+    print "Succesfully updated live config!"
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

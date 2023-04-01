@@ -1,0 +1,414 @@
+// markdown colors
+@markdown-color-link: @color-alien-blue;
+@markdown-color-code: @color-off-white;
+@markdown-color-code-alt: @color-white;
+@markdown-color-border-light: @color-pale-grey;
+@markdown-color-border-heavy: darken(@color-pale-grey, 15%);
+@markdown-color-font: @color-semi-black;
+@markdown-color-font-light: @color-text-grey;
+
+// wiki page styles
+@markdown-color-wiki-header: @color-text-grey;
+@markdown-color-wiki-header-alt: @color-ui-blue;
+
+
+.md-font-size(@base, @font, @line) {
+  font-size: (@font / @base) * 1em;
+  line-height: (@line / @font) * 1em;
+}
+
+.md-margins(@font, @top, @bottom) {
+  margin-top: (@top / @font) * 1em;
+  margin-bottom: (@bottom / @font) * 1em;
+}
+
+.md-base-font-size(@font-size) {
+  font-size: (@font-size / @base-font-keyword-size) * 1em;
+}
+
+.md-container-small,
+.md-container {
+  font-size: @base-font-keyword;
+}
+
+.md {
+  h1, h2, h3, h4, h5, h6 {
+    &:extend(.md .-headers all);
+  }
+
+  th, td {
+    &:extend(.md .-cells all);
+  }
+
+  ul, ol {
+    &:extend(.md .-lists all);
+  }
+
+  .-lists, pre, blockquote, table, p {
+    &:extend(.md .-blocks all);
+  }
+
+  p, pre > code, th, td, li {
+    &:extend(.md .-text all);
+  }
+
+  color: @markdown-color-font;
+  max-width: 60em;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  .-headers {
+    border: 0;
+    color: inherit;
+    -webkit-font-smoothing: antialiased;
+
+    code {
+      font-size: inherit;
+    }
+  }
+
+  blockquote,
+  del {
+    color: @markdown-color-font-light;
+  }
+
+  a {
+    color: @markdown-color-link;
+    text-decoration: none;
+
+    del {
+      color: inherit;
+    }
+  }
+
+  h6 {
+    text-decoration: underline;
+  }
+
+  em {
+    font-style: italic;
+    font-weight: inherit;
+  }
+
+  th,
+  strong,
+  .-headers {
+    font-weight: 600;
+    font-style: inherit;
+  }
+
+  h2,
+  h4 {
+    font-weight: 500;
+  }
+
+  &,
+  h6 {
+    font-weight: 400;
+  }
+
+  * {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  tr,
+  code,
+  .-cells,
+  .-lists,
+  .-blocks,
+  .-headers {
+    margin: 0;
+    padding: 0;
+  }
+
+  hr {
+    border: 0;
+    color: transparent;
+    background: @markdown-color-border-heavy;
+    height: 2px;
+    padding: 0;
+  }
+
+  blockquote {
+    border-left: 2px solid @markdown-color-border-heavy;
+  }
+
+  code,
+  pre {
+    border: 1px solid darken(@markdown-color-code, 10%);
+    background-color: @markdown-color-code;
+    border-radius: 2px;
+  }
+
+  code {
+    margin: 0 2px;
+    white-space: nowrap;
+    word-break: normal;
+  }
+
+  p {
+    code {
+      line-height: 1em;
+    }
+  }
+
+  pre {
+    overflow: auto;
+
+    code {
+      white-space: pre;
+      background-color: transparent;
+      border: 0;
+      display: block;
+      padding: 0 !important;
+    }
+  }
+
+  // can't rely on &:extend here, doesn't apply the align rules
+  td, th {
+    border: 1px solid @markdown-color-border-light;
+    text-align: left;
+
+    &[align=center] {
+      text-align: center;
+    }
+
+    &[align=right] {
+      text-align: right;
+    }
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  blockquote {
+    // -2 to compensate for border
+    padding: 0 ((@margin-small - 2) * 1px);
+    margin-left: (@margin-x-small * 1px);
+  }
+
+  code {
+    padding: 0 ((@margin-x-small - 1) * 1px);
+  }
+
+  pre,
+  .-cells {
+    padding: ((@margin-x-small - 1) * 1px) ((@margin-small - 1) * 1px);
+  }
+
+  .-lists {
+    padding-left: (@margin-xxx-large * 1px);
+  }
+
+  sup {
+    font-size: 0.86em;
+    line-height: 0;
+  }
+
+  li li,
+  li p {
+    font-size: 1em !important;
+  }
+}
+
+
+.link .usertext .md {
+  padding: (@margin-x-small * 1px) (@margin-small * 1px);
+}
+
+.new-comment .md,
+.link .md,
+.usertext.border .md {
+  :not(pre) > code,
+  pre {
+    background-color: @markdown-color-code-alt;
+  }
+}
+
+.linklisting .md,
+.commentarea .md {
+  @vertical-margin: (@margin-x-small * 1px);
+  margin-top: @vertical-margin;
+  margin-bottom: @vertical-margin;
+}
+
+textarea {
+  // prevent from using system default colors, since this can cause
+  // problems on systems with dark color schemes
+  background-color: white;
+  color: black;
+}
+
+code {
+  // this hack fixes browsers automatically shrinking monospace fonts.  weird.
+  // http://code.stephenmorley.org/html-and-css/fixing-browsers-broken-monospace-font-handling/
+  font-family:monospace,monospace;
+}
+
+
+.md {
+  @font-base: @font-small;
+  @line-base: @line-small;
+
+  .md-base-font-size(@font-base);
+
+  h1,
+  h2 {
+    .md-font-size(@font-base, @font-large, @line-large);
+    .md-margins(@font-large, @margin-medium, @margin-medium);
+  }
+
+  h3,
+  h4 {
+    .md-font-size(@font-base, @font-medium, @line-medium);
+    .md-margins(@font-medium, @margin-small, @margin-small);
+  }
+
+  h5,
+  h6 {
+    .md-font-size(@font-base, @font-base, @line-base);
+    .md-margins(@font-base, @margin-small, @margin-x-small);
+  }
+
+  .-blocks {
+    .md-margins(@font-base, @margin-x-small, @margin-x-small);
+  }
+
+  textarea,
+  .-text {
+    .md-font-size(@font-base, @font-base, @line-base);
+  }
+}
+
+.md-container-small .md,
+.side .md {
+  @font-base: @font-x-small;
+  @line-base: @line-x-small;
+
+  .md-base-font-size(@font-base);
+
+  h1,
+  h2 {
+    .md-font-size(@font-base, @font-large, @line-large);
+    .md-margins(@font-large, @margin-small, @margin-small);
+  }
+
+  h3,
+  h4 {
+    .md-font-size(@font-base, @font-medium, @line-medium);
+    .md-margins(@font-medium, @margin-small, @margin-small);
+  }
+
+  h5,
+  h6 {
+    .md-font-size(@font-base, @font-small, @line-small);
+    .md-margins(@font-small, @margin-small, @margin-x-small);
+  }
+
+  .-blocks {
+    .md-margins(@font-base, @margin-x-small, @margin-x-small);
+  }
+
+  .-text {
+    .md-font-size(@font-base, @font-base, @line-base);
+  }
+}
+
+.wiki-page-content .md {
+  @font-base: @font-small;
+  @line-base: @line-small;
+
+  h1 {
+    .md-font-size(@font-base, @font-xxx-large, @line-xxx-large);
+    .md-margins(@font-xxx-large, @margin-xxx-large, @margin-x-large);
+  }
+
+  h2 {
+    .md-font-size(@font-base, @font-xx-large, @line-xx-large);
+    .md-margins(@font-xx-large, @margin-xx-large, @margin-medium);
+  }
+
+  h3 {
+    .md-font-size(@font-base, @font-x-large, @line-x-large);
+    .md-margins(@font-x-large, @margin-large, @margin-small);
+  }
+
+  .-blocks {
+    .md-margins(@font-base, @margin-x-small, @margin-small);
+  }
+
+  // Style changes for wiki pages
+  h1,
+  h6 {
+    color: @markdown-color-wiki-header;
+    font-weight: 300;
+  }
+
+  h2 {
+    color: @markdown-color-wiki-header-alt;
+  }
+
+  h2,
+  h3 {
+    font-weight: 600;
+  }
+
+  h4 {
+    font-style: italic;
+  }
+
+  h5 {
+    text-decoration: underline;
+  }
+
+  h4,
+  h5 {
+    font-weight: 400;
+  }
+
+  h6 {
+    .md-font-size(@font-base, @font-base, @line-base);
+    .md-margins(@font-base, @margin-medium, @margin-x-small);
+
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+}
+
+
+.md {
+  &,
+  .-cells,
+  .-lists,
+  .-blocks,
+  .-headers {
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  li {
+    > :first-child {
+      margin-top: 0;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

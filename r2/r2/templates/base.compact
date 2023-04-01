@@ -1,0 +1,78 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%!
+   from r2.lib.template_helpers import static
+   from r2.lib import js
+%>
+<%namespace file="utils.html" import="js_setup, googleanalytics, classes"/>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${c.lang}">
+  <head>
+    <link rel="apple-touch-icon" 
+          href="/static/compact/reddit-apple-mobile-device.png"/>
+    <link rel="apple-touch-startup-image" 
+          href="/static/compact/reddit_startimg.png" />
+    <link rel="canonical" href="${thing.canonical_link}" />
+    %if hasattr(thing, "shortlink"):
+      <link rel="shorturl" href="https://${thing.shortlink}" />
+    %endif
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>${self.Title()}</title>
+    <meta name="title" content="${self.Title()}" />
+    <meta name="description" content="${thing.short_description or g.short_description}" />
+    <meta name="referrer" content="${c.referrer_policy}" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    ${self.robots()}
+    <link rel="stylesheet" href="${static('compact.css')}" type="text/css" media="screen" />
+
+    <!--[if gte IE 9]> <!-->
+      ${unsafe(js.use('reddit-init'))}
+    <!-- <![endif]-->
+
+    <!--[if lt IE 9]>
+      ${unsafe(js.use('reddit-init-legacy'))}
+    <![endif]-->
+
+    ${js_setup(thing.extra_js_config)}
+    ${googleanalytics('mobile')}
+  </head>
+  <body ${classes(*thing.page_classes())}>
+    ${self.bodyContent()}
+    ${unsafe(js.use('mobile'))}
+  </body>
+</html>
+
+<%def name="bodyContent()">
+</%def>
+
+<%def name="Title()">
+${thing.title}
+</%def>
+
+<%def name="robots()">
+   %if hasattr(thing, 'robots') and thing.robots:
+     <meta name="robots" content="${thing.robots}" />
+   %endif
+</%def>
+

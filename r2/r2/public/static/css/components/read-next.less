@@ -1,0 +1,157 @@
+@read-next-color-background: @color-white;
+@read-next-color-header: #EFF7FF;
+@read-next-color-button-background: lighten(@color-ui-blue, 5%);
+@read-next-color-text: @color-semi-black;
+@read-next-color-text-light: @color-dark-grey;
+@read-next-height: 100px;
+@read-next-width: 300px;
+@read-next-link-height: 60px;
+@read-next-thumbnail-size: 45px;
+@zindex-read-next: @zindex-modal - 1;
+
+@read-next-font-base: @font-x-small;
+@read-next-font-small: @font-xx-small;
+@read-next-line-base: @line-x-small;
+@read-next-line-large: @line-small;
+
+.read-next-font-size(@font:@read-next-font-base, @line:@read-next-line-base) {
+  .md-font-size(@read-next-font-base, @font, @line);
+}
+
+.read-next-container {
+  font-size: @base-font-keyword;
+}
+
+.read-next {
+  .md-base-font-size(@read-next-font-base);
+  .no-select();
+  background: @read-next-color-background;
+  border: 1px solid darken(@read-next-color-background, 15%);
+  box-sizing: border-box;
+  color: @read-next-color-text;
+  display: none;
+  height: @read-next-height;
+  position: relative;
+  width: @read-next-width;
+  z-index: @zindex-read-next;
+
+  &.active {
+    display: block;
+  }
+
+  &.fixed {
+    border-bottom-width: 0;
+    bottom: 0;
+    position: fixed;
+  }
+
+  .read-next-header {
+    background-color: @read-next-color-header;
+    border-bottom: 1px solid darken(@read-next-color-header, 5%);
+    color: @read-next-color-text-light;
+    padding-left: @margin-small * 1px;
+    padding-right: @margin-small * 1px;
+    padding-top: @margin-x-small * 1px;
+  }
+
+  .read-next-header-title {
+    .read-next-font-size(@read-next-font-base, @read-next-line-large);
+    margin-left: (@read-next-line-base + @margin-x-small) * 2px;
+    position: relative;
+    // magic number, but it looks better ;_;
+    top: -2px;
+  }
+
+  .read-next-title {
+    .read-next-font-size();
+    display: block;
+    max-height: @read-next-line-base * 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .read-next-nav {
+    .read-next-font-size(@read-next-font-small);
+    position: absolute;
+    top: @margin-x-small * 1px;
+  }
+
+  .read-next-nav-right {
+    right: @margin-x-small * 1px;
+
+    > * {
+      margin-left: @margin-x-small * 1px;
+    }
+  }
+
+  .read-next-nav-left {
+    left: @margin-x-small * 1px;
+     
+    > * {
+      margin-right: @margin-x-small * 1px;
+    }
+  }
+
+  .read-next-dismiss,
+  .read-next-button {
+    .transform(scale(1, 1) translateY(0px));
+    .transition(all, 0.2s);
+    cursor: pointer;
+    display: inline-block;
+    height: @read-next-line-base * 1px;
+    position: relative;
+    text-align: center;
+    width: @read-next-line-base * 1px;
+
+    &:active {
+      .transform(scale(1.01, 1.01) translateY(1px));
+    }
+  }
+
+  .read-next-button {
+    background-color: @read-next-color-button-background;
+    border-radius: 50%;
+    color: @read-next-color-background;
+
+    &:active {
+      background-color: darken(@read-next-color-button-background, 5%);
+    }
+  }
+
+  .read-next-list {
+    padding: @margin-small * 1px;
+    padding-top: @margin-x-small * 1px;
+  }
+
+  .read-next-link {
+    display: none;
+    float: left;
+    height: @read-next-link-height;
+    overflow: hidden;
+    width: 100%;
+
+    &.active {
+      display: block;
+    }
+
+    .read-next-thumbnail {
+      display: block;
+      float: left;
+      height: @read-next-thumbnail-size;
+      margin-right: @margin-x-small * 1px;
+      // magic number, but it just looks better
+      margin-top: 3px; 
+      width: @read-next-thumbnail-size;
+
+      img {
+        height: auto;
+        width: 100%;
+      }
+    }
+  }
+
+  .read-next-meta {
+    .read-next-font-size(@read-next-font-small);
+    color: @read-next-color-text-light;
+  }
+}

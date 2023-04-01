@@ -1,0 +1,238 @@
+/* subreddit stylesheet source viewer */
+.subreddit-stylesheet-source {
+    padding: 0.5em;
+    overflow-x: auto;
+    margin: 10px 7px;
+    font-size: medium;
+    font-family: "Bitstream Vera Sans Mono", Consolas, monospace;
+}
+
+/* github.com style (c) Vasily Polovnyov <vast@whiteants.net> - from the highlight.js source */
+pre {
+    color: #333;
+    background-color: #f8f8ff;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .input_number {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+/* Monokai style - ported by Luigi Maselli - http://grigio.org - from the highlight.js source */
+.res-nightmode pre {
+  background: #272822;
+  color: #ddd;
+}
+
+.res-nightmode pre .tag,
+.res-nightmode pre .tag .title,
+.res-nightmode pre .keyword,
+.res-nightmode pre .literal,
+.res-nightmode pre .change,
+.res-nightmode pre .winutils,
+.res-nightmode pre .flow,
+.res-nightmode pre .lisp .title,
+.res-nightmode pre .clojure .built_in,
+.res-nightmode pre .nginx .title,
+.res-nightmode pre .tex .special {
+  color: #F92672;
+}
+
+.res-nightmode pre code .constant {
+  color: #66D9EF;
+}
+
+.res-nightmode pre .class .title {
+  color: white;
+}
+
+.res-nightmode pre .attribute,
+.res-nightmode pre .symbol,
+.res-nightmode pre .symbol .string,
+.res-nightmode pre .value,
+.res-nightmode pre .regexp {
+  color: #BF79DB;
+}
+
+.res-nightmode pre .tag .value,
+.res-nightmode pre .string,
+.res-nightmode pre .subst,
+.res-nightmode pre .title,
+.res-nightmode pre .haskell .type,
+.res-nightmode pre ..res-nightmode preprocessor,
+.res-nightmode pre .ruby .class .parent,
+.res-nightmode pre .built_in,
+.res-nightmode pre .sql .aggregate,
+.res-nightmode pre .django .template_tag,
+.res-nightmode pre .django .variable,
+.res-nightmode pre .smalltalk .class,
+.res-nightmode pre .javadoc,
+.res-nightmode pre .django .filter .argument,
+.res-nightmode pre .smalltalk .localvars,
+.res-nightmode pre .smalltalk .array,
+.res-nightmode pre .attr_selector,
+.res-nightmode pre .pseudo,
+.res-nightmode pre .addition,
+.res-nightmode pre .stream,
+.res-nightmode pre .envvar,
+.res-nightmode pre .apache .tag,
+.res-nightmode pre .apache .cbracket,
+.res-nightmode pre .tex .command,
+.res-nightmode pre .input_number {
+  color: #A6E22E;
+}
+
+.res-nightmode pre .comment,
+.res-nightmode pre .java .annotation,
+.res-nightmode pre .python .decorator,
+.res-nightmode pre .template_comment,
+.res-nightmode pre .pi,
+.res-nightmode pre .doctype,
+.res-nightmode pre .deletion,
+.res-nightmode pre .shebang,
+.res-nightmode pre .apache .sqbracket,
+.res-nightmode pre .tex .formula {
+  color: #75715E;
+}
+
+.res-nightmode pre .keyword,
+.res-nightmode pre .literal,
+.res-nightmode pre .css .id,
+.res-nightmode pre .phpdoc,
+.res-nightmode pre .title,
+.res-nightmode pre .haskell .type,
+.res-nightmode pre .vbscript .built_in,
+.res-nightmode pre .sql .aggregate,
+.res-nightmode pre .rsl .built_in,
+.res-nightmode pre .smalltalk .class,
+.res-nightmode pre .diff .header,
+.res-nightmode pre .chunk,
+.res-nightmode pre .winutils,
+.res-nightmode pre .bash .variable,
+.res-nightmode pre .apache .tag,
+.res-nightmode pre .tex .special,
+.res-nightmode pre .request,
+.res-nightmode pre .status {
+  font-weight: bold;
+}
+
+.res-nightmode pre .coffeescript .javascript,
+.res-nightmode pre .javascript .xml,
+.res-nightmode pre .tex .formula,
+.res-nightmode pre .xml .javascript,
+.res-nightmode pre .xml .vbscript,
+.res-nightmode pre .xml .css,
+.res-nightmode pre .xml .cdata {
+  opacity: 0.5;
+}

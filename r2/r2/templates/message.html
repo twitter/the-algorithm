@@ -1,0 +1,211 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   from r2.lib.filters import safemarkdown, websafe, conditional_websafe
+   from r2.lib.pages.things import MessageButtons
+   from r2.lib.pages import WrappedUser
+   from r2.lib.template_helpers import static, format_html
+   from r2.lib.template_helpers import (
+       add_admin_distinguish,
+       add_moderator_distinguish,
+   )
+   from r2.models import Account
+%>
+
+<%inherit file="comment_skeleton.html"/>
+<%namespace file="utils.html" import="thing_timestamp" />
+<%namespace file="wrappeduser.html" import="make_distinguish" />
+
+## disable voting arrows
+<%def name="midcol(cls='')">
+  %if thing.was_comment and not thing._spam:
+    ${parent.midcol(display=True, cls = cls)}
+  %else:
+    <div class="midcol" style='display:none'></div>
+  %endif
+</%def>
+
+<%def name="thing_css_class(what)" buffered="True">
+  ${parent.thing_css_class(what)}
+  ${"new" if thing.new else ""}
+  ${"was-comment" if thing.was_comment else ""}
+  ${"recipient" if thing.user_is_recipient else ""}
+  ${"message-reply" if getattr(thing, "is_child", False) else ""}
+  ${"message-parent" if getattr(thing, "is_parent", False) else ""}
+  ${"gold" if getattr(thing, "distinguished", "") == "gold" else ""}
+  ${"gold-auto" if getattr(thing, "distinguished", "") == "gold-auto" else ""}
+  ${"threaded" if getattr(thing, "threaded", "") else ""}
+  ${"most-recent" if getattr(thing, "most_recent", "") else ""}
+</%def>
+
+<%def name="thing_css_rowclass(what)">
+  ${parent.thing_css_rowclass(what)}
+  <%
+    accent_color = getattr(thing, "accent_color", "")
+  %>
+  %if getattr(thing, "is_parent", False) and accent_color:
+    color-bar
+  %endif
+</%def>
+
+<%def name="thing_data_attributes(what)">
+  ${parent.thing_data_attributes(what)}
+  <%
+    accent_color = getattr(thing, "accent_color", "")
+  %>
+  %if getattr(thing, "is_parent", False) and accent_color:
+    style="border-color:${accent_color};"
+  %endif
+</%def>
+
+<%def name="tagline()">
+  <a href="javascript:void(0)" class="expand" onclick="return togglemessage(this)">
+    ${"[%s]" % ("+" if thing.collapsed else "–")}
+  </a>
+
+  %if c.user_is_admin:
+     %if not thing.was_comment and hasattr(thing, "del_on_recipient") and thing.del_on_recipient:
+       <em>${_("deleted message")}</em>&#32;
+     %endif
+  %endif
+
+  <%
+    substitutions = {}
+
+    if thing.sr_id:
+        path = thing.subreddit.path.rstrip('/')
+
+        if getattr(thing, "subreddit_distinguish", None) == "admin":
+            distinguish_attribs_list = []
+            add_admin_distinguish(distinguish_attribs_list)
+            distinguish = format_html(capture(make_distinguish, distinguish_attribs_list))
+            type = "admin-distinguish"
+            substitutions['subreddit'] = format_html(u'<span class="subreddit"><a href="%(path)s" class="%(type)s">%(path)s</a>%(distinguish)s</span>', path=path, distinguish=distinguish, type=type)
+        elif getattr(thing, "subreddit_distinguish", None) == "moderator":
+            distinguish_attribs_list = []
+            add_moderator_distinguish(distinguish_attribs_list, thing.subreddit)
+            distinguish = format_html(capture(make_distinguish, distinguish_attribs_list))
+            type = "moderator-distinguish"
+            substitutions['subreddit'] = format_html(u'<span class="subreddit"><a href="%(path)s" class="%(type)s">%(path)s</a>%(distinguish)s</span>', path=path, distinguish=distinguish, type=type)
+        else:
+            substitutions['subreddit'] = format_html(u'<span class="subreddit"><a href="%(path)s">%(path)s</a></span>', path=path)
+
+    substitutions['author'] = format_html(u'<span class="sender">%s</span>', WrappedUser(thing.author, thing.attribs, thing))
+
+    if isinstance(thing.to, Account):
+        to_attribs = []
+        if thing.sr_id and not thing.was_comment:
+            if thing.to.name in g.admins:
+                add_admin_distinguish(to_attribs)
+            elif thing.to_is_moderator:
+                add_moderator_distinguish(to_attribs, thing.subreddit)
+        substitutions['dest'] = format_html(u'<span class="recipient">%s</span>', WrappedUser(thing.to, to_attribs, thing))
+    elif thing.sr_id:
+        substitutions['dest'] = format_html(u'<span class="recipient subreddit"><a href="%(path)s">%(path)s</a></span>', path=thing.subreddit.path)
+
+    substitutions['when'] = unsafe(capture(thing_timestamp, thing, thing.timesince, live=True, include_tense=True))
+
+    taglinetext = conditional_websafe(thing.taglinetext).replace(' ', '&#32;')
+    taglinetext = format_html(taglinetext, **substitutions)
+  %>
+
+  <span class="head">
+    ${taglinetext}
+  </span>
+
+  %if c.user_is_admin:
+    ${self.admintagline()}
+  %endif
+</%def>
+
+<%def name="subject()">
+  <p class="subject">
+    %if getattr(thing, "is_parent", False):
+       %if thing.sr_id:
+         <span class="correspondent reddit rounded">
+           <%
+             if getattr(thing, "user_is_moderator", False):
+               sr_path = "%smessage/moderator/inbox" % thing.subreddit.path
+             else:
+               sr_path = thing.subreddit.path
+             accent_color = getattr(thing, "accent_color", "")
+           %>
+           <a href="${sr_path}">
+             %if accent_color:
+               <span class="marker-dot" style="background-color:${accent_color};"></span>
+             %endif
+             /r/${thing.subreddit.name}
+           </a>
+         </span>
+       %else:
+         <span class="correspondent rounded">
+           <%
+              corr = thing.author if thing.user_is_recipient else thing.to
+            %>
+           ${WrappedUser(corr)}
+         </span>
+       %endif
+    %endif
+    <span class="subject-text">${thing.subject}</span>
+  %if thing.was_comment:
+    <a href="${thing.link_permalink}" class="title">${thing.link_title}</a>
+  %elif getattr(thing, "is_parent", False):
+    <br/>
+      <a class="expand-btn" href="#" onclick="return show_all_messages(this)">
+        ${_("expand all")}
+      </a>
+      <a class="expand-btn" href="#"  onclick="return hide_all_messages(this)">
+        ${_("collapse all")}
+      </a>
+  %endif
+ </p>
+</%def>
+
+<%def name="ParentDiv()">
+  %if getattr(thing, 'distinguished', '') == 'gold':
+    <div class="insignia"><img src="${static('gold/gold-insignia-big.png')}"></div>
+  %endif
+${self.subject()}
+</%def>
+
+<%def name="commentBody()">
+ %if thing.was_comment and hasattr(thing, "parent"):
+    <p>
+      <a href="#" class="parent-link"
+         onclick="return fetch_parent(this, '${thing.parent_permalink}/.json', '${thing.parent}')">
+        ${_("show parent")}
+      </a>
+    </p>
+ %endif
+ <div class="md-container">
+   ${unsafe(safemarkdown(thing.body))}
+ </div>
+</%def>
+
+<%def name="buttons()">
+  ${MessageButtons(thing)}
+</%def>
+
+<%def name="entry()">
+  ${parent.entry()}
+</%def>

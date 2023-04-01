@@ -1,0 +1,113 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2014
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+   import simplejson
+   from pylons.i18n import _, ungettext
+   from r2.lib.filters import safemarkdown
+   from r2.lib.strings import Score
+   from r2.lib.template_helpers import get_domain, add_sr
+%>
+<%inherit file="printable.iframe" />
+<%namespace file="utils.html" import="thing_timestamp" />
+
+<%def name="parent()">
+  %if c.profilepage:
+    <a href="${thing.link.url}"
+       %if thing.nofollow:
+         rel="nofollow"
+       %endif
+       >${thing.link.title}</a>
+  %endif
+</%def>
+
+<%def name="comment_css_class(thing, hide_edits)">
+  ${"reddit-embed-comment-deleted" if thing.deleted else ""}
+  ${"reddit-embed-comment-edited" if hide_edits else ""}
+</%def>
+
+<%def name="entry()">
+  <%
+    edited_recently = c.embed_config.get("thing").get("edited")
+    hide_edits = (not thing.edits_visible) and edited_recently
+  %>
+  <article class="reddit-embed-comment ${comment_css_class(thing, hide_edits)}">
+    %if thing.deleted:
+      ${_("This comment was deleted.")}
+    %else:
+      <header class="reddit-embed-comment-header">
+        %if thing.author._deleted:
+          <span class="reddit-embed-author reddit-embed-author-deleted">
+            ${_("[account deleted]")}
+          </span>
+        %else:
+          <span class="reddit-embed-author">
+            ${thing.author.name}
+          </span>
+        %endif
+        %if hide_edits:
+          ${_("%(name)s's comment was changed.") % dict(name="")}
+        %else:
+        <div class="reddit-embed-comment-meta">
+          %if not thing.score_hidden:
+            <a href="${add_sr(thing.permalink)}?context=3"
+               class="reddit-embed-comment-meta-item reddit-embed-score"
+               data-redirect-type="score"
+               data-redirect-thing="${thing._id}">
+              ${websafe(Score.safepoints(thing.score))}
+            </a>
+          %endif
+          %if thing.edits_visible and edited_recently:
+            <a href="${add_sr(thing.permalink)}?context=3"
+               class="reddit-embed-comment-meta-item reddit-embed-edited"
+               data-redirect-type="edited"
+               data-redirect-thing="${thing._id}">
+              edited
+            </a>
+          %endif
+          <a href="${add_sr(thing.permalink)}?context=3"
+             class="reddit-embed-comment-meta-item reddit-embed-permalink"
+             data-redirect-type="timestamp"
+             data-redirect-thing="${thing._id}">
+            ${thing_timestamp(thing, thing.timesince, live=True, include_tense=True)}
+          </a>
+        </div>
+        %endif
+      </header>
+      %if hide_edits:
+        <a href="${add_sr(thing.permalink)}?context=3"
+           data-redirect-type="hidden_comment"
+           data-redirect-thing="${thing._id}">
+          ${_("View the current version on reddit.")}
+        </a>
+      %else:
+        <blockquote class="reddit-embed-comment-body">
+          ${unsafe(safemarkdown(thing.body, nofollow=thing.nofollow))}
+        </blockquote>
+        <a class="reddit-embed-comment-more" href="javascript:;" target="_self"
+           data-track-action="read_more">
+          ${_("Read more")}
+        </a>
+      %endif
+    %endif
+  </article>
+</%def>

@@ -1,0 +1,111 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%namespace file="utils.html" import="optionalstyle"/>
+<%namespace file="printable.html" import="arrow"/>
+
+<%
+    like_cls = "unvoted"
+    if getattr(thing, "likes", None):
+        like_cls = "likes"
+    elif getattr(thing, "likes", None) is False:
+        like_cls = "dislikes"
+    thing.like_cls = like_cls
+ %>
+${self.parent()}
+${self.entry()}
+${self.Child()}
+
+
+<%def name="parent()">
+</%def>
+
+<%def name="Child()">
+  ${getattr(thing, "child", '')}
+</%def>
+
+<%def name="entry()">
+</%def>
+
+
+<%def name="static_arrows(thing)">
+  <%
+   from r2.lib.template_helpers import get_domain
+   domain = get_domain(subreddit=False)
+   permalink = "%s://%s%s" % (g.default_scheme, domain, thing.permalink)
+   if thing.likes == False:
+      arrow = "%s://%s/static/widget_arrows_down.gif"
+   elif thing.likes:
+      arrow = "%s://%s/static/widget_arrows_up.gif"
+   else:
+      arrow = "%s://%s/static/widget_arrows.gif"
+   arrow = arrow % (g.default_scheme, domain)
+   %>
+  <a href="${permalink}" class="reddit-voting-arrows" target="_blank"
+     ${optionalstyle("float:left; display:block;")}>
+    <img src="${arrow}" alt="vote" 
+         ${optionalstyle("border:none;margin-top:3px;")}/>
+  </a>
+</%def>
+
+<%def name="iframe_arrows(thing)">
+  <% 
+   from r2.lib.template_helpers import get_domain
+   %>
+  <div class="reddit-voting-arrows" 
+     ${optionalstyle("float:left; margin: 1px;")}>
+    <script type="text/javascript">
+      var reddit_bordercolor="FFFFFF";
+    </script>
+    <%
+       from r2.models import FakeSubreddit
+       url = ("%s://%s/static/button/button4.html?t=4&id=%s&sr=%s" %
+               (g.default_scheme, get_domain(subreddit=False), thing._fullname,
+               c.site.name if not isinstance(c.site, FakeSubreddit) else ""))
+       if c.bgcolor:
+          url += "&bgcolor=%s&bordercolor=%s" % (c.bgcolor, c.bgcolor)
+       else:
+          url += "&bgcolor=FFFFFF&bordercolor=FFFFFF"
+     %>
+    <iframe src="${url}" height="55" width="51" scrolling="no" frameborder="0"
+            ${optionalstyle("margin:0px;")}>
+    </iframe>
+  </div>
+</%def>
+
+<%def name="real_arrows(thing)">
+  <div class="midcol ${thing.like_cls}" ${optionalstyle("width: 15px")}>
+    ${arrow(thing, 1, thing.likes)}
+    ${arrow(thing, 0, thing.likes == False)}
+ </div>
+</%def>
+
+
+<%def name="arrows(thing)">
+  %if getattr(thing, 'embed_voting_style',None) == 'votable':
+    ${self.real_arrows(thing)}
+  %elif request.GET.get("expanded") or getattr(thing, 'embed_voting_style', None) == 'expanded':
+    ${self.iframe_arrows(thing)}
+  %else:
+    ${self.static_arrows(thing)}
+  %endif
+</%def>

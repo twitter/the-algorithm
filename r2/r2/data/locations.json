@@ -1,0 +1,1695 @@
+{
+  "AD": {
+    "name": "Andorra"
+  }, 
+  "AE": {
+    "name": "United Arab Emirates"
+  }, 
+  "AF": {
+    "name": "Afghanistan"
+  }, 
+  "AG": {
+    "name": "Antigua and Barbuda"
+  }, 
+  "AI": {
+    "name": "Anguilla"
+  }, 
+  "AL": {
+    "name": "Albania"
+  }, 
+  "AM": {
+    "name": "Armenia"
+  }, 
+  "AO": {
+    "name": "Angola"
+  }, 
+  "AP": {
+    "name": "Asia/Pacific Region"
+  }, 
+  "AQ": {
+    "name": "Antarctica"
+  }, 
+  "AR": {
+    "name": "Argentina"
+  }, 
+  "AS": {
+    "name": "American Samoa"
+  }, 
+  "AT": {
+    "name": "Austria"
+  }, 
+  "AU": {
+    "name": "Australia"
+  }, 
+  "AW": {
+    "name": "Aruba"
+  }, 
+  "AX": {
+    "name": "Aland Islands"
+  }, 
+  "AZ": {
+    "name": "Azerbaijan"
+  }, 
+  "BA": {
+    "name": "Bosnia and Herzegovina"
+  }, 
+  "BB": {
+    "name": "Barbados"
+  }, 
+  "BD": {
+    "name": "Bangladesh"
+  }, 
+  "BE": {
+    "name": "Belgium"
+  }, 
+  "BF": {
+    "name": "Burkina Faso"
+  }, 
+  "BG": {
+    "name": "Bulgaria"
+  }, 
+  "BH": {
+    "name": "Bahrain"
+  }, 
+  "BI": {
+    "name": "Burundi"
+  }, 
+  "BJ": {
+    "name": "Benin"
+  }, 
+  "BL": {
+    "name": "Saint Bartelemey"
+  }, 
+  "BM": {
+    "name": "Bermuda"
+  }, 
+  "BN": {
+    "name": "Brunei Darussalam"
+  }, 
+  "BO": {
+    "name": "Bolivia"
+  }, 
+  "BQ": {
+    "name": "Bonaire"
+  }, 
+  "BR": {
+    "name": "Brazil"
+  }, 
+  "BS": {
+    "name": "Bahamas"
+  }, 
+  "BT": {
+    "name": "Bhutan"
+  }, 
+  "BV": {
+    "name": "Bouvet Island"
+  }, 
+  "BW": {
+    "name": "Botswana"
+  }, 
+  "BY": {
+    "name": "Belarus"
+  }, 
+  "BZ": {
+    "name": "Belize"
+  }, 
+  "CA": {
+    "name": "Canada"
+  }, 
+  "CC": {
+    "name": "Cocos (Keeling) Islands"
+  }, 
+  "CD": {
+    "name": "Congo"
+  }, 
+  "CF": {
+    "name": "Central African Republic"
+  }, 
+  "CG": {
+    "name": "Congo"
+  }, 
+  "CH": {
+    "name": "Switzerland"
+  }, 
+  "CI": {
+    "name": "Cote d'Ivoire"
+  }, 
+  "CK": {
+    "name": "Cook Islands"
+  }, 
+  "CL": {
+    "name": "Chile"
+  }, 
+  "CM": {
+    "name": "Cameroon"
+  }, 
+  "CN": {
+    "name": "China"
+  }, 
+  "CO": {
+    "name": "Colombia"
+  }, 
+  "CR": {
+    "name": "Costa Rica"
+  }, 
+  "CU": {
+    "name": "Cuba"
+  }, 
+  "CV": {
+    "name": "Cape Verde"
+  }, 
+  "CW": {
+    "name": "Curacao"
+  }, 
+  "CX": {
+    "name": "Christmas Island"
+  }, 
+  "CY": {
+    "name": "Cyprus"
+  }, 
+  "CZ": {
+    "name": "Czech Republic"
+  }, 
+  "DE": {
+    "name": "Germany"
+  }, 
+  "DJ": {
+    "name": "Djibouti"
+  }, 
+  "DK": {
+    "name": "Denmark"
+  }, 
+  "DM": {
+    "name": "Dominica"
+  }, 
+  "DO": {
+    "name": "Dominican Republic"
+  }, 
+  "DZ": {
+    "name": "Algeria"
+  }, 
+  "EC": {
+    "name": "Ecuador"
+  }, 
+  "EE": {
+    "name": "Estonia"
+  }, 
+  "EG": {
+    "name": "Egypt"
+  }, 
+  "EH": {
+    "name": "Western Sahara"
+  }, 
+  "ER": {
+    "name": "Eritrea"
+  }, 
+  "ES": {
+    "name": "Spain"
+  }, 
+  "ET": {
+    "name": "Ethiopia"
+  }, 
+  "EU": {
+    "name": "Europe"
+  }, 
+  "FI": {
+    "name": "Finland"
+  }, 
+  "FJ": {
+    "name": "Fiji"
+  }, 
+  "FK": {
+    "name": "Falkland Islands (Malvinas)"
+  }, 
+  "FM": {
+    "name": "Micronesia"
+  }, 
+  "FO": {
+    "name": "Faroe Islands"
+  }, 
+  "FR": {
+    "name": "France"
+  }, 
+  "GA": {
+    "name": "Gabon"
+  }, 
+  "GB": {
+    "name": "United Kingdom"
+  }, 
+  "GD": {
+    "name": "Grenada"
+  }, 
+  "GE": {
+    "name": "Georgia"
+  }, 
+  "GF": {
+    "name": "French Guiana"
+  }, 
+  "GG": {
+    "name": "Guernsey"
+  }, 
+  "GH": {
+    "name": "Ghana"
+  }, 
+  "GI": {
+    "name": "Gibraltar"
+  }, 
+  "GL": {
+    "name": "Greenland"
+  }, 
+  "GM": {
+    "name": "Gambia"
+  }, 
+  "GN": {
+    "name": "Guinea"
+  }, 
+  "GP": {
+    "name": "Guadeloupe"
+  }, 
+  "GQ": {
+    "name": "Equatorial Guinea"
+  }, 
+  "GR": {
+    "name": "Greece"
+  }, 
+  "GS": {
+    "name": "South Georgia and the South Sandwich Islands"
+  }, 
+  "GT": {
+    "name": "Guatemala"
+  }, 
+  "GU": {
+    "name": "Guam"
+  }, 
+  "GW": {
+    "name": "Guinea-Bissau"
+  }, 
+  "GY": {
+    "name": "Guyana"
+  }, 
+  "HK": {
+    "name": "Hong Kong"
+  }, 
+  "HM": {
+    "name": "Heard Island and McDonald Islands"
+  }, 
+  "HN": {
+    "name": "Honduras"
+  }, 
+  "HR": {
+    "name": "Croatia"
+  }, 
+  "HT": {
+    "name": "Haiti"
+  }, 
+  "HU": {
+    "name": "Hungary"
+  }, 
+  "ID": {
+    "name": "Indonesia"
+  }, 
+  "IE": {
+    "name": "Ireland"
+  }, 
+  "IL": {
+    "name": "Israel"
+  }, 
+  "IM": {
+    "name": "Isle of Man"
+  }, 
+  "IN": {
+    "name": "India"
+  }, 
+  "IO": {
+    "name": "British Indian Ocean Territory"
+  }, 
+  "IQ": {
+    "name": "Iraq"
+  }, 
+  "IR": {
+    "name": "Iran"
+  }, 
+  "IS": {
+    "name": "Iceland"
+  }, 
+  "IT": {
+    "name": "Italy"
+  }, 
+  "JE": {
+    "name": "Jersey"
+  }, 
+  "JM": {
+    "name": "Jamaica"
+  }, 
+  "JO": {
+    "name": "Jordan"
+  }, 
+  "JP": {
+    "name": "Japan"
+  }, 
+  "KE": {
+    "name": "Kenya"
+  }, 
+  "KG": {
+    "name": "Kyrgyzstan"
+  }, 
+  "KH": {
+    "name": "Cambodia"
+  }, 
+  "KI": {
+    "name": "Kiribati"
+  }, 
+  "KM": {
+    "name": "Comoros"
+  }, 
+  "KN": {
+    "name": "Saint Kitts and Nevis"
+  }, 
+  "KP": {
+    "name": "Korea"
+  }, 
+  "KR": {
+    "name": "Korea"
+  }, 
+  "KW": {
+    "name": "Kuwait"
+  }, 
+  "KY": {
+    "name": "Cayman Islands"
+  }, 
+  "KZ": {
+    "name": "Kazakhstan"
+  }, 
+  "LA": {
+    "name": "Lao People's Democratic Republic"
+  }, 
+  "LB": {
+    "name": "Lebanon"
+  }, 
+  "LC": {
+    "name": "Saint Lucia"
+  }, 
+  "LI": {
+    "name": "Liechtenstein"
+  }, 
+  "LK": {
+    "name": "Sri Lanka"
+  }, 
+  "LR": {
+    "name": "Liberia"
+  }, 
+  "LS": {
+    "name": "Lesotho"
+  }, 
+  "LT": {
+    "name": "Lithuania"
+  }, 
+  "LU": {
+    "name": "Luxembourg"
+  }, 
+  "LV": {
+    "name": "Latvia"
+  }, 
+  "LY": {
+    "name": "Libyan Arab Jamahiriya"
+  }, 
+  "MA": {
+    "name": "Morocco"
+  }, 
+  "MC": {
+    "name": "Monaco"
+  }, 
+  "MD": {
+    "name": "Moldova"
+  }, 
+  "ME": {
+    "name": "Montenegro"
+  }, 
+  "MF": {
+    "name": "Saint Martin"
+  }, 
+  "MG": {
+    "name": "Madagascar"
+  }, 
+  "MH": {
+    "name": "Marshall Islands"
+  }, 
+  "MK": {
+    "name": "Macedonia"
+  }, 
+  "ML": {
+    "name": "Mali"
+  }, 
+  "MM": {
+    "name": "Myanmar"
+  }, 
+  "MN": {
+    "name": "Mongolia"
+  }, 
+  "MO": {
+    "name": "Macao"
+  }, 
+  "MP": {
+    "name": "Northern Mariana Islands"
+  }, 
+  "MQ": {
+    "name": "Martinique"
+  }, 
+  "MR": {
+    "name": "Mauritania"
+  }, 
+  "MS": {
+    "name": "Montserrat"
+  }, 
+  "MT": {
+    "name": "Malta"
+  }, 
+  "MU": {
+    "name": "Mauritius"
+  }, 
+  "MV": {
+    "name": "Maldives"
+  }, 
+  "MW": {
+    "name": "Malawi"
+  }, 
+  "MX": {
+    "name": "Mexico"
+  }, 
+  "MY": {
+    "name": "Malaysia"
+  }, 
+  "MZ": {
+    "name": "Mozambique"
+  }, 
+  "NA": {
+    "name": "Namibia"
+  }, 
+  "NC": {
+    "name": "New Caledonia"
+  }, 
+  "NE": {
+    "name": "Niger"
+  }, 
+  "NF": {
+    "name": "Norfolk Island"
+  }, 
+  "NG": {
+    "name": "Nigeria"
+  }, 
+  "NI": {
+    "name": "Nicaragua"
+  }, 
+  "NL": {
+    "name": "Netherlands"
+  }, 
+  "NO": {
+    "name": "Norway"
+  }, 
+  "NP": {
+    "name": "Nepal"
+  }, 
+  "NR": {
+    "name": "Nauru"
+  }, 
+  "NU": {
+    "name": "Niue"
+  }, 
+  "NZ": {
+    "name": "New Zealand"
+  }, 
+  "O1": {
+    "name": "Other Country"
+  }, 
+  "OM": {
+    "name": "Oman"
+  }, 
+  "PA": {
+    "name": "Panama"
+  }, 
+  "PE": {
+    "name": "Peru"
+  }, 
+  "PF": {
+    "name": "French Polynesia"
+  }, 
+  "PG": {
+    "name": "Papua New Guinea"
+  }, 
+  "PH": {
+    "name": "Philippines"
+  }, 
+  "PK": {
+    "name": "Pakistan"
+  }, 
+  "PL": {
+    "name": "Poland"
+  }, 
+  "PM": {
+    "name": "Saint Pierre and Miquelon"
+  }, 
+  "PN": {
+    "name": "Pitcairn"
+  }, 
+  "PR": {
+    "name": "Puerto Rico"
+  }, 
+  "PS": {
+    "name": "Palestinian Territory"
+  }, 
+  "PT": {
+    "name": "Portugal"
+  }, 
+  "PW": {
+    "name": "Palau"
+  }, 
+  "PY": {
+    "name": "Paraguay"
+  }, 
+  "QA": {
+    "name": "Qatar"
+  }, 
+  "RE": {
+    "name": "Reunion"
+  }, 
+  "RO": {
+    "name": "Romania"
+  }, 
+  "RS": {
+    "name": "Serbia"
+  }, 
+  "RU": {
+    "name": "Russian Federation"
+  }, 
+  "RW": {
+    "name": "Rwanda"
+  }, 
+  "SA": {
+    "name": "Saudi Arabia"
+  }, 
+  "SB": {
+    "name": "Solomon Islands"
+  }, 
+  "SC": {
+    "name": "Seychelles"
+  }, 
+  "SD": {
+    "name": "Sudan"
+  }, 
+  "SE": {
+    "name": "Sweden"
+  }, 
+  "SG": {
+    "name": "Singapore"
+  }, 
+  "SH": {
+    "name": "Saint Helena"
+  }, 
+  "SI": {
+    "name": "Slovenia"
+  }, 
+  "SJ": {
+    "name": "Svalbard and Jan Mayen"
+  }, 
+  "SK": {
+    "name": "Slovakia"
+  }, 
+  "SL": {
+    "name": "Sierra Leone"
+  }, 
+  "SM": {
+    "name": "San Marino"
+  }, 
+  "SN": {
+    "name": "Senegal"
+  }, 
+  "SO": {
+    "name": "Somalia"
+  }, 
+  "SR": {
+    "name": "Suriname"
+  }, 
+  "SS": {
+    "name": "South Sudan"
+  }, 
+  "ST": {
+    "name": "Sao Tome and Principe"
+  }, 
+  "SV": {
+    "name": "El Salvador"
+  }, 
+  "SX": {
+    "name": "Sint Maarten"
+  }, 
+  "SY": {
+    "name": "Syrian Arab Republic"
+  }, 
+  "SZ": {
+    "name": "Swaziland"
+  }, 
+  "TC": {
+    "name": "Turks and Caicos Islands"
+  }, 
+  "TD": {
+    "name": "Chad"
+  }, 
+  "TF": {
+    "name": "French Southern Territories"
+  }, 
+  "TG": {
+    "name": "Togo"
+  }, 
+  "TH": {
+    "name": "Thailand"
+  }, 
+  "TJ": {
+    "name": "Tajikistan"
+  }, 
+  "TK": {
+    "name": "Tokelau"
+  }, 
+  "TL": {
+    "name": "Timor-Leste"
+  }, 
+  "TM": {
+    "name": "Turkmenistan"
+  }, 
+  "TN": {
+    "name": "Tunisia"
+  }, 
+  "TO": {
+    "name": "Tonga"
+  }, 
+  "TR": {
+    "name": "Turkey"
+  }, 
+  "TT": {
+    "name": "Trinidad and Tobago"
+  }, 
+  "TV": {
+    "name": "Tuvalu"
+  }, 
+  "TW": {
+    "name": "Taiwan"
+  }, 
+  "TZ": {
+    "name": "Tanzania"
+  }, 
+  "UA": {
+    "name": "Ukraine"
+  }, 
+  "UG": {
+    "name": "Uganda"
+  }, 
+  "UM": {
+    "name": "United States Minor Outlying Islands"
+  }, 
+  "US": {
+    "name": "United States",
+    "regions": {
+      "AK": {
+        "metros": {
+          "743": {
+            "name": "Anchorage, AK"
+          }, 
+          "745": {
+            "name": "Fairbanks, AK"
+          }, 
+          "747": {
+            "name": "Juneau, AK"
+          }
+        }, 
+        "name": "Alaska"
+      }, 
+      "AL": {
+        "metros": {
+          "606": {
+            "name": "Dothan, AL"
+          }, 
+          "630": {
+            "name": "Birmingham, AL"
+          }, 
+          "686": {
+            "name": "Mobile, AL-Pensacola, FL"
+          }, 
+          "691": {
+            "name": "Huntsville-Decatur (Florence), AL"
+          }, 
+          "698": {
+            "name": "Montgomery (Selma), AL"
+          }
+        }, 
+        "name": "Alabama"
+      }, 
+      "AR": {
+        "metros": {
+          "628": {
+            "name": "Monroe, LA-El Dorado, AR"
+          }, 
+          "670": {
+            "name": "Ft Smith-Springdale, AR"
+          }, 
+          "693": {
+            "name": "Little Rock-Pine Bluff, AR"
+          }, 
+          "734": {
+            "name": "Jonesboro, AR"
+          }
+        }, 
+        "name": "Arkansas"
+      }, 
+      "AZ": {
+        "metros": {
+          "753": {
+            "name": "Phoenix, AZ"
+          }, 
+          "771": {
+            "name": "Yuma, AZ-El Centro, CA"
+          }, 
+          "789": {
+            "name": "Tucson (Sierra Vista), AZ"
+          }
+        }, 
+        "name": "Arizona"
+      }, 
+      "CA": {
+        "metros": {
+          "771": {
+            "name": "Yuma, AZ-El Centro, CA"
+          }, 
+          "800": {
+            "name": "Bakersfield, CA"
+          }, 
+          "802": {
+            "name": "Eureka, CA"
+          }, 
+          "803": {
+            "name": "Los Angeles, CA"
+          }, 
+          "804": {
+            "name": "Palm Springs, CA"
+          }, 
+          "807": {
+            "name": "San Francisco-Oakland-San Jose, CA"
+          }, 
+          "825": {
+            "name": "San Diego, CA"
+          }, 
+          "828": {
+            "name": "Monterey-Salinas, CA"
+          }, 
+          "855": {
+            "name": "Santa Barbara-San Luis Obispo, CA"
+          }, 
+          "862": {
+            "name": "Sacramento-Stockton-Modesto, CA"
+          }, 
+          "866": {
+            "name": "Fresno-Visalia, CA"
+          }, 
+          "868": {
+            "name": "Chico-Redding, CA"
+          }
+        }, 
+        "name": "California"
+      }, 
+      "CO": {
+        "metros": {
+          "751": {
+            "name": "Denver, CO"
+          }, 
+          "752": {
+            "name": "Colorado Springs-Pueblo, CO"
+          }, 
+          "773": {
+            "name": "Grand Junction-Montrose, CO"
+          }
+        }, 
+        "name": "Colorado"
+      }, 
+      "CT": {
+        "metros": {
+          "533": {
+            "name": "Hartford & New Haven, CT"
+          }
+        }, 
+        "name": "Connecticut"
+      }, 
+      "DC": {
+        "metros": {
+          "511": {
+            "name": "Washington, DC (Hagerstown, MD)"
+          }
+        }, 
+        "name": "District of Columbia"
+      }, 
+      "FL": {
+        "metros": {
+          "528": {
+            "name": "Miami-Ft. Lauderdale, FL"
+          }, 
+          "530": {
+            "name": "Tallahassee, FL-Thomasville, GA"
+          }, 
+          "534": {
+            "name": "Orlando-Daytona Beach, FL"
+          }, 
+          "539": {
+            "name": "Tampa-St Petersburg (Sarasota), FL"
+          }, 
+          "548": {
+            "name": "West Palm Beach-Ft. Pierce, FL"
+          }, 
+          "561": {
+            "name": "Jacksonville, FL"
+          }, 
+          "571": {
+            "name": "Ft. Myers-Naples, FL"
+          }, 
+          "592": {
+            "name": "Gainesville, FL"
+          }, 
+          "656": {
+            "name": "Panama City, FL"
+          }, 
+          "686": {
+            "name": "Mobile, AL-Pensacola, FL"
+          }
+        }, 
+        "name": "Florida"
+      }, 
+      "GA": {
+        "metros": {
+          "503": {
+            "name": "Macon, GA"
+          }, 
+          "507": {
+            "name": "Savannah, GA"
+          }, 
+          "520": {
+            "name": "Augusta, GA"
+          }, 
+          "522": {
+            "name": "Columbus, GA"
+          }, 
+          "524": {
+            "name": "Atlanta, GA"
+          }, 
+          "525": {
+            "name": "Albany, GA"
+          }, 
+          "530": {
+            "name": "Tallahassee, FL-Thomasville, GA"
+          }
+        }, 
+        "name": "Georgia"
+      }, 
+      "HI": {
+        "metros": {
+          "744": {
+            "name": "Honolulu, HI"
+          }
+        }, 
+        "name": "Hawaii"
+      }, 
+      "IA": {
+        "metros": {
+          "611": {
+            "name": "Rochester-Austin, MN-Mason City, IA"
+          }, 
+          "624": {
+            "name": "Sioux City, IA"
+          }, 
+          "631": {
+            "name": "Ottumwa, IA-Kirksville, MO"
+          }, 
+          "637": {
+            "name": "Cedar Rapids-Waterloo-Iowa City, IA"
+          }, 
+          "679": {
+            "name": "Des Moines-Ames, IA"
+          }, 
+          "682": {
+            "name": "Davenport,IA-Rock Island-Moline,IL"
+          }, 
+          "717": {
+            "name": "Quincy, IL-Hannibal, MO-Keokuk, IA"
+          }
+        }, 
+        "name": "Iowa"
+      }, 
+      "ID": {
+        "metros": {
+          "757": {
+            "name": "Boise, ID"
+          }, 
+          "758": {
+            "name": "Idaho Falls-Pocatello, ID"
+          }, 
+          "760": {
+            "name": "Twin Falls, ID"
+          }
+        }, 
+        "name": "Idaho"
+      }, 
+      "IL": {
+        "metros": {
+          "602": {
+            "name": "Chicago, IL"
+          }, 
+          "610": {
+            "name": "Rockford, IL"
+          }, 
+          "632": {
+            "name": "Paducah, KY-Harrisburg, IL"
+          }, 
+          "648": {
+            "name": "Champaign & Springfield-Decatur,IL"
+          }, 
+          "675": {
+            "name": "Peoria-Bloomington, IL"
+          }, 
+          "682": {
+            "name": "Davenport,IA-Rock Island-Moline,IL"
+          }, 
+          "717": {
+            "name": "Quincy, IL-Hannibal, MO-Keokuk, IA"
+          }
+        }, 
+        "name": "Illinois"
+      }, 
+      "IN": {
+        "metros": {
+          "509": {
+            "name": "Ft. Wayne, IN"
+          }, 
+          "527": {
+            "name": "Indianapolis, IN"
+          }, 
+          "581": {
+            "name": "Terre Haute, IN"
+          }, 
+          "582": {
+            "name": "Lafayette, IN"
+          }, 
+          "588": {
+            "name": "South Bend-Elkhart, IN"
+          }, 
+          "649": {
+            "name": "Evansville, IN"
+          }
+        }, 
+        "name": "Indiana"
+      }, 
+      "KS": {
+        "metros": {
+          "603": {
+            "name": "Joplin, MO-Pittsburg, KS"
+          }, 
+          "605": {
+            "name": "Topeka, KS"
+          }, 
+          "678": {
+            "name": "Wichita-Hutchinson, KS"
+          }
+        }, 
+        "name": "Kansas"
+      }, 
+      "KY": {
+        "metros": {
+          "529": {
+            "name": "Louisville, KY"
+          }, 
+          "541": {
+            "name": "Lexington, KY"
+          }, 
+          "632": {
+            "name": "Paducah, KY-Harrisburg, IL"
+          }, 
+          "736": {
+            "name": "Bowling Green, KY"
+          }
+        }, 
+        "name": "Kentucky"
+      }, 
+      "LA": {
+        "metros": {
+          "612": {
+            "name": "Shreveport, LA"
+          }, 
+          "622": {
+            "name": "New Orleans, LA"
+          }, 
+          "628": {
+            "name": "Monroe, LA-El Dorado, AR"
+          }, 
+          "642": {
+            "name": "Lafayette, LA"
+          }, 
+          "643": {
+            "name": "Lake Charles, LA"
+          }, 
+          "644": {
+            "name": "Alexandria, LA"
+          }, 
+          "716": {
+            "name": "Baton Rouge, LA"
+          }
+        }, 
+        "name": "Louisiana"
+      }, 
+      "MA": {
+        "metros": {
+          "506": {
+            "name": "Boston, MA-Manchester, NH"
+          }, 
+          "521": {
+            "name": "Providence, RI-New Bedford, MA"
+          }, 
+          "543": {
+            "name": "Springfield-Holyoke, MA"
+          }
+        }, 
+        "name": "Massachusetts"
+      }, 
+      "MD": {
+        "metros": {
+          "511": {
+            "name": "Washington, DC (Hagerstown, MD)"
+          }, 
+          "512": {
+            "name": "Baltimore, MD"
+          }, 
+          "576": {
+            "name": "Salisbury, MD"
+          }
+        }, 
+        "name": "Maryland"
+      }, 
+      "ME": {
+        "metros": {
+          "500": {
+            "name": "Portland-Auburn, ME"
+          }, 
+          "537": {
+            "name": "Bangor, ME"
+          }, 
+          "552": {
+            "name": "Presque Isle, ME"
+          }
+        }, 
+        "name": "Maine"
+      }, 
+      "MI": {
+        "metros": {
+          "505": {
+            "name": "Detroit, MI"
+          }, 
+          "513": {
+            "name": "Flint-Saginaw-Bay City, MI"
+          }, 
+          "540": {
+            "name": "Traverse City-Cadillac, MI"
+          }, 
+          "551": {
+            "name": "Lansing, MI"
+          }, 
+          "553": {
+            "name": "Marquette, MI"
+          }, 
+          "563": {
+            "name": "Grand Rapids-Kalamazoo, MI"
+          }, 
+          "583": {
+            "name": "Alpena, MI"
+          }
+        }, 
+        "name": "Michigan"
+      }, 
+      "MN": {
+        "metros": {
+          "611": {
+            "name": "Rochester-Austin, MN-Mason City, IA"
+          }, 
+          "613": {
+            "name": "Minneapolis-St. Paul, MN"
+          }, 
+          "676": {
+            "name": "Duluth, MN-Superior, WI"
+          }, 
+          "737": {
+            "name": "Mankato, MN"
+          }
+        }, 
+        "name": "Minnesota"
+      }, 
+      "MO": {
+        "metros": {
+          "603": {
+            "name": "Joplin, MO-Pittsburg, KS"
+          }, 
+          "604": {
+            "name": "Columbia-Jefferson City, MO"
+          }, 
+          "609": {
+            "name": "St. Louis, MO"
+          }, 
+          "616": {
+            "name": "Kansas City, MO"
+          }, 
+          "619": {
+            "name": "Springfield, MO"
+          }, 
+          "631": {
+            "name": "Ottumwa, IA-Kirksville, MO"
+          }, 
+          "638": {
+            "name": "St. Joseph, MO"
+          }, 
+          "717": {
+            "name": "Quincy, IL-Hannibal, MO-Keokuk, IA"
+          }
+        }, 
+        "name": "Missouri"
+      }, 
+      "MS": {
+        "metros": {
+          "647": {
+            "name": "Greenwood-Greenville, MS"
+          }, 
+          "673": {
+            "name": "Columbus-Tupelo-West Point, MS"
+          }, 
+          "710": {
+            "name": "Hattiesburg-Laurel, MS"
+          }, 
+          "711": {
+            "name": "Meridian, MS"
+          }, 
+          "718": {
+            "name": "Jackson, MS"
+          }, 
+          "746": {
+            "name": "Biloxi-Gulfport, MS"
+          }
+        }, 
+        "name": "Mississippi"
+      }, 
+      "MT": {
+        "metros": {
+          "754": {
+            "name": "Butte-Bozeman, MT"
+          }, 
+          "755": {
+            "name": "Great Falls, MT"
+          }, 
+          "756": {
+            "name": "Billings, MT"
+          }, 
+          "762": {
+            "name": "Missoula, MT"
+          }, 
+          "766": {
+            "name": "Helena, MT"
+          }, 
+          "798": {
+            "name": "Glendive, MT"
+          }
+        }, 
+        "name": "Montana"
+      }, 
+      "NC": {
+        "metros": {
+          "517": {
+            "name": "Charlotte, NC"
+          }, 
+          "518": {
+            "name": "Greensboro-Winston Salem, NC"
+          }, 
+          "545": {
+            "name": "Greenville-New Bern-Washington, NC"
+          }, 
+          "550": {
+            "name": "Wilmington, NC"
+          }, 
+          "560": {
+            "name": "Raleigh-Durham (Fayetteville), NC"
+          }
+        }, 
+        "name": "North Carolina"
+      }, 
+      "ND": {
+        "metros": {
+          "687": {
+            "name": "Minot-Bismarck-Dickinson, ND"
+          }, 
+          "724": {
+            "name": "Fargo-Valley City, ND"
+          }
+        }, 
+        "name": "North Dakota"
+      }, 
+      "NE": {
+        "metros": {
+          "652": {
+            "name": "Omaha, NE"
+          }, 
+          "722": {
+            "name": "Lincoln & Hastings-Kearney, NE"
+          }, 
+          "740": {
+            "name": "North Platte, NE"
+          }, 
+          "759": {
+            "name": "Cheyenne, WY-Scottsbluff, NE"
+          }
+        }, 
+        "name": "Nebraska"
+      }, 
+      "NH": {
+        "metros": {
+          "506": {
+            "name": "Boston, MA-Manchester, NH"
+          }
+        }, 
+        "name": "New Hampshire"
+      }, 
+      "NM": {
+        "metros": {
+          "790": {
+            "name": "Albuquerque-Santa Fe, NM"
+          }
+        }, 
+        "name": "New Mexico"
+      }, 
+      "NV": {
+        "metros": {
+          "811": {
+            "name": "Reno, NV"
+          }, 
+          "839": {
+            "name": "Las Vegas, NV"
+          }
+        }, 
+        "name": "Nevada"
+      }, 
+      "NY": {
+        "metros": {
+          "501": {
+            "name": "New York, NY"
+          }, 
+          "502": {
+            "name": "Binghamton, NY"
+          }, 
+          "514": {
+            "name": "Buffalo, NY"
+          }, 
+          "523": {
+            "name": "Burlington, VT-Plattsburgh, NY"
+          }, 
+          "526": {
+            "name": "Utica, NY"
+          }, 
+          "532": {
+            "name": "Albany-Schenectady-Troy, NY"
+          }, 
+          "538": {
+            "name": "Rochester, NY"
+          }, 
+          "549": {
+            "name": "Watertown, NY"
+          }, 
+          "555": {
+            "name": "Syracuse, NY"
+          }, 
+          "565": {
+            "name": "Elmira, NY"
+          }
+        }, 
+        "name": "New York"
+      }, 
+      "OH": {
+        "metros": {
+          "510": {
+            "name": "Cleveland-Akron (Canton), OH"
+          }, 
+          "515": {
+            "name": "Cincinnati, OH"
+          }, 
+          "535": {
+            "name": "Columbus, OH"
+          }, 
+          "536": {
+            "name": "Youngstown, OH"
+          }, 
+          "542": {
+            "name": "Dayton, OH"
+          }, 
+          "547": {
+            "name": "Toledo, OH"
+          }, 
+          "554": {
+            "name": "Wheeling, WV-Steubenville, OH"
+          }, 
+          "558": {
+            "name": "Lima, OH"
+          }, 
+          "596": {
+            "name": "Zanesville, OH"
+          }
+        }, 
+        "name": "Ohio"
+      }, 
+      "OK": {
+        "metros": {
+          "627": {
+            "name": "Wichita Falls, TX & Lawton, OK"
+          }, 
+          "650": {
+            "name": "Oklahoma City, OK"
+          }, 
+          "657": {
+            "name": "Sherman, TX-Ada, OK"
+          }, 
+          "671": {
+            "name": "Tulsa, OK"
+          }
+        }, 
+        "name": "Oklahoma"
+      }, 
+      "OR": {
+        "metros": {
+          "801": {
+            "name": "Eugene, OR"
+          }, 
+          "813": {
+            "name": "Medford-Klamath Falls, OR"
+          }, 
+          "820": {
+            "name": "Portland, OR"
+          }, 
+          "821": {
+            "name": "Bend, OR"
+          }
+        }, 
+        "name": "Oregon"
+      }, 
+      "PA": {
+        "metros": {
+          "504": {
+            "name": "Philadelphia, PA"
+          }, 
+          "508": {
+            "name": "Pittsburgh, PA"
+          }, 
+          "516": {
+            "name": "Erie, PA"
+          }, 
+          "566": {
+            "name": "Harrisburg-Lancaster-York, PA"
+          }, 
+          "574": {
+            "name": "Johnstown-Altoona, PA"
+          }, 
+          "577": {
+            "name": "Wilkes Barre-Scranton, PA"
+          }
+        }, 
+        "name": "Pennsylvania"
+      }, 
+      "RI": {
+        "metros": {
+          "521": {
+            "name": "Providence, RI-New Bedford, MA"
+          }
+        }, 
+        "name": "Rhode Island"
+      }, 
+      "SC": {
+        "metros": {
+          "519": {
+            "name": "Charleston, SC"
+          }, 
+          "546": {
+            "name": "Columbia, SC"
+          }, 
+          "567": {
+            "name": "Greenville-Spartanburg, SC"
+          }, 
+          "570": {
+            "name": "Florence-Myrtle Beach, SC"
+          }
+        }, 
+        "name": "South Carolina"
+      }, 
+      "SD": {
+        "metros": {
+          "725": {
+            "name": "Sioux Falls(Mitchell), SD"
+          }, 
+          "764": {
+            "name": "Rapid City, SD"
+          }
+        }, 
+        "name": "South Dakota"
+      }, 
+      "TN": {
+        "metros": {
+          "531": {
+            "name": "Tri-Cities, TN-VA"
+          }, 
+          "557": {
+            "name": "Knoxville, TN"
+          }, 
+          "575": {
+            "name": "Chattanooga, TN"
+          }, 
+          "639": {
+            "name": "Jackson, TN"
+          }, 
+          "640": {
+            "name": "Memphis, TN"
+          }, 
+          "659": {
+            "name": "Nashville, TN"
+          }
+        }, 
+        "name": "Tennessee"
+      }, 
+      "TX": {
+        "metros": {
+          "600": {
+            "name": "Corpus Christi, TX"
+          }, 
+          "618": {
+            "name": "Houston, TX"
+          }, 
+          "623": {
+            "name": "Dallas-Ft. Worth, TX"
+          }, 
+          "625": {
+            "name": "Waco-Temple-Bryan, TX"
+          }, 
+          "626": {
+            "name": "Victoria, TX"
+          }, 
+          "627": {
+            "name": "Wichita Falls, TX & Lawton, OK"
+          }, 
+          "633": {
+            "name": "Odessa-Midland, TX"
+          }, 
+          "634": {
+            "name": "Amarillo, TX"
+          }, 
+          "635": {
+            "name": "Austin, TX"
+          }, 
+          "636": {
+            "name": "Harlingen-Weslaco-McAllen, TX"
+          }, 
+          "641": {
+            "name": "San Antonio, TX"
+          }, 
+          "651": {
+            "name": "Lubbock, TX"
+          }, 
+          "657": {
+            "name": "Sherman, TX-Ada, OK"
+          }, 
+          "661": {
+            "name": "San Angelo, TX"
+          }, 
+          "662": {
+            "name": "Abilene-Sweetwater, TX"
+          }, 
+          "692": {
+            "name": "Beaumont-Port Arthur, TX"
+          }, 
+          "709": {
+            "name": "Tyler-Longview(Nacogdoches), TX"
+          }, 
+          "749": {
+            "name": "Laredo, TX"
+          }, 
+          "765": {
+            "name": "El Paso, TX"
+          }
+        }, 
+        "name": "Texas"
+      }, 
+      "UT": {
+        "metros": {
+          "770": {
+            "name": "Salt Lake City, UT"
+          }
+        }, 
+        "name": "Utah"
+      }, 
+      "VA": {
+        "metros": {
+          "544": {
+            "name": "Norfolk-Portsmouth-Newport News,VA"
+          }, 
+          "556": {
+            "name": "Richmond-Petersburg, VA"
+          }, 
+          "569": {
+            "name": "Harrisonburg, VA"
+          }, 
+          "573": {
+            "name": "Roanoke-Lynchburg, VA"
+          }, 
+          "584": {
+            "name": "Charlottesville, VA"
+          }
+        }, 
+        "name": "Virginia"
+      }, 
+      "VT": {
+        "metros": {
+          "523": {
+            "name": "Burlington, VT-Plattsburgh, NY"
+          }
+        }, 
+        "name": "Vermont"
+      }, 
+      "WA": {
+        "metros": {
+          "810": {
+            "name": "Yakima-Pasco-Richland-Kennewick, WA"
+          }, 
+          "819": {
+            "name": "Seattle-Tacoma, WA"
+          }, 
+          "881": {
+            "name": "Spokane, WA"
+          }
+        }, 
+        "name": "Washington"
+      }, 
+      "WI": {
+        "metros": {
+          "617": {
+            "name": "Milwaukee, WI"
+          }, 
+          "658": {
+            "name": "Green Bay-Appleton, WI"
+          }, 
+          "669": {
+            "name": "Madison, WI"
+          }, 
+          "676": {
+            "name": "Duluth, MN-Superior, WI"
+          }, 
+          "702": {
+            "name": "La Crosse-Eau Claire, WI"
+          }, 
+          "705": {
+            "name": "Wausau-Rhinelander, WI"
+          }
+        }, 
+        "name": "Wisconsin"
+      }, 
+      "WV": {
+        "metros": {
+          "554": {
+            "name": "Wheeling, WV-Steubenville, OH"
+          }, 
+          "559": {
+            "name": "Bluefield-Beckley-Oak Hill, WV"
+          }, 
+          "564": {
+            "name": "Charleston-Huntington, WV"
+          }, 
+          "597": {
+            "name": "Parkersburg, WV"
+          }, 
+          "598": {
+            "name": "Clarksburg-Weston, WV"
+          }
+        }, 
+        "name": "West Virginia"
+      }, 
+      "WY": {
+        "metros": {
+          "759": {
+            "name": "Cheyenne, WY-Scottsbluff, NE"
+          }, 
+          "767": {
+            "name": "Casper-Riverton, WY"
+          }
+        }, 
+        "name": "Wyoming"
+      }
+    }
+  }, 
+  "UY": {
+    "name": "Uruguay"
+  }, 
+  "UZ": {
+    "name": "Uzbekistan"
+  }, 
+  "VA": {
+    "name": "Holy See (Vatican City State)"
+  }, 
+  "VC": {
+    "name": "Saint Vincent and the Grenadines"
+  }, 
+  "VE": {
+    "name": "Venezuela"
+  }, 
+  "VG": {
+    "name": "Virgin Islands"
+  }, 
+  "VI": {
+    "name": "Virgin Islands"
+  }, 
+  "VN": {
+    "name": "Vietnam"
+  }, 
+  "VU": {
+    "name": "Vanuatu"
+  }, 
+  "WF": {
+    "name": "Wallis and Futuna"
+  }, 
+  "WS": {
+    "name": "Samoa"
+  }, 
+  "YE": {
+    "name": "Yemen"
+  }, 
+  "YT": {
+    "name": "Mayotte"
+  }, 
+  "ZA": {
+    "name": "South Africa"
+  }, 
+  "ZM": {
+    "name": "Zambia"
+  }, 
+  "ZW": {
+    "name": "Zimbabwe"
+  }
+}

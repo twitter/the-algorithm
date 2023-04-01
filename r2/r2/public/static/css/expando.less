@@ -1,0 +1,45 @@
+.thing .entry .expando-button {
+    background-color: transparent;
+    cursor: pointer;
+    height: 20px;
+    margin: 4px 8px 4px 0;
+    width: 20px;
+
+    &.expanded {
+        background-image: url('../icon-contract.png'); /* SPRITE */
+    }
+
+    &.expanded:hover {
+        background-image: url('../icon-contract-hover.png'); /* SPRITE */
+    }
+
+    &.collapsed {
+        background-image: url('../icon-expand.png'); /* SPRITE */
+    }
+
+    &.collapsed:hover {
+        background-image: url('../icon-expand-hover.png'); /* SPRITE */
+    }
+
+    @media
+    only screen and (min-resolution: 2dppx),
+    only screen and (-webkit-min-device-pixel-ratio: 2) {
+        background-size: 100%;
+
+        &.expanded {
+            background-image: url(../icon-contract_2x.png); /* SPRITE pixel-ratio=2 */
+        }
+
+        &.expanded:hover {
+            background-image: url(../icon-contract-hover_2x.png); /* SPRITE pixel-ratio=2 */
+        }
+
+        &.collapsed {
+            background-image: url(../icon-expand_2x.png); /* SPRITE pixel-ratio=2 */
+        }
+
+        &.collapsed:hover {
+            background-image: url(../icon-expand-hover_2x.png); /* SPRITE pixel-ratio=2 */
+        }
+    }
+}

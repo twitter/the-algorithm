@@ -1,0 +1,95 @@
+## The contents of this file are subject to the Common Public Attribution
+## License Version 1.0. (the "License"); you may not use this file except in
+## compliance with the License. You may obtain a copy of the License at
+## http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+## License Version 1.1, but Sections 14 and 15 have been added to cover use of
+## software over a computer network and provide for limited attribution for the
+## Original Developer. In addition, Exhibit A has been modified to be
+## consistent with Exhibit B.
+##
+## Software distributed under the License is distributed on an "AS IS" basis,
+## WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+## the specific language governing rights and limitations under the License.
+##
+## The Original Code is reddit.
+##
+## The Original Developer is the Initial Developer.  The Initial Developer of
+## the Original Code is reddit Inc.
+##
+## All portions of the code written by reddit are Copyright (c) 2006-2015
+## reddit Inc. All Rights Reserved.
+###############################################################################
+
+<%!
+    from r2.lib.template_helpers import html_datetime, simplified_timesince
+    from r2.lib.filters import safemarkdown, websafe, conditional_websafe
+    from r2.lib.template_helpers import add_sr, format_html
+    from r2.models.account import DeletedUser, Account
+%>
+<%namespace name="utils" file="utils.xml"/>
+<%
+    permalink = add_sr(thing.permalink, force_hostname = True)
+
+    # we get thing.taglinetext set by add_props, but it requires some %(foo)s
+    # formatting substitutions
+
+    substitutions = {}
+
+    if thing.sr_id:
+       substitutions['subreddit'] = thing.subreddit.name
+
+    substitutions['author'] = (DeletedUser() if thing.author._deleted else thing.author).name
+
+    if isinstance(thing.to, Account):
+       substitutions['dest'] = (DeletedUser() if thing.to._deleted else thing.to).name
+    elif thing.sr_id:
+       substitutions['dest'] = substitutions['subreddit']
+
+    # most templates use the thing.timesince StringTemplate for this, but the
+    # double- escaping that <%atom:content/> does means that it can't be
+    # properly replaced. Because clients will be caching these, this display
+    # will almost always be incorrect anyway so we may consider replacing these
+    # with more absolute timestamps
+    substitutions['when'] = simplified_timesince(thing._date)
+
+    taglinetext = conditional_websafe(thing.taglinetext)
+    taglinetext = format_html(taglinetext, **substitutions)
+
+    if thing.was_comment:
+        permalink = permalink + '?context=3'
+        link_text = _("[context]")
+    else:
+        link_text = _("[full conversation]")
+
+%>
+<entry>
+    <%utils:atom_author author="${thing.author}"/>
+
+    %if thing.was_comment:
+        <category term="${thing.subreddit.name}" label="/r/${thing.subreddit.name}" />
+    %endif
+
+    <%utils:atom_content>
+        <div>
+            ${unsafe(taglinetext)}: ${thing.subject}
+        </div>
+
+        ${unsafe(safemarkdown(thing.body))}
+
+        <div>
+            <a href="${permalink}">${link_text}</a>
+        </div>
+    </%utils:atom_content>
+
+    <id>${thing._fullname}</id>
+
+    <link href="${permalink}"/>
+
+    <updated>${html_datetime(thing._date)}</updated>
+
+    <%utils:atom_content tag_name="summary">
+        ${unsafe(taglinetext)}: ${thing.subject}
+    </%utils:atom_content>
+
+    <title>${unsafe(taglinetext)}: ${thing.subject}</title>
+</entry>

@@ -1,0 +1,143 @@
+#!/bin/bash
+# The contents of this file are subject to the Common Public Attribution
+# License Version 1.0. (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+# http://code.reddit.com/LICENSE. The License is based on the Mozilla Public
+# License Version 1.1, but Sections 14 and 15 have been added to cover use of
+# software over a computer network and provide for limited attribution for the
+# Original Developer. In addition, Exhibit A has been modified to be consistent
+# with Exhibit B.
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+# the specific language governing rights and limitations under the License.
+#
+# The Original Code is reddit.
+#
+# The Original Developer is the Initial Developer.  The Initial Developer of
+# the Original Code is reddit Inc.
+#
+# All portions of the code written by reddit are Copyright (c) 2006-2015 reddit
+# Inc. All Rights Reserved.
+###############################################################################
+
+set -e
+
+# expects two environment variables
+#   REDDIT_ROOT = path to the root of the reddit public code; the directory with the Makefile
+#   REDDIT_INI = path to the ini file to use
+# which should be supplied via:
+source /etc/default/reddit
+# additionally, some configuration can be overridden in the environment
+export TMPDIR=${TMPDIR:-/tmp}
+export PGUSER=${PGUSER:-reddit}
+export PGHOST=${PGHOST:-localhost}
+
+## command line args
+# one of "link" or "comment"
+export THING_CLS="$1"
+# period of data to extract from postgres: e.g. "hour", "week", "year", "all"
+export INTERVAL="$2"
+# which period listings to update.
+# formatted as python tuple of strings: e.g. '("hour",)' or ("week", "all",) etc
+export TIMES="$3"
+
+echo "Starting $THING_CLS processing"
+
+# enable reporting to sentry
+export REDDIT_ERRORS_TO_SENTRY=1
+
+THING_DUMP=$TMPDIR/$THING_CLS-$INTERVAL-thing.dump
+DATA_DUMP=$TMPDIR/$THING_CLS-$INTERVAL-data.dump
+function clean_up {
+    rm -f $THING_DUMP $DATA_DUMP
+}
+
+if [ -e $THING_DUMP ]; then
+    echo cannot start because $THING_DUMP exists
+    ls -l $THING_DUMP
+    exit 1
+fi
+touch $THING_DUMP
+
+# since we're in charge of this run now, we have to clean up afterwards
+trap clean_up EXIT
+
+function run_query {
+    psql -F"\t" -A -t -c "$1"
+}
+
+function mrsort {
+    LC_ALL=C sort -S200m
+}
+
+function reddit {
+    reddit_usage() {
+        echo "reddit: [-jN] cmd..." 2>&1
+        exit
+    }
+
+    local OPTIND o njobs
+
+    njobs=1
+
+    while getopts ":j:" o; do
+        case "${o}" in
+            j)
+                njobs="${OPTARG}"
+                ;;
+            *)
+                reddit_usage
+                ;;
+        esac
+    done
+    shift $((OPTIND-1))
+
+    cmd="paster --plugin=r2 run $REDDIT_INI $REDDIT_ROOT/r2/lib/mr_top.py -c \"$@ # $THING_CLS $INTERVAL $TIMES\""
+
+    if [ "$njobs" = "1" ]; then
+        sh -c "$cmd" # just execute it directly
+    else
+        $REDDIT_ROOT/../scripts/hashdist.py -n"$njobs" -- sh -c "$cmd"
+    fi
+}
+
+# Hack to let pg fetch all things with intervals
+if [ $INTERVAL = "all" ]; then
+   export INTERVAL="century"
+fi
+
+MINID=$(run_query "SELECT thing_id
+                   FROM reddit_thing_$THING_CLS
+                   WHERE
+                      date > now() - interval '1 $INTERVAL' AND
+                      date < now()
+                   ORDER BY date
+                   LIMIT 1")
+if [ -z $MINID ]; then
+    echo \$MINID is empty. Replication is likely behind.
+    exit 1
+fi
+
+run_query "\\copy (SELECT thing_id, 'thing', '$THING_CLS', ups, downs, deleted, spam, extract(epoch from date)
+                   FROM reddit_thing_$THING_CLS
+                   WHERE
+                       not deleted AND
+                       thing_id >= $MINID
+                  ) to $THING_DUMP"
+
+run_query "\\copy (SELECT thing_id, 'data', '$THING_CLS', key, value
+                   FROM reddit_data_$THING_CLS
+                   WHERE
+                       key IN ('url', 'sr_id', 'author_id') AND
+                       thing_id >= $MINID
+                  ) to $DATA_DUMP"
+
+cat $THING_DUMP $DATA_DUMP |
+    mrsort |
+    reddit "join_things('$THING_CLS')" |
+    reddit "time_listings($TIMES, '$THING_CLS')" |
+    mrsort |
+    reddit -j4 "write_permacache()"
+
+echo 'Done.'

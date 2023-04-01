@@ -1,0 +1,363 @@
+.transition (@property, @duration, @function: ease, @delay: 0s) {
+    -webkit-transition: @arguments;
+    -moz-transition: @arguments;
+    -o-transition: @arguments;
+    -ms-transition: @arguments;
+    transition: @arguments;
+}
+
+.no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+@debug-color: #ee0;
+@debug-dark-color: #990;
+@admin-color: #e00;
+@admin-dark-color: #900;
+#admin-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    .show-button {
+        display: none;
+    }
+    &.hidden {
+        .status-bar, .timings-bar {
+            display: none !important;
+        }
+
+        .show-button {
+            display: block;
+            &:before, &:after {
+                content: '';
+                border: 0 solid transparent;
+                position: absolute;
+                display: block;
+                top: 0;
+            }
+
+            &:before {
+                @size: 12px;
+                right: -@size;
+                border-width: @size;
+                z-index: 101;
+            }
+
+            &:after {
+                @size: 18px;
+                right: -@size;
+                border-width: @size;
+                border-top-color: gray;
+                z-index: 100;
+            }
+        }
+
+        &.debug {
+            .show-button:before {
+                border-top-color: @debug-color;
+            }
+            .show-button:after {
+                border-top-color: @debug-dark-color;
+            }
+        }
+
+        &.admin {
+            .show-button:before {
+                border-top-color: @admin-color;
+            }
+            .show-button:after {
+                border-top-color: @admin-dark-color;
+            }
+        }
+    }
+
+    .status-bar {
+        font-size: 12px;
+        height: 14px;
+        line-height: 14px;
+        padding: 2px 5px;
+        border-bottom: 1px solid gray;
+        background: white;
+        z-index: 9999;
+        white-space: nowrap;
+        overflow: hidden;
+        box-shadow: 0 -5px 15px #cee3f8 inset;
+        .no-select;
+
+        .caption {
+            font-weight: bold;
+            color: gray;
+        }
+
+        .indicator {
+            margin-left: 14px;
+        }
+
+        .indicator .icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            vertical-align: bottom;
+            margin-right: 5px;
+            border: 1px solid black;
+        }
+
+        .indicator.debug .icon {
+            background: @debug-color;
+            border-color: @debug-dark-color;
+        }
+
+        .indicator.admin .icon {
+            background: @admin-color;
+            border-color: @admin-dark-color;
+        }
+
+        .indicator.secure .icon {
+            background: #8e0;
+            border-color: #890;
+        }
+
+        .indicator.dev-statics .icon {
+            background: #9ff;
+            border-color: #089;
+            border-top-width: 5px;
+            border-bottom-width: 5px;
+            height: 4px;
+        }
+
+        .indicator.prod-statics .icon {
+            background: #0ee;
+            border-color: #089;
+        }
+
+        .indicator.disabled {
+            opacity: .5;
+        }
+
+        .indicator.disabled .icon {
+            display: none;
+        }
+
+        .admin-off {
+            margin-left: 8px;
+            padding: 0 4px;
+            background: fade(@admin-dark-color, 5%);
+            border: 1px solid fade(@admin-dark-color, 40%);
+            border-radius: 3px;
+            font-size: 11px;
+            color: @admin-dark-color;
+            cursor: pointer;
+            vertical-align: top;
+        }
+
+        .controls {
+            position: absolute;
+            right: 0;
+
+            & > span {
+                border-left: 1px solid #ccc;
+                padding: 0 7px;
+                color: #369;
+                cursor: default;
+
+                .state {
+                    display: inline-block;
+                    width: 1em;
+                }
+            }
+
+            .dropdown.lightdrop .selected {
+                font-weight: normal;
+                text-decoration: none;
+                color: #369;
+            }
+        }
+    }
+    &.admin .status-bar {
+        box-shadow: 0 -5px 15px #ffcfc7 inset;
+    }
+
+    .timings-bar {
+        position: relative;
+        display: block;
+        background: #eee;
+        border-bottom: 1px solid gray;
+        box-shadow: 0 -5px 15px #ddd inset;
+
+        .expand-button {
+            display: inline-block;
+            width: 11px;
+            line-height: 11px;
+            margin: 1px 4px;
+            background: #f4f4f4;
+            border: 1px solid #bbb;
+            border-bottom-width: 2px;
+            border-radius: 2px;
+            font-size: 11px;
+            text-align: center;
+            cursor: pointer;
+            .no-select;
+        }
+
+        &.mini-timings {
+            height: 16px;
+            line-height: 16px;
+            .timeline-browser {
+                display: none;
+            }
+        }
+        &.full-timings {
+            height: 25px;
+            line-height: 25px;
+        }
+
+        .timelines {
+            position: absolute;
+            left: 20px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            cursor: -webkit-zoom-in;
+            cursor: -moz-zoom-in;
+            cursor: zoom-in;
+
+            &.zoomed {
+                cursor: -webkit-zoom-out;
+                cursor: -moz-zoom-out;
+                cursor: zoom-out;
+            }
+
+        }
+
+        .timeline {
+            position: relative;
+            margin: 1px;
+
+            .elapsed {
+                position: absolute;
+                top: 0;
+                right: 2px;
+            }
+
+            .events {
+                position: relative;
+                margin-right: 40px;
+            }
+
+            .event {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                border: 1px solid rgba(0, 0, 0, .5);
+                z-index: 2;
+
+                opacity: .65;
+                .transition(opacity, .25s);
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            .event.out-of-bounds {
+                left: 0;
+                right: 0;
+                border: 1px solid #888;
+                background: #aaa;
+            }
+        }
+
+        .event-color(@color) {
+            background: @color;
+            border-color: darken(saturate(@color, 30%), 23%);
+            box-shadow: 0 -2px 0px darken(@color, 4%) inset;
+        }
+
+        .timeline-browser {
+            @height: 8px;
+            height: @height;
+            .events {
+                height: @height;
+            }
+
+            .elapsed {
+                font-size: 8px;
+                line-height: @height;
+            }
+
+            .event.start {
+                .event-color(rgb(20, 200, 60));
+            }
+
+            .event.redirect {
+                .event-color(rgb(20, 200, 120));
+            }
+
+            .event.https {
+                .event-color(rgb(120, 100, 120));
+            }
+
+            .event.request {
+                .event-color(rgb(20, 150, 150));
+            }
+
+            .event.response {
+                .event-color(rgb(20, 90, 250));
+            }
+
+            .event.domLoading {
+                .event-color(rgb(50, 50, 150));
+            }
+
+            .event.domInteractive {
+                .event-color(rgb(80, 50, 150));
+            }
+
+            .event.domContentLoaded {
+                .event-color(rgb(120, 50, 150));
+            }
+        }
+
+        .timeline-server {
+            @height: 14px;
+            height: @height;
+            .events {
+                height: @height;
+            }
+
+            .elapsed {
+                font-size: 10px;
+                line-height: @height;
+            }
+
+            .event.web {
+                z-index: 1;
+                .event-color(rgb(50, 150, 20));
+            }
+
+            .event.render {
+                &.nocache {
+                    .event-color(rgb(240, 200, 17));
+                }
+                &.cached {
+                    .event-color(rgb(200, 170, 50));
+                }
+            }
+
+            .event.cassandra {
+                .event-color(rgb(150, 50, 20));
+            }
+
+            .event.pg {
+                .event-color(rgb(20, 50, 150));
+            }
+        }
+    }
+}
