@@ -37,14 +37,17 @@ public final class EarlybirdRealtimeIndexSegmentAtomicReader
    */
   EarlybirdRealtimeIndexSegmentAtomicReader(EarlybirdRealtimeIndexSegmentData segmentData) {
     super(segmentData);
-
+    
+    final int initialMaxDocId = Integer.MAX_VALUE;
+    
     this.fields = new InMemoryFields(segmentData.getPerFieldMap(), syncData.getIndexPointers());
 
     // We cache the highest doc ID and the number of docs, because the reader must return the same
     // values for its entire lifetime, and the segment will get more tweets over time.
     // These values could be slightly out of sync with 'fields', because we don't update these
     // values atomically with the fields.
-    this.maxDocId = segmentData.getDocIDToTweetIDMapper().getPreviousDocID(Integer.MAX_VALUE);
+    int initialMaxDocId = Integer.MAX_VALUE;
+    this.maxDocId = segmentData.getDocIDToTweetIDMapper().getPreviousDocID(initialMaxDocId);
     this.numDocs = segmentData.getDocIDToTweetIDMapper().getNumDocs();
   }
 
