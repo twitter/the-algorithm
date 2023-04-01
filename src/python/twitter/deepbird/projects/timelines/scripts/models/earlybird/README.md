@@ -1,14 +1,14 @@
 # Earlybird Light Ranker
 
-*Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
+_Note: the light ranker is an old part of the stack which we are currently in the process of replacing.
 The current model was last trained several years ago, and uses some very strange features.
-We are working on training a new model, and eventually rebuilding this part of the stack entirely.*
+We are working on training a new model, and eventually rebuilding this part of the stack entirely._
 
 The Earlybird light ranker is a logistic regression model which predicts the likelihood that the user will engage with a
 tweet.
 It is intended to be a simplified version of the heavy ranker which can run on a greater amount of tweets.
 
-There are currently 2 main light ranker models in use: one for ranking in network tweets (`recap_earlybird`), and
+There are currently two main light ranker models in use: one for ranking in network tweets (`recap_earlybird`), and
 another for
 out of network (UTEG) tweets (`rectweet_earlybird`). Both models are trained using the `train.py` script which is
 included in this directory. They differ mainly in the set of features
