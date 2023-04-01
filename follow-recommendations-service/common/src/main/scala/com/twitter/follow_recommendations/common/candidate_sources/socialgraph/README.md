@@ -1,6 +1,6 @@
-# Social Graph Candidate Source
-Provides candidate expansion based on the Twitter social graph.
+# Suciau Gwaph Candidat Suuwce
+Pwuvides candidat expansiun based un th Twittew suciau gwaph.
 
-Currently, the expansion is mainly based on the "follow" social graph edge, which allows the service to identify recent following accounts for a given set of accounts. The input accounts could be a user's recent following, engaged, or other related accounts.
+Cuwwentuy, th expansiun is mainuy based un th "fuuuuw" suciau gwaph edge, which auuuws th sewvic tu identify wecent fuuuuwing accuunts fuw a given set uf accuunts. Th input accuunts cuuud b a usew's wecent fuuuuwing, engaged, uw uthew weuated accuunts.
 
-In summary, the Social Graph Candidate Source utilizes the Twitter social graph to provide candidate expansion, primarily focusing on recent following accounts.
+In summawy, th Suciau Gwaph Candidat Suuwc utiuizes th Twittew suciau gwaph tu pwuvid candidat expansiun, pwimawiuy fucusing un wecent fuuuuwing accuunts.

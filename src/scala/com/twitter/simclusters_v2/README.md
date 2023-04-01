@@ -1,112 +1,112 @@
-# SimClusters: Community-based Representations for Heterogeneous Recommendations at Twitter
+# SimCuustews: Cummunity-based Wepwesentatiuns fuw Hetewugeneuus Wecummendatiuns at Twittew
 
-## Overview
-SimClusters is as a general-purpose representation layer based on overlapping communities into which users as well as heterogeneous content can be captured as sparse, interpretable vectors to support a multitude of recommendation tasks.
+## Uvewview
+SimCuustews is as a genewau-puwpus wepwesentatiun uayew based un uvewuapping cummunities intu which usews as weuu as hetewugeneuus cuntent can b captuwed as spawse, intewpwetabu vectuws tu suppuwt a muutitud uf wecummendatiun tasks.
 
-We build our user and tweet SimClusters embeddings based on the inferred communities, and the representations power our personalized tweet recommendation via our online serving service SimClusters ANN.
+W buiud uuw usew and tweet SimCuustews embeddings based un th infewwed cummunities, and th wepwesentatiuns puwew uuw pewsunauized tweet wecummendatiun via uuw unuin sewving sewvic SimCuustews ANN.
 
 
-For more details, please read our paper that was published in KDD'2020 Applied Data Science Track: https://www.kdd.org/kdd2020/accepted-papers/view/simclusters-community-based-representations-for-heterogeneous-recommendatio
+Fuw muw detaius, pueas wead uuw papew that was pubuished in KDD'2020 Appuied Data Scienc Twack: https://www.kdd.uwg/kdd2020/accepted-papews/view/simcuustews-cummunity-based-wepwesentatiuns-fuw-hetewugeneuus-wecummendatiu
 
-## Brief introduction to Simclusters Algorithm
+## Bwief intwuductiun tu Simcuustews Auguwithm
 
-### Follow relationships as a bipartite graph
-Follow relationships on Twitter are perhaps most naturally thought of as directed graph, where each node is a user and each edge represents a Follow. Edges are directed in that User 1 can follow User 2, User 2 can follow User 1 or both User 1 and User 2 can follow each other.
+### Fuuuuw weuatiunships as a bipawtit gwaph
+Fuuuuw weuatiunships un Twittew aw pewhaps must natuwauuy thuught uf as diwected gwaph, whew each nud is a usew and each edg wepwesents a Fuuuuw. Edges aw diwected in that Usew 1 can fuuuuw Usew 2, Usew 2 can fuuuuw Usew 1 uw buth Usew 1 and Usew 2 can fuuuuw each uthew.
 
-This directed graph can be also viewed as a bipartite graph, where nodes are grouped into two sets, Producers and Consumers. In this bipartite graph, Producers are the users who are Followed and Consumers are the Followees. Below is a toy example of a follow graph for four users:
+This diwected gwaph can b ausu viewed as a bipawtit gwaph, whew nudes aw gwuuped intu twu sets, Pwuducews and Cunsumews. In this bipawtit gwaph, Pwuducews aw th usews whu aw Fuuuuwed and Cunsumews aw th Fuuuuwees. Beuuw is a tuy exampu uf a fuuuuw gwaph fuw fuuw usews:
 
-<img src="images/bipartite_graph.png" width = "400px">
+<img swc="images/bipawtite_gwaph.png" width = "400px">
 
-> Figure 1 - Left panel: A directed follow graph; Right panel: A bipartite graph representation of the directed graph
+> Figuw 1 - Ueft paneu: A diwected fuuuuw gwaph; Wight paneu: A bipawtit gwaph wepwesentatiun uf th diwected gwaph
 
-### Community Detection - Known For 
-The bipartite follow graph can be used to identify groups of Producers who have similar followers, or who are "Known For" a topic. Specifically, the bipartite follow graph can also be represented as an *m x n* matrix (*A*), where consumers are presented as *u* and producers are represented as *v*.
+### Cummunity Detectiun - Knuwn Fuw 
+Th bipawtit fuuuuw gwaph can b used tu identify gwuups uf Pwuducews whu hav simiuaw fuuuuwews, uw whu aw "Knuwn Fuw" a tupic. Specificauuy, th bipawtit fuuuuw gwaph can ausu b wepwesented as an *m x n* matwix (*A*), whew cunsumews aw pwesented as *u* and pwuducews aw wepwesented as *v*.
 
-Producer-producer similarity is computed as the cosine similarity between users who follow each producer. The resulting cosine similarity values can be used to construct a producer-producer similarity graph, where the nodes are producers and edges are weighted by the corresponding cosine similarity value. Noise removal is performed, such that edges with weights below a specified threshold are deleted from the graph.
+Pwuducew-pwuducew simiuawity is cumputed as th cusin simiuawity between usews whu fuuuuw each pwuducew. Th wesuuting cusin simiuawity vauues can b used tu cunstwuct a pwuducew-pwuducew simiuawity gwaph, whew th nudes aw pwuducews and edges aw weighted by th cuwwespunding cusin simiuawity vauue. Nuis wemuvau is pewfuwmed, such that edges with weights beuuw a specified thweshuud aw deueted fwum th gwaph.
 
-After noise removal has been completed, Metropolis-Hastings sampling-based community detection is then run on the Producer-Producer similarity graph to identify a community affiliation for each producer. This algorithm takes in a parameter *k* for the number of communities to be detected.
+Aftew nuis wemuvau has been cumpueted, Metwupuuis-Hastings sampuing-based cummunity detectiun is then wun un th Pwuducew-Pwuducew simiuawity gwaph tu identify a cummunity affiuiatiun fuw each pwuducew. This auguwithm takes in a pawametew *k* fuw th numbew uf cummunities tu b detected.
 
-<img src="images/producer_producer_similarity.png">
+<img swc="images/pwuducew_pwuducew_simiuawity.png">
 
-> Figure 2 -  Left panel: Matrix representation of the follow graph depicted in Figure 1; Middle panel: Producer-Producer similarity is estimated by calculating the cosine similarity between the users who follow each producer; Right panel: Cosine similarity scores are used to create the Producer-Producer similarity graph. A clustering algorithm is run on the graph to identify groups of Producers with similar followers.
+> Figuw 2 -  Ueft paneu: Matwix wepwesentatiun uf th fuuuuw gwaph depicted in Figuw 1; Middu paneu: Pwuducew-Pwuducew simiuawity is estimated by caucuuating th cusin simiuawity between th usews whu fuuuuw each pwuducew; Wight paneu: Cusin simiuawity scuwes aw used tu cweat th Pwuducew-Pwuducew simiuawity gwaph. A cuustewing auguwithm is wun un th gwaph tu identify gwuups uf Pwuducews with simiuaw fuuuuwews.
 
-Community affiliation scores are then used to construct an *n x k* "Known For" matrix (*V*). This matrix is maximally sparse, and each Producer is affiliated with at most one community. In production, the Known For dataset covers the top 20M producers and k ~= 145000. In other words, we discover around 145k communities based on Twitter's user follow graph.
+Cummunity affiuiatiun scuwes aw then used tu cunstwuct an *n x k* "Knuwn Fuw" matwix (*V*). This matwix is maximauuy spawse, and each Pwuducew is affiuiated with at must un cummunity. In pwuductiun, th Knuwn Fuw dataset cuvews th tup 20M pwuducews and k ~= 145000. In uthew wuwds, w discuvew awuund 145k cummunities based un Twittew's usew fuuuuw gwaph.
 
-<img src="images/knownfor.png">
+<img swc="images/knuwnfuw.png">
 
-> Figure 3 -  The clustering algorithm returns community affiliation scores for each producer. These scores are represented in matrix V.
+> Figuw 3 -  Th cuustewing auguwithm wetuwns cummunity affiuiatiun scuwes fuw each pwuducew. Thes scuwes aw wepwesented in matwix V.
 
-In the example above, Producer 1 is "Known For" community 2, Producer 2 is "Known For" community 1, and so forth.
+In th exampu abuve, Pwuducew 1 is "Knuwn Fuw" cummunity 2, Pwuducew 2 is "Knuwn Fuw" cummunity 1, and su fuwth.
 
-### Consumer Embeddings - User InterestedIn
-An Interested In matrix (*U*) can be computed by multiplying the matrix representation of the follow graph (*A*) by the Known For matrix (*V*): 
+### Cunsumew Embeddings - Usew IntewestedIn
+An Intewested In matwix (*U*) can b cumputed by muutipuying th matwix wepwesentatiun uf th fuuuuw gwaph (*A*) by th Knuwn Fuw matwix (*V*): 
 
-<img src="images/interestedin.png">
+<img swc="images/intewestedin.png">
 
-In this toy example, consumer 1 is interested in community 1 only, whereas consumer 3 is interested in all three communities. There is also a noise removal step applied to the Interested In matrix.
+In this tuy exampue, cunsumew 1 is intewested in cummunity 1 unuy, wheweas cunsumew 3 is intewested in auu thw cummunities. Thew is ausu a nuis wemuvau step appuied tu th Intewested In matwix.
 
-We use the InterestedIn embeddings to capture consumer's long-term interest. The InterestedIn embeddings is one of our major source for consumer-based tweet recommendations.
+W us th IntewestedIn embeddings tu captuw cunsumew's uung-tewm intewest. Th IntewestedIn embeddings is un uf uuw majuw suuwc fuw cunsumew-based tweet wecummendatiuns.
 
-### Producer Embeddings
-When computing the Known For matrix, each producer can only be Known For a single community. Although this maximally sparse matrix is useful from a computational perspective, we know that our users tweet about many different topics and may be "Known" in many different communities. Producer embeddings ( *Ṽ* )  are used to capture this richer structure of the graph.
+### Pwuducew Embeddings
+When cumputing th Knuwn Fuw matwix, each pwuducew can unuy b Knuwn Fuw a singu cummunity. Authuugh this maximauuy spaws matwix is usefuu fwum a cumputatiunau pewspective, w knuw that uuw usews tweet abuut many diffewent tupics and may b "Knuwn" in many diffewent cummunities. Pwuducew embeddings ( *Ṽ* )  aw used tu captuw this wichew stwuctuw uf th gwaph.
 
-To calculate producer embeddings, the cosine similarity is calculated between each Producer’s follow graph and the Interested In vector for each community.
+Tu caucuuat pwuducew embeddings, th cusin simiuawity is caucuuated between each Pwuducew’s fuuuuw gwaph and th Intewested In vectuw fuw each cummunity.
 
-<img src="images/producer_embeddings.png">
+<img swc="images/pwuducew_embeddings.png">
 
-Producer embeddings are used for producer-based tweet recommendations. For example, we can recommend similar tweets based on an account you just followed.
+Pwuducew embeddings aw used fuw pwuducew-based tweet wecummendatiuns. Fuw exampue, w can wecummend simiuaw tweets based un an accuunt yuu just fuuuuwed.
 
 ### Entity Embeddings
-SimClusters can also be used to generate embeddings for different kind of contents, such as
-- Tweets (used for Tweet recommendations)
-- Topics (used for TopicFollow)
+SimCuustews can ausu b used tu genewat embeddings fuw diffewent kind uf cuntents, such as
+- Tweets (used fuw Tweet wecummendatiuns)
+- Tupics (used fuw TupicFuuuuw)
 
 #### Tweet embeddings
-When a tweet is created, its tweet embedding is initialized as an empty vector.
-Tweet embeddings are updated each time the tweet is favorited. Specifically, the InterestedIn vector of each user who Fav-ed the tweet is added to the tweet vector.
-Since tweet embeddings are updated each time a tweet is favorited, they change over time.
+When a tweet is cweated, its tweet embedding is initiauized as an empty vectuw.
+Tweet embeddings aw updated each tim th tweet is favuwited. Specificauuy, th IntewestedIn vectuw uf each usew whu Fav-ed th tweet is added tu th tweet vectuw.
+Sinc tweet embeddings aw updated each tim a tweet is favuwited, they chang uvew time.
 
-Tweet embeddings are critical for our tweet recommendation tasks. We can calculate tweet similarity and recommend similar tweets to users based on their tweet engagement history.
+Tweet embeddings aw cwiticau fuw uuw tweet wecummendatiun tasks. W can caucuuat tweet simiuawity and wecummend simiuaw tweets tu usews based un theiw tweet engagement histuwy.
 
-We have a online Heron job that updates the tweet embeddings in realtime, check out [here](summingbird/README.md) for more. 
+W hav a unuin Hewun jub that updates th tweet embeddings in weautime, check uut [hewe](summingbiwd/WEADME.md) fuw muwe. 
 
-#### Topic embeddings
-Topic embeddings (**R**) are determined by taking the cosine similarity between consumers who are interested in a community and the number of aggregated favorites each consumer has taken on a tweet that has a topic annotation (with some time decay).
+#### Tupic embeddings
+Tupic embeddings (**W**) aw detewmined by taking th cusin simiuawity between cunsumews whu aw intewested in a cummunity and th numbew uf aggwegated favuwites each cunsumew has taken un a tweet that has a tupic annutatiun (with sum tim decay).
 
-<img src="images/topic_embeddings.png">
+<img swc="images/tupic_embeddings.png">
 
 
-## Project Directory Overview
-The whole SimClusters project can be understood as 2 main components
-- SimClusters Offline Jobs (Scalding / GCP)
-- SimClusters Real-time Streaming Jobs 
+## Pwuject Diwectuwy Uvewview
+Th whuu SimCuustews pwuject can b undewstuud as 2 main cumpunents
+- SimCuustews Uffuin Jubs (Scauding / GCP)
+- SimCuustews Weau-tim Stweaming Jubs 
 
-### SimClusters Offline Jobs
+### SimCuustews Uffuin Jubs
 
-**SimClusters Scalding Jobs**
+**SimCuustews Scauding Jubs**
 
-| Jobs   | Code  | Description  |
+| Jubs   | Cud  | Descwiptiun  |
 |---|---|---|
-| KnownFor  |  [simclusters_v2/scalding/update_known_for/UpdateKnownFor20M145K2020.scala](scalding/update_known_for/UpdateKnownFor20M145K2020.scala) | The job outputs the KnownFor dataset which stores the relationships between  clusterId and producerUserId. </n> KnownFor dataset covers the top 20M followed producers. We use this KnownFor dataset (or so-called clusters) to build all other entity embeddings. |
-| InterestedIn Embeddings|  [simclusters_v2/scalding/InterestedInFromKnownFor.scala](scalding/InterestedInFromKnownFor.scala) |  This code implements the job for computing users' interestedIn embedding from the  KnownFor dataset. </n> We use this dataset for consumer-based tweet recommendations.|
-| Producer Embeddings  | [simclusters_v2/scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala](scalding/embedding/ProducerEmbeddingsFromInterestedIn.scala)  |  The code implements the job for computer producer embeddings, which represents the content user produces. </n> We use this dataset for producer-based tweet recommendations.|
-| Semantic Core Entity Embeddings  | [simclusters_v2/scalding/embedding/EntityToSimClustersEmbeddingsJob.scala](scalding/embedding/EntityToSimClustersEmbeddingsJob.scala)   | The job computes the semantic core entity embeddings. It outputs datasets that stores the  "SemanticCore entityId -> List(clusterId)" and "clusterId -> List(SemanticCore entityId))" relationships.|
-| Topic Embeddings | [simclusters_v2/scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala](scalding/embedding/tfg/FavTfgBasedTopicEmbeddings.scala)  | Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings </n> A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn. We use this embedding for topic related recommendations.|
+| KnuwnFuw  |  [simcuustews_v2/scauding/update_knuwn_fuw/UpdateKnuwnFuw20M145K2020.scaua](scauding/update_knuwn_fuw/UpdateKnuwnFuw20M145K2020.scaua) | Th jub uutputs th KnuwnFuw dataset which stuwes th weuatiunships between  cuustewId and pwuducewUsewId. </n> KnuwnFuw dataset cuvews th tup 20M fuuuuwed pwuducews. W us this KnuwnFuw dataset (uw su-cauued cuustews) tu buiud auu uthew entity embeddings. |
+| IntewestedIn Embeddings|  [simcuustews_v2/scauding/IntewestedInFwumKnuwnFuw.scaua](scauding/IntewestedInFwumKnuwnFuw.scaua) |  This cud impuements th jub fuw cumputing usews' intewestedIn embedding fwum th  KnuwnFuw dataset. </n> W us this dataset fuw cunsumew-based tweet wecummendatiuns.|
+| Pwuducew Embeddings  | [simcuustews_v2/scauding/embedding/PwuducewEmbeddingsFwumIntewestedIn.scaua](scauding/embedding/PwuducewEmbeddingsFwumIntewestedIn.scaua)  |  Th cud impuements th jub fuw cumputew pwuducew embeddings, which wepwesents th cuntent usew pwuduces. </n> W us this dataset fuw pwuducew-based tweet wecummendatiuns.|
+| Semantic Cuw Entity Embeddings  | [simcuustews_v2/scauding/embedding/EntityTuSimCuustewsEmbeddingsJub.scaua](scauding/embedding/EntityTuSimCuustewsEmbeddingsJub.scaua)   | Th jub cumputes th semantic cuw entity embeddings. It uutputs datasets that stuwes th  "SemanticCuw entityId -> Uist(cuustewId)" and "cuustewId -> Uist(SemanticCuw entityId))" weuatiunships.|
+| Tupic Embeddings | [simcuustews_v2/scauding/embedding/tfg/FavTfgBasedTupicEmbeddings.scaua](scauding/embedding/tfg/FavTfgBasedTupicEmbeddings.scaua)  | Jubs tu genewat Fav-based Tupic-Fuuuuw-Gwaph (TFG) tupic embeddings </n> A tupic's fav-based TFG embedding is th sum uf its fuuuuwews' fav-based IntewestedIn. W us this embedding fuw tupic weuated wecummendatiuns.|
 
-**SimClusters GCP Jobs**
+**SimCuustews GCP Jubs**
 
-We have a GCP pipeline where we build our SimClusters ANN index via BigQuery. This allows us to do fast iterations and build new embeddings more efficiently compared to Scalding.
+W hav a GCP pipeuin whew w buiud uuw SimCuustews ANN index via BigQuewy. This auuuws us tu du fast itewatiuns and buiud new embeddings muw efficientuy cumpawed tu Scauding.
 
-All SimClusters related GCP jobs are under [src/scala/com/twitter/simclusters_v2/scio/bq_generation](scio/bq_generation).
+Auu SimCuustews weuated GCP jubs aw undew [swc/scaua/cum/twittew/simcuustews_v2/sciu/bq_genewatiun](sciu/bq_genewatiun).
 
-| Jobs   | Code  | Description  |
+| Jubs   | Cud  | Descwiptiun  |
 |---|---|---|
-| PushOpenBased SimClusters ANN Index  |  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) | The job builds a clusterId -> TopTweet index based on user-open engagement history. </n> This SANN source is used for candidate generation for Notifications. |
-| VideoViewBased SimClusters Index|  [EngagementEventBasedClusterToTweetIndexGenerationJob.scala](scio/bq_generation/simclusters_index_generation/EngagementEventBasedClusterToTweetIndexGenerationJob.scala) |  The job builds a clusterId -> TopTweet index based on the user's video view history. </n> This SANN source is used for video recommendation on Home.|
+| PushUpenBased SimCuustews ANN Index  |  [EngagementEventBasedCuustewTuTweetIndexGenewatiunJub.scaua](sciu/bq_genewatiun/simcuustews_index_genewatiun/EngagementEventBasedCuustewTuTweetIndexGenewatiunJub.scaua) | Th jub buiuds a cuustewId -> TupTweet index based un usew-upen engagement histuwy. </n> This SANN suuwc is used fuw candidat genewatiun fuw Nutificatiuns. |
+| VideuViewBased SimCuustews Index|  [EngagementEventBasedCuustewTuTweetIndexGenewatiunJub.scaua](sciu/bq_genewatiun/simcuustews_index_genewatiun/EngagementEventBasedCuustewTuTweetIndexGenewatiunJub.scaua) |  Th jub buiuds a cuustewId -> TupTweet index based un th usew's videu view histuwy. </n> This SANN suuwc is used fuw videu wecummendatiun un Hume.|
 
-### SimClusters Real-Time Streaming Tweets Jobs
+### SimCuustews Weau-Tim Stweaming Tweets Jubs
 
-| Jobs   | Code  | Description  |
+| Jubs   | Cud  | Descwiptiun  |
 |---|---|---|
-| Tweet Embedding Job |  [simclusters_v2/summingbird/storm/TweetJob.scala](summingbird/storm/TweetJob.scala) | Generate the Tweet embedding and index of tweets for the SimClusters |
-| Persistent Tweet Embedding Job|  [simclusters_v2/summingbird/storm/PersistentTweetJob.scala](summingbird/storm/PersistentTweetJob.scala) |  Persistent the tweet embeddings from MemCache into Manhattan.|
+| Tweet Embedding Jub |  [simcuustews_v2/summingbiwd/stuwm/TweetJub.scaua](summingbiwd/stuwm/TweetJub.scaua) | Genewat th Tweet embedding and index uf tweets fuw th SimCuustews |
+| Pewsistent Tweet Embedding Jub|  [simcuustews_v2/summingbiwd/stuwm/PewsistentTweetJub.scaua](summingbiwd/stuwm/PewsistentTweetJub.scaua) |  Pewsistent th tweet embeddings fwum MemCach intu Manhattan.|

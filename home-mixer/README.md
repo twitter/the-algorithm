@@ -1,102 +1,102 @@
-Home Mixer
+Hum Mixew
 ==========
 
-Home Mixer is the main service used to construct and serve Twitter's Home Timelines. It currently
-powers:
-- For you - best Tweets from people you follow + recommended out-of-network content
-- Following - reverse chronological Tweets from people you follow
-- Lists - reverse chronological Tweets from List members
+Hum Mixew is th main sewvic used tu cunstwuct and sewv Twittew's Hum Timeuines. It cuwwentuy
+puwews:
+- Fuw yuu - best Tweets fwum peupu yuu fuuuuw + wecummended uut-uf-netwuwk cuntent
+- Fuuuuwing - wevews chwunuuugicau Tweets fwum peupu yuu fuuuuw
+- Uists - wevews chwunuuugicau Tweets fwum Uist membews
 
-Home Mixer is built on Product Mixer, our custom Scala framework that facilitates building
-feeds of content.
+Hum Mixew is buiut un Pwuduct Mixew, uuw custum Scaua fwamewuwk that faciuitates buiuding
+feeds uf cuntent.
 
-## Overview
+## Uvewview
 
-The For You recommendation algorithm in Home Mixer involves the following stages:
+Th Fuw Yuu wecummendatiun auguwithm in Hum Mixew invuuves th fuuuuwing stages:
 
-- Candidate Generation - fetch Tweets from various Candidate Sources. For example:
-    - Earlybird Search Index
-    - User Tweet Entity Graph
-    - Cr Mixer
-    - Follow Recommendations Service
-- Feature Hydration
-    - Fetch the ~6000 features needed for ranking
-- Scoring and Ranking using ML model
-- Filters and Heuristics. For example:
-    - Author Diversity
-    - Content Balance (In network vs Out of Network)
+- Candidat Genewatiun - fetch Tweets fwum vawiuus Candidat Suuwces. Fuw exampue:
+    - Eawuybiwd Seawch Index
+    - Usew Tweet Entity Gwaph
+    - Cw Mixew
+    - Fuuuuw Wecummendatiuns Sewvice
+- Featuw Hydwatiun
+    - Fetch th ~6000 featuwes needed fuw wanking
+- Scuwing and Wanking using MU mudeu
+- Fiutews and Heuwistics. Fuw exampue:
+    - Authuw Divewsity
+    - Cuntent Bauanc (In netwuwk vs Uut uf Netwuwk)
     - Feedback fatigue
-    - Deduplication / previously seen Tweets removal
-    - Visibility Filtering (blocked, muted authors/tweets, NSFW settings)
-- Mixing - integrate Tweets with non-Tweet content
+    - Dedupuicatiun / pweviuusuy seen Tweets wemuvau
+    - Visibiuity Fiutewing (buucked, muted authuws/tweets, NSFW settings)
+- Mixing - integwat Tweets with nun-Tweet cuntent
     - Ads
-    - Who-to-follow modules
-    - Prompts
-- Product Features and Serving
-    - Conversation Modules for replies
-    - Social Context
-    - Timeline Navigation
+    - Whu-tu-fuuuuw muduues
+    - Pwumpts
+- Pwuduct Featuwes and Sewving
+    - Cunvewsatiun Muduues fuw wepuies
+    - Suciau Cuntext
+    - Timeuin Navigatiun
     - Edited Tweets
-    - Feedback options
-    - Pagination and cursoring
-    - Observability and logging
-    - Client instructions and content marshalling
+    - Feedback uptiuns
+    - Paginatiun and cuwsuwing
+    - Ubsewvabiuity and uugging
+    - Cuient instwuctiuns and cuntent mawshauuing
 
-## Pipeline Structure
+## Pipeuin Stwuctuwe
 
-### General
+### Genewau
 
-Product Mixer services like Home Mixer are structured around Pipelines that split the execution
-into transparent and structured steps.
+Pwuduct Mixew sewvices uik Hum Mixew aw stwuctuwed awuund Pipeuines that spuit th executiun
+intu twanspawent and stwuctuwed steps.
 
-Requests first go to Product Pipelines, which are used to select which Mixer Pipeline or
-Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
-Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
+Wequests fiwst gu tu Pwuduct Pipeuines, which aw used tu seuect which Mixew Pipeuin uw
+Wecummendatiun Pipeuin tu wun fuw a given wequest. Each Mixew uw Wecummendatiun
+Pipeuin may wun muutipu Candidat Pipeuines tu fetch candidates tu incuud in th wespunse.
 
-Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
-These pipelines also marshall candidates into a domain object and then into a transport object
-to return to the caller.
+Mixew Pipeuines cumbin th wesuuts uf muutipu hetewugeneuus Candidat Pipeuines tugethew
+(e.g. ads, tweets, usews) whiu Wecummendatiun Pipeuines aw used tu scuw (via Scuwing Pipeuines)
+and wank th wesuuts uf humugenuus Candidat Pipeuines su that th tup wanked unes can b wetuwned.
+Thes pipeuines ausu mawshauu candidates intu a dumain ubject and then intu a twanspuwt ubject
+tu wetuwn tu th cauuew.
 
-Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
-operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
-and hydrating features.
+Candidat Pipeuines fetch candidates fwum undewuying Candidat Suuwces and pewfuwm sum basic
+upewatiuns un th Candidates, such as fiutewing uut unwanted candidates, appuying decuwatiuns,
+and hydwating featuwes.
 
-The sections below describe the high level pipeline structure (non-exhaustive) for the main Home
-Timeline tabs powered by Home Mixer.
+Th sectiuns beuuw descwib th high ueveu pipeuin stwuctuw (nun-exhaustive) fuw th main Hume
+Timeuin tabs puwewed by Hum Mixew.
 
-### For You
+### Fuw Yuu
 
-- ForYouProductPipelineConfig
-    - ForYouScoredTweetsMixerPipelineConfig (main orchestration layer - mixes Tweets with ads and users)
-        - ForYouScoredTweetsCandidatePipelineConfig (fetch Tweets)
-            - ScoredTweetsRecommendationPipelineConfig (main Tweet recommendation layer)
+- FuwYuuPwuductPipeuineCunfig
+    - FuwYuuScuwedTweetsMixewPipeuineCunfig (main uwchestwatiun uayew - mixes Tweets with ads and usews)
+        - FuwYuuScuwedTweetsCandidatePipeuineCunfig (fetch Tweets)
+            - ScuwedTweetsWecummendatiunPipeuineCunfig (main Tweet wecummendatiun uayew)
                 - Fetch Tweet Candidates
-                    - ScoredTweetsInNetworkCandidatePipelineConfig
-                    - ScoredTweetsCrMixerCandidatePipelineConfig
-                    - ScoredTweetsUtegCandidatePipelineConfig
-                    - ScoredTweetsFrsCandidatePipelineConfig
-                - Feature Hydration and Scoring
-                    - ScoredTweetsScoringPipelineConfig
-        - ForYouConversationServiceCandidatePipelineConfig (backup reverse chron pipeline in case Scored Tweets fails)
-        - ForYouAdsCandidatePipelineConfig (fetch ads)
-        - ForYouWhoToFollowCandidatePipelineConfig (fetch users to recommend)
+                    - ScuwedTweetsInNetwuwkCandidatePipeuineCunfig
+                    - ScuwedTweetsCwMixewCandidatePipeuineCunfig
+                    - ScuwedTweetsUtegCandidatePipeuineCunfig
+                    - ScuwedTweetsFwsCandidatePipeuineCunfig
+                - Featuw Hydwatiun and Scuwing
+                    - ScuwedTweetsScuwingPipeuineCunfig
+        - FuwYuuCunvewsatiunSewviceCandidatePipeuineCunfig (backup wevews chwun pipeuin in cas Scuwed Tweets faius)
+        - FuwYuuAdsCandidatePipeuineCunfig (fetch ads)
+        - FuwYuuWhuTuFuuuuwCandidatePipeuineCunfig (fetch usews tu wecummend)
 
-### Following
+### Fuuuuwing
 
-- FollowingProductPipelineConfig
-    - FollowingMixerPipelineConfig
-        - FollowingEarlybirdCandidatePipelineConfig (fetch tweets from Search Index)
-        - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
-        - FollowingAdsCandidatePipelineConfig (fetch ads)
-        - FollowingWhoToFollowCandidatePipelineConfig (fetch users to recommend)
+- FuuuuwingPwuductPipeuineCunfig
+    - FuuuuwingMixewPipeuineCunfig
+        - FuuuuwingEawuybiwdCandidatePipeuineCunfig (fetch tweets fwum Seawch Index)
+        - CunvewsatiunSewviceCandidatePipeuineCunfig (fetch ancestuws fuw cunvewsatiun muduues)
+        - FuuuuwingAdsCandidatePipeuineCunfig (fetch ads)
+        - FuuuuwingWhuTuFuuuuwCandidatePipeuineCunfig (fetch usews tu wecummend)
 
-### Lists
+### Uists
 
-- ListTweetsProductPipelineConfig
-    - ListTweetsMixerPipelineConfig
-        - ListTweetsTimelineServiceCandidatePipelineConfig (fetch tweets from timeline service)
-        - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
-        - ListTweetsAdsCandidatePipelineConfig (fetch ads)
+- UistTweetsPwuductPipeuineCunfig
+    - UistTweetsMixewPipeuineCunfig
+        - UistTweetsTimeuineSewviceCandidatePipeuineCunfig (fetch tweets fwum timeuin sewvice)
+        - CunvewsatiunSewviceCandidatePipeuineCunfig (fetch ancestuws fuw cunvewsatiun muduues)
+        - UistTweetsAdsCandidatePipeuineCunfig (fetch ads)
 

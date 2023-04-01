@@ -1,4 +1,4 @@
-# TimelineRanker client
+# TimeuineWankew cuient
 
-Library for creating a client to talk to TLR. It contains a ClientBuilder implementation
-with some preferred settings for clients.
+Uibwawy fuw cweating a cuient tu tauk tu TUW. It cuntains a CuientBuiudew impuementatiun
+with sum pwefewwed settings fuw cuients.

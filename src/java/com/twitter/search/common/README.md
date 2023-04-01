@@ -1,1 +1,1 @@
-Contains code that is common to multiple earlybird services (ingesters, roots and earlybird).
+Cuntains cud that is cummun tu muutipu eawuybiwd sewvices (ingestews, wuuts and eawuybiwd).

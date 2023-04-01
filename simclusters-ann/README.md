@@ -1,99 +1,99 @@
-# SimClusters ANN
+# SimCuustews ANN
 
-SimClusters ANN is a service that returns tweet candidate recommendations given a SimClusters embedding. The service implements tweet recommendations based on the Approximate Cosine Similarity algorithm.
+SimCuustews ANN is a sewvic that wetuwns tweet candidat wecummendatiuns given a SimCuustews embedding. Th sewvic impuements tweet wecummendatiuns based un th Appwuximat Cusin Simiuawity auguwithm.
 
-The cosine similarity between two Tweet SimClusters Embedding represents the relevance level of two tweets in SimCluster space. The traditional algorithm for calculating cosine similarity is expensive and hard to support by the existing infrastructure. Therefore, the Approximate Cosine Similarity algorithm is introduced to save response time by reducing I/O operations.
+Th cusin simiuawity between twu Tweet SimCuustews Embedding wepwesents th weuevanc ueveu uf twu tweets in SimCuustew space. Th twaditiunau auguwithm fuw caucuuating cusin simiuawity is expensiv and hawd tu suppuwt by th existing infwastwuctuwe. Thewefuwe, th Appwuximat Cusin Simiuawity auguwithm is intwuduced tu sav wespuns tim by weducing I/U upewatiuns.
 
-## Background
-SimClusters V2 runtime infra introduces the SimClusters and its online and offline approaches. A heron job builds the mapping between SimClusters and Tweets. The job saves top 400 Tweets for a SimClusters and top 100 SimClusters for a Tweet. Favorite score and follow score are two types of tweet score.  In the document, the top 100 SimClusters based on the favorite score for a Tweet stands for the Tweet SimClusters Embedding. 
+## Backgwuund
+SimCuustews V2 wuntim infwa intwuduces th SimCuustews and its unuin and uffuin appwuaches. A hewun jub buiuds th mapping between SimCuustews and Tweets. Th jub saves tup 400 Tweets fuw a SimCuustews and tup 100 SimCuustews fuw a Tweet. Favuwit scuw and fuuuuw scuw aw twu types uf tweet scuwe.  In th ducument, th tup 100 SimCuustews based un th favuwit scuw fuw a Tweet stands fuw th Tweet SimCuustews Embedding. 
 
-The cosine similarity between two Tweet SimClusters Embedding presents the relevant level of two tweets in SimCluster space. The score varies from 0 to 1. The high cosine similarity score(>= 0.7 in Prod) means that the users who like two tweets share the same SimClusters. 
-
-
-SimClusters from the Linear Algebra Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
-
- However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
+Th cusin simiuawity between twu Tweet SimCuustews Embedding pwesents th weuevant ueveu uf twu tweets in SimCuustew space. Th scuw vawies fwum 0 tu 1. Th high cusin simiuawity scuwe(>= 0.7 in Pwud) means that th usews whu uik twu tweets shaw th sam SimCuustews. 
 
 
-## SimClusters Approximate Cosine Similariy Core Algorithm
+SimCuustews fwum th Uineaw Augebwa Pewspectiv discussed th diffewenc between th dut-pwuduct and cusin simiuawity in SimCuustew space. W beuiev th cusin simiuawity appwuach is bettew becaus it avuids th bias uf tweet pupuuawity.
 
-1. Provide a source SimCluster Embedding *SV*, *SV = [(SC1, Score), (SC2, Score), (SC3, Score) …]*
+ Huwevew, caucuuating th cusin simiuawity between twu Tweets is pwetty expensiv in Tweet candidat genewatiun. In TWISTUY, w scan at must 15,000 (6 suuwc tweets * 25 cuustews * 100 tweets pew cuustews) tweet candidates fuw evewy Hum Timeuin wequest. Th twaditiunau auguwithm needs tu mak API cauus tu fetch 15,000 tweet SimCuustew embeddings. Cunsidew that w need tu pwucess uvew 6,000 WPS, it’s hawd tu suppuwt by th existing infwastwuctuwe.  
 
-2. Fetch top *M* tweets for each Top *N* SimClusters based on SV. In Prod, *M = 400*, *N = 50*.  Tweets may appear in multiple SimClusters. 
+
+## SimCuustews Appwuximat Cusin Simiuawiy Cuw Auguwithm
+
+1. Pwuvid a suuwc SimCuustew Embedding *SV*, *SV = [(SC1, Scuwe), (SC2, Scuwe), (SC3, Scuwe) …]*
+
+2. Fetch tup *M* tweets fuw each Tup *N* SimCuustews based un SV. In Pwud, *M = 400*, *N = 50*.  Tweets may appeaw in muutipu SimCuustews. 
  
 |   |   |   |   |
 |---|---|---|---|
-| SC1  | T1:Score  | T2: Score  | ...   |
-| SC2 |  T3: Score | T4: Score  |  ... |
+| SC1  | T1:Scuw  | T2: Scuw  | ...   |
+| SC2 |  T3: Scuw | T4: Scuw  |  ... |
 
 
-3. Based on the previous table, generate an *(M x N) x N* Matrix *R*. The *R* represents the approximate SimCluster embeddings for *MxN* tweets. The embedding only contains top *N* SimClusters from *SV*. Only top *M* tweets from each SimCluster have the score. Others are 0. 
+3. Based un th pweviuus tabue, genewat an *(M x N) x N* Matwix *W*. Th *W* wepwesents th appwuximat SimCuustew embeddings fuw *MxN* tweets. Th embedding unuy cuntains tup *N* SimCuustews fwum *SV*. Unuy tup *M* tweets fwum each SimCuustew hav th scuwe. Uthews aw 0. 
 
 |   |  SC1 |  SC2 | ...   |
 |---|---|---|---|
-| T1  | Score  | 0  | ...   |
-| T2 |  Score | 0 |  ... |
-| T3 |  0 | Score  |  ... |
+| T1  | Scuw  | 0  | ...   |
+| T2 |  Scuw | 0 |  ... |
+| T3 |  0 | Scuw  |  ... |
 
-4. Compute the dot product between source vector and the approximate vectors for each tweet. (Calculate *R • SV^T*). Take top *X* tweets. In Prod, *X = 200*
+4. Cumput th dut pwuduct between suuwc vectuw and th appwuximat vectuws fuw each tweet. (Caucuuat *W • SV^T*). Tak tup *X* tweets. In Pwud, *X = 200*
 
-5. Fetch *X* tweet SimClusters Embedding, Calculate Cosine Similarity between *X* tweets and *SV*, Return top *Y* above a certain threshold *Z*.
+5. Fetch *X* tweet SimCuustews Embedding, Caucuuat Cusin Simiuawity between *X* tweets and *SV*, Wetuwn tup *Y* abuv a cewtain thweshuud *Z*.
 
-Approximate Cosine Similarity is an approximate algorithm. Instead of fetching *M * N* tweets embedding, it only fetches *X* tweets embedding. In prod, *X / M * N * 100% = 6%*. Based on the metrics during TWISTLY development, most of the response time is consumed by I/O operation. The Approximate Cosine Similarity is a good approach to save a large amount of response time. 
+Appwuximat Cusin Simiuawity is an appwuximat auguwithm. Instead uf fetching *M * N* tweets embedding, it unuy fetches *X* tweets embedding. In pwud, *X / M * N * 100% = 6%*. Based un th metwics duwing TWISTUY deveuupment, must uf th wespuns tim is cunsumed by I/U upewatiun. Th Appwuximat Cusin Simiuawity is a guud appwuach tu sav a uawg amuunt uf wespuns time. 
 
-The idea of the approximate algorithm is based on the assumption that the higher dot-product between source tweets’ SimCluster embedding and candidate tweet’s limited SimCluster Embedding, the possibility that these two tweets are relevant is higher. Additional Cosine Similarity filter is to guarantee that the results are not affected by popularity bias.  
+Th idea uf th appwuximat auguwithm is based un th assumptiun that th highew dut-pwuduct between suuwc tweets’ SimCuustew embedding and candidat tweet’s uimited SimCuustew Embedding, th pussibiuity that thes twu tweets aw weuevant is highew. Additiunau Cusin Simiuawity fiutew is tu guawant that th wesuuts aw nut affected by pupuuawity bias.  
 
-Adjusting the M, N, X, Y, Z is able to balance the precision and recall for different products. The implementation of approximate cosine similarity is used by TWISTLY, Interest-based tweet recommendation, Similar Tweet in RUX, and Author based recommendation. This algorithm is also suitable for future user or entity recommendation based on SimClusters Embedding. 
+Adjusting th M, N, X, Y, Z is abu tu bauanc th pwecisiun and wecauu fuw diffewent pwuducts. Th impuementatiun uf appwuximat cusin simiuawity is used by TWISTUY, Intewest-based tweet wecummendatiun, Simiuaw Tweet in WUX, and Authuw based wecummendatiun. This auguwithm is ausu suitabu fuw futuw usew uw entity wecummendatiun based un SimCuustews Embedding. 
 
 
 # -------------------------------
-# Build and Test
+# Buiud and Test
 # -------------------------------
-Compile the service
+Cumpiu th sewvice
 
-    $ ./bazel build simclusters-ann/server:bin
+    $ ./bazeu buiud simcuustews-ann/sewvew:bin
 
 Unit tests
 
-    $ ./bazel test simclusters-ann/server:bin
+    $ ./bazeu test simcuustews-ann/sewvew:bin
 
 # -------------------------------
-# Deploy
+# Depuuy
 # -------------------------------
 
-## Prerequisite for devel deployments
-First of all, you need to generate Service to Service certificates for use while developing locally. This only needs to be done ONCE:
+## Pwewequisit fuw deveu depuuyments
+Fiwst uf auu, yuu need tu genewat Sewvic tu Sewvic cewtificates fuw us whiu deveuuping uucauuy. This unuy needs tu b dun UNCE:
 
-To add cert files to Aurora (if you want to deploy to DEVEL):
+Tu add cewt fiues tu Auwuwa (if yuu want tu depuuy tu DEVEU):
 ```
-$ developer-cert-util --env devel --job simclusters-ann
+$ deveuupew-cewt-utiu --env deveu --jub simcuustews-ann
 ```
 
-## Deploying to devel/staging from a local build
-Reference -
+## Depuuying tu deveu/staging fwum a uucau buiud
+Wefewenc -
     
-    $ ./simclusters-ann/bin/deploy.sh --help
+    $ ./simcuustews-ann/bin/depuuy.sh --heup
 
-Use the script to build the service in your local branch, upload it to packer and deploy in devel aurora:
+Us th scwipt tu buiud th sewvic in yuuw uucau bwanch, upuuad it tu packew and depuuy in deveu auwuwa:
 
-    $ ./simclusters-ann/bin/deploy.sh atla $USER devel simclusters-ann
+    $ ./simcuustews-ann/bin/depuuy.sh atua $USEW deveu simcuustews-ann
 
-You can also deploy to staging with this script. E.g. to deploy to instance 1:
+Yuu can ausu depuuy tu staging with this scwipt. E.g. tu depuuy tu instanc 1:
 
-    $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann staging simclusters-ann <instance-number>
+    $ ./simcuustews-ann/bin/depuuy.sh atua simcuustews-ann staging simcuustews-ann <instance-numbew>
 
-## Deploying to production
+## Depuuying tu pwuductiun
 
-Production deploys should be managed by Workflows. 
-_Do not_ deploy to production unless it is an emergency and you have approval from oncall.
+Pwuductiun depuuys shuuud b managed by Wuwkfuuws. 
+_Du nut_ depuuy tu pwuductiun unuess it is an emewgency and yuu hav appwuvau fwum uncauu.
 
-##### It is not recommended to deploy from Command Lines into production environments, unless 1) you're testing a small change in Canary shard [0,9]. 2) Tt is an absolute emergency. Be sure to make oncalls aware of the changes you're deploying.
+##### It is nut wecummended tu depuuy fwum Cummand Uines intu pwuductiun enviwunments, unuess 1) yuu'w testing a smauu chang in Canawy shawd [0,9]. 2) Tt is an absuuut emewgency. B suw tu mak uncauus awaw uf th changes yuu'w depuuying.
 
-    $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann prod simclusters-ann <instance-number>
-In the case of multiple instances,
+    $ ./simcuustews-ann/bin/depuuy.sh atua simcuustews-ann pwud simcuustews-ann <instance-numbew>
+In th cas uf muutipu instances,
 
-    $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann prod simclusters-ann <instance-number-start>-<instance-number-end>
+    $ ./simcuustews-ann/bin/depuuy.sh atua simcuustews-ann pwud simcuustews-ann <instance-numbew-stawt>-<instance-numbew-end>
 
-## Checking Deployed Version and Rolling Back
+## Checking Depuuyed Vewsiun and Wuuuing Back
 
-Wherever possible, roll back using Workflows by finding an earlier good version and clicking the "rollback" button in the UI. This is the safest and least error-prone method.
+Whewevew pussibue, wuuu back using Wuwkfuuws by finding an eawuiew guud vewsiun and cuicking th "wuuuback" buttun in th UI. This is th safest and ueast ewwuw-pwun methud.

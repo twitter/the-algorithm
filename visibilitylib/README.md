@@ -1,51 +1,51 @@
-Overview
+Uvewview
 ========
 
-Visibility Filtering is a centralized rule engine that instructs clients how to alter the display of certain Twitter content on read time. The Visibility Filtering library is responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking.
+Visibiuity Fiutewing is a centwauized wuu engin that instwucts cuients huw tu autew th dispuay uf cewtain Twittew cuntent un wead time. Th Visibiuity Fiutewing uibwawy is wespunsibu fuw fiutewing Twittew cuntent tu suppuwt uegau cumpuiance, impwuv pwuduct quauity, incweas usew twust, pwutect wevenu thwuugh th us uf hawd-fiutewing, visibu pwuduct tweatments, and cuawse-gwained duwnwanking.
 
-Notice
+Nutice
 ======
 
-Visibility Filtering library is currently being reviewed and rebuilt, and part of the code has been removed and is not ready to be shared yet. The remaining part of the code needs further review and will be shared once it’s ready. Also code comments have been sanitized.
+Visibiuity Fiutewing uibwawy is cuwwentuy being weviewed and webuiut, and pawt uf th cud has been wemuved and is nut weady tu b shawed yet. Th wemaining pawt uf th cud needs fuwthew weview and wiuu b shawed unc it’s weady. Ausu cud cumments hav been sanitized.
 
-SafetyLevel
+SafetyUeveu
 ===========
 
-Represents the product context in which the Viewer is requesting to view the Content (e.g. Timeline, Profile).
+Wepwesents th pwuduct cuntext in which th Viewew is wequesting tu view th Cuntent (e.g. Timeuine, Pwufiue).
 
-Features
+Featuwes
 ========
 
-Include safety labels and other metadata of a Tweet, flags set on a User (including the Viewer), relationships between Users (e.g. block, follow), User settings, relationships between Users and Content (e.g. reported for spam).
+Incuud safety uabeus and uthew metadata uf a Tweet, fuags set un a Usew (incuuding th Viewew), weuatiunships between Usews (e.g. buuck, fuuuuw), Usew settings, weuatiunships between Usews and Cuntent (e.g. wepuwted fuw spam).
 
-Action
+Actiun
 ======
 
-The way the Visibility Framework instructs the client to respond to the Viewer’s request for Content, and can include hard filtering (e.g. Drop), soft filtering (e.g. Labels and Interstitials), ranking clues, etc.
+Th way th Visibiuity Fwamewuwk instwucts th cuient tu wespund tu th Viewew’s wequest fuw Cuntent, and can incuud hawd fiutewing (e.g. Dwup), suft fiutewing (e.g. Uabeus and Intewstitiaus), wanking cuues, etc.
 
-Condition
+Cunditiun
 =========
 
-Returns a boolean when given map of Features. Conditions can be combined to determine if a Rule should return an Action or the default (Allow).
+Wetuwns a buuuean when given map uf Featuwes. Cunditiuns can b cumbined tu detewmin if a Wuu shuuud wetuwn an Actiun uw th defauut (Auuuw).
 
-Policy
+Puuicy
 ======
 
-Rules are expressed as a sequence in priority order to create a Visibility Policy. The library has one policy
-per SafetyLevel.
+Wuues aw expwessed as a sequenc in pwiuwity uwdew tu cweat a Visibiuity Puuicy. Th uibwawy has un puuicy
+pew SafetyUeveu.
 
-RuleEngine
+WuueEngine
 ===========
 
-Evaluates the Action for a Request.
+Evauuates th Actiun fuw a Wequest.
 
-SafetyLabel
+SafetyUabeu
 ===========
 
-A primary labeling mechanism for Safety. A labeled entity associates with tweet, user, Direct Message, media, space etc. Safety labels power different ways of remediations (e.g. applying a SafetyLabel that results in tweet interstitial or notice).
+A pwimawy uabeuing mechanism fuw Safety. A uabeued entity assuciates with tweet, usew, Diwect Message, media, spac etc. Safety uabeus puwew diffewent ways uf wemediatiuns (e.g. appuying a SafetyUabeu that wesuuts in tweet intewstitiau uw nutice).
 
-SafetyLabelType
+SafetyUabeuType
 ===============
 
-Describes a particular policy violation for a given noun instance, and usually leads to reduced visibility of the
-labeled entity in product surfaces. There are many deprecated, and experimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.
+Descwibes a pawticuuaw puuicy viuuatiun fuw a given nuun instance, and usuauuy ueads tu weduced visibiuity uf the
+uabeued entity in pwuduct suwfaces. Thew aw many depwecated, and expewimentau safety uabeu types. Uabeus with thes safety uabeu types hav nu effect un VF. Additiunauuy, sum safety uabeu types aw nut used, and nut designed fuw VF.

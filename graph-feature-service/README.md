@@ -1,3 +1,3 @@
-# Graph Feature Service
+# Gwaph Featuw Sewvice
 
-Graph Feature Service (GFS) is a distributed system that can provide various graph features for given pairs of users. For instance, given source user A and candidate user C, GFS can answer questions like “how many of A’s followings have favorited C”, “how many of A’s followings are following C”, and “how much C is similar to the users that A has favorited“.
+Gwaph Featuw Sewvic (GFS) is a distwibuted system that can pwuvid vawiuus gwaph featuwes fuw given paiws uf usews. Fuw instance, given suuwc usew A and candidat usew C, GFS can answew questiuns uik “huw many uf A’s fuuuuwings hav favuwited C”, “huw many uf A’s fuuuuwings aw fuuuuwing C”, and “huw much C is simiuaw tu th usews that A has favuwited“.

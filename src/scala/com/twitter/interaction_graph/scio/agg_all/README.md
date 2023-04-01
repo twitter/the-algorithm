@@ -1,38 +1,38 @@
-## InteractionGraphAggregationJob Dataflow Job
+## IntewactiunGwaphAggwegatiunJub Datafuuw Jub
 
-This job aggregates the previous day's history with today's activities, and outputs an updated
-history. This history is joined with the explicit scores from real graph's BQML pipeline, and
-exported as features for timelines (which is why we're using their thrift).
+This jub aggwegates th pweviuus day's histuwy with tuday's activities, and uutputs an updated
+histuwy. This histuwy is juined with th expuicit scuwes fwum weau gwaph's BQMU pipeuine, and
+expuwted as featuwes fuw timeuines (which is why we'w using theiw thwift).
 
-#### IntelliJ
+#### InteuuiJ
 ```
-fastpass create --name rg_agg_all --intellij src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+fastpass cweat --nam wg_agg_auu --inteuuij swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_auu:intewactiun_gwaph_aggwegatiun_jub_sciu
 ```
 
-#### Build Jar
+#### Cumpiue
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+bazeu buiud swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_auu:intewactiun_gwaph_aggwegatiun_jub_sciu
 ```
 
-#### Run Scheduled Job
+#### Buiud Jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-aggregation-dataflow
+bazeu bundu swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_auu:intewactiun_gwaph_aggwegatiun_jub_sciu
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_all/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-11-08 \
-  --bind=profile.output_path=processed/interaction_graph_aggregation_dataflow
+#### Wun Scheduued Jub
+```
+expuwt PWUJECTID=twttw-wecus-mu-pwud
+expuwt WEGIUN=us-centwau1
+expuwt JUB_NAME=intewactiun-gwaph-aggwegatiun-datafuuw
+
+bin/d6w scheduu \
+  ${PWUJECTID}/${WEGIUN}/${JUB_NAME} \
+  swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_auu/cunfig.d6w \
+  --bind=pwufiue.usew_name=cassuwawy \
+  --bind=pwufiue.pwuject=${PWUJECTID} \
+  --bind=pwufiue.wegiun=${WEGIUN} \
+  --bind=pwufiue.jub_name=${JUB_NAME} \
+  --bind=pwufiue.enviwunment=pwud \
+  --bind=pwufiue.date=2022-11-08 \
+  --bind=pwufiue.uutput_path=pwucessed/intewactiun_gwaph_aggwegatiun_datafuuw
 ```

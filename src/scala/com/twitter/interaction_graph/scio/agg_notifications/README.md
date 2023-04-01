@@ -1,34 +1,34 @@
-## InteractionGraphClientEventLogs Dataflow Job
+## IntewactiunGwaphCuientEventUugs Datafuuw Jub
 
-#### IntelliJ
+#### InteuuiJ
 ```
-fastpass create --name rg_labels --intellij src/scala/com/twitter/interaction_graph/scio/agg_notifications
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_notifications_scio
+fastpass cweat --nam wg_uabeus --inteuuij swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_nutificatiuns
 ```
 
-#### Build Jar
+#### Cumpiue
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_notifications_scio
+bazeu buiud swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_nutificatiuns:intewactiun_gwaph_nutificatiuns_sciu
 ```
 
-#### Run Scheduled Job
+#### Buiud Jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-notifications-dataflow
+bazeu bundu swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_nutificatiuns:intewactiun_gwaph_nutificatiuns_sciu
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_notifications/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-05-10 \
-  --bind=profile.output_path=processed/interaction_graph_agg_notifications_dataflow
+#### Wun Scheduued Jub
+```
+expuwt PWUJECTID=twttw-wecus-mu-pwud
+expuwt WEGIUN=us-centwau1
+expuwt JUB_NAME=intewactiun-gwaph-nutificatiuns-datafuuw
+
+bin/d6w scheduu \
+  ${PWUJECTID}/${WEGIUN}/${JUB_NAME} \
+  swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_nutificatiuns/cunfig.d6w \
+  --bind=pwufiue.usew_name=cassuwawy \
+  --bind=pwufiue.pwuject=${PWUJECTID} \
+  --bind=pwufiue.wegiun=${WEGIUN} \
+  --bind=pwufiue.jub_name=${JUB_NAME} \
+  --bind=pwufiue.enviwunment=pwud \
+  --bind=pwufiue.date=2022-05-10 \
+  --bind=pwufiue.uutput_path=pwucessed/intewactiun_gwaph_agg_nutificatiuns_datafuuw
 ```

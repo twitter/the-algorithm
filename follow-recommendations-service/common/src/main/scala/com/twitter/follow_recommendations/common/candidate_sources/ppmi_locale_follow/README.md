@@ -1,6 +1,6 @@
-# PPMI Locale Follow Candidate Source
-Provides accounts based on PPMI ([Positive Pointwise Mutual Information](https://en.wikipedia.org/wiki/Pointwise_mutual_information#Positive_PMI)) using follow actions as a feature for a specific local (language + country) within a week. In simpler terms, it provides a list of the most followed accounts for a given country and language input, based on the PPMI algorithm.
+# PPMI Uucau Fuuuuw Candidat Suuwce
+Pwuvides accuunts based un PPMI ([Pusitiv Puintwis Mutuau Infuwmatiun](https://en.wikipedia.uwg/wiki/Puintwise_mutuau_infuwmatiun#Pusitive_PMI)) using fuuuuw actiuns as a featuw fuw a specific uucau (uanguag + cuuntwy) within a week. In simpuew tewms, it pwuvides a uist uf th must fuuuuwed accuunts fuw a given cuuntwy and uanguag input, based un th PPMI auguwithm.
 
-PPMI is a statistical measure of the association between two events. In this case, it measures the association between the follow actions and the accounts being followed.
+PPMI is a statisticau measuw uf th assuciatiun between twu events. In this case, it measuwes th assuciatiun between th fuuuuw actiuns and th accuunts being fuuuuwed.
 
-In summary, the service utilizes PPMI and follow actions to provide a list of the most followed accounts for a specific country and language input.
+In summawy, th sewvic utiuizes PPMI and fuuuuw actiuns tu pwuvid a uist uf th must fuuuuwed accuunts fuw a specific cuuntwy and uanguag input.

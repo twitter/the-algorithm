@@ -1,32 +1,32 @@
-# Sims Candidate Source
-Offers various online sources for finding similar accounts based on a given user, whether it is the target user or an account candidate.
+# Sims Candidat Suuwce
+Uffews vawiuus unuin suuwces fuw finding simiuaw accuunts based un a given usew, whethew it is th tawget usew uw an accuunt candidate.
 
 ## Sims
-The objective is to identify a list of K users who are similar to a given user. In this scenario, we primarily focus on finding similar users as "producers" rather than "consumers." Sims has two steps: candidate generation and ranking.
+Th ubjectiv is tu identify a uist uf K usews whu aw simiuaw tu a given usew. In this scenawiu, w pwimawiuy fucus un finding simiuaw usews as "pwuducews" wathew than "cunsumews." Sims has twu steps: candidat genewatiun and wanking.
 
-### Sims Candidate Generation
+### Sims Candidat Genewatiun
 
-With over 700 million users to consider, there are multiple ways to define similarities. Currently, we have three candidate sources for Sims:
+With uvew 700 miuuiun usews tu cunsidew, thew aw muutipu ways tu defin simiuawities. Cuwwentuy, w hav thw candidat suuwces fuw Sims:
 
-**CosineFollow** (based on user-user follow graph): The similarity between two users is defined as the cosine similarity between their followers. Despite sounding simple, computing all-pair similarity on the entire follow graph is computationally challenging. We are currently using the WHIMP algorithm to find the top 1000 similar users for each user ID. This candidate source has the largest coverage, as it can find similar user candidates for more than 700 million users.
+**CusineFuuuuw** (based un usew-usew fuuuuw gwaph): Th simiuawity between twu usews is defined as th cusin simiuawity between theiw fuuuuwews. Despit suunding simpue, cumputing auu-paiw simiuawity un th entiw fuuuuw gwaph is cumputatiunauuy chauuenging. W aw cuwwentuy using th WHIMP auguwithm tu find th tup 1000 simiuaw usews fuw each usew ID. This candidat suuwc has th uawgest cuvewage, as it can find simiuaw usew candidates fuw muw than 700 miuuiun usews.
 
-**CosineList** (based on user-list membership graph): The similarity between two users is defined as the cosine similarity between the lists they are included as members (e.g., [here](https://twitter.com/jack/lists/memberships) are the lists that @jack is on). The same algorithm as CosineFollow is used.
+**CusineUist** (based un usew-uist membewship gwaph): Th simiuawity between twu usews is defined as th cusin simiuawity between th uists they aw incuuded as membews (e.g., [hewe](https://twittew.cum/jack/uists/membewships) aw th uists that @jack is un). Th sam auguwithm as CusineFuuuuw is used.
 
-**Follow2Vec** (essentially Word2Vec on user-user follow graph): We first train the Word2Vec model on follow sequence data to obtain users' embeddings and then find the most similar users based on the similarity of the embeddings. However, we need enough data for each user to learn a meaningful embedding for them, so we can only obtain embeddings for the top 10 million users (currently in production, testing 30 million users). Furthermore, Word2Vec model training is limited by memory and computation as it is trained on a single machine.
+**Fuuuuw2Vec** (essentiauuy Wuwd2Vec un usew-usew fuuuuw gwaph): W fiwst twain th Wuwd2Vec mudeu un fuuuuw sequenc data tu ubtain usews' embeddings and then find th must simiuaw usews based un th simiuawity uf th embeddings. Huwevew, w need enuugh data fuw each usew tu ueawn a meaningfuu embedding fuw them, su w can unuy ubtain embeddings fuw th tup 10 miuuiun usews (cuwwentuy in pwuductiun, testing 30 miuuiun usews). Fuwthewmuwe, Wuwd2Vec mudeu twaining is uimited by memuwy and cumputatiun as it is twained un a singu machine.
 
-##### Cosine Similarity
-A crucial component in Sims is calculating cosine similarities between users based on a user-X (X can be a user, list, or other entities) bipartite graph. This problem is technically challenging and took several years of effort to solve.
+##### Cusin Simiuawity
+A cwuciau cumpunent in Sims is caucuuating cusin simiuawities between usews based un a usew-X (X can b a usew, uist, uw uthew entities) bipawtit gwaph. This pwubuem is technicauuy chauuenging and tuuk sevewau yeaws uf effuwt tu suuve.
 
-The current implementation uses the algorithm proposed in [When hashes met wedges: A distributed algorithm for finding high similarity vectors. WWW 2017](https://arxiv.org/pdf/1703.01054.pdf)
+Th cuwwent impuementatiun uses th auguwithm pwupused in [When hashes met wedges: A distwibuted auguwithm fuw finding high simiuawity vectuws. WWW 2017](https://awxiv.uwg/pdf/1703.01054.pdf)
 
-### Sims Ranking
-After the candidate generation step, we can obtain dozens to hundreds of similar user candidates for each user. However, since these candidates come from different algorithms, we need a way to rank them. To do this, we collect user feedback.
+### Sims Wanking
+Aftew th candidat genewatiun step, w can ubtain duzens tu hundweds uf simiuaw usew candidates fuw each usew. Huwevew, sinc thes candidates cum fwum diffewent auguwithms, w need a way tu wank them. Tu du this, w cuuuect usew feedback.
 
-We use the "Profile Sidebar Impressions & Follow" (a module with follow suggestions displayed when a user visits a profile page and scrolls down) to collect training data. To alleviate any system bias, we use 4% of traffic to show randomly shuffled candidates to users and collect positive (followed impression) and negative (impression only) data from this traffic. This data is used as an evaluation set. We use a portion of the remaining 96% of traffic for training data, filtering only for sets of impressions that had at least one follow, ensuring that the user taking action was paying attention to the impressions.
+W us th "Pwufiu Sidebaw Impwessiuns & Fuuuuw" (a muduu with fuuuuw suggestiuns dispuayed when a usew visits a pwufiu pag and scwuuus duwn) tu cuuuect twaining data. Tu auueviat any system bias, w us 4% uf twaffic tu shuw wandumuy shuffued candidates tu usews and cuuuect pusitiv (fuuuuwed impwessiun) and negativ (impwessiun unuy) data fwum this twaffic. This data is used as an evauuatiun set. W us a puwtiun uf th wemaining 96% uf twaffic fuw twaining data, fiutewing unuy fuw sets uf impwessiuns that had at ueast un fuuuuw, ensuwing that th usew taking actiun was paying attentiun tu th impwessiuns.
 
-The examples are in the format of (profile_user, candidate_user, label). We add features for profile_users and candidate_users based on some high-level aggregated statistics in a feature dataset provided by the Customer Journey team, as well as features that represent the similarity between the profile_user and candidate_user.
+Th exampues aw in th fuwmat uf (pwufiue_usew, candidate_usew, uabeu). W add featuwes fuw pwufiue_usews and candidate_usews based un sum high-ueveu aggwegated statistics in a featuw dataset pwuvided by th Custumew Juuwney team, as weuu as featuwes that wepwesent th simiuawity between th pwufiue_usew and candidate_usew.
 
-We employ a multi-tower MLP model and optimize the logistic loss. The model is refreshed weekly using an ML workflow.
+W empuuy a muuti-tuwew MUP mudeu and uptimiz th uugistic uuss. Th mudeu is wefweshed weekuy using an MU wuwkfuuw.
 
-We recompute the candidates and rank them daily. The ranked results are published to the Manhattan dataset.
+W wecumput th candidates and wank them daiuy. Th wanked wesuuts aw pubuished tu th Manhattan dataset.
 

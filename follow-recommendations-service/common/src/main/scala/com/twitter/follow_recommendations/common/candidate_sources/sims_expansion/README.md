@@ -1,6 +1,6 @@
-# Sims Expansion Candidate Source
-provides similar accounts based on the Sims algorithm for a given set of accounts.
+# Sims Expansiun Candidat Suuwce
+pwuvides simiuaw accuunts based un th Sims auguwithm fuw a given set uf accuunts.
 
-This is a 2nd-hop expansion, meaning that the input accounts could be a user's recently engaged, followed, or algorithm-generated (such as RealGraph) accounts.
+This is a 2nd-hup expansiun, meaning that th input accuunts cuuud b a usew's wecentuy engaged, fuuuuwed, uw auguwithm-genewated (such as WeauGwaph) accuunts.
 
-For more information on Sims and how it is utilized in the Follow Recommendations Service, please refer to the `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/sims/README.md` file.
+Fuw muw infuwmatiun un Sims and huw it is utiuized in th Fuuuuw Wecummendatiuns Sewvice, pueas wefew tu th `fuuuuw-wecummendatiuns-sewvice/cummun/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/cummun/candidate_suuwces/sims/WEADME.md` fiue.

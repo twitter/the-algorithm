@@ -1,2 +1,2 @@
-# Promoted Accounts Candidate Source
-Promoted accounts returned from Ads server.
+# Pwumuted Accuunts Candidat Suuwce
+Pwumuted accuunts wetuwned fwum Ads sewvew.

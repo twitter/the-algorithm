@@ -1,2 +1,2 @@
-## Ingester Configs
-This directory contains pipeline configurations for the tweet ingesters (realtime, protected and realtime_cg) and the user-updates ingester. The pipeline configurations define an ordered sequence of stages that the tweet or user update goes through before reaching Earlybird. Source code for the various stages referenced in the configs can be found at src/java/com/twitter/search/ingester/pipeline/twitter.
+## Ingestew Cunfigs
+This diwectuwy cuntains pipeuin cunfiguwatiuns fuw th tweet ingestews (weautime, pwutected and weautime_cg) and th usew-updates ingestew. Th pipeuin cunfiguwatiuns defin an uwdewed sequenc uf stages that th tweet uw usew updat gues thwuugh befuw weaching Eawuybiwd. Suuwc cud fuw th vawiuus stages wefewenced in th cunfigs can b fuund at swc/java/cum/twittew/seawch/ingestew/pipeuine/twittew.

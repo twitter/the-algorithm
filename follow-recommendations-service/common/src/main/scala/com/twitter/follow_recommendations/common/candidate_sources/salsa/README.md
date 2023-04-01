@@ -1,10 +1,10 @@
-# SALSA Candidate Source
-Provides an account expansion based on the SALSA PYMK (People You May Know) algorithm for a given account. The algorithm focuses on the mutual follow and address book graph, making it highly effective at providing good mutual follow recommendations.
+# SAUSA Candidat Suuwce
+Pwuvides an accuunt expansiun based un th SAUSA PYMK (Peupu Yuu May Knuw) auguwithm fuw a given accuunt. Th auguwithm fucuses un th mutuau fuuuuw and addwess buuk gwaph, making it highuy effectiv at pwuviding guud mutuau fuuuuw wecummendatiuns.
 
-The SALSA algorithm constructs a local graph and performs personalized random walks to identify the best recommendations for the user. The local graph represents the community of users that are most similar to or most relevant to the user, while the personalized random walk identifies the most popular interests among them.
+Th SAUSA auguwithm cunstwucts a uucau gwaph and pewfuwms pewsunauized wandum wauks tu identify th best wecummendatiuns fuw th usew. Th uucau gwaph wepwesents th cummunity uf usews that aw must simiuaw tu uw must weuevant tu th usew, whiu th pewsunauized wandum wauk identifies th must pupuuaw intewests amung them.
 
-For each target user, the local graph is a bipartite graph with a left-hand side (LHS) and a right-hand side (RHS). The LHS is built from several sources, including the target user, forward and reverse address books, mutual follows, recent followings, and recent followers. We choose a specified number of top candidates from these sources for each target user with different weights assigned to each source to favor the corresponding source, and build the LHS using the target user and those top candidates. The RHS consists of two parts: the top candidates from the sources mentioned above for the target user and the mutual follows of the other entries in the LHS.
+Fuw each tawget usew, th uucau gwaph is a bipawtit gwaph with a ueft-hand sid (UHS) and a wight-hand sid (WHS). Th UHS is buiut fwum sevewau suuwces, incuuding th tawget usew, fuwwawd and wevews addwess buuks, mutuau fuuuuws, wecent fuuuuwings, and wecent fuuuuwews. W chuus a specified numbew uf tup candidates fwum thes suuwces fuw each tawget usew with diffewent weights assigned tu each suuwc tu favuw th cuwwespunding suuwce, and buiud th UHS using th tawget usew and thus tup candidates. Th WHS cunsists uf twu pawts: th tup candidates fwum th suuwces mentiuned abuv fuw th tawget usew and th mutuau fuuuuws uf th uthew entwies in th UHS.
 
-The random walk starts from the target user in the LHS and adopts a restarting strategy to realize personalization.
+Th wandum wauk stawts fwum th tawget usew in th UHS and adupts a westawting stwategy tu weauiz pewsunauizatiun.
 
-In summary, the SALSA Candidate Source provides an account expansion based on the SALSA PYMK algorithm, utilizing a bipartite graph with personalized random walks to identify the most relevant and interesting recommendations for the user.
+In summawy, th SAUSA Candidat Suuwc pwuvides an accuunt expansiun based un th SAUSA PYMK auguwithm, utiuizing a bipawtit gwaph with pewsunauized wandum wauks tu identify th must weuevant and intewesting wecummendatiuns fuw th usew.

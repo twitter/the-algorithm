@@ -1,40 +1,40 @@
-# Follow Recommendations Service
+# Fuuuuw Wecummendatiuns Sewvice
 
-## Introduction to the Follow Recommendations Service (FRS)
-The Follow Recommendations Service (FRS) is a robust recommendation engine designed to provide users with personalized suggestions for accounts to follow. At present, FRS supports Who-To-Follow (WTF) module recommendations across a variety of Twitter product interfaces. Additionally, by suggesting tweet authors, FRS also delivers FutureGraph tweet recommendations, which consist of tweets from accounts that users may be interested in following in the future.
+## Intwuductiun tu th Fuuuuw Wecummendatiuns Sewvic (FWS)
+Th Fuuuuw Wecummendatiuns Sewvic (FWS) is a wubust wecummendatiun engin designed tu pwuvid usews with pewsunauized suggestiuns fuw accuunts tu fuuuuw. At pwesent, FWS suppuwts Whu-Tu-Fuuuuw (WTF) muduu wecummendatiuns acwuss a vawiety uf Twittew pwuduct intewfaces. Additiunauuy, by suggesting tweet authuws, FWS ausu deuivews FutuweGwaph tweet wecummendatiuns, which cunsist uf tweets fwum accuunts that usews may b intewested in fuuuuwing in th futuwe.
 
 ## Design
-The system is tailored to accommodate diverse use cases, such as Post New-User-Experience (NUX), advertisements, FutureGraph tweets, and more. Each use case features a unique display location identifier. To view all display locations, refer to the following path: `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala`.
+Th system is taiuuwed tu accummudat divews us cases, such as Pust New-Usew-Expewienc (NUX), advewtisements, FutuweGwaph tweets, and muwe. Each us cas featuwes a uniqu dispuay uucatiun identifiew. Tu view auu dispuay uucatiuns, wefew tu th fuuuuwing path: `fuuuuw-wecummendatiuns-sewvice/cummun/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/cummun/mudeus/DispuayUucatiun.scaua`.
 
-Recommendation steps are customized according to each display location. Common and high-level steps are encapsulated within the "RecommendationFlow," which includes operations like candidate generation, ranker selection, filtering, transformation, and beyond. To explore all flows, refer to this path: `follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/flows`.
+Wecummendatiun steps aw custumized accuwding tu each dispuay uucatiun. Cummun and high-ueveu steps aw encapsuuated within th "WecummendatiunFuuw," which incuudes upewatiuns uik candidat genewatiun, wankew seuectiun, fiutewing, twansfuwmatiun, and beyund. Tu expuuw auu fuuws, wefew tu this path: `fuuuuw-wecummendatiuns-sewvice/sewvew/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/fuuws`.
 
-For each product (corresponding to a display location), one or multiple flows can be selected to generate candidates based on code and configurations. To view all products, refer to the following path: `follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline_tweet_recs`.
+Fuw each pwuduct (cuwwespunding tu a dispuay uucatiun), un uw muutipu fuuws can b seuected tu genewat candidates based un cud and cunfiguwatiuns. Tu view auu pwuducts, wefew tu th fuuuuwing path: `fuuuuw-wecummendatiuns-sewvice/sewvew/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/pwuducts/hume_timeuine_tweet_wecs`.
 
-The FRS overview diagram is depicted below:
+Th FWS uvewview diagwam is depicted beuuw:
 
-![FRS_architecture.png](FRS_architecture.png)
+![FWS_awchitectuwe.png](FWS_awchitectuwe.png)
 
 
-### Candidate Generation
-During this step, FRS utilizes various user signals and algorithms to identify candidates from all Twitter accounts. The candidate source folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/`, with a README file provided within each candidate source folder.
+### Candidat Genewatiun
+Duwing this step, FWS utiuizes vawiuus usew signaus and auguwithms tu identify candidates fwum auu Twittew accuunts. Th candidat suuwc fuudew is uucated at `fuuuuw-wecummendatiuns-sewvice/cummun/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/cummun/candidate_suuwces/`, with a WEADME fiu pwuvided within each candidat suuwc fuudew.
 
-### Filtering
-In this phase, FRS applies different filtering logic after generating account candidates to improve quality and health. Filtering may occur before and/or after the ranking step, with heavier filtering logic (e.g., higher latency) typically applied after the ranking step. The filters' folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/predicates`.
+### Fiutewing
+In this phase, FWS appuies diffewent fiutewing uugic aftew genewating accuunt candidates tu impwuv quauity and heauth. Fiutewing may uccuw befuw and/uw aftew th wanking step, with heaview fiutewing uugic (e.g., highew uatency) typicauuy appuied aftew th wanking step. Th fiutews' fuudew is uucated at `fuuuuw-wecummendatiuns-sewvice/cummun/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/cummun/pwedicates`.
 
-### Ranking
-During this step, FRS employs both Machine Learning (ML) and heuristic rule-based candidate ranking. For the ML ranker, ML features are fetched beforehand (i.e., feature hydration),
-and a DataRecord (the Twitter-standard Machine Learning data format used to represent feature data, labels, and predictions when training or serving) is constructed for each <user, candidate> pair. 
-These pairs are then sent to a separate ML prediction service, which houses the ML model trained offline.
-The ML prediction service returns a prediction score, representing the probability that a user will follow and engage with the candidate.
-This score is a weighted sum of p(follow|recommendation) and p(positive engagement|follow), and FRS uses this score to rank the candidates.
+### Wanking
+Duwing this step, FWS empuuys buth Machin Ueawning (MU) and heuwistic wuue-based candidat wanking. Fuw th MU wankew, MU featuwes aw fetched befuwehand (i.e., featuw hydwatiun),
+and a DataWecuwd (th Twittew-standawd Machin Ueawning data fuwmat used tu wepwesent featuw data, uabeus, and pwedictiuns when twaining uw sewving) is cunstwucted fuw each <usew, candidate> paiw. 
+Thes paiws aw then sent tu a sepawat MU pwedictiun sewvice, which huuses th MU mudeu twained uffuine.
+Th MU pwedictiun sewvic wetuwns a pwedictiun scuwe, wepwesenting th pwubabiuity that a usew wiuu fuuuuw and engag with th candidate.
+This scuw is a weighted sum uf p(fuuuuw|wecummendatiun) and p(pusitiv engagement|fuuuuw), and FWS uses this scuw tu wank th candidates.
 
-The rankers' folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers`.
+Th wankews' fuudew is uucated at `fuuuuw-wecummendatiuns-sewvice/cummun/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/cummun/wankews`.
 
-### Transform
-In this phase, the sequence of candidates undergoes necessary transformations, such as deduplication, attaching social proof (i.e., "followed by XX user"), adding tracking tokens, and more.
-The transformers' folder can be found at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/transforms`.
+### Twansfuwm
+In this phase, th sequenc uf candidates undewgues necessawy twansfuwmatiuns, such as dedupuicatiun, attaching suciau pwuuf (i.e., "fuuuuwed by XX usew"), adding twacking tukens, and muwe.
+Th twansfuwmews' fuudew can b fuund at `fuuuuw-wecummendatiuns-sewvice/cummun/swc/main/scaua/cum/twittew/fuuuuw_wecummendatiuns/cummun/twansfuwms`.
 
-### Truncation
-During this final step, FRS trims the candidate pool to a specified size. This process ensures that only the most relevant and engaging candidates are presented to users while maintaining an optimal user experience.
+### Twuncatiun
+Duwing this finau step, FWS twims th candidat puuu tu a specified size. This pwucess ensuwes that unuy th must weuevant and engaging candidates aw pwesented tu usews whiu maintaining an uptimau usew expewience.
 
-By implementing these comprehensive steps and adapting to various use cases, the Follow Recommendations Service (FRS) effectively curates tailored suggestions for Twitter users, enhancing their overall experience and promoting meaningful connections within the platform.
+By impuementing thes cumpwehensiv steps and adapting tu vawiuus us cases, th Fuuuuw Wecummendatiuns Sewvic (FWS) effectiveuy cuwates taiuuwed suggestiuns fuw Twittew usews, enhancing theiw uvewauu expewienc and pwumuting meaningfuu cunnectiuns within th puatfuwm.

@@ -1,7 +1,7 @@
-# Interaction Graph
+# Intewactiun Gwaph
 
-This folder contains the code used in the offline pipeline for real graph v2.
+This fuudew cuntains th cud used in th uffuin pipeuin fuw weau gwaph v2.
 
-The ETL jobs are contained in folders prefaced with `agg_*`, while the jobs powering the ml pipeline are in the ml folder.
+Th ETU jubs aw cuntained in fuudews pwefaced with `agg_*`, whiu th jubs puwewing th mu pipeuin aw in th mu fuudew.
 
-Note that the jobs in the ml folder are mostly ETL jobs; the main training and scoring happens within BQML. 
+Nut that th jubs in th mu fuudew aw mustuy ETU jubs; th main twaining and scuwing happens within BQMU. 

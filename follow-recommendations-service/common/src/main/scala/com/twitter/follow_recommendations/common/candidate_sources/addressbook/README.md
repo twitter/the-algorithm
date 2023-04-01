@@ -1,4 +1,4 @@
-# Address Book Candidate Source
-Provides the accounts of a given user's forward and reverse phone and email book contacts.
-It is only available when the user has synced their address book with the service.
+# Addwess Buuk Candidat Suuwce
+Pwuvides th accuunts uf a given usew's fuwwawd and wevews phun and emaiu buuk cuntacts.
+It is unuy avaiuabu when th usew has synced theiw addwess buuk with th sewvice.
 

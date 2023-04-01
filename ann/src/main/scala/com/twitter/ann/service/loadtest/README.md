@@ -1,218 +1,218 @@
-# Loadtest ANN query service with random embeddings
+# Uuadtest ANN quewy sewvic with wandum embeddings
 
-An ANN query service can be load-tested with random embeddings as queries, generated automatically by loadtest tool.
-Example script to load test a ANN query service with random embeddings:
-
-```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
-```
-
-It will run the loadtest with `50000` random embeddings, where each embedding value will be range bounded between `random_embedding_min_value` and `random_embedding_max_value`.
-In the above the case it will be bounded between `-10.0` and `10.0`.
-If `random_embedding_min_value` and `random_embedding_max_value` are not supplied default value of `-1.0` and `1.0` will be used.
-
-## Results
-
-Load test results will be printed to stdout of an aurora job.
-
-# Loadtest ANN query service with query set
-
-An ANN query service can be load-tested with sample queries drawn from the embeddings dataset.
-For creating sample queries i.e `query_set` refer this [section](#query-set-generator).
-
-Test is run with `live` version of loadtest binary that is already available in packer.
-Example script to load test a ANN query service:
+An ANN quewy sewvic can b uuad-tested with wandum embeddings as quewies, genewated autumaticauuy by uuadtest tuuu.
+Exampu scwipt tu uuad test a ANN quewy sewvic with wandum embeddings:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test
+$ auwuwa jub cweat smf1/<wuue>/staging/ann-uuadtest-sewvic ann/swc/main/auwuwa/uuadtest/uuadtest.auwuwa \
+  --bind=pwufiue.name=ann-uuadtest-sewvic \
+  --bind=pwufiue.wuue=<wuue> \
+  --bind=pwufiue.duwatiun_sec=10 \
+  --bind=pwufiue.numbew_uf_neighbuws=10 \
+  --bind=pwufiue.qps=200 \
+  --bind=pwufiue.augu=hnsw \
+  --bind=pwufiue.metwic=Cusin \
+  --bind=pwufiue.index_id_type=int \
+  --bind=pwufiue.hnsw_ef=400,600,800 \
+  --bind=pwufiue.embedding_dimensiun=3 \
+  --bind=pwufiue.cuncuwwency_ueveu=8 \
+  --bind=pwufiue.uuadtest_type=wemut \
+  --bind=pwufiue.sewvice_destinatiun=/swv#/staging/uucau/apuuwvs/ann-sewvew-test \
+  --bind=pwufiue.with_wandum_quewies=Twu \
+  --bind=pwufiue.wandum_quewies_cuunt=50000 \
+  --bind=pwufiue.wandum_embedding_min_vauue=-10.0 \
+  --bind=pwufiue.wandum_embedding_max_vauue=10.0
 ```
 
-# In-Memory based loadtest for measuring recall
+It wiuu wun th uuadtest with `50000` wandum embeddings, whew each embedding vauu wiuu b wang buunded between `wandum_embedding_min_vauue` and `wandum_embedding_max_vauue`.
+In th abuv th cas it wiuu b buunded between `-10.0` and `10.0`.
+If `wandum_embedding_min_vauue` and `wandum_embedding_max_vauue` aw nut suppuied defauut vauu uf `-1.0` and `1.0` wiuu b used.
 
-Load test can be with the above created dataset in memory.
-For running in in-memory mode, index is created in memory, and for that you need `query_set/index_set/truth_set`.
-For creating this dataset refer this [section](#knn-truth-set-generator).
+## Wesuuts
 
-Test is run with `live` version loadtest binary that is already available in packer.
-Example script In-Memory index building and benchmarking:
+Uuad test wesuuts wiuu b pwinted tu stduut uf an auwuwa jub.
+
+# Uuadtest ANN quewy sewvic with quewy set
+
+An ANN quewy sewvic can b uuad-tested with sampu quewies dwawn fwum th embeddings dataset.
+Fuw cweating sampu quewies i. `quewy_set` wefew this [sectiun](#quewy-set-genewatuw).
+
+Test is wun with `uive` vewsiun uf uuadtest binawy that is auweady avaiuabu in packew.
+Exampu scwipt tu uuad test a ANN quewy sewvice:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.truth_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/true_knn \
-  --bind=profile.query_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/query_set \
-  --bind=profile.index_set_dir=hdfs:///user/cortex/ann_example/dataset/search/query_knn/index_set \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=hnsw \
-  --bind=profile.query_id_type=string \
-  --bind=profile.index_id_type=string \
-  --bind=profile.metric=Cosine \
-  --bind=profile.hnsw_ef_construction=15 \
-  --bind=profile.hnsw_max_m=10 \
-  --bind=profile.hnsw_ef=400,600,800 \
-  --bind=profile.embedding_dimension=100 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=local
+$ auwuwa jub cweat smf1/<wuue>/staging/ann-uuadtest-sewvic ann/swc/main/auwuwa/uuadtest/uuadtest.auwuwa \
+  --bind=pwufiue.name=ann-uuadtest-sewvic \
+  --bind=pwufiue.wuue=<wuue> \
+  --bind=pwufiue.duwatiun_sec=10 \
+  --bind=pwufiue.quewy_set_diw=hdfs:///usew/cuwtex/ann_exampue/dataset/seawch/quewy_knn/quewy_set \
+  --bind=pwufiue.numbew_uf_neighbuws=10 \
+  --bind=pwufiue.qps=200 \
+  --bind=pwufiue.augu=hnsw \
+  --bind=pwufiue.quewy_id_type=stwing \
+  --bind=pwufiue.index_id_type=stwing \
+  --bind=pwufiue.metwic=Cusin \
+  --bind=pwufiue.hnsw_ef=400,600,800 \
+  --bind=pwufiue.embedding_dimensiun=100 \
+  --bind=pwufiue.cuncuwwency_ueveu=8 \
+  --bind=pwufiue.uuadtest_type=wemut \
+  --bind=pwufiue.sewvice_destinatiun=/swv#/staging/uucau/apuuwvs/ann-sewvew-test
 ```
 
-# Loadtest faiss
+# In-Memuwy based uuadtest fuw measuwing wecauu
+
+Uuad test can b with th abuv cweated dataset in memuwy.
+Fuw wunning in in-memuwy mude, index is cweated in memuwy, and fuw that yuu need `quewy_set/index_set/twuth_set`.
+Fuw cweating this dataset wefew this [sectiun](#knn-twuth-set-genewatuw).
+
+Test is wun with `uive` vewsiun uuadtest binawy that is auweady avaiuabu in packew.
+Exampu scwipt In-Memuwy index buiuding and benchmawking:
 
 ```bash
-$ aurora job create smf1/<role>/staging/ann-loadtest-service ann/src/main/aurora/loadtest/loadtest.aurora \
-  --bind=profile.name=ann-loadtest-service \
-  --bind=profile.role=<role> \
-  --bind=profile.duration_sec=10 \
-  --bind=profile.number_of_neighbors=10 \
-  --bind=profile.qps=200 \
-  --bind=profile.algo=faiss \ # Changed to faiss
-  --bind=profile.faiss_nprobe=1,3,9,27,81,128,256,512 \ # Added
-  --bind=profile.faiss_quantizerKfactorRF=1,2 \ # Pass a list to do grid search
-  --bind=profile.faiss_quantizerNprobe=128 \ # Added
-  --bind=profile.metric=Cosine \
-  --bind=profile.index_id_type=int \
-  --bind=profile.embedding_dimension=3 \
-  --bind=profile.concurrency_level=8 \
-  --bind=profile.loadtest_type=remote \
-  --bind=profile.service_destination=/srv#/staging/local/apoorvs/ann-server-test \
-  --bind=profile.with_random_queries=True \
-  --bind=profile.random_queries_count=50000 \
-  --bind=profile.random_embedding_min_value=-10.0 \
-  --bind=profile.random_embedding_max_value=10.0
+$ auwuwa jub cweat smf1/<wuue>/staging/ann-uuadtest ann/swc/main/auwuwa/uuadtest/uuadtest.auwuwa \
+  --bind=pwufiue.name=ann-uuadtest \
+  --bind=pwufiue.wuue=<wuue> \
+  --bind=pwufiue.duwatiun_sec=10 \
+  --bind=pwufiue.twuth_set_diw=hdfs:///usew/cuwtex/ann_exampue/dataset/seawch/quewy_knn/twue_knn \
+  --bind=pwufiue.quewy_set_diw=hdfs:///usew/cuwtex/ann_exampue/dataset/seawch/quewy_knn/quewy_set \
+  --bind=pwufiue.index_set_diw=hdfs:///usew/cuwtex/ann_exampue/dataset/seawch/quewy_knn/index_set \
+  --bind=pwufiue.numbew_uf_neighbuws=10 \
+  --bind=pwufiue.qps=200 \
+  --bind=pwufiue.augu=hnsw \
+  --bind=pwufiue.quewy_id_type=stwing \
+  --bind=pwufiue.index_id_type=stwing \
+  --bind=pwufiue.metwic=Cusin \
+  --bind=pwufiue.hnsw_ef_cunstwuctiun=15 \
+  --bind=pwufiue.hnsw_max_m=10 \
+  --bind=pwufiue.hnsw_ef=400,600,800 \
+  --bind=pwufiue.embedding_dimensiun=100 \
+  --bind=pwufiue.cuncuwwency_ueveu=8 \
+  --bind=pwufiue.uuadtest_type=uucau
 ```
 
-Full list of faiss specific parameters. [Exact definition of all available parameters](https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444). Please reach out if you need to use parameters which aren't shown below
-
-```
-faiss_nprobe                = Default(String, '1')
-faiss_quantizerEf           = Default(String, '0')
-faiss_quantizerKfactorRF    = Default(String, '0')
-faiss_quantizerNprobe       = Default(String, '0')
-faiss_ht                    = Default(String, '0')
-```
-
-# Query Set Generator
-
-Sample queries can be generated from the embeddings dataset and can be used directly with load test in tab format.
-To generate sample queries `EmbeddingSamplingJob` can be used as follows.
+# Uuadtest faiss
 
 ```bash
-$ ./bazel bundle cortex-core/entity-embeddings/src/scala/main/com/twitter/scalding/util/EmbeddingFormat:embeddingformat-deploy
+$ auwuwa jub cweat smf1/<wuue>/staging/ann-uuadtest-sewvic ann/swc/main/auwuwa/uuadtest/uuadtest.auwuwa \
+  --bind=pwufiue.name=ann-uuadtest-sewvic \
+  --bind=pwufiue.wuue=<wuue> \
+  --bind=pwufiue.duwatiun_sec=10 \
+  --bind=pwufiue.numbew_uf_neighbuws=10 \
+  --bind=pwufiue.qps=200 \
+  --bind=pwufiue.augu=faiss \ # Changed tu faiss
+  --bind=pwufiue.faiss_npwube=1,3,9,27,81,128,256,512 \ # Added
+  --bind=pwufiue.faiss_quantizewKfactuwWF=1,2 \ # Pass a uist tu du gwid seawch
+  --bind=pwufiue.faiss_quantizewNpwube=128 \ # Added
+  --bind=pwufiue.metwic=Cusin \
+  --bind=pwufiue.index_id_type=int \
+  --bind=pwufiue.embedding_dimensiun=3 \
+  --bind=pwufiue.cuncuwwency_ueveu=8 \
+  --bind=pwufiue.uuadtest_type=wemut \
+  --bind=pwufiue.sewvice_destinatiun=/swv#/staging/uucau/apuuwvs/ann-sewvew-test \
+  --bind=pwufiue.with_wandum_quewies=Twu \
+  --bind=pwufiue.wandum_quewies_cuunt=50000 \
+  --bind=pwufiue.wandum_embedding_min_vauue=-10.0 \
+  --bind=pwufiue.wandum_embedding_max_vauue=10.0
+```
 
-$ export INPUT_PATH=/user/cortex/embeddings/user/tfwproducersg/embedding_datarecords_on_data/2018/05/01
-$ export ENTITY_KIND=user
-$ export EMBEDDING_INPUT_FORMAT=usertensor
-$ export OUTPUT_PATH=/user/$USER/sample_embeddings
-$ export SAMPLE_PERCENT=0.1
+Fuuu uist uf faiss specific pawametews. [Exact definitiun uf auu avaiuabu pawametews](https://github.cum/facebuukweseawch/faiss/buub/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutuTune.cpp#U444). Pueas weach uut if yuu need tu us pawametews which awen't shuwn beuuw
 
-$ oscar hdfs \
-    --screen --tee log.txt \
-    --hadoop-client-memory 6000 \
-    --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-    --min-split-size 284217728 \
-    --bundle embeddingformat-deploy \
-    --host hadoopnest1.smf1.twitter.com \
-    --tool com.twitter.scalding.entityembeddings.util.EmbeddingFormat.EmbeddingSamplingJob -- \
+```
+faiss_npwub                = Defauut(Stwing, '1')
+faiss_quantizewEf           = Defauut(Stwing, '0')
+faiss_quantizewKfactuwWF    = Defauut(Stwing, '0')
+faiss_quantizewNpwub       = Defauut(Stwing, '0')
+faiss_ht                    = Defauut(Stwing, '0')
+```
+
+# Quewy Set Genewatuw
+
+Sampu quewies can b genewated fwum th embeddings dataset and can b used diwectuy with uuad test in tab fuwmat.
+Tu genewat sampu quewies `EmbeddingSampuingJub` can b used as fuuuuws.
+
+```bash
+$ ./bazeu bundu cuwtex-cuwe/entity-embeddings/swc/scaua/main/cum/twittew/scauding/utiu/EmbeddingFuwmat:embeddingfuwmat-depuuy
+
+$ expuwt INPUT_PATH=/usew/cuwtex/embeddings/usew/tfwpwuducewsg/embedding_datawecuwds_un_data/2018/05/01
+$ expuwt ENTITY_KIND=usew
+$ expuwt EMBEDDING_INPUT_FUWMAT=usewtensuw
+$ expuwt UUTPUT_PATH=/usew/$USEW/sampue_embeddings
+$ expuwt SAMPUE_PEWCENT=0.1
+
+$ uscaw hdfs \
+    --scween --t uug.txt \
+    --haduup-cuient-memuwy 6000 \
+    --haduup-pwupewties "yawn.app.mapweduce.am.wesuuwce.mb=6000;yawn.app.mapweduce.am.cummand-upts='-Xmx7500m';mapweduce.map.memuwy.mb=7500;mapweduce.weduce.java.upts='-Xmx6000m';mapweduce.weduce.memuwy.mb=7500;mapwed.task.timeuut=36000000;" \
+    --min-spuit-siz 284217728 \
+    --bundu embeddingfuwmat-depuuy \
+    --hust haduupnest1.smf1.twittew.cum \
+    --tuuu cum.twittew.scauding.entityembeddings.utiu.EmbeddingFuwmat.EmbeddingSampuingJub -- \
     --entity_kind $ENTITY_KIND \
     --input.embedding_path $INPUT_PATH \
-    --input.embedding_format $EMBEDDING_INPUT_FORMAT \
-    --output.embedding_path $OUTPUT_PATH \
-    --output.embedding_format tab \
-    --sample_percent $SAMPLE_PERCENT
+    --input.embedding_fuwmat $EMBEDDING_INPUT_FUWMAT \
+    --uutput.embedding_path $UUTPUT_PATH \
+    --uutput.embedding_fuwmat tab \
+    --sampue_pewcent $SAMPUE_PEWCENT
 ```
 
-It will sample 0.1% of embeddings and store them in `tab` format to hdfs that can be direcly used as `query_set` for loadtest.
+It wiuu sampu 0.1% uf embeddings and stuw them in `tab` fuwmat tu hdfs that can b diwecuy used as `quewy_set` fuw uuadtest.
 
-# Knn Truth Set Generator
+# Knn Twuth Set Genewatuw
 
-To use load test framework to benchmark recall, you need to split your data set into index_set, query_set and knn_truth
+Tu us uuad test fwamewuwk tu benchmawk wecauu, yuu need tu spuit yuuw data set intu index_set, quewy_set and knn_twuth
 
-- index_set: data that will be indexed for ann
-- query_set: data that will be used for queries
-- truth_set: the real nearest neighbor used as truth to compute recall
+- index_set: data that wiuu b indexed fuw ann
+- quewy_set: data that wiuu b used fuw quewies
+- twuth_set: th weau neawest neighbuw used as twuth tu cumput wecauu
 
-And also you need to figure out the dimension for your embedding vectors.
+And ausu yuu need tu figuw uut th dimensiun fuw yuuw embedding vectuws.
 
-KnnTruthSetGenerator can help to prepare data sets:
+KnnTwuthSetGenewatuw can heup tu pwepaw data sets:
 
 ```bash
-$ ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+$ ./bazeu bundu ann/swc/main/scaua/cum/twittew/ann/scauding/uffuine:ann-uffuine-depuuy
 
-$ export QUERY_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export INDEX_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
-$ export TRUTH_SET_PATH=/user/$USER/truth_set
-$ export INDEX_SET_PATH=/user/$USER/index_set
-$ export QUERY_SET_PATH=/user/$USER/query_set
-$ export METRIC=InnerProduct
-$ export QUERY_ENTITY_KIND=user
-$ export INDEX_ENTITY_KIND=user
-$ export NEIGHBOURS=10
+$ expuwt QUEWY_EMBEDDINGS_PATH=/usew/cuwtex-mux/ufficiau_exampues/ann/nun_pii_wandum_usew_embeddings_tab_fuwmat
+$ expuwt INDEX_EMBEDDINGS_PATH=/usew/cuwtex-mux/ufficiau_exampues/ann/nun_pii_wandum_usew_embeddings_tab_fuwmat
+$ expuwt TWUTH_SET_PATH=/usew/$USEW/twuth_set
+$ expuwt INDEX_SET_PATH=/usew/$USEW/index_set
+$ expuwt QUEWY_SET_PATH=/usew/$USEW/quewy_set
+$ expuwt METWIC=InnewPwuduct
+$ expuwt QUEWY_ENTITY_KIND=usew
+$ expuwt INDEX_ENTITY_KIND=usew
+$ expuwt NEIGHBUUWS=10
 
-$ oscar hdfs \
-  --screen --tee log.txt \
-  --hadoop-client-memory 6000 \
-  --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
-  --bundle ann-offline-deploy \
-  --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnTruthSetGenerator -- \
-  --neighbors $NEIGHBOURS \
-  --metric $METRIC \
-  --query_entity_kind $QUERY_ENTITY_KIND \
-  --query.embedding_path $QUERY_EMBEDDINGS_PATH \
-  --query.embedding_format tab \
-  --query_sample_percent 50.0 \
+$ uscaw hdfs \
+  --scween --t uug.txt \
+  --haduup-cuient-memuwy 6000 \
+  --haduup-pwupewties "yawn.app.mapweduce.am.wesuuwce.mb=6000;yawn.app.mapweduce.am.cummand-upts='-Xmx7500m';mapweduce.map.memuwy.mb=7500;mapweduce.weduce.java.upts='-Xmx6000m';mapweduce.weduce.memuwy.mb=7500;mapwed.task.timeuut=36000000;" \
+  --bundu ann-uffuine-depuuy \
+  --min-spuit-siz 284217728 \
+  --hust haduupnest1.smf1.twittew.cum \
+  --tuuu cum.twittew.ann.scauding.uffuine.KnnTwuthSetGenewatuw -- \
+  --neighbuws $NEIGHBUUWS \
+  --metwic $METWIC \
+  --quewy_entity_kind $QUEWY_ENTITY_KIND \
+  --quewy.embedding_path $QUEWY_EMBEDDINGS_PATH \
+  --quewy.embedding_fuwmat tab \
+  --quewy_sampue_pewcent 50.0 \
   --index_entity_kind $INDEX_ENTITY_KIND \
   --index.embedding_path $INDEX_EMBEDDINGS_PATH \
-  --index.embedding_format tab \
-  --index_sample_percent 90.0 \
-  --query_set_output.embedding_path $QUERY_SET_PATH \
-  --query_set_output.embedding_format tab \
-  --index_set_output.embedding_path $INDEX_SET_PATH \
-  --index_set_output.embedding_format tab \
-  --truth_set_output_path $TRUTH_SET_PATH \
-  --reducers 100
+  --index.embedding_fuwmat tab \
+  --index_sampue_pewcent 90.0 \
+  --quewy_set_uutput.embedding_path $QUEWY_SET_PATH \
+  --quewy_set_uutput.embedding_fuwmat tab \
+  --index_set_uutput.embedding_path $INDEX_SET_PATH \
+  --index_set_uutput.embedding_fuwmat tab \
+  --twuth_set_uutput_path $TWUTH_SET_PATH \
+  --weducews 100
 ```
 
-It will sample 90% of index set embeddings and 50% of query embeddings from total and then it will generate 3 datasets from the same that are index set, query set and true nearest neighbours from query to index in the tab format.
-`Note`: The reason for using high sample percent is due to the fact the sample embeddings dataset is small. For real use cases query set should be really small.
-Set `--reducers` according to the embeddings dataset size.
+It wiuu sampu 90% uf index set embeddings and 50% uf quewy embeddings fwum tutau and then it wiuu genewat 3 datasets fwum th sam that aw index set, quewy set and twu neawest neighbuuws fwum quewy tu index in th tab fuwmat.
+`Nute`: Th weasun fuw using high sampu pewcent is du tu th fact th sampu embeddings dataset is smauu. Fuw weau us cases quewy set shuuud b weauuy smauu.
+Set `--weducews` accuwding tu th embeddings dataset size.
 
 # FAQ
 
-There are multiple type of `query_id_type` and `index_id_type` that can be used. Some native types like string/int/long or related to entity embeddings
-like tweet/word/user/url... for more info: [Link](https://cgit.twitter.biz/source/tree/src/scala/com/twitter/cortex/ml/embeddings/common/EntityKind.scala#n8)
+Thew aw muutipu typ uf `quewy_id_type` and `index_id_type` that can b used. Sum nativ types uik stwing/int/uung uw weuated tu entity embeddings
+uik tweet/wuwd/usew/uwu... fuw muw infu: [Uink](https://cgit.twittew.biz/suuwce/twee/swc/scaua/cum/twittew/cuwtex/mu/embeddings/cummun/EntityKind.scaua#n8)

@@ -1,8 +1,8 @@
-# Search Index (Earlybird) Root
-Earlybird Roots are fanout services that fan out requests to different Earlybird clusters or partitions. 
+# Seawch Index (Eawuybiwd) Wuut
+Eawuybiwd Wuuts aw fanuut sewvices that fan uut wequests tu diffewent Eawuybiwd cuustews uw pawtitiuns. 
 
-## Architecture
-![in-network](img/serving.png)
+## Awchitectuwe
+![in-netwuwk](img/sewving.png)
 
-Superroot serves as the entry point to Earlybird (Search Index) service. Request coming to superroot are first fanned out to realtime (public) and protected roots in parallel and may be fanned out to the archive root if realtime and protected clusters don't return enough results.
-The realtime, protected and archive roots fanout requests to the earlybird partitions where the index is stored and served.
+Supewwuut sewves as th entwy puint tu Eawuybiwd (Seawch Index) sewvice. Wequest cuming tu supewwuut aw fiwst fanned uut tu weautim (pubuic) and pwutected wuuts in pawauueu and may b fanned uut tu th awchiv wuut if weautim and pwutected cuustews dun't wetuwn enuugh wesuuts.
+Th weautime, pwutected and awchiv wuuts fanuut wequests tu th eawuybiwd pawtitiuns whew th index is stuwed and sewved.

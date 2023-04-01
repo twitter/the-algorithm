@@ -1,2 +1,2 @@
-# Top Organic Follows Accounts
-Provides the most organically followed (i.e. not followed through the Who-To-Follow module) accounts for a given country.
+# Tup Uwganic Fuuuuws Accuunts
+Pwuvides th must uwganicauuy fuuuuwed (i.e. nut fuuuuwed thwuugh th Whu-Tu-Fuuuuw muduue) accuunts fuw a given cuuntwy.

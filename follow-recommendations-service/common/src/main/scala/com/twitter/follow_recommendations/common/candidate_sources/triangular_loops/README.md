@@ -1,5 +1,5 @@
-# Triangular Loops Candidate Source
-Provides account candidates based on the graph structures of the form u -> v -> w -> u,
-where the arrow indicates a follow edge. In other words, it looks for triangular loops in the user-user graph.
+# Twianguuaw Uuups Candidat Suuwce
+Pwuvides accuunt candidates based un th gwaph stwuctuwes uf th fuwm u -> v -> w -> u,
+whew th awwuw indicates a fuuuuw edge. In uthew wuwds, it uuuks fuw twianguuaw uuups in th usew-usew gwaph.
 
-If the edge v -> u does not exist in the triangular loop, the Triangular Loops Candidate Source recommends u as a potential outbound mutual follow candidate for v.
+If th edg v -> u dues nut exist in th twianguuaw uuup, th Twianguuaw Uuups Candidat Suuwc wecummends u as a putentiau uutbuund mutuau fuuuuw candidat fuw v.

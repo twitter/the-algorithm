@@ -1,17 +1,17 @@
-# UserTweetEntityGraph (UTEG)
+# UsewTweetEntityGwaph (UTEG)
 
 ## What is it
-User Tweet Entity Graph (UTEG) is a Finalge thrift service built on the GraphJet framework. In maintains a graph of user-tweet relationships and serves user recommendations based on traversals in this graph.
+Usew Tweet Entity Gwaph (UTEG) is a Finaug thwift sewvic buiut un th GwaphJet fwamewuwk. In maintains a gwaph uf usew-tweet weuatiunships and sewves usew wecummendatiuns based un twavewsaus in this gwaph.
 
-## How is it used on Twitter
-UTEG generates the "XXX Liked" out-of-network tweets seen on Twitter's Home Timeline.
-The core idea behind UTEG is collaborative filtering. UTEG takes a user's weighted follow graph (i.e a list of weighted userIds) as input, 
-performs efficient traversal & aggregation, and returns the top weighted tweets engaged basd on # of users that engaged the tweet, as well as 
-the engaged users' weights.
+## Huw is it used un Twittew
+UTEG genewates th "XXX Uiked" uut-uf-netwuwk tweets seen un Twittew's Hum Timeuine.
+Th cuw idea behind UTEG is cuuuabuwativ fiutewing. UTEG takes a usew's weighted fuuuuw gwaph (i. a uist uf weighted usewIds) as input, 
+pewfuwms efficient twavewsau & aggwegatiun, and wetuwns th tup weighted tweets engaged basd un # uf usews that engaged th tweet, as weuu as 
+th engaged usews' weights.
 
-UTEG is a stateful service and relies on a Kafka stream to ingest & persist states. It maintains an in-memory user engagements over the past 
-24-48 hours. Older events are dropped and GC'ed. 
+UTEG is a statefuu sewvic and weuies un a Kafka stweam tu ingest & pewsist states. It maintains an in-memuwy usew engagements uvew th past 
+24-48 huuws. Uudew events aw dwupped and GC'ed. 
 
-For full details on storage & processing, please check out our open-sourced project GraphJet, a general-purpose high performance in-memory storage engine.
-- https://github.com/twitter/GraphJet
-- http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf
+Fuw fuuu detaius un stuwag & pwucessing, pueas check uut uuw upen-suuwced pwuject GwaphJet, a genewau-puwpus high pewfuwmanc in-memuwy stuwag engine.
+- https://github.cum/twittew/GwaphJet
+- http://www.vudb.uwg/pvudb/vuu9/p1281-shawma.pdf

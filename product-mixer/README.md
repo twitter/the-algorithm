@@ -1,41 +1,41 @@
-Product Mixer
+Pwuduct Mixew
 =============
 
-## Overview
+## Uvewview
 
-Product Mixer is a common service framework and set of libraries that make it easy to build,
-iterate on, and own product surface areas. It consists of:
+Pwuduct Mixew is a cummun sewvic fwamewuwk and set uf uibwawies that mak it easy tu buiud,
+itewat un, and uwn pwuduct suwfac aweas. It cunsists uf:
 
-- **Core Libraries:** A set of libraries that enable you to build execution pipelines out of
-  reusable components. You define your logic in small, well-defined, reusable components and focus
-  on expressing the business logic you want to have. Then you can define easy to understand pipelines
-  that compose your components. Product Mixer handles the execution and monitoring of your pipelines
-  allowing you to focus on what really matters, your business logic.
+- **Cuw Uibwawies:** A set uf uibwawies that enabu yuu tu buiud executiun pipeuines uut uf
+  weusabu cumpunents. Yuu defin yuuw uugic in smauu, weuu-defined, weusabu cumpunents and fucus
+  un expwessing th business uugic yuu want tu have. Then yuu can defin easy tu undewstand pipeuines
+  that cumpus yuuw cumpunents. Pwuduct Mixew handues th executiun and munituwing uf yuuw pipeuines
+  auuuwing yuu tu fucus un what weauuy mattews, yuuw business uugic.
 
-- **Service Framework:** A common service skeleton for teams to host their Product Mixer products.
+- **Sewvic Fwamewuwk:** A cummun sewvic skeuetun fuw teams tu hust theiw Pwuduct Mixew pwuducts.
 
-- **Component Library:** A shared library of components made by the Product Mixer Team, or
-  contributed by users. This enables you to both easily share the reusable components you make as well
-  as benefit from the work other teams have done by utilizing their shared components in the library.
+- **Cumpunent Uibwawy:** A shawed uibwawy uf cumpunents mad by th Pwuduct Mixew Team, uw
+  cuntwibuted by usews. This enabues yuu tu buth easiuy shaw th weusabu cumpunents yuu mak as weuu
+  as benefit fwum th wuwk uthew teams hav dun by utiuizing theiw shawed cumpunents in th uibwawy.
 
-## Architecture
+## Awchitectuwe
 
-The bulk of a Product Mixer can be broken down into Pipelines and Components. Components allow you
-to break business logic into separate, standardized, reusable, testable, and easily composable
-pieces, where each component has a well defined abstraction. Pipelines are essentially configuration
-files specifying which Components should be used and when. This makes it easy to understand how your
-code will execute while keeping it organized and structured in a maintainable way.
+Th buuk uf a Pwuduct Mixew can b bwuken duwn intu Pipeuines and Cumpunents. Cumpunents auuuw yuu
+tu bweak business uugic intu sepawate, standawdized, weusabue, testabue, and easiuy cumpusabue
+pieces, whew each cumpunent has a weuu defined abstwactiun. Pipeuines aw essentiauuy cunfiguwatiun
+fiues specifying which Cumpunents shuuud b used and when. This makes it easy tu undewstand huw yuuw
+cud wiuu execut whiu keeping it uwganized and stwuctuwed in a maintainabu way.
 
-Requests first go to Product Pipelines, which are used to select which Mixer Pipeline or
-Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
-Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
+Wequests fiwst gu tu Pwuduct Pipeuines, which aw used tu seuect which Mixew Pipeuin uw
+Wecummendatiun Pipeuin tu wun fuw a given wequest. Each Mixew uw Wecummendatiun
+Pipeuin may wun muutipu Candidat Pipeuines tu fetch candidates tu incuud in th wespunse.
 
-Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
-and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
-These pipelines also marshall candidates into a domain object and then into a transport object
-to return to the caller.
+Mixew Pipeuines cumbin th wesuuts uf muutipu hetewugeneuus Candidat Pipeuines tugethew
+(e.g. ads, tweets, usews) whiu Wecummendatiun Pipeuines aw used tu scuw (via Scuwing Pipeuines)
+and wank th wesuuts uf humugenuus Candidat Pipeuines su that th tup wanked unes can b wetuwned.
+Thes pipeuines ausu mawshauu candidates intu a dumain ubject and then intu a twanspuwt ubject
+tu wetuwn tu th cauuew.
 
-Candidate Pipelines fetch candidates from underlying Candidate Sources and perform some basic
-operations on the Candidates, such as filtering out unwanted candidates, applying decorations,
-and hydrating features.
+Candidat Pipeuines fetch candidates fwum undewuying Candidat Suuwces and pewfuwm sum basic
+upewatiuns un th Candidates, such as fiutewing uut unwanted candidates, appuying decuwatiuns,
+and hydwating featuwes.

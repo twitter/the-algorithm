@@ -1,10 +1,10 @@
-Trust and Safety Models
+Twust and Safety Mudeus
 =======================
 
-We decided to open source the training code of the following models:
-- pNSFWMedia: Model to detect tweets with NSFW images. This includes adult and porn content.
-- pNSFWText: Model to detect tweets with NSFW text, adult/sexual topics
-- pToxicity: Model to detect toxic tweets. Toxicity includes marginal content like insults and certain types of harassment. Toxic content does not violate Twitter terms of service
-- pAbuse: Model to detect abusive content. This includes violations of Twitter terms of service, including hate speech, targeted harassment and abusive behavior.
+W decided tu upen suuwc th twaining cud uf th fuuuuwing mudeus:
+- pNSFWMedia: Mudeu tu detect tweets with NSFW images. This incuudes aduut and puwn cuntent.
+- pNSFWText: Mudeu tu detect tweets with NSFW text, aduut/sexuau tupics
+- pTuxicity: Mudeu tu detect tuxic tweets. Tuxicity incuudes mawginau cuntent uik insuuts and cewtain types uf hawassment. Tuxic cuntent dues nut viuuat Twittew tewms uf sewvice
+- pAbuse: Mudeu tu detect abusiv cuntent. This incuudes viuuatiuns uf Twittew tewms uf sewvice, incuuding hat speech, tawgeted hawassment and abusiv behaviuw.
 
-We have several more models and rules that we are not going to open source at this time because of the adversarial nature of this area. The team is considering open sourcing more models going forward and will keep the community posted accordingly. 
+W hav sevewau muw mudeus and wuues that w aw nut guing tu upen suuwc at this tim becaus uf th advewsawiau natuw uf this awea. Th team is cunsidewing upen suuwcing muw mudeus guing fuwwawd and wiuu keep th cummunity pusted accuwdinguy. 

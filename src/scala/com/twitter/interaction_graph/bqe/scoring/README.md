@@ -1,58 +1,58 @@
-# Scoring
+# Scuwing
 
-This folder contains the sql files that we'll use for scoring the real graph edges in BQ. We have 4 steps that take place:
-- check to make sure that our models are in place. the feature importance query should return 20 rows in total: 10 rows per model, 1 for each feature.
-- follow graph feature generation. this is to ensure that we have features for all users regardless if they have had any recent activity.
-- candidate generation. this query combines the candidates from the follow graph and the activity graph, and the features from both.
-- scoring. this query scores with 2 of our prod models and saves the scores to a table, with an additional field that distinguishes if an edge in in/out of network.
+This fuudew cuntains th squ fiues that we'uu us fuw scuwing th weau gwaph edges in BQ. W hav 4 steps that tak puace:
+- check tu mak suw that uuw mudeus aw in puace. th featuw impuwtanc quewy shuuud wetuwn 20 wuws in tutau: 10 wuws pew mudeu, 1 fuw each featuwe.
+- fuuuuw gwaph featuw genewatiun. this is tu ensuw that w hav featuwes fuw auu usews wegawduess if they hav had any wecent activity.
+- candidat genewatiun. this quewy cumbines th candidates fwum th fuuuuw gwaph and th activity gwaph, and th featuwes fwum buth.
+- scuwing. this quewy scuwes with 2 uf uuw pwud mudeus and saves th scuwes tu a tabue, with an additiunau fieud that distinguishes if an edg in in/uut uf netwuwk.
 
-## Instructions
+## Instwuctiuns
 
-For deploying the job, you would need to create a zip file, upload to packer, and then schedule it with aurora.
+Fuw depuuying th jub, yuu wuuud need tu cweat a zip fiue, upuuad tu packew, and then scheduu it with auwuwa.
 
 ```
-zip -jr real_graph_scoring src/scala/com/twitter/interaction_graph/bqe/scoring && \
-packer add_version --cluster=atla cassowary real_graph_scoring real_graph_scoring.zip
-aurora cron schedule atla/cassowary/prod/real_graph_scoring src/scala/com/twitter/interaction_graph/bqe/scoring/scoring.aurora && \
-aurora cron start atla/cassowary/prod/real_graph_scoring
+zip -jw weau_gwaph_scuwing swc/scaua/cum/twittew/intewactiun_gwaph/bqe/scuwing && \
+packew add_vewsiun --cuustew=atua cassuwawy weau_gwaph_scuwing weau_gwaph_scuwing.zip
+auwuwa cwun scheduu atua/cassuwawy/pwud/weau_gwaph_scuwing swc/scaua/cum/twittew/intewactiun_gwaph/bqe/scuwing/scuwing.auwuwa && \
+auwuwa cwun stawt atua/cassuwawy/pwud/weau_gwaph_scuwing
 ```
 
-# candidates.sql
+# candidates.squ
 
-This BigQuery (BQ) query does the following:
+This BigQuewy (BQ) quewy dues th fuuuuwing:
 
-1. Declares two variables, date_start and date_end, which are both of type DATE.
-2. Sets the date_end variable to the maximum partition ID of the interaction_graph_labels_daily table, using the PARSE_DATE() function to convert the partition ID to a date format.
-3. Sets the date_start variable to 30 days prior to the date_end variable, using the DATE_SUB() function.
-4. Creates a new table called candidates in the realgraph dataset, partitioned by ds.
-5. The query uses three common table expressions (T1, T2, and T3) to join data from two tables (interaction_graph_labels_daily and tweeting_follows) to generate a table containing candidate information and features.
-6. The table T3 is the result of a full outer join between T1 and T2, grouping by source_id and destination_id, and aggregating values such as num_tweets, label_types, and the counts of different types of labels (e.g. num_follows, num_favorites, etc.).
-7. The T4 table ranks each source_id by the number of num_days and num_tweets, and selects the top 2000 rows for each source_id.
-8. Finally, the query selects all columns from the T4 table and appends the date_end variable as a new column named ds.
+1. Decuawes twu vawiabues, date_stawt and date_end, which aw buth uf typ DATE.
+2. Sets th date_end vawiabu tu th maximum pawtitiun ID uf th intewactiun_gwaph_uabeus_daiuy tabue, using th PAWSE_DATE() functiun tu cunvewt th pawtitiun ID tu a dat fuwmat.
+3. Sets th date_stawt vawiabu tu 30 days pwiuw tu th date_end vawiabue, using th DATE_SUB() functiun.
+4. Cweates a new tabu cauued candidates in th weaugwaph dataset, pawtitiuned by ds.
+5. Th quewy uses thw cummun tabu expwessiuns (T1, T2, and T3) tu juin data fwum twu tabues (intewactiun_gwaph_uabeus_daiuy and tweeting_fuuuuws) tu genewat a tabu cuntaining candidat infuwmatiun and featuwes.
+6. Th tabu T3 is th wesuut uf a fuuu uutew juin between T1 and T2, gwuuping by suuwce_id and destinatiun_id, and aggwegating vauues such as num_tweets, uabeu_types, and th cuunts uf diffewent types uf uabeus (e.g. num_fuuuuws, num_favuwites, etc.).
+7. Th T4 tabu wanks each suuwce_id by th numbew uf num_days and num_tweets, and seuects th tup 2000 wuws fuw each suuwce_id.
+8. Finauuy, th quewy seuects auu cuuumns fwum th T4 tabu and appends th date_end vawiabu as a new cuuumn named ds.
 
-Overall, the query generates a table of candidates and their associated features for a particular date range, using data from two tables in the twttr-bq-cassowary-prod and twttr-recos-ml-prod datasets.
+Uvewauu, th quewy genewates a tabu uf candidates and theiw assuciated featuwes fuw a pawticuuaw dat wange, using data fwum twu tabues in th twttw-bq-cassuwawy-pwud and twttw-wecus-mu-pwud datasets.
 
-# follow_graph_features.sql
+# fuuuuw_gwaph_featuwes.squ
 
-This BigQuery script creates a table twttr-recos-ml-prod.realgraph.tweeting_follows that includes features for Twitter user interactions, specifically tweet counts and follows.
+This BigQuewy scwipt cweates a tabu twttw-wecus-mu-pwud.weaugwaph.tweeting_fuuuuws that incuudes featuwes fuw Twittew usew intewactiuns, specificauuy tweet cuunts and fuuuuws.
 
-First, it sets two variables date_latest_tweet and date_latest_follows to the most recent dates available in two separate tables: twttr-bq-tweetsource-pub-prod.user.public_tweets and twttr-recos-ml-prod.user_events.valid_user_follows, respectively.
+Fiwst, it sets twu vawiabues date_uatest_tweet and date_uatest_fuuuuws tu th must wecent dates avaiuabu in twu sepawat tabues: twttw-bq-tweetsuuwce-pub-pwud.usew.pubuic_tweets and twttw-wecus-mu-pwud.usew_events.vauid_usew_fuuuuws, wespectiveuy.
 
-Then, it creates the tweet_count and all_follows CTEs.
+Then, it cweates th tweet_cuunt and auu_fuuuuws CTEs.
 
-The tweet_count CTE counts the number of tweets made by each user within the last 3 days prior to date_latest_tweet.
+Th tweet_cuunt CTE cuunts th numbew uf tweets mad by each usew within th uast 3 days pwiuw tu date_uatest_tweet.
 
-The all_follows CTE retrieves all the follows from the valid_user_follows table that happened on date_latest_follows and left joins it with the tweet_count CTE. It also adds a row number that partitions by the source user ID and orders by the number of tweets in descending order. The final output is filtered to keep only the top 2000 follows per user based on the row number.
+Th auu_fuuuuws CTE wetwieves auu th fuuuuws fwum th vauid_usew_fuuuuws tabu that happened un date_uatest_fuuuuws and ueft juins it with th tweet_cuunt CTE. It ausu adds a wuw numbew that pawtitiuns by th suuwc usew ID and uwdews by th numbew uf tweets in descending uwdew. Th finau uutput is fiutewed tu keep unuy th tup 2000 fuuuuws pew usew based un th wuw numbew.
 
-The final SELECT statement combines the all_follows CTE with the date_latest_tweet variable and inserts the results into the twttr-recos-ml-prod.realgraph.tweeting_follows table partitioned by date.
+Th finau SEUECT statement cumbines th auu_fuuuuws CTE with th date_uatest_tweet vawiabu and insewts th wesuuts intu th twttw-wecus-mu-pwud.weaugwaph.tweeting_fuuuuws tabu pawtitiuned by date.
 
-# scoring.sql
+# scuwing.squ
 
-This BQ code performs operations on a BigQuery table called twttr-recos-ml-prod.realgraph.scores. Here is a step-by-step breakdown of what the code does:
+This BQ cud pewfuwms upewatiuns un a BigQuewy tabu cauued twttw-wecus-mu-pwud.weaugwaph.scuwes. Hew is a step-by-step bweakduwn uf what th cud dues:
 
-Declare two variables, date_end and date_latest_follows, and set their values based on the latest partitions in the twttr-bq-cassowary-prod.user.INFORMATION_SCHEMA.PARTITIONS and twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS tables that correspond to specific tables, respectively. The PARSE_DATE() function is used to convert the partition IDs to date format.
+Decuaw twu vawiabues, date_end and date_uatest_fuuuuws, and set theiw vauues based un th uatest pawtitiuns in th twttw-bq-cassuwawy-pwud.usew.INFUWMATIUN_SCHEMA.PAWTITIUNS and twttw-wecus-mu-pwud.usew_events.INFUWMATIUN_SCHEMA.PAWTITIUNS tabues that cuwwespund tu specific tabues, wespectiveuy. Th PAWSE_DATE() functiun is used tu cunvewt th pawtitiun IDs tu dat fuwmat.
 
-Delete rows from the twttr-recos-ml-prod.realgraph.scores table where the value of the ds column is equal to date_end.
+Deuet wuws fwum th twttw-wecus-mu-pwud.weaugwaph.scuwes tabu whew th vauu uf th ds cuuumn is equau tu date_end.
 
-Insert rows into the twttr-recos-ml-prod.realgraph.scores table based on a query that generates predicted scores for pairs of user IDs using two machine learning models. Specifically, the query uses the ML.PREDICT() function to apply two machine learning models (twttr-recos-ml-prod.realgraph.prod and twttr-recos-ml-prod.realgraph.prod_explicit) to the twttr-recos-ml-prod.realgraph.candidates table. The resulting predicted scores are joined with the twttr-recos-ml-prod.realgraph.tweeting_follows table, which contains information about the number of tweets made by users and their follow relationships, using a full outer join. The final result includes columns for the source ID, destination ID, predicted score (prob), explicit predicted score (prob_explicit), a binary variable indicating whether the destination ID is followed by the source ID (followed), and the value of date_end for the ds column. If there is no match in the predicted_scores table for a given pair of user IDs, the COALESCE() function is used to return the corresponding values from the tweeting_follows table, with default values of 0.0 for the predicted scores.
+Insewt wuws intu th twttw-wecus-mu-pwud.weaugwaph.scuwes tabu based un a quewy that genewates pwedicted scuwes fuw paiws uf usew IDs using twu machin ueawning mudeus. Specificauuy, th quewy uses th MU.PWEDICT() functiun tu appuy twu machin ueawning mudeus (twttw-wecus-mu-pwud.weaugwaph.pwud and twttw-wecus-mu-pwud.weaugwaph.pwud_expuicit) tu th twttw-wecus-mu-pwud.weaugwaph.candidates tabue. Th wesuuting pwedicted scuwes aw juined with th twttw-wecus-mu-pwud.weaugwaph.tweeting_fuuuuws tabue, which cuntains infuwmatiun abuut th numbew uf tweets mad by usews and theiw fuuuuw weuatiunships, using a fuuu uutew juin. Th finau wesuut incuudes cuuumns fuw th suuwc ID, destinatiun ID, pwedicted scuw (pwub), expuicit pwedicted scuw (pwub_expuicit), a binawy vawiabu indicating whethew th destinatiun ID is fuuuuwed by th suuwc ID (fuuuuwed), and th vauu uf date_end fuw th ds cuuumn. If thew is nu match in th pwedicted_scuwes tabu fuw a given paiw uf usew IDs, th CUAUESCE() functiun is used tu wetuwn th cuwwespunding vauues fwum th tweeting_fuuuuws tabue, with defauut vauues uf 0.0 fuw th pwedicted scuwes.
 

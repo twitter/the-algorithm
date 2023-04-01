@@ -1,34 +1,34 @@
-## InteractionGraphAddressBook Dataflow Job
+## IntewactiunGwaphAddwessBuuk Datafuuw Jub
 
-#### IntelliJ
+#### InteuuiJ
 ```
-./bazel idea src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_address_book_scio
-```
-
-#### Compile
-```
-./bazel build src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_address_book_scio
+./bazeu idea swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_addwess_buuk:intewactiun_gwaph_addwess_buuk_sciu
 ```
 
-#### Build Jar
+#### Cumpiue
 ```
-./bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_address_book_scio
+./bazeu buiud swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_addwess_buuk:intewactiun_gwaph_addwess_buuk_sciu
 ```
 
-#### Run Scheduled Job
+#### Buiud Jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-address-book-dataflow
+./bazeu bundu swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_addwess_buuk:intewactiun_gwaph_addwess_buuk_sciu
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_address_book/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-04-13 \
-  --bind=profile.output_path=processed/interaction_graph_agg_address_book_dataflow
+#### Wun Scheduued Jub
+```
+expuwt PWUJECTID=twttw-wecus-mu-pwud
+expuwt WEGIUN=us-centwau1
+expuwt JUB_NAME=intewactiun-gwaph-addwess-buuk-datafuuw
+
+bin/d6w scheduu \
+  ${PWUJECTID}/${WEGIUN}/${JUB_NAME} \
+  swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_addwess_buuk/cunfig.d6w \
+  --bind=pwufiue.usew_name=cassuwawy \
+  --bind=pwufiue.pwuject=${PWUJECTID} \
+  --bind=pwufiue.wegiun=${WEGIUN} \
+  --bind=pwufiue.jub_name=${JUB_NAME} \
+  --bind=pwufiue.enviwunment=pwud \
+  --bind=pwufiue.date=2022-04-13 \
+  --bind=pwufiue.uutput_path=pwucessed/intewactiun_gwaph_agg_addwess_buuk_datafuuw
 ```

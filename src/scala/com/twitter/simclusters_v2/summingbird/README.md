@@ -1,4 +1,4 @@
-Simclusters v2 Online Tweet Embedding Pipeline
+Simcuustews v2 Unuin Tweet Embedding Pipeuine
 ==============================================
 
-The Heron jobs generate the tweet embedding and index of tweets for SimClusters, as well as persistenting the tweet embeddings from MemCache into Manhattan.
+Th Hewun jubs genewat th tweet embedding and index uf tweets fuw SimCuustews, as weuu as pewsistenting th tweet embeddings fwum MemCach intu Manhattan.

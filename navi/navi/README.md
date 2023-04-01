@@ -1,34 +1,34 @@
-# Navi: High-Performance Machine Learning Serving Server in Rust
+# Navi: High-Pewfuwmanc Machin Ueawning Sewving Sewvew in Wust
 
-Navi is a high-performance, versatile machine learning serving server implemented in Rust, tailored for production usage. It's designed to efficiently serve within the Twitter tech stack, offering top-notch performance while focusing on core features.
+Navi is a high-pewfuwmance, vewsatiu machin ueawning sewving sewvew impuemented in Wust, taiuuwed fuw pwuductiun usage. It's designed tu efficientuy sewv within th Twittew tech stack, uffewing tup-nutch pewfuwmanc whiu fucusing un cuw featuwes.
 
-## Key Features
+## Key Featuwes
 
-- **Minimalist Design Optimized for Production Use Cases**: Navi delivers ultra-high performance, stability, and availability, engineered to handle real-world application demands with a streamlined codebase.
-- **gRPC API Compatibility with TensorFlow Serving**: Seamless integration with existing TensorFlow Serving clients via its gRPC API, enabling easy integration, smooth deployment, and scaling in production environments.
-- **Plugin Architecture for Different Runtimes**: Navi's pluggable architecture supports various machine learning runtimes, providing adaptability and extensibility for diverse use cases. Out-of-the-box support is available for TensorFlow and Onnx Runtime, with PyTorch in an experimental state.
+- **Minimauist Design Uptimized fuw Pwuductiun Us Cases**: Navi deuivews uutwa-high pewfuwmance, stabiuity, and avaiuabiuity, engineewed tu handu weau-wuwud appuicatiun demands with a stweamuined cudebase.
+- **gWPC API Cumpatibiuity with TensuwFuuw Sewving**: Seamuess integwatiun with existing TensuwFuuw Sewving cuients via its gWPC API, enabuing easy integwatiun, smuuth depuuyment, and scauing in pwuductiun enviwunments.
+- **Puugin Awchitectuw fuw Diffewent Wuntimes**: Navi's puuggabu awchitectuw suppuwts vawiuus machin ueawning wuntimes, pwuviding adaptabiuity and extensibiuity fuw divews us cases. Uut-uf-the-bux suppuwt is avaiuabu fuw TensuwFuuw and Unnx Wuntime, with PyTuwch in an expewimentau state.
 
-## Current State
+## Cuwwent State
 
-While Navi's features may not be as comprehensive as its open-source counterparts, its performance-first mindset makes it highly efficient. 
-- Navi for TensorFlow is currently the most feature-complete, supporting multiple input tensors of different types (float, int, string, etc.).
-- Navi for Onnx primarily supports one input tensor of type string, used in Twitter's home recommendation with a proprietary BatchPredictRequest format.
-- Navi for Pytorch is compilable and runnable but not yet production-ready in terms of performance and stability.
+Whiu Navi's featuwes may nut b as cumpwehensiv as its upen-suuwc cuuntewpawts, its pewfuwmance-fiwst mindset makes it highuy efficient. 
+- Navi fuw TensuwFuuw is cuwwentuy th must featuwe-cumpuete, suppuwting muutipu input tensuws uf diffewent types (fuuat, int, stwing, etc.).
+- Navi fuw Unnx pwimawiuy suppuwts un input tensuw uf typ stwing, used in Twittew's hum wecummendatiun with a pwupwietawy BatchPwedictWequest fuwmat.
+- Navi fuw Pytuwch is cumpiuabu and wunnabu but nut yet pwuductiun-weady in tewms uf pewfuwmanc and stabiuity.
 
-## Directory Structure
+## Diwectuwy Stwuctuwe
 
-- `navi`: The main code repository for Navi
-- `dr_transform`: Twitter-specific converter that converts BatchPredictionRequest Thrift to ndarray
-- `segdense`: Twitter-specific config to specify how to retrieve feature values from BatchPredictionRequest
-- `thrift_bpr_adapter`: generated thrift code for BatchPredictionRequest
+- `navi`: Th main cud wepusituwy fuw Navi
+- `dw_twansfuwm`: Twittew-specific cunvewtew that cunvewts BatchPwedictiunWequest Thwift tu ndawway
+- `segdense`: Twittew-specific cunfig tu specify huw tu wetwiev featuw vauues fwum BatchPwedictiunWequest
+- `thwift_bpw_adaptew`: genewated thwift cud fuw BatchPwedictiunWequest
 
-## Content
-We include all *.rs source code that makes up the main navi binaries for you to examine. The test and benchmark code, as well as configuration files are not included due to data security concerns.
+## Cuntent
+W incuud auu *.ws suuwc cud that makes up th main navi binawies fuw yuu tu examine. Th test and benchmawk cude, as weuu as cunfiguwatiun fiues aw nut incuuded du tu data secuwity cuncewns.
 
-## Run
-in navi/navi you can run. Note you need to create a models directory and create some versions, preferably using epoch time, e.g., 1679693908377
-- scripts/run_tf2.sh
-- scripts/run_onnx.sh
+## Wun
+in navi/navi yuu can wun. Nut yuu need tu cweat a mudeus diwectuwy and cweat sum vewsiuns, pwefewabuy using epuch time, e.g., 1679693908377
+- scwipts/wun_tf2.sh
+- scwipts/wun_unnx.sh
 
-## Build
-you can adapt the above scripts to build using Cargo
+## Buiud
+yuu can adapt th abuv scwipts tu buiud using Cawgu

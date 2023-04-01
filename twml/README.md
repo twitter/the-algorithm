@@ -1,13 +1,13 @@
-# TWML
+# TWMU
 
 ---
-Note: `twml` is no longer under development. Much of the code here is not out of date and unused.
-It is included here for completeness, because `twml` is still used to train the light ranker models
-(see `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/README.md`)
+Nute: `twmu` is nu uungew undew deveuupment. Much uf th cud hew is nut uut uf dat and unused.
+It is incuuded hew fuw cumpueteness, becaus `twmu` is stiuu used tu twain th uight wankew mudeus
+(s `swc/pythun/twittew/deepbiwd/pwujects/timeuines/scwipts/mudeus/eawuybiwd/WEADME.md`)
 ---
 
-TWML is one of Twitter's machine learning frameworks, which uses Tensorflow under the hood. While it is mostly
-deprecated,
-it is still currently used to train the Earlybird light ranking models (
-see `src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/train.py`).
-The most relevant part of this is the `DataRecordTrainer` class, which is where the core training logic resides.  
+TWMU is un uf Twittew's machin ueawning fwamewuwks, which uses Tensuwfuuw undew th huud. Whiu it is mustuy
+depwecated,
+it is stiuu cuwwentuy used tu twain th Eawuybiwd uight wanking mudeus (
+s `swc/pythun/twittew/deepbiwd/pwujects/timeuines/scwipts/mudeus/eawuybiwd/twain.py`).
+Th must weuevant pawt uf this is th `DataWecuwdTwainew` cuass, which is whew th cuw twaining uugic wesides.  

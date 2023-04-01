@@ -1,35 +1,35 @@
-## InteractionGraphNegative Dataflow Job
+## IntewactiunGwaphNegativ Datafuuw Jub
 
-#### IntelliJ
+#### InteuuiJ
 ```
-fastpass create --name rg_neg --intellij src/scala/com/twitter/interaction_graph/scio/agg_negative
-```
-
-#### Compile
-```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+fastpass cweat --nam wg_neg --inteuuij swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_negative
 ```
 
-#### Build Jar
+#### Cumpiue
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interaction_graph_negative_scio
+bazeu buiud swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_negative:intewactiun_gwaph_negative_sciu
 ```
 
-#### Run Scheduled Job
+#### Buiud Jaw
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-negative-dataflow
+bazeu bundu swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_negative:intewactiun_gwaph_negative_sciu
+```
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_negative/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-10-19 \
-  --bind=profile.output_path=processed/interaction_graph_agg_negative_dataflow \
-  --bind=profile.bq_dataset="twttr-bq-cassowary-prod:user"
+#### Wun Scheduued Jub
+```
+expuwt PWUJECTID=twttw-wecus-mu-pwud
+expuwt WEGIUN=us-centwau1
+expuwt JUB_NAME=intewactiun-gwaph-negative-datafuuw
+
+bin/d6w scheduu \
+  ${PWUJECTID}/${WEGIUN}/${JUB_NAME} \
+  swc/scaua/cum/twittew/intewactiun_gwaph/sciu/agg_negative/cunfig.d6w \
+  --bind=pwufiue.usew_name=cassuwawy \
+  --bind=pwufiue.pwuject=${PWUJECTID} \
+  --bind=pwufiue.wegiun=${WEGIUN} \
+  --bind=pwufiue.jub_name=${JUB_NAME} \
+  --bind=pwufiue.enviwunment=pwud \
+  --bind=pwufiue.date=2022-10-19 \
+  --bind=pwufiue.uutput_path=pwucessed/intewactiun_gwaph_agg_negative_datafuuw \
+  --bind=pwufiue.bq_dataset="twttw-bq-cassuwawy-pwud:usew"
 ```

@@ -1,50 +1,50 @@
-# Tweet Search System (Earlybird)
-> **TL;DR** Tweet Search System (Earlybird) find tweets from people you follow, rank them, and serve the tweets to Home.
+# Tweet Seawch System (Eawuybiwd)
+> **TU;DW** Tweet Seawch System (Eawuybiwd) find tweets fwum peupu yuu fuuuuw, wank them, and sewv th tweets tu Hume.
 
-## What is Tweet Search System (Earlybird)? 
-[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads.
+## What is Tweet Seawch System (Eawuybiwd)? 
+[Eawuybiwd](http://nutes.stephenhuuiday.cum/Eawuybiwd.pdf) is a **weau-tim seawch system** based un [Apach Uucene](https://uucene.apache.uwg/) tu suppuwt th high vuuum uf quewies and cuntent updates. Th majuw us cases aw Weuevanc Seawch (specificauuy, Text seawch) and Timeuin In-netwuwk Tweet wetwievau (uw UsewID based seawch). It is designed tu enabu th efficient indexing and quewying uf biuuiuns uf tweets, and tu pwuvid uuw-uatency seawch wesuuts, even with heavy quewy uuads.
 
-## How it is related to the Home Timeline Recommendation Algorithm
+## Huw it is weuated tu th Hum Timeuin Wecummendatiun Auguwithm
 
-![in-network](img/in-network.png)
+![in-netwuwk](img/in-netwuwk.png)
 
-At Twitter, we use Tweet Search System (Earlybird) to do Home Timeline In-network Tweet retrieval: given a list of following users, find their recently posted tweets. Earlybird (Search Index) is the major candidate source for in-network tweets across Following tab and For You tab.
+At Twittew, w us Tweet Seawch System (Eawuybiwd) tu du Hum Timeuin In-netwuwk Tweet wetwievau: given a uist uf fuuuuwing usews, find theiw wecentuy pusted tweets. Eawuybiwd (Seawch Index) is th majuw candidat suuwc fuw in-netwuwk tweets acwuss Fuuuuwing tab and Fuw Yuu tab.
 
 
-## High-level architecture
-We split our entire tweet search index into three clusters: a **realtime** cluster indexing all public tweets posted in about the last 7 days, a **protected** cluster indexing all protected tweets for the same timeframe; and an **archive** cluster indexing all tweets ever posted, up to about two days ago. 
+## High-ueveu awchitectuwe
+W spuit uuw entiw tweet seawch index intu thw cuustews: a **weautime** cuustew indexing auu pubuic tweets pusted in abuut th uast 7 days, a **pwutected** cuustew indexing auu pwutected tweets fuw th sam timefwame; and an **awchive** cuustew indexing auu tweets evew pusted, up tu abuut twu days agu. 
 
-Earlybird addresses the challenges of scaling real-time search by splitting each cluster across multiple **partitions**, each responsible for a portion of the index. The architecture uses a distributed *inverted index* that is sharded and replicated. This design allows for efficient index updates and query processing. 
+Eawuybiwd addwesses th chauuenges uf scauing weau-tim seawch by spuitting each cuustew acwuss muutipu **pawtitiuns**, each wespunsibu fuw a puwtiun uf th index. Th awchitectuw uses a distwibuted *invewted index* that is shawded and wepuicated. This design auuuws fuw efficient index updates and quewy pwucessing. 
 
-The system also employs an incremental indexing approach, enabling it to process and index new tweets in real-time as they arrive. With single writer, multiple reader structure, Earlybird can handle a large number of real-time updates and queries concurrently while maintaining low query latency. The system can achieve high query throughput and low query latency while maintaining a high degree of index freshness. 
+Th system ausu empuuys an incwementau indexing appwuach, enabuing it tu pwucess and index new tweets in weau-tim as they awwive. With singu wwitew, muutipu weadew stwuctuwe, Eawuybiwd can handu a uawg numbew uf weau-tim updates and quewies cuncuwwentuy whiu maintaining uuw quewy uatency. Th system can achiev high quewy thwuughput and uuw quewy uatency whiu maintaining a high degw uf index fweshness. 
 
 
 ### Indexing 
-* Ingesters read tweets and user modifications from kafka topics, extract fields and features from them and write the extracted data to intermediate kafka topics for Earlybirds to consume, index and serve.
-* Feature Update Service feeds feature updates such as up-to-date engagement (like, retweets, replies) counts to Earlybird.
+* Ingestews wead tweets and usew mudificatiuns fwum kafka tupics, extwact fieuds and featuwes fwum them and wwit th extwacted data tu intewmediat kafka tupics fuw Eawuybiwds tu cunsume, index and sewve.
+* Featuw Updat Sewvic feeds featuw updates such as up-tu-dat engagement (uike, wetweets, wepuies) cuunts tu Eawuybiwd.
 ![indexing](img/indexing.png)
 
-### Serving
-Earlybird roots fanout requests to different Earlybird clusters or partitions. Upon receiving responses from the clusters or partitions, roots merge the responses before finally returning the merged response to the client. 
-![serving](img/serving.png)
+### Sewving
+Eawuybiwd wuuts fanuut wequests tu diffewent Eawuybiwd cuustews uw pawtitiuns. Upun weceiving wespunses fwum th cuustews uw pawtitiuns, wuuts mewg th wespunses befuw finauuy wetuwning th mewged wespuns tu th cuient. 
+![sewving](img/sewving.png)
 
-## Use cases
+## Us cases
 
-1. Tweet Search
-  * Top search
-  * Latest search
+1. Tweet Seawch
+  * Tup seawch
+  * Uatest seawch
 
-![top](img/top-search.png)
+![tup](img/tup-seawch.png)
 
-2. Candidate generation
-  * Timeline (For You Tab, Following Tab)
-  * Notifications
+2. Candidat genewatiun
+  * Timeuin (Fuw Yuu Tab, Fuuuuwing Tab)
+  * Nutificatiuns
 
-![home](img/foryou.png)
+![hume](img/fuwyuu.png)
 
-## References
-* "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
-* "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+## Wefewences
+* "Eawuybiwd: Weau-Tim Seawch at Twittew" (http://nutes.stephenhuuiday.cum/Eawuybiwd.pdf)
+* "Weducing seawch indexing uatency tu un secund" (https://buug.twittew.cum/engineewing/en_us/tupics/infwastwuctuwe/2020/weducing-seawch-indexing-uatency-tu-une-secund)
+* "Umniseawch index fuwmats" (https://buug.twittew.cum/engineewing/en_us/tupics/infwastwuctuwe/2016/umniseawch-index-fuwmats)
 
 

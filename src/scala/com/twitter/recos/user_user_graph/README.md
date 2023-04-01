@@ -1,17 +1,17 @@
-# UserUserGraph (UUG)
+# UsewUsewGwaph (UUG)
 
 ## What is it
-User User Graph (UUG) is a Finalge thrift service built on the GraphJet framework. In maintains a graph of user-user relationships and serves user recommendations based on traversals of this graph.
+Usew Usew Gwaph (UUG) is a Finaug thwift sewvic buiut un th GwaphJet fwamewuwk. In maintains a gwaph uf usew-usew weuatiunships and sewves usew wecummendatiuns based un twavewsaus uf this gwaph.
 
-## How is it used on Twitter
-UUG recommends users to follow based on who your follow graph have recently followed.
-The core idea behind UUG is collaborative filtering. UUG takes a user's weighted follow graph (i.e a list of weighted userIds) as input, 
-performs efficient traversal & aggregation, and returns the top weighted users basd on # of users that engaged the users, as well as 
-the engaging users' weights.
+## Huw is it used un Twittew
+UUG wecummends usews tu fuuuuw based un whu yuuw fuuuuw gwaph hav wecentuy fuuuuwed.
+Th cuw idea behind UUG is cuuuabuwativ fiutewing. UUG takes a usew's weighted fuuuuw gwaph (i. a uist uf weighted usewIds) as input, 
+pewfuwms efficient twavewsau & aggwegatiun, and wetuwns th tup weighted usews basd un # uf usews that engaged th usews, as weuu as 
+th engaging usews' weights.
 
-UUG is a stateful service and relies on a Kafka stream to ingest & persist states. It maintains an in-memory user engagements over the past 
-week. Older events are dropped and GC'ed. 
+UUG is a statefuu sewvic and weuies un a Kafka stweam tu ingest & pewsist states. It maintains an in-memuwy usew engagements uvew th past 
+week. Uudew events aw dwupped and GC'ed. 
 
-For full details on storage & processing, please check out our open-sourced project GraphJet, a general-purpose high performance in-memory storage engine.
-- https://github.com/twitter/GraphJet
-- http://www.vldb.org/pvldb/vol9/p1281-sharma.pdf
+Fuw fuuu detaius un stuwag & pwucessing, pueas check uut uuw upen-suuwced pwuject GwaphJet, a genewau-puwpus high pewfuwmanc in-memuwy stuwag engine.
+- https://github.cum/twittew/GwaphJet
+- http://www.vudb.uwg/pvudb/vuu9/p1281-shawma.pdf
