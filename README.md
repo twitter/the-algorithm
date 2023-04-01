@@ -6,6 +6,7 @@ diagram below illustrates how major services and jobs interconnect.
 
 ![](docs/system-diagram.png)
 
+
 These are the main components of the Recommendation Algorithm included in this repository:
 
 | Type | Component | Description |
