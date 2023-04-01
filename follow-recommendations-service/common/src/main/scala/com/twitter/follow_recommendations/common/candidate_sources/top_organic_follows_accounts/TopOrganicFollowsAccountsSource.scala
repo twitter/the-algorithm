@@ -86,14 +86,14 @@ class TopOrganicFollowsAccountsSource @Inject() (
             debug("candidate source failed identifier = %s".format(identifier), t)
             errorStats.incr()
           })
-          .map(transformOrganicFollowAccountssToCandidateSource)
+          .map(transformOrganicFollowAccountsToCandidateSource)
       }.getOrElse {
         noCountryCodeStats.incr()
         Stitch.value(Seq[CandidateUser]())
       }
   }
 
-  private def transformOrganicFollowAccountssToCandidateSource(
+  private def transformOrganicFollowAccountsToCandidateSource(
     organicFollowsAccounts: Seq[Option[OrganicFollowsAccounts]]
   ): Seq[CandidateUser] = {
     organicFollowsAccounts

@@ -56,7 +56,7 @@ object StratoClientModule extends TwitterModule {
   val WTFPostNuxFeaturesPath = "ml/featureStore/onboarding/wtfPostNuxFeatures.User"
   val ElectionCandidatesPath = "onboarding/electionAccounts"
   val UserUserGraphPath = "recommendations/userUserGraph"
-  val WtfDissmissEventsPath = "onboarding/wtfDismissEvents"
+  val WtfDismissEventsPath = "onboarding/wtfDismissEvents"
   val RelatableAccountsPath = "onboarding/userrecs/relatableAccounts"
   val ExtendedNetworkCandidatesPath = "search/account_search/extendedNetworkCandidatesMH"
   val LabeledNotificationPath = "frigate/magicrecs/labeledPushRecsAggregated.User"
@@ -234,7 +234,7 @@ object StratoClientModule extends TwitterModule {
       Unit,
       (Long, (Long, Long)),
       WhoToFollowDismissEventDetails
-    ](WtfDissmissEventsPath)
+    ](WtfDismissEventsPath)
 
   @Provides
   @Singleton

@@ -98,8 +98,8 @@ trait ScribeClientEventSideEffect[
       override val languageCode = query.clientContext.languageCode
       override val userAgent = query.clientContext.userAgent
       override val isSsl = None
-      override val referer = None
-      override val externalReferer = None
+      override val referrer = None
+      override val externalReferrer = None
     }
   }
 }
