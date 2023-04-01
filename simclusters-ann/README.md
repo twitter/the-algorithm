@@ -7,10 +7,10 @@ The cosine similarity between two Tweet SimClusters Embedding represents the rel
 ## Background
 SimClusters V2 runtime infra introduces the SimClusters and its online and offline approaches. A heron job builds the mapping between SimClusters and Tweets. The job saves top 400 Tweets for a SimClusters and top 100 SimClusters for a Tweet. Favorite score and follow score are two types of tweet score.  In the document, the top 100 SimClusters based on the favorite score for a Tweet stands for the Tweet SimClusters Embedding. 
 
-The cosine similarity between two Tweet SimClusters Embedding presents the relevant level of two tweets in SimCluster space. The score varies from 0 to 1. The high cosine similarity score(>= 0.7 in Prod) means that the users who like two tweets share the same SimClusters. 
+The [cosine similarity](https://en.m.wikipedia.org/wiki/Cosine_similarity) between two Tweet SimClusters Embedding presents the relevant level of two tweets in SimCluster space. The score varies from 0 to 1. The high cosine similarity score(>= 0.7 in Prod) means that the users who like two tweets share the same SimClusters. 
 
 
-SimClusters from the Linear Algebra Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
+SimClusters from the [Linear Algebra](https://en.m.wikipedia.org/wiki/Linear_algebra) Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
 
  However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
 
@@ -35,7 +35,7 @@ SimClusters from the Linear Algebra Perspective discussed the difference between
 | T2 |  Score | 0 |  ... |
 | T3 |  0 | Score  |  ... |
 
-4. Compute the dot product between source vector and the approximate vectors for each tweet. (Calculate *R • SV^T*). Take top *X* tweets. In Prod, *X = 200*
+4. Compute the [dot product](https://en.m.wikipedia.org/wiki/Dot_product) between source vector and the approximate vectors for each tweet. (Calculate *R • SV^T*). Take top *X* tweets. In Prod, *X = 200*
 
 5. Fetch *X* tweet SimClusters Embedding, Calculate Cosine Similarity between *X* tweets and *SV*, Return top *Y* above a certain threshold *Z*.
 
