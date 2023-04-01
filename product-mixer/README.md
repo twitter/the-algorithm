@@ -31,7 +31,7 @@ Recommendation Pipeline to run for a given request. Each Mixer or Recommendation
 Pipeline may run multiple Candidate Pipelines to fetch candidates to include in the response.
 
 Mixer Pipelines combine the results of multiple heterogeneous Candidate Pipelines together
-(e.g. ads, tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
+(e.g. ads, Tweets, users) while Recommendation Pipelines are used to score (via Scoring Pipelines)
 and rank the results of homogenous Candidate Pipelines so that the top ranked ones can be returned.
 These pipelines also marshall candidates into a domain object and then into a transport object
 to return to the caller.
