@@ -30,7 +30,7 @@ These are the main components of the Recommendation Algorithm included in this r
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
-We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
+We included Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
 
 ## Contributing
 
