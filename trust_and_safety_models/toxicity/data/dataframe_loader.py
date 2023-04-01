@@ -93,11 +93,19 @@ class ENLoader(DataframeLoader):
 
     return df
 
-  def load_data(self, test=False, **kwargs):
-    if "reload" in kwargs and kwargs["reload"]:
-      df = self._reload(test, kwargs["reload"])
-      if df is not None and df.shape[0] > 0:
-        return df
+  def load_data(self, test=False, reload_data=False):
+    data = None
+    if reload_data:
+        try:
+            data = self._reload(test, reload_data)
+        except Exception as e:
+            print(f"An error occurred while reloading the data: {str(e)}")
+            return None
+    if data is not None and data.shape[0] > 0:
+        return data
+    else:
+        print("The reloaded data is empty or None")
+        return None
 
     df = None
     query_settings = self.query_settings
