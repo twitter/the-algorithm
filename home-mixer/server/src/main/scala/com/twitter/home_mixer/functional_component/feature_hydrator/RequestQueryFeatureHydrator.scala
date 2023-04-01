@@ -51,6 +51,7 @@ class RequestQueryFeatureHydrator[
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Request")
 
   private val DarkRequestAnnotation = "clnt/has_dark_request"
+  private val Spacey = "spacey ✩"
 
   // Convert Language code to ISO 639-3 format
   private def getLanguageISOFormatByCode(languageCode: String): String =
