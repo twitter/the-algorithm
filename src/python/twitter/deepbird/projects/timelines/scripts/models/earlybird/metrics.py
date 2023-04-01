@@ -52,7 +52,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
 
     num_labels = shape[class_dim]
     # If we are doing multi-class / multi-label metric, the number of classes / labels must
-    # be know at graph construction time.  This dimension cannot have size None.
+    # be known at graph construction time.  This dimension cannot have size None.
     assert num_labels is not None, "The multi-metric dimension cannot be None."
     assert classes is None or len(classes) == num_labels, (
       "Number of classes must match the number of labels")
