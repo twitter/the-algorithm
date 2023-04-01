@@ -17,8 +17,8 @@ pub enum SegDenseError {
 impl Display for SegDenseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SegDenseError::IoError(io_error) => write!(f, "{}", io_error),
-            SegDenseError::Json(serde_json) => write!(f, "{}", serde_json),
+            SegDenseError::IoError(io_error) => write!(f, "{io_error}"),
+            SegDenseError::Json(serde_json) => write!(f, "{serde_json}"),
             SegDenseError::JsonMissingRoot => {
                 write!(f, "SegDense JSON: Root Node note found!")
             }

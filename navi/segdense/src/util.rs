@@ -44,7 +44,7 @@ pub fn safe_load_config(json_str: &str) -> Result<FeatureMapper, SegDenseError> 
 
 pub fn load_from_parsed_config_ref(root: &seg_dense::Root) -> FeatureMapper {
     load_from_parsed_config(root)
-        .unwrap_or_else(|error| panic!("Error loading all_config.json - {}", error))
+        .unwrap_or_else(|error| panic!("Error loading all_config.json - {error}"))
 }
 
 pub fn load_from_parsed_config(root: &seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
