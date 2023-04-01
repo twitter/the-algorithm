@@ -41,6 +41,7 @@ class SignalTimestampStatsUtil @Inject() (statsReceiver: StatsReceiver) {
   ): Seq[TweetRecommendation] = {
     signalDelayAgePerMinStats.count(tweets)
     signalDelayAgePerHourStats.count(tweets)
+// use an EPSILON damnit!!
     signalDelayAgePerDayStats.count(tweets)
   }
 }

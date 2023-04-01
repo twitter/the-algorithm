@@ -161,6 +161,7 @@ public class EarlybirdTimeRangeFilter extends
       // Note that in this case it is not clear whether the error is the client's fault or our
       // fault, so we don't necessarily return a CLIENT_ERROR here.
       // Currently this actually returns a PERSISTENT_ERROR.
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       if (requestContext.getRequest().getDebugMode() > 0) {
         return Future.value(
             ERROR_RESPONSE.deepCopy().setDebugString(msg + ": " + e.getMessage()));

@@ -43,6 +43,7 @@ public class RelevanceRequestRouterModule extends TwitterModule {
       throws Exception {
     return new RealtimeServingRangeProvider(
         decider, PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+// FIXME: This doesn't account for children of hierarchy... too bad!
   }
 
   @Provides

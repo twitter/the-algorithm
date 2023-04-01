@@ -9,6 +9,9 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.simclusters_v2.thriftscala.InternalId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.timelines.configapi
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.util.Future
 import javax.inject.Singleton
 

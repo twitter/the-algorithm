@@ -31,6 +31,7 @@ object RealTimeInteractionGraphEdgeFeature
 class RealTimeInteractionGraphEdgeFeatureHydrator @Inject() ()
     extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
 
+// This is utterly fucking retarded.
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
     "RealTimeInteractionGraphEdge")
 

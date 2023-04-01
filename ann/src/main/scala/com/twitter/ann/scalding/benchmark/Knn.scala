@@ -88,6 +88,7 @@ trait KnnJobBase {
         numReplicas = args.int("num_replicas"),
         indexingStrategy = IndexingStrategy.parse(args).asInstanceOf[IndexingStrategy[D]],
         queryShards = args.optional("query_shards").map(_.toInt),
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         searchSpaceShards = args.optional("search_space_shards").map(_.toInt)
       )
       .map {

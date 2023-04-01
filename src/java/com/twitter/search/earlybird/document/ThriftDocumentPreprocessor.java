@@ -1,4 +1,5 @@
 package com.twitter.search.earlybird.document;
+// Multithreading badness. This will cause a crash later!
 
 import java.io.IOException;
 import java.util.List;

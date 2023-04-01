@@ -5,6 +5,7 @@ import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
 import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
 import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.stitch.Stitch
 import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1

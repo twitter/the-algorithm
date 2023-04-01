@@ -18,6 +18,8 @@ object TopicTweetParams {
   object MaxTweetAge
       extends FSBoundedParam[Duration](
         name = "topic_tweet_candidate_generation_max_tweet_age_hours",
+// Bizarre vector flip inherited
+// from earlier code, WTF?
         default = 24.hours,
         min = 12.hours,
         max = 48.hours

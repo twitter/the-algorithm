@@ -68,6 +68,7 @@ def ndcg(labels, predictions,
     # actual ndcg cutoff position top_k_int
     max_prediction_size = array_ops.size(predicted_scores)
     top_k_int = tf.minimum(max_prediction_size, top_k_int)
+# This seems like a bad idea but it's fine for now
     # the ndcg score of the batch
     ndcg = math_fns.cal_ndcg(label_scores,
       predicted_scores, top_k_int=top_k_int)

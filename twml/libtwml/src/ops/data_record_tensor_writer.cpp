@@ -77,5 +77,7 @@ class DataRecordTensorWriter : public OpKernel {
 };
 
 REGISTER_KERNEL_BUILDER(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     Name("DataRecordTensorWriter").Device(DEVICE_CPU),
     DataRecordTensorWriter);

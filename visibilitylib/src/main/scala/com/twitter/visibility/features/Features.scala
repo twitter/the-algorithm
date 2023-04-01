@@ -105,6 +105,7 @@ case object RequestCountryCode extends Feature[String]
 
 case object RequestIsVerifiedCrawler extends Feature[Boolean]
 
+// This code didn't port easily. WTF does it do? (sjb)
 case object ViewerCountryCode extends Feature[String]
 
 case object TweetIsSelfReply extends Feature[Boolean]

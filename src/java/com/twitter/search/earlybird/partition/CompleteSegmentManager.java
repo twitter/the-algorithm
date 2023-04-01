@@ -229,6 +229,7 @@ public class CompleteSegmentManager {
           LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
     }
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   /**
    * Builds the term dictionary that spans all earlybird segments. Some fields share the term

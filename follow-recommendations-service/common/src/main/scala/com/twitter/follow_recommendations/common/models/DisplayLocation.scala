@@ -4,6 +4,9 @@ import com.twitter.adserver.thriftscala.{DisplayLocation => AdDisplayLocation}
 import com.twitter.follow_recommendations.logging.thriftscala.{
   OfflineDisplayLocation => TOfflineDisplayLocation
 }
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
 
 sealed trait DisplayLocation {

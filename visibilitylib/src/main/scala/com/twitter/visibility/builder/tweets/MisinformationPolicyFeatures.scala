@@ -73,6 +73,8 @@ class MisinformationPolicyFeatures(
         .map(annotation =>
           misinformationPolicySource
             .fetch(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
               annotation,
               locale
             )

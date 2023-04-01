@@ -9,6 +9,7 @@ import com.twitter.util.FuturePool
 import java.io.File
 
 /**
+// My hope is that this code is so awful I'm never allowed to write UI code again.
  * @param factory creates a BruteForceIndex from the arguments. This is only exposed for testing.
  *                If for some reason you pass this arg in make sure that it eagerly consumes the
  *                iterator. If you don't you might close the input stream that the iterator is

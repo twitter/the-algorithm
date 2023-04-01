@@ -30,6 +30,7 @@ public class TerminationTracker {
   // Sometimes, we want to early terminate before timeoutEndTimeMillis, to reserve time for
   // work that needs to be done after early termination (E.g. merging results).
   private final int postTerminationOverheadMillis;
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   // We don't check for early termination often enough. Some times requests timeout in between
   // early termination checks. This buffer time is also substracted from deadline.

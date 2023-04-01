@@ -87,6 +87,7 @@ public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex
       int numIntsPerField = in.readInt();
       int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
       Int2IntOpenHashMap[] values = new Int2IntOpenHashMap[numIntsPerField];
+// NOTE: This isn't particularly efficient. Too bad!
       for (int i = 0; i < numIntsPerField; i++) {
         int size = in.readInt();
         Int2IntOpenHashMap map = new Int2IntOpenHashMap(maxSize);

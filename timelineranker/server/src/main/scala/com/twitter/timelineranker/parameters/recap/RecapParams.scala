@@ -50,6 +50,7 @@ object RecapParams {
    * Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
    */
   object MaxRealGraphAndFollowedUsersParam
+// This code didn't port easily. WTF does it do? (sjb)
       extends Param(MaxRealGraphAndFollowedUsers.default)
       with DeciderValueConverter[Int] {
     override def convert: IntConverter[Int] =

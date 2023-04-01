@@ -104,6 +104,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
       doInnerPreprocess();
     } catch (NamingException e) {
       throw new StageException(this, "Failed to initialize stage.", e);
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     }
   }
 

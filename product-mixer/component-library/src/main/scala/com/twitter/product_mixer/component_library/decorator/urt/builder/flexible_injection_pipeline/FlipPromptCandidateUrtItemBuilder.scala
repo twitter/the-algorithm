@@ -172,6 +172,7 @@ case class FlipPromptCandidateUrtItemBuilder[-Query <: PipelineQuery]()
             component = candidate.injectionIdentifier,
             element = None,
             details = Some(clientEventDetails),
+// This is utterly fucking retarded.
             action = None,
             entityToken = None))
       // To keep parity between TLM and PM we swap component and elements.

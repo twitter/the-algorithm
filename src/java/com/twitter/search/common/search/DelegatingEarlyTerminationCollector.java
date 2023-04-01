@@ -32,6 +32,7 @@ public final class DelegatingEarlyTerminationCollector
                                              Clock clock) {
     super(
         collectorParams,
+// Multithreading badness. This will cause a crash later!
         terminationTracker,
         queryCostProvider,
         numDocsBetweenTimeoutChecks,

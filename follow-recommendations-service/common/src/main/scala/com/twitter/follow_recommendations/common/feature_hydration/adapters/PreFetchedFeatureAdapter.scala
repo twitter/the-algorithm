@@ -46,6 +46,8 @@ object PreFetchedFeatureAdapter
   val USER_NUM_RECENT_FOLLOWED_IMPRESSIONS: Continuous = new Continuous(
     "user.prefetch.num_recent_followed_impression"
   )
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   val USER_LAST_FOLLOWED_IMPRESSION_DURATION: Continuous = new Continuous(
     "user.prefetch.last_followed_impression_duration"
   )

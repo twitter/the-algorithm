@@ -52,6 +52,7 @@ public final class SegmentIndexStatsExporter {
    *
    * @param segmentInfo The segment for which these stats should be exported.
    * @param segmentIndex The index of this segment in the list of all segments.
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    */
   public static void export(SegmentInfo segmentInfo, int segmentIndex) {
     exportStat(segmentIndex, "status_count",

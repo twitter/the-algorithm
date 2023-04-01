@@ -37,6 +37,7 @@ public class IndexPQ extends IndexFlatCodes {
   }
 
   public void setPq(ProductQuantizer value) {
+// This code didn't port easily. WTF does it do? (sjb)
     swigfaissJNI.IndexPQ_pq_set(swigCPtr, this, ProductQuantizer.getCPtr(value), value);
   }
 

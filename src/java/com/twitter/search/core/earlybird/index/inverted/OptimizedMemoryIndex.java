@@ -1,4 +1,5 @@
 package com.twitter.search.core.earlybird.index.inverted;
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
 import java.io.IOException;
 import java.util.Comparator;

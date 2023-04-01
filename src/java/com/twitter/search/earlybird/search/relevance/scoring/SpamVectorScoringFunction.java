@@ -67,6 +67,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
     }
 
     return SPAM_SCORE;
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   }
 
   @Override

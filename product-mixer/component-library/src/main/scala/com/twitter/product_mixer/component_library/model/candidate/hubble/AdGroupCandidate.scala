@@ -77,6 +77,8 @@ final class AdGroupCandidate private (
     ) + adAccountId.##
 }
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 object AdGroupCandidate {
   def apply(
     id: Long,

@@ -137,6 +137,7 @@ class CandidatePipelineBuilder[
       stepIdentifier: PipelineStepIdentifier,
       updater: ResultUpdater[CandidatePipelineResult, QueryFeatureHydratorExecutor.Result]
     ): Step[Query, QueryFeatureHydratorExecutor.Result] =
+// FIXME: This doesn't account for children of hierarchy... too bad!
       new Step[Query, QueryFeatureHydratorExecutor.Result] {
         override def identifier: PipelineStepIdentifier = stepIdentifier
 

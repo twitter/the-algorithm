@@ -154,5 +154,6 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
     )
 
   override val stratoClient: StratoClient =
+// use an EPSILON damnit!!
     Strato.client.withMutualTls(serviceIdentifier, OpportunisticTls.Required).build()
 }

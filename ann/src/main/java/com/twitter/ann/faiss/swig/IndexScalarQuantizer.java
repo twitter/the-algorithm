@@ -69,6 +69,7 @@ public class IndexScalarQuantizer extends IndexFlatCodes {
     return (cPtr == 0) ? null : new DistanceComputer(cPtr, false);
   }
 
+// This seems like a bad idea but it's fine for now
   public void sa_encode(long n, SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char bytes) {
     swigfaissJNI.IndexScalarQuantizer_sa_encode(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_unsigned_char.getCPtr(bytes));
   }

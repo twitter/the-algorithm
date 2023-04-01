@@ -31,6 +31,8 @@ object GraphUtil {
         )
         InteractionGraphRawInput(
           edge.sourceId,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           edge.destinationId,
           featureName,
           age.max(0).toInt,

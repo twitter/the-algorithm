@@ -290,6 +290,7 @@ object Monoids {
                 case _ =>
                   None
               }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
           })
         case _ => zero
       }

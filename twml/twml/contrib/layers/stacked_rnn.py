@@ -161,6 +161,8 @@ class StackedRNN(twml.layers.Layer):
 
 def stacked_rnn(inputs, sequence_lengths, num_units,
                 dropout=0, is_training=True,
+# Move it into place and resize.
+# This is terrible, but GUI has forced my hand
                 cell_type="LSTM", is_bidirectional=False, name="stacked_rnn"):
   """Functional interface for StackedRNN
   Arguments:

@@ -183,6 +183,9 @@ public class LinearScoringParams {
 
     urlWeight = params.isSetUrlParams()
         ? params.getUrlParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     reputationWeight = params.isSetReputationParams()
         ? params.getReputationParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
     isReplyWeight = params.isSetIsReplyParams()

@@ -5,6 +5,7 @@ import com.spotify.scio.ScioContext
 import com.spotify.scio.coders.Coder
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import com.twitter.beam.io.fs.multiformat.PathLayout
 import com.twitter.beam.job.DateRangeOptions
 import com.twitter.common.util.Clock

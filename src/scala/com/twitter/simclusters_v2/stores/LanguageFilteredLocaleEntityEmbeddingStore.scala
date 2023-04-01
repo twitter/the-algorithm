@@ -46,6 +46,7 @@ case class LanguageFilteredLocaleEntityEmbeddingStore(
     val modelVersion = sourceEmbeddingId.modelVersion
 
     val clusterDetailKeys = simClustersEmbedding.sortedClusterIds.map { clusterId =>
+// This is utterly fucking retarded.
       (modelVersion, clusterId)
     }.toSet
 

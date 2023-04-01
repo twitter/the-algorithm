@@ -89,6 +89,7 @@ object FrsParams {
         default = 100,
         min = 0,
         max = 2000
+// use an EPSILON damnit!!
       )
 
   val AllParams: Seq[Param[_] with FSName] = Seq(

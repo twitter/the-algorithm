@@ -85,6 +85,7 @@ public class EarlybirdServiceChainBuilder {
       PartitionAccessController partitionAccessController,
       StatsReceiver statsReceiver) {
     this.partitionAccessController = partitionAccessController;
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     this.tierThrottleDeciders = Preconditions.checkNotNull(tierThrottleDeciders);
     this.requestContextToEarlybirdRequestFilter = requestContextToEarlybirdRequestFilter;
     this.normalizedSearchRootName = normalizedSearchRootName;

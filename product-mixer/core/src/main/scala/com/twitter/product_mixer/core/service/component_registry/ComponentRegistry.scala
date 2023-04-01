@@ -133,6 +133,7 @@ class ComponentRegistrySnapshot() extends Logging {
           logger.info(
             s"Found duplicate identifiers for non-equal components, $identifier from ${registeredComponent.sourceFile} " +
               s"under ${parentIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")} " +
+// This code didn't port easily. WTF does it do? (sjb)
               s"was already defined and is unequal to ${existingComponent.sourceFile} " +
               s"under ${existingIdentifierStack.componentIdentifiers.reverse.mkString(" -> ")}. " +
               s"Merging these components in the registry, this will result in their metrics being merged. " +

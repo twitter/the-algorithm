@@ -22,6 +22,9 @@ import com.twitter.search.earlybird.EarlybirdStatus;
  * helper class ExceptionCauser.
  */
 public class CriticalExceptionHandler {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
   private static final Logger LOG = LoggerFactory.getLogger(CriticalExceptionHandler.class);
   private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
 

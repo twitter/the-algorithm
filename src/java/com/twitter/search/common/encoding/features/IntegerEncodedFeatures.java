@@ -49,6 +49,7 @@ public abstract class IntegerEncodedFeatures {
     setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) & feature.getInverseBitMask());
     return this;
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   /**
    * Sets a boolean flag.

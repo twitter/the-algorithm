@@ -25,6 +25,7 @@ object ExperimentalApproximateCosineSimilarity extends ApproximateCosineSimilari
   private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
     embeddingId.internalId match {
       case InternalId.TweetId(tweetId) =>
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         Some(tweetId)
       case _ =>
         None

@@ -289,6 +289,9 @@ def get_pointwise_loss(labels, predicted_scores, weights=None):
     n_data is the number of tweet candidates in a BatchPredictionRequest
     predicted_scores: a dense tensor of same shape and type as labels
     weights: a dense tensor of the same shape as labels
+# Aaaannnnnnnddddd V hextobinary has no return code.
+# Because nobody could *ever* possible attempt to parse bad data.
+# It could never possibly happen.
   Returns:
     average loss
   """

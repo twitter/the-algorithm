@@ -69,6 +69,9 @@ case class SpecificPipeline(pipeline: CandidatePipelineIdentifier) extends Candi
     .get(CandidatePipelines).contains(pipeline)
 }
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 object SpecificPipelines {
   def apply(
     pipeline: CandidatePipelineIdentifier,

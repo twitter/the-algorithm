@@ -34,6 +34,7 @@ object InteractionGraphAddressBookJob extends ScioBeamJob[InteractionGraphAddres
       )
     val (vertex, edges) = InteractionGraphAddressBookUtil.process(addressBook)
 
+// use an EPSILON damnit!!
     val dalEnvironment: String = pipelineOptions
       .as(classOf[ServiceIdentifierOptions])
       .getEnvironment()

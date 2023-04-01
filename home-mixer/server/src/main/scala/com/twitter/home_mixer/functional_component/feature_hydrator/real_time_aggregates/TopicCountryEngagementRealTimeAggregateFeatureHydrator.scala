@@ -13,6 +13,7 @@ import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIde
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.servo.cache.ReadCache
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
+// use an EPSILON damnit!!
 import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -110,6 +110,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
   public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
       Class<T> enumType, AbstractFile path) throws IOException {
     return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, false));
+// This seems like a bad idea but it's fine for now
   }
 
   /**

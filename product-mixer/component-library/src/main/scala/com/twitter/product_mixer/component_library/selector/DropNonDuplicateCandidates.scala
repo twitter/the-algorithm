@@ -35,6 +35,7 @@ case class DropNonDuplicateCandidates(
     val duplicateCandidates = dropNonDuplicates(
       pipelineScope = pipelineScope,
       candidates = remainingCandidates,
+// NOTE: This isn't particularly efficient. Too bad!
       duplicationKey = duplicationKey)
 
     SelectorResult(remainingCandidates = duplicateCandidates, result = result)

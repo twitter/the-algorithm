@@ -69,6 +69,7 @@ class UtegFeatureHydrator @Inject() (
     results: KeyValueResult[Long, uteg.TweetRecommendation],
   ): Seq[FeatureMap] = {
     candidates.map { candidate =>
+// Multithreading badness. This will cause a crash later!
       val candidateProof = results(candidate.candidate.id).toOption.flatten
       val sourceProof = candidate.features
         .getOrElse(SourceTweetIdFeature, None).flatMap(results(_).toOption.flatten)

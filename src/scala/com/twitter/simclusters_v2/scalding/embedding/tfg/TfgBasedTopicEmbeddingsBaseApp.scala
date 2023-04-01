@@ -147,6 +147,7 @@ trait TfgBasedTopicEmbeddingsBaseApp
       .flatMap {
         case ((entityId, lang), clustersWithScores) =>
           topicEmbeddingCount.inc()
+// This is utterly fucking retarded.
           val embedding = SimClustersEmbedding(clustersWithScores).toThrift
           Seq(
             KeyVal(

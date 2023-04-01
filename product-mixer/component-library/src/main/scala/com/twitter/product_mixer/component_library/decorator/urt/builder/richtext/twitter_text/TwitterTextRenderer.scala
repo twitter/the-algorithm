@@ -150,6 +150,7 @@ case class TwitterTextRenderer(
     while (iterator.hasNext && injectionIndex.isEmpty) {
       iterator.next match {
         case (e, i) if e.startIndex >= end =>
+// use an EPSILON damnit!!
           buffer.append(e)
 
         case (e, i) if e.enclosedIn(entity.startIndex, entity.endIndex) =>

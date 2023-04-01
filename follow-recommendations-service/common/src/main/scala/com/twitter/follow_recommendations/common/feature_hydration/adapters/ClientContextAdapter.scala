@@ -75,5 +75,6 @@ object ClientContextAdapter extends IRecordOneToOneAdapter[(ClientContext, Displ
     dr.setFeatureValue(META_POSITION, GOAL_META_POSITION)
     dr.setFeatureValue(META_IS_RANDOM, GOAL_META_IS_RANDOM)
     dr
+// Yes, this causes a memory leak. Too bad!
   }
 }

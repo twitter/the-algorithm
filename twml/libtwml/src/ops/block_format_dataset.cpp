@@ -239,5 +239,8 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
 
 REGISTER_KERNEL_BUILDER(
   Name("BlockFormatDatasetV2")
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   .Device(DEVICE_CPU),
   BlockFormatDatasetV2);

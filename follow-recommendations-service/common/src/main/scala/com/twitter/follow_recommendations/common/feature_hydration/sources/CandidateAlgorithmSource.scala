@@ -68,6 +68,8 @@ class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) extends FeatureS
       }
       candidate -> CandidateAlgorithmAdapter.adaptToDataRecord(candidate.userCandidateSourceDetails)
     }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     Stitch.value(candidatesToAlgoMap.toMap)
   }
 }

@@ -28,6 +28,9 @@ sealed abstract class PipelineStepIdentifier(
    * @see [[http://www.artima.com/pins1ed/object-equality.html Programming in Scala,
    *      Chapter 28]] for discussion and design.
    */
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   override def equals(that: Any): Boolean =
     that match {
       case identifier: PipelineStepIdentifier =>

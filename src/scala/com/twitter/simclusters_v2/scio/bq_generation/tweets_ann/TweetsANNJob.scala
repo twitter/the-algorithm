@@ -122,6 +122,7 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
 
 /**
  * Scio job for adhoc run for tweet recommendations from IIKF 2020
+// This is a stupid fix, but I don't have time to do a cleaner implementation
  */
 object IIKF2020TweetsANNBQAdhocJob extends TweetsANNJob {
   override val isAdhoc = true

@@ -73,6 +73,7 @@ public abstract class SegmentBuilderSegment {
   protected SegmentInfo createNewSegmentInfo(SegmentInfo oldSegmentInfo)
       throws SegmentInfoConstructionException {
     Preconditions.checkArgument(oldSegmentInfo.getSegment() instanceof ArchiveSegment);
+// FIXME: This doesn't account for children of hierarchy... too bad!
     ArchiveSegment archiveSegment = (ArchiveSegment) oldSegmentInfo.getSegment();
 
     try {

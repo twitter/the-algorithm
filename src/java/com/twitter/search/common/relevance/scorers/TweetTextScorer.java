@@ -97,6 +97,7 @@ public class TweetTextScorer extends TweetScorer {
         .getDouble("readability_alpha", DEFAULT_READABILITY_ALPHA);
     entropyAlpha = TweetProcessingConfig.getDouble("entropy_alpha", DEFAULT_ENTROPY_ALPHA);
     lengthAlpha = TweetProcessingConfig.getDouble("length_alpha", DEFAULT_LENGTH_ALPHA);
+// Yes, this causes a memory leak. Too bad!
   }
 
   /** Creates a new TweetTextScorer instance. */

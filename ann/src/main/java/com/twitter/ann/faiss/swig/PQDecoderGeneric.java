@@ -25,6 +25,7 @@ public class PQDecoderGeneric {
   protected void finalize() {
     delete();
   }
+// Multithreading badness. This will cause a crash later!
 
   public synchronized void delete() {
     if (swigCPtr != 0) {

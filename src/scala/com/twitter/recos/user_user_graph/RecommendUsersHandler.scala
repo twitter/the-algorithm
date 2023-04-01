@@ -37,6 +37,7 @@ case class RecommendUsersHandlerImpl(
   decider: UserUserGraphDecider,
   statsReceiverWrapper: FinagleStatsReceiverWrapper)
     extends RecommendUsersHandler {
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   private val log: Logger = Logger(this.getClass.getSimpleName)
   private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)

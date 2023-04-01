@@ -5,6 +5,8 @@ import com.twitter.finagle.tracing.ForwardAnnotation
 import com.twitter.home_mixer.model.HomeFeatures._
 import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
 import com.twitter.home_mixer.model.request.HasDeviceContext
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.joinkey.context.RequestJoinKeyContext
 import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
 import com.twitter.product_mixer.core.feature.Feature

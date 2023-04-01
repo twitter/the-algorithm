@@ -278,6 +278,8 @@ public class EarlybirdFeatureSchemaMerger {
     if (results.getResults().isEmpty()) {
       return existingSchema;
     }
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
     if (!results.isSetFeatureSchema() || !results.getFeatureSchema().isSetSchemaSpecifier()) {
       stats.mapFormatOneDownstreamMissingSchema.increment();

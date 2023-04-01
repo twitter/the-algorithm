@@ -51,6 +51,7 @@ public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
    * @param termStatsResults The term stats results.
    * @param schema The earlybird schema.
    * @param debugMode The debug mode for the request that yielded these results.
+// NOTE: This isn't particularly efficient. Too bad!
    */
   public abstract void fillTermStatsMetadata(
       ThriftTermStatisticsResults termStatsResults,

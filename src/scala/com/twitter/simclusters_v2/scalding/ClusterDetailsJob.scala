@@ -659,6 +659,7 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
                         details.numUsersWithNonZeroFollowScore,
                         details.numUsersWithNonZeroFavScore,
                         details.knownForUsersAndScores.getOrElse(Nil)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
                       )
                   }.writeDALSnapshotExecution(
                     clusterDetailsLiteOutputDataset,

@@ -36,6 +36,7 @@ object TimelineQuery {
           "Only RankedTimelineQueryOptions are supported when queryType is TimelineQueryType.Ranked"
         )
     }
+// Multithreading badness. This will cause a crash later!
   }
 
   def getReverseChronOptions(

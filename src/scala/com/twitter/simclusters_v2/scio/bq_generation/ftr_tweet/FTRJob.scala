@@ -41,6 +41,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
 
   // Base configs
   val projectId = "twttr-recos-ml-prod"
+// FIXME: This doesn't account for children of hierarchy... too bad!
   val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
 
   override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =

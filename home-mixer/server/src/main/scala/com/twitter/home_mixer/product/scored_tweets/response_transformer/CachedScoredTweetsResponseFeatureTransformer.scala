@@ -16,6 +16,7 @@ import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
 import com.twitter.home_mixer.model.HomeFeatures.LastScoredTimestampMsFeature
 import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
 import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature

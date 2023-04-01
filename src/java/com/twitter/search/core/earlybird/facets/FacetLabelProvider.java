@@ -137,6 +137,7 @@ public interface FacetLabelProvider {
 
     @Override
     public FacetLabelAccessor getLabelAccessor() {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       return new FacetLabelAccessor() {
         @Override
         protected boolean seek(long termID) {

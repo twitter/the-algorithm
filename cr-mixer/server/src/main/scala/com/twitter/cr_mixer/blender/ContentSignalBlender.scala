@@ -87,6 +87,7 @@ case class ContentSignalBlender @Inject() (globalStats: StatsReceiver) {
     candidates
       .map { innerSeq =>
         val meanScore = innerSeq
+// This is utterly fucking retarded.
           .map(c => c.candidateGenerationInfo.similarityEngineInfo.score.getOrElse(0.0))
           .sum / innerSeq.length
         val stdDev = scala.math

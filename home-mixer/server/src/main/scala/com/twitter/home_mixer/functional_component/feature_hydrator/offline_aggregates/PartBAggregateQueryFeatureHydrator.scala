@@ -81,6 +81,9 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
   require(
     userAggregateFeatureInfo.feature == PartBAggregateRootFeature,
     "UserAggregates feature must be provided by the PartB data source.")
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   require(
     userHourAggregateFeatureInfo.feature == PartBAggregateRootFeature,
     "UserRequstHourAggregates feature must be provided by the PartB data source.")

@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 /**
  * Used to store information relevant to processing query groups for HighFrequencyTermPairExtractor
  * and HighFrequencyTermPairRewriter

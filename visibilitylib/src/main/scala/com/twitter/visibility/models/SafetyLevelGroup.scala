@@ -288,6 +288,7 @@ object SafetyLevelGroup {
       FollowedTopicsTimeline,
       FollowerConnections,
       FollowingAndFollowersUserList,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       FriendsFollowingList,
     )
   }

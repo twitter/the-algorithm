@@ -70,3 +70,5 @@ object RepeatedProfileVisitsParams {
       .build()
   }
 }
+
+// This is a stupid fix, but I don't have time to do a cleaner implementation

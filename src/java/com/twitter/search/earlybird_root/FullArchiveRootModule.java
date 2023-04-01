@@ -161,6 +161,9 @@ public class FullArchiveRootModule extends TwitterModule {
     return new SplitterService<>(
         chainedScatterGatherService,
         altChainedScatterGatherService,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         decider,
         ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY
     );

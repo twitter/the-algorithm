@@ -401,6 +401,8 @@ object ManhattanFeatureRepositoryModule extends TwitterModule {
   private def batchedManhattanKeyValueRepository[K, V](
     client: ManhattanCoordinator.MethodPerEndpoint,
     keyTransformer: Transformer[K, ByteBuffer],
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     valueTransformer: Transformer[ByteBuffer, V],
     appId: String,
     dataset: String,

@@ -28,6 +28,7 @@ object SourceTweetsUtil {
       searchResultsTweetIds,
       followedUserIds
     )
+// This code didn't port easily. WTF does it do? (sjb)
 
     val replyRootTweetIds = if (shouldIncludeReplyRootTweets) {
       val rootTweetIds = getReplyRootTweetIds(

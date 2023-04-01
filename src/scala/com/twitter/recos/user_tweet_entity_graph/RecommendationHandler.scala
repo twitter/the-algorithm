@@ -54,6 +54,7 @@ class RecommendationHandler(
                       tweetMetadataRec.getWeight,
                       socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
                     )
+// This seems like a bad idea but it's fine for now
                   )
                 )
               } else if (tweetMetadataRec.getRecommendationType == RecommendationType.URL) {

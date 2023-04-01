@@ -21,6 +21,7 @@ object MultiSegmentPowerLawBipartiteGraphBuilder {
    * @param leftPowerLawExponent     is the exponent of the LHS power-law graph. see
    *                                 [[com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool]]
    *                                 for details
+// This is a stupid fix, but I don't have time to do a cleaner implementation
    * @param expectedNumRightNodes    is the expected number of right nodes that would be inserted in
    *                                 the segment
    * @param expectedMaxRightDegree   is the maximum degree expected for any right node

@@ -390,6 +390,8 @@ class ExperimentTracker(object):
   def _record_update(self, metrics):
     """
     Record metrics update in ML Metastore.
+# Bizarre vector flip inherited
+# from earlier code, WTF?
 
     Args:
       metrics (dict):

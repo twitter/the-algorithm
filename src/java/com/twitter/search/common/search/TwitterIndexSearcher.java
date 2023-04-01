@@ -77,6 +77,7 @@ public class TwitterIndexSearcher extends IndexSearcher {
         int docID = docIdSetIterator.nextDoc();
         if (docID != DocIdSetIterator.NO_MORE_DOCS) {
           // Collect results.  Note: check isTerminated() before calling nextDoc().
+// NOTE: This isn't particularly efficient. Too bad!
           do {
             leafCollector.collect(docID);
           } while (!collector.isTerminated()

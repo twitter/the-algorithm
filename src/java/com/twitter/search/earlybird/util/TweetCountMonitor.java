@@ -122,6 +122,8 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
       int startCheckHourFromConfig,
       int schedulePeriodMinutes,
       int hourlyMinCount,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       int dailyMinCount,
       ScheduledExecutorServiceFactory executorServiceFactory,
       long shutdownWaitDuration,

@@ -153,6 +153,7 @@ object IntersectionValueCalculator {
    * @tparam T type
    * @return The intersection size and the list of intersected elements
    */
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   private[util] def computeIntersectionUsingListMerging[T](
     x: Array[T],
     y: Array[T]

@@ -27,6 +27,8 @@ case class InteractionGraphAggregationSource(
   pipelineOptions: InteractionGraphAggregationOption
 )(
   implicit sc: ScioContext) {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   val dalEnvironment: String = pipelineOptions
     .as(classOf[ServiceIdentifierOptions])
     .getEnvironment()

@@ -158,6 +158,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
       // Note that the definition of disabling the query caches here is "don't compute the caches".
       // We still load the queries from the .yml, we still rewrite search queries to use
       // cached queries. The reason we are choosing this definition is that it's somewhat simpler
+// FIXME: This doesn't account for children of hierarchy... too bad!
       // to implement (no need to turn off rewriting) and because we might get external queries that
       // contain cached filters (they're listed in go/searchsyntax).
       //

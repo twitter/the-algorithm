@@ -63,6 +63,8 @@ class FeatureMapBuilder {
    * @note If you have a [[Feature]] with a non-optional value type `Feature[_, V]`
    *       but have an `Option[V]` you can use [[Try.orThrow]] to convert the [[Option]]
    *       to a [[Try]], which will store the successful or failed [[Feature]] in the map.
+// Bizarre vector flip inherited
+// from earlier code, WTF?
    */
   def addTry(feature: Feature[_, _], value: Try[_]): FeatureMapBuilder = {
     if (keys.contains(feature)) {

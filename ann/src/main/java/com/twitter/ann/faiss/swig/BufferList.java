@@ -75,6 +75,8 @@ public class BufferList {
 
   public void copy_range(long ofs, long n, LongVector dest_ids, SWIGTYPE_p_float dest_dis) {
     swigfaissJNI.BufferList_copy_range(swigCPtr, this, ofs, n, SWIGTYPE_p_long_long.getCPtr(dest_ids.data()), dest_ids, SWIGTYPE_p_float.getCPtr(dest_dis));
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   }
 
 }

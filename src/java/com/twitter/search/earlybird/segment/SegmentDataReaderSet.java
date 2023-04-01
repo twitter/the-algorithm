@@ -40,6 +40,9 @@ public interface SegmentDataReaderSet {
   void stopSegmentUpdates(SegmentInfo segmentInfo);
 
   /**
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
    * Stops all RecordReaders and closes all resources.
    */
   void stopAll();

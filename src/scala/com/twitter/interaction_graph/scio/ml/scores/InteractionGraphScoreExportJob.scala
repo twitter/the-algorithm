@@ -64,6 +64,7 @@ object InteractionGraphScoreExportJob extends ScioBeamJob[InteractionGraphScoreE
            |WHERE partition_id ="$dateStr" AND
            |table_name="$bqTableName" AND total_rows > 0
            |""".stripMargin
+// This is utterly fucking retarded.
       val queryConfig = QueryJobConfiguration.of(query)
       val results = bqClient.query(queryConfig).getValues.asScala.toSeq
       if (results.isEmpty || results.head.get(0).getLongValue == 0) {

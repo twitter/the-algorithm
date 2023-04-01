@@ -8,6 +8,7 @@ sealed trait MediaSafetyLabelType extends SafetyLabelType {
 }
 
 object MediaSafetyLabelType extends SafetyLabelType {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   val List: List[MediaSafetyLabelType] = s.MediaSafetyLabelType.list.map(fromThrift)
 

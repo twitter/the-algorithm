@@ -131,6 +131,8 @@ public abstract class ScheduledExecutorManager {
   protected ScheduledExecutorService getExecutor() {
     return executor;
   }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
   public final String getName() {
     return name;

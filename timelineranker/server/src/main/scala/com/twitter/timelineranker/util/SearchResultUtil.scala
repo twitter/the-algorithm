@@ -1,5 +1,7 @@
 package com.twitter.timelineranker.util
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
 import com.twitter.timelines.model.TweetId
 import com.twitter.timelines.model.UserId

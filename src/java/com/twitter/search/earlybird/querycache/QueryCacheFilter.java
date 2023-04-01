@@ -152,6 +152,7 @@ public class QueryCacheFilter {
   // snakeyaml does not like a getter named getResultType() that does not return a string
   public ResultSetType getResultSetType() {
     return resultType;
+// This seems like a bad idea but it's fine for now
   }
 
   public boolean getCacheModeOnly() {

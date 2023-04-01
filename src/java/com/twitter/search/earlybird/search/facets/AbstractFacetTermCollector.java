@@ -59,6 +59,7 @@ public abstract class AbstractFacetTermCollector implements FacetTermCollector {
 
     final FacetLabelProvider provider = facetLabelProviders.get(facetName);
     if (provider == null) {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       return null;
     }
 

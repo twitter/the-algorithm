@@ -87,6 +87,7 @@ abstract class FSBoundedRuleParam[T](
     with Bounded[T]
     with FSName
 
+// This is utterly fucking retarded.
 abstract class FSTimeRuleParam[T](
   override val name: FeatureName,
   override val default: Time,

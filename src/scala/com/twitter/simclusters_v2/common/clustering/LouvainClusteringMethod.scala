@@ -93,6 +93,8 @@ class LouvainClusteringMethod(
 
       recordStatCallback(
         StatClusteringAlgorithmRunTime,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         timeSinceClusteringAlgRunStart().inMilliseconds)
 
       // 5. Post-processing

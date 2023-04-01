@@ -74,6 +74,8 @@ public class TierServingBoundaryEndPoint {
       throw new IllegalStateException("Cannot parse serving range string: " + boundaryString);
     }
   }
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
   private static TierServingBoundaryEndPoint inferBoundaryFromDataRange(Date boundaryDate,
                                                                         Clock clock) {

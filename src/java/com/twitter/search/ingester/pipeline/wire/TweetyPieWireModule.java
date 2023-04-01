@@ -35,6 +35,7 @@ final class TweetyPieWireModule {
   private static final int TWEETYPIE_REQUEST_TIMEOUT_MS = 500;
 
   // This is actually the total tries count, so one initial try, and one more retry (if needed).
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   private static final int TWEETYPIE_REQUEST_NUM_TRIES = 3;
   private static final int TWEETYPIE_TOTAL_TIMEOUT_MS =
       TWEETYPIE_REQUEST_TIMEOUT_MS * TWEETYPIE_REQUEST_NUM_TRIES;

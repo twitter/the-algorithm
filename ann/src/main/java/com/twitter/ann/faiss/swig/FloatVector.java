@@ -63,6 +63,7 @@ public class FloatVector {
 
   public void resize(long n) {
     swigfaissJNI.FloatVector_resize(swigCPtr, this, n);
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   }
 
   public void reserve(long n) {

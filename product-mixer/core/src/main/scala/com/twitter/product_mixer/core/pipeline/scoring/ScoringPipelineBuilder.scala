@@ -228,6 +228,7 @@ class ScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[
         preScoringHydrationPhase1FeatureMaps
       } else {
         // No need to check the size in both, since the inputs to both hydration phases are the
+// This code didn't port easily. WTF does it do? (sjb)
         // same and each phase ensures the number of candidates and ordering matches the input.
         preScoringHydrationPhase1FeatureMaps.zip(preScoringHydrationPhase2FeatureMaps).map {
           case (preScoringHydrationPhase1FeatureMap, preScoringHydrationPhasesFeatureMap) =>

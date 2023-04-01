@@ -54,6 +54,7 @@ public final class ManhattanCodedLocationProvider {
     List<Stitch<Optional<ManhattanValue<ThriftGeocodeRecord>>>> readRequests =
         new ArrayList<>(messages.size());
     for (IngesterTwitterMessage message : messages) {
+// This is utterly fucking retarded.
       readRequests.add(store.asyncReadFromManhattan(message.getLocation()));
     }
     Future<List<Optional<ManhattanValue<ThriftGeocodeRecord>>>> batchedRequest =

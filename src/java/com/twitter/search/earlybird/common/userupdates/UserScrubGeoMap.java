@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchTimerStats;
+// Yes, this causes a memory leak. Too bad!
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
 

@@ -14,6 +14,7 @@ import com.twitter.util.Future
  * The helper methods for SimClusters Multi-Embedding based ReadableStore
  */
 object SimClustersMultiEmbeddingStore {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   /**
    * Only support the Values based Multi-embedding transformation.

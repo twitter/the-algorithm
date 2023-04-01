@@ -13,6 +13,9 @@ import com.twitter.hermit.store.common.ObservedCachedReadableStore
 import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
 import com.twitter.hermit.store.common.ObservedReadableStore
 import com.twitter.inject.TwitterModule
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.relevance_platform.common.injection.LZ4Injection
 import com.twitter.relevance_platform.common.injection.SeqObjectInjection
 import com.twitter.storehaus.ReadableStore

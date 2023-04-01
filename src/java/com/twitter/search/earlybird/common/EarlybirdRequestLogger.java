@@ -270,6 +270,8 @@ public class EarlybirdRequestLogger extends RPCLogger {
             Integer.toString(response.getNumSearchedSegments()));
       }
     }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   }
 
   private static int numRequestedForLog(EarlybirdRequest request) {

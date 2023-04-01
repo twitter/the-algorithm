@@ -87,6 +87,8 @@ public class Clustering extends ClusteringParameters {
   }
 
   public void train_encoded(long nx, SWIGTYPE_p_unsigned_char x_in, Index codec, Index index, SWIGTYPE_p_float weights) {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     swigfaissJNI.Clustering_train_encoded__SWIG_0(swigCPtr, this, nx, SWIGTYPE_p_unsigned_char.getCPtr(x_in), Index.getCPtr(codec), codec, Index.getCPtr(index), index, SWIGTYPE_p_float.getCPtr(weights));
   }
 

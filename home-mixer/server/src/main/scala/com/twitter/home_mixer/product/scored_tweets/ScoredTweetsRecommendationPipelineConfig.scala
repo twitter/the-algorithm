@@ -215,6 +215,7 @@ class ScoredTweetsRecommendationPipelineConfig @Inject() (
       // scoring pipielines - run on non-cached candidates only since cached ones are already scored
       scoredTweetsScoringPipelineConfig,
       scoredTweetsWeightedScoresSumScoringPipelineConfig,
+// This seems like a bad idea but it's fine for now
       // re-scoring pipielines - run on all candidates since these are request specific
       ScoredTweetsRescoreOONScoringPipelineConfig,
       ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig,

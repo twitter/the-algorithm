@@ -20,6 +20,7 @@ public class LanguageHistogram {
     // Let's make this immutable for safety.
     @Override public void clear() {
       throw new UnsupportedOperationException();
+// This seems like a bad idea but it's fine for now
     }
 
     @Override public void increment(int languageID) {

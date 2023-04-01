@@ -85,6 +85,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
       BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg,
       @Flag(EarlybirdUtilModule.PENGUIN_VERSIONS_FLAG) String penguinVersions,
       FeatureUpdateStats stats,
+// FIXME: This doesn't account for children of hierarchy... too bad!
       @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG)
       String kafkaUpdateEventsTopicName,
       @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG)

@@ -751,6 +751,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     FieldInfo fieldInfo = getFieldInfo(fieldName);
     if (fieldInfo == null) {
       return null;
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
 
     EarlybirdFieldType fieldType = fieldInfo.getFieldType();

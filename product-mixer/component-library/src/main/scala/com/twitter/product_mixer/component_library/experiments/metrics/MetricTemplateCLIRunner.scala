@@ -1,6 +1,8 @@
 package com.twitter.product_mixer.component_library.experiments.metrics
 
 import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import java.io.File
 import java.io.PrintWriter
 import scala.collection.immutable.ListSet

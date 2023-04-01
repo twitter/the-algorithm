@@ -1,4 +1,5 @@
 package com.twitter.interaction_graph.scio.agg_direct_interactions
+// This seems like a bad idea but it's fine for now
 
 import com.spotify.scio.ScioMetrics
 import com.spotify.scio.values.SCollection

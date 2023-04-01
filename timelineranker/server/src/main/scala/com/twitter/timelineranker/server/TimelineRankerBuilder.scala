@@ -54,6 +54,8 @@ class TimelineRankerBuilder(config: RuntimeConfiguration) {
     inNetworkTweetRepository = inNetworkTweetRepository,
     recapHydrationRepository = recapHydrationRepository,
     recapAuthorRepository = recapAuthorRepository,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     entityTweetsRepository = entityTweetsRepository,
     utegLikedByTweetsRepository = utegLikedByTweetsRepository,
     serviceObserver = serviceObserver,

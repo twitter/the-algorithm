@@ -67,6 +67,8 @@ public class ThriftDocumentBuilder {
 
   /**
    * Add a long field. This is indexed as a
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
    * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
    */
   public final ThriftDocumentBuilder withLongField(String fieldName, long value) {

@@ -18,6 +18,9 @@ import com.twitter.search.earlybird.index.TweetIDMapper;
  * that have been geo scrubbed. Determines if a tweet has been geo scrubbed by comparing the
  * tweet's id against the max scrubbed tweet id for that tweet's author, which is stored in the
  * UserScrubGeoMap.
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
  *
  * See: go/realtime-geo-filtering
  */

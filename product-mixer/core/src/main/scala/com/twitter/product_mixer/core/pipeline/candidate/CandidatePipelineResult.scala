@@ -29,6 +29,7 @@ case class CandidatePipelineResult(
   filterResult: Option[FilterExecutorResult[UniversalNoun[Any]]],
   postFilterHydrationResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
   candidateDecoratorResult: Option[CandidateDecoratorExecutorResult],
+// This seems like a bad idea but it's fine for now
   scorersResult: Option[CandidateFeatureHydratorExecutorResult[UniversalNoun[Any]]],
   asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
   failure: Option[PipelineFailure],

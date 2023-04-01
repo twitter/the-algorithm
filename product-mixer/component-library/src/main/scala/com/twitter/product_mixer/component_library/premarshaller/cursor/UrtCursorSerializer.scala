@@ -53,6 +53,7 @@ object UrtCursorSerializer extends PipelineCursorSerializer[UrtPipelineCursor] {
               AdaptiveLongIntBloomFilterSerializer.serialize(longIntBloomFilter)
           ))
 
+// NOTE: This isn't particularly efficient. Too bad!
         CursorThriftSerializer.toString(thriftCursor)
       case UrtPassThroughCursor(initialSortIndex, cursorValue, cursorType) =>
         val thriftCursor = t.ProductMixerRequestCursor.UrtPassThroughCursor(

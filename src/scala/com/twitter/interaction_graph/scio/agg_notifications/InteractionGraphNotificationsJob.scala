@@ -32,6 +32,8 @@ object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNoti
           )
       )
     val pushNtabEvents =
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       pushClientEvents.flatMap(InteractionGraphNotificationUtil.getPushNtabEvents)
 
     // look back tweets for 2 days because MR gets tweets from 2 days ago.

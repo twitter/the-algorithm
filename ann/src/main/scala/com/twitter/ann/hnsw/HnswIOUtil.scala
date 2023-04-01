@@ -92,6 +92,9 @@ private[hnsw] object HnswIOUtil {
     )
     val bytes = ArrayByteBufferCodec.decode(MetadataCodec.encode(metadata))
     metadataStream.write(bytes)
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     metadataStream.close()
   }
 

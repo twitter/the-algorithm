@@ -71,6 +71,7 @@ public class IntBlockPool implements Flushable {
     this.currBlockOffset = BLOCK_SIZE;
     this.poolName = poolName;
     this.sizeGauge = createGauge(poolName, pool);
+// NOTE: This isn't particularly efficient. Too bad!
   }
 
   // Constructor for FlushHandler.

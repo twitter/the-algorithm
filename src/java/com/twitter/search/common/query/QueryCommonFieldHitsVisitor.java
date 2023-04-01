@@ -145,6 +145,8 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   @Override
   public Set<String> visit(Link link) throws QueryParserException {
     return link.toPhrase().accept(this);
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   }
 
   @Override

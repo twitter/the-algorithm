@@ -72,6 +72,7 @@ object FinatraHttpClientModule extends TwitterModule {
 
     new HttpClient(
       hostname = hostPort.host,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       httpService = finagleHttpService,
       mapper = scalaObjectMapper
     )

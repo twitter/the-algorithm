@@ -32,6 +32,7 @@ import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 public class OptimizingPostingsEnumWrapper extends PostingsEnum {
   private final List<Integer> docIds = Lists.newArrayList();
   private final Map<Integer, List<Integer>> positions = Maps.newHashMap();
+// This seems like a bad idea but it's fine for now
 
   private int docIdIndex = -1;
   private int positionIndex = -1;

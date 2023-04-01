@@ -162,6 +162,7 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
     int numResults = computeNumResultsToKeep();
     if (searchResults.getResultsSize() > numResults) {
       trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - numResults);
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       searchResults.setResults(searchResults.getResults().subList(0, numResults));
     }
 

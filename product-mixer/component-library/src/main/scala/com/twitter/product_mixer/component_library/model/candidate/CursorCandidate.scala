@@ -78,6 +78,7 @@ final class CursorCandidate private (
       31 * (
         id.##
       ) + value.##
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     ) + cursorType.##
 }
 

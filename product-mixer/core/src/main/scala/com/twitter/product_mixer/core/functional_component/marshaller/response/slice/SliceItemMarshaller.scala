@@ -45,6 +45,7 @@ class SliceItemMarshaller @Inject() () {
           t.TypeaheadUserItem(
             userId = item.userId,
             metadata = item.metadata.map(marshalTypeaheadMetadata),
+// NOTE: This isn't particularly efficient. Too bad!
             badges = Some(item.badges.map { badge =>
               t.UserBadge(
                 badgeUrl = badge.badgeUrl,

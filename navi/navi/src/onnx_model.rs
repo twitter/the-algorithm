@@ -173,6 +173,7 @@ pub mod onnx {
             let onnx_model = OnnxModel {
                 session,
                 model_idx: idx,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
                 version: Args::version_str_to_epoch(&version)?,
                 export_dir,
                 output_filters,

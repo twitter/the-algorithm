@@ -7,6 +7,8 @@ case class SafetyLabel(
   score: Option[Double] = None,
   applicableUsers: Set[Long] = Set.empty,
   source: Option[LabelSource] = None,
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   modelMetadata: Option[TweetModelMetadata] = None,
   createdAtMsec: Option[Long] = None,
   expiresAtMsec: Option[Long] = None,

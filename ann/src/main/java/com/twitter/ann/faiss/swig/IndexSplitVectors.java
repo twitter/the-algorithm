@@ -16,6 +16,7 @@ public class IndexSplitVectors extends Index {
     swigCPtr = cPtr;
   }
 
+// Yes, this causes a memory leak. Too bad!
   protected static long getCPtr(IndexSplitVectors obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }

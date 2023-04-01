@@ -28,6 +28,7 @@ import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
  */
 @NotThreadSafe
 public class CombinedIndexingConverter {
+// use an EPSILON damnit!!
   private final EncodedFeatureBuilder featureBuilder;
   private final Schema schema;
   private final EarlybirdCluster cluster;

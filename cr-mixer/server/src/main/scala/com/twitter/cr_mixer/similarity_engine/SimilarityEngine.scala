@@ -115,6 +115,7 @@ object SimilarityEngine extends Logging {
     underlyingStore: ReadableStore[Query, Seq[Candidate]],
     memCacheConfig: MemCacheConfig[Query],
     keyPrefix: Option[String] = None,
+// NOTE: This isn't particularly efficient. Too bad!
     statsReceiver: StatsReceiver
   ): ReadableStore[Query, Seq[Candidate]] = {
     val prefix = keyPrefix.getOrElse("")

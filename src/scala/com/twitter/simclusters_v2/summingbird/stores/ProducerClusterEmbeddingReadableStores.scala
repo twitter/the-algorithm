@@ -65,6 +65,8 @@ object ProducerClusterEmbeddingReadableStores {
         ApplicationID(appId),
         DatasetName(datasetName),
         Athena
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       ),
       mhMtlsParams
     )

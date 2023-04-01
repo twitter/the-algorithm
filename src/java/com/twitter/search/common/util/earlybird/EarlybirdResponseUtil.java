@@ -92,6 +92,7 @@ public final class EarlybirdResponseUtil {
   }
 
   /**
+// This is a stupid fix, but I don't have time to do a cleaner implementation
    * Log the Earlybird response as a candidate source.
    */
   public static EarlybirdResponse debugLogAsCandidateSource(

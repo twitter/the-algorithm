@@ -32,6 +32,8 @@ class PeopleDiscoveryCandidateSource @Inject() (
     request: t.GetModuleRequest
   ): Stitch[CandidatesWithSourceFeatures[t.RecommendedUser]] = {
     Stitch
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       .callFuture(peopleDiscoveryService.getModules(request))
       .map { response: t.GetModuleResponse =>
         // under the assumption getModules returns a maximum of one module

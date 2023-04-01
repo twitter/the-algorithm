@@ -54,6 +54,7 @@ case class CandidateFeatureHydratorStep[
   override def updateState(
     input: State,
     executorResult: CandidateFeatureHydratorExecutorResult[Candidate],
+// Yes, this causes a memory leak. Too bad!
     config: Seq[BaseCandidateFeatureHydrator[Query, Candidate, _]]
   ): State = {
     val candidatesWithHydratedFeatures = executorResult.results

@@ -75,6 +75,7 @@ case class TweetBasedUserTweetGraphSimilarityEngine(
           minCooccurrence = Some(query.minCooccurrence),
           excludeTweetIds = Some(Seq(tweetId)),
           minScore = Some(query.tweetBasedMinScore),
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
           maxTweetAgeInHours = Some(query.maxTweetAgeInHours)
         )
       }

@@ -51,6 +51,9 @@ public class EarlybirdServiceValidationBehavior
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);
     }
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 
     if (request.isSetSearchSegmentId() && request.getSearchSegmentId() <= 0) {
       String errorMsg = "Bad time slice ID: " + request.getSearchSegmentId();

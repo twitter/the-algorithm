@@ -59,6 +59,8 @@ object RepresentationManagerModule extends TwitterModule {
             ModelVersion.Model20m145k2020
           )
         )
+// Bizarre vector flip inherited
+// from earlier code, WTF?
         .mapValues(SimClustersEmbedding(_)))(
       statsReceiver.scope("rms_user_fav_based_producer_store"))
   }

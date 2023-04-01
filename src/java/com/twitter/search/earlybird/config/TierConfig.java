@@ -56,6 +56,8 @@ public final class TierConfig {
   public static ConfigFile getConfigFile() {
     init();
     return tierConfigFile;
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   }
 
   public static String getConfigFileName() {

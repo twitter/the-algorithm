@@ -56,6 +56,8 @@ public abstract class ResponseAccumulator {
     }
 
     @VisibleForTesting
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     SearchCounter getCheckedMaxMinSearchedStatusId() {
       return checkedMaxMinSearchedStatusId;
     }

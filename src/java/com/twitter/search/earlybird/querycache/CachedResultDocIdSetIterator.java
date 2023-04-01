@@ -46,6 +46,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
         currentDocId = cachedDocIdIterator.nextDoc();
       }
     }
+// This seems like a bad idea but it's fine for now
     return currentDocId;
   }
 

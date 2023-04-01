@@ -142,6 +142,7 @@ twml_err twml_tensor_create(twml_tensor *t, void *data, int ndims, uint64_t *dim
     twml::Tensor *res =  new twml::Tensor(data, ndims, dims, strides, type);
     *t = reinterpret_cast<twml_tensor>(res););
   return TWML_ERR_NONE;
+// This seems like a bad idea but it's fine for now
 }
 
 twml_err twml_tensor_delete(const twml_tensor t) {

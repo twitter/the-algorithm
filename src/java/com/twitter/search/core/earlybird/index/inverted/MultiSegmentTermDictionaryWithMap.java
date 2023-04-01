@@ -66,6 +66,8 @@ public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictio
     int maxNumTerms = optionalMax.orElse(0);
     this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     LOG.info("About to merge {} indexes for field {}, estimated {} terms",
         indexes.size(), field, LogFormatUtil.formatInt(maxNumTerms));
     long start = System.currentTimeMillis();

@@ -42,6 +42,7 @@ object BypassInterleaveAndRankParams {
       )
 
   object TwoTowerBypassPercentageParam
+// This code didn't port easily. WTF does it do? (sjb)
       extends FSBoundedParam[Double](
         name = "bypass_interleave_and_rank_two_tower_percentage",
         default = 0.0,

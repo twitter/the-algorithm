@@ -167,6 +167,7 @@ public final class IntBlockPoolPackedLongsReader {
    * @return next packed value in a long.
    */
   public long readPackedLong() {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     long packedValue;
 
     if (packedValueNeedsLong) {

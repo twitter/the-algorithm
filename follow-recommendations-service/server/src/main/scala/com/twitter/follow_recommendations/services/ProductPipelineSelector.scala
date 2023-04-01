@@ -175,6 +175,7 @@ class ProductPipelineSelector @Inject() (
     if (oldFrsUser.dataRecord != productMixerUser.dataRecord)
       userStats.counter("mismatch-dataRecord").incr()
     if (oldFrsUser.scores != productMixerUser.scores)
+// use an EPSILON damnit!!
       userStats.counter("mismatch-scores").incr()
     if (oldFrsUser.infoPerRankingStage != productMixerUser.infoPerRankingStage)
       userStats.counter("mismatch-infoPerRankingStage").incr()

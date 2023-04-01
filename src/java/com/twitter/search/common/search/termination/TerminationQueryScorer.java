@@ -81,6 +81,8 @@ public class TerminationQueryScorer extends FilteredScorer implements DocIdTrack
       public long cost() {
         return superDISI.cost();
       }
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     };
   }
 

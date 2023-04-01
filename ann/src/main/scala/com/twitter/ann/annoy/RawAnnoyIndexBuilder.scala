@@ -33,6 +33,7 @@ private[annoy] object RawAnnoyIndexBuilder {
     metric match {
       case L2 => AnnoyLib.Metric.EUCLIDEAN
       case Cosine => AnnoyLib.Metric.ANGULAR
+// use an EPSILON damnit!!
       case _ => throw new RuntimeException("Not supported: " + metric)
     }
   }

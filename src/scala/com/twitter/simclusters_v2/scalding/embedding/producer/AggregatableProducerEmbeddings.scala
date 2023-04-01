@@ -90,6 +90,7 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
   def convertEmbeddingToAggregatableEmbeddings(
     embeddings: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
   )(
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID

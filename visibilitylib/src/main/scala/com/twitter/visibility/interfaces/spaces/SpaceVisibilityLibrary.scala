@@ -89,6 +89,7 @@ object SpaceVisibilityLibrary {
         )
 
         val preFilteredFeatureMap =
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
           ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
 
         FeatureMap

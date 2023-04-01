@@ -59,6 +59,7 @@ class UserStateClient @Inject() (
       }
     val userStateStitchWithTimeout: Stitch[Option[UserState]] = 
       userStateStitch
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         // set a 150ms timeout limit for user state fetches
         .within(150.milliseconds)(DefaultTimer)
         .rescue {

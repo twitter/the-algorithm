@@ -52,6 +52,8 @@ case class SimClustersANNCandidateSource(
               .stat(sourceEmbeddingId.embeddingType.name, sourceEmbeddingId.modelVersion.name).add(
                 candidates.size)
             Some(candidates)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           }
         case None =>
           fetchCandidatesStat

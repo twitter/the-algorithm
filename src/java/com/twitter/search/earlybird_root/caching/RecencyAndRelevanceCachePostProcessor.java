@@ -15,6 +15,7 @@ import com.twitter.search.queryparser.query.QueryParserException;
 import com.twitter.search.queryparser.util.IdTimeRanges;
 
 public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostProcessor {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   private static final Logger LOG =
       LoggerFactory.getLogger(RecencyAndRelevanceCachePostProcessor.class);

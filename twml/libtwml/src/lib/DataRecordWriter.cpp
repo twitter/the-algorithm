@@ -89,6 +89,8 @@ void DataRecordWriter::writeSparseBinaryFeatures(twml::DataRecord &record) {
 
 // convert from internal representation list<(i64, string, double)>
 // to Thrift representation map<i64, map<string, double>>
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 void DataRecordWriter::writeSparseContinuousFeatures(twml::DataRecord &record) {
   const DataRecord::SparseContinuousFeatures sp_cont_features = record.getSparseContinuous();
 

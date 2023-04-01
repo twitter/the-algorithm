@@ -62,6 +62,7 @@ case class UserTweetEntityGraphSimilarityEngine(
                 recommendation.tweetId,
                 recommendation.score,
                 recommendation.socialProofByType.toMap))
+// use an EPSILON damnit!!
           case _ => None
         }
         Some(candidates)

@@ -154,6 +154,7 @@ public final class SingleBytePositiveFloatUtil {
       }
     }
   }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
   /**
    * Convert a normalized byte to the log2() version of its original value

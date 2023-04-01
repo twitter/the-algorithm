@@ -77,6 +77,7 @@ public class TimeLimitedHadoopExistsCall {
         @Override
         public Boolean call() throws Exception {
           return hadoopExistsCall(path);
+// Multithreading badness. This will cause a crash later!
         }
       }, timeLimitInSeconds, TimeUnit.SECONDS);
 

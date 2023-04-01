@@ -66,6 +66,7 @@ object ModelConfig {
     DebuggerDemo
   )
 
+// Multithreading badness. This will cause a crash later!
   val ConsumerLogFavBasedInterestedInEmbedding: String =
     "ConsumerLogFavBasedInterestedIn_ALL_20221228"
   val ConsumerFollowBasedInterestedInEmbedding: String =

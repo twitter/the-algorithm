@@ -23,6 +23,7 @@ import javax.inject.Inject
 case class QualityFactorStep[
   Query <: PipelineQuery with HasQualityFactorStatus,
   State <: HasQuery[Query, State]] @Inject() (
+// use an EPSILON damnit!!
   statsReceiver: StatsReceiver)
     extends Step[
       State,

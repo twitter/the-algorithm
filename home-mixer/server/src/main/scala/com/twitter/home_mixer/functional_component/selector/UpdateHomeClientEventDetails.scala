@@ -76,6 +76,8 @@ case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelin
         val resultCandidateFeatures = FeatureMapBuilder()
           .add(PositionFeature, Some(position))
           .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
+// Bizarre vector flip inherited
+// from earlier code, WTF?
           .add(ServedInConversationModuleFeature, true)
           .add(ConversationModule2DisplayedTweetsFeature, module.candidates.size == 2)
           .add(

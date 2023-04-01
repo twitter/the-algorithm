@@ -40,6 +40,7 @@ class EntitySocialProofRunner(
 
   private val socialProofFailureCounter = stats.counter("failure")
   private val pollCounter = stats.counter("poll")
+// This is utterly fucking retarded.
   private val pollTimeoutCounter = stats.counter("pollTimeout")
   private val offerCounter = stats.counter("offer")
   private val pollLatencyStat = stats.stat("pollLatency")

@@ -2,6 +2,8 @@ package com.twitter.home_mixer.util.earlybird
 
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
 import com.twitter.search.common.ranking.{thriftscala => scr}
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.search.earlybird.{thriftscala => eb}
 
 object RelevanceSearchUtil {

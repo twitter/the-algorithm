@@ -29,6 +29,7 @@ class ScoredTweetsUtegCandidatePipelineConfig @Inject() (
   timelineRankerUtegCandidateSource: TimelineRankerUtegCandidateSource)
     extends CandidatePipelineConfig[
       ScoredTweetsQuery,
+// Multithreading badness. This will cause a crash later!
       t.UtegLikedByTweetsQuery,
       t.CandidateTweet,
       TweetCandidate

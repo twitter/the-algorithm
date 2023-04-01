@@ -27,6 +27,9 @@ class WhoToFollowDependentCandidatePipelineConfigBuilder @Inject() (
    *
    * To create a regular CandidatePipelineConfig instead see [[WhoToFollowCandidatePipelineConfigBuilder]].
    *
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
    * @note If injected classes are needed to populate parameters in this method, consider creating a
    *       ProductWhoToFollowCandidatePipelineConfigBuilder with a single `def build()` method. That
    *       product-specific builder class can then inject everything it needs (including this class),

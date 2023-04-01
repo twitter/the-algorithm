@@ -56,6 +56,7 @@ case class InactivePredicate @Inject() (
     userRecommendableCache
       .readThrough(candidate.id).map {
         case recFeaturesFetchResult =>
+// FIXME: This doesn't account for children of hierarchy... too bad!
           recFeaturesFetchResult match {
             case None =>
               PredicateResult.Invalid(Set(FilterReason.MissingRecommendabilityData))

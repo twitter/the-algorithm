@@ -83,6 +83,7 @@ object EarlybirdTensorflowBasedSimilarityEngine {
       extends EarlybirdSearchQuery
 
   private def getThriftSearchQuery(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     query: EarlybirdTensorflowBasedSearchQuery,
     processingTimeout: Duration
   ): ThriftSearchQuery =

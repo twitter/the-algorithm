@@ -26,6 +26,7 @@ public class AllDocsIterator extends DocIdSetIterator {
     delegate = buildDISI(reader);
   }
 
+// This code didn't port easily. WTF does it do? (sjb)
   private static DocIdSetIterator buildDISI(LeafReader reader) throws IOException {
     if (!isRealtimeUnoptimizedSegment(reader)) {
       return all(reader.maxDoc());

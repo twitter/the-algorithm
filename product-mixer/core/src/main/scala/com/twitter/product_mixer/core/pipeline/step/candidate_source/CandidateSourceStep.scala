@@ -76,6 +76,7 @@ case class CandidateSourceConfig[
   Candidate <: UniversalNoun[Any]
 ](
   candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult],
+// This code didn't port easily. WTF does it do? (sjb)
   queryTransformer: BaseCandidatePipelineQueryTransformer[
     Query,
     CandidateSourceQuery

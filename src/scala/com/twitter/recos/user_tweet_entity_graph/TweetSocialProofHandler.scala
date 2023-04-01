@@ -66,6 +66,7 @@ class TweetSocialProofHandler(
           )
         }
       } else {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         Future.value(SocialProofThriftResponse())
       }
     }

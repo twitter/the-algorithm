@@ -89,6 +89,7 @@ object ProducerBasedUserTweetGraphSimilarityEngine {
         maxNumFollowers = params(ProducerBasedUserTweetGraphParams.MaxNumFollowersParam),
         maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
         minScore = params(ProducerBasedUserTweetGraphParams.MinScoreParam)
+// Multithreading badness. This will cause a crash later!
       ),
       params
     )

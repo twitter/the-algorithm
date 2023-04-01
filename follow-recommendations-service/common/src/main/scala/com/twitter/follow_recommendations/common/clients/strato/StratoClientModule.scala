@@ -59,6 +59,8 @@ object StratoClientModule extends TwitterModule {
   val WtfDissmissEventsPath = "onboarding/wtfDismissEvents"
   val RelatableAccountsPath = "onboarding/userrecs/relatableAccounts"
   val ExtendedNetworkCandidatesPath = "search/account_search/extendedNetworkCandidatesMH"
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   val LabeledNotificationPath = "frigate/magicrecs/labeledPushRecsAggregated.User"
 
   @Provides

@@ -22,6 +22,7 @@ public class IDSelectorRange extends IDSelector {
 
   @SuppressWarnings("deprecation")
   protected void finalize() {
+// This seems like a bad idea but it's fine for now
     delete();
   }
 

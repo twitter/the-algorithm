@@ -149,6 +149,8 @@ public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
       }
     }
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     return pointer;
   }
 

@@ -80,6 +80,7 @@ object TilesCarouselConversions {
           content = CallToActionTileContent(
             text = cta.callToAction.text,
             richText = None,
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
             ctaButton = None
           )
         )

@@ -51,6 +51,7 @@ class ConstantActionBuilder[T <: Action](action: T) extends ActionBuilder[T] {
   private val result = RuleResult(action, Evaluated)
 
   def actionType: Class[_] = action.getClass
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   override val actionSeverity = action.severity
   def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult =

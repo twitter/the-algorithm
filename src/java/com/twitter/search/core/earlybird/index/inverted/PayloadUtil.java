@@ -31,6 +31,7 @@ public final class PayloadUtil {
   public static int[] encodePayload(BytesRef payload) {
     if (payload == null) {
       return EMPTY_PAYLOAD;
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
 
     int intsInPayload = intsForBytes(payload.length);

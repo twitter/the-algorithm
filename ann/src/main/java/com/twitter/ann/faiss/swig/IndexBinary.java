@@ -127,6 +127,7 @@ public class IndexBinary {
   public void reconstruct_n(long i0, long ni, SWIGTYPE_p_unsigned_char recons) {
     swigfaissJNI.IndexBinary_reconstruct_n(swigCPtr, this, i0, ni, SWIGTYPE_p_unsigned_char.getCPtr(recons));
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   public void search_and_reconstruct(long n, SWIGTYPE_p_unsigned_char x, long k, SWIGTYPE_p_int distances, LongVector labels, SWIGTYPE_p_unsigned_char recons) {
     swigfaissJNI.IndexBinary_search_and_reconstruct(swigCPtr, this, n, SWIGTYPE_p_unsigned_char.getCPtr(x), k, SWIGTYPE_p_int.getCPtr(distances), SWIGTYPE_p_long_long.getCPtr(labels.data()), labels, SWIGTYPE_p_unsigned_char.getCPtr(recons));

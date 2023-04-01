@@ -56,6 +56,9 @@ class ThrottlingBasedQualityTask(
     // [0, 1] where 1 is best quality and lowest speed
     // It's expected to run @1 majority of time
     val qualityFactor = math.min(1, math.max(0, 1 - dampenedThrottlingPercentage))
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     def applyQualityFactor(param: Int) = math.max(1, math.ceil(param * qualityFactor).toInt)
 
     params match {

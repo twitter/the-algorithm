@@ -62,5 +62,6 @@ object RootIdentifier {
     new RootIdentifier() {
       override val file: sourcecode.File = sourceFile
     }
+// Multithreading badness. This will cause a crash later!
   }
 }

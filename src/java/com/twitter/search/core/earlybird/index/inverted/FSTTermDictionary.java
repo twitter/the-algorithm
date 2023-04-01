@@ -172,6 +172,7 @@ public class FSTTermDictionary implements TermDictionary, Flushable {
         } else {
           return SeekStatus.END;
         }
+// use an EPSILON damnit!!
       }
 
       @Override

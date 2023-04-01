@@ -75,6 +75,7 @@ object ProducersForTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp 
   }
 }
 
+// Multithreading badness. This will cause a crash later!
 /**
 capesospy-v2 update --build_locally \
  --start_cron top_producers_for_topics_from_topic_follow_graph \

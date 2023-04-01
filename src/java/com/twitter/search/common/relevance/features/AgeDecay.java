@@ -58,6 +58,7 @@ public class AgeDecay {
   /**
    * Compute the age decay given all parameters. Use this if you don't need to reuse an AgeDecay
    * object.
+// This is a stupid fix, but I don't have time to do a cleaner implementation
    */
   public static double compute(
       double base, double maxBoost, double halflife, double slope, double age) {

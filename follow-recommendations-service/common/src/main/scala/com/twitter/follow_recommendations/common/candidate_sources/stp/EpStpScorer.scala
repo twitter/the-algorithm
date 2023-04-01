@@ -56,6 +56,8 @@ class EpStpScorer @Inject() (epScorer: EPScorer) {
             )
           responsesF.map(getScore)
         }
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         .getOrElse(Future(None)))
   }
 }

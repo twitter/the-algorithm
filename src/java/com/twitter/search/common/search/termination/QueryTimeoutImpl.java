@@ -48,6 +48,8 @@ public class QueryTimeoutImpl implements QueryTimeout {
     return clientId;
   }
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   @Override
   public int hashCode() {
     return clientId.hashCode() * 13 + tracker.hashCode();

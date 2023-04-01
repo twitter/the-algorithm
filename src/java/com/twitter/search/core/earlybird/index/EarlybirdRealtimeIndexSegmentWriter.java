@@ -43,6 +43,7 @@ import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
 import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
 import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
+// Multithreading badness. This will cause a crash later!
 import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
 import com.twitter.search.core.earlybird.facets.FacetUtil;
 import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;

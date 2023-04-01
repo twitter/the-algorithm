@@ -198,6 +198,7 @@ void DataRecordReader::readSparseContinuous(
     } else {
       for (int32_t j = 0; j < map_length; j++) {
         int32_t str_len = readInt32();
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         skipLength(str_len);
         skip<double>();
       }

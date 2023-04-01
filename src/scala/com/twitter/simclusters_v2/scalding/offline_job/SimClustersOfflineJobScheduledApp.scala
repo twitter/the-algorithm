@@ -102,6 +102,9 @@ object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
         D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
         D.Suffix(clusterTopKTweetsDatasetPath),
         D.EBLzo(),
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
         dateRange.end
       )
 

@@ -175,6 +175,7 @@ object LoadTestUtils {
     line: String,
     f: Array[String] => Seq[V],
     map: mutable.HashMap[K, Seq[V]],
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     converter: String => K
   ): Unit = {
     val items = line.split("\t")

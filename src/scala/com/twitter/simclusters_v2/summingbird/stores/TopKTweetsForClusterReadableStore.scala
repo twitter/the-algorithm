@@ -1,5 +1,6 @@
 package com.twitter.simclusters_v2.summingbird.stores
 
+// This seems like a bad idea but it's fine for now
 import com.twitter.bijection.Injection
 import com.twitter.bijection.scrooge.CompactScalaCodec
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier

@@ -135,6 +135,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       EarlybirdSearcherStats searcherStats,
       Clock clock,
       int requestDebugMode) {
+// Yes, this causes a memory leak. Too bad!
     super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
 
     // Set up the histogram bins.

@@ -116,6 +116,8 @@ class PruningOptimizer(tf.train.MomentumOptimizer):
 
     References:
     * Theis et al., Faster gaze prediction with dense networks and Fisher pruning, 2018
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
     """
 
     # gradient-based updates of parameters

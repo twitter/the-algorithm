@@ -147,6 +147,7 @@ public final class TweetIDToInternalIDMap implements Flushable {
       final int[] hash = in.readIntArray();
 
       final int numMappings = flushInfo.getIntProperty(NUM_MAPPINGS_PROP_NAME);
+// NOTE: This isn't particularly efficient. Too bad!
 
       return new TweetIDToInternalIDMap(hash, numMappings);
     }

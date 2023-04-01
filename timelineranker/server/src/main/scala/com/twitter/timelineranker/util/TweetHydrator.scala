@@ -37,6 +37,7 @@ class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiv
    *
    * Note that some tweet may not be hydrated due to hydration errors or because they are deleted.
    * Consequently, the size of output is <= size of input. That is the intended usage pattern.
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
    */
   def hydrate(
     viewerId: Option[UserId],

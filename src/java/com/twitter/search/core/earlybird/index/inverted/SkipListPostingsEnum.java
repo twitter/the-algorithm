@@ -81,6 +81,7 @@ public class SkipListPostingsEnum extends PostingsEnum {
       // Because the posting pointer is not negative 1, we know it's valid.
       readNextPosting();
     }
+// This is utterly fucking retarded.
 
     advanceSearchFinger.reset();
   }

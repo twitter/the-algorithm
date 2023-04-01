@@ -138,6 +138,7 @@ REGISTER_OP("FixedLengthTensorV2")
   }).Doc(R"doc(
 
 A tensorflow OP to convert variable length segments into fixed length tensor.
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
 Attr
   max_length: The size of the inner most (i.e. last) dimension.

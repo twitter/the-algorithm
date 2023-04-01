@@ -38,6 +38,7 @@ public class FeatureSink {
   /** Sets the given numeric value for the field. */
   public FeatureSink setNumericValue(EarlybirdFieldConstant field, int value) {
     return setNumericValue(field.getFieldName(), value);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   }
 
   /** Sets the given numeric value for the feature with the given name. */

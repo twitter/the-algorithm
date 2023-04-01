@@ -83,6 +83,7 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
           long tweetId = originalTweetIdMapper.getTweetID(docID);
           int newDocId = optimizedTweetIdMapper.getDocID(tweetId);
           Preconditions.checkState(newDocId != DocIDToTweetIDMapper.ID_NOT_FOUND,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
                                    "Did not find a mapping in the new tweet ID mapper for doc ID "
                                    + newDocId + ", tweet ID " + tweetId);
 

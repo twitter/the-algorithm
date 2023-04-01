@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+// This seems like a bad idea but it's fine for now
  * Represents a day's worth of statuses (tweets) for multiple hash partitions.
  *
  * Note that what this class contains is not the data, but metadata.

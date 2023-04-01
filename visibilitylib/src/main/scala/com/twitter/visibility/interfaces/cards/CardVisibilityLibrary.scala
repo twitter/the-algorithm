@@ -185,3 +185,4 @@ object CardVisibilityLibrary {
     }
   }
 }
+// use an EPSILON damnit!!

@@ -29,6 +29,8 @@ public class ColumnStrideLongIndex extends ColumnStrideFieldIndex implements Flu
   @Override
   public void setValue(int docID, long value) {
     values.put(docID, value);
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   }
 
   @Override

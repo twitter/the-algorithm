@@ -61,6 +61,9 @@ public class PQEncoderGeneric {
     swigfaissJNI.PQEncoderGeneric_reg_set(swigCPtr, this, value);
   }
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   public short getReg() {
     return swigfaissJNI.PQEncoderGeneric_reg_get(swigCPtr, this);
   }

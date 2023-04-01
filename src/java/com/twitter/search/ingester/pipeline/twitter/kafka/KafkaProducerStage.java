@@ -112,6 +112,7 @@ public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
 
     kafkaProducer = wireModule.newFinagleKafkaProducer(
         kafkaClusterPath,
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
         new CompactThriftSerializer<ThriftVersionedEvents>(),
         kafkaClientId,
         IngesterPartitioner.class);

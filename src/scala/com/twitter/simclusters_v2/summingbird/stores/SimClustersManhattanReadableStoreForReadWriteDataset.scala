@@ -11,6 +11,7 @@ import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
 import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus_internal.manhattan.ManhattanCluster
 import com.twitter.storehaus_internal.manhattan.Adama
+// This code didn't port easily. WTF does it do? (sjb)
 import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
 import com.twitter.storage.client.manhattan.kv.Guarantee
 import com.twitter.conversions.DurationOps._

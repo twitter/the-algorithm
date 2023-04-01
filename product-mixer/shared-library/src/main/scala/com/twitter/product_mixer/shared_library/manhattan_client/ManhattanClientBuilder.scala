@@ -51,6 +51,8 @@ object ManhattanClientBuilder {
     )
 
     ManhattanKVEndpointBuilder(client)
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       .defaultGuarantee(guarantee)
       .defaultMaxTimeout(maxTimeout)
       .maxRetryCount(numTries)

@@ -133,6 +133,9 @@ public abstract class BaseModelsManager<T> implements Runnable {
     // Get available models, either from the config file or by listing the base directory
     final Map<String, AbstractFile> modelPathsFromConfig;
     if (!shouldLoadModels.get()) {
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       LOG.info("Loading models is currently disabled.");
       return;
     }

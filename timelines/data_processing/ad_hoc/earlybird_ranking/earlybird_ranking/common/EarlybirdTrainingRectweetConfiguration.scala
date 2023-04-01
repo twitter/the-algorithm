@@ -72,6 +72,8 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
     // only LINK_LANGUAGE availabe in rectweet. no LANGUAGE feature
     val linkLanguageTransform = new ITransform {
       private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
       override def transformContext(featureContext: FeatureContext): FeatureContext =
         featureContext.addFeatures(

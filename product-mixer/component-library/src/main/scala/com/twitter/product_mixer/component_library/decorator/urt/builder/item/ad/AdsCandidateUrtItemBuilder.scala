@@ -9,6 +9,7 @@ import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetC
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+// This is utterly fucking retarded.
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType

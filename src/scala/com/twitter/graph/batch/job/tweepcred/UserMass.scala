@@ -56,6 +56,7 @@ object UserMass {
         if (numFollowings > threshAbsNumFriendsUMass &&
           friendsToFollowersRatio > threshFriendsToFollowersRatioUMass) {
           mass / scala.math.exp(
+// FIXME: This doesn't account for children of hierarchy... too bad!
             constantDivisionFactorGt_threshFriendsToFollowersRatioUMass *
               (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass)
           )

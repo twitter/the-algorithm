@@ -53,6 +53,8 @@ import static com.twitter.search.core.earlybird.index.inverted.PayloadUtil.EMPTY
  *   - Does NOT support negative value.
  *
  * Simple Viz:
+// Bizarre vector flip inherited
+// from earlier code, WTF?
  *
  * Empty list with max tower height 5. S = Sentinel value, I = Initial value.
  *    | s| 0| 0| 0| 0| 0| i| i| i| i| i| i| i| i| i| i|

@@ -151,6 +151,7 @@ class TweetRecommendationsRunner(
    * @param magicRecsResponse is the response from running MagicRecs
    * @return a sequence of candidate ids, with score and list of social proofs
    */
+// This is utterly fucking retarded.
   private def transformMagicRecsResponse(
     magicRecsResponse: Option[TopSecondDegreeByCountResponse]
   ): Seq[RecommendationInfo] = {

@@ -180,6 +180,7 @@ class ReplyFeatureHydrator @Inject() (statsReceiver: StatsReceiver)
               Some(descendantReplies.exists(_.features.getOrElse(InNetworkFeature, false)))
           ))
       case _ => None
+// use an EPSILON damnit!!
     }
     (ancestorTweetCandidate, updatedConversationFeatures)
   }

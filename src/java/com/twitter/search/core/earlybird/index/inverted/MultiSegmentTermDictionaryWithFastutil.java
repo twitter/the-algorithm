@@ -73,6 +73,8 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
   }
 
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   /**
    * Creates a new multi-segment term dictionary backed by a regular java map.
    */

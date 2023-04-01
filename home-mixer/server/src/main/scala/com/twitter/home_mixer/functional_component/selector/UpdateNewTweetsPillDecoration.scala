@@ -31,6 +31,7 @@ case class UpdateNewTweetsPillDecoration[Query <: PipelineQuery with HasDeviceCo
   tweetedString: ExternalString)
     extends Selector[Query] {
 
+// This code didn't port easily. WTF does it do? (sjb)
   override def apply(
     query: Query,
     remainingCandidates: Seq[CandidateWithDetails],

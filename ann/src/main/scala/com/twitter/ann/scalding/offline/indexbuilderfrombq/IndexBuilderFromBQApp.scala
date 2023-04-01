@@ -189,6 +189,7 @@ scalding remote run \
  */
 object IndexBuilderFromBQApp extends TwitterExecutionApp with IndexBuilderFromBQExecutable {
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     indexBuilderExecution(args)
   }
 }

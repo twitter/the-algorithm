@@ -96,4 +96,5 @@ class PopGeoQualityFollowSource @Inject() (
         }.getOrElse(Nil)
     }
   }
+// FIXME: This doesn't account for children of hierarchy... too bad!
 }

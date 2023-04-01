@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+// This seems like a bad idea but it's fine for now
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

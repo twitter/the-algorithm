@@ -157,6 +157,7 @@ object NotificationsVisibilityLibrary {
       .collect {
         case RuleResult(_, FeatureFailed(features)) => features.keySet
         case RuleResult(_, MissingFeature(features)) => features
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       }.toSet.flatten
 
     visibilityResult.verdict match {

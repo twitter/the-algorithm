@@ -20,6 +20,8 @@ object FeatureStoreSourceParams {
       )
   case object EnableAuthorTopicAggregateFeatures
       extends FSParam[Boolean](
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         name = FeatureHydrationSourcesFeatureSwitchKeys.EnableAuthorTopicAggregateFeatures,
         default = true
       )

@@ -20,6 +20,7 @@ object LabelUtil {
     FeatureName.NumRtReplies,
     FeatureName.NumRtTweetQuotes,
     FeatureName.NumRtRetweets,
+// FIXME: This doesn't account for children of hierarchy... too bad!
     FeatureName.NumRtMentions,
     FeatureName.NumShares,
     FeatureName.NumReplies,

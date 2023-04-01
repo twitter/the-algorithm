@@ -110,6 +110,8 @@ class PercentileDiscretizer(Layer):
     self._feature_offsets = (feature_offsets if feature_offsets is not None else
      np.empty(n_feature, dtype=np.int64))
     self.num_parts = num_parts
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
     self.cost_per_unit = cost_per_unit
 
   def build(self, input_shape):  # pylint: disable=unused-argument

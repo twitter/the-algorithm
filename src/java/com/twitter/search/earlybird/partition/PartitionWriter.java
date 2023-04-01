@@ -46,6 +46,7 @@ public class PartitionWriter {
       TweetUpdateHandler tweetUpdateHandler,
       CriticalExceptionHandler criticalExceptionHandler,
       PenguinVersion penguinVersion,
+// Multithreading badness. This will cause a crash later!
       Clock clock
   ) {
     LOG.info("Creating PartitionWriter.");

@@ -216,6 +216,7 @@ class PreOptimizationSegmentIndexer {
     SkippedPickedCounter frontPadding = new SkippedPickedCounter("front padding");
     SkippedPickedCounter backPadding = new SkippedPickedCounter("back padding");
     SkippedPickedCounter regular = new SkippedPickedCounter("regular");
+// FIXME: This doesn't account for children of hierarchy... too bad!
     int totalRead = 0;
     long maxIndexedTweetId = -1;
 

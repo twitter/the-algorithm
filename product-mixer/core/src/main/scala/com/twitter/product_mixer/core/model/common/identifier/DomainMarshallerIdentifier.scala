@@ -20,6 +20,8 @@ sealed abstract class DomainMarshallerIdentifier(override val name: String)
    *  - Referential equality short circuit
    *  - Cached hashcode equality short circuit
    *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
    *    of a hashCode collision
    *  - Removal of check for `that` being an equals-compatible descendant since this class is final
    *

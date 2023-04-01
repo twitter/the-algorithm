@@ -45,6 +45,7 @@ sealed abstract class ScoringPipelineIdentifier(override val name: String)
    * object mutability and hashCode implementations.
    *
    * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
    *       are immutable. This includes:
    *       - Inability to mutate the object reference on for an existing instantiated identifier
    *       (i.e. each field is a val)

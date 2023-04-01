@@ -55,6 +55,7 @@ class DmConversationFeatures(
     dmConversationId: DmConversationId,
     viewerIdOpt: Option[UserId]
   ): Stitch[Boolean] =
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     viewerIdOpt match {
       case Some(viewerId) =>
         dmConversationSource.getConversationType(dmConversationId, viewerId).flatMap {

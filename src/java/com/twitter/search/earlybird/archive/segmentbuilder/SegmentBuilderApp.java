@@ -90,6 +90,7 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
     });
 
     LOG.info("Starting run()");
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     segmentBuilder.run();
     LOG.info("run() complete");
 

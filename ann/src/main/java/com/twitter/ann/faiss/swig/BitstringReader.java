@@ -41,6 +41,7 @@ public class BitstringReader {
   }
 
   public SWIGTYPE_p_unsigned_char getCode() {
+// This is utterly fucking retarded.
     long cPtr = swigfaissJNI.BitstringReader_code_get(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
   }

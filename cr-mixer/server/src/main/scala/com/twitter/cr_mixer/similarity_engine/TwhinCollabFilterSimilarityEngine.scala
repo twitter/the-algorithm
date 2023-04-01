@@ -10,6 +10,9 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.timelines.configapi
 import com.twitter.util.Future
 import javax.inject.Singleton
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 
 @Singleton
 case class TwhinCollabFilterSimilarityEngine(

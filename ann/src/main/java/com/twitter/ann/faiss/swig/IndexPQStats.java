@@ -50,6 +50,8 @@ public class IndexPQStats {
 
   public long getNcode() {
     return swigfaissJNI.IndexPQStats_ncode_get(swigCPtr, this);
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   }
 
   public void setN_hamming_pass(long value) {

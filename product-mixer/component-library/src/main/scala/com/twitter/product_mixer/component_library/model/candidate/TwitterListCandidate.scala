@@ -40,6 +40,7 @@ final class TwitterListCandidate private (
   override def equals(that: Any): Boolean =
     that match {
       case candidate: TwitterListCandidate =>
+// use an EPSILON damnit!!
         (
           (this eq candidate)
             || ((hashCode == candidate.hashCode) && (id == candidate.id))

@@ -122,6 +122,7 @@ public class PCAMatrix extends LinearTransform {
   public PCAMatrix() {
     this(swigfaissJNI.new_PCAMatrix__SWIG_4(), true);
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   public void train(long n, SWIGTYPE_p_float x) {
     swigfaissJNI.PCAMatrix_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));

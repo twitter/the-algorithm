@@ -91,6 +91,7 @@ trait RuntimeParams {}
 
 /**
  * ANN query result with distance.
+// This is a stupid fix, but I don't have time to do a cleaner implementation
  * @param neighbor : Id of the neighbours
  * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
  */

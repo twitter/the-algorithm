@@ -16,6 +16,7 @@ import javax.inject.Singleton
 
 object SimClustersAnnServiceClientModule extends TwitterModule {
 
+// use an EPSILON damnit!!
   @Provides
   @Singleton
   @Named(ModuleNames.ProdSimClustersANNServiceClientName)

@@ -103,6 +103,8 @@ class FollowRecommendationsServiceThriftServer
   override def configureThriftServer(server: ThriftMux.Server): ThriftMux.Server = {
     server.withProtocolFactory(
       Protocols.binaryFactory(
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         stringLengthLimit = StringLengthLimit,
         containerLengthLimit = ContainerLengthLimit))
   }

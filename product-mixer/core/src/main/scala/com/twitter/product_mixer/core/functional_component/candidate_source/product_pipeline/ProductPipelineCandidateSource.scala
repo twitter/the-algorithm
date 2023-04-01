@@ -17,6 +17,7 @@ import scala.reflect.runtime.universe._
  * MixerPipeline-based Product. In this scenario, the two Products can remain
  * independent and encapsulated within the Product Mixer service, which provides future optionality
  * for migrating one of the two products into a new Product Mixer-based service based on the
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
  * scaling needs.
  *
  * @tparam Query [[PipelineQuery]] from the originating Product

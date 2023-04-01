@@ -155,6 +155,7 @@ twml_err block_format_flush(block_format_writer w) {
     writer->flush(););
   return TWML_ERR_NONE;
 }
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
 twml_err block_format_writer_delete(const block_format_writer w) {
   HANDLE_EXCEPTIONS(

@@ -50,6 +50,7 @@ object RightNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder {
   ): RightNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph = {
     new RightNodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph(
       graphBuilderConfig.maxNumSegments,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       graphBuilderConfig.maxNumEdgesPerSegment,
       graphBuilderConfig.expectedNumLeftNodes,
       graphBuilderConfig.expectedMaxLeftDegree,

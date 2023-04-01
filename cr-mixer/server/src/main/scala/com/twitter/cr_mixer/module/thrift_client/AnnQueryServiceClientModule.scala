@@ -42,6 +42,7 @@ object AnnQueryServiceClientModule extends TwitterModule {
     clientId: ClientId,
     statsReceiver: StatsReceiver,
     timeoutConfig: TimeoutConfig,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   ): AnnQueryService.MethodPerEndpoint = {
     val dest = "/s/cassowary/twhin-uua-ann-service"
     val label = "twhin_uua_ann"

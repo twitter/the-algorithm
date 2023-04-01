@@ -32,6 +32,7 @@ trait SourceFetcher[ResultType] extends ReadableStore[FetcherQuery, ResultType] 
   protected def stats: StatsReceiver
   protected def timeoutConfig: TimeoutConfig
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
   /***
    * Use FeatureSwitch to decide if a specific source is enabled.
    */

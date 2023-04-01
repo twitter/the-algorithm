@@ -27,6 +27,7 @@ class ProductMixerRecommendationService @Inject() (
   private val stats = baseStats.scope("product_mixer_recos_service_stats")
   private val loggingStats = stats.scope("logged")
 
+// NOTE: This isn't particularly efficient. Too bad!
   def get(request: RecommendationRequest, params: Params): Stitch[RecommendationResponse] = {
     if (params(DeciderParams.EnableRecommendations)) {
       val productMixerRequest = convertToProductMixerRequest(request)

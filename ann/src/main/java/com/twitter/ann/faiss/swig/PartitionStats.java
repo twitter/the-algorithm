@@ -41,6 +41,8 @@ public class PartitionStats {
   }
 
   public long getBissect_cycles() {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     return swigfaissJNI.PartitionStats_bissect_cycles_get(swigCPtr, this);
   }
 

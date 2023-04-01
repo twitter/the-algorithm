@@ -76,6 +76,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
 
     if (numHitsProcessed >= maxHits) {
       return false;
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     }
 
     // Check if there is a gap between the last result and the min status ID of current search.

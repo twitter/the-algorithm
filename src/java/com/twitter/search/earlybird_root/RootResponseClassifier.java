@@ -62,6 +62,8 @@ public class RootResponseClassifier extends AbstractPartialFunction<ReqRep, Resp
         RETRYABLE_FAILURE_COUNTER.increment();
         return ResponseClasses.RETRYABLE_FAILURE;
       default:
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         SUCCESS_COUNTER.increment();
         return ResponseClasses.SUCCESS;
     }

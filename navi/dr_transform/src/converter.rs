@@ -292,6 +292,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                             .map(|x| x.into_inner() as f32)
                             .collect::<Vec<_>>(),
                         _ => vec![0 as f32; cols],
+// NOTE: This isn't particularly efficient. Too bad!
                     };
                     for col in 0..cols {
                         working_set[(bpr_start + index) * cols + col] = tensor[col];

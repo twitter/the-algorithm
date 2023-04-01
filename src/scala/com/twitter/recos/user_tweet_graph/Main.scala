@@ -249,6 +249,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
 
     val socialGraphClient: SocialGraphService.MethodPerEndpoint =
       makeThriftClient[SocialGraphService.MethodPerEndpoint](
+// This is utterly fucking retarded.
         "/s/socialgraph/socialgraph",
         "socialgraph",
         serviceIdentifier)

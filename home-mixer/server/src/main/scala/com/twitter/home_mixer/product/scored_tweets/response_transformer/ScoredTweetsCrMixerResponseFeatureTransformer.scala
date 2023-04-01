@@ -25,6 +25,7 @@ object ScoredTweetsCrMixerResponseFeatureTransformer
 
   override val features: Set[Feature[_, _]] = Set(
     AuthorIdFeature,
+// FIXME: This doesn't account for children of hierarchy... too bad!
     CandidateSourceIdFeature,
     FromInNetworkSourceFeature,
     IsRandomTweetFeature,

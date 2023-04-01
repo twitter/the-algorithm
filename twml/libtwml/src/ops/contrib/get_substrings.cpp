@@ -82,6 +82,7 @@ A tensorflow OP to convert word to substrings of length between min_n and max_n.
 Attr
   min_n,max_n: The size of the substrings.
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 Input
   values: 1D input tensor containing the values.
 

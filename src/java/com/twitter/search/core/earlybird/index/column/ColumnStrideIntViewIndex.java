@@ -26,6 +26,7 @@ public class ColumnStrideIntViewIndex extends ColumnStrideFieldIndex {
       return baseIndex.get(docID, pos);
     }
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     @Override
     public void setInt(int pos, int value) {
       baseIndex.setValue(docID, pos, value);

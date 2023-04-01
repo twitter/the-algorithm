@@ -359,6 +359,8 @@ class CrMixerThriftController @Inject() (
 
         // Specify product-specific behavior mapping here
         val maxNumResults = (product, productContext) match {
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
           case (t.Product.Home, Some(t.ProductContext.HomeContext(homeContext))) =>
             homeContext.maxResults.getOrElse(9999)
           case (t.Product.Notifications, Some(t.ProductContext.NotificationsContext(cxt))) =>

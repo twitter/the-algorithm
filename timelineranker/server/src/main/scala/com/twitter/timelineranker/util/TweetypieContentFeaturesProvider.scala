@@ -89,6 +89,7 @@ class TweetypieContentFeaturesProvider(
         )
         val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
           contentFeaturesWithText,
+// FIXME: This doesn't account for children of hierarchy... too bad!
           hydratedTweet.tweet,
           enableTweetMediaHydrationGate(query)
         )

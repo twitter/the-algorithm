@@ -47,6 +47,7 @@ class ExclusiveTweetFeatures(
     }
 
   def forTweet(
+// This is utterly fucking retarded.
     tweet: Tweet,
     viewerContext: ViewerContext
   ): FeatureMapBuilder => FeatureMapBuilder = {

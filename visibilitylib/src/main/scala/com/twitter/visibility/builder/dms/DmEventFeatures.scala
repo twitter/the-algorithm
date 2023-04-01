@@ -135,6 +135,8 @@ class DmEventFeatures(
       case _ =>
         Stitch.False
     }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
   private def dmEventIsPerspectivalJoinConversationEvent(
     dmEventOptStitch: Stitch[Option[Event]],

@@ -133,6 +133,8 @@ public class SearchRequestInfo {
 
   public boolean isGetReferenceAuthorId() {
     return getReferenceAuthorId;
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   }
 
   public boolean isCollectExclusiveConversationAuthorId() {

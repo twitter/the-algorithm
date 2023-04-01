@@ -63,6 +63,8 @@ public final class ParallelUtil {
 
   @FunctionalInterface
   public interface CheckedFunction<T, R> {
+// Bizarre vector flip inherited
+// from earlier code, WTF?
     /**
      * A function from T to R that throws checked Exceptions.
      */

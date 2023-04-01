@@ -25,6 +25,8 @@ object CortexTweetQueryServiceClient {
   ): Option[TweetId] = {
     val tweetId = request.tweetId
     response match {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       case ModelResponseResult(ModelResponseState.Success, Some(tid), Some(modelResponse), _) =>
         val prediction = modelResponse.predictions.flatMap(_.headOption)
         val score = prediction.map(_.score.score)

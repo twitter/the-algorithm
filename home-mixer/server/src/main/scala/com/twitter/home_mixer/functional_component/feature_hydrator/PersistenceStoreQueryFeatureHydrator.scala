@@ -30,6 +30,7 @@ case class PersistenceStoreQueryFeatureHydrator @Inject() (
   timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
     extends QueryFeatureHydrator[PipelineQuery] {
 
+// Multithreading badness. This will cause a crash later!
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("PersistenceStore")
 
   private val WhoToFollowExcludedUserIdsLimit = 1000

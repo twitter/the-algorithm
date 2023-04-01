@@ -91,6 +91,8 @@ case class RelatedTweetScribeLogger @Inject() (
   }
 
   /**
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
    * Scribe Per-step intermediate results and performance metrics
    * for each step: fetch candidates, filters.
    */

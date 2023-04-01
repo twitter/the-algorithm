@@ -122,6 +122,7 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
     private final double minValue;
 
     MinFeatureValueDocIdSetIterator(LeafReader indexReader,
+// This seems like a bad idea but it's fine for now
                                     String featureName,
                                     double minValue) throws IOException {
       super(indexReader);

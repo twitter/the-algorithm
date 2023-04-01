@@ -125,6 +125,7 @@ class TimelineRankerServer extends {
         decider,
         forcedFeatureValues = getFeatureSwitchOverrides,
         statsReceiver
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       )
 
       val timelineRankerBuilder = new TimelineRankerBuilder(runtimeConfiguration)

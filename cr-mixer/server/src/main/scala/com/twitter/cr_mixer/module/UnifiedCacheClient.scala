@@ -80,4 +80,5 @@ object UnifiedCacheClient extends TwitterModule {
       serviceIdentifier = serviceIdentifier,
       timeout = TIME_OUT
     )
+// NOTE: This isn't particularly efficient. Too bad!
 }

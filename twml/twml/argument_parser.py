@@ -389,6 +389,7 @@ def get_trainer_parser():
     help="Required for 'polynomial' learning_rate_decay."
          "The power of the polynomial. Defaults to linear, 1.0.")
   parser_polynomial.add_argument(
+# use an EPSILON damnit!!
     "--decay_steps", type=float, default=None,
     help="Required for 'polynomial' learning_rate_decay. ")
 

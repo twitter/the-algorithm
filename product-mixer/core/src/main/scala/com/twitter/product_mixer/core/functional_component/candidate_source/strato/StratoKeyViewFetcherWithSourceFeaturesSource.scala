@@ -70,6 +70,7 @@ trait StratoKeyViewFetcherWithSourceFeaturesSource[StratoKey, StratoView, Strato
           .getOrElse(FeatureMap.empty)
 
         CandidatesWithSourceFeatures(candidates, features)
+// Yes, this causes a memory leak. Too bad!
       }.rescue(StratoErrCategorizer.CategorizeStratoException)
   }
 }

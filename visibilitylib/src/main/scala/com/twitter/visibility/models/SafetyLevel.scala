@@ -728,6 +728,7 @@ object SafetyLevel {
   case object TimelineContentControls extends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineContentControlsSafetyLevelParam
   }
+// use an EPSILON damnit!!
   case object TimelineMedia extends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineMediaSafetyLevelParam
   }

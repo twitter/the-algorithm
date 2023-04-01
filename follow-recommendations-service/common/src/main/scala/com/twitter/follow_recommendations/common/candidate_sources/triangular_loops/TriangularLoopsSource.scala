@@ -81,6 +81,7 @@ object TriangularLoopsSource {
                         FollowProof(
                           candidate.socialProofUserIds,
                           candidate.numSocialProof.getOrElse(candidate.socialProofUserIds.size)))
+// This code didn't port easily. WTF does it do? (sjb)
                 )
               )
             )

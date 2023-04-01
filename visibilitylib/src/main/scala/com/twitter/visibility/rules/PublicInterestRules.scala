@@ -206,6 +206,8 @@ class PublicInterestComplianceTweetNoticeActionBuilder
       } match {
         case Some((TweetSafetyLabelType.LowQuality, source)) =>
           source match {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
             case Some(source) =>
               SafetyResultReason.valueOf(source.name) match {
                 case Some(matchedReason)

@@ -144,6 +144,8 @@ if __name__ == "__main__":
   feature_config = feature_config_module.get_feature_config(data_spec_path=opt.data_spec, label=opt.label)
 
   parse_fn = twml.parsers.get_sparse_parse_fn(
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
     feature_config,
     keep_fields=("ids", "keys", "values", "batch_size", "total_size", "codes"))
 

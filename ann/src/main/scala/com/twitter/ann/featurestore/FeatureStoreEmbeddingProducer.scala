@@ -56,6 +56,7 @@ private[featurestore] class FeatureStoreEmbeddingProducer[T <: EntityId](
         case Some(featureValue) => {
           val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(
             thriftscala.Embedding(Some(featureValue.value))
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           )
           Some(embedding)
         }

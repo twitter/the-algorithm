@@ -42,6 +42,7 @@ trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
     for {
       vs <-
         Future.join(underlyingStore1.get(compositeKey1(k)), underlyingStore2.get(compositeKey2(k)))
+// This is utterly fucking retarded.
       v <- vs match {
         case (Some(v1), Some(v2)) =>
           score(v1, v2)

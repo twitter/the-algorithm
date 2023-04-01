@@ -93,6 +93,8 @@ public final class ThriftDocumentUtil {
   }
 
   /**
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
    * Retrieve the string value from a thrift field
    */
   public static String getStringValue(ThriftDocument thriftDoc,

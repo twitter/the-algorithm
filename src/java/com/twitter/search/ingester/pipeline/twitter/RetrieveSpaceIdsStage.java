@@ -53,6 +53,8 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
     emitAndCount(message);
   }
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   private void tryToRetrieveSpaceId(TwitterMessage message) {
     if (DeciderUtil.isAvailableForRandomRecipient(decider, PARSE_SPACE_ID_DECIDER_KEY)) {
       Set<String> spaceIds = parseSpaceIdsFromMessage(message);

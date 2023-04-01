@@ -125,6 +125,7 @@ class ConversationControlFeatures(
       case ConversationControl.Followers(followers) =>
         followers.conversationTweetAuthorId
     }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
     conversationAuthorId match {
       case Some(authorId) =>

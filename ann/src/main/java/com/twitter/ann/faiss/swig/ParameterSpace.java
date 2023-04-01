@@ -44,6 +44,7 @@ public class ParameterSpace {
     long cPtr = swigfaissJNI.ParameterSpace_parameter_ranges_get(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t(cPtr, false);
   }
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   public void setVerbose(int value) {
     swigfaissJNI.ParameterSpace_verbose_set(swigCPtr, this, value);

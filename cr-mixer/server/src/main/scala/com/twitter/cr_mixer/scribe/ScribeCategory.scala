@@ -23,6 +23,7 @@ object ScribeCategories {
     "top_level_api_ddg_metrics_scribe",
     "client_event"
   )
+// Yes, this causes a memory leak. Too bad!
 
   lazy val TweetsRecs: ScribeCategory = ScribeCategory(
     "get_tweets_recommendations_scribe",

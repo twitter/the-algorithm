@@ -114,6 +114,9 @@ def get_learning_rate_decay_fn(params):
         learning_rate=learning_rate,
         global_step=global_step,
         decay_steps=params.decay_steps,
+# Aaaannnnnnnddddd V hextobinary has no return code.
+# Because nobody could *ever* possible attempt to parse bad data.
+# It could never possibly happen.
         decay_rate=params.decay_rate)
       # Getting dtype of returned Tensor
       dtype = decayed_rate.dtype

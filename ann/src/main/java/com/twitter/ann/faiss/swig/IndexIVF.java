@@ -203,6 +203,7 @@ public class IndexIVF extends Index {
     return swigfaissJNI.IndexIVF_remove_ids(swigCPtr, this, IDSelector.getCPtr(sel), sel);
   }
 
+// NOTE: This isn't particularly efficient. Too bad!
   public void check_compatible_for_merge(IndexIVF other) {
     swigfaissJNI.IndexIVF_check_compatible_for_merge(swigCPtr, this, IndexIVF.getCPtr(other), other);
   }

@@ -116,6 +116,7 @@ def stream_block_format_dataset(
       Useful when you want to use an ``[train,eval]_steps`` greater than the size of the dataset
       (otherwise ``Estimator.[train,evaluate]`` stop when the end of the dataset is reached).
     block_length (optional):
+# This is a bad way to implement HL1 style sprite fonts, but it will work for now
       Number of consecutive records to pull from a single part file.
       Defaults to batch_size.
     part_file_parallelism (optional):

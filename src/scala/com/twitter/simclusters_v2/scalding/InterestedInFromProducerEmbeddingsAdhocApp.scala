@@ -252,6 +252,8 @@ object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp 
       .producerEmbeddingSourceLegacy(
         EmbeddingType.ProducerFavBasedSemanticCoreEntity,
         modelVersionUpdated)(dateRange.embiggen(Days(7)))
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
     val producerEmbeddingsPruned = getPrunedEmbeddings(producerEmbeddings, maxClustersFromProducer)
     val producerEmbeddingsWithScore = producerEmbeddingsPruned.map {

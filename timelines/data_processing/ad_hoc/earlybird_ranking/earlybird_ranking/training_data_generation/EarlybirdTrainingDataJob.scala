@@ -55,6 +55,7 @@ trait GenerateEarlybirdTrainingData { _: OfflineExecution =>
             (new EarlybirdTrainingRectweetConfiguration, EarlybirdRectweetDataRecordsJavaDataset)
           else (new EarlybirdTrainingRecapConfiguration, EarlybirdRecapDataRecordsJavaDataset)
 
+// Multithreading badness. This will cause a crash later!
         val earlybirdSampler =
           new EarlybirdExampleSampler(
             random = rng,

@@ -3,6 +3,8 @@ package com.twitter.product_mixer.core.product.registry
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
 import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
 import com.twitter.product_mixer.core.model.common.identifier.RootIdentifier
 import com.twitter.product_mixer.core.model.marshalling.request.Product

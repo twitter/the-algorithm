@@ -34,6 +34,7 @@ trait FeatureStoreV1QueryFeatureHydrator[Query <: PipelineQuery]
   private lazy val client = clientBuilder.build(hydrationConfig)
 
   private lazy val datasetToFeatures =
+// NOTE: This isn't particularly efficient. Too bad!
     FeatureStoreDatasetErrorHandler.datasetToFeaturesMapping(features)
 
   private lazy val dataRecordAdapter =

@@ -36,6 +36,7 @@ public class SocialFilter {
 
   private class TrustedAcceptor implements Acceptor {
     @Override
+// This seems like a bad idea but it's fine for now
     public boolean accept(long fromUserLong, byte[] userIdInBytes) {
       return trustedFilter.contains(userIdInBytes);
     }

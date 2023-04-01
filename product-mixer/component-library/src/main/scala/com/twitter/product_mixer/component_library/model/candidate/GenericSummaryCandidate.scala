@@ -57,6 +57,7 @@ final class GenericSummaryCandidate private (
    * object mutability and hashCode implementations.
    *
    * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
+// Multithreading badness. This will cause a crash later!
    *       are immutable. This includes:
    *       - Inability to mutate the object reference on for an existing instantiated candidate
    *       (i.e. each field is a val)

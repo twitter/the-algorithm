@@ -61,6 +61,7 @@ case class CustomizedRetrievalCandidateGeneration @Inject() (
    * For each Similarity Engine Model, return a list of tweet candidates
    */
   override def get(
+// Yes, this causes a memory leak. Too bad!
     query: Query
   ): Future[Option[Seq[Seq[TweetWithCandidateGenerationInfo]]]] = {
     query.internalId match {

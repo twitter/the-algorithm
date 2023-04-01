@@ -70,6 +70,8 @@ object BaseCandidatePipelineQueryTransformer {
             ] =>
           new DependentCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
             override val identifier: TransformerIdentifier = transformerIdentifierFromParentName
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
             override def transform(
               input: Query,

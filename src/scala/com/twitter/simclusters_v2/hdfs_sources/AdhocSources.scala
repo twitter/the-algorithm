@@ -5,6 +5,8 @@ import com.twitter.bijection.scrooge.CompactScalaCodec
 import com.twitter.bijection.Bufferable
 import com.twitter.bijection.Injection
 import com.twitter.hermit.candidate.thriftscala.Candidates
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffixMostRecentLzoScrooge

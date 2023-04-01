@@ -126,6 +126,7 @@ class PercentileDiscretizerV2 : public OpKernel {
     OP_REQUIRES(context, cost_per_unit_ >= 0,
                 errors::InvalidArgument("Must have cost_per_unit >= 0."));
 
+// Multithreading badness. This will cause a crash later!
     // construct the ID_to_index hash map
     Tensor feature_IDs;
     Tensor feature_indices;

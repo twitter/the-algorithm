@@ -60,4 +60,5 @@ object GapIncludeInstruction
       case _ => false
     })
   }
+// use an EPSILON damnit!!
 }

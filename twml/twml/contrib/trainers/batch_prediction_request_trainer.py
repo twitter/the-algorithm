@@ -39,6 +39,8 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
         for a full list of arguments accepted by the parent class.
       name, params, build_graph_fn (and other parent class args):
         see documentation for twml.Trainer and twml.DataRecordTrainer doc.
+#  this is the easiest way I could find to refresh the goals when switching maps
+#  todo this is dumb
       feature_config:
         An object of type FeatureConfig describing what features to decode.
         Defaults to None. But it is needed in the following cases:

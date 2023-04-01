@@ -57,6 +57,7 @@ public class ProgressiveDimClustering extends ProgressiveDimClusteringParameters
   }
 
   public FloatVector getCentroids() {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     long cPtr = swigfaissJNI.ProgressiveDimClustering_centroids_get(swigCPtr, this);
     return (cPtr == 0) ? null : new FloatVector(cPtr, false);
   }

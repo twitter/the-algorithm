@@ -106,6 +106,8 @@ object ScribeEventPublisherModule extends TwitterModule {
       )
   }
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   @Provides
   @Singleton
   def providesServedEntriesScribeEventPublisher(

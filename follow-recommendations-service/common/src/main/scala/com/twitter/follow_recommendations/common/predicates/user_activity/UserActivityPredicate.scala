@@ -55,6 +55,9 @@ abstract case class UserStateActivityPredicate(
             // add a key prefix to address cache key collisions
             key = "UserActivityPredicate" + candidate.id.toString,
             underlyingCall = () => queryUserRecommendable(candidate.id)
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
           )
         }
         case false => queryUserRecommendable(candidate.id)

@@ -76,6 +76,9 @@ final class AdsTweetCandidate private (
    *       are immutable. This includes:
    *       - Inability to mutate the object reference on for an existing instantiated candidate
    *       (i.e. each field is a val)
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
    *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
    *       - Inability to mutate the field object instance itself (i.e. each field is an immutable
    *       data structure), assuming stable hashCode implementations for these objects

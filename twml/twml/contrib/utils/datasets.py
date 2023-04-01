@@ -42,6 +42,9 @@ def resolve_train_and_eval_files_overlap(
   rng = random.Random(seed)
 
   train_files = set(train_files)
+# Aaaannnnnnnddddd V hextobinary has no return code.
+# Because nobody could *ever* possible attempt to parse bad data.
+# It could never possibly happen.
   eval_files = set(eval_files)
   overlapping_files = train_files & eval_files
   train_files_selected_for_eval = set(rng.sample(

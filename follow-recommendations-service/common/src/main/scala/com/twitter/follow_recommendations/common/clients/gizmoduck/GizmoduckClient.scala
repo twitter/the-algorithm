@@ -42,6 +42,7 @@ class GizmoduckClient @Inject() (gizmoduckStitchClient: Gizmoduck, statsReceiver
   }
 }
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
 object GizmoduckClient {
   // Similar to GizmoduckUserRepository.DefaultPerspectiveEdges
   val DefaultPerspectiveEdges: Set[PerspectiveEdge] =

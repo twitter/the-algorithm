@@ -84,6 +84,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
 
     // multiple facets, follow the pointer to find all facets in the facetsPool.
     if (pointer == -1) {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       pointer = FacetCountingArray.decodePointer(currentFacet);
     }
     int facetID = countingArray.getFacetsPool().get(pointer);

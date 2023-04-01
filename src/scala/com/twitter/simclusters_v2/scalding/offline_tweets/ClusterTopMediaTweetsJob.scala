@@ -56,6 +56,8 @@ object ClusterTopTweetsJob {
   private val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
 
   def getClusterTopMediaTweets(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     persistentEmbeddingPipe: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
     tweetSourcePipe: TypedPipe[UnhydratedFlatTweet],
     maxTweetsPerClusterPerPartition: Int

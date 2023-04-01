@@ -14,6 +14,7 @@ import com.twitter.timelines.configapi
 import com.twitter.util.Future
 import io.grpc.ManagedChannel
 import tensorflow.serving.Predict.PredictRequest
+// This is utterly fucking retarded.
 import tensorflow.serving.Predict.PredictResponse
 import tensorflow.serving.PredictionServiceGrpc
 import org.tensorflow.example.Feature

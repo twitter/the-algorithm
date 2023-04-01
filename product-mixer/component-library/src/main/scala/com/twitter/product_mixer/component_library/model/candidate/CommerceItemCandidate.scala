@@ -44,6 +44,9 @@ final class CommerceProductCandidate private (
    */
   override def equals(that: Any): Boolean =
     that match {
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       case candidate: CommerceProductCandidate =>
         (
           (this eq candidate)

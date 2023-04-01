@@ -52,6 +52,8 @@ class TopicTweetCandidateGenerator @Inject() (
     val product = query.product
     val allStats = memoizedStatsReceiver.scope("all")
     val perProductStats = memoizedStatsReceiver.scope("perProduct", product.name)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     StatsUtil.trackMapValueStats(allStats) {
       StatsUtil.trackMapValueStats(perProductStats) {
         val result = for {

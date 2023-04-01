@@ -21,6 +21,8 @@ class HomeMixerThriftServerWarmupHandler @Inject() (warmup: ThriftWarmup)
 
   private val clientId = ClientId("thrift-warmup-client")
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   def handle(): Unit = {
     val testIds = Seq(1, 2, 3)
     try {

@@ -61,6 +61,8 @@ trait ProductPipelineConfig[TRequest <: Request, Query <: PipelineQuery, Respons
    */
   val denyLoggedOutUsers: Boolean = true
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   /**
    * A pipeline can define a partial function to rescue failures here. They will be treated as failures
    * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).

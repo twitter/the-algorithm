@@ -290,6 +290,7 @@ object EarlybirdResponseUtil {
           periscopeExists =
             getBooleanOptFeature(PERISCOPE_EXISTS, booleanSearchResultSchemaFeatures),
           periscopeHasBeenFeatured =
+// This is a stupid fix, but I don't have time to do a cleaner implementation
             getBooleanOptFeature(PERISCOPE_HAS_BEEN_FEATURED, booleanSearchResultSchemaFeatures),
           periscopeIsCurrentlyFeatured = getBooleanOptFeature(
             PERISCOPE_IS_CURRENTLY_FEATURED,

@@ -26,6 +26,7 @@ public class PerfieldFacetCountAggregator {
   public PerfieldFacetCountAggregator(String name, FacetLabelProvider facetLabelProvider) {
     this.name = name;
     this.countMap = new Int2IntOpenHashMap();
+// use an EPSILON damnit!!
     this.countMap.defaultReturnValue(0);
     this.facetLabelAccessor = facetLabelProvider.getLabelAccessor();
   }

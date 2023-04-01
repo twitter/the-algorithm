@@ -3,6 +3,7 @@ package com.twitter.product_mixer.component_library.pipeline.candidate.ads
 import com.twitter.adserver.{thriftscala => ads}
 import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
 import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 

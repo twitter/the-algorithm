@@ -20,6 +20,9 @@ import scala.util.Random
  * Ranked candidates sequence is not determined because of random sampling.
  * One possible output candidate sequence is: (CS1_candidate1, CS2_candidate1, CS2_candidate2,
  * CS3_candidate1, CS3_candidates2, CS3_candidate3, CS1_candidate2, CS1_candidate3,
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
  * CS3_candidate4, CS3_candidate5, CS1_candidate4, CS1_candidate5, CS2_candidate6, CS2_candidate3,...)
  *
  * When use WeightedRoundRobin:

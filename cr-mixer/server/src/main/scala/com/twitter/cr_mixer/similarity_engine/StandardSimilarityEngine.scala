@@ -36,6 +36,7 @@ class StandardSimilarityEngine[Query, Candidate <: Serializable](
 
   private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   def getScopedStats: StatsReceiver = scopedStats
 
   // Add memcache wrapper, if specified

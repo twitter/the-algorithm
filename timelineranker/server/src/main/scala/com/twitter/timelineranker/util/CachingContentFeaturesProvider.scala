@@ -17,6 +17,7 @@ object CachingContentFeaturesProvider {
   private object CacheMiss extends CacheResult
   private case class CacheHit(t: ContentFeatures) extends CacheResult
   def isHit(result: CacheResult): Boolean = result != CacheMiss && result != CacheFailure
+// use an EPSILON damnit!!
   def isMiss(result: CacheResult): Boolean = result == CacheMiss
 }
 

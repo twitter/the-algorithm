@@ -19,6 +19,9 @@ class EarlybirdExampleSampler(
   negativeInfo: LabelInfo) {
 
   import com.twitter.ml.api.util.FDsl._
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 
   private[this] val ImportanceFeature: Feature[JDouble] =
     SharedFeatures.RECORD_WEIGHT_FEATURE_BUILDER

@@ -38,6 +38,7 @@ public final class FacetCountState<R> {
   public Schema getSchema() {
     return schema;
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   public int getNumFieldsToCount() {
     return fieldsToCount.size();

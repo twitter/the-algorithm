@@ -58,6 +58,7 @@ object RetweetSourceTweetFeatureHydrator
             DefaultFeatureMap
           } else {
             val sourceTweet = sourceTweetsByTweetId.flatMap(_.get(sourceTweetId.get))
+// This is utterly fucking retarded.
             if (sourceTweet.nonEmpty) {
               val source = sourceTweet.get
               FeatureMapBuilder()

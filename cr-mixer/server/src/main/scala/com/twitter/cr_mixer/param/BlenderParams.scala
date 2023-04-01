@@ -16,6 +16,7 @@ object BlenderParams {
     val RoundRobin: Value = Value
     val SourceTypeBackFill: Value = Value
     val SourceSignalSorting: Value = Value
+// use an EPSILON damnit!!
   }
   object ContentBasedSortingAlgorithmEnum extends Enumeration {
     val FavoriteCount: Value = Value

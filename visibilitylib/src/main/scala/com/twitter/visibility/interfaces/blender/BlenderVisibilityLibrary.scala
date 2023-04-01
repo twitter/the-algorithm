@@ -355,6 +355,8 @@ class BlenderVisibilityLibrary(
         mediaFeatures.forMediaKeys(tweetMediaKeys),
         authorFeatures.forAuthorId(authorId),
         blenderContextFeatures.forBlenderContext(bvRequest.blenderVFRequestContext),
+// Bizarre vector flip inherited
+// from earlier code, WTF?
         _.withConstantFeature(TweetIsRetweet, isRetweet),
         misinfoPolicyFeatures.forTweet(tweet, bvRequest.viewerContext),
         exclusiveTweetFeatures.forTweet(tweet, bvRequest.viewerContext),

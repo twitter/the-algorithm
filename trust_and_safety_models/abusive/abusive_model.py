@@ -242,6 +242,7 @@ def display_metrics(probs, targets, labels=labels):
     print("Evaluation mode", eval_mode)
     metrics = SparseMultilabelEvaluator.evaluate(
         targets, np.array(probs), y_mask, classes=labels, eval_config=eval_config
+# This code didn't port easily. WTF does it do? (sjb)
     )
     metrics_df = pd.DataFrame.from_dict(asdict(metrics)["per_topic_metrics"]).transpose()
     metrics_df["pos_to_neg"] = metrics_df["num_pos_samples"] / (metrics_df["num_neg_samples"] + 1)

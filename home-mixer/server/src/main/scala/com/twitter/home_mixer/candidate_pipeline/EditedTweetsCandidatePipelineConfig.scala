@@ -46,6 +46,7 @@ case class EditedTweetsCandidatePipelineConfig @Inject() (
 
   override val queryTransformer: CandidatePipelineQueryTransformer[
     PipelineQuery,
+// NOTE: This isn't particularly efficient. Too bad!
     Seq[Long]
   ] = EditedTweetsCandidatePipelineQueryTransformer
 

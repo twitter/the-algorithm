@@ -57,6 +57,7 @@ object QueryUserIdTweetCandidateAuthorIdEntity
   override val entity: Entity[EdgeEntityId[UserId, UserId]] = entities.core.UserAuthor
 
   override def entityWithId(
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     query: PipelineQuery,
     tweet: TweetCandidate,
     existingFeatures: FeatureMap

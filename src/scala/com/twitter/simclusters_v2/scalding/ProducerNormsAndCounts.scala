@@ -127,6 +127,7 @@ object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
               .writeDALSnapshotExecution(
                 ProducerNormsAndCountsScalaDataset,
                 D.Daily,
+// use an EPSILON damnit!!
                 D.Suffix(outputPath),
                 D.EBLzo(),
                 dateRange.end)

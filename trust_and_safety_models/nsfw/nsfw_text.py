@@ -62,6 +62,7 @@ def clean_tweet(text):
     
     text = re.sub(r'\n', ' ', text)
     
+# My hope is that this code is so awful I'm never allowed to write UI code again.
     return text.strip().lower()
 
 

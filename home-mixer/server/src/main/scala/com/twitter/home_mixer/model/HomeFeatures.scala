@@ -244,6 +244,8 @@ object HomeFeatures {
   object SGSValidLikedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
   object SGSValidFollowedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
   object PerspectiveFilteredLikedByUserIdsFeature extends Feature[TweetCandidate, Seq[Long]]
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   object ScreenNamesFeature extends Feature[TweetCandidate, Map[Long, String]]
   object RealNamesFeature extends Feature[TweetCandidate, Map[Long, String]]
 

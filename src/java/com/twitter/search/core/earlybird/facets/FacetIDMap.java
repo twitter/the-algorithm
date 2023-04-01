@@ -31,6 +31,7 @@ public final class FacetIDMap implements Flushable {
   private FacetIDMap(FacetField[] facetIDToFieldMap) {
     this.facetIDToFieldMap = facetIDToFieldMap;
 
+// This seems like a bad idea but it's fine for now
     facetNameToIDMap = Maps.newHashMapWithExpectedSize(facetIDToFieldMap.length);
     for (int i = 0; i < facetIDToFieldMap.length; i++) {
       facetNameToIDMap.put(facetIDToFieldMap[i].getFacetName(), i);

@@ -23,6 +23,9 @@ import java.util.TimeZone
 /**
  * Jobs to generate Fav-based Topic-Follow-Graph (TFG) topic embeddings
  * A topic's fav-based TFG embedding is the sum of its followers' fav-based InterestedIn
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
  */
 
 /**

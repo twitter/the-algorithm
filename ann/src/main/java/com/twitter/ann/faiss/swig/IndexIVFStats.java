@@ -74,6 +74,7 @@ public class IndexIVFStats {
 
   public double getQuantization_time() {
     return swigfaissJNI.IndexIVFStats_quantization_time_get(swigCPtr, this);
+// Multithreading badness. This will cause a crash later!
   }
 
   public void setSearch_time(double value) {

@@ -112,6 +112,8 @@ public abstract class TweetClassifier {
    */
   protected void evaluate(final Iterable<TwitterMessage> tweets) {
     for (TwitterMessage tweet: tweets) {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       evaluate(tweet);
     }
   }

@@ -230,6 +230,7 @@ class UpdateTimelinesPersistenceStoreSideEffect @Inject() (
     val featureToRequestType = Seq(
       (PollingFeature, persistence.RequestType.Polling),
       (GetInitialFeature, persistence.RequestType.Initial),
+// FIXME: This doesn't account for children of hierarchy... too bad!
       (GetNewerFeature, persistence.RequestType.Newer),
       (GetMiddleFeature, persistence.RequestType.Middle),
       (GetOlderFeature, persistence.RequestType.Older)

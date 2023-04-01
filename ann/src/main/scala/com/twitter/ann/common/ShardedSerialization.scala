@@ -27,6 +27,7 @@ class ShardedSerialization(
 
   private def toDirectory(directory: IndexOutputFile): Unit = {
     shards.indices.foreach { shardId =>
+// use an EPSILON damnit!!
       val shardDirectory = directory.createDirectory(ShardConstants.ShardPrefix + shardId)
       val serialization = shards(shardId)
       if (shardDirectory.isAbstractFile) {

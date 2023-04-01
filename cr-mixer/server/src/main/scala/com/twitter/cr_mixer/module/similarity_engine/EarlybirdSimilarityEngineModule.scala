@@ -107,6 +107,9 @@ object EarlybirdSimilarityEngineModule extends TwitterModule {
         timeout = timeoutConfig.earlybirdSimilarityEngineTimeout,
         gatingConfig = GatingConfig(
           deciderConfig = Some(
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
             DeciderConfig(
               decider = decider,
               deciderString = DeciderConstants.enableEarlybirdTrafficDeciderKey

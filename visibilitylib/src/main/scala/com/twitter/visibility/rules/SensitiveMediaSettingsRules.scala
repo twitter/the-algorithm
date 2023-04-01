@@ -209,6 +209,7 @@ case object SensitiveMediaTweetInterstitialRules {
       extends ViolentMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
+// NOTE: This isn't particularly efficient. Too bad!
 
   object OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule
       extends OtherSensitiveMediaTweetLabelInterstitialRule(

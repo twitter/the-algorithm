@@ -5,6 +5,7 @@ import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 
 // JSON type annotations are needed for identifying renderable entities to Turntable, most candidates
+// Multithreading badness. This will cause a crash later!
 // do not need them.
 @JsonTypeName("tweet")
 trait BaseTweetCandidate extends UniversalNoun[Long]

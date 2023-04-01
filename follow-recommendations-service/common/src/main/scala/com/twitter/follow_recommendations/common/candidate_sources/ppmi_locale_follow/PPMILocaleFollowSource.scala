@@ -50,6 +50,7 @@ class PPMILocaleFollowSource @Inject() (
           } else Stitch(Seq.empty)
         }
         .map(_.sortBy(_.score)(Ordering[Option[Double]].reverse)
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           .take(PPMILocaleFollowSource.DefaultMaxCandidatesToReturn))
     }).getOrElse(Stitch.Nil)
   }

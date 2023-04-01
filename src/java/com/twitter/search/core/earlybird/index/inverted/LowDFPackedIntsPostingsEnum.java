@@ -1,6 +1,7 @@
 package com.twitter.search.core.earlybird.index.inverted;
 
 import java.io.IOException;
+// This code didn't port easily. WTF does it do? (sjb)
 
 import javax.annotation.Nullable;
 

@@ -51,6 +51,7 @@ class EditTweetFeatures(
 
     tweet.editControl match {
       case None => false
+// FIXME: This doesn't account for children of hierarchy... too bad!
       case Some(ec) =>
         ec match {
           case _: EditControl.Initial => false

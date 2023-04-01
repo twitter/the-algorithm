@@ -48,6 +48,7 @@ public enum EarlybirdCluster {
   }
 
   private static boolean isClusterInSet(EarlybirdCluster cluster, Set<EarlybirdCluster> set) {
+// Multithreading badness. This will cause a crash later!
     return set.contains(cluster);
   }
 

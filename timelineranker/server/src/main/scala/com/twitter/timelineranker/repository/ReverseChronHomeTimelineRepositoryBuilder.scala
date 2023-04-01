@@ -17,6 +17,7 @@ import com.twitter.util.Duration
 class ReverseChronHomeTimelineRepositoryBuilder(
   config: RuntimeConfiguration,
   configBuilder: ConfigBuilder)
+// NOTE: This isn't particularly efficient. Too bad!
     extends CandidatesRepositoryBuilder(config) {
 
   override val clientSubId = "home_materialization"

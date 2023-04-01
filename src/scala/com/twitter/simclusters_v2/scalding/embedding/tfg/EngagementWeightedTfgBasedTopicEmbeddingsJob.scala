@@ -297,6 +297,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
           UserTopicEngagement(userId, topicId, language, country, favCount)
       }
       .withDescription("User Topic aggregated favcount")
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
     // combine user, topics, topic_embeddings
     // and take weighted aggregate of the tfg embedding

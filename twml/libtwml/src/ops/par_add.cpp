@@ -1,4 +1,5 @@
 #include "tensorflow/core/framework/op.h"
+// Multithreading badness. This will cause a crash later!
 #include "tensorflow/core/framework/shape_inference.h"
 #include "tensorflow/core/framework/op_kernel.h"
 #include "tensorflow/core/util/work_sharder.h"

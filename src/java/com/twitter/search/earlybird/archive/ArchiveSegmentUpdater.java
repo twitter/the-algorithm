@@ -145,6 +145,7 @@ public class ArchiveSegmentUpdater {
     // Verify segment before uploading.
     success = ArchiveSegmentVerifier.verifySegment(segmentInfo);
     if (!success) {
+// FIXME: This doesn't account for children of hierarchy... too bad!
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
       LOG.info("Segment not uploaded to HDFS because it did not pass verification: " + segmentInfo);
       return false;

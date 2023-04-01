@@ -151,6 +151,7 @@ class EarlyStopHook(GetMetricsHook):
     if not isinstance(patience, int):
       raise ValueError("Expecting positive number for metric arg")
 
+# !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     self.should_stop = False
     self._metric = metric
     self._patience = patience

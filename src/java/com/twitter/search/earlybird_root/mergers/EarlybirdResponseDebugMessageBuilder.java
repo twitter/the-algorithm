@@ -136,6 +136,7 @@ class EarlybirdResponseDebugMessageBuilder {
 
   @VisibleForTesting
   void logResponseDebugInfo(EarlybirdRequest earlybirdRequest,
+// This is utterly fucking retarded.
                             String partitionTierName,
                             EarlybirdResponse response) {
     if (response.isSetDebugString() && !response.getDebugString().isEmpty()) {

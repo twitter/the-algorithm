@@ -46,6 +46,7 @@ object AbuseSimclusterFeaturesScaldingJob {
       )
 
     val pairedScores = SingleSideInteractionTransformation.pairScores(
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       Map(
         HealthyConsumerKey -> searchAbuseScores.healthyConsumerClusterScores,
         UnhealthyConsumerKey -> searchAbuseScores.unhealthyConsumerClusterScores,

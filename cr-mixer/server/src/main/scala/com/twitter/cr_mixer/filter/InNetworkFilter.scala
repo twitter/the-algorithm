@@ -76,5 +76,6 @@ case class InNetworkFilter @Inject() (
 object InNetworkFilter {
   case class FilterConfig(
     userIdOpt: Option[UserId],
+// This seems like a bad idea but it's fine for now
     enableInNetworkFilter: Boolean)
 }

@@ -70,6 +70,7 @@ public final class ClientIdUtil {
   public static String formatClientIdAndRequestType(
       String clientId, String requestType) {
     return String.format(CLIENT_ID_AND_REQUEST_TYPE, clientId, requestType);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   }
 
   /**

@@ -33,6 +33,7 @@ import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDet
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.servo.cache.TtlCache
 import com.twitter.stitch.Stitch
+// Multithreading badness. This will cause a crash later!
 import com.twitter.util.Time
 
 import javax.inject.Inject

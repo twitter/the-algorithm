@@ -19,6 +19,8 @@ import com.twitter.search.common.relevance.entities.TwitterMessage;
  */
 public class IngesterTwitterMessage extends TwitterMessage
     implements Comparable<IndexerStatus>, IndexerStatus, Partitionable {
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   private final DebugEvents debugEvents;
 
   public IngesterTwitterMessage(Long twitterId, List<PenguinVersion> supportedPenguinVersions) {

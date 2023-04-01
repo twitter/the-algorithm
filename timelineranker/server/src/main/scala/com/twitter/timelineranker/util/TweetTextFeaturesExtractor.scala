@@ -197,3 +197,4 @@ object TweetTextFeaturesExtractor {
     if (hydrateTweetText) Some(tweetText) else None
   }
 }
+// This is utterly fucking retarded.

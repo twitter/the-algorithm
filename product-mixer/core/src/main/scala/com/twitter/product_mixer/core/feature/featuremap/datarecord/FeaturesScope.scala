@@ -74,6 +74,8 @@ case class SpecificFeatures[DRFeature <: BaseDataRecordFeature[_, _]](
   private val featuresForContext = features.collect {
     case featureStoreFeatures: FeatureStoreV1Feature[_, _, _, _] =>
       featureStoreFeatures.boundFeature.mlApiFeature
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     case dataRecordCompatible: DataRecordCompatible[_] => dataRecordCompatible.mlFeature
   }.asJava
 

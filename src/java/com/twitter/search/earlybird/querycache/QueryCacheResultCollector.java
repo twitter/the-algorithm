@@ -58,6 +58,9 @@ public class QueryCacheResultCollector
   public void startSegment() throws IOException {
     // The doc IDs in the optimized segments are always in the 0 .. (segmentSize - 1) range, so we
     // can use a dense bitset to collect the hits. However, unoptimized segments can use any int
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
     // doc IDs, so we have to use a sparse bitset to collect the hits in those segments.
     if (currTwitterReader.getSegmentData().isOptimized()) {
       switch (queryCacheFilter.getResultSetType()) {

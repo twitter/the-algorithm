@@ -180,6 +180,7 @@ pub fn register_custom_metrics() {
     REGISTRY
         .register(Box::new(NUM_REQUESTS_FAILED.clone()))
         .expect("collector can be registered");
+// This code didn't port easily. WTF does it do? (sjb)
     REGISTRY
         .register(Box::new(NUM_REQUESTS_DROPPED.clone()))
         .expect("collector can be registered");

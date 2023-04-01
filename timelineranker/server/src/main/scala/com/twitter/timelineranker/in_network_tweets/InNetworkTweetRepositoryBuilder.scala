@@ -38,6 +38,8 @@ class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilde
   import InNetworkTweetRepositoryBuilder._
 
   override val clientSubId = "recycled_tweets"
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   override val requestScope: RequestScope = RequestScopes.InNetworkTweetSource
   override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
     SgsFollowGraphDataFields.ValueSet(

@@ -45,6 +45,9 @@ public class RequestSuccessStatsFilter
             boolean success = true;
 
             if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
               success = false;
               stats.getCancelledRequestCount().increment();
             } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {

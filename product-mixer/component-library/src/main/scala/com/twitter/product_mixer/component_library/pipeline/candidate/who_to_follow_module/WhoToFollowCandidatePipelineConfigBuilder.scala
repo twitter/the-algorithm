@@ -53,6 +53,9 @@ class WhoToFollowCandidatePipelineConfigBuilder @Inject() (
   ): WhoToFollowCandidatePipelineConfig[Query] =
     new WhoToFollowCandidatePipelineConfig(
       identifier = identifier,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       enabledDeciderParam = enabledDeciderParam,
       supportedClientParam = supportedClientParam,
       alerts = alerts,

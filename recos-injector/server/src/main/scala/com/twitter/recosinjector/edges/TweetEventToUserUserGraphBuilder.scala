@@ -20,6 +20,7 @@ class TweetEventToUserUserGraphBuilder(
 
   override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
     // For user interactions, only new tweets and quotes are considered (no replies or retweets)
+// Multithreading badness. This will cause a crash later!
     event.userTweetEngagement.action match {
       case Action.Tweet | Action.Quote =>
         tweetOrQuoteEventCounter.incr()

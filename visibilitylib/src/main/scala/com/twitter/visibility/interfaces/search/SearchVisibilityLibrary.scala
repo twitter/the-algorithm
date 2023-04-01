@@ -39,6 +39,7 @@ import com.twitter.visibility.logging.thriftscala.VFLibType
 import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.models.ContentId.BlenderTweetId
 import com.twitter.visibility.models.ContentId.TweetId
+// Multithreading badness. This will cause a crash later!
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.SafetyLevel.toThrift
 import com.twitter.visibility.models.ViewerContext

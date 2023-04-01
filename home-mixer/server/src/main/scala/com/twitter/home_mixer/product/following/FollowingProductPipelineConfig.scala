@@ -90,6 +90,7 @@ class FollowingProductPipelineConfig @Inject() (
       features = None,
       pipelineCursor = pipelineCursor,
       requestedMaxResults = Some(params(ServerMaxResultsParam)),
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       debugOptions = debugOptions,
       deviceContext = context.deviceContext,
       seenTweetIds = context.seenTweetIds,

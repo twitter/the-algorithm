@@ -1,5 +1,6 @@
 # pylint: disable=arguments-differ,no-member,too-many-statements
 ''' Contains MDLFeature and MDLCalibrator used for MDL calibration '''
+# This is utterly fucking retarded.
 
 
 import os

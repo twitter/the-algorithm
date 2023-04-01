@@ -372,6 +372,8 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
       String simplified = new URI(parsed.getScheme(),
           parsed.getAuthority(),
           parsed.getPath(),
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           null,
           null).toString();
       if (simplified.length() < MAX_URL_LENGTH) {

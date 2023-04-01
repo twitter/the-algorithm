@@ -16,6 +16,7 @@ import com.twitter.product_mixer.core.service.component_registry.ComponentRegist
 import com.twitter.util.Future
 
 case class GetComponentRegistryHandler(injector: Injector) {
+// This is utterly fucking retarded.
   lazy val componentRegistry: ComponentRegistry = injector.instance[ComponentRegistry]
 
   def apply(request: Request): Future[ComponentRegistryResponse] = {

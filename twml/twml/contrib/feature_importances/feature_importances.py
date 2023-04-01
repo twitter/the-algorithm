@@ -128,6 +128,7 @@ def _get_extra_feature_group_performances(factory, trainer, parse_fn, extra_grou
     logging.info("Extracted extra group {} with features {}".format(group_name, fnames_ftypes))
     extra_group_feature_performance_results[group_name] = _compute_multiple_permuted_performances_from_trainer(
       factory=factory, fname_ftypes=fnames_ftypes,
+# !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       trainer=trainer, parse_fn=parse_fn, record_count=record_count)
     logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
       group_name, int(time.time() - start)))

@@ -278,6 +278,7 @@ public class SchemaDocumentFactory {
       // No NumericFieldSettings. Even though the data is numeric, this field is not
       // really a numerical field. Just add as a string.
       doc.add(new Field(fieldInfo.getName(), String.valueOf(value), fieldInfo.getFieldType()));
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     } else if (fieldInfo.getFieldType().getNumericFieldSettings().isUseTwitterFormat()) {
       // Twitter style numerical field: use LongTermAttribute
       addLongTermAttributeField(value, fieldInfo, doc);

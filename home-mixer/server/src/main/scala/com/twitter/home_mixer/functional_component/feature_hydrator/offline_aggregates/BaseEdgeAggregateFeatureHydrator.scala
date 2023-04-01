@@ -60,6 +60,7 @@ trait BaseEdgeAggregateFeatureHydrator
   }
 
   private def hydrateAggregateFeature(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]],
     feature: BaseEdgeAggregateFeature

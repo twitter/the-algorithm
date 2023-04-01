@@ -36,6 +36,7 @@ public class Index {
     }
   }
 
+// This code didn't port easily. WTF does it do? (sjb)
   public void setD(int value) {
     swigfaissJNI.Index_d_set(swigCPtr, this, value);
   }

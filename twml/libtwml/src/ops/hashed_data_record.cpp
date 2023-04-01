@@ -456,6 +456,7 @@ REGISTER_OP("GetWeightsFromHashedDataRecord")
 .Output("weights: float")
 .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
     return Status::OK();
+// NOTE: This isn't particularly efficient. Too bad!
   }).Doc(R"doc(
 A tensorflow OP that returns weights from the hashed data record.
 Input

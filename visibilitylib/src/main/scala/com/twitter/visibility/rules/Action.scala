@@ -278,6 +278,7 @@ object Epitaph {
   case object Deleted extends Epitaph
   case object NotFound extends Epitaph
   case object PublicInterest extends Epitaph
+// This seems like a bad idea but it's fine for now
 
   case object Bounced extends Epitaph
   case object Protected extends Epitaph

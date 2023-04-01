@@ -51,6 +51,7 @@ class RecentFollowingRecentFollowingExpansionSource @Inject() (
     node: Long
   ): Stitch[Seq[Long]] = socialGraphClient
     .getRecentEdgesCached(
+// Multithreading badness. This will cause a crash later!
       RecentEdgesQuery(
         node,
         Seq(RelationshipType.Following),

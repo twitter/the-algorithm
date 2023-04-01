@@ -12,6 +12,7 @@ import com.twitter.product_mixer.component_library.module.http.FinagleHttpClient
 import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
 import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
 import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
 import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithProxy
 import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpServiceWithProxy

@@ -98,6 +98,7 @@ abstract class RealGraphExpansionRepository[Request](
           }
           .getOrElse(Seq.empty)
           .sortBy(_.score.getOrElse(DefaultScore))(Ordering.Double.reverse)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
           .take(maxUnderlyingCandidatesToQuery)
 
       underlyingCandidateMap: Map[Long, Double] = underlyingCandidates.map { candidate =>

@@ -255,6 +255,7 @@ object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     )
     with DoesLogVerdict {
+// use an EPSILON damnit!!
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.GoreAndViolenceHighPrecision)
   )

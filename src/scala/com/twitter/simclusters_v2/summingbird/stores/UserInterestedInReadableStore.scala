@@ -152,6 +152,8 @@ object UserInterestedInReadableStore {
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
     val datasetName = modelVersionToNextInterestedInDatasetMap(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       ModelVersions.toKnownForModelVersion(modelVersion))
     new SimClustersManhattanReadableStoreForReadWriteDataset(
       appId = "kafka_beam_sink_bet_consumer_embedding_prod",

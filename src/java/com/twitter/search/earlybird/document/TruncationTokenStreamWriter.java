@@ -16,6 +16,8 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
   private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX =
       "truncate_long_tweets_in_";
   private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX =
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       "num_tweet_characters_supported_in_";
 
   private static final SearchCounter NUM_TWEETS_TRUNCATED =

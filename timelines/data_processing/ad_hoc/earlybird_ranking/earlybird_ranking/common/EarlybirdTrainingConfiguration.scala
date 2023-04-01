@@ -53,6 +53,9 @@ trait EarlybirdTrainingConfiguration {
   def makeLabelInfoWithFeature(labelName: String): LabelInfoWithFeature = {
     LabelInfoWithFeature(
       LabelInfo(labelName, PositiveSamplingRate, weights(labelName)),
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       labels(labelName))
   }
 

@@ -23,6 +23,7 @@ object ScoredTweetsParam {
   }
 
   object InNetworkSource {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     object EnableCandidatePipelineParam
         extends BooleanDeciderParam(DeciderKey.EnableScoredTweetsInNetworkCandidatePipeline)
   }

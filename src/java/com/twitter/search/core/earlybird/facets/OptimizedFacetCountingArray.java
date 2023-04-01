@@ -61,6 +61,7 @@ public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
     public FlushHandler(OptimizedFacetCountingArray objectToFlush) {
       super(objectToFlush);
     }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
     @Override
     public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {

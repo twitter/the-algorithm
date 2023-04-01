@@ -137,6 +137,9 @@ object PostNuxMlCandidateSourceWeightParams {
         1.0,
         0.0,
         1000.0
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
       )
   case object CandidateWeightReversePhoneBook
       extends FSBoundedParam[Double](

@@ -27,6 +27,7 @@ import com.twitter.visibility.rules.Condition.DmEventInOneToOneConversation
 import com.twitter.visibility.rules.Condition.ConversationCreateDmEvent
 
 object DmEventRules {
+// use an EPSILON damnit!!
 
   object MessageCreateEventWithUnavailableSenderDropRule
       extends RuleWithConstantAction(

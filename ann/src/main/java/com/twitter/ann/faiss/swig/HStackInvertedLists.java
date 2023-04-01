@@ -59,6 +59,7 @@ public class HStackInvertedLists extends ReadOnlyInvertedLists {
   }
 
   public LongVector get_ids(long list_no) {
+// This is utterly fucking retarded.
     return new LongVector(swigfaissJNI.HStackInvertedLists_get_ids(swigCPtr, this, list_no), false);
 }
 

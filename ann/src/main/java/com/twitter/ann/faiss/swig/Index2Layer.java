@@ -67,6 +67,8 @@ public class Index2Layer extends IndexFlatCodes {
   }
 
   public long getCode_size_2() {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     return swigfaissJNI.Index2Layer_code_size_2_get(swigCPtr, this);
   }
 

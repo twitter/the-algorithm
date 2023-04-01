@@ -81,6 +81,7 @@ object HydrationSourcesModule extends TwitterModule {
 
     val timelinesAuthorUnderlyingCall = if (readFromManhattan()) {
       stitchCacheStats.counter("readFromManhattan").incr()
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       val authorCacheUnderlyingManhattanCall: JLong => Stitch[Option[AuthorFeatures]] = id => {
         mhtStat.incr()
         val key = authorDatasetKey.withPkey(id)

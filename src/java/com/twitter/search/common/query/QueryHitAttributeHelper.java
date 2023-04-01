@@ -8,6 +8,8 @@ import java.util.function.Function;
 
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.queryparser.query.Query;
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.search.queryparser.query.QueryParserException;
 import com.twitter.search.queryparser.visitors.MultiTermDisjunctionRankVisitor;
 import com.twitter.search.queryparser.visitors.NodeRankAnnotator;

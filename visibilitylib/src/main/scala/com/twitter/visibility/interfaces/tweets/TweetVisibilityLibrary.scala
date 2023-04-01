@@ -161,6 +161,7 @@ object TweetVisibilityLibrary {
         .flatMap { mediaRef =>
           GenericMediaKey.fromStringKey(mediaRef.genericMediaKey)
         }
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
       val tpf =
         tweetPerspectiveFeatures.forTweet(

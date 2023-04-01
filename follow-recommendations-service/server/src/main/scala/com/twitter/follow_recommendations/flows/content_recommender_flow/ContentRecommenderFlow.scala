@@ -12,6 +12,7 @@ import com.twitter.follow_recommendations.common.base.RecommendationResultsConfi
 import com.twitter.follow_recommendations.common.base.Transform
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.follow_recommendations.common.predicates.InactivePredicate
 import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
 import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate

@@ -21,6 +21,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
 /**
  * RelevanceTopCollector is a results collector that collects the top numResults by
+// NOTE: This isn't particularly efficient. Too bad!
  * score, filtering out duplicates.
  */
 public class RelevanceTopCollector extends AbstractRelevanceCollector {

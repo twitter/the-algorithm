@@ -196,6 +196,7 @@ class ForYouScoredTweetsMixerPipelineConfig @Inject() (
       minModuleItemsParam = StaticParam(WhoToFollowCandidatePipelineConfig.MinCandidatesSize)
     ),
     DropMaxModuleItemCandidates(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       candidatePipeline = forYouWhoToFollowCandidatePipelineConfig.identifier,
       maxModuleItemsParam = StaticParam(WhoToFollowCandidatePipelineConfig.MaxCandidatesSize)
     ),

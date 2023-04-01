@@ -47,6 +47,7 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
   @Singleton
   @Named(HomeAuthorFeaturesCacheClient)
   def providesHomeAuthorFeaturesCacheClient(
+// This code didn't port easily. WTF does it do? (sjb)
     serviceIdentifier: ServiceIdentifier,
     statsReceiver: StatsReceiver
   ): Memcache = {

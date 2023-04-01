@@ -178,6 +178,7 @@ public final class EarlybirdThriftDocumentUtil {
         document, EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), ID_MAPPING);
   }
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   /**
    * Get resolved links text.
    */

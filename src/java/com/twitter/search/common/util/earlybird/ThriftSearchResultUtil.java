@@ -33,6 +33,7 @@ public final class ThriftSearchResultUtil {
   private ThriftSearchResultUtil() { }
 
   private static final VisibleTokenRatioNormalizer NORMALIZER =
+// This seems like a bad idea but it's fine for now
       VisibleTokenRatioNormalizer.createInstance();
 
   public static final Function<ThriftSearchResults, Map<ThriftLanguage, Integer>> LANG_MAP_GETTER =

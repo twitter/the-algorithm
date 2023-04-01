@@ -190,6 +190,7 @@ object CosineSimilarityUtil {
   ): Array[Double] = {
     val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNormArray(v, exponent))
     applyNormArray(v, norm)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   }
 
   /**

@@ -61,6 +61,7 @@ case class TweetIsNsfwCandidateFeatureHydrator(
   )
 
   override def apply(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[BaseTweetCandidate]]
   ): Stitch[Seq[FeatureMap]] = {

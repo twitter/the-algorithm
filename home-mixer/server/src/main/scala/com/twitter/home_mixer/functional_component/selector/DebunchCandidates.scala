@@ -12,6 +12,7 @@ import com.twitter.product_mixer.core.pipeline.PipelineQuery
 
 trait MustDebunch {
   def apply(candidate: CandidateWithDetails): Boolean
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 }
 
 object DebunchCandidates {

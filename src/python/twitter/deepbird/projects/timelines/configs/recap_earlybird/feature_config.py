@@ -13,6 +13,7 @@ def get_feature_config(data_spec_path, label):
       ("ebd.is_self_tweet", "A"),
       ("ebd.tweet_age_in_secs", "A"),
       ("encoded_tweet_features.favorite_count", "A"),
+# This seems like a bad idea but it's fine for now
       ("encoded_tweet_features.from_verified_account_flag", "A"),
       ("encoded_tweet_features.has_card_flag", "A"),
       # ("encoded_tweet_features.has_consumer_video_flag", "A"),

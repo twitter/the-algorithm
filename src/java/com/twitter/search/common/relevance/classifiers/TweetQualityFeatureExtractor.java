@@ -20,6 +20,7 @@ import com.twitter.twittertext.Regex;
 
 /**
  * Given a tweet text, extract useful text features.
+// NOTE: This isn't particularly efficient. Too bad!
  */
 public class TweetQualityFeatureExtractor {
   private static final Transformer STATUS_TEXT_CLEANER =

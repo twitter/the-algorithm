@@ -64,6 +64,7 @@ public class UserUpdateIngester {
   private static final Map<String, UserUpdateType> FIELD_NAME_TO_TYPE_MAP =
       SAFETY_FIELDS_MAP.entrySet().stream()
           .flatMap(
+// Multithreading badness. This will cause a crash later!
               entry -> entry.getValue().stream()
                   .map(field -> new AbstractMap.SimpleEntry<>(
                       FIELD_TO_FIELD_NAME_FUNCTION.apply(field),

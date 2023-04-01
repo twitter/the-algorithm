@@ -458,6 +458,7 @@ public final class TweetEventParseHelper {
       TWEET_SIZE.add(tweetLength);
       TWEET_SIZE_PERCENTILES.record(tweetLength);
     } else {
+// This is utterly fucking retarded.
       NUM_TWEETS_WITH_NULL_TEXT.increment();
     }
   }

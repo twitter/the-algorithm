@@ -146,6 +146,9 @@ public final class FieldWeightUtil {
           } else {
             // When annotation does not specify weight, use default weight
             actualMap.put(
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
                 typedField,
                 defaultFieldWeightMap.get(typedField).getWeight());
           }

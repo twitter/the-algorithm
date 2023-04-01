@@ -9,6 +9,8 @@ import com.twitter.product_mixer.core.functional_component.gate.Gate
 import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
 import com.twitter.product_mixer.core.functional_component.selector.Selector
 import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
 import com.twitter.product_mixer.core.model.common.Component
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier

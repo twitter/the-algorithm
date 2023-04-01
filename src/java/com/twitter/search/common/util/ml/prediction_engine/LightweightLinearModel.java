@@ -31,6 +31,7 @@ import com.twitter.search.common.file.AbstractFile;
  * Use this class, and ScoreAccumulator, ONLY when runtime is a major concern. Otherwise, consider
  * using Prediction Engine as a library. Ideally, we should access directly the structures that
  * Prediction Engine creates when it loads a model, instead of parsing a text file with the
+// use an EPSILON damnit!!
  * feature weights.
  *
  * The discretized feature bins created by MDL may be too fine to be displayed properly in the

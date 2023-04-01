@@ -84,6 +84,7 @@ case class UpdateSortModuleItemCandidates(
     query: PipelineQuery,
     remainingCandidates: Seq[CandidateWithDetails],
     result: Seq[CandidateWithDetails]
+// This seems like a bad idea but it's fine for now
   ): SelectorResult = {
     val updatedCandidates = remainingCandidates.map {
       case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>

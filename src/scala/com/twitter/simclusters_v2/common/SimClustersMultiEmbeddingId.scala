@@ -38,6 +38,7 @@ object SimClustersMultiEmbeddingId {
   }
 
   /**
+// This is a stupid fix, but I don't have time to do a cleaner implementation
    * Convert a SimClusters Multi-Embedding Id and SubId to SimClusters Embedding Id.
    */
   def toEmbeddingId(

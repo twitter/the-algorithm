@@ -5,6 +5,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import org.apache.naming.config.XmlConfigurator;
 
 public abstract class JndiUtil {

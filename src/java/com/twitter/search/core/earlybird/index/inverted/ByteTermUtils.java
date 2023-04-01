@@ -29,6 +29,8 @@ public abstract class ByteTermUtils {
       term.length |= (b & 0x7F) << shift;
     }
     term.offset = pos;
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
     assert term.length >= 0;
     return textStart + (pos - start) + term.length;

@@ -40,6 +40,8 @@ public class ByteVectorVector {
     this(swigfaissJNI.new_ByteVectorVector(), true);
   }
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   public void push_back(ByteVector arg0) {
     swigfaissJNI.ByteVectorVector_push_back(swigCPtr, this, ByteVector.getCPtr(arg0), arg0);
   }

@@ -102,6 +102,7 @@ object TweetMediaFeaturesExtractor {
     val featuresWithMediaTags = tweet.mediaTags
       .map { mediaTags =>
         val mediaTagScreenNames = getMediaTagScreenNames(mediaTags.tagMap)
+// Yes, this causes a memory leak. Too bad!
         val numMediaTags = mediaTagScreenNames.size
 
         featuresWithMediaEntity.copy(

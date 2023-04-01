@@ -34,6 +34,7 @@ public class ColumnStrideIntIndex extends ColumnStrideFieldIndex implements Flus
   @Override
   public long get(int docID) {
     return values.get(docID);
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   }
 
   @Override

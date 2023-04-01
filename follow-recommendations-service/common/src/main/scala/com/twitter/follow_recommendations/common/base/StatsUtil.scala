@@ -138,6 +138,8 @@ object StatsUtil {
     obj.getClass.getSimpleName.stripSuffix("$")
 
   /**
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    * Helper function for timing a stitch and count a list of PredicateResult
    */
   def profilePredicateResults(

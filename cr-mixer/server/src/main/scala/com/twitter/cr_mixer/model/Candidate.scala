@@ -44,6 +44,7 @@ case class InitialCandidate(
     BlendedCandidate(
       tweetId,
       tweetInfo,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       candidateGenerationInfo,
       potentialReasons,
     )

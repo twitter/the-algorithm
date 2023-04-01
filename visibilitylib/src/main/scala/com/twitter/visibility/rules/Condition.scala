@@ -718,6 +718,9 @@ object Condition {
               if label.labelType == safetyLabel
                 && label.score.exists(_ >= threshold) =>
             SatisfiedResult
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         }.getOrElse(UnsatisfiedResult)
     }
   }

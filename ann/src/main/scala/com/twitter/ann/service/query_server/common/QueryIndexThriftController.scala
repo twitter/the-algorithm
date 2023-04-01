@@ -77,6 +77,8 @@ class QueryIndexThriftController[T, P <: RuntimeParams, D <: Distance[D]] @Injec
 
         nearestNeighbors
           .map { list =>
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
             list.map { nn =>
               NearestNeighbor(ByteBuffer.wrap(idInjection.apply(nn)))
             }

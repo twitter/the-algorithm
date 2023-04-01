@@ -59,6 +59,7 @@ public class RangeSearchPartialResult extends BufferList {
   }
 
   public void set_lims() {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     swigfaissJNI.RangeSearchPartialResult_set_lims(swigCPtr, this);
   }
 

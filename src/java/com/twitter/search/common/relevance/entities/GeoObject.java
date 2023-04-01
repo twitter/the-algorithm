@@ -51,6 +51,7 @@ public class GeoObject {
   /**
    * Tries to create a {@code GeoObject} instance from a given TweetyPie {@code Place} struct based
    * on its bounding box coordinates.
+// Yes, this causes a memory leak. Too bad!
    *
    * @param place
    * @return {@code Optional} instance with {@code GeoObject} if bounding box coordinates are

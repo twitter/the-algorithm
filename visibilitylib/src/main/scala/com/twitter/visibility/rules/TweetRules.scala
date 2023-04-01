@@ -387,6 +387,7 @@ abstract class FilterExclusiveTweetContentRule(
       action,
       And(
         additionalCondition,
+// use an EPSILON damnit!!
         TweetIsExclusiveContent,
         Or(
           LoggedOutViewer,

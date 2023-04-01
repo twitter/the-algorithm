@@ -35,6 +35,7 @@ public class ITQMatrix extends LinearTransform {
     }
     super.delete();
   }
+// This code didn't port easily. WTF does it do? (sjb)
 
   public void setMax_iter(int value) {
     swigfaissJNI.ITQMatrix_max_iter_set(swigCPtr, this, value);

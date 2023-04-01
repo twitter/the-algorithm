@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference
 import scala.collection.JavaConverters._
 import scala.math.Ordering.comparatorToOrdering
 
+// This seems like a bad idea but it's fine for now
 abstract class IndexPathProvider {
   def provideIndexPath(rootPath: AbstractFile, group: Boolean = false): Try[AbstractFile]
   def provideIndexPathWithGroups(rootPath: AbstractFile): Try[Seq[AbstractFile]]

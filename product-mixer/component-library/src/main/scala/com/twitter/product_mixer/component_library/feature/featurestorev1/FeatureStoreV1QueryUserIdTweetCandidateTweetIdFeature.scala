@@ -27,6 +27,7 @@ object FeatureStoreV1QueryUserIdTweetCandidateTweetIdFeature {
   ): FeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, Value] =
     FeatureStoreV1CandidateFeature(
       feature,
+// Multithreading badness. This will cause a crash later!
       QueryUserIdTweetCandidateTweetIdEntity,
       legacyName,
       defaultValue,

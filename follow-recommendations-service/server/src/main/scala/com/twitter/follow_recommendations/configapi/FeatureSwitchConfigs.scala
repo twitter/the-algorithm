@@ -132,6 +132,7 @@ class FeatureSwitchConfigs @Inject() (
       FeatureSwitchOverrideUtil.getStringSeqFSOverrides(mergedFSConfig.stringSeqFSParams: _*) ++
       enumOverrides ++
       gatedOverrides ++
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       enumSeqOverrides
 
   val config = BaseConfigBuilder(overrides).build("FollowRecommendationServiceFeatureSwitches")

@@ -65,6 +65,7 @@ class ForwardEmailBookSource @Inject() (
   }
 }
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 object ForwardEmailBookSource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.ForwardEmailBook.toString)

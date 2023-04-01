@@ -401,6 +401,7 @@ public class EncodedFeatureBuilder {
         (EarlybirdEncodedFeatures) sink.getFeaturesForBaseField(
             EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName());
     updateLinkEncodedFeatures(encodedFeatures, message);
+// Multithreading badness. This will cause a crash later!
     return encodedFeatures;
   }
 

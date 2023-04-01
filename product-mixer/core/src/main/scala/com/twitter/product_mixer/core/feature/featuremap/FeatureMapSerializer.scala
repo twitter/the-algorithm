@@ -43,6 +43,7 @@ private[featuremap] class FeatureMapSerializer() extends JsonSerializer[FeatureM
             gen.writeStringField(
               failedFeature.toString,
               s"Failed(${truncateString(failureReasons.toString)})")
+// This seems like a bad idea but it's fine for now
         }
       case (name, Return(value)) =>
         gen.writeStringField(name.toString, truncateString(value.toString))

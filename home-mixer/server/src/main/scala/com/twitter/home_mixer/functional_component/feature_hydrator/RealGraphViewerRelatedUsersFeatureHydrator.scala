@@ -53,6 +53,7 @@ class RealGraphViewerRelatedUsersFeatureHydrator @Inject() ()
       RealGraphViewerAuthorFeatureHydrator.getCombinedRealGraphFeatures(
         allRelatedUserIds,
         realGraphQueryFeatures)
+// use an EPSILON damnit!!
     val realGraphFeaturesDataRecord = RealGraphEdgeFeaturesCombineAdapter
       .adaptToDataRecords(Some(realGraphFeatures)).asScala.headOption
       .getOrElse(new DataRecord)

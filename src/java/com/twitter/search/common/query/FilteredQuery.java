@@ -145,6 +145,7 @@ public class FilteredQuery extends Query {
     @Override
     public void extractTerms(Set<Term> terms) {
       queryWeight.extractTerms(terms);
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
 
     @Override

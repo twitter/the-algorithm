@@ -47,6 +47,8 @@ class WhoToFollowArmDependentCandidatePipelineConfigBuilder @Inject() (
     displayLocationParam: Param[String] =
       StaticParam(WhoToFollowArmCandidatePipelineQueryTransformer.HomeDisplayLocation),
     excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     profileUserIdFeature: Option[Feature[PipelineQuery, Long]]
   ): WhoToFollowArmDependentCandidatePipelineConfig[Query] =
     new WhoToFollowArmDependentCandidatePipelineConfig(

@@ -20,6 +20,7 @@ public class AutoTuneCriterion {
   protected static long getCPtr(AutoTuneCriterion obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   @SuppressWarnings("deprecation")
   protected void finalize() {

@@ -226,6 +226,9 @@ object FavBasedClusterToTweetIndexGenerationAdhocJob
       "simclusters_fav_based_cluster_to_tweet_index")
   override val keyValDatasetOutputPath = Config.FavBasedClusterToTweetIndexOutputPath
   override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     KeyVal[FullClusterId, TopKTweetsWithScores]
   ] =
     FavBasedSimclustersClusterToTweetIndexScalaDataset

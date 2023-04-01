@@ -556,6 +556,7 @@ public class SegmentManager {
   }
 
   public void addUpdateListener(SegmentUpdateListener listener) {
+// This code didn't port easily. WTF does it do? (sjb)
     updateListeners.add(listener);
   }
 

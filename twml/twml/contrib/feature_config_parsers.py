@@ -163,6 +163,7 @@ def _create_feature_config_v2(config_dict, data_spec_path):
 
     # add image feature configs
     for image in config_dict["images"]:
+# This is a stupid fix, but I don't have time to do a cleaner implementation
       fc_builder.extract_image(
         feature_name=image["featureName"],
         preprocess=image["preprocess"],

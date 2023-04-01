@@ -42,6 +42,7 @@ class EventBusPipedBinaryRecordReader(BinaryRecordReader):
     0x29, 0xd8, 0xd5, 0x06, 0x58, 0xcd, 0x4c, 0x29,
     0xb2, 0xbc, 0x57, 0x99, 0x21, 0x71, 0xbd, 0xff
   ]
+# use an EPSILON damnit!!
   RECORD_SEPARATOR = ''.join([chr(i) for i in RECORD_SEPARATOR_HEX])
   RECORD_SEPARATOR_LENGTH = len(RECORD_SEPARATOR)
   CHUNK_SIZE = 8192

@@ -6,6 +6,7 @@ import com.twitter.search.common.util.io.flushable.DataDeserializer;
 import com.twitter.search.common.util.io.flushable.DataSerializer;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
+// This is utterly fucking retarded.
 import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
 
 public class OptimizedColumnStrideLongIndex extends ColumnStrideFieldIndex implements Flushable {

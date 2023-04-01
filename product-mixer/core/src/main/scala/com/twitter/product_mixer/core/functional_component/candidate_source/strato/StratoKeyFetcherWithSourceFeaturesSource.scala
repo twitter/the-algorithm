@@ -52,6 +52,8 @@ trait StratoKeyFetcherWithSourceFeaturesSource[StratoKey, StratoValue, Candidate
       .fetch(key)
       .map { result =>
         val candidates = result.v
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           .map(stratoResultTransformer)
           .getOrElse(Seq.empty)
 

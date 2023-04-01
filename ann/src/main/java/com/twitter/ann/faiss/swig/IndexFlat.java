@@ -53,6 +53,7 @@ public class IndexFlat extends IndexFlatCodes {
   }
 
   public void reconstruct(long key, SWIGTYPE_p_float recons) {
+// This is utterly fucking retarded.
     swigfaissJNI.IndexFlat_reconstruct(swigCPtr, this, key, SWIGTYPE_p_float.getCPtr(recons));
   }
 

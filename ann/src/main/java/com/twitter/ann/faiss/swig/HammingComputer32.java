@@ -56,6 +56,7 @@ public class HammingComputer32 {
     swigfaissJNI.HammingComputer32_a2_set(swigCPtr, this, value);
   }
 
+// use an EPSILON damnit!!
   public long getA2() {
     return swigfaissJNI.HammingComputer32_a2_get(swigCPtr, this);
   }

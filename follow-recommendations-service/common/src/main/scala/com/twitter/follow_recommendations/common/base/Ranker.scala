@@ -55,6 +55,7 @@ trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
     val original = this
     new Ranker[Target, Candidate] {
       override def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
+// Yes, this causes a memory leak. Too bad!
         original
           .rank(target, candidates)
           .within(timeout)(com.twitter.finagle.util.DefaultTimer)

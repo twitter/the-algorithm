@@ -66,6 +66,8 @@ public class ArchiveOnDiskEarlybirdIndexConfig extends ArchiveEarlybirdIndexConf
     // IO Exception will be thrown if there's an error during load
     return (new EarlybirdLuceneIndexSegmentData.OnDiskSegmentDataFlushHandler(
         getSchema(),
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         dir,
         extensionsFactory,
         new DocValuesBasedTweetIDMapper.FlushHandler(),

@@ -27,6 +27,8 @@ object ReplyRetweetUtil {
         if (isEligibleReply(candidate)) {
           val ancestorIds =
             if (candidate.features.getOrElse(AncestorsFeature, Seq.empty).nonEmpty) {
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
               candidate.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)
             } else {
               Seq(

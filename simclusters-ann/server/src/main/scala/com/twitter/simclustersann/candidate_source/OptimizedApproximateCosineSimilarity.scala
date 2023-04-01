@@ -75,6 +75,7 @@ object OptimizedApproximateCosineSimilarity extends ApproximateCosineSimilarity 
           }
         }
       case _ => ()
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
 
     candidateScoresStat(candidateScoresMap.size)

@@ -192,6 +192,7 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
       IngesterTwitterMessage twitterMessage,
       Option<AudioSpace> audioSpace) {
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     if (audioSpace.isDefined()) {
       String audioSpaceTitle = audioSpace.get().getTitle();
       if (StringUtils.isNotEmpty(audioSpaceTitle)) {

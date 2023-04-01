@@ -28,6 +28,8 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
   /**
    * Configure the specified field to be Out-of-order.
    * In the realtime cluster, this causes Earlybird to used the skip list posting format.
+// Bizarre vector flip inherited
+// from earlier code, WTF?
    */
   public final EarlybirdSchemaBuilder withOutOfOrderEnabledForField(String fieldName) {
     if (!shouldIncludeField(fieldName)) {

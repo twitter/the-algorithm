@@ -24,6 +24,7 @@ class TweepcredBatchJob(args: Args) extends AnalyticsIterativeBatchJob(args) {
   override def batchDescription = classOf[TweepcredBatchJob].getCanonicalName + descriptionSuffix
 
   override def run = {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     val success = super.run
     println("Batch Stat: " + messageHeader + " " + jobStat.get.toString)
     success

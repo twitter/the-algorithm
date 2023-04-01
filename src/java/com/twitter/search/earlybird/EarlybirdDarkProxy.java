@@ -62,6 +62,8 @@ public class EarlybirdDarkProxy {
       StatsReceiver statsReceiver,
       EarlybirdServerSetManager earlybirdServerSetManager,
       final EarlybirdWarmUpManager earlybirdWarmUpManager,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       String clusterName) {
     ResolverProxy resolverProxy = new ResolverProxy();
     ServerSetResolver.SelfServerSetResolver selfServerSetResolver =

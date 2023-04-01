@@ -20,6 +20,9 @@ class TweetMediaMetadataFeatures(
 
   def forTweet(
     tweet: Tweet,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     mediaKeys: Seq[GenericMediaKey],
     enableFetchMediaMetadata: Boolean
   ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>

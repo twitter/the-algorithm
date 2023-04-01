@@ -152,6 +152,7 @@ public enum FlushVersion {
   // This is the last rebuild based on /tables/statuses. Starting 9/14 this build-gen is powered
   // by TweetSource. During this rebuild both statuses and engagement counts were rebuilt.
   VERSION_106("Periodic archive full rebuild. PCM-74652", true, 0),
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   VERSION_107("Removing card fields from full archive index.", true, 0),
   VERSION_108("Removing the tms_id field from all schemas.", true, 0),
   VERSION_109("Removing LAT_LON_FIELD from all schemas.", true, 0),

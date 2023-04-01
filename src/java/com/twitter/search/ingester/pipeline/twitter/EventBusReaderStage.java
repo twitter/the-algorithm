@@ -130,6 +130,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
 
         // If the availability is 0 then disable the reader, otherwise read from EventBus.
         if (eventBusReaderEnabledAvailability == 0) {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
           try {
             closeEventBusSubscriber();
           } catch (Exception e) {

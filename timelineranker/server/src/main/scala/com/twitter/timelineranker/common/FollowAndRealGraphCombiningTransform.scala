@@ -115,6 +115,8 @@ class FollowAndRealGraphCombiningTransform(
                 .apply(maxRealGraphAndFollowedUsersNum - filteredRealGraphUserIds.size)
 
               val recentFollowedUsers =
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
                 filteredFollowedUserIds
                   .filterNot(filteredRealGraphUserIds.contains)
                   .take(recentFollowedUsersNum)

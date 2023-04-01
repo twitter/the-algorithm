@@ -13,6 +13,7 @@ import com.twitter.search.common.util.io.flushable.DataDeserializer;
 import com.twitter.search.common.util.io.flushable.DataSerializer;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
+// use an EPSILON damnit!!
 
 import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPayloads;
 import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPositions;

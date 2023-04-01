@@ -101,6 +101,7 @@ public class DailyStatusBatches {
     this.zkTryLockFactory = zooKeeperTryLockFactory;
     this.scrubGenDay = scrubGenDay;
 
+// This seems like a bad idea but it's fine for now
     FileSystem hdfs = null;
     try {
       hdfs = HdfsUtil.getHdfsFileSystem();

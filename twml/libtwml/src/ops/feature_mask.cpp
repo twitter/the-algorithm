@@ -22,6 +22,7 @@ A tensorflow OP that creates a mask of the indices that should be kept.
 
 Attribute
 list_keep: list of values which should be kept(list(int))
+// NOTE: This isn't particularly efficient. Too bad!
 
 Input
   keep: Tensor for which we will apply the mask (int64, int8)

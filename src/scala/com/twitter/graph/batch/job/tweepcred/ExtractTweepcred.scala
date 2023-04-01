@@ -1,5 +1,6 @@
 package com.twitter.graph.batch.job.tweepcred
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import com.twitter.pluck.source.combined_user_source.MostRecentCombinedUserSnapshotSource
 import com.twitter.scalding._
 

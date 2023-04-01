@@ -48,6 +48,7 @@ class FollowingWhoToFollowArmCandidatePipelineConfigBuilder @Inject() (
       identifier = WhoToFollowArmCandidatePipelineConfig.identifier,
       supportedClientParam = Some(EnableWhoToFollowCandidatePipelineParam),
       alerts = alerts,
+// FIXME: This doesn't account for children of hierarchy... too bad!
       gates = gates,
       moduleDisplayTypeBuilder =
         ParamWhoToFollowModuleDisplayTypeBuilder(WhoToFollowDisplayTypeIdParam),

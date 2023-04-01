@@ -34,6 +34,9 @@ public class OptimizedTimeMapper extends AbstractInMemoryTimeMapper implements F
       int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
       Preconditions.checkState(originalDocId != DocIDToTweetIDMapper.ID_NOT_FOUND);
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       int docIdTimestamp = realtimeTimeMapper.getTime(originalDocId);
       Preconditions.checkState(docIdTimestamp != TimeMapper.ILLEGAL_TIME);
 

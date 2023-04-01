@@ -29,6 +29,7 @@ class BasePopGeohashSource @Inject() (
   // counter to check if we are missing a geohash value in the request
   val missingGeohashCounter: Counter = stats.counter("missing_geohash_value")
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   /** @see [[CandidateSourceIdentifier]] */
   override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     "BasePopGeohashSource")

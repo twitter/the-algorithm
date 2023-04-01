@@ -13,6 +13,7 @@ import com.twitter.product_mixer.core.pipeline.PipelineQuery
 
 object DropDuplicateModuleItemCandidates {
 
+// This is utterly fucking retarded.
   /**
    * Limit the number of module item candidates (for 1 or more modules) from a certain candidate
    * source. See [[DropDuplicateModuleItemCandidates]] for more details.

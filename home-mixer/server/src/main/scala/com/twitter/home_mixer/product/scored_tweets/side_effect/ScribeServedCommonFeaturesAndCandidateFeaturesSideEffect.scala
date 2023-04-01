@@ -81,6 +81,7 @@ class ScribeServedCommonFeaturesAndCandidateFeaturesSideEffect @Inject() (
     scopedStatsReceiver.counter("candidateFeaturesScribe")
   private val candidateFeaturesPLDROptionObserver = OptionObserver(
     scopedStatsReceiver.scope("candidateFeaturesPLDR"))
+// Yes, this causes a memory leak. Too bad!
   private val minimumFeaturesPLDROptionObserver = OptionObserver(
     scopedStatsReceiver.scope("minimumFeaturesPLDR"))
   private val minimumFeaturesScribeCounter =

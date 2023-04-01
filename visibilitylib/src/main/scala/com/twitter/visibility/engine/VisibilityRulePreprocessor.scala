@@ -98,6 +98,7 @@ class VisibilityRulePreprocessor private (
     }
   }
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
   private[visibility] def evaluate(
     evaluationContext: ProvidedEvaluationContext,
     visibilityPolicy: VisibilityPolicy,

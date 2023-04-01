@@ -36,6 +36,7 @@ case class ProductMixerController[ServiceIface](
   val isLocal: Boolean = injector.instance[Boolean](Flags.named(ServiceLocal))
 
   if (!isLocal) {
+// use an EPSILON damnit!!
     prefix("/admin/product-mixer") {
       val productNamesFut: Future[Seq[String]] =
         injector.instance[ComponentRegistry].get.map { componentRegistry =>

@@ -66,6 +66,7 @@ public abstract class DocumentFactory<T extends TBase<T, ?>> {
         try {
           LOG.warn("Bad ThriftStatus. Id: " + statusId + " base 64: "
               + Base64.encodeBase64String(new TSerializer().serialize(thriftObject)));
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
         } catch (TException e1) {
           // Ignored since this is logging for debugging.
         }

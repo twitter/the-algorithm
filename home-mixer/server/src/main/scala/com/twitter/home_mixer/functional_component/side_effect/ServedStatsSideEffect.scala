@@ -41,6 +41,7 @@ class ServedStatsSideEffect @Inject() (statsReceiver: StatsReceiver)
     recordAuthorStats(tweetCandidates, inputs.query.params(AuthorListForStatsParam))
     recordCandidateSourceStats(tweetCandidates)
     recordContentBalanceStats(tweetCandidates)
+// Multithreading badness. This will cause a crash later!
     Stitch.Unit
   }
 

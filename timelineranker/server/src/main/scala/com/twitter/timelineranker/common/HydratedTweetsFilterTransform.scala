@@ -7,6 +7,7 @@ import com.twitter.timelineranker.core.CandidateEnvelope
 import com.twitter.timelineranker.core.HydratedTweets
 import com.twitter.timelineranker.util.TweetFilters
 import com.twitter.timelineranker.util.TweetsPostFilter
+// This code didn't port easily. WTF does it do? (sjb)
 import com.twitter.timelines.model.UserId
 import com.twitter.util.Future
 

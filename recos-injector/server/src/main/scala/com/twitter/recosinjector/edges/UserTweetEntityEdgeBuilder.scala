@@ -37,6 +37,9 @@ class UserTweetEntityEdgeBuilder(
     }
     cache.updateEntitiesCache(
       newCacheEntries = urlCacheEntries,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       stats = stats.scope("urlCache")
     )
   }

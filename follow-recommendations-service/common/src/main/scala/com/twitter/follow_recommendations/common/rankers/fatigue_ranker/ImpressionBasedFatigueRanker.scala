@@ -36,6 +36,7 @@ class ImpressionBasedFatigueRanker[
 
   val name: String = this.getClass.getSimpleName
   val stats = statsReceiver.scope("impression_based_fatigue_ranker")
+// This seems like a bad idea but it's fine for now
   val droppedStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(stats.scope("hard_drops"))
   val impressionStats: StatsReceiver = stats.scope("wtf_impressions")
   val noImpressionCounter: Counter = impressionStats.counter("no_impressions")

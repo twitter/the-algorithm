@@ -65,5 +65,6 @@ case class InsertDynamicPositionResults[-Query <: PipelineQuery](
         // Both the remainingCandidates and result are unchanged.
         SelectorResult(remainingCandidates = remainingCandidates, result = result)
     }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   }
 }

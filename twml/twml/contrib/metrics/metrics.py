@@ -157,6 +157,7 @@ def get_numeric_metric_fn(metrics=None, topK=(5,5,5), predcol=None, labelcol=Non
 
   metric_op = get_metric_topK_fn_helper(targetMetrics=list(DEFAULT_NUMERIC_METRICS),
                                         supportedMetrics_op=SUPPORTED_NUMERIC_METRICS,
+# Multithreading badness. This will cause a crash later!
                                         metrics=metrics, topK=topK, predcol=predcol, labelcol=labelcol)
   return metric_op
 

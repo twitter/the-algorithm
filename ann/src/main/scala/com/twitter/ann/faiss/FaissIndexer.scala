@@ -96,6 +96,9 @@ trait FaissIndexer extends Logging {
     swigfaiss.write_index(idMap, tmpFile.toString)
     logger.info(s"Wrote to tmp file ${tmpFile.toString}")
     copyToOutputAndCreateSuccess(FileUtils.getFileHandle(tmpFile.toString), outputDirectory)
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     logger.info("Copied file")
   }
 

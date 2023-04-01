@@ -93,6 +93,7 @@ class RuntimeConfigurationImpl(
   )
 
   val underlyingClients: UnderlyingClientConfiguration = buildUnderlyingClientConfiguration
+// NOTE: This isn't particularly efficient. Too bad!
 
   val clientWrappers: ClientWrappers = new ClientWrappers(this)
   override val clientWrapperFactories: ClientWrapperFactories = new ClientWrapperFactories(this)

@@ -21,6 +21,7 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.topic_recos.thriftscala.TopicTweet
 import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
 import javax.inject.Named
+// This code didn't port easily. WTF does it do? (sjb)
 import javax.inject.Singleton
 
 object SkitTopicTweetSimilarityEngineModule extends TwitterModule {

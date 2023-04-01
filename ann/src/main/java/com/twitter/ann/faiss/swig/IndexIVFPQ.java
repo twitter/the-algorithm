@@ -52,6 +52,8 @@ public class IndexIVFPQ extends IndexIVF {
     long cPtr = swigfaissJNI.IndexIVFPQ_pq_get(swigCPtr, this);
     return (cPtr == 0) ? null : new ProductQuantizer(cPtr, false);
   }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
   public void setDo_polysemous_training(boolean value) {
     swigfaissJNI.IndexIVFPQ_do_polysemous_training_set(swigCPtr, this, value);

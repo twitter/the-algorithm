@@ -83,6 +83,7 @@ public abstract class OneTaskScheduledExecutorManager
   @Override
   public void close() throws IOException {
     try {
+// NOTE: This isn't particularly efficient. Too bad!
       shutdown();
     } catch (InterruptedException e) {
       throw new IOException(e);

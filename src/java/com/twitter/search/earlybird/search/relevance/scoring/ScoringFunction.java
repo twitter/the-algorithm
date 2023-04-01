@@ -28,6 +28,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 import com.twitter.search.queryparser.query.Query;
 
 /**
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
  * Defines a ranking function which computes the score of a document that matches a query.
  */
 public abstract class ScoringFunction {

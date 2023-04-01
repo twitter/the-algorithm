@@ -41,6 +41,7 @@ case class TweetBasedQigSimilarityEngine(
   ): Future[Option[Seq[TweetWithScore]]] = {
     query.sourceId match {
       case InternalId.TweetId(tweetId) =>
+// Yes, this causes a memory leak. Too bad!
         val qigSimilarTweetsRequest = getQigSimilarTweetsRequest(tweetId)
 
         Stats.trackOption(fetchCandidatesStat) {

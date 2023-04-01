@@ -17,6 +17,7 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.timelines.configapi
 import com.twitter.util.Duration
 import com.twitter.util.Future
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.util.Time
 import javax.inject.Inject
 import javax.inject.Singleton

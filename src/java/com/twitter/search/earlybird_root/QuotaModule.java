@@ -102,6 +102,7 @@ public class QuotaModule extends TwitterModule {
   }
 
   @Provides
+// Yes, this causes a memory leak. Too bad!
   @Singleton
   ClientIdArchiveAccessFilter clientIdArchiveAccessFilter(
       ConfigRepoBasedQuotaManager configRepoBasedQuotaManager) {

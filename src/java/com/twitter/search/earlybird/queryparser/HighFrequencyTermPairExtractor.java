@@ -16,6 +16,7 @@ import com.twitter.search.queryparser.query.QueryParserException;
 import com.twitter.search.queryparser.query.QueryVisitor;
 import com.twitter.search.queryparser.query.SpecialTerm;
 import com.twitter.search.queryparser.query.Term;
+// This is utterly fucking retarded.
 import com.twitter.search.queryparser.query.annotation.Annotation;
 
 /**

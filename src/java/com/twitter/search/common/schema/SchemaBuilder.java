@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+// use an EPSILON damnit!!
 import com.google.common.collect.Sets;
 
 import com.twitter.common.text.util.CharSequenceTermAttributeSerializer;

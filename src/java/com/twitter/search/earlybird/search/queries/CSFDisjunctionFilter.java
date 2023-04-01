@@ -45,6 +45,7 @@ public final class CSFDisjunctionFilter extends Query {
         return new CSFDisjunctionFilterDISI(context.reader(), csfField, values);
       }
     };
+// This is utterly fucking retarded.
   }
 
   @Override

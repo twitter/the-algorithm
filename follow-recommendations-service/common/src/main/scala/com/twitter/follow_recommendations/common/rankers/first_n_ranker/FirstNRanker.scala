@@ -32,6 +32,7 @@ class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFact
   private val mergeStat3 = mergeStat.counter("3")
   private val mergeStat4 = mergeStat.counter("4+")
   private val candidateSizeStats = baseStats.scope("candidate_size")
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   private case class CandidateSourceScore(
     candidateId: Long,

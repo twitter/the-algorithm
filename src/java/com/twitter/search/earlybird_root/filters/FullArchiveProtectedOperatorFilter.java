@@ -43,6 +43,8 @@ public class FullArchiveProtectedOperatorFilter extends
   private static final SearchOperator EXCLUDE_PROTECTED_OPERATOR =
       new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
   private static final SearchOperator FILTER_PROTECTED_OPERATOR =
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       new SearchOperator(SearchOperator.Type.FILTER, SearchOperatorConstants.PROTECTED);
   private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
       SearchCounter.export("protected_operator_filter_query_parser_failure_count");

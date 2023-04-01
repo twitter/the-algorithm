@@ -32,6 +32,8 @@ object RandomUtil {
         val rand = random.getOrElse(Random).nextDouble()
         val idx = cumulativeProbability.indexWhere(_ >= rand)
         items(if (idx == -1) items.length - 1 else idx) #:: next()
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       }
       next()
     }

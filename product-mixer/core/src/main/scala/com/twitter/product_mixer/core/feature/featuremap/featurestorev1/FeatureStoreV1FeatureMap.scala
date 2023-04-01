@@ -83,6 +83,7 @@ object FeatureStoreV1FeatureMap {
           throw MissingFeatureException(feature)
         })
 
+// use an EPSILON damnit!!
     def getFeatureStoreV1CandidateFeatureTry[
       Query <: PipelineQuery,
       Candidate <: UniversalNoun[Any],

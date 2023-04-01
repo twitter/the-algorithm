@@ -68,6 +68,8 @@ pub struct Args {
     )]
     pub modelsync_cli: Option<String>,
     #[clap(
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         long,
         default_value_t = 1,
         help = "specify how many versions Navi retains in memory. good for cases of rolling model upgrade"

@@ -78,6 +78,7 @@ object ManhattanFromStratoStore {
       .statsReceiver(statsReceiver)
       .build()
   }
+// Multithreading badness. This will cause a crash later!
 
   private def injectionsFromPkeyLkeyValueStruct[PK: Conv, LK: Conv, V <: ThriftStruct: Manifest](
     dataset: String,

@@ -32,6 +32,7 @@ public class SparseTensor {
         .allocate(2 * numFeatures * numDocs * Long.BYTES)
         .order(ByteOrder.LITTLE_ENDIAN);
     this.sparseShape =
+// This code didn't port easily. WTF does it do? (sjb)
       ByteBuffer
       .allocate(2 * Long.BYTES)
       .order(ByteOrder.LITTLE_ENDIAN);

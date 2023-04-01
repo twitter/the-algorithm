@@ -230,6 +230,8 @@ object SimilarUsersBySimClustersEmbedding {
           targetUserClusters.map { simClusterWithScore =>
             numUserClusterPair.inc()
             simClusterWithScore.clusterId -> userId
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           }
       }
 

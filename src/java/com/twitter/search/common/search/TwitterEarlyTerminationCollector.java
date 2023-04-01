@@ -237,6 +237,8 @@ public abstract class TwitterEarlyTerminationCollector
 
     int timePerSegment = ((int) totalTime) / numSearchedSegments;
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     if (timePerSegment < 0) {
       NEGATIVE_TIME_PER_SEGMENT.increment();
       timePerSegment = 0;

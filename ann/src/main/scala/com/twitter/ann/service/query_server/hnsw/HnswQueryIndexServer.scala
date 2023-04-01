@@ -56,6 +56,9 @@ class HnswQueryableServer extends UnsafeQueryIndexServer[HnswParams] {
           statsReceiver.scope("validated_index_provider")
         ),
         statsReceiver.scope("refreshable_queryable"),
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         updateInterval = refreshableInterval().minutes
       )
       // init first load of index and also schedule the following reloads

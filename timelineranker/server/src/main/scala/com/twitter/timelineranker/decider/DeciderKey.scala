@@ -1,5 +1,7 @@
 package com.twitter.timelineranker.decider
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.servo.decider.DeciderKeyEnum
 
 object DeciderKey extends DeciderKeyEnum {

@@ -25,6 +25,7 @@ import com.twitter.visibility.rules.Reason.ErasedAuthor
 import com.twitter.visibility.rules.Reason.OffboardedAuthor
 import com.twitter.visibility.rules.Reason.ProtectedAuthor
 import com.twitter.visibility.rules.Reason.SuspendedAuthor
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.visibility.rules.Reason.ViewerBlocksAuthor
 import com.twitter.visibility.rules.Reason.ViewerHardMutedAuthor
 import com.twitter.visibility.rules.Reason.ViewerMutesAuthor

@@ -20,6 +20,7 @@ object EntityTweetsSearchResultsTransform {
  */
 class EntityTweetsSearchResultsTransform(
   searchClient: SearchClient,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   statsReceiver: StatsReceiver,
   logSearchDebugInfo: Boolean = false)
     extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {

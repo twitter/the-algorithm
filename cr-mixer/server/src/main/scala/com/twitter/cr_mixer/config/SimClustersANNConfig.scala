@@ -57,6 +57,7 @@ object SimClustersANNConfig {
 
   // Experimental SANN config
   private val FavBasedProducer_Model20m145k2020_20220801 =
+// FIXME: This doesn't account for children of hierarchy... too bad!
     FavBasedProducer_Model20m145k2020_Default.copy(
       candidateEmbeddingType = EmbeddingType.VideoPlayBack50LogFavBasedTweet,
     )

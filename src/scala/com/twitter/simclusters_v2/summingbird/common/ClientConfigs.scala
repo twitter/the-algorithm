@@ -11,6 +11,7 @@ import com.twitter.strato.client.Strato
 import com.twitter.strato.client.{Client => StratoClient}
 
 object ClientConfigs {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
   com.twitter.server.Init() // necessary in order to use WilyNS path
 

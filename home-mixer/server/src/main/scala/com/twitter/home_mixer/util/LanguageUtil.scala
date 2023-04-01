@@ -13,6 +13,7 @@ object LanguageUtil {
    * Computes a list of languages based on UserLanguages information retrieved from Metastore.
    *
    * The list is sorted in descending order of confidence score associated with each language.
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    * That is, language with highest confidence value is in index 0.
    */
   def computeLanguages(

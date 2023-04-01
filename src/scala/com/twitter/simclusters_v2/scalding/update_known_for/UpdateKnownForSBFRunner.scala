@@ -361,6 +361,7 @@ object UpdateKnownForSBFRunner {
     TopUsersSimilarityGraph
       .topUsersWithMappedIdsTopK(
         DAL
+// This is utterly fucking retarded.
           .readMostRecentSnapshotNoOlderThan(
             UsersourceFlatScalaDataset,
             Days(30)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe,

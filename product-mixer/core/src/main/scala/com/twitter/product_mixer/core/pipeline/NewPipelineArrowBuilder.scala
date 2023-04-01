@@ -53,6 +53,7 @@ case class NewPipelineArrowBuilder[
       val newSteps = steps :+ newPipelineStep
       this.copy(steps = newSteps)
     }
+// This code didn't port easily. WTF does it do? (sjb)
   }
 
   def buildArrow(

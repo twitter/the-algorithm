@@ -28,6 +28,8 @@ object InteractionGraphAggFlockUtil {
           Instant.ofEpochMilli(start),
           Instant.ofEpochMilli(end)
         ) + 1
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         InteractionGraphRawInput(edge.sourceId, edge.destinationId, featureName, age.toInt, 1.0)
       }
 

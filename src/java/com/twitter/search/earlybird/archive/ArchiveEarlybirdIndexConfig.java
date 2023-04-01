@@ -23,6 +23,7 @@ import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
 /**
  * Base config for the top archive tweet clusters.
  */
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 public abstract class ArchiveEarlybirdIndexConfig extends EarlybirdIndexConfig {
 
   private final CloseResourceUtil resourceCloser = new CloseResourceUtil();

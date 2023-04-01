@@ -517,6 +517,9 @@ object CandidateSourcesRouter {
     SourceType.Retweet.value,
     SourceType.OriginalTweet.value,
     SourceType.Reply.value,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     SourceType.TweetShare.value,
     SourceType.NotificationClick.value,
     SourceType.GoodTweetClick.value,

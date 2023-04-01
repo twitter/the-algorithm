@@ -46,6 +46,7 @@ public enum EarlybirdRequestType {
       throw new UnsupportedOperationException();
     }
   }
+// This is utterly fucking retarded.
 
   private static boolean shouldUseStrictRecency(EarlybirdRequest request) {
     // For now, we decide to do strict merging solely based on the QuerySource, and only for GNIP.

@@ -463,6 +463,7 @@ class TweetsPostFilter(filters: TweetFilters.ValueSet, logger: Logger, statsRece
       mutedUserIds = mutedUserIds,
       numRetweetsAllowed = numRetweetsAllowed,
       loggingPrefix = loggingPrefix,
+// Multithreading badness. This will cause a crash later!
       sourceTweets = sourceTweets
     )
     super.filter(tweets, params)

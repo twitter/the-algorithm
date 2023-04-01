@@ -172,6 +172,9 @@ class InNetworkTweetSource(
     DependencyProvider.from(MonitoringParams.DebugAuthorsAllowListParam)
 
   private[this] val retrieveSearchResultsTransform = new RecapSearchResultsTransform(
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     searchClient = searchClient,
     maxCountProvider = maxCountWithMarginProvider,
     returnAllResultsProvider = earlybirdReturnAllResultsProvider,

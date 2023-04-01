@@ -35,6 +35,8 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
     }
     super.delete();
   }
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
   public void setIl(InvertedLists value) {
     swigfaissJNI.SliceInvertedLists_il_set(swigCPtr, this, InvertedLists.getCPtr(value), value);

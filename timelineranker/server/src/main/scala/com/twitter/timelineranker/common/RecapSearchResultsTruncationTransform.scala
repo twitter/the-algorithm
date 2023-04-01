@@ -50,6 +50,7 @@ class RecapSearchResultsTruncationTransform(
         } else searchResultsExcludingRandom
         sorted.take(maxCountExcludingRandom)
       } else searchResultsExcludingRandom
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
     // put back the random tweet set aside previously
     val allTruncatedResults = truncatedResultsExcludingRandom ++ randomTweetSeq

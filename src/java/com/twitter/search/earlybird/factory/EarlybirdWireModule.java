@@ -75,6 +75,7 @@ import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
 import com.twitter.search.earlybird.partition.freshstartup.FreshStartupHandler;
 import com.twitter.search.earlybird.partition.HdfsUtil;
 import com.twitter.search.earlybird.partition.KafkaStartup;
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
 import com.twitter.search.earlybird.partition.PartitionManager;
 import com.twitter.search.earlybird.partition.PartitionManagerStartup;

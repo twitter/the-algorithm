@@ -73,6 +73,7 @@ final class AdCreativeCandidate private (
    * @note In order for the hashCode to be consistent with object equality, `##` must be used for
    *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
    */
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   override val hashCode: Int =
     31 * (
       31 * (

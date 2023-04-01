@@ -49,6 +49,7 @@ class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
         f: CommunityVisibilityResult => Boolean
       ): Stitch[Boolean] = getFlagFromFeatures { v =>
         f(v.communityVisibilityResult)
+// NOTE: This isn't particularly efficient. Too bad!
       }
 
       builder

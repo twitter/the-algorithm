@@ -75,6 +75,7 @@ public abstract class RequestRouter {
   }
 
   Future<EarlybirdResponse> maybeAttachSentRequestsToDebugInfo(
+// use an EPSILON damnit!!
       List<RequestResponse> requestResponses,
       EarlybirdRequestContext requestContext,
       Future<EarlybirdResponse> response

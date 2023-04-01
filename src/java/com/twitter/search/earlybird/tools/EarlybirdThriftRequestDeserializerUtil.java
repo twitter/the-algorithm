@@ -54,6 +54,8 @@ public final class EarlybirdThriftRequestDeserializerUtil {
     try {
       String line;
       while ((line = reader.readLine()) != null) {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         EarlybirdRequest ebRequest = deserializeEBRequest(line);
         if (ebRequest != null) {
           System.out.println(ebRequest);

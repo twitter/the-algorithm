@@ -63,6 +63,7 @@ class WhoToFollowCandidatePipelineConfig[Query <: PipelineQuery](
     layoutVersionParam,
     excludedUserIdsFeature)
 
+// Yes, this causes a memory leak. Too bad!
   override val featuresFromCandidateSourceTransformers: Seq[
     CandidateFeatureTransformer[t.RecommendedUser]
   ] = Seq(WhoToFollowResponseFeatureTransformer)

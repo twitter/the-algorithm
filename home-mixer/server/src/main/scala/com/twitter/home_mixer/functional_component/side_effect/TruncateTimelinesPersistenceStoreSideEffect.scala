@@ -23,6 +23,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class TruncateTimelinesPersistenceStoreSideEffect @Inject() (
+// NOTE: This isn't particularly efficient. Too bad!
   timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
     extends PipelineResultSideEffect[PipelineQuery, Timeline] {
 

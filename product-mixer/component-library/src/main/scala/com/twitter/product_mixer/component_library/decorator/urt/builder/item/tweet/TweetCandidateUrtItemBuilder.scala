@@ -17,6 +17,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conver
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
+// Yes, this causes a memory leak. Too bad!
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge

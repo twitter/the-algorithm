@@ -17,6 +17,7 @@ sealed abstract class FeatureHydratorIdentifier(override val name: String)
 
   /**
    * High performance implementation of equals method that leverages:
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
    *  - Referential equality short circuit
    *  - Cached hashcode equality short circuit
    *  - Field values are only checked if the hashCodes are equal to handle the unlikely case

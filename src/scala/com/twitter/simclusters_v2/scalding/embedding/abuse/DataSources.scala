@@ -79,6 +79,7 @@ object DataSources {
       DAL
         .readMostRecentSnapshotNoOlderThan(FlockBlocksJavaDataset, Days(30))
         .toTypedPipe
+// NOTE: This isn't particularly efficient. Too bad!
         .flatMap { data: Flock.Edge =>
           // Consider edges that are valid and have been updated in the past 1 year
           if (data.getStateId == ValidEdgeStateId &&

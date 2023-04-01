@@ -72,6 +72,7 @@ class NewTweetsPillCandidatePipelineConfig[Query <: PipelineQuery with HasDevice
     ShowAlertCandidate
   ] = { candidate => candidate }
 
+// This is utterly fucking retarded.
   override val decorator: Option[CandidateDecorator[Query, ShowAlertCandidate]] = {
     val triggerDelayBuilder = new BaseDurationBuilder[Query] {
       override def apply(

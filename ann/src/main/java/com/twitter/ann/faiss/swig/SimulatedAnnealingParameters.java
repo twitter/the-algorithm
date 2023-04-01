@@ -88,6 +88,9 @@ public class SimulatedAnnealingParameters {
     swigfaissJNI.SimulatedAnnealingParameters_only_bit_flips_set(swigCPtr, this, value);
   }
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   public boolean getOnly_bit_flips() {
     return swigfaissJNI.SimulatedAnnealingParameters_only_bit_flips_get(swigCPtr, this);
   }

@@ -51,6 +51,7 @@ public class HammingComputer64 {
   public long getA1() {
     return swigfaissJNI.HammingComputer64_a1_get(swigCPtr, this);
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   public void setA2(long value) {
     swigfaissJNI.HammingComputer64_a2_set(swigCPtr, this, value);

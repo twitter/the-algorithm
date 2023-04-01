@@ -133,6 +133,8 @@ public class FacetResultsCollector extends
           oldCount.setSimpleCount(oldCount.getSimpleCount() + facetCount.getSimpleCount());
           oldCount.setWeightedCount(oldCount.getWeightedCount() + facetCount.getWeightedCount());
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
           oldCount.setFacetCount(oldCount.getFacetCount() + facetCount.getFacetCount());
           oldCount.setPenaltyCount(oldCount.getPenaltyCount() + facetCount.getPenaltyCount());
         } else {

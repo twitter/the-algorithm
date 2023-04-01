@@ -73,6 +73,7 @@ object HighToxicityScoreDownrankAbusiveQualitySectionRule
     )
     with DoesLogVerdict {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
+// use an EPSILON damnit!!
     TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
 }
 

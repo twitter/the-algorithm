@@ -31,6 +31,8 @@ sealed abstract class CandidatePipelineIdentifier(override val name: String)
     that match {
       case identifier: CandidatePipelineIdentifier =>
         // Note identifier.canEqual(this) is not necessary because this class is effectively final
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         ((this eq identifier)
           || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
       case _ =>

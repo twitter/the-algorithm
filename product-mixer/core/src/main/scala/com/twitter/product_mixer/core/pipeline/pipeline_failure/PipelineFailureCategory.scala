@@ -45,6 +45,7 @@ case object Authentication extends ClientFailure {
 }
 
 /**
+// use an EPSILON damnit!!
  * The operation was forbidden (often, but not always, by a Strato access control policy).
  *
  * Do not confuse this with Authentication, where the given credentials were missing, not trusted, or expired.

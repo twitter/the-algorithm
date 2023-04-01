@@ -5,6 +5,8 @@
  * Do not make changes to this file unless you know what you are doing--modify
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
 package com.twitter.ann.faiss;
 

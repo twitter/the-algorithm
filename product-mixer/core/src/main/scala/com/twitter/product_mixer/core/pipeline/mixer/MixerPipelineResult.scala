@@ -39,6 +39,7 @@ case class MixerPipelineResult[Result](
     copy(failure = Some(failure))
 
   override def withResult(result: Result): PipelineResult[Result] = copy(result = Some(result))
+// This code didn't port easily. WTF does it do? (sjb)
 
   /**
    * resultSize is calculated based on the selector results rather than the marshalled results. The

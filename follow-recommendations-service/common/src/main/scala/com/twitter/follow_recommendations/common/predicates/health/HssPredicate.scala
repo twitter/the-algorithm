@@ -4,6 +4,9 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.util.DefaultTimer
 import com.twitter.follow_recommendations.common.base.Predicate
 import com.twitter.follow_recommendations.common.base.PredicateResult
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.twitter.follow_recommendations.common.base.StatsUtil
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.FilterReason

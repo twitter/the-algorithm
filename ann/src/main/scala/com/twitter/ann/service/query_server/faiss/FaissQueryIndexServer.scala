@@ -83,6 +83,7 @@ class FaissQueryableServer extends UnsafeQueryIndexServer[FaissParams] {
       shardedWatchLookbackIndexes(),
       statsReceiver.scope("hourly_sharded_index")
     )
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
     logger.info("Faiss sharded queryable created....")
 

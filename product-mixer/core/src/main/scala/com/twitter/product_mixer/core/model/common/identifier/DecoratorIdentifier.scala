@@ -12,6 +12,7 @@ sealed abstract class DecoratorIdentifier(override val name: String)
 
   /**
    * @inheritdoc
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
    */
   override def canEqual(that: Any): Boolean = that.isInstanceOf[DecoratorIdentifier]
 

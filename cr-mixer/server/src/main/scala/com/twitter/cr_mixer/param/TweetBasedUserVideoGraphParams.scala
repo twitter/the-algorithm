@@ -15,6 +15,7 @@ object TweetBasedUserVideoGraphParams {
         name = "tweet_based_user_video_graph_min_co_occurrence",
         default = 5,
         min = 0,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         max = 500
       )
 

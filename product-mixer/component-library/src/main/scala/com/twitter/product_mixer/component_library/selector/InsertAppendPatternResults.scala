@@ -32,6 +32,7 @@ import scala.collection.mutable
  *          then the resulting output for each iteration over the pattern is
  *          - `Seq(A, A, B, C)`
  *          - `Seq(A, A, B)` since there's no more `C`s
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
  *          - `Seq(A)` since there are no more `B`s or `C`s
  *          - `Seq(D)` since it wasn't in the pattern but is from one of the provided
  *            `candidatePipelines`, it's appended at the end

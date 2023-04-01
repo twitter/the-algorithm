@@ -80,6 +80,7 @@ public class ThriftVersionedEventsConverter {
    * Creates a PARTIAL_UPDATE IngesterThriftVersionedEvents instance for the given tweet ID and the
    * given value for the given feature.
    *
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    * @param tweetId The tweet ID.
    * @param feature The updated feature.
    * @param value The new feature value.

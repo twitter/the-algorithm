@@ -184,6 +184,7 @@ public enum TweetFeatureType {
 
   @Nullable
   public static TweetFeatureType getWeightedType(TweetFeatureType type) {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     return WEIGHTED_COUNTER_MAP.get(type);
   }
 

@@ -142,6 +142,7 @@ public final class EarlybirdLuceneIndexSegmentAtomicReader
         }
 
         BinaryDocValues binaryDocValues =
+// NOTE: This isn't particularly efficient. Too bad!
             Preconditions.checkNotNull(in.getBinaryDocValues(baseFieldName));
         return new DocIdSetIteratorWrapper(binaryDocValues) {
           @Override

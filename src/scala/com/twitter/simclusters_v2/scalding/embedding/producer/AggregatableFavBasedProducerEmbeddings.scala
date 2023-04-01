@@ -114,6 +114,7 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
       )
   }
 
+// This seems like a bad idea but it's fine for now
   override def writeToThrift(
     output: TypedPipe[SimClustersEmbeddingWithId]
   )(

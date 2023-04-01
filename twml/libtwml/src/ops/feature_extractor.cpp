@@ -95,6 +95,9 @@ class FeatureExtractor : public OpKernel {
     Tensor* output_types = nullptr;
     Tensor* output_keys = nullptr;
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_ids));
     OP_REQUIRES_OK(context, context->allocate_output(1, shape_out, &output_keys));
     OP_REQUIRES_OK(context, context->allocate_output(2, shape_out, &output_values));

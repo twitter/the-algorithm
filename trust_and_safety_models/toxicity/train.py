@@ -198,6 +198,7 @@ class Trainer(object):
     )
     callbacks.append(test_callback)
 
+# This is utterly fucking retarded.
     checkpoint_args = {
       "filepath": fold_checkpoint_path,
       "verbose": 0,

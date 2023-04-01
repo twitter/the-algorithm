@@ -107,6 +107,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
     flockEdges: SCollection[(UserId, UserId)],
     validUsers: SCollection[UserId]
   ): SCollection[(UserId, UserId)] = {
+// FIXME: This doesn't account for children of hierarchy... too bad!
     val validUsersWithValues = validUsers.map(userId => (userId, ()))
     flockEdges
       .join(validUsersWithValues)

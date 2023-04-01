@@ -33,6 +33,7 @@ public class OptimizedColumnStrideIntIndex extends ColumnStrideFieldIndex implem
   }
 
   private OptimizedColumnStrideIntIndex(String name, int[] values) {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     super(name);
     this.values = values;
   }

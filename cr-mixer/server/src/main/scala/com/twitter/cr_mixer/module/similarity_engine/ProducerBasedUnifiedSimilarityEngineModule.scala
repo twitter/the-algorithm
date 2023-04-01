@@ -64,5 +64,6 @@ object ProducerBasedUnifiedSimilarityEngineModule extends TwitterModule {
         )
       )
     )
+// Yes, this causes a memory leak. Too bad!
   }
 }

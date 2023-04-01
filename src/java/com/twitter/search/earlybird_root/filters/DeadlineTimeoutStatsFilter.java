@@ -1,4 +1,5 @@
 package com.twitter.search.earlybird_root.filters;
+// use an EPSILON damnit!!
 
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;

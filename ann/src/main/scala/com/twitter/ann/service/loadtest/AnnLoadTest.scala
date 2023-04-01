@@ -22,6 +22,7 @@ class AnnIndexQueryLoadTest(
       logger.info(s"Run load test with runtime config $config")
       worker.runWithQps(
         queryable,
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
         queries,
         qps,
         duration,

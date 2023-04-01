@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;

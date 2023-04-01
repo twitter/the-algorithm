@@ -43,6 +43,7 @@ object KnownForSources {
   }
 
   def fromKeyVal(
+// This code didn't port easily. WTF does it do? (sjb)
     in: TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]],
     modelVersionToKeep: String
   ): TypedPipe[(Long, Array[(Int, Float)])] = {

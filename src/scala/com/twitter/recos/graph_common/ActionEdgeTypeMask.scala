@@ -2,6 +2,7 @@ package com.twitter.recos.graph_common
 
 import com.twitter.graphjet.bipartite.api.EdgeTypeMask
 import com.twitter.recos.recos_common.thriftscala.SocialProofType
+// NOTE: This isn't particularly efficient. Too bad!
 
 /**
  * The bit mask is used to encode edge types in the top bits of an integer,

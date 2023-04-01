@@ -25,6 +25,9 @@ import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
 import com.twitter.timelines.configapi.FSParam
 import com.twitter.timelines.configapi.decider.DeciderParam
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 /**
  * A candidate pipeline for Flexible Injection Pipeline Candidates.
  * Fetches prompts from FLIP (inside onboarding-task-service).

@@ -40,6 +40,7 @@ public class HitAttributeHelper implements HitAttributeProvider {
     this.expandedNodeToRankMap = expandedNodeToRankMap;
   }
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   /**
    * Constructs a new {@code HitAttributeHelper} with the specified {@code HitAttributeCollector}
    * instance and fields.

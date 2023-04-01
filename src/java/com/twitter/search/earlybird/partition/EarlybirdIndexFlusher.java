@@ -354,6 +354,7 @@ public class EarlybirdIndexFlusher {
     Path segmentPath = segmentPrefix.suffix(DATA_SUFFIX);
 
     FlushInfo flushInfo = new FlushInfo();
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
     try (FSDataOutputStream outputStream = fileSystem.create(segmentPath)) {
       DataSerializer out = new DataSerializer(segmentPath.toString(), outputStream);

@@ -29,6 +29,7 @@ trait SourceGraphFetcher extends SourceFetcher[GraphSourceInfo] {
     func: => Future[Option[GraphSourceInfo]]
   ): Future[Option[GraphSourceInfo]] = {
     val productScopedStats = stats.scope(query.product.originalName)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
     StatsUtil
       .trackOptionStats(productScopedStats) {

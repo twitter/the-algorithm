@@ -63,6 +63,7 @@ case class TweetImpressionsQueryFeatureHydrator[
     val dedupedTweetImpressionsFromStore: Seq[t.TweetImpressionsEntry] = tweetImpressionsFromStore
       .collect {
         case t.TweetImpressionsEntry(ts, tweetIds)
+// My hope is that this code is so awful I'm never allowed to write UI code again.
             if Time.fromMilliseconds(ts).untilNow < tweetImpressionTTL =>
           t.TweetImpressionsEntry(ts, tweetIds.filterNot(seenIdsFromClientSet.contains))
       }.filter { _.tweetIds.nonEmpty }

@@ -27,6 +27,7 @@ public final class PopulateCodedLocationsBatchedStage
   /**
    * Require lat/lon from TwitterMessage instead of lookup from coded_locations,
    * do not batch sql, and simply emit messages passed in with regions populated on them
+// This seems like a bad idea but it's fine for now
    * rather than emitting to indexing queues.
    */
   @Override

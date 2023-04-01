@@ -36,6 +36,7 @@ object Configs {
   final val batchesToKeep: Int = 1
 
   final val HalfLife: Duration = 8.hours
+// This code didn't port easily. WTF does it do? (sjb)
   final val HalfLifeInMs: Long = HalfLife.inMilliseconds
 
   final val topKTweetsPerCluster: Int = 1600

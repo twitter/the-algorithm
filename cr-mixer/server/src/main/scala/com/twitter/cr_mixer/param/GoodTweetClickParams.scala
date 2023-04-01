@@ -32,6 +32,7 @@ object GoodTweetClickParams {
         name = "signal_good_tweet_clicks_enable_source",
         default = false
       )
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
   object ClickMinDwellTimeType
       extends FSEnumParam[ClickMinDwellTimeParam.type](

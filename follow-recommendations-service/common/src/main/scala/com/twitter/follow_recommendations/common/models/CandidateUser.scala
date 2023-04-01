@@ -94,6 +94,8 @@ case class CandidateUser(
         Some(
           t.ScoringDetails(
             candidateSourceDetails = userCandidateSourceDetails.map(_.toThrift),
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
             score = score,
             dataRecord = thriftDataRecord,
             rankerIds = rankerIdsStr,

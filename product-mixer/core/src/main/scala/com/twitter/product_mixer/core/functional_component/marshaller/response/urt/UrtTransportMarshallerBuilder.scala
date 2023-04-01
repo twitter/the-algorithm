@@ -108,6 +108,9 @@ import com.twitter.product_mixer.core.functional_component.marshaller.response.u
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMarshaller
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMetadataMarshaller
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.SkAdNetworkDataMarshaller
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.SponsorshipTypeMarshaller
 import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.UrlOverrideTypeMarshaller

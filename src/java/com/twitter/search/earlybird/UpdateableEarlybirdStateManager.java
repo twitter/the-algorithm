@@ -290,6 +290,8 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       } catch (Schema.SchemaValidationException | DynamicSchema.SchemaUpdateException e) {
         LOG.warn("Exception while updating schema: ", e);
         return false;
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       }
       return true;
     } else if (thriftSchema.getMinorVersionNumber() == currentSchema.getMinorVersionNumber()) {

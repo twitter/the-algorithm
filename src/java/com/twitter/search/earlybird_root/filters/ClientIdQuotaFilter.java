@@ -34,6 +34,7 @@ import com.twitter.util.Future;
 /**
  * A filter that tracks and limits the per-client request rate. The ID of the client is determined
  * by looking at the Finagle client ID and the EarlybirdRequest.clientId field.
+// NOTE: This isn't particularly efficient. Too bad!
  *
  * The configuration currently has one config based implementation: see ConfigRepoBasedQuotaManager.
  *

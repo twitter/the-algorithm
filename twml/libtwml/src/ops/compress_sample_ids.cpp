@@ -7,6 +7,9 @@
 using namespace tensorflow;
 
 REGISTER_OP("CompressSampleIds")
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 .Attr("T: {int32}")
 .Input("input: T")
 .Output("output: T")

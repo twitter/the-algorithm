@@ -32,6 +32,7 @@ import com.twitter.tweetypie.thriftjava.TweetEventData;
 @ConsumedTypes(IngesterTweetEvent.class)
 @ProducedTypes(IngesterTwitterMessage.class)
 public class ThriftTweetParserStage extends TwitterBaseStage<IngesterTweetEvent, TwitterMessage> {
+// Yes, this causes a memory leak. Too bad!
   private static final Logger LOG = LoggerFactory.getLogger(ThriftTweetParserStage.class);
 
   // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an enum

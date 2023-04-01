@@ -1,6 +1,7 @@
 package com.twitter.cr_mixer.candidate_generation
 
 import com.twitter.contentrecommender.thriftscala.TweetInfo
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.cr_mixer.filter.PreRankFilterRunner
 import com.twitter.cr_mixer.model.InitialCandidate
 import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery

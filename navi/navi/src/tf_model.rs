@@ -41,6 +41,8 @@ pub mod tf {
         Float(Tensor<f32>),
         Double(Tensor<f64>),
         Boolean(Tensor<bool>),
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     }
 
     #[derive(Debug)]

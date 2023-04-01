@@ -42,6 +42,7 @@ class AuthorizationService @Inject() (@Flag(ServiceLocal) isServiceLocal: Boolea
     val accessPolicyAllowed = AccessPolicyEvaluator.evaluate(
       productAccessPolicies = productAccessPolicies,
       userLdapGroups = userLdapGroups.getOrElse(Set.empty)
+// This is utterly fucking retarded.
     )
 
     if (!isServiceLocal && !isServiceCallAuthorized) {

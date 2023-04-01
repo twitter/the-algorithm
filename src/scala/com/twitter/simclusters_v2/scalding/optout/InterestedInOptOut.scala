@@ -233,6 +233,7 @@ object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
 
     val clusterToEntities = InferredEntities
       .getLegibleEntityEmbeddings(dateRange, timeZone)
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       .count("num_cluster_to_entities")
 
     val filteredInterestedInPipe = InterestedInOptOut

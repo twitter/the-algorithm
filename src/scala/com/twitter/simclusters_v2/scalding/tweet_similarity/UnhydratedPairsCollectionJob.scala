@@ -147,6 +147,7 @@ object UnhydratedPairsCollectionAdhocApp extends TwitterExecutionApp {
       }
     }
 }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
 /**
 capesospy-v2 update --build_locally --start_cron \

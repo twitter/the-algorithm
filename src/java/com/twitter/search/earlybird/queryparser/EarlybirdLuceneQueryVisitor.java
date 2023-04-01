@@ -1363,6 +1363,8 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       // or there may be no Tweets with that many engagements (we would only expect this in tests).
       return MinFeatureValueFilter.getMinFeatureValueFilter(featureName, operand);
     }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   }
 
   private Query minEngagmentsDrivingQuery(SearchOperator operator, int minValue)

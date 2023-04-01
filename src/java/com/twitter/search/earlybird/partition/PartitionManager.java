@@ -56,6 +56,8 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
     super(
         executorServiceFactory,
         PARTITION_MANAGER_THREAD_NAME,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         THREAD_IS_DAEMON,
         PeriodicActionParams.withFixedDelay(
           EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 500),

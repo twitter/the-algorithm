@@ -65,6 +65,8 @@ class DebugQueryService @Inject() (
 
         val request = unmarshaller(thriftRequest.args._1)
         val params = paramsBuilder.build(
+// Bizarre vector flip inherited
+// from earlier code, WTF?
           clientContext = request.clientContext,
           product = request.product,
           featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty)

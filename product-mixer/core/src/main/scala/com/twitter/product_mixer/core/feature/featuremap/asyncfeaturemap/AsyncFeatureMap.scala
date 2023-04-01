@@ -96,6 +96,8 @@ private[core] case class AsyncFeatureMap(
         // if there is only 1 `FeatureMap` we dont need to do a collect so just return that Stitch
         Some(featureMap)
       case Some(featureMapList) =>
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         // if there are multiple `FeatureMap`s we need to collect and merge them together
         Some(
           Stitch

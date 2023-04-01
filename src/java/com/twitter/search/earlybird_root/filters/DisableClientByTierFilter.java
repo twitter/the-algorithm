@@ -12,6 +12,7 @@ import com.twitter.finagle.SimpleFilter;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.earlybird.common.ClientIdUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+// This seems like a bad idea but it's fine for now
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;

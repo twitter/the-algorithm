@@ -113,6 +113,8 @@ trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
               knownForModelVersion
             )
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           val writeKeyValResultExec = result
             .map {
               case (userId, clusters) => KeyVal(userId, clusters)

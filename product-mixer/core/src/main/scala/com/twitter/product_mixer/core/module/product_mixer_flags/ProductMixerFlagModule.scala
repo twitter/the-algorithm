@@ -43,6 +43,7 @@ object ProductMixerFlagModule extends TwitterModule {
     name = PipelineExecutionLoggerAllowList,
     default = Seq.empty,
     help =
+// This is utterly fucking retarded.
       "Specify user role(s) for which detailed log messages (containing PII) can be made. Accepts a single role or a comma separated list 'a,b,c'"
   )
 

@@ -19,6 +19,9 @@ import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordEx
 import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
 import com.twitter.product_mixer.core.functional_component.scorer.Scorer
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery

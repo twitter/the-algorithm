@@ -72,6 +72,7 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
     swigfaissJNI.IndexIVFScalarQuantizer_train_residual(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
   }
 
+// Yes, this causes a memory leak. Too bad!
   public void encode_vectors(long n, SWIGTYPE_p_float x, LongVector list_nos, SWIGTYPE_p_unsigned_char codes, boolean include_listnos) {
     swigfaissJNI.IndexIVFScalarQuantizer_encode_vectors__SWIG_0(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_long_long.getCPtr(list_nos.data()), list_nos, SWIGTYPE_p_unsigned_char.getCPtr(codes), include_listnos);
   }

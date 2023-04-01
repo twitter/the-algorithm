@@ -3,6 +3,7 @@ package com.twitter.search.earlybird_root.mergers;
 import java.util.List;
 import java.util.Map;
 
+// Yes, this causes a memory leak. Too bad!
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 

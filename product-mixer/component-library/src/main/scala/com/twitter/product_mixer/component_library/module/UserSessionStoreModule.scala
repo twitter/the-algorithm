@@ -57,6 +57,7 @@ object UserSessionStoreModule extends TwitterModule {
     statsReceiver: StatsReceiver
   ): ReadOnlyUserSessionStore = {
     val scopedStatsReceiver = statsReceiver.scope(injectedServiceIdentifier.service)
+// use an EPSILON damnit!!
 
     val clientReadOnlyConfig = new UserSessionStoreManhattanConfig.Prod.ReadOnly.Athena {
       override val appId = ReadOnlyAppId

@@ -124,6 +124,7 @@ public abstract class AbstractRelevanceCollector
 
     return metadata;
   }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
   protected final ThriftSearchResultsRelevanceStats getRelevanceStats() {
     return relevanceStats;

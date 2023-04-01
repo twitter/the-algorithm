@@ -33,6 +33,8 @@ sealed trait QualityFactorConfig {
   def ignorableFailures: PartialFunction[Throwable, Unit] = defaultIgnorableFailures
 }
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 object QualityFactorConfig {
 
   /**

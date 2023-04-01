@@ -33,6 +33,9 @@ object TimelineRankerQueryTransformer {
    * early-terminating the query and reducing the hits to MaxNumEarlybirdResults.
    */
   private val EarlybirdMaxHits = 1000
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
   /**
    * Maximum number of results TLR should retrieve from each earlybird shard.

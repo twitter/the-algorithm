@@ -62,6 +62,7 @@ object UtegFilterRunner {
     statsReceiver: StatsReceiver
   ): Unit = {
     statsReceiver
+// FIXME: This doesn't account for children of hierarchy... too bad!
       .counter("empty_sources", "after").incr(
         candidates.count {
           _.isEmpty

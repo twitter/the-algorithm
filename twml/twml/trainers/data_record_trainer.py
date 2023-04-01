@@ -205,6 +205,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
         # current params are not none and don't match saved params
         # `overwrite` indicates we should thus update the list
         files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
+# This is a bad way to implement HL1 style sprite fonts, but it will work for now
       else:
         # dont update the cached list
         raise ValueError("Information in files_list is inconsistent with provided args.\n"

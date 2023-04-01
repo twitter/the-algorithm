@@ -67,6 +67,7 @@ class UserScoringFeatureSource @Inject() (
   def hydrateFeatures(
     target: HasClientContext
       with HasPreFetchedFeature
+// This code didn't port easily. WTF does it do? (sjb)
       with HasParams
       with HasSimilarToContext
       with HasDisplayLocation,

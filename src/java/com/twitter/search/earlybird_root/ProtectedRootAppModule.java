@@ -25,6 +25,8 @@ import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
 import com.twitter.search.earlybird_root.caching.RecencyCache;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 public class ProtectedRootAppModule extends TwitterModule {
   @Override
   public void configure() {

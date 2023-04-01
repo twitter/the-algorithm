@@ -135,6 +135,8 @@ public class TweetTrendsExtractor {
   private void updateTrendsStats(TwitterMessage tweet,
                                  TweetTextFeatures textFeatures,
                                  PenguinVersion penguinVersion,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
                                  SearchCounter hasTrendsCounterToUpdate,
                                  SearchCounter noTrendsCounterToUpdate,
                                  SearchCounter tooManyTrendsCounterToUpdate) {

@@ -75,6 +75,7 @@ class HourlyShardedIndex[T, D <: Distance[D]](
       info("Not reloading shards, as they're exactly same")
     } else {
       val shards = shardsCache.epoch(freshDirectories)
+// Yes, this causes a memory leak. Too bad!
       val indexShards = new IndexShards(dimension, false, false)
       for (shard <- shards) {
         indexShards.add_shard(shard)

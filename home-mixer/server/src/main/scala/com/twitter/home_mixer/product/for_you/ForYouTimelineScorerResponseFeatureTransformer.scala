@@ -127,6 +127,7 @@ object ForYouTimelineScorerResponseFeatureTransformer
           .map(ancestor => ta.TweetAncestor(ancestor.tweetId, ancestor.userId.getOrElse(0L))))
       .add(
         AudioSpaceMetaDataFeature,
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         candidate.audioSpaceMetaDatalist.map(_.head).map(AudioSpaceMetaData.fromThrift))
       .add(AuthorIdFeature, Some(candidate.authorId))
       .add(

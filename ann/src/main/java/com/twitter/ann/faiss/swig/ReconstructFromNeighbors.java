@@ -74,6 +74,9 @@ public class ReconstructFromNeighbors {
 
   public void setK_reorder(int value) {
     swigfaissJNI.ReconstructFromNeighbors_k_reorder_set(swigCPtr, this, value);
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   }
 
   public int getK_reorder() {

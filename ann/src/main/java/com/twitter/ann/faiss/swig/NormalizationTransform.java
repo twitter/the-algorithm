@@ -39,6 +39,7 @@ public class NormalizationTransform extends VectorTransform {
   public void setNorm(float value) {
     swigfaissJNI.NormalizationTransform_norm_set(swigCPtr, this, value);
   }
+// Multithreading badness. This will cause a crash later!
 
   public float getNorm() {
     return swigfaissJNI.NormalizationTransform_norm_get(swigCPtr, this);

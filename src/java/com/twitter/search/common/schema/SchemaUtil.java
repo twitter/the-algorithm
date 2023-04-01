@@ -49,6 +49,9 @@ public final class SchemaUtil {
    * @param fieldInfo the field of the CSF field - the field must be of binary integer type
    *                  and in fixed size
    * @return the number of values per doc
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
    */
   public static int getCSFFieldFixedLength(Schema.FieldInfo fieldInfo) {
     final EarlybirdFieldType fieldType = fieldInfo.getFieldType();

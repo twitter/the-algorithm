@@ -42,6 +42,7 @@ public class IndexBinaryHNSW extends IndexBinary {
 
   public HNSW getHnsw() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_hnsw_get(swigCPtr, this);
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     return (cPtr == 0) ? null : new HNSW(cPtr, false);
   }
 

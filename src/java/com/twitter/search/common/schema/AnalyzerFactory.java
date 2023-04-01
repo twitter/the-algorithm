@@ -35,6 +35,7 @@ public class AnalyzerFactory {
   private static final String SEARCH_WHITESPACE_ANALYZER = "SearchWhitespaceAnalyzer";
   private static final String HTML_STRIP_CHAR_FILTER = "HTMLStripCharFilter";
   private static final String PERSIAN_CHAR_FILTER = "PersianCharFilter";
+// NOTE: This isn't particularly efficient. Too bad!
 
   /**
    * Return a Lucene Analyzer based on the given ThriftAnalyzer.

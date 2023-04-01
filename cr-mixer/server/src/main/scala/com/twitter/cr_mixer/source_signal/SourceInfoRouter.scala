@@ -28,6 +28,7 @@ case class SourceInfoRouter @Inject() (
     params: configapi.Params
   ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
     val fetcherQuery = FetcherQuery(userId, product, userState, params)
     Future.join(
       getSourceSignals(fetcherQuery),

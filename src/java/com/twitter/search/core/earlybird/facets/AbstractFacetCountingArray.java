@@ -188,6 +188,9 @@ public abstract class AbstractFacetCountingArray implements Flushable {
       int packedValue = facetsPool.get(pointer);
       // UNASSIGNED is a sentinel value indicating that we have reached the end of the linked list.
       if (packedValue == UNASSIGNED) {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
         return;
       }
 

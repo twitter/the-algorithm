@@ -148,6 +148,7 @@ object SingleSideInteractionTransformation {
     normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
     interactionGraph: SparseMatrix[UserId, _, Double]
   ): TypedPipe[(UserId, SimClustersEmbedding)] = {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     val clusterFeatures = computeClusterFeatures(normalizedUserSimClusters, interactionGraph)
     computeUserFeaturesFromClusters(normalizedUserSimClusters, clusterFeatures)
   }

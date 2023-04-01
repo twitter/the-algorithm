@@ -196,6 +196,9 @@ object TimelineConversationsVisibilityLibrary {
               safetyLevel
             )
             .map { results: Seq[Try[VisibilityResult]] =>
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
               val (succeededRequests, _) = results.partition(_.exists(_.finished))
               val visibilityResultMap = succeededRequests.flatMap {
                 case Return(result) =>

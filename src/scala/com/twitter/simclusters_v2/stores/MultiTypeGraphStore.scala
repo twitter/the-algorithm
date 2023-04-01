@@ -65,6 +65,8 @@ object MultiTypeGraphStore {
   }
 
   def getTopKNounsForRightNodeType(
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     mhMtlsParams: ManhattanKVClientMtlsParams
   ): ReadableStore[RightNodeTypeStruct, NounWithFrequencyList] = {
     ManhattanRO.getReadableStoreWithMtls[RightNodeTypeStruct, NounWithFrequencyList](

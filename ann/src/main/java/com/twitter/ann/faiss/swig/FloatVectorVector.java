@@ -64,6 +64,8 @@ public class FloatVectorVector {
   public void resize(long n) {
     swigfaissJNI.FloatVectorVector_resize(swigCPtr, this, n);
   }
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
   public void reserve(long n) {
     swigfaissJNI.FloatVectorVector_reserve(swigCPtr, this, n);

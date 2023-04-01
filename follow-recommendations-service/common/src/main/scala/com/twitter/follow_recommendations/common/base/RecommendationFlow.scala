@@ -23,6 +23,7 @@ trait BaseRecommendationFlow[Target, Candidate <: UniversalNoun[Long]] {
     pipelineRequest: Target
   ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]]
 
+// This code didn't port easily. WTF does it do? (sjb)
   def mapKey[Target2](fn: Target2 => Target): BaseRecommendationFlow[Target2, Candidate] = {
     val original = this
     new BaseRecommendationFlow[Target2, Candidate] {

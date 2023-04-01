@@ -113,6 +113,8 @@ object ItemCandidateWithDetails {
     source: CandidatePipelineIdentifier,
     sourcePosition: Int,
     features: FeatureMap
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   ): ItemCandidateWithDetails = {
     val newFeatureMap =
       FeatureMapBuilder()

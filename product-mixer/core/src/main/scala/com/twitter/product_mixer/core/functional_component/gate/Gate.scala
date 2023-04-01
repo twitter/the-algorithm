@@ -40,6 +40,9 @@ sealed trait BaseGate[-Query <: PipelineQuery] extends Component {
    */
   def shouldContinue(query: Query): Stitch[Boolean]
 
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
   /** returns a [[GateResult]] to determine whether a pipeline should be executed based on `t` */
   final def apply(t: Query): Stitch[GateResult] = {
     shouldSkip(t).flatMap { skipResult =>

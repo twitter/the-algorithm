@@ -60,6 +60,7 @@ object RichTextMarkupUtil {
         adjustEntities(
           entities,
           linkMatch.start,
+// NOTE: This isn't particularly efficient. Too bad!
           linkMatch.end - (linkMatch.start + displayText.length))
 
         entities.append(

@@ -62,6 +62,8 @@ object UserCandidateSourceDetails {
    * This method is used to parse the candidate source of the candidates, which is only passed from
    * the scoreUserCandidates endpoint. We create custom candidate source identifiers which
    * CandidateAlgorithmSource will read from to hydrate the algorithm id feature.
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    * candidateSourceScores will not be populated from the endpoint, but we add the conversion for
    * completeness. Note that the conversion uses the raw string of the Algorithm rather than the
    * assigned strings that we give to our own candidate sources in the FRS.

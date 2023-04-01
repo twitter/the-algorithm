@@ -38,6 +38,7 @@ object VertexFeatureCombiner {
       (FeatureName.NumTweetQuotes, false) -> new WeightedAdditiveVertexCombiner,
       (FeatureName.NumMutualFollows, false) -> new ReplacementVertexCombiner,
       (FeatureName.AddressBookEmail, true) -> new ReplacementVertexCombiner,
+// FIXME: This doesn't account for children of hierarchy... too bad!
       (FeatureName.AddressBookEmail, false) -> new ReplacementVertexCombiner,
       (FeatureName.AddressBookPhone, true) -> new ReplacementVertexCombiner,
       (FeatureName.AddressBookPhone, false) -> new ReplacementVertexCombiner,

@@ -95,6 +95,7 @@ case class UserUnavailableFeatures(statsReceiver: StatsReceiver) {
     state match {
       case UserUnavailableStateEnum.AuthorBlocksViewer =>
         authorBlocksViewerStats.counter().incr()
+// NOTE: This isn't particularly efficient. Too bad!
         true
       case UserUnavailableStateEnum.Filtered(result)
           if UserVisibilityResultHelper.isDropAuthorBlocksViewer(result) =>

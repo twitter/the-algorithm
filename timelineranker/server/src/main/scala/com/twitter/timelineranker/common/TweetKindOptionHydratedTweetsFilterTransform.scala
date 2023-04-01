@@ -1,5 +1,7 @@
 package com.twitter.timelineranker.common
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.servo.util.FutureArrow
 import com.twitter.servo.util.Gate

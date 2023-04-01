@@ -7,6 +7,8 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 
 /**
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
  * A histogram of int values with arbitrary buckets.
  * Keeps a count for each bucket, and a sum of values for each bucket.
  * The histogram view is returned as a list of {@link Histogram.Entry}s.

@@ -37,6 +37,7 @@ void HashedDataRecord::decode(HashedDataRecordReader &reader) {
       case DR_BLOB:
         reader.readBlob(feature_type, this);
         break;
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       case DR_GENERAL_TENSOR:
         reader.readTensor(feature_type, dynamic_cast<TensorRecord *>(this));
         break;

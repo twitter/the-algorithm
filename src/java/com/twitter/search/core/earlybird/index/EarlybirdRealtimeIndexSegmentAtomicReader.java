@@ -157,6 +157,7 @@ public final class EarlybirdRealtimeIndexSegmentAtomicReader
   public PointValues getPointValues(String field) {
     return null;
   }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
   @Override
   public LeafMetaData getMetaData() {

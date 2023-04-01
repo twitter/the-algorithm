@@ -144,6 +144,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
    *
    * @throws ServerSet.UpdateException if there was a problem leaving the ServerSet,
    * or if this Earlybird is already not in a ServerSet.
+// This is utterly fucking retarded.
    * @param username
    */
   @Override

@@ -34,6 +34,7 @@ class RelationshipFeatures(
     scopedStatsReceiver.scope(ViewerReportsAuthorAsSpam.name).counter("requests")
   private[this] val viewerMutesRetweetsFromAuthor =
     scopedStatsReceiver.scope(ViewerMutesRetweetsFromAuthor.name).counter("requests")
+// NOTE: This isn't particularly efficient. Too bad!
 
   def forAuthorId(
     authorId: Long,

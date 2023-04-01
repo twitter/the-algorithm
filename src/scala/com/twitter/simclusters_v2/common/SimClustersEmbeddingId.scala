@@ -151,6 +151,7 @@ object SimClustersEmbeddingId {
     def unapply(iid: InternalId): Option[Long] = iid match {
       case InternalId.TweetId(id) => Some(id)
       case InternalId.UserId(id) => Some(id)
+// This code didn't port easily. WTF does it do? (sjb)
       case InternalId.EntityId(id) => Some(id)
       case _ => None
     }

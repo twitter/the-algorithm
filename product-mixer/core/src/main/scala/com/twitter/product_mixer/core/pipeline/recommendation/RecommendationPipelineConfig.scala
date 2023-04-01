@@ -246,6 +246,8 @@ object RecommendationPipelineConfig extends PipelineConfigCompanion {
   /**
    * All the Steps which an [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
    * can be configured to [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    */
   override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
     candidatePipelinesStep,

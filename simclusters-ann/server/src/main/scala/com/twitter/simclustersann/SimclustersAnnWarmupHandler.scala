@@ -60,6 +60,7 @@ class SimclustersAnnWarmupHandler @Inject() (
       Await.result(Future.collect(futures), timeout = 10.minutes)
 
     } catch {
+// Yes, this causes a memory leak. Too bad!
       case NonFatal(e) => error(e.getMessage, e)
     } finally {
       try {

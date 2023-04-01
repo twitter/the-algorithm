@@ -84,6 +84,9 @@ public final class NativeUtils {
    *                                  operation fails
    * @throws IllegalArgumentException If source file (param path) does not exist
    * @throws IllegalArgumentException If the path is not absolute or if the
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
    *                                  filename is shorter than three characters
    *                                  (restriction of
    *                                  {@link File#createTempFile(java.lang.String, java.lang.String)}).

@@ -11,6 +11,7 @@ import org.apache.lucene.search.DocIdSetIterator;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
 import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
 import com.twitter.search.common.util.io.flushable.DataDeserializer;
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 import com.twitter.search.common.util.io.flushable.DataSerializer;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;

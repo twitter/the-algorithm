@@ -141,6 +141,7 @@ object TweetJob {
               )
             }
         case _ =>
+// Multithreading badness. This will cause a crash later!
           None
 
       }

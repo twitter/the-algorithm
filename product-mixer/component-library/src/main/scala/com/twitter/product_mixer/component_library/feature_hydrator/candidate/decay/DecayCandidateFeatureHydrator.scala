@@ -30,6 +30,9 @@ object DecayScore extends Feature[UniversalNoun[Long], Double]
  *
  * Reference: https://www.cuemath.com/exponential-decay-formula/
  *
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
  * @note This penalizes but does not filter out the candidate, so "stale" candidates can still appear.
  */
 case class DecayCandidateFeatureHydrator[Candidate <: UniversalNoun[Long]](

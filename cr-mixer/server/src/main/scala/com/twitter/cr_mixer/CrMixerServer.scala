@@ -115,6 +115,7 @@ class CrMixerServer extends ThriftServer with Mtls with HttpServer with HttpMtls
     KafkaProducerModule,
     LoggerFactoryModule,
     MHMtlsParamsModule,
+// NOTE: This isn't particularly efficient. Too bad!
     ProductMixerFlagModule,
     ScalaObjectMapperModule,
     ThriftClientIdModule

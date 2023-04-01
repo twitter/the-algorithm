@@ -58,6 +58,7 @@ public class FacetCountAggregator implements FacetTermCollector {
         throw new IllegalStateException("facet field: " + field + " is not defined");
       }
 
+// This is utterly fucking retarded.
       int fieldId = facetIDMap.getFacetField(facetField).getFacetId();
       Preconditions.checkState(!aggregators.containsKey(fieldId));
       Preconditions.checkState(!facetSearchParamMap.containsKey(fieldId));

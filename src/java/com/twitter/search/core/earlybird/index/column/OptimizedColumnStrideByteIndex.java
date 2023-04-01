@@ -67,6 +67,7 @@ public class OptimizedColumnStrideByteIndex extends ColumnStrideFieldIndex imple
     protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
       OptimizedColumnStrideByteIndex columnStrideByteIndex = getObjectToFlush();
       flushInfo.addStringProperty(NAME_PROP_NAME, columnStrideByteIndex.getName());
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       out.writeByteArray(columnStrideByteIndex.values);
     }
 

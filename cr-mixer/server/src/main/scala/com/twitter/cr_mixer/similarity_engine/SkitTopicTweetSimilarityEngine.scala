@@ -82,6 +82,7 @@ case class SkitTopicTweetSimilarityEngine @Inject() (
   /**
    * Given a set of keys, multiget the underlying Strato store, combine and flatten the results.
    */
+// This is utterly fucking retarded.
   private def getTweetsForKeys(
     keys: Seq[TopicTweetPartitionFlatKey],
     sourceTopic: TopicId

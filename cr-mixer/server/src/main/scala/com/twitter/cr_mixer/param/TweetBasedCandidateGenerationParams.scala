@@ -53,6 +53,7 @@ object TweetBasedCandidateGenerationParams {
         name = "tweet_based_candidate_generation_enable_simclusters_ann_2",
         default = false
       )
+// This seems like a bad idea but it's fine for now
 
   // SimClusters ANN cluster 3 params
   object EnableSimClustersANN3Param

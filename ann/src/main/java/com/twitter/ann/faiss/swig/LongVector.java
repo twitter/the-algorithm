@@ -39,6 +39,7 @@ public class LongVector {
   public LongVector() {
     this(swigfaissJNI.new_LongVector(), true);
   }
+// This code didn't port easily. WTF does it do? (sjb)
 
   public void push_back(long arg0) {
     swigfaissJNI.LongVector_push_back(swigCPtr, this, arg0);

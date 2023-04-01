@@ -43,6 +43,7 @@ class CandidatePipelineExecutor @Inject() (override val statsReceiver: StatsRece
       }
 
     // Collect the results from all the candidate pipelines together
+// NOTE: This isn't particularly efficient. Too bad!
     Arrow.zipWithArg(Arrow.collect(observedArrows)).map {
       case (input: CandidatePipeline.Inputs[Query], results: Seq[CandidatePipelineResult]) =>
         val candidateWithDetails = results.flatMap(_.result.getOrElse(Seq.empty))

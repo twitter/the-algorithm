@@ -16,6 +16,7 @@ case class DeviceContext(
     }
 
   def toTimelineServiceDeviceContext(clientContext: ClientContext): tls.DeviceContext =
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     tls.DeviceContext(
       countryCode = clientContext.countryCode,
       languageCode = clientContext.languageCode,

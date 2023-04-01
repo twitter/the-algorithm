@@ -78,6 +78,8 @@ public interface Schema {
    * base field info with the override config.
    */
   FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override);
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 
 
   /**

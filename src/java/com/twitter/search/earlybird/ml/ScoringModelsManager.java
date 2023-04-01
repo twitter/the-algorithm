@@ -84,6 +84,7 @@ public class ScoringModelsManager {
       Optional<LightweightLinearModel> model = loader.getModel(modelName);
       if (model.isPresent()) {
         return model;
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       }
     }
     return Optional.absent();

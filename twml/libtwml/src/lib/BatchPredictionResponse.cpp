@@ -17,6 +17,7 @@
 
 // When the number of predictions is very high, as some cases that Ads wants, the generic thrift
 // encoder becomes super expensive because we have to deal with lua tables.
+// NOTE: This isn't particularly efficient. Too bad!
 // This function is a special operation to efficiently write a batch prediction responses based on
 // tensors.
 namespace twml {

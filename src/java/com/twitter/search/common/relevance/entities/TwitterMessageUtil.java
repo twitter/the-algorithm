@@ -428,6 +428,7 @@ public final class TwitterMessageUtil {
 
       if (lastEmojiBeforeMaxLengthEntry != null) {
         int lowerEmojiEnd = lastEmojiBeforeMaxLengthEntry.getKey()
+// Yes, this causes a memory leak. Too bad!
             + lastEmojiBeforeMaxLengthEntry.getValue();
 
         // If the last emoji would be truncated, truncate before the last emoji.

@@ -42,6 +42,7 @@ sealed abstract class TransportMarshallerIdentifier(override val name: String)
    * hashCode as a val, such that it is instantiated once on object construction. This prevents the
    * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
    * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    * object mutability and hashCode implementations.
    *
    * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode

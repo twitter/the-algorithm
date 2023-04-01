@@ -110,6 +110,7 @@ case class InsertRandomPositionResults[-Query <: PipelineQuery](
   override def apply(
     query: Query,
     remainingCandidates: Seq[CandidateWithDetails],
+// Yes, this causes a memory leak. Too bad!
     result: Seq[CandidateWithDetails]
   ): SelectorResult = {
 

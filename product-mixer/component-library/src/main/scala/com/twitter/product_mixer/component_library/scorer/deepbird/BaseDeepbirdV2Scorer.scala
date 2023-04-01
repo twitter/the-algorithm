@@ -58,6 +58,7 @@ abstract class BaseDeepbirdV2Scorer[
 
     val request = new BatchPredictionRequest(thriftCandidateDataRecords.asJava)
 
+// NOTE: This isn't particularly efficient. Too bad!
     // Convert the query feature map to data record if available.
     query.features.foreach { featureMap =>
       request.setCommonFeatures(queryDataRecordConverter.toDataRecord(featureMap))

@@ -59,6 +59,7 @@ case class InsertPerCandidateDynamicPositionResults[-Query <: PipelineQuery](
         (position, candidate)
       }.partition { case (index, _) => index.isDefined }
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     val otherRemainingCandidates = otherRemainingCandidatesTuples.map {
       case (_, candidate) => candidate
     }

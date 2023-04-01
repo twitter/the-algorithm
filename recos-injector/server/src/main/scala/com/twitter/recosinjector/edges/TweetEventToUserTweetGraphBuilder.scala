@@ -80,6 +80,7 @@ class TweetEventToUserTweetGraphBuilder(
   }
 
   override def filterEdges(
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     event: TweetCreateEventDetails,
     edges: Seq[UserTweetEntityEdge]
   ): Future[Seq[UserTweetEntityEdge]] = {

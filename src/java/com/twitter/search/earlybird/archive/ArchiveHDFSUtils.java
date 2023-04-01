@@ -166,6 +166,7 @@ public final class ArchiveHDFSUtils {
            .append(padding(cal.get(Calendar.DAY_OF_MONTH), 2));
     return builder.toString();
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   private static String padding(int value, int len) {
     return String.format("%0" + len + "d", value);

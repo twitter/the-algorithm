@@ -75,6 +75,7 @@ case class FrsTweetCandidateGeneratorQuery(
   countryCodeOpt: Option[String] = None,
   requestUUID: Long)
     extends CandidateGeneratorQuery
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
 case class AdsCandidateGeneratorQuery(
   userId: UserId,

@@ -17,6 +17,8 @@ import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import org.apache.lucene.search.TermStatistics;
 import org.apache.lucene.search.Weight;
 import org.apache.lucene.util.BytesRef;

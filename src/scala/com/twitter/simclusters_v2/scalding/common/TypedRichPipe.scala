@@ -61,6 +61,7 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
 
 object TypedRichPipe extends java.io.Serializable {
   import scala.language.implicitConversions
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   implicit def typedPipeToRichPipe[V](
     pipe: TypedPipe[V]

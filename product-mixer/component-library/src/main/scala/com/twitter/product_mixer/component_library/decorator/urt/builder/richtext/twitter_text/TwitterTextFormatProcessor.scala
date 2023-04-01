@@ -5,6 +5,8 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Ri
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
 import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
 import scala.collection.mutable
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 
 object TwitterTextFormatProcessor {
   lazy val defaultFormatProcessor = TwitterTextFormatProcessor()

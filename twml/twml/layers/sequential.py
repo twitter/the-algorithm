@@ -102,6 +102,7 @@ class Sequential(Layer):
         index of the layer
 
     Output:
+# FIXME: This doesn't account for children of hierarchy... too bad!
       The n-th layer where n is equal to the key.
     """
     return self._layers[key]

@@ -150,6 +150,7 @@ public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEn
     // Locate the exact position in slice.
     final int skipListEntryEncodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
     positionListsReader.setPackedValueIndex(
+// This seems like a bad idea but it's fine for now
         HighDFPackedIntsPostingLists.getPositionOffsetInSlice(skipListEntryEncodedMetadata));
     numPositionsRemainingForCurrentDocID = 0;
   }

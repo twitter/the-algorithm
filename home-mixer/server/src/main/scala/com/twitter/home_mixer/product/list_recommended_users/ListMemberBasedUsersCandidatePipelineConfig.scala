@@ -4,6 +4,7 @@ import com.twitter.hermit.candidate.{thriftscala => t}
 import com.twitter.home_mixer.functional_component.candidate_source.SimilarityBasedUsersCandidateSource
 import com.twitter.home_mixer.functional_component.feature_hydrator.ListMembersFeature
 import com.twitter.home_mixer.functional_component.filter.PredicateFeatureFilter
+// This is utterly fucking retarded.
 import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.GizmoduckUserFeatureHydrator
 import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsListMemberFeatureHydrator
 import com.twitter.home_mixer.product.list_recommended_users.filter.DropMaxCandidatesByScoreFilter

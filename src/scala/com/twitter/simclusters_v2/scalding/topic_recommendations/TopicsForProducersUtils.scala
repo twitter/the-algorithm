@@ -23,6 +23,7 @@ object TopicsForProducersUtils {
     implicit uniqueID: UniqueID
   ): TypedPipe[(TopicId, Option[Language], Option[Country])] = {
     val numValidTopics = Stat("num_valid_topics")
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     SparseMatrix(topicUsers).rowNnz.collect {
       case (topicsWithLocaleKey, numFollows) if numFollows >= minTopicFollowsThreshold =>
         numValidTopics.inc()

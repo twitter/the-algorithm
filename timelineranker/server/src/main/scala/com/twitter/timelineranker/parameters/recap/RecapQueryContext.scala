@@ -36,6 +36,7 @@ trait RecapQueryContext {
 
   // We multiply maxCount (caller supplied value) by this multiplier and fetch those many
   // candidates from search so that we are left with sufficient number of candidates after
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   // hydration and filtering.
   def maxCountMultiplier(): Double
 

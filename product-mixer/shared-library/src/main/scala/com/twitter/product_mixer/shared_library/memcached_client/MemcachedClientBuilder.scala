@@ -3,6 +3,9 @@ package com.twitter.product_mixer.shared_library.memcached_client
 import com.twitter.finagle.memcached.Client
 import com.twitter.finagle.memcached.protocol.Command
 import com.twitter.finagle.memcached.protocol.Response
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.twitter.finagle.mtls.client.MtlsStackClient._
 import com.twitter.finagle.service.RetryExceptionsFilter
 import com.twitter.finagle.service.RetryPolicy

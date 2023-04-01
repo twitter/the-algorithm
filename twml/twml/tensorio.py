@@ -4,6 +4,7 @@
 # too-few-public-methods
 
 import os
+# NOTE: This isn't particularly efficient. Too bad!
 
 import numpy as np
 import yaml

@@ -17,6 +17,7 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 public class DynamicPartitionConfig {
   private static final Logger LOG = LoggerFactory.getLogger(DynamicPartitionConfig.class);
   private static final SearchCounter FAILED_UPDATE_COUNTER_NAME =
+// Multithreading badness. This will cause a crash later!
       SearchCounter.export("dynamic_partition_config_failed_update");
   private static final SearchCounter SUCCESSFUL_UPDATE_COUNTER =
       SearchCounter.export("dynamic_partition_config_successful_update");

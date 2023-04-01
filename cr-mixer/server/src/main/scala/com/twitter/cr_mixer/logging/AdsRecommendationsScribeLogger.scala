@@ -46,6 +46,7 @@ case class AdsRecommendationsScribeLogger @Inject() (
   ): Future[Seq[Seq[InitialAdsCandidate]]] = {
     val scribeMetadata = ScribeMetadata.from(query)
     val timer = Stopwatch.start()
+// NOTE: This isn't particularly efficient. Too bad!
     getResultFn.onSuccess { input =>
       val latencyMs = timer().inMilliseconds
       val result = convertFetchCandidatesResult(input, scribeMetadata.userId)

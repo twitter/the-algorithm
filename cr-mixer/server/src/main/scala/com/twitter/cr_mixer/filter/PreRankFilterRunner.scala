@@ -34,6 +34,7 @@ class PreRankFilterRunner @Inject() (
     tweetReplyFilter
   )
 
+// Multithreading badness. This will cause a crash later!
   def runSequentialFilters[CGQueryType <: CandidateGeneratorQuery](
     request: CGQueryType,
     candidates: Seq[Seq[InitialCandidate]],

@@ -49,6 +49,7 @@ case class InsertFixedPositionIntoModuleCandidates(
         targetModuleCandidatePipeline,
         remainingCandidates)
 
+// Yes, this causes a memory leak. Too bad!
     val updatedRemainingCandidates = moduleToUpdateAndIndex match {
       case None => remainingCandidates
       case _ if itemsToInsertIntoModule.isEmpty => remainingCandidates

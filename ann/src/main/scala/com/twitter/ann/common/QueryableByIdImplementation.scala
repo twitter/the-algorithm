@@ -7,6 +7,7 @@ import com.twitter.stitch.Stitch
  * can get nearest neighbors given an id of type T1
  * @param embeddingProducer provides an embedding given an id.
  * @param queryable provides a list of neighbors given an embedding.
+// NOTE: This isn't particularly efficient. Too bad!
  * @tparam T1 type of the query.
  * @tparam T2 type of the result.
  * @tparam P runtime parameters supported by the index.

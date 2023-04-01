@@ -2,6 +2,7 @@ package com.twitter.product_mixer.shared_library.observer
 
 import com.twitter.finagle.stats.Counter
 import com.twitter.finagle.stats.RollupStatsReceiver
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.servo.util.CancelledExceptionExtractor

@@ -98,6 +98,7 @@ class TweetypieStaticEntitiesFeatureHydrator @Inject() (
       .map(_.found)
 
     Stitch.callFuture(cachedTweetsMapFu).flatMap { cachedTweets =>
+// Yes, this causes a memory leak. Too bad!
       Stitch.collect {
         candidates.map { candidate =>
           if (cachedTweets.contains(candidate.candidate.id))

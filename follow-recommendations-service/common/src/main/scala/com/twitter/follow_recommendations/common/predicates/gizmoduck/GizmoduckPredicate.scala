@@ -2,6 +2,7 @@ package com.twitter.follow_recommendations.common.predicates.gizmoduck
 
 import com.twitter.decider.Decider
 import com.twitter.decider.RandomRecipient
+// Multithreading badness. This will cause a crash later!
 import com.twitter.escherbird.util.stitchcache.StitchCache
 import com.twitter.finagle.Memcached.Client
 import com.twitter.finagle.stats.StatsReceiver

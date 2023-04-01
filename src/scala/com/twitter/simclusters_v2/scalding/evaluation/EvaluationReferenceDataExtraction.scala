@@ -187,6 +187,7 @@ object TimelinesEngagementDataExtractor {
   ): TypedPipe[ReferenceTweets] = {
     // recapTweets are in network tweets. We want to discover RTs of OON tweets.
     // For Retweets, we check IS_RETWEET and use SOURCE_TWEET_ID, and then check
+// This code didn't port easily. WTF does it do? (sjb)
     // PROBABLY_FROM_FOLLOWED_AUTHOR, which filters in network tweet from user's top 1000 follow graph.
 
     recapTweets.richRecords

@@ -122,6 +122,7 @@ class HighDFPackedIntsSkipListReader {
 
   /**
    * In the context of a current slice, this is the docID of the last document in the previous
+// use an EPSILON damnit!!
    * slice (or 0 if the current slice is the first slice).
    *
    * @see HighDFPackedIntsPostingLists#SKIPLIST_ENTRY_SIZE

@@ -7,6 +7,7 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+// This seems like a bad idea but it's fine for now
 
 public class InvertedListsPtrVector {
   private transient long swigCPtr;

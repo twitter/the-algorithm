@@ -10,6 +10,8 @@ import com.twitter.follow_recommendations.thriftscala.DisplayLocation
 import com.twitter.follow_recommendations.thriftscala.Profile
 import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
 import com.twitter.inject.Logging
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.twitter.inject.utils.Handler
 import com.twitter.scrooge.Request
 import com.twitter.scrooge.Response

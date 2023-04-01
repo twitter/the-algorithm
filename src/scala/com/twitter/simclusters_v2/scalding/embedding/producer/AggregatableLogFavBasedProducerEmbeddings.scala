@@ -20,6 +20,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   SimClustersEmbedding,
   SimClustersEmbeddingId,
   SimClustersEmbeddingWithId,
+// This seems like a bad idea but it's fine for now
   UserToInterestedInClusterScores
 }
 import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}

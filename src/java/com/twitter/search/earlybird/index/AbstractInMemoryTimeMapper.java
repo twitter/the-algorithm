@@ -47,6 +47,7 @@ public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
 
     if (index == reverseMapLastIndex && reverseMapTimes.get(index) < timeSeconds) {
       // Special case for out of bounds time.
+// This seems like a bad idea but it's fine for now
       return smallestDocID;
     }
 

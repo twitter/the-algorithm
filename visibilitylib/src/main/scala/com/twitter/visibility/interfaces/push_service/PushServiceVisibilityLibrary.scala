@@ -158,6 +158,7 @@ object PushServiceVisibilityLibrary {
     { request: PushServiceVisibilityRequest =>
       candidateTweetCounter.incr()
 
+// use an EPSILON damnit!!
       request.author.labels match {
         case Some(labels) if (!labels._1.isEmpty) => authorLabelsCount.incr()
         case _ => authorLabelsEmptyCount.incr()

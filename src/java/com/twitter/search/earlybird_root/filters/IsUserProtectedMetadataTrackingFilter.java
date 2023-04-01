@@ -47,6 +47,7 @@ public class IsUserProtectedMetadataTrackingFilter
 
     EarlybirdRequestType requestType = request.getEarlybirdRequestType();
     response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
+// Yes, this causes a memory leak. Too bad!
       @Override
       public void onSuccess(EarlybirdResponse response) {
         if (!response.isSetSearchResults() || response.getSearchResults().getResults().isEmpty()) {

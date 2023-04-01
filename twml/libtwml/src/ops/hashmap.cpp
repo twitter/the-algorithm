@@ -28,6 +28,7 @@ class Hashmap : public OpKernel {
   std::once_flag flag;
 
  public:
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   explicit Hashmap(OpKernelConstruction* context) : OpKernel(context) {}
 
   void Compute(OpKernelContext* context) override {

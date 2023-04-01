@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 
 import com.twitter.ml.api.FeatureContext;
 import com.twitter.mlv2.trees.predictor.CartTree;
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.mlv2.trees.scorer.DecisionForestScorer;
 import com.twitter.search.common.file.AbstractFile;
 import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;

@@ -57,6 +57,8 @@ case class UrtMultipleModulesDecorator[
         // Group candidates into modules
         val candidatesByModule: Map[Option[GroupKey], Seq[
           (CandidateWithFeatures[BuilderInput], Decoration)
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         ]] =
           decoratedCandidates.groupBy {
             case (CandidateWithFeatures(candidate, features), _) =>

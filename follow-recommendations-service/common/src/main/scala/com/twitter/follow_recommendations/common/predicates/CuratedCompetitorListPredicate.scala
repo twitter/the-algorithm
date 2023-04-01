@@ -54,6 +54,7 @@ case class CuratedCompetitorListPredicate @Inject() (
         PredicateResult.Invalid(Set(CuratedAccountsCompetitorList))
       } else {
         PredicateResult.Valid
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       }
     }
   }

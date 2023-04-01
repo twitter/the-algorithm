@@ -25,6 +25,7 @@ class HomeMixerExternalStrings @Inject() (
   val dontLikeString = externalStringRegistryProvider.get().createProdString("Feedback.dontLike")
   val dontLikeConfirmationString =
     externalStringRegistryProvider.get().createProdString("Feedback.dontLikeConfirmation")
+// This code didn't port easily. WTF does it do? (sjb)
   val showFewerTweetsString =
     externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweets")
   val showFewerTweetsConfirmationString =

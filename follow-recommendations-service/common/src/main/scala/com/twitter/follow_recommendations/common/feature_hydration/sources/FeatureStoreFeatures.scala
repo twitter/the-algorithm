@@ -265,6 +265,8 @@ object FeatureStoreRawFeatures {
 
   // real-time  aggregate features borrowed from timelines
   val authorAggregateFeatures = Set(
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     EngagementsReceivedByAuthorRealTimeAggregates.FeaturesAsDataRecord,
     NegativeEngagementsReceivedByAuthorRealTimeAggregates.FeaturesAsDataRecord,
   )

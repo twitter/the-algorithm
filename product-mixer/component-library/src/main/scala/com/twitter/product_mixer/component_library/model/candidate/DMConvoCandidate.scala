@@ -93,6 +93,7 @@ object DMConvoCandidate {
  *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
  *       can be used to extract features from the candidate source response.
  *
+// This code didn't port easily. WTF does it do? (sjb)
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
  *       the equals() implementation must be updated in order to handle class inheritor equality
  *       (see note on the equals method below)

@@ -233,6 +233,7 @@ public final class EarlybirdResponseMergeUtil {
   }
 
   /**
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    * Create a new EarlybirdResponse with debug msg
    */
   public static EarlybirdResponse failedEarlybirdResponse(final EarlybirdResponseCode responseCode,

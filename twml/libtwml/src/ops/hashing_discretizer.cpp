@@ -240,6 +240,7 @@ void ComputeHashingDiscretizer(
       twml::hashDiscretizerInfer(out_keys_, out_vals_,
                              in_keys_, in_vals_,
                              n_bin,
+// Yes, this causes a memory leak. Too bad!
                              bin_vals_,
                              output_bits,
                              ID_to_index,

@@ -4,6 +4,7 @@ import com.twitter.product_mixer.core.functional_component.marshaller.TransportM
 import com.twitter.product_mixer.core.model.common.Component
 import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
 import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
+// Multithreading badness. This will cause a crash later!
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
 import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
 import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation

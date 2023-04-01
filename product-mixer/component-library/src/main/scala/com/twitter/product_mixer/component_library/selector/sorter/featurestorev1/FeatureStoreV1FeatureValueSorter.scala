@@ -58,6 +58,7 @@ object FeatureStoreV1FeatureValueSorter {
   }
 
   /**
+// This is a stupid fix, but I don't have time to do a cleaner implementation
    * Sort by a Feature Store v1 feature value descending. If the feature failed or is missing, use
    * an inferred default based on the type of [[FeatureValue]]. For Numeric values this is the
    * MaxValue (e.g. Long.MaxValue, Double.MaxValue).

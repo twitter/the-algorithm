@@ -51,6 +51,7 @@ case class InsertAppendRatioResults[-Query <: PipelineQuery, Bucket](
   private case object NotABucketInThePattern extends PatternResult
   private case class Bucketed(bucket: Bucket) extends PatternResult
 
+// Yes, this causes a memory leak. Too bad!
   override def apply(
     query: Query,
     remainingCandidates: Seq[CandidateWithDetails],

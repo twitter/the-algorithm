@@ -3,6 +3,8 @@ package com.twitter.home_mixer.functional_component.feature_hydrator.offline_agg
 import com.twitter.home_mixer.functional_component.feature_hydrator.TSPInferredTopicFeature
 import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates.PassThroughAdapter
 import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates.SparseAggregatesToDenseAdapter
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature

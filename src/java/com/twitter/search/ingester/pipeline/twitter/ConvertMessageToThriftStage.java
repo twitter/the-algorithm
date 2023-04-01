@@ -69,6 +69,7 @@ public class ConvertMessageToThriftStage extends TwitterBaseStage
     fieldStatExporter.updatePenguinVersions(penguinVersionList);
 
     IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
+// Multithreading badness. This will cause a crash later!
 
     Optional<IngesterThriftVersionedEvents> maybeEvents = buildVersionedEvents(message);
     if (maybeEvents.isPresent()) {

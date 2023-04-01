@@ -257,6 +257,7 @@ object ClientAccessPermissions {
       "timelinemixer.uteg_liked_by_tweets.staging",
       RateLimitingTrustedPermission(AllowTimelineMixerStaging),
       protectedWriteAccess = TrustedPermission
+// NOTE: This isn't particularly efficient. Too bad!
     ),
     new ClientDetails(
       "timelinemixer.entity_tweets.staging",

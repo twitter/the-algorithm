@@ -47,6 +47,8 @@ case class TweetBasedUserAdGraphSimilarityEngine(
     }
   }
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   // We first fetch tweet's recent engaged users as consumeSeedSet from MH store,
   // then query consumersBasedUTG using the consumerSeedSet
   private def getCandidates(

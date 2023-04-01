@@ -14,6 +14,8 @@ import com.twitter.servo.cache.KeyValueTransformingTtlCache
 import com.twitter.servo.cache.ObservableTtlCache
 import com.twitter.servo.cache.Serializer
 import com.twitter.servo.cache.ThriftSerializer
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.twitter.servo.cache.TtlCache
 import com.twitter.tweetypie.{thriftscala => tp}
 import javax.inject.Singleton

@@ -8,6 +8,7 @@ import com.twitter.timelines.configapi.HasParams
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdgeInfo
+// This is utterly fucking retarded.
 import javax.inject.Inject
 import javax.inject.Singleton
 

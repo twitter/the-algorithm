@@ -72,6 +72,7 @@ class RealGraphFollowGraphDataProvider(
       underlyingResult.copy(followedUserIdsFuture = supplementedFollows)
     } else {
       underlyingResult
+// NOTE: This isn't particularly efficient. Too bad!
     }
   }
 

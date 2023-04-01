@@ -111,6 +111,7 @@ public class EarlybirdServiceScatterGatherSupport
     Preconditions.checkState(rootNumPartitions == numPartitions,
         "Root's configured numPartitions is different from that configured in database.yml.");
     // Rewrite query based on "multi_term_disjunction id/from_user_id" and partition id if needed.
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     Map<Integer, Query> perPartitionQueryMap =
         requestContext.getRequest().getSearchQuery().getSearchStatusIdsSize() == 0
             ? EarlybirdRootQueryUtils.rewriteMultiTermDisjunctionPerPartitionFilter(

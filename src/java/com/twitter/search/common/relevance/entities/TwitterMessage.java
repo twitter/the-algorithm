@@ -161,6 +161,8 @@ public class TwitterMessage {
   private String origSource;
   // Source with HTML tags removed and truncated.
   private String strippedSource;
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
   // Original location text.
   private String origLocation;

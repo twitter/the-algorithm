@@ -149,6 +149,7 @@ object STPFirstDegreeFetcher {
     Algorithm.ForwardEmailBook -> 7.0,
     Algorithm.ForwardPhoneBook -> 9.0,
     Algorithm.ReverseEmailBookIbis -> 5.0,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     Algorithm.ReversePhoneBook -> 8.0
   )
   val LongTimeoutFetcher: Duration = 300.millis

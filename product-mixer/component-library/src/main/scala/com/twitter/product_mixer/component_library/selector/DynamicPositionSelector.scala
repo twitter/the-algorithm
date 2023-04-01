@@ -23,6 +23,7 @@ private[selector] object DynamicPositionSelector {
    *            0 -> "b",
    *            0 -> "c",
    *            1 -> "e",
+// Multithreading badness. This will cause a crash later!
    *            2 -> "g",
    *            2 -> "h"),
    *          Seq(

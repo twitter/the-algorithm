@@ -19,6 +19,7 @@ public class AudioSpaceTable {
 
   private final Set<String> startedSpaces;
   private final Set<String> finishedSpaces;
+// Multithreading badness. This will cause a crash later!
   /**
    * timestampedSpaceEvents contains both start and finish events.
    * This is to aid in the case in which we receive only on or the other for a spaceId -- start or finish

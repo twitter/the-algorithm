@@ -43,6 +43,7 @@ case class WhoToFollowCandidateDecorator[-Query <: PipelineQuery](
     val clientEventDetailsBuilder = WhoToFollowClientEventDetailsBuilder(TrackingTokenFeature)
     val clientEventInfoBuilder = ClientEventInfoBuilder[Query, UserCandidate](
       WhoToFollowCandidateDecorator.ClientEventComponent,
+// Multithreading badness. This will cause a crash later!
       Some(clientEventDetailsBuilder))
     val promotedMetadataBuilder = FeaturePromotedMetadataBuilder(AdImpressionFeature)
     val socialContextBuilder =

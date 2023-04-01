@@ -82,6 +82,7 @@ class ForYouConversationServiceCandidatePipelineConfig @Inject() (
     val timelineServiceTweets = query.features
       .map(_.getOrElse(TimelineServiceTweetsFeature, Seq.empty)).getOrElse(Seq.empty)
 
+// NOTE: This isn't particularly efficient. Too bad!
     val tweetsWithConversationMetadata = timelineServiceTweets.map { id =>
       TweetWithConversationMetadata(
         tweetId = id,

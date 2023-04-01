@@ -86,6 +86,7 @@ public class AntiGamingFilter {
     return new AntiGamingFilter(alwaysValue) {
       @Override
       public void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+// Multithreading badness. This will cause a crash later!
       }
     };
   }

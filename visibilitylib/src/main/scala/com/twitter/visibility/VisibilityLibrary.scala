@@ -144,6 +144,7 @@ object VisibilityLibrary {
     def memoizeSafetyLevelParams(gate: Gate[Unit]): Builder =
       copy(memoizeSafetyLevelParams = gate)
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     def memoizeSafetyLevelParams(gateBoolean: Boolean): Builder = {
       val gate = Gate.const(gateBoolean)
       copy(memoizeSafetyLevelParams = gate)

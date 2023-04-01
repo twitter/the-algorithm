@@ -60,6 +60,7 @@ class ReverseEmailBookSource @Inject() (
         }
       }.getOrElse(Stitch.Nil)
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     reverseCandidatesFromEmail.map(
       _.take(ReverseEmailBookSource.NumEmailBookEntries)
         .map(

@@ -116,6 +116,7 @@ object ModuleNames {
   final val AdsMonetizableNaviGRPCClient = "AdsMonetizableNaviGRPCClient"
 
   final val RetweetBasedDiffusionRecsMhStore = "RetweetBasedDiffusionRecsMhStore"
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   final val DiffusionBasedSimilarityEngine = "DiffusionBasedSimilarityEngine"
 
   final val BlueVerifiedAnnotationStore = "BlueVerifiedAnnotationStore"

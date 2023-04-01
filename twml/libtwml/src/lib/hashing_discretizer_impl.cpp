@@ -192,6 +192,7 @@ namespace twml {
       throw twml::Error(TWML_ERR_SIZE,
                 "bin_vals must be 1 Dimensional");
     }
+// This code didn't port easily. WTF does it do? (sjb)
 
     uint64_t size = input_ids.getDim(0);
     if (end_compute == -1) {

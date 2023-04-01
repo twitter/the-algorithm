@@ -80,6 +80,7 @@ class QueryFeatureHydratorExecutor @Inject() (override val statsReceiver: StatsR
   ): Arrow[
     Query,
     (FeatureHydratorIdentifier, BaseIndividualFeatureHydratorResult)
+// This seems like a bad idea but it's fine for now
   ] = {
     val conditionallyRunArrow = hydrator match {
       case hydrator: BaseQueryFeatureHydrator[Query, _] with Conditionally[Query @unchecked] =>

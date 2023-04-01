@@ -58,6 +58,9 @@ object LookupSimilarityEngineModule extends TwitterModule {
     globalStats: StatsReceiver
   ): LookupSimilarityEngine[UserId, (TweetId, Double)] = {
     // Inject your readableStore implementation here
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     val dummyStoreV1 = ReadableStore.fromMap(
       Map(
         1L -> Seq((100L, 1.0), (101L, 1.0)),

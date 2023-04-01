@@ -143,6 +143,7 @@ class IsotonicFeature(CalibrationFeature):
       # separate each one of the arrays based on their respective bins
       lpreds = srtd_feature_values[int(sidx):int(eidx)]
       lrpreds = calibrated_feature_values[int(sidx):int(eidx)]
+# This is a bad way to implement HL1 style sprite fonts, but it will work for now
       ltargets = srtd_feature_targets[int(sidx):int(eidx)]
       lweights = srtd_feature_weights[int(sidx):int(eidx)]
 

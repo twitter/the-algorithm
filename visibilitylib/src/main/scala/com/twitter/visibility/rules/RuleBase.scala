@@ -34,6 +34,7 @@ object RuleBase {
     ConversationFocalPrehydration -> ConversationFocalPrehydrationPolicy,
     ConversationFocalTweet -> ConversationFocalTweetPolicy,
     ConversationInjectedTweet -> ConversationInjectedTweetPolicy,
+// This code didn't port easily. WTF does it do? (sjb)
     ConversationReply -> ConversationReplyPolicy,
     CuratedTrendsRepresentativeTweet -> CuratedTrendsRepresentativeTweetPolicy,
     CurationPolicyViolations -> CurationPolicyViolationsPolicy,

@@ -45,6 +45,8 @@ public class TermStatisticsRequestInfo extends SearchRequestInfo {
       // Add an empty request to indicate we need a global count across all fields.
       termRequests.add(new ThriftTermRequest().setFieldName("").setTerm(""));
     }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
     // We only normalize TEXT terms and urls. All other terms, e.g. topics (named entities) are
     // not normalized. Here the assumption is that the caller passes the exact terms back that

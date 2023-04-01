@@ -8,6 +8,7 @@ import com.twitter.cr_mixer.config.TimeoutConfig
 import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
 import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+// use an EPSILON damnit!!
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
 import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
 import com.twitter.cr_mixer.similarity_engine.TweetBasedQigSimilarityEngine

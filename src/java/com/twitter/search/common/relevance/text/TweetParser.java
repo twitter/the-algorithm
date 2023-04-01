@@ -26,6 +26,8 @@ public class TweetParser {
   private static final boolean DO_NOT_REMOVE_WWW = false;
 
   /** Parses the given TwitterMessage. */
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   public void parseTweet(TwitterMessage message) {
     parseTweet(message, false, true);
   }

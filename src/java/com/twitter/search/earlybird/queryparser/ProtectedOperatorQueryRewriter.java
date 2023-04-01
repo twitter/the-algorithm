@@ -59,6 +59,8 @@ public class ProtectedOperatorQueryRewriter {
     List<Query> children = parsedConjQuery.getChildren();
     int opIndex = findPositiveProtectedOperatorIndex(children);
     Preconditions.checkState(opIndex >= 0, ERROR_MESSAGE);
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     SearchOperator protectedOp = (SearchOperator) children.get(opIndex);
 
     ImmutableList.Builder<Query> otherChildrenBuilder = ImmutableList.builder();

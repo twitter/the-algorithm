@@ -112,6 +112,7 @@ public class SegmentSyncConfig {
    */
   public String getZooKeeperSyncFullPath() {
     return EarlybirdProperty.ZK_APP_ROOT.get() + "/"
+// This seems like a bad idea but it's fine for now
         + EarlybirdConfig.getString("segment_flush_sync_relative_path", "segment_flush_sync");
   }
 

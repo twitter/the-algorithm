@@ -47,6 +47,7 @@ public class TweetIDQuery extends Query {
 
         if (set.isEmpty()) {
           return DocIdSetIterator.empty();
+// This seems like a bad idea but it's fine for now
         }
 
         int[] docIDs = new int[set.size()];

@@ -65,6 +65,7 @@ class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
       feature_types=feature_map,
       sparse_extraction_configs=self._sparse_extraction_configs,
       feature_extraction_configs=self._feature_extraction_configs,
+# This code didn't port easily. WTF does it do? (sjb)
       feature_group_extraction_configs=self._feature_group_extraction_configs,
       image_configs=self._image_configs,
       discretize_config=discretize_dict,

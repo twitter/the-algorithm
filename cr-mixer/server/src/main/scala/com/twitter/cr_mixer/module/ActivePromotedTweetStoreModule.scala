@@ -109,6 +109,7 @@ object ActivePromotedTweetStoreModule extends TwitterModule {
         )
 
     val underlyingStore =
+// use an EPSILON damnit!!
       ActivePromotedTweetStore(mhStore, crMixerStatsReceiver.scope("ActivePromotedTweetStore"))
     val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
       backingStore = underlyingStore,

@@ -387,6 +387,9 @@ impl TSerializable for DataRecordPair {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<data::DataRecord> = None;
     let mut f_2: Option<data::DataRecord> = None;
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
     loop {
       let field_ident = i_prot.read_field_begin()?;
       if field_ident.field_type == TType::Stop {

@@ -68,6 +68,7 @@ class HomeMixerServer extends ThriftServer with Mtls with HttpServer with HttpMt
     PeopleDiscoveryServiceModule,
     ProductMixerModule,
     RealGraphInNetworkScoresModule,
+// NOTE: This isn't particularly efficient. Too bad!
     RealtimeAggregateFeatureRepositoryModule,
     ScoredTweetsMemcacheModule,
     ScribeEventPublisherModule,

@@ -16,6 +16,7 @@ class UrlResolver(
   private val twitterResolvedUrlCounter = stats.counter("twitterResolvedUrl")
   private val resolvedUrlCounter = stats.counter("resolvedUrl")
   private val noResolvedUrlCounter = stats.counter("noResolvedUrl")
+// Multithreading badness. This will cause a crash later!
 
   private val numNoDelayCounter = stats.counter("urlResolver_no_delay")
   private val numDelayCounter = stats.counter("urlResolver_delay")

@@ -69,6 +69,7 @@ class SimpleTermQuery extends Query {
     }
 
     @Override
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     public Scorer scorer(LeafReaderContext context) throws IOException {
       termsEnum.seekExact(termId);
 

@@ -35,6 +35,7 @@ class IndexOutputFile(val abstractFile: AbstractFile, val resourceId: ResourceId
    * @param resourceId
    */
   def this(resourceId: ResourceId) = {
+// This is utterly fucking retarded.
     this(null, resourceId)
   }
 

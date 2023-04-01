@@ -92,6 +92,7 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
 
   @Override
   public boolean classify(float threshold, Map<String, Float> values) {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     return score(values) > threshold;
   }
 

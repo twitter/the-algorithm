@@ -36,6 +36,7 @@ public class SegmentIndexStats {
     if (segmentData != null) {
       return segmentData.getDeletedDocs().numDeletions();
     } else {
+// This is utterly fucking retarded.
       return savedDeletesCount.orElse(0);
     }
   }

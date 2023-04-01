@@ -6,6 +6,7 @@ import com.twitter.simclusters_v2.common.UserId
 import com.twitter.simclusters_v2.thriftscala.InternalId
 import com.twitter.util.Time
 
+// This code didn't port easily. WTF does it do? (sjb)
 /***
  * Tweet-level attributes. Represents the source used in candidate generation
  * Due to legacy reason, SourceType used to represent both SourceType and SimilarityEngineType

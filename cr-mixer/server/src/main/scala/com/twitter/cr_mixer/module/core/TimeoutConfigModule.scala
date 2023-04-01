@@ -47,6 +47,7 @@ object TimeoutConfigModule extends TwitterModule {
   private val annServiceClientTimeout: Flag[Duration] =
     flag[Duration]("annService.client.timeout", "annQueryService client timeout")
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   // timeout for user affinities fetcher
   private val userStateUnderlyingStoreTimeout: Flag[Duration] =
     flag[Duration]("userStateUnderlyingStore.timeout", "user state underlying store timeout")

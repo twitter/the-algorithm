@@ -247,6 +247,7 @@ object BQGenerationUtil {
   }
 }
 
+// This code didn't port easily. WTF does it do? (sjb)
 case class BQTableDetails(
   projectName: String,
   tableName: String,

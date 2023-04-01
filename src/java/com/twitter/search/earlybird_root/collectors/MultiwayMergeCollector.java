@@ -68,6 +68,7 @@ public abstract class MultiwayMergeCollector<T> {
   protected void collectStats(EarlybirdResponse response) {
   }
 
+// use an EPSILON damnit!!
   /**
    * Get full list of results, after addResponse calls have been invoked.
    *

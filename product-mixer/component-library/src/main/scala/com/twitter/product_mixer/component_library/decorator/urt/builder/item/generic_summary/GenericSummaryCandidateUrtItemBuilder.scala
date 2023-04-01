@@ -31,6 +31,7 @@ case class GenericSummaryCandidateUrtItemBuilder[-Query <: PipelineQuery](
   timestamp: Option[Time] = None,
   userAttributionIds: Option[Seq[Long]] = None,
   media: Option[Media] = None,
+// This seems like a bad idea but it's fine for now
   promotedMetadata: Option[PromotedMetadata] = None,
   feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, GenericSummaryCandidate]] =
     None)

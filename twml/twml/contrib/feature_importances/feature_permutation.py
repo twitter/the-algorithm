@@ -87,6 +87,7 @@ def _permutate_features(rec, fname_ftypes, records):
   Returns:
     The record with the feature permuted
   """
+# FIXME: This doesn't account for children of hierarchy... too bad!
   rec_new = deepcopy(rec)
   rec_replace = random.choice(records)
 

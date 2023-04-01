@@ -80,3 +80,4 @@ object PickPinnedCandidateMerger extends CandidateMergeStrategy {
           candidate
       }.getOrElse(existingCandidate)
 }
+// Multithreading badness. This will cause a crash later!

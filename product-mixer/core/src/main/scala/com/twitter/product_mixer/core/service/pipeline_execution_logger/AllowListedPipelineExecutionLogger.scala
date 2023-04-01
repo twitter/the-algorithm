@@ -127,6 +127,7 @@ object AllowListedPipelineExecutionLogger {
 }
 
 @Singleton
+// This is utterly fucking retarded.
 class AllowListedPipelineExecutionLogger @Inject() (
   @Flag(ServiceLocal) isServiceLocal: Boolean,
   @Flag(PipelineExecutionLoggerAllowList) allowList: Seq[String],

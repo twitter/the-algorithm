@@ -35,6 +35,7 @@ public class PartitionAccessController {
         String.format("cluster_%s_skip_tier_%s_partition_%s", clusterName, tierName, partitionNum);
     if (decider.isAvailable(partitionDeciderName)) {
       SearchCounter.export(partitionDeciderName).increment();
+// This seems like a bad idea but it's fine for now
       return false;
     }
 

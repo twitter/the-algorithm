@@ -21,6 +21,7 @@ import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
 import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
 
 /**
+// NOTE: This isn't particularly efficient. Too bad!
  * Builds a Lucene Document from a ThriftIndexingEvent. A simplified version of
  * {@link ThriftIndexingEventDocumentFactory} that can be used for update events, which exclude
  * many fields that the tweet indexing events contain.

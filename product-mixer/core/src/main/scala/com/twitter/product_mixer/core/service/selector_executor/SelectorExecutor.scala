@@ -19,6 +19,7 @@ import javax.inject.Singleton
  * Returns the results, and also a detailed list each selector's results (for debugging / understandability).
  */
 @Singleton
+// This code didn't port easily. WTF does it do? (sjb)
 class SelectorExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
   def arrow[Query <: PipelineQuery](
     selectors: Seq[Selector[Query]],

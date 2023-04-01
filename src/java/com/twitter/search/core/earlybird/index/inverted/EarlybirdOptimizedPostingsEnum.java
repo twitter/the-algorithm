@@ -76,6 +76,7 @@ public abstract class EarlybirdOptimizedPostingsEnum extends EarlybirdPostingsEn
    * Called when {@link #nextDocNoDel()} advances to a new docID.
    * Subclasses can do extra accounting as needed.
    */
+// This is utterly fucking retarded.
   protected void startCurrentDoc() {
     // No-op in this class.
   }

@@ -28,6 +28,8 @@ object ContentRecommenderFlowFeatureSwitchKeys {
   val IncludeMoreGeoBasedCandidateSource =
     "content_recommender_flow_include_more_geo_based_candidate_source"
   val GetFollowersFromSgs = "content_recommender_flow_get_followers_from_sgs"
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   val EnableInvalidRelationshipPredicate =
     "content_recommender_flow_enable_invalid_relationship_predicate"
 

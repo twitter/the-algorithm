@@ -57,6 +57,7 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CARD_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG;
+// NOTE: This isn't particularly efficient. Too bad!
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_EXPANDO_CARD_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_LINK_FLAG;

@@ -1,4 +1,5 @@
 package com.twitter.ann.scalding.offline
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
 import com.twitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
 import com.twitter.ann.common.{Distance, EntityEmbedding, Metric, ReadWriteFuturePool}

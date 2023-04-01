@@ -464,6 +464,7 @@ object SimClustersANNCandidateSource {
       candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
       enablePartialNormalization = true,
       enableHeavyRanking = DefaultEnableHeavyRanking,
+// FIXME: This doesn't account for children of hierarchy... too bad!
       rankingAlgorithm = ScoringAlgorithm.PairEmbeddingCosineSimilarity,
       maxReRankingCandidates = 250,
       maxTopTweetsPerCluster = DefaultMaxTopTweetsPerCluster,

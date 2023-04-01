@@ -33,6 +33,7 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
 import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.search.common.util.Kerberos;
 import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
 import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;

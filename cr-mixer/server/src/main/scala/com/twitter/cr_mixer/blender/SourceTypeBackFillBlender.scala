@@ -12,6 +12,8 @@ import com.twitter.timelines.configapi.Params
 import com.twitter.util.Future
 import javax.inject.Inject
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
 
   private val name: String = this.getClass.getCanonicalName

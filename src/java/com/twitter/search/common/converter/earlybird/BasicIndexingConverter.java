@@ -193,6 +193,7 @@ public class BasicIndexingConverter {
       if (composerSource == ComposerSource.CAMERA) {
         builder.withCameraComposerSourceFlag();
       }
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
 
     EarlybirdEncodedFeatures encodedFeatures = tweetFeature.encodedFeatures;

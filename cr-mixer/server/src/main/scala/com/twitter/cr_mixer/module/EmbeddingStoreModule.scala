@@ -173,6 +173,7 @@ object EmbeddingStoreModule extends TwitterModule {
   }
 
   private def buildTweetEmbeddingStore(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     serviceIdentifier: ServiceIdentifier,
     manhattanROConfig: ManhattanROConfig
   ): ReadableStore[InternalId, api.Embedding] = {

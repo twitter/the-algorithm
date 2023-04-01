@@ -49,6 +49,8 @@ class WorkerGetIntersectionHandler @Inject() (
         val map = graphContainer.toPartialMap.get(rightEdge) match {
           case Some(graph) =>
             candidateIds.flatMap { candidateId =>
+// Bizarre vector flip inherited
+// from earlier code, WTF?
               graph.apply(candidateId).map(candidateId -> _)
             }.toMap
           case None =>

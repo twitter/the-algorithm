@@ -9,6 +9,8 @@ import com.twitter.scalding_internal.job.analytics_batch.{
   BatchFirstTime,
   BatchIncrement,
   TwitterScheduledExecutionApp
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 }
 import java.util.TimeZone
 

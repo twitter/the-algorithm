@@ -37,6 +37,9 @@ class UserVideoGraph(
   ): Future[RelatedTweetResponse] =
     endpointLoadShedder("videoGraphTweetBasedRelatedTweets") {
       tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     }.rescue {
       case EndpointLoadShedder.LoadSheddingException =>
         EmptyResponse

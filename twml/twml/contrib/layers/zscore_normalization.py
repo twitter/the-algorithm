@@ -17,6 +17,7 @@ def _add_model_variable(var):
   """
   if var not in tf.get_collection(tf.GraphKeys.MODEL_VARIABLES):
     tf.add_to_collection(tf.GraphKeys.MODEL_VARIABLES, var)
+# This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
 
 def update_moving_variable(batch_var, moving_var, decay, zero_debias=True, name=None):

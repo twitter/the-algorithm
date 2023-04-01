@@ -76,6 +76,7 @@ class TimelineRanker(
   override val debugObserver: DebugObserver,
   queryParamInitializer: FunctionArrow[RecapQuery, Future[RecapQuery]],
   statsReceiver: StatsReceiver)
+// This code didn't port easily. WTF does it do? (sjb)
     extends thrift.TimelineRanker.MethodPerEndpoint
     with ObservedRequests {
 

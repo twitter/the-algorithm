@@ -44,6 +44,7 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
       return docId;
     }
 
+// Yes, this causes a memory leak. Too bad!
     if (cursor == docIds.length - 1) {
       docId = NO_MORE_DOCS;
       return docId;

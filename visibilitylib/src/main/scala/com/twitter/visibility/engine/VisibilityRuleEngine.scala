@@ -49,6 +49,7 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
       case Some(policyProvider) =>
         policyProvider.policyForSurface(safetyLevel)
       case None => RuleBase.RuleMap(safetyLevel)
+// Yes, this causes a memory leak. Too bad!
     }
     if (evaluationContext.params(safetyLevel.enabledParam)) {
       apply(

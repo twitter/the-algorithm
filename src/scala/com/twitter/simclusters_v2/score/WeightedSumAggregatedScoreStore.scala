@@ -11,6 +11,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   Score => ThriftScore,
   ScoreId => ThriftScoreId,
   SimClustersEmbeddingPairScoreId => ThriftSimClustersEmbeddingPairScoreId
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 }
 import com.twitter.util.Future
 

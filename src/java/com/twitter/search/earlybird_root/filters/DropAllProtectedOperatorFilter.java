@@ -1,4 +1,5 @@
 package com.twitter.search.earlybird_root.filters;
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
 import javax.inject.Inject;
 

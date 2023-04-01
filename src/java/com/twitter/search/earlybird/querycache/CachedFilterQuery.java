@@ -206,6 +206,7 @@ public final class CachedFilterQuery extends Query {
   }
 
   private CachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       throws NoSuchFilterException {
     queryCacheFilter = queryCacheManager.getFilter(filterName);
     if (queryCacheFilter == null) {

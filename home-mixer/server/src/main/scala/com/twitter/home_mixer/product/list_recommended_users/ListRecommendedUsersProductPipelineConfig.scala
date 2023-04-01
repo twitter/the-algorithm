@@ -14,6 +14,7 @@ import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifie
 import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
 import com.twitter.product_mixer.core.model.marshalling.request
 import com.twitter.product_mixer.core.pipeline.PipelineConfig
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
 import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig

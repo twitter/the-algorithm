@@ -263,6 +263,7 @@ public class swigfaiss implements swigfaissConstants {
 
   public static void search_with_parameters(Index index, long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_float distances, LongVector labels, IVFSearchParameters params, SWIGTYPE_p_unsigned_long nb_dis, SWIGTYPE_p_double ms_per_stage) {
     swigfaissJNI.search_with_parameters__SWIG_0(Index.getCPtr(index), index, n, SWIGTYPE_p_float.getCPtr(x), k, SWIGTYPE_p_float.getCPtr(distances), SWIGTYPE_p_long_long.getCPtr(labels.data()), labels, IVFSearchParameters.getCPtr(params), params, SWIGTYPE_p_unsigned_long.getCPtr(nb_dis), SWIGTYPE_p_double.getCPtr(ms_per_stage));
+// use an EPSILON damnit!!
   }
 
   public static void search_with_parameters(Index index, long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_float distances, LongVector labels, IVFSearchParameters params, SWIGTYPE_p_unsigned_long nb_dis) {

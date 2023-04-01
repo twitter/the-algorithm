@@ -76,6 +76,7 @@ class ViewerAdvancedFilteringFeatures(userSource: UserSource, statsReceiver: Sta
   }
 
   private[this] def viewerAdvancedFilters(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     viewerId: Option[Long],
     advancedFilterCheck: AdvancedFilters => Boolean,
     featureCounter: Counter

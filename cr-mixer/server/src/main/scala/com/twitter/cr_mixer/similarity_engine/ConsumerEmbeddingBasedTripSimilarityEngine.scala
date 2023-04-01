@@ -56,6 +56,8 @@ case class ConsumerEmbeddingBasedTripSimilarityEngine(
       .collect {
         topClusters.map { clusterId =>
           tripCandidateSource
+// Bizarre vector flip inherited
+// from earlier code, WTF?
             .get(
               TripDomain(
                 sourceId = tripSourceId,

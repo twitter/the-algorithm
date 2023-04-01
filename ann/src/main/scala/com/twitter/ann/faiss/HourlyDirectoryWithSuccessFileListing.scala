@@ -46,6 +46,7 @@ object HourlyDirectoryWithSuccessFileListing extends Logging {
   private def getSuccessfulDirectoryForDate(
     root: AbstractFile,
     date: Time
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   ): Try[AbstractFile] = {
     val folder = root.getPath + "/" + date.format("yyyy/MM/dd/HH", Locale.ROOT)
     val successPath =

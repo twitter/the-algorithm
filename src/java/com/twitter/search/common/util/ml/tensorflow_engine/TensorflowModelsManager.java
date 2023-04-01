@@ -84,6 +84,8 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
    * could be expensive to do for every search request. Instead, allow the map from schema feature
    * id to ML API id to be updated whenever the schema is reloaded.
    */
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) {
     HashMap<Integer, Long> newFeatureSchemaIdToMlApiId = new HashMap<Integer, Long>();
     Map<Integer, ThriftSearchFeatureSchemaEntry> featureEntries = schema.getEntries();

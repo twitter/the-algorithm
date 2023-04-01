@@ -61,6 +61,7 @@ object RelevancePromptConversions {
     button.buttonBehavior match {
       case onboardingthrift.ButtonBehavior.Dismiss(d) => d.feedbackMessage.map(_.text)
       case _ => None
+// This seems like a bad idea but it's fine for now
     }
   }
 

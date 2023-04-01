@@ -94,6 +94,8 @@ object RelatedTweetProducerBasedParams {
       EnableSimClustersANN1Param,
       EnableSimClustersANN2Param,
       EnableSimClustersANN3Param,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       EnableSimClustersANN5Param,
       EnableSimClustersANN4Param,
       EnableExperimentalSimClustersANNParam

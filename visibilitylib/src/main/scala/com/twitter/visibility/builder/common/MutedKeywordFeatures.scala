@@ -44,6 +44,7 @@ class MutedKeywordFeatures(
     requests.incr()
     viewerMutesKeywordInTweetForHomeTimeline.incr()
     viewerMutesKeywordInTweetForTweetReplies.incr()
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     viewerMutesKeywordInTweetForNotifications.incr()
     viewerMutesKeywordInTweetForAllSurfaces.incr()
 

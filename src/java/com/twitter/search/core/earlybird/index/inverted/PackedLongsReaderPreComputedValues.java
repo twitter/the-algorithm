@@ -173,6 +173,8 @@ public final class PackedLongsReaderPreComputedValues {
   }
 
   /********************************************************************
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    * Getters of Pre-computed Values: returns should NEVER be modified *
    ********************************************************************/
 

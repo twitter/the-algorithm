@@ -34,6 +34,7 @@ class SgsRelationshipsPredicate(
   statsReceiver: StatsReceiver = NullStatsReceiver)
     extends Predicate[(HasClientContext with HasParams, CandidateUser)]
     with Logging {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
 

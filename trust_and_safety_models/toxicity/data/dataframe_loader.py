@@ -131,6 +131,8 @@ class ENLoader(DataframeLoader):
       date_end=end_date,
       task_version=task_version,
       **query_settings["precision"],
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
     )
     curr_df = execute_query(client=CLIENT, query=curr_query)
 

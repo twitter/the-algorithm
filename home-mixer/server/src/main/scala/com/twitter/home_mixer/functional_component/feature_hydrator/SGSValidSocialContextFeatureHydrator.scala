@@ -52,6 +52,7 @@ class SGSValidSocialContextFeatureHydrator @Inject() (
     getValidUserIds(query.getRequiredUserId, allSocialContextUserIds).map { validUserIds =>
       candidates.map { candidate =>
         val sgsFilteredLikedByUserIds =
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
           candidate.features
             .getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers)
             .filter(validUserIds.contains)

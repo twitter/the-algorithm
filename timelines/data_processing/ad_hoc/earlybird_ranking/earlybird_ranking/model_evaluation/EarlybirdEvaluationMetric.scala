@@ -97,6 +97,7 @@ case class TopNPercentRecall(percent: Double) extends EarlybirdEvaluationMetric 
       Some(truePos / k.toDouble)
     } else {
       None
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     }
   }
 }

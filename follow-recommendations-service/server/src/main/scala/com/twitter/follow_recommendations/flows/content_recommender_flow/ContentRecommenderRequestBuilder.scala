@@ -51,6 +51,8 @@ class ContentRecommenderRequestBuilder @Inject() (
             req.recommendationRequest.clientContext.userId.map(userId =>
               rescueWithStatsWithin(
                 socialGraph.getRecentFollowedByUserIdsFromCachedColumn(userId),
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
                 stats,
                 "recentFollowedByUserIds",
                 req

@@ -972,6 +972,7 @@ public class EarlybirdSearcher {
             terminationTracker);
     searchRequestInfo.setIdTimeRanges(idTimeRanges);
     setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
+// This is utterly fucking retarded.
     TermStatisticsCollector.TermStatisticsSearchResults hits =
         searcher.collectTermStatistics(searchRequestInfo, this, request.getDebugMode());
     EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);

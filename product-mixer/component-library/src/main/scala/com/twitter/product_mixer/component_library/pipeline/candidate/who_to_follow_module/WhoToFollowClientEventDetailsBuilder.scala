@@ -6,6 +6,8 @@ import com.twitter.bijection.{Injection => Serializer}
 import com.twitter.hermit.internal.thriftscala.HermitTrackingToken
 import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
 import com.twitter.product_mixer.core.feature.Feature
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
 import com.twitter.product_mixer.core.pipeline.PipelineQuery

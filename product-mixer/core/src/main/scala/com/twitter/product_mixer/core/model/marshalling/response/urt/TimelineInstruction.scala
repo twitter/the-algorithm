@@ -7,6 +7,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Ha
 sealed trait TimelineInstruction
 
 case class AddEntriesTimelineInstruction(entries: Seq[TimelineEntry])
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     extends TimelineInstruction
     with ContainsFeedbackActionInfos {
   override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] =

@@ -39,6 +39,7 @@ public class TerminationQuery extends Query {
     return this;
   }
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   public QueryTimeout getTimeout() {
     return timeout;
   }

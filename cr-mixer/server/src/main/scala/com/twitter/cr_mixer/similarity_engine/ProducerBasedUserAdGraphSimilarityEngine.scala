@@ -72,6 +72,8 @@ object ProducerBasedUserAdGraphSimilarityEngine {
   case class Query(
     sourceId: InternalId,
     maxResults: Int,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
     minCooccurrence: Int, // require at least {minCooccurrence} lhs user engaged with returned tweet
     minScore: Double,
     maxNumFollowers: Int, // max number of lhs users

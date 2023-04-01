@@ -72,6 +72,7 @@ public final class EarlybirdRequestUtil {
    */
   public static void logAndFixExcessiveValues(EarlybirdRequest request) {
     ThriftSearchQuery searchQuery = request.getSearchQuery();
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     if (searchQuery != null) {
       int maxHitsToProcess = 0;
       int numResultsToReturn = 0;

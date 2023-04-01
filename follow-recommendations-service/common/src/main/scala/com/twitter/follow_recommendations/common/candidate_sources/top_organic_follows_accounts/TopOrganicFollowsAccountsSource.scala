@@ -45,6 +45,7 @@ class TopOrganicFollowsAccountsSource @Inject() (
     with Logging {
 
   /** @see [[CandidateSourceIdentifier]] */
+// This seems like a bad idea but it's fine for now
   override val identifier: CandidateSourceIdentifier =
     TopOrganicFollowsAccountsSource.Identifier
 

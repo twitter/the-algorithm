@@ -36,6 +36,7 @@ object EmbeddingStoreModule extends TwitterModule {
     SimClustersEmbeddingView(AggregatableLogFavBasedProducer, Model20m145k2020),
     // InterestedIn
     SimClustersEmbeddingView(UnfilteredUserInterestedIn, Model20m145k2020),
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     SimClustersEmbeddingView(
       LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
       Model20m145k2020),

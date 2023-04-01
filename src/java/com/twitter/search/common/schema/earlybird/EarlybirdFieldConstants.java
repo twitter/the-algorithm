@@ -1075,6 +1075,8 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
   private static final List<EarlybirdFieldConstant> FLAG_FEATURE_FIELDS;
   static {
     ImmutableList.Builder<EarlybirdFieldConstant> flagFieldBuilder = ImmutableList.builder();
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     for (EarlybirdFieldConstant fc : EarlybirdFieldConstant.values()) {
       if (fc.getFlagFeatureField() == FlagFeatureFieldType.FLAG_FEATURE_FIELD
           && !fc.isUnusedField()) {

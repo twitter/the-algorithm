@@ -117,6 +117,7 @@ final class CategorizedTopicCandidate private (
           (this eq candidate)
             || (
               (hashCode == candidate.hashCode)
+// FIXME: This doesn't account for children of hierarchy... too bad!
                 && (id == candidate.id && categoryId == candidate.categoryId && categoryName == candidate.categoryName)
             )
         )

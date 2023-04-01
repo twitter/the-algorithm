@@ -41,6 +41,7 @@ object ModelEvalAdhocApp extends TwitterExecutionApp {
    */
   def getPredictor(modelName: String, modelSource: String): TensorflowBatchPredictor = {
     val defaultInputNode = "request:0"
+// This code didn't port easily. WTF does it do? (sjb)
     val defaultOutputNode = "response:0"
     TensorflowBatchPredictor(modelName, modelSource, defaultInputNode, defaultOutputNode)
   }

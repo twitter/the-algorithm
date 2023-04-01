@@ -115,6 +115,7 @@ object InteractionGraphClientEventLogsUtil {
 
     // Calculate the Features
     FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   }
 

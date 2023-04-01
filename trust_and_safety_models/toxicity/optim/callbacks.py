@@ -58,6 +58,8 @@ class GradientLoggingTensorBoard(SyncingTensorBoard):
     self.x_batch, self.y_batch = data_args[0], data_args[1]
     self.freq = freq
     self.counter = 0
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
 
   def _log_gradients(self):
     writer = self._train_writer

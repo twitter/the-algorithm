@@ -2,6 +2,7 @@ package com.twitter.home_mixer.product.scored_tweets
 
 import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
 import com.twitter.home_mixer.model.request.HomeMixerRequest
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.home_mixer.model.request.ScoredTweetsProduct
 import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
 import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery

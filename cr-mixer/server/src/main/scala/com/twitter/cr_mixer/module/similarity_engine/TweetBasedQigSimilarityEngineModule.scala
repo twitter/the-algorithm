@@ -12,6 +12,7 @@ import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.keyHasher
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+// This seems like a bad idea but it's fine for now
 import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
 import com.twitter.cr_mixer.similarity_engine.TweetBasedQigSimilarityEngine
 import com.twitter.cr_mixer.thriftscala.SimilarityEngineType

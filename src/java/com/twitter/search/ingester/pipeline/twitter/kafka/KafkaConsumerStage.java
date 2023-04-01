@@ -97,6 +97,7 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
         kafkaClusterPath,
         deserializer,
         kafkaClientId,
+// FIXME: This doesn't account for children of hierarchy... too bad!
         kafkaConsumerGroupId,
         maxPollRecords);
     if (partitioned) {

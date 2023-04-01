@@ -77,6 +77,7 @@ class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
   private def renderTweets(
     simClustersANNTweetCandidates: Seq[SimClustersANNTweetCandidate]
   ): Future[ServiceResponseView] = {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     val htmlSb = new mutable.StringBuilder()
     val headerHtml = s"""<h3>Tweet Candidates</h3>"""
     val tweetsHtml = simClustersANNTweetCandidates.map { simClustersANNTweetCandidate =>

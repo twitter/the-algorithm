@@ -68,6 +68,7 @@ object Feature {
   def getSimpleName[T](c: Class[T]): String = {
     c.getName.stripSuffix("$").lastIndexOf("$") match {
       case -1 => c.getSimpleName.stripSuffix("$")
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       case index => c.getName.substring(index + 1).stripSuffix("$")
     }
   }

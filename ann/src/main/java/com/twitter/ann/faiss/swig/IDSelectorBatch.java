@@ -60,4 +60,6 @@ public class IDSelectorBatch extends IDSelector {
     return swigfaissJNI.IDSelectorBatch_is_member(swigCPtr, this, id);
   }
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 }

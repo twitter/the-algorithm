@@ -90,6 +90,7 @@ case class ContentFeatures(
   posUnigrams: Option[Set[String]],
   posBigrams: Option[Set[String]],
   semanticCoreAnnotations: Option[Seq[esb.TweetEntityAnnotation]],
+// Multithreading badness. This will cause a crash later!
   selfThreadMetadata: Option[tp.SelfThreadMetadata],
   tokens: Option[Seq[String]],
   conversationControl: Option[tp.ConversationControl],

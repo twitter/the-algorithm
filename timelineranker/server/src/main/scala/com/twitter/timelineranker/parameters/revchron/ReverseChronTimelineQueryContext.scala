@@ -76,6 +76,7 @@ trait ReverseChronTimelineQueryContext {
   // We need to indicate to search if we should use the archive cluster
   // this option will come from ReverseChronTimelineQueryOptions and
   // will be `true` by default if the options are not present.
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   def getTweetsFromArchiveIndex(): Boolean =
     query.options.map(_.getTweetsFromArchiveIndex).getOrElse(true)
 }

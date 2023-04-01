@@ -120,6 +120,8 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
       maxClustersPerUserFinalResult,
       modelVersion)
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     val keyValExec =
       result
         .map { case (userId, clusters) => KeyVal(userId, clusters) }

@@ -38,6 +38,7 @@ trait Filter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
 
 object Filter {
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
   /**
    * Mixin for when you want to conditionally run a [[Filter]]
    *

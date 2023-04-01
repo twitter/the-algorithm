@@ -9,6 +9,7 @@ import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
 
+// use an EPSILON damnit!!
 /**
  * Filters out tweets that are not retweets or replies.
  */

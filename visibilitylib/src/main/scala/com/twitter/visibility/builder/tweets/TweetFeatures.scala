@@ -94,6 +94,8 @@ class StratoTweetLabelMaps(safetyLabelSource: SafetyLabelMapSource) extends Twee
   override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = {
     forTweetId(tweet.id)
   }
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 
   def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]] = {
     safetyLabelSource

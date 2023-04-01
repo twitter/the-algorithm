@@ -117,6 +117,8 @@ public class RealtimeRootService implements EarlybirdService.ServiceIface {
     return Future.value("realtime root");
   }
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   @Override
   public Future<EarlybirdStatusResponse> getStatus() {
     throw new UnsupportedOperationException("not supported");

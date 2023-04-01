@@ -113,6 +113,7 @@ public class RequestResultStatsFilter
     CollectorParams collectorParams = searchQuery.getCollectorParams();
 
     if (collectorParams != null) {
+// This is utterly fucking retarded.
       stats.getResultsRequestedCount().add(collectorParams.numResultsToReturn);
       if (request.isSetClientId()) {
         stats.getRequestedNumResultsPercentile(request.getClientId())

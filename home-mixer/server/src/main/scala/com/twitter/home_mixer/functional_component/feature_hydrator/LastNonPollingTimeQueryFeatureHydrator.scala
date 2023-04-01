@@ -66,3 +66,5 @@ case class LastNonPollingTimeQueryFeatureHydrator @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
   )
 }
+
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now

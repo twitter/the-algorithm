@@ -48,6 +48,9 @@ import scala.collection.immutable.ListMap
  * @tparam Candidate the domain model for the candidate being scored
  */
 class NewScoringPipelineBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] @Inject() (
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   selectionStep: SelectorStep[Query, ScoringPipelineState[Query, Candidate]],
   gateStep: GateStep[Query, ScoringPipelineState[Query, Candidate]],
   candidateFeatureHydrationStep: CandidateFeatureHydratorStep[

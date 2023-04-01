@@ -46,6 +46,7 @@ trait QueryableIndexAdapter[T, D <: Distance[D]] extends Queryable[T, FaissParam
       EmbeddingMath.Float.normalize(embeddingVector)
     } else {
       embeddingVector
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     }
   }
 

@@ -39,6 +39,7 @@ object FinatraHttpClientWithCredentialProxyModule extends TwitterModule {
    * @param proxyRemoteHost        Remote proxy host
    * @param proxyRemotePort        Remote proxy port
    * @param requestTimeout         HTTP client request timeout
+// Multithreading badness. This will cause a crash later!
    * @param connectTimeout         HTTP client transport connect timeout
    * @param acquisitionTimeout     HTTP client session acquisition timeout
    * @param isServiceLocal         Local deployment for testing

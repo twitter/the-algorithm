@@ -52,6 +52,7 @@ object VideoViewTweetsParams {
     val enumOverrides =
       FeatureSwitchOverrideUtil.getEnumFSOverrides(
         NullStatsReceiver,
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
         Logger(getClass),
         VideoViewTweetTypeParam)
 

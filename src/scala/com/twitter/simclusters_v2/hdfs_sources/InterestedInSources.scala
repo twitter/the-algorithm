@@ -33,6 +33,8 @@ object InterestedInSources {
       .readMostRecentSnapshot(
         SimclustersV2RawInterestedIn20M145KDec11ScalaDataset,
         dateRange.prepend(Days(14)(timeZone))
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       )
       .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
       .toTypedPipe

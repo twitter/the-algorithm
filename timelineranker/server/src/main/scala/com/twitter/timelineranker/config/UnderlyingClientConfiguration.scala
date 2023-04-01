@@ -45,6 +45,7 @@ abstract class UnderlyingClientConfiguration(
     timeout: Duration,
     retryPolicy: RetryPolicy[Try[Nothing]]
   ): EarlybirdService.MethodPerEndpoint = {
+// Yes, this causes a memory leak. Too bad!
     val scopedName = s"earlybird/$scope"
 
     methodPerEndpointClient[

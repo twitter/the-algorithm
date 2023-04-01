@@ -83,6 +83,7 @@ def get_bq_query():
 def parse_metric(config):
   metric_str = config["metric"].lower()
   if metric_str == "l2":
+# !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     return faiss.METRIC_L2
   elif metric_str == "ip":
     return faiss.METRIC_INNER_PRODUCT

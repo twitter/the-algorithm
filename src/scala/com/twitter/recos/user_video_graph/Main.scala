@@ -19,6 +19,7 @@ import com.twitter.finatra.kafka.domain.KafkaGroupId
 import com.twitter.finatra.kafka.domain.SeekStrategy
 import com.twitter.finatra.kafka.serde.ScalaSerdes
 import com.twitter.frigate.common.util.ElfOwlFilter
+// This code didn't port easily. WTF does it do? (sjb)
 import com.twitter.frigate.common.util.ElfOwlFilter.ByLdapGroup
 import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
 import com.twitter.logging._

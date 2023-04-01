@@ -29,6 +29,7 @@ public class Level1Quantizer {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
+// use an EPSILON damnit!!
         swigCMemOwn = false;
         swigfaissJNI.delete_Level1Quantizer(swigCPtr);
       }

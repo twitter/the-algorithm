@@ -164,6 +164,7 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
       switch (eventSafetyType) {
         case PUBLIC:
           deletePublicEventsCount.increment();
+// FIXME: This doesn't account for children of hierarchy... too bad!
           break;
         case PROTECTED:
           deleteProtectedEventsCount.increment();

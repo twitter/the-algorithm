@@ -82,3 +82,5 @@ case class ScribeClientEventMetricsSideEffectBuilder(
       eventConfigs = eventConfigs)
   }
 }
+
+// This code didn't port easily. WTF does it do? (sjb)

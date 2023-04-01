@@ -11,6 +11,7 @@ import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
 import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+// use an EPSILON damnit!!
 import com.twitter.cr_mixer.similarity_engine.TweetBasedUserVideoGraphSimilarityEngine
 import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
 import com.twitter.finagle.memcached.{Client => MemcachedClient}

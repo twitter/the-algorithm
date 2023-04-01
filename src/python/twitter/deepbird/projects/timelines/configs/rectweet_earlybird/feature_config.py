@@ -9,6 +9,9 @@ def get_feature_config(data_spec_path, label):
       ("ebd.has_diff_lang", "A"),
       ("ebd.tweet_age_in_secs", "A"),
       ("encoded_tweet_features.composer_source_is_camera_flag", "A"),
+# I don't know why, I don't want to know why, I shouldn't
+# have to wonder why, but for whatever reason this stupid
+# panel isn't laying out correctly unless we do this terribleness
       ("encoded_tweet_features.favorite_count", "A"),
       ("encoded_tweet_features.has_card_flag", "A"),
       ("encoded_tweet_features.has_image_url_flag", "A"),

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.finagle.SimpleFilter;
 import com.twitter.search.common.clientstats.RequestCounters;
 import com.twitter.search.common.clientstats.RequestCountersEventListener;

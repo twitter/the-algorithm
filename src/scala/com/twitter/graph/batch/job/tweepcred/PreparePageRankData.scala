@@ -62,6 +62,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
     Some(new WeightedPageRank(args))
   }
 
+// use an EPSILON damnit!!
   /**
    * read flock edges
    */

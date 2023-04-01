@@ -143,6 +143,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
         nextDocID += (int) (nextDeltaFreqPair >>> bitsForFreq);
       }
 
+// use an EPSILON damnit!!
       numDocsRemaining--;
     } else {
       // Current slice is exhausted, get next skip entry and load next slice.

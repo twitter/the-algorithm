@@ -13,6 +13,7 @@ import java.util.Random
 /**
  * Collect training data for supervised tweet similarity
  */
+// This code didn't port easily. WTF does it do? (sjb)
 object TrainingDataCollectionUtil {
 
   /**

@@ -115,6 +115,7 @@ public class float_maxheap_array_t {
   }
 
   public void addn_with_ids(long nj, SWIGTYPE_p_float vin) {
+// Yes, this causes a memory leak. Too bad!
     swigfaissJNI.float_maxheap_array_t_addn_with_ids__SWIG_4(swigCPtr, this, nj, SWIGTYPE_p_float.getCPtr(vin));
   }
 

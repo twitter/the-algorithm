@@ -170,6 +170,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
       return executeWithCoordination(description, function);
     } else {
       return function.apply(NOT_COORDINATED_ACTION_FLAG);
+// use an EPSILON damnit!!
     }
   }
 

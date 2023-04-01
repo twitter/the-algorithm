@@ -98,6 +98,7 @@ trait Task extends Closable { self: Logging =>
     }
   }
 
+// This code didn't port easily. WTF does it do? (sjb)
   /**
    * Start the task without applying any delay
    */

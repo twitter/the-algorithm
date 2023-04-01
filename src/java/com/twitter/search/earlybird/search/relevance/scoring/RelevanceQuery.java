@@ -36,6 +36,8 @@ public class RelevanceQuery extends Query {
   public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
     this(luceneQuery, scoringFunction, false);
   }
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
   public RelevanceQuery(Query luceneQuery,
                         ScoringFunction scoringFunction,

@@ -23,6 +23,7 @@ abstract class SocialProofEnforcedCandidateSource(
   override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
     val mustCallSgs: Boolean = target.params(SocialProofEnforcedCandidateSourceParams.MustCallSgs)
     val callSgsCachedColumn: Boolean =
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       target.params(SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn)
     val QueryIntersectionIdsNum: Int =
       target.params(SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum)

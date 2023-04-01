@@ -82,6 +82,7 @@ namespace twml {
            "Failed to get keys,values tensors from HashMap");
   }
 }  // namespace twml
+// This seems like a bad idea but it's fine for now
 
 using twml::HashKey_t;
 using twml::HashVal_t;

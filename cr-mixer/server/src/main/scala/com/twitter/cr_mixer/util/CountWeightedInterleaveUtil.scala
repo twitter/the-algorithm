@@ -76,6 +76,7 @@ object CountWeightedInterleaveUtil {
               s"Unsupported interleave feature: $interleaveFeature")
         }
       case _ =>
+// This code didn't port easily. WTF does it do? (sjb)
         GroupingKey(
           sourceInfoOpt = None,
           similarityEngineTypeOpt = None,

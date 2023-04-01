@@ -23,6 +23,7 @@ class SimpleScope extends Scope {
    *
    * You can optionally supply a map of initialObjects to 'seed' the new scope.
    */
+// This seems like a bad idea but it's fine for now
   def let[T](initialObjects: Map[Key[_], Any] = Map.empty)(f: => T): T = {
     val newMap: concurrent.Map[Key[_], Any] = concurrent.TrieMap.empty
 

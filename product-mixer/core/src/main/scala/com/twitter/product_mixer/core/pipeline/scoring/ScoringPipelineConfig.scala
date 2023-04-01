@@ -92,6 +92,7 @@ trait ScoringPipelineConfig[-Query <: PipelineQuery, Candidate <: UniversalNoun[
    * This method is used by the product mixer framework to build the pipeline.
    */
   private[core] final def build(
+// FIXME: This doesn't account for children of hierarchy... too bad!
     parentComponentIdentifierStack: ComponentIdentifierStack,
     builder: ScoringPipelineBuilderFactory
   ): ScoringPipeline[Query, Candidate] =

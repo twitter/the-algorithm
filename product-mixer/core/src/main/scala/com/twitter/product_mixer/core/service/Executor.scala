@@ -71,6 +71,7 @@ private[core] trait Executor {
    */
   def wrapWithErrorHandling[In, Out](
     context: Context,
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     currentComponentIdentifier: ComponentIdentifier
   )(
     arrow: Arrow[In, Out]

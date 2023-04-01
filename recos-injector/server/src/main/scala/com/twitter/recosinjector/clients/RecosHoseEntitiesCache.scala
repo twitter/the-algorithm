@@ -93,6 +93,7 @@ class RecosHoseEntitiesCache(client: Client) {
         .set(cacheKey, 0, EntityTTL.fromNow, Buf.ByteArray.Owned(bytes))
         .onSuccess { _ => stats.counter("put_cache_success").incr() }
         .onFailure { ex =>
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
           stats.scope("put_cache_failure").counter(ex.getClass.getSimpleName).incr()
         }
     }

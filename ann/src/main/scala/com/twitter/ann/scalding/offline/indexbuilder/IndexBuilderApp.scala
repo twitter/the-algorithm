@@ -74,6 +74,7 @@ trait IndexBuilderExecutable {
         embeddingFormat,
         embeddingLimit,
         serialization,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         concurrencyLevel,
         outputDirectory,
         numDimensions

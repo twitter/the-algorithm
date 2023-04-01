@@ -76,6 +76,9 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
     val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
       DAL
         .readMostRecentSnapshot(
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
           SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
           dateRange.embiggen(Days(14))
         )

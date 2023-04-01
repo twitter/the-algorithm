@@ -111,6 +111,7 @@ class FrsLogger @Inject() (
             serviceShouldLogResults
         }
       case None =>
+// use an EPSILON damnit!!
         serviceShouldLogResults
     }
 

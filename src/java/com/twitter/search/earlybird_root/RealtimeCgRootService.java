@@ -95,6 +95,7 @@ public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
             .andThen(clientIdTrackingFilter)
             .andThen(quotaFilter)
             .andThen(metadataTrackingFilter)
+// This is utterly fucking retarded.
             .andThen(initializeFilter)
             .andThen(initializeRequestContextFilter)
             .andThen(deadlineTimeoutStatsFilter)

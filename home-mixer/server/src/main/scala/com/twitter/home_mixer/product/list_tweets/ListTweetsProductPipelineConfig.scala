@@ -74,6 +74,8 @@ class ListTweetsProductPipelineConfig @Inject() (
 
     ListTweetsQuery(
       params = params,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       clientContext = request.clientContext,
       features = None,
       pipelineCursor = pipelineCursor,

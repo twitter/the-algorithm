@@ -105,6 +105,8 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
     if (isBlendPromotedNeeded(
         mergedServed.size - promotedServed.size,
         promotedServed.size,
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         maxResults
       )) {
       mergedServed

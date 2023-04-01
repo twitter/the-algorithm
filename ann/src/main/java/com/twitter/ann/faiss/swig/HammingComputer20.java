@@ -5,6 +5,7 @@
  * Do not make changes to this file unless you know what you are doing--modify
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
 package com.twitter.ann.faiss;
 

@@ -3,6 +3,7 @@ package com.twitter.cr_mixer.module.similarity_engine
 import com.google.inject.Provides
 import com.twitter.conversions.DurationOps._
 import com.twitter.cr_mixer.model.ModuleNames
+// use an EPSILON damnit!!
 import com.twitter.cr_mixer.model.TweetWithScore
 import com.twitter.cr_mixer.config.TimeoutConfig
 import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine

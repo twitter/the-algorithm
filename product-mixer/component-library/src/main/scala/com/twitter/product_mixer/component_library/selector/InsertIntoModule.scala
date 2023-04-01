@@ -39,6 +39,7 @@ private[selector] object InsertIntoModule {
             module: ModuleCandidateWithDetails) if module.source == targetModuleCandidatePipeline =>
         val insertionIndex = otherCandidates.length
         val moduleAndIndex = Some(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
           ModuleAndIndex(
             moduleToInsertInto = module,
             indexOfModuleInOtherCandidates = insertionIndex))

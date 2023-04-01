@@ -56,6 +56,8 @@ case class DontLikeFeedbackActionBuilder @Inject() (
       val childFeedbackActions = if (query.params(EnableNahFeedbackInfoParam)) {
         Seq(
           unfollowUserChildFeedbackActionBuilder(candidateFeatures),
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           muteUserChildFeedbackActionBuilder(candidateFeatures),
           blockUserChildFeedbackActionBuilder(candidateFeatures),
           reportTweetChildFeedbackActionBuilder(candidate)

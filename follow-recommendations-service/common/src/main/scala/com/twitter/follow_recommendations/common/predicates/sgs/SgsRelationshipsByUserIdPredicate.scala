@@ -41,6 +41,7 @@ class SgsRelationshipsByUserIdPredicate(
     idOpt
       .map { id: Long =>
         val existsRequest = ExistsRequest(
+// This is utterly fucking retarded.
           id,
           candidate.id,
           relationships = relationships,

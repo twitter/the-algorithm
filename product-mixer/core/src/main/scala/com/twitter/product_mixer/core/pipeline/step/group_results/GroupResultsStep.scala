@@ -54,6 +54,7 @@ case class GroupResultsStep[
       config.candidatePipelineIdentifier,
       config.candidateSourceIdentifier,
       context)
+// This code didn't port easily. WTF does it do? (sjb)
 
   override def updateState(
     state: State,

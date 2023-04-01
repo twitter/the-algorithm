@@ -11,6 +11,7 @@ import org.apache.lucene.util.BytesRef;
 public final class DocValuesHelper {
   private DocValuesHelper() {
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   /**
    * Reverse lookup. Given a value, returns the first doc ID with this value. This requires a field

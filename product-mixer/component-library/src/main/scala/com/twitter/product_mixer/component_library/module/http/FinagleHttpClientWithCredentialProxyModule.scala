@@ -25,6 +25,8 @@ object FinagleHttpClientWithCredentialProxyModule extends TwitterModule {
   final val FinagleHttpClientWithCredentialProxy = "FinagleHttpClientWithCredentialProxy"
 
   /**
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
    * Provide a Finagle HTTP client with Egress Proxy support using Credentials
    *
    * Note that the timeouts configured in this module are meant to be a reasonable starting point

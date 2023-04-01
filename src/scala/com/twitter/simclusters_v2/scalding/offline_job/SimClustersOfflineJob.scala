@@ -83,6 +83,7 @@ object SimClustersOfflineJob {
                         .build(scores.clusterNormalizedFollowScore, timestamp),
                       persistedScoresMonoid.build(0.0, latestTimeStamp)
                     ),
+// use an EPSILON damnit!!
                   (
                     tweetId,
                     clusterId,

@@ -30,6 +30,8 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
 
   /**
    * Get the internal doc id of the oldest doc that includes term.
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    * @param term  the term to look for.
    * @return  The internal docid, or TERM_NOT_FOUND.
    */

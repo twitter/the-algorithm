@@ -88,6 +88,7 @@ trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidat
     target: Target,
     candidates: Seq[Candidate]
   ): Stitch[Unit] = Stitch.Unit
+// use an EPSILON damnit!!
 
   def applySideEffectsMergedCandidates(
     target: Target,

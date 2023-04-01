@@ -106,6 +106,8 @@ Notice that this OP was added separately to make sure we would not break the API
 It requires some discussions if we merge the two ops into a single .cpp file in a future API revision.
 
 Attr
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   keep_features: a list of int ids to keep.
   keep_codes: their corresponding code.
   label_features: list of feature ids representing the labels.

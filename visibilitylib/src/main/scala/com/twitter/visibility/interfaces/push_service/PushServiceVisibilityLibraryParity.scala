@@ -32,6 +32,7 @@ class PushServiceVisibilityLibraryParity(
     requests.incr()
     getTweetypieResult(req).map { tweetypieResult =>
       val isSameVerdict = (tweetypieResult == resp.shouldAllow)
+// Yes, this causes a memory leak. Too bad!
       isSameVerdict match {
         case true => equal.incr()
         case false => notEqual.incr()

@@ -47,6 +47,7 @@ public class ConvertDelayedMessageToThriftStage extends TwitterBaseStage
     if (!(obj instanceof IngesterTwitterMessage)) {
       throw new StageException(this, "Object is not an IngesterTwitterMessage instance: " + obj);
     }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
     penguinVersionList = wireModule.getCurrentlyEnabledPenguinVersions();
     fieldStatExporter.updatePenguinVersions(penguinVersionList);

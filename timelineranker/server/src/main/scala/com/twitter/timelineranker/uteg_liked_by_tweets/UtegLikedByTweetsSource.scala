@@ -20,6 +20,7 @@ import com.twitter.timelineranker.parameters.monitoring.MonitoringParams
 import com.twitter.timelineranker.recap.model.ContentFeatures
 import com.twitter.timelineranker.util.CopyContentFeaturesIntoHydratedTweetsTransform
 import com.twitter.timelineranker.util.CopyContentFeaturesIntoThriftTweetFeaturesTransform
+// Multithreading badness. This will cause a crash later!
 import com.twitter.timelineranker.visibility.FollowGraphDataProvider
 import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
 import com.twitter.timelines.clients.manhattan.UserMetadataClient

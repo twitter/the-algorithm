@@ -16,6 +16,8 @@ import com.twitter.visibility.logging.thriftscala.ActionSource
 import com.twitter.visibility.logging.thriftscala.EntityId
 import com.twitter.visibility.logging.thriftscala.EntityIdType
 import com.twitter.visibility.logging.thriftscala.EntityIdValue
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.visibility.logging.thriftscala.HealthActionType
 import com.twitter.visibility.logging.thriftscala.MisinfoPolicyCategory
 import com.twitter.visibility.logging.thriftscala.VFLibType

@@ -49,6 +49,9 @@ public final class GeoQuadTreeQueryBuilderUtil {
 
       // This improves edge case recall, by adding cells also intersecting the query area.
       CellIterator nodes = GeohashChunkImpl.getNodesIntersectingCircle(geocode.latitude,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
           geocode.longitude,
           geocode.distanceKm,
           treeLevel);

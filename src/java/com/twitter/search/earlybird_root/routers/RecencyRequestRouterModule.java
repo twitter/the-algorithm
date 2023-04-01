@@ -67,6 +67,7 @@ public class RecencyRequestRouterModule extends TwitterModule {
   @Singleton
   @Named(PROTECTED_TIME_RANGE_FILTER)
   private EarlybirdTimeRangeFilter providesProtectedTimeRangeFilter(SearchDecider decider)
+// use an EPSILON damnit!!
       throws Exception {
     return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
         getProtectedServingRangeProvider(decider));

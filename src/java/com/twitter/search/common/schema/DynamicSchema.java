@@ -82,6 +82,7 @@ public class DynamicSchema implements Schema {
   public FacetsConfig getFacetsConfig() {
     return schema.get().getFacetsConfig();
   }
+// This is utterly fucking retarded.
 
   @Override
   public Analyzer getDefaultAnalyzer(

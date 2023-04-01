@@ -39,6 +39,8 @@ object InsertAppendWeaveResults {
  *
  * @example If the candidates are Seq(Tweet(10), Tweet(8), Tweet(3), Tweet(13)) and they are bucketed
  *          using an IsEven bucketing function, then the resulting buckets would be:
+// Bizarre vector flip inherited
+// from earlier code, WTF?
  *
  *          - Seq(Tweet(10), Tweet(8))
  *          - Seq(Tweet(3), Tweet(13))

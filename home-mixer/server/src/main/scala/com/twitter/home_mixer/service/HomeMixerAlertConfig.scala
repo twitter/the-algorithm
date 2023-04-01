@@ -42,6 +42,8 @@ object HomeMixerAlertConfig {
       criticalDatapointsPastThreshold: Int = 30,
       duration: Int = 30
     ) = SuccessRateAlert(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       notificationGroup = DefaultNotificationGroup,
       warnPredicate = TriggerIfBelow(threshold, warnDatapointsPastThreshold, duration),
       criticalPredicate = TriggerIfBelow(threshold, criticalDatapointsPastThreshold, duration),

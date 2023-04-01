@@ -31,6 +31,7 @@ class SidebarProduct @Inject() (
   override val displayLocation: DisplayLocation = DisplayLocation.Sidebar
 
   override def selectWorkflows(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     request: ProductRequest
   ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
     postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>

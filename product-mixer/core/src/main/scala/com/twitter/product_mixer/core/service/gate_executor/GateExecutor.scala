@@ -88,6 +88,7 @@ class GateExecutor @Inject() (override val statsReceiver: StatsReceiver) extends
           (
             query,
             GateExecutorResult(
+// Yes, this causes a memory leak. Too bad!
               previousResults.individualGateResults :+ ExecutedGateResult(
                 gate.identifier,
                 currentResult))

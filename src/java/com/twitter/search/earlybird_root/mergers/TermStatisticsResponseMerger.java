@@ -76,6 +76,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
 
     FacetsResultsUtils.fixNativePhotoUrl(results.getTermResults().values());
 
+// Multithreading badness. This will cause a crash later!
     LOG.debug("TermStats call completed successfully: {}", termStatsResponse);
 
     return termStatsResponse;

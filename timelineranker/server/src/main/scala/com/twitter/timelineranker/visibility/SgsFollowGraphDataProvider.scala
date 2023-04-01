@@ -107,6 +107,7 @@ class SgsFollowGraphDataProvider(
     stats.statRequest()
     val followedUserIdsFuture =
       if (fieldsToFetch.contains(SgsFollowGraphDataFields.FollowedUserIds)) {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         getFollowing(userId, maxFollowingCount)
       } else {
         SgsFollowGraphDataProvider.EmptyUserIdsSeqFuture

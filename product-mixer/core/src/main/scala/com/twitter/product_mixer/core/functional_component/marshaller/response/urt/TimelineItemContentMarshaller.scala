@@ -121,6 +121,8 @@ class TimelineItemContentMarshaller @Inject() (
 }
 
 class UnsupportedTimelineItemException(timelineItem: TimelineItem)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     extends UnsupportedOperationException(
       "Unsupported timeline item " + TransportMarshaller.getSimpleName(timelineItem.getClass))
 

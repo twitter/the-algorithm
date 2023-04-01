@@ -128,6 +128,7 @@ public class SegmentHdfsFlusher {
   }
 
   /**
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
    * Check whether the segment has already been flushed to HDFS. If not, flush the segment to disk
    * and upload the files to HDFS.
    *

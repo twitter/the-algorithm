@@ -432,6 +432,8 @@ case class CrMixerScribeLogger @Inject() (
       )
     }
   }
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 
   /**
    * Handles client_event serialization to log data into DDG metrics

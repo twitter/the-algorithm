@@ -2540,6 +2540,8 @@ case object TweetDetailPolicy
           NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
           MutedKeywordForQuotedTweetTweetDetailInterstitialRule,

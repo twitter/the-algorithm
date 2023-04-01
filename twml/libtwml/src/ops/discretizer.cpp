@@ -198,6 +198,8 @@ REGISTER_OP("PercentileDiscretizerBinIndices")
 .Input("bin_ids: int64")
 .Input("bin_vals: T")
 .Input("feature_offsets: int64")
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 .Output("new_keys: int64")
 .Output("new_vals: T")
 .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {

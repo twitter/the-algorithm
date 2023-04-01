@@ -62,6 +62,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
       num_weights = None
     elif len(weights_shape) > 1:
       num_weights = weights_shape[class_dim]
+# !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     else:
       num_weights = 1
 

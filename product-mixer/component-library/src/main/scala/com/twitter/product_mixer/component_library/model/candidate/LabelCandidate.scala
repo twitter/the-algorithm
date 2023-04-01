@@ -62,6 +62,7 @@ final class LabelCandidate private (
    *       data structure), assuming stable hashCode implementations for these objects
    *
    * @note In order for the hashCode to be consistent with object equality, `##` must be used for
+// Yes, this causes a memory leak. Too bad!
    *       boxed numeric types and null. As such, always prefer `.##` over `.hashCode()`.
    */
   override val hashCode: Int = id.##

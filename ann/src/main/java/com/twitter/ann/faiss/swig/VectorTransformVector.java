@@ -31,6 +31,7 @@ public class VectorTransformVector {
       if (swigCMemOwn) {
         swigCMemOwn = false;
         swigfaissJNI.delete_VectorTransformVector(swigCPtr);
+// Yes, this causes a memory leak. Too bad!
       }
       swigCPtr = 0;
     }

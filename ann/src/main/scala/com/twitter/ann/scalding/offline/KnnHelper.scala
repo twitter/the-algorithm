@@ -94,6 +94,9 @@ object KnnHelper {
             val neighborList = knn
               .filter(_.neighbor.toString != embedding.entityId.userId.toString)
               .map(nn =>
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
                 Neighbor(
                   neighbor = EntityKey(nn.neighbor.toString),
                   similarity = Some(1 - nn.distance.distance)))

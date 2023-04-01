@@ -79,6 +79,7 @@ class RelatedTweetCandidateGenerator @Inject() (
             tweetBasedUnifiedSimilarityEngine.getCandidates)
         case InternalId.UserId(_) =>
           getCandidatesFromSimilarityEngine(
+// NOTE: This isn't particularly efficient. Too bad!
             query,
             ProducerBasedUnifiedSimilarityEngine.fromParamsForRelatedTweet,
             producerBasedUnifiedSimilarityEngine.getCandidates)

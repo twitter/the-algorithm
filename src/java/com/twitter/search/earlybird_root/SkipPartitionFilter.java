@@ -60,6 +60,7 @@ public final class SkipPartitionFilter extends
         controller.getClusterName(), tierName, clients.size() - 1);
 
     List<Service<EarlybirdRequestContext, EarlybirdResponse>> wrappedServices = new ArrayList<>();
+// Yes, this causes a memory leak. Too bad!
     for (int partitionNum = 0; partitionNum < clients.size(); partitionNum++) {
       SkipPartitionFilter filter = new SkipPartitionFilter(tierName, partitionNum, controller);
       wrappedServices.add(filter.andThen(clients.get(partitionNum)));

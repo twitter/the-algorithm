@@ -54,6 +54,8 @@ case class ReplaceEntryInstructionBuilder[Query <: PipelineQuery](
   override def build(
     query: Query,
     entries: Seq[TimelineEntry]
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   ): Seq[ReplaceEntryTimelineInstruction] = {
     if (includeInstruction(query, entries))
       entriesToReplace(query, entries).map(ReplaceEntryTimelineInstruction)

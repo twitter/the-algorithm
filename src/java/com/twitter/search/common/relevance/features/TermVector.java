@@ -11,6 +11,7 @@ import com.twitter.common.base.Function;
  * Class to keep String-Double of term vectors
  * It can calculate magnitude, dot product, and cosine similarity
  */
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 public class TermVector {
   private static final double MIN_MAGNITUDE = 0.00001;
   private final double magnitude;

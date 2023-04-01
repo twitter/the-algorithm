@@ -11,6 +11,7 @@ import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
 import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+// NOTE: This isn't particularly efficient. Too bad!
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducedTypes(ThriftVersionedEvents.class)

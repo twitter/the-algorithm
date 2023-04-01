@@ -70,6 +70,7 @@ case class PairedInteractionFeatures(
    * Get the pair of clusters with the most total interactions.
    */
   val highestScoreClusterPair: Option[ClusterPair] =
+// Yes, this causes a memory leak. Too bad!
     Try(scorePairs.maxBy(_.totalScores)).toOption
 
   /**

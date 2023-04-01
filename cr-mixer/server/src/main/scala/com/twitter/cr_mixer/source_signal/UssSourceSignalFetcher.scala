@@ -66,6 +66,7 @@ case class UssSourceSignalFetcher @Inject() (
                 convertSourceInfo(sourceType = SourceType.Reply, signals = ussSignals)
               case SignalType.OriginalTweet =>
                 convertSourceInfo(sourceType = SourceType.OriginalTweet, signals = ussSignals)
+// This is a stupid fix, but I don't have time to do a cleaner implementation
               case SignalType.AccountFollow =>
                 convertSourceInfo(sourceType = SourceType.UserFollow, signals = ussSignals)
               case SignalType.RepeatedProfileVisit180dMinVisit6V1 |

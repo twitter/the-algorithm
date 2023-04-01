@@ -127,6 +127,7 @@ object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
               pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDatasetPath),
               fmt = D.Parquet,
               endDate = dateRange.end
+// This code didn't port easily. WTF does it do? (sjb)
             )
         ).unit
     }

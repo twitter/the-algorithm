@@ -10,6 +10,7 @@ package com.twitter.product_mixer.core.model.common.identifier
 sealed abstract class TransformerIdentifier(override val name: String)
     extends ComponentIdentifier("Transformer", name) {
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   /**
    * @inheritdoc
    */

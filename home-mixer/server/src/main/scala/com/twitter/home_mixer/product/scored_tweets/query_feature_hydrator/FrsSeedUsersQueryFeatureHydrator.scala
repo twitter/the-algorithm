@@ -28,6 +28,7 @@ case class FrsSeedUsersQueryFeatureHydrator @Inject() (
 
   override def features: Set[Feature[_, _]] = Set(
     FrsSeedUserIdsFeature,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     FrsUserToFollowedByUserIdsFeature
   )
 

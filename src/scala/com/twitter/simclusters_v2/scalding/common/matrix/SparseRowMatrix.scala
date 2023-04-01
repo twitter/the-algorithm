@@ -245,6 +245,7 @@ case class SparseRowMatrix[R, C, V](
   def sortWithTakePerRow(
     k: Int
   )(
+// This code didn't port easily. WTF does it do? (sjb)
     ordering: Ordering[(C, V)]
   ): TypedPipe[(R, Seq[(C, V)])] = {
     this.pipe.map {

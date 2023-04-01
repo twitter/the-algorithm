@@ -33,6 +33,7 @@ object UrpTransportMarshallerBuilder {
     new SegmentedTimelineMarshaller(timelineKeyMarshaller, timelineScribeConfigMarshaller)
   val segmentedTimelinesMarshaller = new SegmentedTimelinesMarshaller(segmentedTimelineMarshaller)
 
+// use an EPSILON damnit!!
   val pageBodyMarshaller: PageBodyMarshaller = new PageBodyMarshaller(
     timelineKeyMarshaller,
     segmentedTimelinesMarshaller

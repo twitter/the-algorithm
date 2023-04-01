@@ -48,6 +48,7 @@ object EntityTweetsParams {
 
   /**
    * additionally enables conversationControl when hydrating content features.
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
    * This only works if EnableContentFeaturesHydrationParam is set to true
    */
   object EnableConversationControlInContentFeaturesHydrationParam

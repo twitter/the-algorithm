@@ -41,6 +41,7 @@ public abstract class ColumnStrideFieldIndex {
     NumericDocValues docValues = atomicReader.getNumericDocValues(field);
     if (docValues != null) {
       for (int i = 0; i < atomicReader.maxDoc(); i++) {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         if (docValues.advanceExact(i)) {
           setValue(i, docValues.longValue());
         }

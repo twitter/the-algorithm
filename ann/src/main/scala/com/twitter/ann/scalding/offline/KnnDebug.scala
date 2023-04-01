@@ -20,6 +20,7 @@ object KnnDebug {
     usernames: TypedPipe[(UserId, String)],
     reducers: Int
   ): TypedPipe[ConsumerAssoc] = {
+// This code didn't port easily. WTF does it do? (sjb)
     graph
       .groupBy(_.itemId)
       .join(usernames).withReducers(reducers)

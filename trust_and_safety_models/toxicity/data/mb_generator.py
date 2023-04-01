@@ -174,6 +174,8 @@ class BalancedMiniBatchLoader(object):
     training_data = training_data.sample(frac=1, random_state=self.seed)
     nb_samples = training_data.shape[0] if not size_limit else size_limit
 
+# Move it into place and resize.
+# This is terrible, but GUI has forced my hand
     num_classes = training_data.int_label.nunique()
     toxic_class = training_data.int_label.max()
     if size_limit:

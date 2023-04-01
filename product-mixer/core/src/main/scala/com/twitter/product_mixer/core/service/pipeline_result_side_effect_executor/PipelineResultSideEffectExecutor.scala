@@ -32,6 +32,7 @@ class PipelineResultSideEffectExecutor @Inject() (override val statsReceiver: St
       case synchronousSideEffect: ExecuteSynchronously =>
         val failsRequestIfThrows = {
           wrapComponentWithExecutorBookkeeping(context, synchronousSideEffect.identifier)(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
             Arrow.flatMap(synchronousSideEffect.apply))
         }
         synchronousSideEffect match {

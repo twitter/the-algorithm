@@ -108,6 +108,8 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
         && relevanceOptions.getRankingParams().isSetSelectedTensorflowModel()) {
       String model = relevanceOptions.getRankingParams().getSelectedTensorflowModel();
       SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.export(
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           String.format("batch_scoring_time_for_model_%s", model),
           TimeUnit.NANOSECONDS,
           false,

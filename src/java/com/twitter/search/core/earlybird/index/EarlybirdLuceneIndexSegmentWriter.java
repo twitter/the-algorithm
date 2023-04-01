@@ -24,6 +24,8 @@ import org.apache.lucene.store.LockObtainFailedException;
  * and writes Lucene segments into a {@link Directory}.
  */
 public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWriter {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   private static final Logger LOG =
     LoggerFactory.getLogger(EarlybirdLuceneIndexSegmentWriter.class);
   private static final Marker FATAL = MarkerFactory.getMarker("FATAL");

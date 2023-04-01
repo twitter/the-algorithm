@@ -8,6 +8,7 @@ import com.twitter.finagle.grpc.FinagleChannelBuilder
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
 import com.twitter.finagle.stats.StatsReceiver
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.inject.TwitterModule
 import com.twitter.util.Duration
 import io.grpc.ManagedChannel

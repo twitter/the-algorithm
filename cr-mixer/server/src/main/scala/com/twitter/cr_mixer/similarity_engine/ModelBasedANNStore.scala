@@ -82,6 +82,8 @@ class ModelBasedANNStore(
   }
 
   private def fetchCandidates(
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     query: Query,
     embedding: ThriftEmbedding
   ): Future[Option[NearestNeighborResult]] = {

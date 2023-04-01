@@ -116,6 +116,7 @@ public class RealtimeIndexTerms extends Terms {
 
       // Construct termIter from the subset.
       if (termIter == null) {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         termIter = termSet.tailSet(bytesRef, true).iterator();
       }
 

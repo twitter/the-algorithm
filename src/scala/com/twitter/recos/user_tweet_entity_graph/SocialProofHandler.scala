@@ -143,6 +143,9 @@ class SocialProofHandler(
     }
   }
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   def apply(request: SocialProofThriftRequest): Future[SocialProofThriftResponse] = {
     trackFutureBlockStats(stats) {
       val recommendationsWithSocialProofFut = Future

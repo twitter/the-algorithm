@@ -1,5 +1,6 @@
 package com.twitter.search.earlybird_root.visitors;
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

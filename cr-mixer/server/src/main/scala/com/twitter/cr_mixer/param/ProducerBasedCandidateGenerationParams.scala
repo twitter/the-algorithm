@@ -118,6 +118,8 @@ object ProducerBasedCandidateGenerationParams {
       EnableUTGParam,
       EnableSimClustersANNParam,
       EnableSimClustersANN1Param,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       EnableSimClustersANN2Param,
       EnableSimClustersANN3Param,
       EnableSimClustersANN5Param,

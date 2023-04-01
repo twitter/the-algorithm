@@ -58,6 +58,7 @@ class CombinedScoreAndTruncateTransform(
       earlybirdScoreX100Stat.add(earlybirdScore.toFloat * 100)
       realGraphScoreX100Stat.add(realGraphScore.toFloat * 100)
       val combinedScore =
+// This code didn't port easily. WTF does it do? (sjb)
         realGraphScoreMultiplier * realGraphScore + earlybirdScoreMultiplier * earlybirdScore
       (searchResult, combinedScore)
     }

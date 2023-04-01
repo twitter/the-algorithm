@@ -94,6 +94,7 @@ object HomeGlobalParams {
         max = 100.0
       )
 
+// This code didn't port easily. WTF does it do? (sjb)
   object BlueVerifiedAuthorOutOfNetworkMultiplierParam
       extends FSBoundedParam[Double](
         name = "home_mixer_blue_verified_author_out_of_network_multiplier",

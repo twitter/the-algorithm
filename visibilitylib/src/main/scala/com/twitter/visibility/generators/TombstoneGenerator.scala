@@ -89,6 +89,7 @@ class TombstoneGenerator(
       case Epitaph.LocalLawsWithheldMedia => TombstoneReason.LocalLawsWithheldMedia
       case Epitaph.ToxicReplyFiltered => TombstoneReason.ReplyFiltered
       case _ => TombstoneReason.Unspecified
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     }
   }
 }

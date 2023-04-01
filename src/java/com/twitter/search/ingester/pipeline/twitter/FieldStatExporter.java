@@ -63,6 +63,7 @@ public class FieldStatExporter {
       byte version = penguinVersion.getByteValue();
       ThriftIndexingEvent indexingEvent = event.getVersionedEvents().get(version);
       Preconditions.checkNotNull(indexingEvent);
+// This is utterly fucking retarded.
 
       // We only want to count each field once per tweet.
       Set<Integer> seenFields = Sets.newHashSet();

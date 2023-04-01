@@ -1,5 +1,7 @@
 package com.twitter.follow_recommendations.common.clients.cache
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.bijection.Bijection
 import com.twitter.io.Buf
 import com.twitter.scrooge.CompactThriftSerializer

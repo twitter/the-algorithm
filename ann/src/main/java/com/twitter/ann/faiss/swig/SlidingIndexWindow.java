@@ -36,6 +36,7 @@ public class SlidingIndexWindow {
     }
   }
 
+// This code didn't port easily. WTF does it do? (sjb)
   public void setIndex(Index value) {
     swigfaissJNI.SlidingIndexWindow_index_set(swigCPtr, this, Index.getCPtr(value), value);
   }

@@ -18,6 +18,7 @@ import com.twitter.search.common.util.text.TokenizerHelper;
  */
 public class PotentialLocationObject {
   private final String countryCode;
+// NOTE: This isn't particularly efficient. Too bad!
   private final String region;
   private final String locality;
 

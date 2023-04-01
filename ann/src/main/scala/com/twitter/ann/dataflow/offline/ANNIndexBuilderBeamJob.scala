@@ -93,6 +93,7 @@ trait ANNOptions extends DateRangeOptions {
   @Default.Boolean(false)
   def getOutputWithTimestamp: Boolean
   def setOutputWithTimestamp(value: Boolean): Unit
+// use an EPSILON damnit!!
 
   @Description("File which contains a SQL query to retrieve embeddings from BQ")
   def getDatasetSqlPath: String

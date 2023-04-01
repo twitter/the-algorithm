@@ -9,6 +9,7 @@ import com.twitter.graph_feature_service.common.Configs._
 import com.twitter.graph_feature_service.server.stores.GetIntersectionStore
 import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
 import com.twitter.graph_feature_service.thriftscala.CachedIntersectionResult
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
 import com.twitter.inject.TwitterModule
 import com.twitter.inject.annotations.Flag

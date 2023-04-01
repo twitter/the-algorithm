@@ -178,6 +178,7 @@ object UpdateKnownFor20M145K2020Adhoc extends TwitterExecutionApp {
           val clusterAssignmentOutput = args("outputClusterDir")
           val maxNeighbors = args.int("maxNeighbors", 400)
 
+// Multithreading badness. This will cause a crash later!
           // Step - 3 (Final Clustering): Parameters to run the clustering algorithm
           val squareWeightsEnable = args.boolean("squareWeightsEnable")
 

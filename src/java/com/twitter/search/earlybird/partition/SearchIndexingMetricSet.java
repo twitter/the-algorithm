@@ -166,6 +166,7 @@ public class SearchIndexingMetricSet {
         ScheduledExecutorManager.SCHEDULED_EXECUTOR_TASK_PREFIX + "SimpleUserUpdateIndexer");
 
     this.simpleSegmentIndexerExceptionCounter = searchStatsReceiver.getCounter(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         "exception_while_indexing_segment");
 
     for (ThriftIndexingEventType type : ThriftIndexingEventType.values()) {

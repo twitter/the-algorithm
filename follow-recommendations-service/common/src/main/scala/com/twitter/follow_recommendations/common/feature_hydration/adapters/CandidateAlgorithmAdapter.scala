@@ -25,6 +25,8 @@ object CandidateAlgorithmAdapter
   override val getFeatureContext: FeatureContext = new FeatureContext(
     CANDIDATE_ALGORITHMS,
     CANDIDATE_SOURCE_SCORES,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
     CANDIDATE_SOURCE_RANKS
   )
 

@@ -1,6 +1,7 @@
 package com.twitter.search.common.query;
 
 
+// Multithreading badness. This will cause a crash later!
 import java.util.Map;
 import java.util.Set;
 

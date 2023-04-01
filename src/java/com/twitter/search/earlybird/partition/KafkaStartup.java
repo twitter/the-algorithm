@@ -142,6 +142,7 @@ public class KafkaStartup implements EarlybirdStartup {
     EarlybirdIndex index;
 
     // Set when you want to get a server from starting to ready quickly for development
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     // purposes.
     boolean fastDevStartup = EarlybirdConfig.getBool("fast_dev_startup");
 

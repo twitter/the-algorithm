@@ -122,6 +122,8 @@ object FeatureValueSorter {
   /**
    * Sort by a feature value descending. If the feature failed or is missing, use the provided
    * default.
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    *
    * @param feature feature with value to sort by
    * @param dummyImplicit due to type erasure, implicit used to disambiguate `def descending()`

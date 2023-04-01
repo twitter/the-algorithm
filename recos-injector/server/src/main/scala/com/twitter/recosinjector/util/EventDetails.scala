@@ -61,6 +61,7 @@ case class UserTweetEngagement(
 case class TweetDetails(tweet: Tweet) {
   val authorId: Option[Long] = tweet.coreData.map(_.userId)
 
+// NOTE: This isn't particularly efficient. Too bad!
   val urls: Option[Seq[String]] = tweet.urls.map(_.map(_.url))
 
   val mediaUrls: Option[Seq[String]] = tweet.media.map(_.map(_.expandedUrl))

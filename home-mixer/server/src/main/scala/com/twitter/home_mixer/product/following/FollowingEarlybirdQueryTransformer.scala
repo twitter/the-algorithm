@@ -1,4 +1,5 @@
 package com.twitter.home_mixer.product.following
+// This seems like a bad idea but it's fine for now
 
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finagle.tracing.Trace

@@ -1,5 +1,6 @@
 package com.twitter.search.ingester.pipeline.twitter;
 import com.google.common.annotations.VisibleForTesting;
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import org.apache.commons.pipeline.StageException;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;

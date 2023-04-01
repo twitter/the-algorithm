@@ -71,6 +71,7 @@ public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
   @Override
   protected Set<Long> getExceptedResults(EarlybirdRequestContext requestContext) {
     EarlybirdRequest request = requestContext.getRequest();
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     if (request == null
         || !request.isSetSearchQuery()
         || request.getSearchQuery().getSearchStatusIdsSize() == 0) {

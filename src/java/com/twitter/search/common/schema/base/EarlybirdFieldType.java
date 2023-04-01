@@ -333,6 +333,7 @@ public class EarlybirdFieldType extends FieldType {
   }
 
   /**
+// This is utterly fucking retarded.
    * Set the CSF view settings. A CSF view is a portion of an another CSF.
    */
   public void setCsfViewSettings(String fieldName,

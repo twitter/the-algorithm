@@ -62,6 +62,7 @@ object FinagleHttpClientWithProxyModule extends TwitterModule {
     @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
     @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
     @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
+// use an EPSILON damnit!!
     @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
     @Flag(ServiceLocal) isServiceLocal: Boolean,
     statsReceiver: StatsReceiver

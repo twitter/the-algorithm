@@ -49,6 +49,8 @@ public class FieldWeightDefault {
     return enabled;
   }
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   public float getWeight() {
     return weight;
   }

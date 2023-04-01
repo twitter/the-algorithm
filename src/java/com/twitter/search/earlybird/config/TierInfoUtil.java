@@ -75,4 +75,6 @@ public final class TierInfoUtil {
     Preconditions.checkState(!tierOverrideServingRangesHaveGaps,
                              "Override serving ranges of light reads tiers must not have gaps.");
   }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 }

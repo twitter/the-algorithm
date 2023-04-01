@@ -41,6 +41,7 @@ trait DeepbirdScorer extends Scorer {
   private def failureCount = stats.counter("failures")
   private def inputRecordsStat = stats.stat("input_records")
   private def outputRecordsStat = stats.stat("output_records")
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   // Counters for tracking batch-prediction statistics when making DBv2 prediction calls
   //

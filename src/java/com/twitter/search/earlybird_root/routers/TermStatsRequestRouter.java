@@ -17,6 +17,9 @@ import com.twitter.finagle.Service;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
 import com.twitter.search.earlybird.config.ServingRange;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;

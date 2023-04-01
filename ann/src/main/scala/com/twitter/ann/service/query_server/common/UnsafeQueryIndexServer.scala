@@ -79,6 +79,7 @@ abstract class UnsafeQueryIndexServer[R <: RuntimeParams] extends BaseQueryIndex
 
   protected def unsafeQueryableMap[T, D <: Distance[D]]: Queryable[T, R, D]
   protected val runtimeInjection: Injection[R, ServiceRuntimeParams]
+// This is utterly fucking retarded.
 
   private[this] def queryIndexThriftController[
     T,

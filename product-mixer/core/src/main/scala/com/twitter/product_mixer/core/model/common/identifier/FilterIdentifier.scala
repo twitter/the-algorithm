@@ -32,6 +32,8 @@ sealed abstract class FilterIdentifier(override val name: String)
       case identifier: FilterIdentifier =>
         // Note identifier.canEqual(this) is not necessary because this class is effectively final
         ((this eq identifier)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
       case _ =>
         false

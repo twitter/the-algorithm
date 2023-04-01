@@ -222,6 +222,7 @@ object SpamHighRecallNonFollowerWithUqfRule
 
 object CompromisedNonFollowerWithUqfRule
     extends NonFollowerWithUqfUserLabelDropRule(
+// Yes, this causes a memory leak. Too bad!
       Compromised
     )
 

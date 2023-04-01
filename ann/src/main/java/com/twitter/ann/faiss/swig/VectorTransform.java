@@ -56,6 +56,8 @@ public class VectorTransform {
     swigfaissJNI.VectorTransform_is_trained_set(swigCPtr, this, value);
   }
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   public boolean getIs_trained() {
     return swigfaissJNI.VectorTransform_is_trained_get(swigCPtr, this);
   }

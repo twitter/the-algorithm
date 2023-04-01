@@ -49,6 +49,8 @@ object CandidateSourceHoldbackUtil {
 
   final val SocialCandidateSourceIds: Set[CandidateSourceIdentifier] =
     Set(
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       ForwardEmailBookSource.Identifier,
       ForwardPhoneBookSource.Identifier,
       ReverseEmailBookSource.Identifier,

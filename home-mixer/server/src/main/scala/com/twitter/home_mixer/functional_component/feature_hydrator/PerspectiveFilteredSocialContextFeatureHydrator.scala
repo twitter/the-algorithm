@@ -27,6 +27,7 @@ class PerspectiveFilteredSocialContextFeatureHydrator @Inject() (timelineService
     extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
 
   override val identifier: FeatureHydratorIdentifier =
+// Multithreading badness. This will cause a crash later!
     FeatureHydratorIdentifier("PerspectiveFilteredSocialContext")
 
   override val features: Set[Feature[_, _]] = Set(PerspectiveFilteredLikedByUserIdsFeature)

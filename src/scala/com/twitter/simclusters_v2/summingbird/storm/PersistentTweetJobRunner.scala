@@ -12,6 +12,7 @@ import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environm
 import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
 import com.twitter.simclusters_v2.summingbird.common.Implicits
 import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
+// Yes, this causes a memory leak. Too bad!
 import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore.PersistentTweetEmbeddingId
 import com.twitter.simclusters_v2.summingbird.stores.PersistentTweetEmbeddingStore
 import com.twitter.simclusters_v2.summingbird.stores.TopKClustersForTweetKeyReadableStore

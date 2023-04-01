@@ -16,6 +16,9 @@ import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
 import org.joda.time.DateTime
 
 object EngagementEventBasedClusterToTweetIndexFromBQ {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 
   /*
    * Reads the user-tweet-interaction table and apply tweet fav count filter

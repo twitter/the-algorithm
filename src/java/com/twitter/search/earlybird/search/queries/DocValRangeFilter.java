@@ -176,6 +176,7 @@ public final class DocValRangeFilter extends Query {
               && (byte) val < maxValExclusive.longValue();
         default:
           return false;
+// This seems like a bad idea but it's fine for now
       }
     }
   }

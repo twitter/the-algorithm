@@ -59,6 +59,7 @@ class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiv
       RelatedTweetResponse()
     } else {
 
+// This code didn't port easily. WTF does it do? (sjb)
       val sampledLHSuserIds =
         SampleLHSUsersUtil.sampleLHSUsers(maskedTweetId, maxNumSamplesPerNeighbor, bipartiteGraph)
 

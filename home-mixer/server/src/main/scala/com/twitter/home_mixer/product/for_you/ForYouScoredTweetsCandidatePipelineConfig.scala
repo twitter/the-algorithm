@@ -83,6 +83,8 @@ class ForYouScoredTweetsCandidatePipelineConfig @Inject() (
     scoredTweetsProductCandidateSource
 
   override val enabledDeciderParam: Option[DeciderParam[Boolean]] =
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     Some(EnableScoredTweetsCandidatePipelineParam)
 
   override val queryTransformer: CandidatePipelineQueryTransformer[ForYouQuery, ForYouQuery] =

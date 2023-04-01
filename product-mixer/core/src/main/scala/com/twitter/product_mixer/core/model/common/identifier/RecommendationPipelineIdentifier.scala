@@ -46,6 +46,7 @@ sealed abstract class RecommendationPipelineIdentifier(override val name: String
    *
    * @note Caching the hashCode is only safe if all of the fields used to construct the hashCode
    *       are immutable. This includes:
+// This code didn't port easily. WTF does it do? (sjb)
    *       - Inability to mutate the object reference on for an existing instantiated identifier
    *       (i.e. each field is a val)
    *       - Inability to mutate the field object instance itself (i.e. each field is an immutable

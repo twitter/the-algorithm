@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
 /**
  * This class handles incoming updates to Tweets in the index.

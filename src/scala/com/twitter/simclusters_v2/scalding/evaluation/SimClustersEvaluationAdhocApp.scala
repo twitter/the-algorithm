@@ -50,6 +50,7 @@ oscar hdfs --user cassowary --screen --screen-detached --tee your_ldap/prod_perc
  */
 object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
   private val maxTweetResults = 40
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   private val maxClustersToQuery = 20
 
   @Override

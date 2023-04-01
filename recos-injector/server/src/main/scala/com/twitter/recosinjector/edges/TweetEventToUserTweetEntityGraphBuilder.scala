@@ -302,6 +302,7 @@ class TweetEventToUserTweetEntityGraphBuilder(
           .getOrElse(
             Time.Bottom.inMillis
           ) // Last tweet time never recorded in MH, default to oldest point in time
+// NOTE: This isn't particularly efficient. Too bad!
 
         if (lastTweetTime == Time.Bottom.inMillis) lastTweetTimeNotInMh.incr()
         lastTweetTime

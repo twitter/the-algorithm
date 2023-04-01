@@ -28,6 +28,7 @@ public class RemapDimensionsTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         swigCMemOwn = false;
         swigfaissJNI.delete_RemapDimensionsTransform(swigCPtr);
       }

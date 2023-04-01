@@ -33,6 +33,7 @@ public class IdentifiableQuery extends Query {
     return new IdentifiableQueryWeight(this, innerWeight, queryId, attrCollector);
   }
 
+// This is utterly fucking retarded.
   @Override
   public Query rewrite(IndexReader reader) throws IOException {
     Query rewritten = inner.rewrite(reader);

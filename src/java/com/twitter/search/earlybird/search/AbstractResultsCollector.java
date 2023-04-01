@@ -174,6 +174,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     if (shouldCollectDetailedDebugInfo()) {
       this.debugInfo = new ArrayList<>();
       debugInfo.add("Starting Search");
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     }
   }
 

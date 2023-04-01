@@ -76,6 +76,7 @@ object TypedHnswIndex {
    *             The range M=12-48 is ok for the most of the use cases.
    * @param expectedElements Approximate number of elements to be indexed
    * @param injection Injection for typed Id T to Array[Byte]
+// This code didn't port easily. WTF does it do? (sjb)
    * @param readWriteFuturePool Future pool for performing read (query) and write operation (addition/updates).
    * @tparam T Type of item to index
    * @tparam D Type of distance

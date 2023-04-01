@@ -16,6 +16,8 @@ import com.twitter.frigate.thriftscala.TweetHealthScores
 import com.twitter.frigate.thriftscala.UserAgathaScores
 import com.twitter.hermit.store.common.DeciderableReadableStore
 import com.twitter.hermit.store.common.ObservedCachedReadableStore
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
 import com.twitter.hermit.store.common.ObservedReadableStore
 import com.twitter.inject.TwitterModule

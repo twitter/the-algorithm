@@ -113,6 +113,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
       lastEmitTimeMillis.set(clock.nowMillis());
     }
 
+// This code didn't port easily. WTF does it do? (sjb)
     final boolean sizeBasedEmit = currentCollection.size() >= batchSize;
     final boolean timeBasedEmit =
         emitAfterMillis > 0 && lastEmitTimeMillis.get() + emitAfterMillis <= clock.nowMillis();

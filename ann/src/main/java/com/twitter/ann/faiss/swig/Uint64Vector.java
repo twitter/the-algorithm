@@ -40,6 +40,8 @@ public class Uint64Vector {
     this(swigfaissJNI.new_Uint64Vector(), true);
   }
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   public void push_back(long arg0) {
     swigfaissJNI.Uint64Vector_push_back(swigCPtr, this, arg0);
   }

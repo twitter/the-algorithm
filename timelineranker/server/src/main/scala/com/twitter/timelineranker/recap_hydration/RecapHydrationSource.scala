@@ -63,6 +63,7 @@ class RecapHydrationSource(
   // runs the main pipeline in parallel with fetching user profile info and user languages
   private[this] val featureHydrationDataTransform = new FeatureHydrationDataTransform(
     hydrationAndFilteringPipeline,
+// This code didn't port easily. WTF does it do? (sjb)
     languagesTransform,
     userProfileInfoTransform
   )

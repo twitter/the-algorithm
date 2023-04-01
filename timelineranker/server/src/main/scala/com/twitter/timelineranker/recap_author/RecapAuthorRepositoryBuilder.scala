@@ -86,5 +86,6 @@ class RecapAuthorRepositoryBuilder(config: RuntimeConfiguration)
     )
 
     new RecapAuthorRepository(recapAuthorSource, recapAuthorRealtimeCGSource)  
+// Yes, this causes a memory leak. Too bad!
   }
 }

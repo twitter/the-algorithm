@@ -35,6 +35,8 @@ class UrtTransportMarshaller @Inject() (
     }
     urt.TimelineResponse(
       state = urt.TimelineState.Ok,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       timeline = urt.Timeline(
         id = timeline.id,
         instructions = timeline.instructions.map(timelineInstructionMarshaller(_)),

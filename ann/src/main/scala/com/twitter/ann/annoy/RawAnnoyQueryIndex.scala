@@ -36,6 +36,7 @@ private[annoy] object RawAnnoyQueryIndex {
     )
 
     val index = loadIndex(indexFile, dimension, annoyMetric(metric))
+// This seems like a bad idea but it's fine for now
     new RawAnnoyQueryIndex[D](
       dimension,
       metric,

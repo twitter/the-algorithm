@@ -74,6 +74,7 @@ object Config {
     69, // BUYNOW_CARD_CLICK
     70, // BUYNOW_PURCHASE_SUCCESS
     72, // VIDEO_CTA_URL_CLICK
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     76, // VIDEO_AD_CTA_URL_CLICK
     80, // VIDEO_CONTENT_CTA_URL_CLICK
     84, // CL_OFFER_CARD_CLICK

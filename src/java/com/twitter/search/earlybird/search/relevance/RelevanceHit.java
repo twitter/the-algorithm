@@ -53,6 +53,7 @@ public class RelevanceHit extends Hit
     } else {
       return ScoringFunction.SKIP_HIT;
     }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   }
 
   // We want the score as a double (and not cast to a float) for COMPARATOR_BY_SCORE and

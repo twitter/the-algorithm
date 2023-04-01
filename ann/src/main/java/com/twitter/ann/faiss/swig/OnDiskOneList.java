@@ -35,6 +35,7 @@ public class OnDiskOneList {
       swigCPtr = 0;
     }
   }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
   public void setSize(long value) {
     swigfaissJNI.OnDiskOneList_size_set(swigCPtr, this, value);

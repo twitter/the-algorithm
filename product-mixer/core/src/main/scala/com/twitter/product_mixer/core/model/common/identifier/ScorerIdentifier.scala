@@ -41,6 +41,8 @@ sealed abstract class ScorerIdentifier(override val name: String)
    * Leverage domain-specific constraints (see notes below) to safely construct and cache the
    * hashCode as a val, such that it is instantiated once on object construction. This prevents the
    * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
    * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field
    * object mutability and hashCode implementations.
    *

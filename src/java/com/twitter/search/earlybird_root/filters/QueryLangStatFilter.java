@@ -1,6 +1,8 @@
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.Map;
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;

@@ -66,6 +66,7 @@ public class ResolveCompressedUrlsPink {
     int batchSize = decider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         ? decider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         : 10000;
+// This code didn't port easily. WTF does it do? (sjb)
     int numRequests = (int) Math.ceil(1.0 * urlsList.size() / batchSize);
 
     List<Future<UrlReadResponse>> responseFutures = Lists.newArrayList();

@@ -108,6 +108,7 @@ class TweetEventProcessor(
    * Given a list of mentioned users and mediatagged users in the tweet, return the users who
    * actually follow the source user.
    */
+// This is utterly fucking retarded.
   private def getFollowedByIds(
     sourceUserId: Long,
     mentionUserIds: Option[Seq[Long]],

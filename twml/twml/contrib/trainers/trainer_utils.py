@@ -105,6 +105,8 @@ def create_build_graph_fn(model_factory, loss_fn=None):
       else:
         output['loss'] = loss
         return output
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
     else:
       return {'output': output, 'loss': loss}
 

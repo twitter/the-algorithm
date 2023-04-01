@@ -49,6 +49,7 @@ object DmEventVisibilityLibrary {
       val dmEventId = req.dmEventId
       val contentId = DmEventId(dmEventId)
       val safetyLevel = req.safetyLevel
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
       if (!RuleBase.hasDmEventRules(safetyLevel)) {
         Stitch.value(VisibilityResult(contentId = contentId, verdict = Drop(Reason.Unspecified)))

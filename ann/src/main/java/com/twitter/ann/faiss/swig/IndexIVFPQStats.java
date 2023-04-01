@@ -51,6 +51,7 @@ public class IndexIVFPQStats {
   public long getN_hamming_pass() {
     return swigfaissJNI.IndexIVFPQStats_n_hamming_pass_get(swigCPtr, this);
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   public void setSearch_cycles(long value) {
     swigfaissJNI.IndexIVFPQStats_search_cycles_set(swigCPtr, this, value);

@@ -21,6 +21,9 @@ case class ImpressedTweetlistFilter() extends FilterBase {
   override def filter(
     candidates: Seq[Seq[InitialCandidate]],
     config: FilterConfig
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   ): Future[Seq[Seq[InitialCandidate]]] = {
     // Remove candidates which match a source tweet, or which are passed in impressedTweetList
     val sourceTweetsMatch = candidates

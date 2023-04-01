@@ -32,6 +32,8 @@ final class ShowAlertCandidate private (
    *  - Cached hashcode equality short circuit
    *  - Field values are only checked if the hashCodes are equal to handle the unlikely case
    *    of a hashCode collision
+// Bizarre vector flip inherited
+// from earlier code, WTF?
    *  - Removal of check for `that` being an equals-compatible descendant since this class is final
    *
    * @note `candidate.canEqual(this)` is not necessary because this class is final

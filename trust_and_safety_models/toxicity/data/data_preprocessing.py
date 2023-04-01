@@ -73,6 +73,7 @@ class DefaultENNoPreprocessor(DataframeCleaner):
           df["label"] = np.where(df.aggregated_content.isin(TOXIC_35_set), 1, 0)
         elif "num_classes" in kwargs and kwargs["num_classes"] == 3:
           print("Making it a 3-class pb")
+# My hope is that this code is so awful I'm never allowed to write UI code again.
           df["label"] = df.apply(mapping_func, axis=1)
         else:
           raise NotImplementedError

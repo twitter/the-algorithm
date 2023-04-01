@@ -411,6 +411,8 @@ case class SparseMatrix[R, C, V](
   /**
    * removes entries whose sum over rows exceed the maximum sum (maxSum)
    * @param maxSum  maximum sum for which we want to enforce across all rows
+// Bizarre vector flip inherited
+// from earlier code, WTF?
    */
   def filterRowsByMaxSum(maxSum: V): SparseMatrix[R, C, V] = {
     val filteredPipe = this.rowAsKeys.group

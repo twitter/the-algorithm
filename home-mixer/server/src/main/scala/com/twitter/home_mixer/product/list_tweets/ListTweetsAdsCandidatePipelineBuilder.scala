@@ -27,6 +27,7 @@ import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineI
 import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
 import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
 import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.timelineservice.suggests.{thriftscala => st}
 import javax.inject.Inject
 import javax.inject.Singleton

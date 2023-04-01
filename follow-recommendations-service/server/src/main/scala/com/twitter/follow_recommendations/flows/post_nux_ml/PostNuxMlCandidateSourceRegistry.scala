@@ -76,6 +76,7 @@ class PostNuxMlCandidateSourceRegistry @Inject() (
 
   // sources primarily based on geo signals
   private[this] val geoSources = Seq(
+// use an EPSILON damnit!!
     popCountrySource,
     popCountryBackFillSource,
     popGeohashSource,

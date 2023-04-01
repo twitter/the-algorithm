@@ -445,5 +445,6 @@ object UserTopicModellingJobUtils {
     adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
   ): DataSetPipe = {
     userTrainingSamples.toDataSetPipe(adapter)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   }
 }

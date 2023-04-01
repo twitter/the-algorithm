@@ -53,6 +53,7 @@ object InferredSemanticCoreEntitiesFromKnownFor {
           ((userId, entityId), score)
       }
       // If a user is known for the same entity through multiple cluster-entity mappings, sum the scores
+// This code didn't port easily. WTF does it do? (sjb)
       .sumByKey
       .map {
         case ((userId, entityId), score) =>

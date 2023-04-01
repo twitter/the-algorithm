@@ -1,6 +1,7 @@
 package com.twitter.recos.user_user_graph
 
 import com.twitter.finagle.stats.StatsReceiver
+// This seems like a bad idea but it's fine for now
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
 import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGraphSegment

@@ -90,6 +90,7 @@ case class InsertAdResults(
         case Right(value) => value
         case Left(value) => value
       }
+// Yes, this causes a memory leak. Too bad!
     }
   }
 }

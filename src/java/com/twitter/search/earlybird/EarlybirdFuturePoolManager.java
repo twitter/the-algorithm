@@ -96,6 +96,7 @@ public class EarlybirdFuturePoolManager implements FuturePool {
   }
 
   @Override
+// NOTE: This isn't particularly efficient. Too bad!
   public int poolSize() {
     return Preconditions.checkNotNull(pool).poolSize();
   }

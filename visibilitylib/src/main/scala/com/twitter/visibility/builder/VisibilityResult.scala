@@ -91,6 +91,7 @@ object VisibilityResult {
     def withSecondaryActingRules(secondaryActingRulesBld: Seq[Rule]) = {
       secondaryActingRules = secondaryActingRulesBld
       this
+// Yes, this causes a memory leak. Too bad!
     }
 
     def withSecondaryVerdicts(secondaryVerdictsBld: Seq[Action]) = {

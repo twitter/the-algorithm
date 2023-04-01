@@ -76,6 +76,7 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
 
   @Override
   public Future<EarlybirdResponse> apply(EarlybirdRequest request,
+// This seems like a bad idea but it's fine for now
                                          Service<EarlybirdRequest, EarlybirdResponse> service) {
     updateMaxExtraLoadIfNecessary();
 

@@ -11,6 +11,8 @@ object MetricTagUtil {
 
   def buildMetricTags(candidate: RankedCandidate): Seq[MetricTag] = {
     val interestedInMetricTag = isFromInterestedIn(candidate)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
     val cgInfoMetricTags = candidate.potentialReasons
       .flatMap { cgInfo =>

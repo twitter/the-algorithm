@@ -30,6 +30,7 @@ object Configs {
   final val MutualFollowKeyPath: String = "mutual_follow_key/"
 
   final val FavoriteOutValPath: String = "favorite_out_val/"
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   final val FavoriteInValPath: String = "favorite_in_val/"
   final val FavoriteOutKeyPath: String = "favorite_out_key/"
   final val FavoriteInKeyPath: String = "favorite_in_key/"

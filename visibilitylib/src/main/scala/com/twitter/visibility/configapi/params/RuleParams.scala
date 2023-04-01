@@ -100,6 +100,8 @@ private[visibility] object RuleParams {
   object EnableNewAdAvoidanceRulesParam extends RuleParam(false)
 
   object EnableNsfaHighRecallAdAvoidanceParam extends RuleParam(false)
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
   object EnableNsfaKeywordsHighPrecisionAdAvoidanceParam extends RuleParam(false)
 

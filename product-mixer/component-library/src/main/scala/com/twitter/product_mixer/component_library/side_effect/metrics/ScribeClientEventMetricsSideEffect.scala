@@ -46,6 +46,7 @@ class ScribeClientEventMetricsSideEffect[
     query: Query,
     selectedCandidates: Seq[CandidateWithDetails],
     remainingCandidates: Seq[CandidateWithDetails],
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     droppedCandidates: Seq[CandidateWithDetails],
     response: UnmarshalledResponseType
   ): Seq[ScribeClientEventSideEffect.ClientEvent] = {

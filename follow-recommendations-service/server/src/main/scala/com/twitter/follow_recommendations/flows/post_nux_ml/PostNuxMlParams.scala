@@ -28,6 +28,9 @@ object PostNuxMlParams {
       extends FSBoundedParam[Duration](
         name = PostNuxMlFlowFeatureSwitchKeys.MLRankerBudget,
         default = 400.millisecond,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         min = 100.millisecond,
         max = 800.millisecond)
       with HasDurationConversion {

@@ -64,6 +64,7 @@ object UserStateStoreModule extends TwitterModule {
             Future.None
         }
     }
+// This seems like a bad idea but it's fine for now
   }
 
   @Provides

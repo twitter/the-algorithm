@@ -35,6 +35,7 @@ class UnifiedUserActionsConsumer(
       .fetchMax(fetchMax)
       .seekStrategy(SeekStrategy.END)
       .enableAutoCommit(false) // AtLeastOnceProcessor performs commits manually
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
       .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation)
       .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)

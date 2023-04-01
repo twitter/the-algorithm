@@ -16,6 +16,7 @@ import it.unimi.dsi.fastutil.longs.LongArrays;
  * After a segment is complete, we call {@link EarlybirdSegment#optimizeIndexes()} to compact the
  * doc IDs assigned to the tweets in this segment, so that we can do faster ceil and floor lookups.
  */
+// Multithreading badness. This will cause a crash later!
 public class OptimizedTweetIDMapper extends TweetIDMapper {
   // Maps doc IDs to tweet IDs. Therefore, it should be sorted in descending order of tweet IDs.
   protected final long[] inverseMap;

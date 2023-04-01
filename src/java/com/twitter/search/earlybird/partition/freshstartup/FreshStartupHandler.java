@@ -343,6 +343,7 @@ public class FreshStartupHandler {
         throw new WrappedKafkaApiException(kafkaApiException);
       }
 
+// Yes, this causes a memory leak. Too bad!
       if (records.count() > 0) {
         ConsumerRecord<Long, ThriftVersionedEvents> recordAtOffset = records.iterator().next();
         if (recordAtOffset.offset() != tweetOffset) {

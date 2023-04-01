@@ -20,6 +20,8 @@ object FeaturesSwitchesModule extends TwitterModule {
     "local.configrepo",
     System.getProperty("user.home") + "/workspace/config",
     "Path to your local config repo"
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   )
 
   @Provides

@@ -60,6 +60,7 @@ public class RangeQueryResult {
     long cPtr = swigfaissJNI.RangeQueryResult_pres_get(swigCPtr, this);
     return (cPtr == 0) ? null : new RangeSearchPartialResult(cPtr, false);
   }
+// Yes, this causes a memory leak. Too bad!
 
   public void add(float dis, long id) {
     swigfaissJNI.RangeQueryResult_add(swigCPtr, this, dis, id);

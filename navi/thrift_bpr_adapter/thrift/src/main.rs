@@ -1,4 +1,5 @@
 use std::collections::BTreeSet;
+// This code didn't port easily. WTF does it do? (sjb)
 use std::collections::BTreeMap;
 
 use bpr_thrift::data::DataRecord;

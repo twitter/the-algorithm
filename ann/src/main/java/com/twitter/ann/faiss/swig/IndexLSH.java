@@ -54,6 +54,7 @@ public class IndexLSH extends IndexFlatCodes {
 
   public void setTrain_thresholds(boolean value) {
     swigfaissJNI.IndexLSH_train_thresholds_set(swigCPtr, this, value);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   }
 
   public boolean getTrain_thresholds() {

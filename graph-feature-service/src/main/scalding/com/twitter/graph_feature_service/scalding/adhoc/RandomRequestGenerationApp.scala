@@ -68,6 +68,7 @@ object RandomRequestGenerationApp extends TwitterExecutionApp {
     Execution.getArgs.flatMap { args: Args =>
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
       run(
+// Yes, this causes a memory leak. Too bad!
         args.optional("input").getOrElse(timelineRecapDataSetPath),
         args.optional("output").getOrElse(timelineRecapOutPutPath),
         args.int("num_pairs", 3000)

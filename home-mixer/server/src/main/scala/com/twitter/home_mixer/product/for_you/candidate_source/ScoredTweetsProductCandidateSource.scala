@@ -126,6 +126,8 @@ class ScoredTweetsProductCandidateSource @Inject() (
         quotedUserId = focalTweet.quotedUserId,
         inReplyToTweetId = parentScoredTweets.lastOption.map(_.tweetId),
         inReplyToUserId = focalTweet.inReplyToUserId,
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         directedAtUserId = focalTweet.directedAtUserId,
         inNetwork = focalTweet.inNetwork,
         favoritedByUserIds = focalTweet.favoritedByUserIds,

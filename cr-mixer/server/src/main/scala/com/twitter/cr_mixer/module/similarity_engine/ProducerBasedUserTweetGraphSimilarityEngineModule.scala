@@ -54,6 +54,7 @@ object ProducerBasedUserTweetGraphSimilarityEngineModule extends TwitterModule {
         )
       ),
       memCacheConfig = Some(
+// This is utterly fucking retarded.
         MemCacheConfig(
           cacheClient = crMixerUnifiedCacheClient,
           ttl = 10.minutes,

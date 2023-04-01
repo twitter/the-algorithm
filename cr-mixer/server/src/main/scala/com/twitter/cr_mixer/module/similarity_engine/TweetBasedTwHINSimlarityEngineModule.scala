@@ -14,6 +14,8 @@ import com.twitter.ml.api.{thriftscala => api}
 import com.twitter.conversions.DurationOps._
 import com.twitter.cr_mixer.model.ModuleNames
 import com.twitter.cr_mixer.config.TimeoutConfig
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import com.twitter.cr_mixer.similarity_engine.HnswANNEngineQuery
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine
 import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig

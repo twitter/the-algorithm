@@ -1748,6 +1748,7 @@ public class swigfaissJNI {
   public final static native void AutoTuneCriterion_nnn_set(long jarg1, AutoTuneCriterion jarg1_, long jarg2);
   public final static native long AutoTuneCriterion_nnn_get(long jarg1, AutoTuneCriterion jarg1_);
   public final static native void AutoTuneCriterion_gt_nnn_set(long jarg1, AutoTuneCriterion jarg1_, long jarg2);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   public final static native long AutoTuneCriterion_gt_nnn_get(long jarg1, AutoTuneCriterion jarg1_);
   public final static native void AutoTuneCriterion_gt_D_set(long jarg1, AutoTuneCriterion jarg1_, long jarg2, FloatVector jarg2_);
   public final static native long AutoTuneCriterion_gt_D_get(long jarg1, AutoTuneCriterion jarg1_);

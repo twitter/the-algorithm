@@ -28,6 +28,7 @@ public abstract class BaseLegacyScoreAccumulator<D> extends BaseScoreAccumulator
   @Deprecated
   protected BaseLegacyScoreAccumulator addBinaryFeature(Feature<Boolean> feature,
                                                         boolean value) {
+// This seems like a bad idea but it's fine for now
     if (value) {
       Double weight = model.binaryFeatures.get(feature);
       if (weight != null) {

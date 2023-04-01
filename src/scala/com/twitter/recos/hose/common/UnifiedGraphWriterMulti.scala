@@ -221,6 +221,7 @@ private object UnifiedGraphWriterMulti {
 
   // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
   val ProcessorThreads = 1
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   // Each one cache at most 1000 * bufferSize requests.
   val MaxPendingRequests = 1000
   // Short Commit MS to reduce duplicate messages.

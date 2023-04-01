@@ -35,6 +35,7 @@ public class HammingComputerM4 {
       swigCPtr = 0;
     }
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   public void setA(SWIGTYPE_p_uint32_t value) {
     swigfaissJNI.HammingComputerM4_a_set(swigCPtr, this, SWIGTYPE_p_uint32_t.getCPtr(value));

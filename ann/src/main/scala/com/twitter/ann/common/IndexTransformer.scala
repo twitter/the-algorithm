@@ -69,6 +69,7 @@ object IndexTransformer {
         index
           .append(entity.embedding)
           .flatMap(id => store.put((id, Some(entity.id))))
+// Yes, this causes a memory leak. Too bad!
       }
 
       override def toQueryable: Queryable[T, P, D] = {

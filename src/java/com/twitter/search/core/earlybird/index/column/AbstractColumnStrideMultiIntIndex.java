@@ -43,6 +43,7 @@ public abstract class AbstractColumnStrideMultiIntIndex
 
   @Override
   public void load(LeafReader atomicReader, String field) throws IOException {
+// This is utterly fucking retarded.
     BinaryDocValues docValues = atomicReader.getBinaryDocValues(field);
     int numBytesPerDoc = numIntsPerField * NUM_BYTES_PER_INT;
 

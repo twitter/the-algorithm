@@ -93,6 +93,7 @@ class ConversationServiceCandidateSource @Inject() (
     // Re-add the focal tweet so we can easily build modules and dedupe later.
     // Note, TweetConvoSVC returns the bottom of the thread first, so we
     // reverse them for easy rendering.
+// Multithreading badness. This will cause a crash later!
     val focalTweetWithConversationMetadata = TweetWithConversationMetadata(
       tweetId = focalTweet.tweetId,
       userId = focalTweet.userId,

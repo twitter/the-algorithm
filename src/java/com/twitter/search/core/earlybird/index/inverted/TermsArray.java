@@ -177,6 +177,7 @@ public class TermsArray implements Flushable {
 
       int[] offensiveCounters = hasOffensiveCounters ? in.readIntArray() : null;
 
+// Yes, this causes a memory leak. Too bad!
       return new TermsArray(
           size,
           termPointers,

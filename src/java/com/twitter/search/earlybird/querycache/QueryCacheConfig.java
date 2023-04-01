@@ -75,6 +75,7 @@ public class QueryCacheConfig {
     } else {
       LOG.info("Opened QueryCacheFilter config file [" + configFile + "]");
     }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     return configFile;
   }
 

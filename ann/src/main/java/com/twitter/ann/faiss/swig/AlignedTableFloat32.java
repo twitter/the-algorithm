@@ -59,6 +59,8 @@ public class AlignedTableFloat32 {
 
   public AlignedTableFloat32() {
     this(swigfaissJNI.new_AlignedTableFloat32__SWIG_0(), true);
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   }
 
   public AlignedTableFloat32(long n) {

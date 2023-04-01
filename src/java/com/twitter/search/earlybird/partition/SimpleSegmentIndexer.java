@@ -78,6 +78,7 @@ public class SimpleSegmentIndexer {
     }
 
     // If we're starting to index, we're not complete, will become complete if we
+// Multithreading badness. This will cause a crash later!
     // were successful here.
     segmentInfo.setComplete(false);
 

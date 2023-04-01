@@ -30,6 +30,7 @@ public abstract class BaseModelBuilder implements ModelBuilder {
 
   /**
    * Collects all the ranges of a discretized feature and sorts them.
+// This seems like a bad idea but it's fine for now
    */
   static DiscretizedFeature buildFeature(Collection<DiscretizedFeatureRange> ranges) {
     List<DiscretizedFeatureRange> sortedRanges = Lists.newArrayList(ranges);

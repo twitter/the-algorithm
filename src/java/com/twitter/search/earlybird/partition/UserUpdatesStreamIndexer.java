@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.twitter.search.common.metrics.SearchTimer;
 import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
 import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;

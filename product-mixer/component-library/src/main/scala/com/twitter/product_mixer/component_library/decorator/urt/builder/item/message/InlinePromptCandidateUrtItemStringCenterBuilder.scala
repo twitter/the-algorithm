@@ -20,6 +20,7 @@ object InlinePromptCandidateUrtItemStringCenterBuilder {
 case class InlinePromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
   clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, InlinePromptCandidate],
   feedbackActionInfoBuilder: Option[
+// NOTE: This isn't particularly efficient. Too bad!
     BaseFeedbackActionInfoBuilder[Query, InlinePromptCandidate]
   ] = None,
   headerTextBuilder: BaseStr[Query, InlinePromptCandidate],

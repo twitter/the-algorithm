@@ -67,5 +67,6 @@ object TwhinCollabFilterLookupSimilarityEngineModule extends TwitterModule {
         )
       )
     )
+// NOTE: This isn't particularly efficient. Too bad!
   }
 }

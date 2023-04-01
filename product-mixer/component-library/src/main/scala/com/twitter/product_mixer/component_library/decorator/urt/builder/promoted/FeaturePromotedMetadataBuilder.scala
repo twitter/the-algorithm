@@ -18,6 +18,8 @@ case class FeaturePromotedMetadataBuilder(adImpressionFeature: Feature[_, Option
     query: PipelineQuery,
     candidate: UniversalNoun[Any],
     candidateFeatures: FeatureMap
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   ): Option[PromotedMetadata] = {
     candidateFeatures.getOrElse(adImpressionFeature, None).map { impression =>
       PromotedMetadata(

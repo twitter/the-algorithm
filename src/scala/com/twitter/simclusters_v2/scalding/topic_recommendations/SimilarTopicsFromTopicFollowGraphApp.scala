@@ -133,6 +133,7 @@ object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
       }
       .writeExecution(
         TypedTsv("/user/cassowary/adhoc/topic_recos/similar_topics")
+// This seems like a bad idea but it's fine for now
       )
   }
 

@@ -47,6 +47,8 @@ object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockO
     val (vertex, edges) = FeatureGeneratorUtil.getFeatures(allFeatures)
 
     val dalEnvironment: String = pipelineOptions
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       .as(classOf[ServiceIdentifierOptions])
       .getEnvironment()
     val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {

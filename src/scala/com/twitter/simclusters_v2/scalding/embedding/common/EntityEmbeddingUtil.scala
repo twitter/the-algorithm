@@ -23,6 +23,7 @@ object EntityEmbeddingUtil {
         case Edge(userId, entity, consumerFeatures, _, _)
             if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) &&
               EntityUtil.getEntityType(entity) == entityType =>
+// Multithreading badness. This will cause a crash later!
           for {
             features <- consumerFeatures
             favFeatures <- features.find(_.featureName == FeatureName.Favorites)

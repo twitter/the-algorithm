@@ -19,6 +19,8 @@ import com.twitter.visibility.models.UserAge
 import com.twitter.visibility.models.ViewerContext
 
 class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_features")
 
   private[this] val requests = scopedStatsReceiver.counter("requests")

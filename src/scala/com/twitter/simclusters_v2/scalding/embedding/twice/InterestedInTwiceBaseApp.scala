@@ -21,6 +21,8 @@ import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelecti
 import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionStatistics._
 import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
 import com.twitter.simclusters_v2.hdfs_sources.UserUserGraphScalaDataset
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
 import com.twitter.simclusters_v2.thriftscala.EmbeddingType

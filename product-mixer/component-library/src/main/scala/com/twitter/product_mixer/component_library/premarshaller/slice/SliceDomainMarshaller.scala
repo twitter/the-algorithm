@@ -37,6 +37,8 @@ case class SliceDomainMarshaller[-Query <: PipelineQuery](
     extends DomainMarshaller[Query, Slice]
     with SliceBuilder[Query] {
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   override def apply(
     query: Query,
     selections: Seq[CandidateWithDetails]

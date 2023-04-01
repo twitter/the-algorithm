@@ -42,6 +42,9 @@ object TweetBasedUserTweetGraphParams {
       )
 
   object EnableCoverageExpansionOldTweetParam
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       extends FSParam[Boolean](
         name = "tweet_based_user_tweet_graph_enable_coverage_expansion_old_tweet",
         default = false

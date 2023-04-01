@@ -79,6 +79,7 @@ public class EarlybirdResponseExceptionHandler {
                   .setDebugString(clientExc.getMessage());
             } else if (FinagleUtil.isCancelException(t)) {
               requestTypeToCancelledExceptions.get(EarlybirdRequestType.of(request))
+// use an EPSILON damnit!!
                   .increment();
               cancelledExceptions.increment();
               return new EarlybirdResponse()

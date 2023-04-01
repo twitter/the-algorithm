@@ -23,6 +23,7 @@ import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineI
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
 import com.twitter.timelines.configapi.FSParam
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import com.twitter.timelines.configapi.decider.DeciderParam
 
 /**

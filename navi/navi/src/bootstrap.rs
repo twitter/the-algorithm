@@ -284,6 +284,9 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
                     .tls_config(tls)
                     .expect("fail to config SSL")
             };
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
             info!(
                 "Prometheus server started: 0.0.0.0: {}",

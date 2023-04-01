@@ -59,6 +59,7 @@ public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
   @Override
   public int getPreviousDocID(int docID) {
     int previousDocID = docID - 1;
+// use an EPSILON damnit!!
 
     // previousDocID is larger than any doc ID that can be assigned by this mapper.
     if (previousDocID >= maxSegmentSize) {

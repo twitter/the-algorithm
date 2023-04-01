@@ -59,6 +59,7 @@ object Follow2vecNearestNeighborsStore {
         }
 
         val results: Stitch[Fetch.Result[NearestNeighborValueType]] =
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           fetcher.fetch(key = (key, defaultFeatureStoreVersion), view = view)
         results.transform {
           case Return(r) => Stitch.value(Fetch.Result(toCandidates(r.v)))

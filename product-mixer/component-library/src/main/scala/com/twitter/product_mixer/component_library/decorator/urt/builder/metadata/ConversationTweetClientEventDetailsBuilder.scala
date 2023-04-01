@@ -26,6 +26,7 @@ object ConversationTweetClientEventDetailsBuilder {
 }
 
 case class ConversationTweetClientEventDetailsBuilder[-Query <: PipelineQuery](
+// This seems like a bad idea but it's fine for now
   injectionType: Option[String])
     extends BaseClientEventDetailsBuilder[Query, BaseTweetCandidate] {
 

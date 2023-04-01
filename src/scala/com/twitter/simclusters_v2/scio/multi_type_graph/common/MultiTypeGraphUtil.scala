@@ -13,6 +13,7 @@ import com.twitter.simclusters_v2.thriftscala.Noun
 import com.twitter.simclusters_v2.thriftscala.RightNode
 import com.twitter.simclusters_v2.thriftscala.RightNodeType
 import com.twitter.util.Duration
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
 object MultiTypeGraphUtil {
   val RootMHPath: String = "manhattan_sequence_files/multi_type_graph/"

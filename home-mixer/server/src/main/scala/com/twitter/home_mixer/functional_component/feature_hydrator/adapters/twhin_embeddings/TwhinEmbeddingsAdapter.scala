@@ -52,6 +52,7 @@ object TwhinEmbeddingsFeatures {
     "user.timelines.twhin_user_engagement_embeddings.twhin_user_engagement_embeddings",
     DataType.FLOAT
   )
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   val TwhinUserFollowEmbeddingsFeature: Feature.Tensor = new Feature.Tensor(
     "user.timelines.twhin_user_follow_embeddings.twhin_user_follow_embeddings",

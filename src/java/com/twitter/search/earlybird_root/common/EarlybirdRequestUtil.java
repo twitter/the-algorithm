@@ -41,6 +41,7 @@ public final class EarlybirdRequestUtil {
     }
 
     if (idTimeRanges == null) {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       // An exception was thrown or the query doesn't accept the boundary operators.
       return Optional.absent();
     }

@@ -336,6 +336,7 @@ public final class SegmentVulture {
         }
         try {
           LOG.info("Deleting old scrubbed segment: " + file.getAbsolutePath());
+// This code didn't port easily. WTF does it do? (sjb)
           FileUtils.deleteDirectory(file);
         } catch (IOException e) {
           LOG.error("Failed to delete directory: " + file.getPath(), e);

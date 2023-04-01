@@ -91,4 +91,5 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
     return swigfaissJNI.SimulatedAnnealingOptimizer_run_optimization(swigCPtr, this, SWIGTYPE_p_int.getCPtr(best_perm));
   }
 
+// This code didn't port easily. WTF does it do? (sjb)
 }

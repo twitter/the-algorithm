@@ -142,6 +142,8 @@ object OfflineTweetRecommendation {
     topTweetsPipe
   }
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   /**
    * Returns the approximate score at the k'th top ranked record using sampling.
    * This score can then be used to filter for the top K elements in a big pipe where

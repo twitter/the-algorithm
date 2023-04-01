@@ -36,6 +36,7 @@ class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
   offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
   triangularLoopsSource: TriangularLoopsSource,
   userUserGraphCandidateSource: UserUserGraphCandidateSource,
+// This code didn't port easily. WTF does it do? (sjb)
   realGraphOonSource: RealGraphOonV2Source,
   recentFollowingRecentFollowingExpansionSource: RecentFollowingRecentFollowingExpansionSource,
   // activity based

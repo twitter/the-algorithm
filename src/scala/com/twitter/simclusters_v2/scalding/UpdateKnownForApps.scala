@@ -214,6 +214,7 @@ object UpdateKnownForApps {
 
         val globalAvgWeightExec =
           UpdateKnownForApps.getGlobalAvgWeight(modifiedSims)
+// Multithreading badness. This will cause a crash later!
 
         val globalAvgMembershipScoreExec = UpdateKnownForApps.getAvgMembershipScore(inputKnownFor)
 

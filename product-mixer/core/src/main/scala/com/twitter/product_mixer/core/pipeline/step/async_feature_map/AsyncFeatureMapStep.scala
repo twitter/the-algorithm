@@ -54,6 +54,8 @@ case class AsyncFeatureMapStep[
     val hydratedFeatureMap =
       executorResult.featureMapsByStep.getOrElse(config.stepToHydrateFor, FeatureMap.empty)
     if (hydratedFeatureMap.isEmpty) {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       state
     } else {
       val updatedFeatureMap = state.query.features

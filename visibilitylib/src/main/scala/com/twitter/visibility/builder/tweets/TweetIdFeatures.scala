@@ -3,6 +3,8 @@ package com.twitter.visibility.builder.tweets
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.servo.util.Gate
 import com.twitter.spam.rtf.thriftscala.SafetyLabel
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 import com.twitter.spam.rtf.thriftscala.SafetyLabelType
 import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
 import com.twitter.stitch.Stitch

@@ -46,6 +46,7 @@ class PublishClientSentImpressionsEventBusSideEffect @Inject() (
     selectedCandidates: Seq[CandidateWithDetails],
     remainingCandidates: Seq[CandidateWithDetails],
     droppedCandidates: Seq[CandidateWithDetails],
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     response: HasMarshalling
   ): Boolean = query.seenTweetIds.exists(_.nonEmpty)
 

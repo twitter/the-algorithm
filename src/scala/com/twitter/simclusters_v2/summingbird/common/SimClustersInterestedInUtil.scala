@@ -22,6 +22,8 @@ object SimClustersInterestedInUtil {
   ): Seq[(ClusterId, InterestedInScores)] = {
     userInterests.clusterIdToScores.toSeq.map {
       case (clusterId, scores) =>
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         val favScore = scores.favScore.getOrElse(0.0)
         val normalizedFavScore = scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
         val normalizedFollowScore = scores.followScoreClusterNormalizedOnly.getOrElse(0.0)

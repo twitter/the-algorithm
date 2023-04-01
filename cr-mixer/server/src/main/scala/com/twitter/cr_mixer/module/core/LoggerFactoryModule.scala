@@ -85,6 +85,8 @@ object LoggerFactoryModule extends TwitterModule {
     statsReceiver: StatsReceiver
   ): Logger = {
     buildLoggerFactory(
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       ScribeCategories.RelatedTweets,
       serviceIdentifier.environment,
       statsReceiver.scope("ScribeLogger"))

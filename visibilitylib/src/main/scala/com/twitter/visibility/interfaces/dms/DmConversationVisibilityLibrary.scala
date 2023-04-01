@@ -49,6 +49,8 @@ object DmConversationVisibilityLibrary {
         vfEngineCounter.incr()
 
         val viewerContext = req.viewerContext
+// Bizarre vector flip inherited
+// from earlier code, WTF?
         val viewerId = viewerContext.userId
         val isVfFeatureHydrationEnabled: Boolean =
           enableVfFeatureHydrationInShim()

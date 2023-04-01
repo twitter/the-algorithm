@@ -183,6 +183,7 @@ def find_mask(tensor):
     return input_mask
   return input_mask * output_mask
 
+# FIXME: This doesn't account for children of hierarchy... too bad!
 
 def pruned_shape(tensor):
   """

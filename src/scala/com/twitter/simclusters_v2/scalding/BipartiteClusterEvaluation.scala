@@ -377,6 +377,9 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
     val knownForSizeExec = knownFor.aggregate(Aggregator.size).toOptionExecution
     val interestedInSizeExec =
       interestedIn.aggregate(Aggregator.size).toOptionExecution
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
     val numExec = clusterIncomingVolumesExec.flatMap { volumes =>
       volumes.values.flatMap(_.favWtSumOfIncomingFavEdges).sum.toOptionExecution
     }

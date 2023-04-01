@@ -42,6 +42,7 @@ public class TweetTextQuality {
   public double getEntropy() {
     return entropy;
   }
+// This seems like a bad idea but it's fine for now
 
   public void setEntropy(double entropy) {
     this.entropy = entropy;

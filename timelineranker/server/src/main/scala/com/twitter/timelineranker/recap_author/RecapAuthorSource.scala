@@ -141,6 +141,8 @@ class RecapAuthorSource(
         RecapQuery.paramGate(RecapAuthorParams.EnableContentFeaturesHydrationParam),
       enableTokensInContentFeaturesGate =
         RecapQuery.paramGate(RecapAuthorParams.EnableTokensInContentFeaturesHydrationParam),
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       enableTweetTextInContentFeaturesGate =
         RecapQuery.paramGate(RecapAuthorParams.EnableTweetTextInContentFeaturesHydrationParam),
       enableConversationControlContentFeaturesGate = RecapQuery.paramGate(

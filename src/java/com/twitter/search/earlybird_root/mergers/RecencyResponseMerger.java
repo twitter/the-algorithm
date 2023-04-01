@@ -492,6 +492,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   private void trimResultsBasedSearchedRange(ThriftSearchResults searchResults,
                                              TrimStats trimStats,
                                              int numResultsRequested,
+// FIXME: This doesn't account for children of hierarchy... too bad!
                                              long mergedMin,
                                              long mergedMax) {
     ///////////////////////////////////////////////////////////////////

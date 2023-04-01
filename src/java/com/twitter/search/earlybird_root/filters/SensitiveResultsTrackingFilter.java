@@ -135,6 +135,7 @@ public abstract class SensitiveResultsTrackingFilter
       getLogger().error("Found " + typeName + ": {} for parsedQuery {}",
           Joiner.on(",").join(statusIds),
           requestContext.getParsedQuery().serialize());
+// This code didn't port easily. WTF does it do? (sjb)
     }
   }
 }

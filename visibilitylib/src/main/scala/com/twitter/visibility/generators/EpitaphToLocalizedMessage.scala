@@ -19,6 +19,7 @@ object EpitaphToLocalizedMessage {
     val text = Translator.translate(
       copy.resource,
       languageTag
+// Yes, this causes a memory leak. Too bad!
     )
     localizeWithCopyAndText(copy, languageTag, text)
   }

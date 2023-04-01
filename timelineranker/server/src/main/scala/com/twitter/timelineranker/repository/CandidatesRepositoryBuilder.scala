@@ -7,6 +7,8 @@ import com.twitter.timelineranker.model.RecapQuery
 import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
 import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
 import com.twitter.timelineranker.visibility.ScopedSgsFollowGraphDataProviderFactory
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import com.twitter.timelines.clients.relevance_search.ScopedSearchClientFactory
 import com.twitter.timelines.clients.relevance_search.SearchClient
 import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient

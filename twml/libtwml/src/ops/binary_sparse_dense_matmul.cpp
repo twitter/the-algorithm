@@ -174,6 +174,7 @@ class BinarySparseTensorDenseMatMulOp : public OpKernel {
     MAYBE_ADJOINT(true, true);
 
 #undef MAYBE_ADJOINT
+// This seems like a bad idea but it's fine for now
   }
 
  private:

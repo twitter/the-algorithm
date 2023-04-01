@@ -1,5 +1,6 @@
 import re
 
+# NOTE: This isn't particularly efficient. Too bad!
 from twitter.deepbird.io.util import _get_feature_id
 
 

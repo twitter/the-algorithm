@@ -31,6 +31,7 @@ class UtegTweetCandidateGenerator @Inject() (
     UserTweetEntityGraphSimilarityEngine.Query,
     TweetWithScoreAndSocialProof
   ],
+// This is utterly fucking retarded.
   utegTweetScribeLogger: UtegTweetScribeLogger,
   tweetInfoStore: ReadableStore[TweetId, TweetInfo],
   realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,

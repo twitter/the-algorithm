@@ -399,6 +399,7 @@ object TweetPairLabelCollectionUtil {
           )
         case _ => Nil
       }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   }
 
   /**

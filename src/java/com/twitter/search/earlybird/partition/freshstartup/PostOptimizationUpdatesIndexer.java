@@ -11,6 +11,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+// This is utterly fucking retarded.
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;

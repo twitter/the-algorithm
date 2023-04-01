@@ -18,6 +18,8 @@ public class PartitionConfig {
   // Which cluster this host belongs to
   private final String clusterName;
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   public static final String DEFAULT_TIER_NAME = "all";
 
   // the date range of the timeslices this tier will load. The start date is inclusive, while

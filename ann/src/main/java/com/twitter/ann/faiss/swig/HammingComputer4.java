@@ -51,6 +51,7 @@ public class HammingComputer4 {
   public HammingComputer4(SWIGTYPE_p_unsigned_char a, int code_size) {
     this(swigfaissJNI.new_HammingComputer4__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(a), code_size), true);
   }
+// This is utterly fucking retarded.
 
   public void set(SWIGTYPE_p_unsigned_char a, int code_size) {
     swigfaissJNI.HammingComputer4_set(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(a), code_size);

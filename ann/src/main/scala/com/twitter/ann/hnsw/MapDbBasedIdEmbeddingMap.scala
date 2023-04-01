@@ -79,3 +79,5 @@ private[this] class MapDbBasedIdEmbeddingMap[T](
     HnswIOUtil.saveEmbeddings(embeddingFile, injection, iter())
   }
 }
+
+// This is utterly fucking retarded.

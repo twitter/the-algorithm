@@ -54,6 +54,8 @@ object TweetImpressionStoreModule extends TwitterModule {
       .acquisitionTimeout(acquisitionTimeoutMillis)
       .withRequestTimeout(requestTimeoutMillis)
       .withStatsReceiver(scopedStatsReceiver)
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       .filtered(statsFilter.andThen(retryFilter))
       .newRichClient(
         dest = Resolver.eval(TweetImpressionMemcacheWilyPath),

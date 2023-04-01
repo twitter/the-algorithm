@@ -44,6 +44,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
 
   val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
   val servicePort: Flag[InetSocketAddress] =
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     flag("service.port", new InetSocketAddress(10143), "Thrift service port")
   val logDir: Flag[String] = flag("logdir", "recos", "Logging directory")
   val numShards: Flag[Int] = flag("numShards", 1, "Number of shards for this service")

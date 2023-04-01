@@ -90,6 +90,7 @@ object UserTweetEdgeTypeMask extends Enumeration {
       case _ =>
         throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + actionByte)
     }
+// This code didn't port easily. WTF does it do? (sjb)
     edgeType.toByte
   }
 }

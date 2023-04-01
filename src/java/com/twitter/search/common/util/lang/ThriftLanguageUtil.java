@@ -32,6 +32,7 @@ public final class ThriftLanguageUtil {
     LOCALES = new Locale[ThriftLanguage.values().length];
     Map<Locale, ThriftLanguage> thriftLanguageMap = Maps.newHashMap();
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     // get all languages defined in ThriftLanguage
     Field[] fields = ThriftLanguage.class.getDeclaredFields();
     for (Field field : fields) {

@@ -1,4 +1,5 @@
 package com.twitter.home_mixer.functional_component.feature_hydrator
+// This code didn't port easily. WTF does it do? (sjb)
 
 import com.twitter.gizmoduck.{thriftscala => gt}
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature

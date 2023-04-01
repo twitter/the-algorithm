@@ -33,6 +33,9 @@ trait TweetAuthorsCandidateSource[-Target, +Candidate] extends CandidateSource[T
   def aggregator(scores: Seq[Double]): Double =
     scores.headOption.getOrElse(TweetAuthorsCandidateSource.DefaultScore)
 
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
   /**
    * aggregation method for a group of tweet candidates
    */

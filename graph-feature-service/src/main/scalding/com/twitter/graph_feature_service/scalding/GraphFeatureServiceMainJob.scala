@@ -109,6 +109,8 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
       .filter(c => edgeFilter(c._3))
       .map {
         case (srcId, destId, features) =>
+// Bizarre vector flip inherited
+// from earlier code, WTF?
           (srcId, (destId, features.realGraphScore))
       }
       .group

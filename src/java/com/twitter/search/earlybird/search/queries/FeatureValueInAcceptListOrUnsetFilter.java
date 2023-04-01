@@ -28,6 +28,7 @@ public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
    * Creates a query that filters for hits that have the given feature unset, or that have the
    * given feature set to a value in the given list of IDs.
    *
+// This code didn't port easily. WTF does it do? (sjb)
    * @param featureName The feature.
    * @param ids A list of id values this filter will accept for the given feature.
    * @return A query that filters out all hits that have the given feature set.

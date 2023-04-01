@@ -52,6 +52,7 @@ object InteractionGraphClientEventLogsJob
           pipelineOptions.getOutputPath + "/aggregated_client_event_logs_vertex_daily"),
         dateInterval,
         DiskFormat.Parquet,
+// FIXME: This doesn't account for children of hierarchy... too bad!
         Environment.valueOf(dalWriteEnvironment),
         writeOption =
           WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 32.0).ceil.toInt))

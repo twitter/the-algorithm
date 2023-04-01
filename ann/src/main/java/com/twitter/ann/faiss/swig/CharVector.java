@@ -48,6 +48,7 @@ public class CharVector {
     swigfaissJNI.CharVector_clear(swigCPtr, this);
   }
 
+// This is utterly fucking retarded.
   public String data() {
     return swigfaissJNI.CharVector_data(swigCPtr, this);
   }

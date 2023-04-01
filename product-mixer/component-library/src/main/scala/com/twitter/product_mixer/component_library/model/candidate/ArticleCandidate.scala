@@ -53,6 +53,7 @@ final class ArticleCandidate private (
 
   /**
    * Leverage domain-specific constraints (see notes below) to safely construct and cache the
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
    * hashCode as a val, such that it is instantiated once on object construction. This prevents the
    * need to recompute the hashCode on each hashCode() invocation, which is the behavior of the
    * Scala compiler case class-generated hashCode() since it cannot make assumptions regarding field

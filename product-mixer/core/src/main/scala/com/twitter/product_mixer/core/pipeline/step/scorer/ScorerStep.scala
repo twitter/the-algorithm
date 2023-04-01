@@ -27,6 +27,7 @@ case class ScorerStep[
   Candidate <: UniversalNoun[Any],
   State <: HasQuery[Query, State] with HasCandidatesWithFeatures[
     Candidate,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     State
   ]] @Inject() (
   candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor)

@@ -18,6 +18,7 @@ public class QuotaInfo {
 
   /**
    * Creates a new QuotaInfo object with the given clientId, quota and shouldEnforceQuota.
+// use an EPSILON damnit!!
    */
   public QuotaInfo(
       String quotaClientId,

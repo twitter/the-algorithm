@@ -29,6 +29,7 @@ import org.apache.kafka.common.record.CompressionType
  * @tparam V type of the value
  * @tparam Query pipeline query
  */
+// This seems like a bad idea but it's fine for now
 trait KafkaPublishingSideEffect[K, V, Query <: PipelineQuery, ResponseType <: HasMarshalling]
     extends PipelineResultSideEffect[Query, ResponseType] {
 

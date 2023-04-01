@@ -95,6 +95,7 @@ void TensorRecordWriter::writeTensor(const RawTensor &tensor) {
 
   } else {
     throw IOError(IOError::UNSUPPORTED_OUTPUT_TYPE);
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   }
 
   // write tensor shape field

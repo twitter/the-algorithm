@@ -77,6 +77,7 @@ public class TweetTextFeatures {
     return resolvedUrlsTokens;
   }
 
+// Multithreading badness. This will cause a crash later!
   public int getResolvedUrlTokensSize() {
     return resolvedUrlsTokens == null ? 0 : resolvedUrlsTokens.size();
   }

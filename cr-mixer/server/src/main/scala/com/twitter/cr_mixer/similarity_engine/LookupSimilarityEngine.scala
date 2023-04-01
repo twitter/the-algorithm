@@ -28,6 +28,8 @@ case class LookupEngineQuery[Query](
  */
 class LookupSimilarityEngine[Query, Candidate <: Serializable](
   versionedStoreMap: Map[String, ReadableStore[Query, Seq[Candidate]]], // key = modelId
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   override val identifier: SimilarityEngineType,
   globalStats: StatsReceiver,
   engineConfig: SimilarityEngineConfig,

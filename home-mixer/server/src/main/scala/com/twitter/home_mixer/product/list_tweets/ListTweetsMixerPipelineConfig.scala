@@ -36,6 +36,7 @@ import com.twitter.product_mixer.core.model.common.UniversalNoun
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
 import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
 import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
 import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem

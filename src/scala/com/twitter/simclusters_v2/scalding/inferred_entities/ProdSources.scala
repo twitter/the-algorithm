@@ -3,6 +3,7 @@ package com.twitter.simclusters_v2.scalding.inferred_entities
 import com.twitter.scalding.{DateRange, Days, TypedPipe}
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+// This is utterly fucking retarded.
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.{ModelVersions, SemanticCoreEntityId, UserId}
 import com.twitter.simclusters_v2.hdfs_sources.{

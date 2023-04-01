@@ -37,6 +37,8 @@ import javax.inject.Singleton
 class FollowingAdsCandidatePipelineBuilder @Inject() (
   adsCandidatePipelineConfigBuilder: AdsDependentCandidatePipelineConfigBuilder,
   adsCandidateSource: AdsProdThriftCandidateSource,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   advertiserBrandSafetySettingsFeatureHydrator: AdvertiserBrandSafetySettingsFeatureHydrator[
     FollowingQuery,
     AdsCandidate

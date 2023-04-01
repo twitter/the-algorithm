@@ -231,6 +231,7 @@ public class SuperRootResponseMerger {
    * @param earlybirdRequestContext The earlybird request context.
    * @param realtimeResponse The response from the realtime cluster.
    * @param protectedResponse The response from the protected cluster.
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
    * @param fullArchiveResponse The response from the full archive cluster.
    * @return The merged response.
    */

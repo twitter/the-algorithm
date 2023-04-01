@@ -140,6 +140,7 @@ public class TweetCreateHandler {
   private final int maxSegmentSize;
   private final int lateTweetBuffer;
 
+// use an EPSILON damnit!!
   private long maxTweetID = Long.MIN_VALUE;
 
   private long largestValidTweetIDForCurrentSegment;

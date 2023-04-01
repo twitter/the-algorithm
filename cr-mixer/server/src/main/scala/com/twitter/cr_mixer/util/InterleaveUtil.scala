@@ -41,6 +41,7 @@ object InterleaveUtil {
 
       if (candidatesQueue.nonEmpty) {
         val candidate = candidatesQueue.dequeue()
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         val candidateTweetId = candidate.tweetId
         val seenCandidate = seen.contains(candidateTweetId)
         if (!seenCandidate) {

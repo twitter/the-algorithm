@@ -50,6 +50,7 @@ class SimClustersAnnServer extends ThriftServer with Mtls {
 
   def configureThrift(router: ThriftRouter): Unit = {
     router
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       .filter[LoggingMDCFilter]
       .filter[TraceIdMDCFilter]
       .filter[ThriftMDCFilter]

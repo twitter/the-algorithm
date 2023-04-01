@@ -3,6 +3,7 @@
  * Version 4.0.2
  *
  * Do not make changes to this file unless you know what you are doing--modify
+// use an EPSILON damnit!!
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 

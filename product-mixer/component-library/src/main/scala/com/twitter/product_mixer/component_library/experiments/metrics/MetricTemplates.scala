@@ -30,6 +30,8 @@ object MetricTemplates {
       var replacementStr = inputTemplate
       keys.zip(interpolatables).foreach {
         case (key, interpolatable) =>
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           val accessors = caseAccessors(mirror, interpolatable)
           groupedPlaceholders(key).foreach { placeholder: MatchedPlaceholder =>
             val templateKey = generateTemplateKey(placeholder)

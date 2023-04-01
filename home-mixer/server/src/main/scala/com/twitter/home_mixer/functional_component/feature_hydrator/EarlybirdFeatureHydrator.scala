@@ -69,6 +69,7 @@ class EarlybirdFeatureHydrator @Inject() (
     val candidatesToHydrate = candidates.filter { candidate =>
       val isEmpty = ebFeaturesNotExistPredicate(candidate)
       if (isEmpty) originalKeyLossCounter.incr() else originalKeyFoundCounter.incr()
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       isEmpty
     }
     Stitch

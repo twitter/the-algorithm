@@ -29,6 +29,7 @@ public class UserUpdatesChecker {
 
   /**
    * Decides whether to skip the given UserInfoUpdate.
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    */
   public boolean skipUserUpdate(UserUpdate userUpdate) {
     if (userUpdate == null) { // always skip null updates

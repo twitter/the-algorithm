@@ -71,6 +71,7 @@ class GroupResultsExecutor @Inject() (override val statsReceiver: StatsReceiver)
 
       val candidatesWithDetails: Seq[CandidateWithDetails] = sortedModules.flatMap {
         case (modulePresentationOpt, resultsSeq) =>
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           val itemsWithDetails = resultsSeq.map { result =>
             val presentationOpt = input.decorations.get(result.candidate) match {
               case itemPresentation @ Some(_: ItemPresentation) => itemPresentation

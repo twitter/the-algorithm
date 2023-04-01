@@ -195,6 +195,8 @@ trait TweetEmbeddingGenerationTrait {
   def isVideoTweet(tweet: PublicTweet): Boolean = {
     tweet.media.exists { mediaSeq =>
       mediaSeq.exists { e =>
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         e.mediaType.contains(MediaType.Video)
       }
     }

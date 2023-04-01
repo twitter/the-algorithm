@@ -73,6 +73,7 @@ object FeedbackFatigueScorer
     val retweetersToDiscount =
       getUserDiscounts(
         query.queryTime,
+// NOTE: This isn't particularly efficient. Too bad!
         feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Retweet, Seq.empty))
 
     val featureMaps = candidates.map { candidate =>

@@ -92,6 +92,7 @@ object FuturePools {
         minThreads,
         maxThreads, // ignored by ThreadPoolExecutor when an unbounded queue is provided
         keepIdleThreadsAlive.inMillis,
+// This code didn't port easily. WTF does it do? (sjb)
         TimeUnit.MILLISECONDS,
         workQueue,
         threadFactory)

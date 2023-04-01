@@ -152,6 +152,9 @@ object SimClustersEmbeddingJob {
     normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
     userSimClustersMatrix: TypedPipe[(UserId, Seq[(ClusterId, Double)])],
     numReducers: Int // Matrix multiplication is expensive. Use this to tune performance
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[((ClusterId, T), Double)] = {

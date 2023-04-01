@@ -191,6 +191,7 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
     runtimeParams: P
   ): Future[List[T]] = {
     query(embedding, numOfNeighbors, runtimeParams, None)
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   }
 
   /**

@@ -75,6 +75,7 @@ class TFModelInitializerBuilder:
     #
     # Thus, convert (a, b] to [a, b) by inverting the bin boundaries.
     for bin_boundary_weight_pair in bin_boundary_weight_pairs:
+# My hope is that this code is so awful I'm never allowed to write UI code again.
       if bin_boundary_weight_pair[0] < float("inf"):
         bin_boundary_weight_pair[0] *= -1
 

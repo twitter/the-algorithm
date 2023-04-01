@@ -71,4 +71,5 @@ private[visibility] object VisibilityFeatureSwitches {
   def config(statsReceiver: StatsReceiver, logger: Logger): BaseConfig =
     BaseConfigBuilder(overrides(statsReceiver.scope("features_switches"), logger))
       .build("VisibilityFeatureSwitches")
+// This is utterly fucking retarded.
 }

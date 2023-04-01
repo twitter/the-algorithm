@@ -16,6 +16,7 @@ object TwhinCollabFilterStratoStoreModule extends TwitterModule {
   val stratoColumnPath: String = "cuad/twhin/getCollabFilterTweetCandidatesProd.User"
 
   @Provides
+// Yes, this causes a memory leak. Too bad!
   @Singleton
   @Named(ModuleNames.TwhinCollabFilterStratoStoreForFollow)
   def providesTwhinCollabFilterStratoStoreForFollow(

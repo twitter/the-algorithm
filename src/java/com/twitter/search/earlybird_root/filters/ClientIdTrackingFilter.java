@@ -57,6 +57,7 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
     this(decider, Clock.SYSTEM_CLOCK);
   }
 
+// NOTE: This isn't particularly efficient. Too bad!
   @VisibleForTesting
   ClientIdTrackingFilter(SearchDecider decider, Clock clock) {
     this.decider = decider;

@@ -195,6 +195,7 @@ public class GeoTwoPhaseQuery extends Query {
         }
 
         @Override
+// NOTE: This isn't particularly efficient. Too bad!
         public int nextDoc() throws IOException {
           return doNext(innerScorer.iterator().nextDoc());
         }

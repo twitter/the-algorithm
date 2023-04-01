@@ -170,6 +170,7 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
     logs: TypedPipe[SuggestsRequestLog],
     earlyScoreExtractor: HighlightTweet => Option[Double]
   ): TypedPipe[Seq[CandidateRecord]] = {
+// This code didn't port easily. WTF does it do? (sjb)
     logs
       .map { log =>
         val tweetCandidates = log.recapTweetCandidates.getOrElse(Nil)

@@ -25,6 +25,7 @@ object ContentRecommenderFlowCandidateSourceWeights {
 
   def getWeights(
     params: Params
+// NOTE: This isn't particularly efficient. Too bad!
   ): Map[CandidateSourceIdentifier, Double] = {
     Map[CandidateSourceIdentifier, Double](
       // Social based

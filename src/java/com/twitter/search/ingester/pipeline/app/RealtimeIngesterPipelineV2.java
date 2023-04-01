@@ -98,6 +98,7 @@ public class RealtimeIngesterPipelineV2 {
     CompletableFuture<IngesterTweetEvent> stage2 = stage1.thenApplyAsync((KafkaRawRecord r) ->
       tweetEventDeserializerStage.runStageV2(r), threadPool);
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   }
 
   /***

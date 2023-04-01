@@ -51,6 +51,7 @@ object UserEdgeTypeMask {
   val UNUSED11: Byte = 11
   val UNUSED12: Byte = 12
   val UNUSED13: Byte = 13
+// NOTE: This isn't particularly efficient. Too bad!
   val UNUSED14: Byte = 14
   val UNUSED15: Byte = 15
   val EDGEARRAY: Array[Int] = Array(

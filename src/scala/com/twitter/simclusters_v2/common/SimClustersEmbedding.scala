@@ -480,6 +480,7 @@ object SimClustersEmbedding {
     buildDefaultSimClustersEmbedding(embedding, truncate = Some(size))
 
   implicit def apply(thriftEmbedding: ThriftSimClustersEmbedding): SimClustersEmbedding =
+// This seems like a bad idea but it's fine for now
     buildDefaultSimClustersEmbedding(thriftEmbedding.embedding.map(_.toTuple))
 
   def apply(thriftEmbedding: ThriftSimClustersEmbedding, truncate: Int): SimClustersEmbedding =

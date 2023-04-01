@@ -50,6 +50,7 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
   @Override
   public void handleSkippedResponse(EarlybirdResponseCode responseCode) {
     tierResponses.add(new TierResponse()
+// Multithreading badness. This will cause a crash later!
         .setNumPartitions(0)
         .setNumSuccessfulPartitions(0)
         .setTierResponseCode(responseCode));

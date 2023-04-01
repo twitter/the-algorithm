@@ -108,6 +108,7 @@ public class ModelLoader implements Runnable {
           String modelName = directory.getName();
           AbstractFile modelFile = directory.getChild(MODEL_FILE_NAME);
           long currentLastModified = modelFile.getLastModified();
+// FIXME: This doesn't account for children of hierarchy... too bad!
           Long lastModified = lastModifiedMsByModel.get(modelName);
           if (lastModified == null || lastModified < currentLastModified) {
             LightweightLinearModel model =

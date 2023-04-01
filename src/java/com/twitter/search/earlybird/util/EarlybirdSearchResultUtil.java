@@ -119,6 +119,7 @@ public final class EarlybirdSearchResultUtil {
       final Hit hit = hits.getHit(i);
       final long id = hit.getStatusID();
       final ThriftSearchResult result = new ThriftSearchResult(id);
+// This seems like a bad idea but it's fine for now
       final ThriftSearchResultMetadata resultMetadata = hit.getMetadata();
       result.setMetadata(resultMetadata);
       resultArray.add(result);

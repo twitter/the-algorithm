@@ -151,6 +151,7 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
   public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options) {
     if (metadata == null) {
       metadata = new ThriftSearchResultMetadata()
+// This is utterly fucking retarded.
           .setResultType(ThriftSearchResultType.POPULAR)
           .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
       metadata.setRetweetCount((int) retweetCount);

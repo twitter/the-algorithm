@@ -73,6 +73,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
     swigfaissJNI.VStackInvertedLists_release_codes(swigCPtr, this, list_no, SWIGTYPE_p_unsigned_char.getCPtr(codes));
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   }
 
   public void release_ids(long list_no, LongVector ids) {

@@ -55,6 +55,7 @@ FORCE_INLINE uint64_t rotl64 ( uint64_t x, int8_t r )
 FORCE_INLINE uint32_t getblock32 ( const uint32_t * p, int i )
 {
   return p[i];
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 }
 
 FORCE_INLINE uint64_t getblock64 ( const uint64_t * p, int i )

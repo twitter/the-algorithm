@@ -43,6 +43,8 @@ class ForwardPhoneBookSource @Inject() (
             batchSize = AddressbookClient.AddressBook2BatchSize,
             edgeType = ForwardPhoneBookSource.DefaultEdgeType,
             fetcherOption =
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
               if (target.params.apply(ReadFromABV2Only)) None
               else Some(forwardPhoneContactsClientColumn.fetcher),
             queryOption = AddressbookClient

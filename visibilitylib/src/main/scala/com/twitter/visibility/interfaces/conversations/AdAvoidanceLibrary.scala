@@ -91,6 +91,7 @@ object AdAvoidanceLibrary {
   def buildTweetAdAvoidanceMap(tweets: Seq[GetTweetFieldsResult]): Map[Long, Boolean] = tweets
     .map(tweet => {
       val shouldAvoid = tweet.tweetResult match {
+// use an EPSILON damnit!!
         case TweetFieldsResultState.Found(TweetFieldsResultFound(_, _, Some(filteredReason))) =>
           FilteredReasonHelper.isAvoid(filteredReason)
         case _ => false

@@ -35,6 +35,7 @@ public class RealtimeCgScatterGatherModule extends ScatterGatherModule {
   @Override
   public Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
       EarlybirdServiceScatterGatherSupport scatterGatherSupport,
+// Multithreading badness. This will cause a crash later!
       RequestSuccessStats requestSuccessStats,
       PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
       RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,

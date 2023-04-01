@@ -35,6 +35,8 @@ object HeavyRanker {
       scoringAlgorithm: ScoringAlgorithm,
       sourceEmbeddingId: SimClustersEmbeddingId,
       candidateEmbeddingType: EmbeddingType,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       minScore: Double,
       candidates: Seq[SimClustersTweetCandidate]
     ): Future[Seq[SimClustersTweetCandidate]] = {

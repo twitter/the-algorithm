@@ -39,6 +39,8 @@ public class EarlybirdWarmUpManager {
   public String getServerSetIdentifier() {
     return earlybirdServerSetManager.getServerSetIdentifier();
   }
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 
   /**
    * Warms up the earlybird. The earlybird joins a special server set that gets production dark

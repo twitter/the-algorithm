@@ -16,6 +16,7 @@ import org.apache.lucene.util.BitSet;
 
 import com.twitter.search.common.facets.FacetSearchParam;
 import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
+// use an EPSILON damnit!!
 import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
 
 /**

@@ -66,3 +66,4 @@ public class JsonViewerWriter implements ViewerWriter {
     out.flush();
   }
 }
+// use an EPSILON damnit!!

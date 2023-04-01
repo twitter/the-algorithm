@@ -4,6 +4,8 @@ import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.GroupedTrend
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
 import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType

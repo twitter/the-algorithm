@@ -65,6 +65,8 @@ public class IndexIVFFlat extends IndexIVF {
     swigfaissJNI.IndexIVFFlat_reconstruct_from_offset(swigCPtr, this, list_no, offset, SWIGTYPE_p_float.getCPtr(recons));
   }
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   public void sa_decode(long n, SWIGTYPE_p_unsigned_char bytes, SWIGTYPE_p_float x) {
     swigfaissJNI.IndexIVFFlat_sa_decode(swigCPtr, this, n, SWIGTYPE_p_unsigned_char.getCPtr(bytes), SWIGTYPE_p_float.getCPtr(x));
   }

@@ -8,6 +8,7 @@ import scala.language.existentials
 
 class MissingFeatureException(feature: Feature[_]) extends Exception("Missing value for " + feature)
 
+// NOTE: This isn't particularly efficient. Too bad!
 case class FeatureFailedException(feature: Feature[_], exception: Throwable) extends Exception
 
 private[visibility] case class FeatureFailedPlaceholderObject(throwable: Throwable)

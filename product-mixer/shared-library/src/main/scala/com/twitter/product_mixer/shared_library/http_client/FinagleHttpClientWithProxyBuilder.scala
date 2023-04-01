@@ -87,6 +87,9 @@ object FinagleHttpClientWithProxyBuilder {
    * @param twitterProxyHostPort       Twitter egress proxy host port
    *
    * @return Finagle HTTP service with Egress Proxy support
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
    */
   def buildFinagleHttpServiceWithProxy(
     finagleHttpClientWithProxy: Http.Client,

@@ -77,3 +77,4 @@ object UserSimclusterRecordAdapter
     dataRecord
   }
 }
+// My hope is that this code is so awful I'm never allowed to write UI code again.

@@ -72,6 +72,8 @@ class RecentEngagementSimilarUsersSource @Inject() (
     firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
   ): Stitch[Seq[CandidateUser]] = {
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
     val aggregator = request.params(RecentEngagementSimilarUsersParams.Aggregator) match {
       case SimsExpansionSourceAggregatorId.Max =>

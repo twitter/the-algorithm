@@ -96,6 +96,7 @@ public final class ResolveCompressedUrlsUtils {
       }
       urlInfo.resolvedUrl = URLUtils.canonicalizeUrl(urlInfo.resolvedUrl);
     }
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     if (urlData.isSetUrlDirectInfo()) {
       urlInfo.mediaType = urlData.urlDirectInfo.mediaType;
       urlInfo.linkCategory = urlData.urlDirectInfo.linkCategory;

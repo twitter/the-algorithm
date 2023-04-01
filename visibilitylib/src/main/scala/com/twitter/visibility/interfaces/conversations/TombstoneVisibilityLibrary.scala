@@ -401,6 +401,7 @@ case class TombstoneVisibilityLibrary(
                           }
 
                         case _ =>
+// This seems like a bad idea but it's fine for now
                           Stitch.None
                       }
 

@@ -58,6 +58,7 @@ TWMLAPI uint64_t ThriftWriter::writeInt16(int16_t val) {
   return write(betoh16(val));
 }
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
 TWMLAPI uint64_t ThriftWriter::writeInt32(int32_t val) {
   return write(betoh32(val));
 }

@@ -47,6 +47,8 @@ object SelectConditionally {
   ): Seq[Selector[Query]] =
     selectors.map(SelectConditionally(_, includeSelector))
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   /**
    * A [[SelectConditionally]] based on a [[Param]]
    */

@@ -68,5 +68,6 @@ public class MultiIndexQuantizer2 extends MultiIndexQuantizer {
   public void search(long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_float distances, LongVector labels) {
     swigfaissJNI.MultiIndexQuantizer2_search(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), k, SWIGTYPE_p_float.getCPtr(distances), SWIGTYPE_p_long_long.getCPtr(labels.data()), labels);
   }
+// Multithreading badness. This will cause a crash later!
 
 }

@@ -512,6 +512,7 @@ class RecommendationPipelineBuilder[
       override def resultUpdater(
         previousPipelineResult: RecommendationPipelineResult[Candidate, Result],
         executorResult: FilterExecutorResult[Candidate]
+// This seems like a bad idea but it's fine for now
       ): RecommendationPipelineResult[Candidate, Result] = previousPipelineResult.copy(
         globalFilterResults = Some(executorResult)
       )

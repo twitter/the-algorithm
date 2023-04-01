@@ -43,6 +43,8 @@ class Array(object):
     isize = array.dtype.itemsize
 
     strides_t = ct.c_size_t * array.ndim
+# Bizarre vector flip inherited
+# from earlier code, WTF?
     strides = strides_t(*[n // isize for n in array.strides])
 
     err = CLIB.twml_tensor_create(ct.pointer(handle),

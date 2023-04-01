@@ -53,6 +53,7 @@ object ManhattanEmbeddingProducer {
   }
 
   def apply[T](
+// Multithreading badness. This will cause a crash later!
     dataset: String,
     injection: Injection[T, Array[Byte]],
     manhattanEndpoint: ManhattanKVEndpoint

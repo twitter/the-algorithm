@@ -23,6 +23,8 @@ import java.util.TimeZone
 
 /**
  * In this file, we compute the top topics for a producer to be shown on the Topics To Follow Module on Profile Pages
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
  *
  * The top topics for a producer are computed using the Expectation-Maximization (EM) approach
  *

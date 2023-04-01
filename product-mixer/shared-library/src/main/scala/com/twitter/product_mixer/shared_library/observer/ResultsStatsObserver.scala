@@ -127,6 +127,8 @@ object ResultsStatsObserver {
   /**
    * Helper function observe a function and result counts and time-series stats
    */
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   def functionResultsStats[T](
     size: T => Int,
     statsReceiver: StatsReceiver,

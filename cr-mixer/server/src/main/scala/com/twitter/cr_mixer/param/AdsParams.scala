@@ -16,6 +16,7 @@ object AdsParams {
         min = 0,
         max = 2000
       )
+// This code didn't port easily. WTF does it do? (sjb)
 
   object EnableScoreBoost
       extends FSParam[Boolean](

@@ -109,6 +109,8 @@ pub mod torch {
                 let next_size = offset + size;
                 unsafe {
                     dst.set_len(next_size);
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
                 }
                 t.copy_data(&mut dst[offset..], size);
                 offset = next_size;

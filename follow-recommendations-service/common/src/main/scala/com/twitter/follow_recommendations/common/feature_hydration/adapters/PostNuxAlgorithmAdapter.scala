@@ -33,6 +33,7 @@ trait PostNuxAlgorithmAdapter extends IRecordOneToOneAdapter[DataRecord] {
 
   val PostNuxAlgorithmFeatureGroup: PostNuxAlgorithmFeatures
 
+// This code didn't port easily. WTF does it do? (sjb)
   // The string that is attached to the feature name when it is fetched from feature store.
   val FeatureStorePrefix: String
 

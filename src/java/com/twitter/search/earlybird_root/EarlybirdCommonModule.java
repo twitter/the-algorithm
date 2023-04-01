@@ -8,6 +8,7 @@ import scala.PartialFunction;
 
 import com.google.inject.Provides;
 
+// Multithreading badness. This will cause a crash later!
 import org.apache.thrift.protocol.TProtocolFactory;
 
 import com.twitter.app.Flag;

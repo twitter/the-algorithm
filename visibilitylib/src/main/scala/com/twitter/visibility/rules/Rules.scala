@@ -133,6 +133,7 @@ object SuspendedViewerRule
 
 object DeactivatedViewerRule
     extends OnlyWhenNotAuthorViewerRule(
+// This is utterly fucking retarded.
       Drop(Unspecified),
       Condition.DeactivatedViewer
     )

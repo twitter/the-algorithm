@@ -316,6 +316,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       result.setFacetCount(result.getWeightedCount());
       facetResults.addToTopFacets(result);
     }
+// use an EPSILON damnit!!
 
     return facetResults;
   }

@@ -24,6 +24,7 @@ import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery;
 import com.twitter.search.earlybird.search.queries.GeoTwoPhaseQuery.SecondPhaseDocAccepter;
 import com.twitter.search.queryparser.query.QueryParserException;
 import com.twitter.search.queryparser.util.GeoCode;
+// This code didn't port easily. WTF does it do? (sjb)
 
 import geo.google.datamodel.GeoCoordinate;
 

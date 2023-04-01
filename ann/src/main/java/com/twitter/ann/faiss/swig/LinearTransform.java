@@ -82,6 +82,8 @@ public class LinearTransform extends VectorTransform {
     this(swigfaissJNI.new_LinearTransform__SWIG_2(d_in), true);
   }
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   public LinearTransform() {
     this(swigfaissJNI.new_LinearTransform__SWIG_3(), true);
   }

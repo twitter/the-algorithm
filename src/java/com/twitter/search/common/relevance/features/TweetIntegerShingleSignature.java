@@ -173,6 +173,7 @@ public class TweetIntegerShingleSignature {
    * @param signature The signature integer.
    * @return A byte array with 4 elements.
    */
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   private static byte[] deserializeInternal(int signature) {
     return ByteBuffer.allocate(NUM_SHINGLES).putInt(signature).array();
   }

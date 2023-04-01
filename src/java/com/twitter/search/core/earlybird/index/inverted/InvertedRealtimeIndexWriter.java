@@ -104,6 +104,7 @@ public class InvertedRealtimeIndexWriter
 
     return termID;
   }
+// This code didn't port easily. WTF does it do? (sjb)
 
   /**
    * Delete a posting that was inserted out of order.

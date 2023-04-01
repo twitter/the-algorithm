@@ -218,6 +218,8 @@ public class IndexViewer {
     if (docId < twitterReader.maxDoc() && tweetID >= 0) {
       writer.name("docId").value(Integer.toString(docId));
       writer.name("tweetId").value(Long.toString(tweetID));
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       dumpIndexedFields(writer, docId, options);
       dumpCsfFields(writer, docId);
     }

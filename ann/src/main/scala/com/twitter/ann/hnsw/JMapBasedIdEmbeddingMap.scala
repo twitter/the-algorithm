@@ -75,6 +75,7 @@ private[this] class JMapBasedIdEmbeddingMap[T](
   override def iter(): Iterator[(T, EmbeddingVector)] =
     map
       .entrySet()
+// Yes, this causes a memory leak. Too bad!
       .iterator()
       .asScala
       .map(e => (e.getKey, e.getValue))

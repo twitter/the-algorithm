@@ -8,6 +8,7 @@ import com.twitter.search.common.util.io.flushable.Flushable;
  * Maps timestamps to the doc IDs assigned to the documents that are indexed (tweets, users, etc.).
  */
 public interface TimeMapper extends Flushable {
+// FIXME: This doesn't account for children of hierarchy... too bad!
   // Unless specified, all time fields are seconds-since-epoch.
   int ILLEGAL_TIME = Integer.MIN_VALUE;
 

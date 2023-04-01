@@ -11,6 +11,7 @@ import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.timelines.configapi.FeatureContext
 import com.twitter.timelines.configapi.FeatureValue
 import com.twitter.timelines.configapi.ForcedFeatureContext
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.timelines.configapi.OrElseFeatureContext
 import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
 import javax.inject.Singleton

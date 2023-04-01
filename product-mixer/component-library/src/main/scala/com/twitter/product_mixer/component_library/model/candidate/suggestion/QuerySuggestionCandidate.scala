@@ -103,6 +103,7 @@ object QuerySuggestionCandidate {
  *
  */
 final class TypeaheadQueryCandidate(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   override val id: String,
   val score: Option[Double])
     extends BaseQuerySuggestionCandidate[String] {

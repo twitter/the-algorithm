@@ -52,6 +52,7 @@ class RealTimeRealGraphClient @Inject() (
       }
     val updatedEngagementScoreMap =
       if (isNewUser)
+// This seems like a bad idea but it's fine for now
         engagementScoreMap + (EngagementType.ProfileView -> RealTimeRealGraphClient.ProfileViewScore)
       else engagementScoreMap
 

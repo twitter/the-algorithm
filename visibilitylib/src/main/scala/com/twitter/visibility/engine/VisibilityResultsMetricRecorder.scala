@@ -47,6 +47,8 @@ case class VisibilityResultsMetricRecorder(
     val isFeatureFailure = result.ruleResultMap.values
       .collectFirst {
         case RuleResult(_, FeatureFailed(_)) =>
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           ruleFailureReceiver.counter("feature_failed").incr()
           true
       }.getOrElse(false)

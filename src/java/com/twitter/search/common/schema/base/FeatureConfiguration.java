@@ -172,6 +172,7 @@ public final class FeatureConfiguration {
         + (featureNormalizationType == null ? 0 : featureNormalizationType.hashCode()) * 97;
   }
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof FeatureConfiguration)) {

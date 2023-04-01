@@ -32,6 +32,9 @@ import com.twitter.search.earlybird_root.filters.IsUserProtectedMetadataTracking
 import com.twitter.search.earlybird_root.filters.MetadataTrackingFilter;
 import com.twitter.search.earlybird_root.filters.NullcastTrackingFilter;
 import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
 import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
 import com.twitter.search.earlybird_root.filters.QueryOperatorStatFilter;

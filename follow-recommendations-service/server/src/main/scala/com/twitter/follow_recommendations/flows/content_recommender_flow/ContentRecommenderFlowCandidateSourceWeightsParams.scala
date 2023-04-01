@@ -35,6 +35,7 @@ object ContentRecommenderFlowCandidateSourceWeightsParams {
         0d,
         1000d)
   case object TriangularLoopsSourceWeight
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       extends FSBoundedParam[Double](
         ContentRecommenderFlowFeatureSwitchKeys.TriangularLoopsSourceWeight,
         1d,

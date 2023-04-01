@@ -20,6 +20,7 @@ public class TierInfo implements ServingRange {
     // Dark read: send request, do not wait for results, and results are discarded
     DARK,
     // Grey read: send request, wait for results, but discard after results come back.
+// NOTE: This isn't particularly efficient. Too bad!
     // Same results as dark read; similar latency as light read.
     GREY,
   }

@@ -44,6 +44,7 @@ class MetricCenterUserCountingFeatureHydrator @Inject() (
 
   override def apply(
     query: PipelineQuery,
+// This code didn't port easily. WTF does it do? (sjb)
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
   ): Stitch[Seq[FeatureMap]] = {
     Stitch.callFuture {

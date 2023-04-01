@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 package com.twitter.ann.faiss;
 
 public class ProductQuantizer {

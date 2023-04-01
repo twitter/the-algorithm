@@ -29,6 +29,8 @@ object PredicateFilter {
    *  )
    *  }}}
    *
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    * @param identifier A FilterIdentifier for the new filter
    * @param shouldKeepCandidate A predicate function from the candidate. Candidates will be kept
    *                            when this function returns True.

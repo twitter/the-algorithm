@@ -137,6 +137,9 @@ object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
       }
       .writeExecution(
         // Write to TSV for easier debugging of the adhoc job.
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         TypedTsv(outputPath)
       )
   }

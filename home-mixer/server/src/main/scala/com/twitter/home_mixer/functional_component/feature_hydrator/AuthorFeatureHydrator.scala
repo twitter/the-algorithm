@@ -28,6 +28,9 @@ import javax.inject.Named
 import javax.inject.Singleton
 import scala.collection.JavaConverters._
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 object AuthorFeature
     extends DataRecordInAFeature[TweetCandidate]
     with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {

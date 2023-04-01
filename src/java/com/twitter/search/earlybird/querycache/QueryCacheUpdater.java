@@ -99,6 +99,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
   void addTask(QueryCacheFilter filter, SegmentInfo segmentInfo,
                Amount<Long, Time> updateInterval, Amount<Long, Time> initialDelay) {
     String filterName = filter.getFilterName();
+// Multithreading badness. This will cause a crash later!
     String query = filter.getQueryString();
 
     // Create the task.

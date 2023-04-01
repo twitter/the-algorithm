@@ -34,6 +34,7 @@ class ExperimentalCandidateSource[T <: HasParams, V](
   private[base] val keepResultsCounter = statsReceiver.counter("keep_results")
   private[base] val discardResultsCounter = statsReceiver.counter("discard_results")
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
   override def apply(request: T): Stitch[Seq[V]] = {
     if (request.params(darkreadAlgorithmParam)) {
       requestsCounter.incr()

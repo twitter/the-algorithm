@@ -8,6 +8,7 @@ import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
 import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
 import com.twitter.product_mixer.core.pipeline.state.HasQuery
 import com.twitter.product_mixer.core.pipeline.step.Step
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.product_mixer.core.service.Executor
 import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
 import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutorResult

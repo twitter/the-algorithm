@@ -15,6 +15,8 @@ import com.twitter.search.earlybird.thriftscala.EarlybirdService
 import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
 import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
 import com.twitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.twitter.simclusters_v2.common.UserId
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -122,6 +122,8 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
 
             Execution
               .zip(
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
                 writeLatestScoresExecution,
                 computeTweetTopKExecution,
                 computeClusterTopKExecution

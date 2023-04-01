@@ -4,6 +4,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
 import com.twitter.graphjet.algorithms.{RecommendationType, TweetIDMask}
 import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGraphSegment
 import com.twitter.recos.hose.common.UnifiedGraphWriter
 import com.twitter.recos.internal.thriftscala.RecosHoseMessage

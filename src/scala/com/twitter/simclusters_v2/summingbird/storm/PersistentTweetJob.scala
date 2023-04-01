@@ -132,6 +132,7 @@ private[storm] object PersistentTweetJob {
 
   /*
     If this change in counts crosses one or more powers of 2 (8,16,32...), return the last boundary
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     that was crossed. In the case where a count delta is large, it may skip a power of 2, and
     thus we may not store embeddings for all 2^(i+3) where 0 <= i <= tweetFavCount.
    */

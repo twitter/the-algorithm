@@ -253,6 +253,9 @@ object DecayedSumClusterToTweetIndexGenerationBatch extends FTRClusterToTweetInd
       "user",
       "simclusters_decayed_sum_cluster_to_tweet_index")
   override val keyValDatasetOutputPath: String =
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     Config.DecayedSumClusterToTweetIndexOutputPath
   override val clusterToTweetIndexSnapshotDataset: KeyValDALDataset[
     KeyVal[FullClusterId, TopKTweetsWithScores]

@@ -268,6 +268,8 @@ object PCAProjectionMatrixAdhoc extends TwitterExecutionApp {
                     Seq(old, nw).mkString(" ")
                 }.mkString("\n")
               log.info("A few entries of OldId to NewId map is")
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
               log.info(mapString)
 
               val newIdToOldId = oldIdToNewId.map(_.swap)

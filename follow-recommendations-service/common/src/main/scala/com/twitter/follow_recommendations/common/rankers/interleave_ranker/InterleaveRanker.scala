@@ -103,6 +103,7 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
             // but only hold those candidates whose selected ranker is this ranker.
             // These ranks will be forced in the final ordering.
             _._1.scores.flatMap(_.selectedRankerId).contains(ranker))
+// FIXME: This doesn't account for children of hierarchy... too bad!
       }
 
     // Only candidates who have isInProducerScoringExperiment set to true will have their position enforced. We

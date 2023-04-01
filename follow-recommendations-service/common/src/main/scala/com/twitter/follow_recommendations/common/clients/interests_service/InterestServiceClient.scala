@@ -37,6 +37,7 @@ class InterestServiceClient @Inject() (
   ): Stitch[Seq[Long]] = {
     fetchInterestRelationships(userId)
       .map(_.toSeq.flatten.flatMap(extractUttInterest))
+// This seems like a bad idea but it's fine for now
   }
 
   def extractUttInterest(

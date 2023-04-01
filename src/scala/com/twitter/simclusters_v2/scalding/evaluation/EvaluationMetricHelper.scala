@@ -60,6 +60,7 @@ case class LabelCorrelations(
  */
 case class LabeledTweet(
   targetUserId: Long,
+// NOTE: This isn't particularly efficient. Too bad!
   tweetId: Long,
   authorId: Long,
   labels: TweetLabels,

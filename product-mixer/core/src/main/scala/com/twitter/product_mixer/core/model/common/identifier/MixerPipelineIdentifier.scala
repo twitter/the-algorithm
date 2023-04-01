@@ -63,6 +63,9 @@ object MixerPipelineIdentifier {
     if (ComponentIdentifier.isValidName(name))
       new MixerPipelineIdentifier(name) {
         override val file: sourcecode.File = sourceFile
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       }
     else
       throw new IllegalArgumentException(s"Illegal MixerPipelineIdentifier: $name")

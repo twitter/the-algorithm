@@ -714,6 +714,8 @@ object TweetBasedUnifiedSimilarityEngine {
     val enableSimClustersANN5 = params(RelatedTweetTweetBasedParams.EnableSimClustersANN5Param)
     val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
     // SimClusters - SANN cluster 4 Similarity Engine
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     val enableSimClustersANN4 = params(RelatedTweetTweetBasedParams.EnableSimClustersANN4Param)
     val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
     // SimClusters ANN Queries for different SANN clusters

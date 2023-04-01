@@ -55,6 +55,8 @@ case class EarlybirdRecencyBasedSimilarityEngine @Inject() (
                 .map(_.map(_.map(tweetId =>
                   TweetWithAuthor(tweetId = tweetId, authorId = seedUserId))))
             }
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           }
         }
       }

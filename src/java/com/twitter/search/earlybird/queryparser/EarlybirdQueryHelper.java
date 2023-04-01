@@ -67,6 +67,7 @@ public abstract class EarlybirdQueryHelper {
   public static final org.apache.lucene.search.Query maybeWrapWithHitAttributionCollector(
       org.apache.lucene.search.Query query,
       @Nullable com.twitter.search.queryparser.query.Query node,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       Schema.FieldInfo fieldInfo,
       @Nullable HitAttributeHelper hitAttributeHelper) {
     // Prevents lint error for assigning to a function parameter.

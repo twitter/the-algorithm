@@ -497,6 +497,7 @@ public class UserIdMultiSegmentQuery extends Query {
           SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
         } else {
           LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         }
 
         if (termsEnum.seekExact(termRef)) {

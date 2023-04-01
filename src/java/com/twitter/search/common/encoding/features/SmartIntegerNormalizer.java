@@ -31,6 +31,7 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
 
   /**
    * Construct a normalizer.
+// Multithreading badness. This will cause a crash later!
    *
    * @param maxValue max value it supports, must be larger than minValue. Anything larger than this
    * would be treated as maxValue.

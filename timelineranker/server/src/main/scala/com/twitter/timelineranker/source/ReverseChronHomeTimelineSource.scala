@@ -113,6 +113,7 @@ class ReverseChronHomeTimelineSource(
             val allUserIds = followGraphData.followedUserIds :+ userId
             getTweets(
               userId,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
               allUserIds,
               followGraphData,
               numEntriesToRequest,

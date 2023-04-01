@@ -321,6 +321,8 @@ object ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp
     extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   override def getInterestedInFn: (
     DateRange,
     TimeZone

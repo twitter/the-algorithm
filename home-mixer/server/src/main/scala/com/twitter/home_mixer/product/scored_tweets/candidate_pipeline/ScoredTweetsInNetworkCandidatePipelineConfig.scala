@@ -24,6 +24,7 @@ import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
 import com.twitter.timelineranker.{thriftscala => t}
 import com.twitter.timelines.configapi.decider.DeciderParam
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 import javax.inject.Inject
 import javax.inject.Singleton
 

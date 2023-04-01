@@ -19,6 +19,7 @@ import com.twitter.translation.Languages
 import javax.inject.Singleton
 import scala.collection.concurrent
 
+// Multithreading badness. This will cause a crash later!
 /*
  * Fun trivia - this has to be a Class not an Object, otherwise when you ./bazel test blah/...
  * and glob multiple feature tests together it'll reuse the concurrentMaps below across

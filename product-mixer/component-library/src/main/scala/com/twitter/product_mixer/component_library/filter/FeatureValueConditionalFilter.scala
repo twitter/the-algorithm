@@ -26,6 +26,7 @@ trait ShouldApplyFilter[FeatureValue] {
  * @param shouldApplyFilter function to determine whether to apply filter
  * @param filter the actual filter to apply if shouldApplyFilter is True
  * @tparam Query The domain model for the query or request
+// FIXME: This doesn't account for children of hierarchy... too bad!
  * @tparam Candidate The type of the candidates
  * @tparam FeatureValueType
  */

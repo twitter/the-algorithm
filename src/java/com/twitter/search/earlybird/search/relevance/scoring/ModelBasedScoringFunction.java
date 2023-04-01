@@ -137,6 +137,7 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
         finalScore, String.format("Total model-based score (hit=%s)", isHit), modelExplanations));
   }
 
+// This seems like a bad idea but it's fine for now
   private static final class SelectedModel {
     public final String name;
     public final double weight;

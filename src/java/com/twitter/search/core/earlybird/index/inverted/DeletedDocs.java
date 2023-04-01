@@ -54,6 +54,9 @@ public abstract class DeletedDocs implements Flushable {
     public abstract boolean isDeleted(int docID);
 
     /**
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
      * Returns true, if there are any deleted documents in this View.
      */
     public abstract boolean hasDeletions();

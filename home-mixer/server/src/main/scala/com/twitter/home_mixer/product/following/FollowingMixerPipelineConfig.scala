@@ -205,6 +205,7 @@ class FollowingMixerPipelineConfig @Inject() (
         conversationServiceCandidatePipelineConfig.identifier,
         newTweetsPillCandidatePipelineConfig.identifier
       ),
+// Multithreading badness. This will cause a crash later!
       stringCenter = stringCenterProvider.get(),
       seeNewTweetsString = externalStrings.seeNewTweetsString,
       tweetedString = externalStrings.tweetedString

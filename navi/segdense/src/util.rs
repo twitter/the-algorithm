@@ -54,6 +54,9 @@ pub fn load_from_parsed_config(root: seg_dense::Root) ->
     Result<FeatureMapper, SegDenseError> {
 
     let v = root.input_features_map;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
     // Do error check
     let map: Map<String, Value> = match v {

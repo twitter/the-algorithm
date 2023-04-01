@@ -2,6 +2,7 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.Collections;
 import java.util.Map;
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
 import javax.inject.Inject;
 

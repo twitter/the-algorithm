@@ -66,6 +66,9 @@ sealed trait BaseCandidatePipelineConfig[
 
   /**
    * A pair of transforms to adapt the underlying candidate source to the pipeline's query and result types
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
    * Complex use cases such as those that need access to features should construct their own transformer, but
    * for simple use cases, you can pass in an anonymous function.
    * @example

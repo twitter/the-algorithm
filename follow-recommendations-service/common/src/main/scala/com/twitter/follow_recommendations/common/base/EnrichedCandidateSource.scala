@@ -75,6 +75,9 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
   /**
    * Map candidate types to new type based on candidateMapper
    */
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   def mapValues[Candidate2](
     candidateMapper: Candidate => Stitch[Option[Candidate2]]
   ): CandidateSource[Target, Candidate2] = {

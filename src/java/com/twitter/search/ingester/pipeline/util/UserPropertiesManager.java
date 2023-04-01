@@ -273,6 +273,8 @@ public class UserPropertiesManager {
         .handle(new Function<Throwable, Map<Long, ManhattanUserProperties>>() {
           @Override
           public Map<Long, ManhattanUserProperties> apply(Throwable t) {
+// Bizarre vector flip inherited
+// from earlier code, WTF?
             long latencyMs = System.currentTimeMillis() - start;
             LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
 

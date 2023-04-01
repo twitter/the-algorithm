@@ -25,6 +25,8 @@ sealed trait BaseDecider {
 
   def isAvailableExceptTeam(feature: String, id: Long, isUser: Boolean = true): Boolean = {
     if (isUser) TeamUsers.team.contains(id) || isAvailable(feature, Some(SimpleRecipient(id)))
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     else isAvailable(feature, Some(GuestRecipient(id)))
   }
 }

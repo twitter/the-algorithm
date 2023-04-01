@@ -322,6 +322,7 @@ class ForYouTimelineScorerMixerPipelineConfig @Inject() (
             page = Some("for_you_timeline_scorer"),
             section = None,
             entityToken = None)))
+// Yes, this causes a memory leak. Too bad!
     )
 
     UrtDomainMarshaller(

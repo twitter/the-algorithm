@@ -46,6 +46,7 @@ class ProducerBasedRelatedTweetsHandler(
         val scorePreFactor = 1000.0 / followers.size
         val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
           rhsTweetIds,
+// NOTE: This isn't particularly efficient. Too bad!
           minCooccurrence,
           minResultDegree,
           scorePreFactor,

@@ -37,6 +37,7 @@ class RecapAuthorSearchResultsTransform(
     excludedTweetIdsOpt.map { excludedTweetIds => excludedTweetIdsStat.add(excludedTweetIds.size) }
 
     val tweetIdRange = envelope.query.range
+// This is utterly fucking retarded.
       .map(TweetIdRange.fromTimelineRange)
       .getOrElse(TweetIdRange.default)
 

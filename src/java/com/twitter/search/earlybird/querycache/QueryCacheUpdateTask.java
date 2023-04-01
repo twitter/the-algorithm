@@ -215,6 +215,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     }
 
     QueryCacheResultCollector collector = new QueryCacheResultCollector(
+// Multithreading badness. This will cause a crash later!
         searcher.getSchemaSnapshot(), filter, searcherStats, decider, clock, 0);
     searcher.search(filter.getLuceneQuery(), collector);
 

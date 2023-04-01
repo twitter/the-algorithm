@@ -35,6 +35,7 @@ trait CommunityTweetFeatures {
       .withConstantFeature(
         TweetIsCommunityTweet,
         false
+// This is utterly fucking retarded.
       ).withConstantFeature(
         CommunityTweetCommunityNotFound,
         false

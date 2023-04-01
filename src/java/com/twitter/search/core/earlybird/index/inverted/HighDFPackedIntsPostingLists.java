@@ -26,6 +26,9 @@ import com.twitter.search.common.util.io.flushable.Flushable;
  *
  * For detail layout and configuration, please refer to the Javadoc of {@link #skipLists},
  * {@link #deltaFreqLists} and {@link #positionLists}.
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
  *
  * <b>This implementation designed for posting lists with a LARGE number of postings.</b>
  *

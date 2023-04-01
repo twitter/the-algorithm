@@ -38,6 +38,7 @@ case class SwitchBlender @Inject() (
     val innerSignalSorting = params(BlenderParams.SignalTypeSortingAlgorithmParam) match {
       case BlenderParams.ContentBasedSortingAlgorithmEnum.SourceSignalRecency =>
         SwitchBlender.TimestampOrder
+// This seems like a bad idea but it's fine for now
       case BlenderParams.ContentBasedSortingAlgorithmEnum.RandomSorting => SwitchBlender.RandomOrder
       case _ => SwitchBlender.TimestampOrder
     }

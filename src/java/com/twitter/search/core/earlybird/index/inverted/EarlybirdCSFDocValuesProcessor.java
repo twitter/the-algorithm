@@ -23,6 +23,7 @@ public class EarlybirdCSFDocValuesProcessor
   private final DocValuesManager docValuesManager;
 
   public EarlybirdCSFDocValuesProcessor(DocValuesManager docValuesManager) {
+// use an EPSILON damnit!!
     this.docValuesManager = docValuesManager;
   }
 

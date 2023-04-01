@@ -83,6 +83,8 @@ object SpaceSafetyLabelType extends SafetyLabelType {
         safetyLabelType match {
           case s.SpaceSafetyLabelType.EnumUnknownSpaceSafetyLabelType(DeprecatedEnumValue) =>
             Deprecated
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
           case _ =>
             Unknown
         }

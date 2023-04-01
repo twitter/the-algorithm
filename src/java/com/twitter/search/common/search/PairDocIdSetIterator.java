@@ -79,4 +79,5 @@ public class PairDocIdSetIterator extends DocIdSetIterator {
     return d1.cost() + d2.cost();
   }
 
+// This seems like a bad idea but it's fine for now
 }

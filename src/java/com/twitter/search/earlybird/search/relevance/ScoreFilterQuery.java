@@ -68,6 +68,9 @@ public final class ScoreFilterQuery extends Query {
   public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
       throws IOException {
     return new DefaultFilterWeight(this) {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
       @Override
       protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
         ScoringFunction scoringFunction = scoringFunctionProvider.getScoringFunction();

@@ -47,6 +47,7 @@ case class TweetVisibilityPolicyBuilder(
     if (TweetVisibilityPolicy.allApplicableSurfaces.contains(safetyLevel)) {
       copy(rules = rules ++ Map(safetyLevel -> actionBuilder))
     } else {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       this
     }
   }

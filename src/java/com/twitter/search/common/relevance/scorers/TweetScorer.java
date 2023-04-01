@@ -6,6 +6,7 @@ import com.twitter.search.common.relevance.entities.TwitterMessage;
 /**
  * Interface to compute feature scores for a single @TwitterMessage
  * object, or a group of them, after they have been processed by
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
  * feature classifiers.
  *
  * Intentionally kept Scorers separate from Classifiers, since they

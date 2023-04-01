@@ -70,6 +70,8 @@ public class IndexFlat1D extends IndexFlatL2 {
   }
 
   public void reset() {
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     swigfaissJNI.IndexFlat1D_reset(swigCPtr, this);
   }
 

@@ -18,6 +18,7 @@ object UpdateSortCandidates {
   ) = new UpdateSortCandidates(SpecificPipeline(candidatePipeline), sorterProvider)
 
   def apply(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     candidatePipeline: CandidatePipelineIdentifier,
     ordering: Ordering[CandidateWithDetails]
   ) =

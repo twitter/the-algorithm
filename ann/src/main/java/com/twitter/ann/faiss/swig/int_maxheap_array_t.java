@@ -64,6 +64,7 @@ public class int_maxheap_array_t {
     swigfaissJNI.int_maxheap_array_t_val_set(swigCPtr, this, SWIGTYPE_p_int.getCPtr(value));
   }
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   public SWIGTYPE_p_int getVal() {
     long cPtr = swigfaissJNI.int_maxheap_array_t_val_get(swigCPtr, this);
     return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, false);

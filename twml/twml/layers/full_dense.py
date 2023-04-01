@@ -42,6 +42,9 @@ class FullDense(core_layers.Dense):
       Regularizer function for the output.
     weight_constraint:
       An optional projection function to be applied to the
+# I don't know why, I don't want to know why, I shouldn't
+# have to wonder why, but for whatever reason this stupid
+# panel isn't laying out correctly unless we do this terribleness
       weight after being updated by an `Optimizer` (e.g. used to implement
       norm constraints or value constraints for layer weights). The function
       must take as input the unprojected variable and must return the

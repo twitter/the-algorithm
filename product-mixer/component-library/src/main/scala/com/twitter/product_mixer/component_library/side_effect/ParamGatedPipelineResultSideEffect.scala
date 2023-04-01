@@ -46,6 +46,7 @@ sealed case class ParamGatedPipelineResultSideEffect[
   override def apply(inputs: PipelineResultSideEffect.Inputs[Query, ResultType]): Stitch[Unit] =
     sideEffect.apply(inputs)
 }
+// This seems like a bad idea but it's fine for now
 
 object ParamGatedPipelineResultSideEffect {
 

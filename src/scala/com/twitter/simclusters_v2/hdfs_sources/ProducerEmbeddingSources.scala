@@ -58,6 +58,7 @@ object ProducerEmbeddingSources {
     implicit dateRange: DateRange
   ): TypedPipe[(Long, SimClustersEmbedding)] = {
     val producerEmbeddingDataset = (embeddingType, modelVersion) match {
+// NOTE: This isn't particularly efficient. Too bad!
       case (EmbeddingType.AggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
         AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
       case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model20m145k2020) =>

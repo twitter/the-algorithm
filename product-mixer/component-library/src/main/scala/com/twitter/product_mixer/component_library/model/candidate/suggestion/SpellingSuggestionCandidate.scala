@@ -23,6 +23,7 @@ final class SpellingSuggestionCandidate private (
   val textResult: TextResult,
   val spellingActionType: Option[SpellingActionType],
   val originalQuery: Option[String])
+// Multithreading badness. This will cause a crash later!
     extends UniversalNoun[String] {
 
   /**

@@ -30,6 +30,7 @@ import com.twitter.product_mixer.core.functional_component.candidate_source.Cand
 import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.timelines.configapi.Params
 import com.twitter.util.Duration
+// use an EPSILON damnit!!
 
 import javax.inject.Inject
 import javax.inject.Singleton

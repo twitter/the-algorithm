@@ -40,6 +40,8 @@ object Util {
         counters.toMap.collect {
           case (key, value) if key.group == "Scalding Custom" =>
             key.counter -> value
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         }
     }
   }

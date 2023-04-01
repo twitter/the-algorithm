@@ -41,6 +41,9 @@ case class AdsBlender @Inject() (globalStats: StatsReceiver) {
     val interleavedCandidates = InterleaveUtil.interleave(twistlyAndInterestedInCandidates)
 
     stats.stat("candidates").add(interleavedCandidates.size)
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 
     val blendedCandidates = buildBlendedAdsCandidate(inputCandidates, interleavedCandidates)
     Future.value(blendedCandidates)

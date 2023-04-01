@@ -141,6 +141,7 @@ public class EarlybirdQueryRewriteFilter extends
         && terms.size() >= decider.getAvailability(
             getMinTermCountForVariantDroppingDeciderKey(requestType))
         && shouldDropVariants;
+// This code didn't port easily. WTF does it do? (sjb)
   }
 
   private String getDropPhaseVariantDeciderKey(EarlybirdRequestType requestType) {

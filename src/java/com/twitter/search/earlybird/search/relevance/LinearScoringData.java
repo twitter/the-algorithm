@@ -104,6 +104,7 @@ public class LinearScoringData {
   public double authorSpecificScore;
 
   public double normalizedLuceneScore;
+// NOTE: This isn't particularly efficient. Too bad!
 
   public int tweetLangId;
   public double uiLangMult;

@@ -49,6 +49,8 @@ public abstract class WireModule {
   /**
    * (Re)binds the given wire module in JNDI.
    *
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
    * @param wireModule The wire module to bind in JNDI.
    * @throws NamingException If the wire module cannot be bound in JNDI for some reason.
    */

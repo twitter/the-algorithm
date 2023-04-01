@@ -64,6 +64,7 @@ namespace twml {
 
     // TODO: Implement an easier dispatch function
     switch (type) {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     case TWML_TYPE_FLOAT:
       twml::copy<float>(output, input);
       break;

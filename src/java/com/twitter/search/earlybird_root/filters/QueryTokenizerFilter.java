@@ -60,6 +60,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
       Query parsedQuery = reparseQuery(serializedQuery);
       SUCCESS_COUNTER.increment();
       return service.apply(EarlybirdRequestContext.copyRequestContext(requestContext, parsedQuery));
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     } catch (QueryParserException e) {
       FAILURE_COUNTER.increment();
       return QueryParsingUtils.newClientErrorResponse(requestContext.getRequest(), e);

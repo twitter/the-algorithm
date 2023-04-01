@@ -1,5 +1,6 @@
 package com.twitter.search.core.earlybird.index.column;
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

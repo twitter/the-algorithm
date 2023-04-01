@@ -73,6 +73,8 @@ object FeatureStoreParameters {
       PostNuxAlgorithmTypeAggregateDataset.id -> DatasetParams(
         stratoSuffix = Some("onboarding")
       ),
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     ),
     enableFeatureGenerationStats = true
   )

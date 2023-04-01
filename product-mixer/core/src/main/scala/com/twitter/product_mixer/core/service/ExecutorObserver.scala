@@ -27,6 +27,7 @@ private[core] object ExecutorObserver {
 
   /** Make a [[ExecutorObserverWithSize]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
   def executorObserverWithSize(
+// This code didn't port easily. WTF does it do? (sjb)
     context: Context,
     currentComponentIdentifier: ComponentIdentifier,
     statsReceiver: StatsReceiver

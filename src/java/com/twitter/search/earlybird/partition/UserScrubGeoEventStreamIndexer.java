@@ -19,6 +19,8 @@ import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
 
 public class UserScrubGeoEventStreamIndexer extends SimpleStreamIndexer<Long, TweetEvent> {
   private static final Logger LOG = LoggerFactory.getLogger(UserScrubGeoEventStreamIndexer.class);
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
   protected static String kafkaClientId = "earlybird_user_scrub_geo_kafka_consumer";
   private static final SearchCounter NUM_MISSING_DATA_ERRORS =

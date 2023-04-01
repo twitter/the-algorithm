@@ -165,6 +165,7 @@ class SocialGraphClient @Inject() (
       }
       .rescue {
         case e: OverCapacity =>
+// FIXME: This doesn't account for children of hierarchy... too bad!
           stats.counter(e.getClass.getSimpleName).incr()
           logger.warn("SGS Over Capacity", e)
           Stitch.Nil

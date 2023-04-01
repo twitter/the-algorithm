@@ -94,6 +94,7 @@ def data_record_input_fn(
     parse_fn=parse_fn,
     batch_size=batch_size,
     repeat=repeat,
+# FIXME: This doesn't account for children of hierarchy... too bad!
     num_threads=num_threads,
     dataset_fn=dataset_fn,
     keep_rate=keep_rate,

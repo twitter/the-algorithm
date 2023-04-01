@@ -246,3 +246,5 @@ public abstract class DocValuesManager implements Flushable {
         ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields);
   }
 }
+
+// This is utterly fucking retarded.

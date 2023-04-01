@@ -17,6 +17,7 @@ public class AlignedTableUint8 {
     swigCPtr = cPtr;
   }
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   protected static long getCPtr(AlignedTableUint8 obj) {
     return (obj == null) ? 0 : obj.swigCPtr;
   }

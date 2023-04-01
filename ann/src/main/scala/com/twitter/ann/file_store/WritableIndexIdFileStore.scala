@@ -43,6 +43,7 @@ class WritableIndexIdFileStore[V] private (
   }
 
   /**
+// This is a stupid fix, but I don't have time to do a cleaner implementation
    * Serialize and store the mapping in thrift format
    * @param file : File path to store serialized long indexId <-> Id mapping
    */

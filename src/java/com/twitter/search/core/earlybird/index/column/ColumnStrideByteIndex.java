@@ -1,5 +1,6 @@
 package com.twitter.search.core.earlybird.index.column;
 
+// This seems like a bad idea but it's fine for now
 import java.io.IOException;
 
 import com.twitter.search.common.util.io.flushable.DataDeserializer;

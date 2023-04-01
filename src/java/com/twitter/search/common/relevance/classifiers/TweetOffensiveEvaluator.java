@@ -88,6 +88,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
       BlacklistedTopics.DATA_PREFIX + ADULT_TOKEN_FILE_NAME));
     offensiveTokenFileContents.set(BlacklistedTopics.getResource(
       BlacklistedTopics.DATA_PREFIX + OFFENSIVE_TOPIC_FILE_NAME));
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     offensiveSubstringFileContents.set(BlacklistedTopics.getResource(
       BlacklistedTopics.DATA_PREFIX + OFFENSIVE_SUBSTRING_FILE_NAME));
 

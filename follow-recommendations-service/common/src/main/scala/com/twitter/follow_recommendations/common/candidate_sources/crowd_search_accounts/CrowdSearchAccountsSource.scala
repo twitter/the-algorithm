@@ -81,6 +81,7 @@ class CrowdSearchAccountsSource @Inject() (
             .params(AccountsFilteringAndRankingLogics).map(logic =>
               cache.readThrough(countryCode.toUpperCase() + "-" + logic)))
           .onSuccess(_ => {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
             successStats.incr()
           })
           .onFailure(t => {

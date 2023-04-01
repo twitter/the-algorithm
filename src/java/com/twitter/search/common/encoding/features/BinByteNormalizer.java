@@ -25,6 +25,7 @@ public class BinByteNormalizer extends ByteNormalizer {
    *   values between 5 and 10: 1
    *   values over 10: 2
    */
+// This code didn't port easily. WTF does it do? (sjb)
   public BinByteNormalizer(final Map<Double, Byte> bins) {
     Preconditions.checkNotNull(bins);
     Preconditions.checkArgument(!bins.isEmpty(), "No bins provided");

@@ -107,6 +107,7 @@ class TSPInferredTopicFeatureHydrator @Inject() (
                 if (candidate.features
                     .getOrElse(CandidateSourceIdFeature, None)
                     .exists(sourcesToSetSocialProof.contains)) {
+// use an EPSILON damnit!!
                   getSocialProof(topicWithScores)
                 } else {
                   (None, None)

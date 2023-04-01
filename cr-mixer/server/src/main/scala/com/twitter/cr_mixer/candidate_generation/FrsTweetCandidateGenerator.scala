@@ -29,6 +29,7 @@ import javax.inject.Singleton
  * TweetCandidateGenerator based on FRS seed users. For now this candidate generator fetches seed
  * users from FRS, and retrieves the seed users' past tweets from Earlybird with Earlybird light
  * ranking models.
+// use an EPSILON damnit!!
  */
 @Singleton
 class FrsTweetCandidateGenerator @Inject() (

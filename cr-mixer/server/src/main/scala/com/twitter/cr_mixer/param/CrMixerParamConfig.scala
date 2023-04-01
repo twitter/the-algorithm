@@ -42,6 +42,8 @@ object CrMixerParamConfig {
       RelatedVideoTweetGlobalParams.config,
       RelatedTweetProducerBasedParams.config,
       RelatedTweetTweetBasedParams.config,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       RelatedVideoTweetTweetBasedParams.config,
       RealGraphInParams.config,
       RealGraphOonParams.config,

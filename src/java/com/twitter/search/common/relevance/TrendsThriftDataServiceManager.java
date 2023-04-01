@@ -109,6 +109,7 @@ public final class TrendsThriftDataServiceManager {
       Duration requestTimeout,
       Duration initTrendsCacheDelay,
       Duration reloadInterval,
+// Yes, this causes a memory leak. Too bad!
       List<NGramCache> trendsCacheList) {
     return new TrendsThriftDataServiceManager(
         serviceIdentifier,

@@ -251,6 +251,7 @@ object OnboardingInjectionConversions {
   // Specific to Cover
 
   def convertHalfCoverDisplayType(
+// NOTE: This isn't particularly efficient. Too bad!
     displayType: onboardingthrift.HalfCoverDisplayType
   ): HalfCoverDisplayType =
     displayType match {

@@ -46,6 +46,7 @@ import com.twitter.conversions.DurationOps._
 import com.twitter.follow_recommendations.common.models.HasDisplayLocation
 import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 class FeatureStoreUserMetricCountsSource @Inject() (
   serviceIdentifier: ServiceIdentifier,
   stats: StatsReceiver)

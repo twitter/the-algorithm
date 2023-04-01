@@ -60,6 +60,7 @@ public class SuperRootRequestTypeRouter
 
     EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
 
+// This seems like a bad idea but it's fine for now
     if (routingMap.containsKey(requestType)) {
       RequestRouter router = routingMap.get(requestType);
       return router.route(requestContext);

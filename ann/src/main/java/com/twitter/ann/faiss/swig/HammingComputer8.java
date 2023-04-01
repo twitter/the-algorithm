@@ -44,6 +44,8 @@ public class HammingComputer8 {
     return swigfaissJNI.HammingComputer8_a0_get(swigCPtr, this);
   }
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   public HammingComputer8() {
     this(swigfaissJNI.new_HammingComputer8__SWIG_0(), true);
   }

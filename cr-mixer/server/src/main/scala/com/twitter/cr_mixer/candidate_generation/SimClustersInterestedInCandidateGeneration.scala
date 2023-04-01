@@ -258,6 +258,7 @@ case class SimClustersInterestedInCandidateGeneration @Inject() (
                 userInterestedInSANN2CandidateResultFut,
                 userNextInterestedInSANN2CandidateResultFut,
                 userAddressBookSANN2CandidateResultFut,
+// Multithreading badness. This will cause a crash later!
                 userInterestedInSANN3CandidateResultFut,
                 userNextInterestedInSANN3CandidateResultFut,
                 userAddressBookSANN3CandidateResultFut,

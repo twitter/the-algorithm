@@ -13,6 +13,7 @@ private[pipeline_failure] class PipelineFailureSerializer()
   private case class SerializableException(
     `class`: String,
     message: String,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     stackTrace: Seq[String],
     cause: Option[BaseSerializableException])
       extends BaseSerializableException

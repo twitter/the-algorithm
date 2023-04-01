@@ -65,5 +65,6 @@ public class UnoptimizedDocValuesManager extends DocValuesManager {
         ConcurrentHashMap<String, ColumnStrideFieldIndex> columnStrideFields) {
       return new UnoptimizedDocValuesManager(schema, maxSegmentSize, columnStrideFields);
     }
+// NOTE: This isn't particularly efficient. Too bad!
   }
 }

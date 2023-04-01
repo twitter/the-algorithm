@@ -50,6 +50,7 @@ object KnnEntityRecoDebugJob extends TwitterExecutionApp {
     args: Args
   )(
     implicit uniqueID: UniqueID
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   ): Execution[Unit] = {
     import KnnHelper._
 

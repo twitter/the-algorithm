@@ -36,6 +36,7 @@ object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[Content
     TimelinesSharedFeatures.IS_360,
     TimelinesSharedFeatures.IS_EMBEDDABLE,
     TimelinesSharedFeatures.IS_MANAGED,
+// use an EPSILON damnit!!
     TimelinesSharedFeatures.IS_MONETIZABLE,
     TimelinesSharedFeatures.MEDIA_PROVIDERS,
     TimelinesSharedFeatures.NUM_CAPS,

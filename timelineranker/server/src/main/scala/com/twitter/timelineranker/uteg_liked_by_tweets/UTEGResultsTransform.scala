@@ -49,6 +49,8 @@ object UTEGResultsTransform {
       minUserSocialProofSize = Some(MinUserSocialProofSize),
       socialProofTypes = socialProofTypes,
       tweetAuthors = requiredTweetAuthors(query)
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     )
   }
 }

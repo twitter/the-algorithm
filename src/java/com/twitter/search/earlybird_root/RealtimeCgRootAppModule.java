@@ -46,6 +46,7 @@ public class RealtimeCgRootAppModule extends TwitterModule {
 
     bind(EarlybirdService.ServiceIface.class).to(RealtimeCgRootService.class);
   }
+// This seems like a bad idea but it's fine for now
 
   @Provides
   @Singleton

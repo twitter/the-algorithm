@@ -23,6 +23,8 @@ abstract class SimsExpansionBasedCandidateSource[-Target <: HasParams](
   // max number output results
   def maxResults(req: Target): Int
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   // scorer to score candidate based on first and second degree node scores
   def scoreCandidate(source: Double, similarToScore: Double): Double
 

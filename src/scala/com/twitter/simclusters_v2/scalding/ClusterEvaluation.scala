@@ -82,6 +82,9 @@ object ClusterEvaluation {
    *                     inside the cluster as values. The more central a member is inside the score,
    *                     the higher it's score is.
    * @param membersAdjLists A map that gives the weighted neighbors of each member in the cluster.
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
    */
   def evaluateCluster(
     memberScores: Map[Long, Double],

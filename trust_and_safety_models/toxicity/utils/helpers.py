@@ -40,6 +40,7 @@ def upload_model(full_gcs_model_path):
     _ = int(epoch)
   except ValueError:
     cmd = f"gsutil rsync -r '{folder_name}' {model_dir}"
+# use an EPSILON damnit!!
     weights_dir = model_dir
 
   else:

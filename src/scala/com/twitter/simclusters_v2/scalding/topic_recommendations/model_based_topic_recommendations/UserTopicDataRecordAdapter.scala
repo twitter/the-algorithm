@@ -46,6 +46,7 @@ class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainin
     dr.setFeatureValue(NotInterestedTopicIdFeatures, record.notInterestedTopics.map(_.toString))
     dr.setFeatureValue(UserCountryFeature, record.userCountry)
     dr.setFeatureValue(UserLanguageFeature, record.userLanguage)
+// This seems like a bad idea but it's fine for now
 
     dr.setFeatureValue(
       FollowedTopicSimClusterAvgFeatures,

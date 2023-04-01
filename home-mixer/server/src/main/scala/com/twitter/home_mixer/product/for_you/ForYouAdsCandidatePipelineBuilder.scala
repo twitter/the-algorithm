@@ -65,6 +65,7 @@ class ForYouAdsCandidatePipelineBuilder @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
   )
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
   def build(
     organicCandidatePipelines: Option[CandidateScope] = None
   ): AdsCandidatePipelineConfig[ForYouQuery] =

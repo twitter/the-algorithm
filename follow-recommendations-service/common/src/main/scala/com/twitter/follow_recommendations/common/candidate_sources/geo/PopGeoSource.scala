@@ -24,6 +24,7 @@ class BasePopGeoSource @Inject() (
     Unit,
     PopUsersInPlace
   ]) extends StratoFetcherWithUnitViewSource[String, PopUsersInPlace](
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       fetcher,
       BasePopGeoSource.Identifier) {
 

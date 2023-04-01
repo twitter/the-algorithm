@@ -98,6 +98,7 @@ public class EarlybirdTimeFilterQueryRewriter {
 
   private EarlybirdRequestContext addOperators(
       EarlybirdRequestContext requestContext,
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       @Nullable Query query) throws QueryParserException {
 
     // Add the SINCE_ID and MAX_ID operators only if the decider is enabled.

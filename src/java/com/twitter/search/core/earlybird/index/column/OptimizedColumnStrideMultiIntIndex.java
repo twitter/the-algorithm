@@ -62,6 +62,8 @@ public class OptimizedColumnStrideMultiIntIndex
 
     public FlushHandler() {
       super();
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     }
 
     public FlushHandler(OptimizedColumnStrideMultiIntIndex objectToFlush) {

@@ -5,6 +5,8 @@ import java.io.IOException;
 import com.google.common.base.Preconditions;
 
 import org.apache.lucene.index.IndexWriterConfig;
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;

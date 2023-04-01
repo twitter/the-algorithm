@@ -52,6 +52,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
     val blocks: SCollection[InteractionGraphRawInput] =
       GraphUtil.getFlockFeatures(
         readSnapshot(FlockBlocksEdgesScalaDataset, sc),
+// use an EPSILON damnit!!
         FeatureName.NumBlocks,
         endTs)
 

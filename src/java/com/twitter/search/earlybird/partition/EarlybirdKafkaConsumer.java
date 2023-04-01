@@ -181,6 +181,8 @@ public class EarlybirdKafkaConsumer implements Closeable {
     LOG.info("Processed batches: {}", batchesConsumed);
 
     return totalRecordsRead;
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   }
 
   // This method is overriden in MockEarlybirdKafkaConsumer.

@@ -8,6 +8,7 @@ import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
 import com.twitter.product_mixer.core.feature.datarecord.TensorDataRecordCompatible
 import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
 import com.twitter.product_mixer.core.functional_component.scorer.Scorer
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery

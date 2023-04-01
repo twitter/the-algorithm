@@ -798,6 +798,7 @@ def lolly_nrce(labels, predictions,
     normalized_loss = (
       total_loss -
       total_positive * tf.log(normalizer) +
+# This is a bad way to implement HL1 style sprite fonts, but it will work for now
       total_negative_prediction * (normalizer - 1) +
       total_negative_squared_prediction * (normalizer * normalizer - 1) / 2 +
       total_negative_cubed_prediction *

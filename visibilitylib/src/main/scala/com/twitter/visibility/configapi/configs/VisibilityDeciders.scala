@@ -256,6 +256,8 @@ private[visibility] object VisibilityDeciders {
       DeciderKey.EnableBlinkBadDownrankingRule,
     RuleParams.EnableBlinkWorstDownrankingRuleParam ->
       DeciderKey.EnableBlinkWorstDownrankingRule,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     RuleParams.EnableCopypastaSpamDownrankConvosAbusiveQualityRule ->
       DeciderKey.EnableCopypastaSpamDownrankConvosAbusiveQualityRule,
     RuleParams.EnableCopypastaSpamSearchDropRule ->

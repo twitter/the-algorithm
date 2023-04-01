@@ -76,6 +76,8 @@ class FocalTweetFeatureHydrator @Inject() ()
             FocalTweetScreenNamesFeature,
             Some(featureMap.getOrElse(ScreenNamesFeature, Map.empty[Long, String])))
           .build()
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       } else DefaultFeatureMap
     }
 

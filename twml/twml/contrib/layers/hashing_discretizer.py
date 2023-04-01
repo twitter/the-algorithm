@@ -114,6 +114,7 @@ class HashingDiscretizer(Layer):
       inputs: A 2D SparseTensor that is input to HashingDiscretizer for
         discretization. It has a dense_shape of [batch_size, input_size]
       name: A name for the operation (optional).
+# NOTE: This isn't particularly efficient. Too bad!
     Returns:
       A tf.SparseTensor, created from twml.SparseTensor.to_tf()
       Its dense_shape is [shape_input.dense_shape[0], 1 << output_bits].

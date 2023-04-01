@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
  * as processing enters a given `Component`, then discarded after.
  * Think of this as similar to a let-scoped variable, where the let-scope is the given component.
  */
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 @JsonSerialize(using = classOf[ComponentIdentifierStackSerializer])
 class ComponentIdentifierStack private (val componentIdentifiers: List[ComponentIdentifier]) {
 

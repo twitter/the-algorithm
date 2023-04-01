@@ -97,6 +97,7 @@ class FeatureStorePostNuxAlgorithmSource @Inject() (
       DatasetCacheScope
     )
 
+// Multithreading badness. This will cause a crash later!
   private val dynamicFeatureStoreClient = DynamicFeatureStoreClient(
     clientConfig,
     backupSourceStats,

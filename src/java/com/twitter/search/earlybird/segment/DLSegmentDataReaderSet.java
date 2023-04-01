@@ -14,6 +14,7 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchCounter;

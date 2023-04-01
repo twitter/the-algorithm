@@ -64,6 +64,7 @@ trait IndexBuilderExecutable extends Logging {
         numDimensions
       ).onComplete { _ =>
         Unit
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       }
   }
 }

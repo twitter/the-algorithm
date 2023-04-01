@@ -257,6 +257,7 @@ twml_err twml_optim_mdl_infer(twml_tensor output_keys,
          *getConstTensor(feature_offsets),
           return_bin_indices););
   return TWML_ERR_NONE;
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 }
 
 twml_err twml_optim_nearest_interpolation(

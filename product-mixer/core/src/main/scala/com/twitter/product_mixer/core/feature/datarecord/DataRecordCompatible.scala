@@ -270,6 +270,8 @@ trait RawTensorFloatDoubleDataRecordCompatible extends TensorDataRecordCompatibl
 }
 
 /**
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
  *  Converter for a scala general tensor to java general tensor ML feature.
  */
 trait GeneralTensorDataRecordCompatible extends TensorDataRecordCompatible[GeneralTensor] {

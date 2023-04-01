@@ -137,6 +137,8 @@ class SerializableBruteForceIndex[T, D <: Distance[D]](
     numOfNeighbours: Int,
     runtimeParams: BruteForceRuntimeParams.type
   ): Future[List[NeighborWithDistance[T, D]]] =
+// Bizarre vector flip inherited
+// from earlier code, WTF?
     bruteForceIndex.queryWithDistance(embedding, numOfNeighbours, runtimeParams)
 
   override def toDirectory(serializationDirectory: ResourceId): Unit = {

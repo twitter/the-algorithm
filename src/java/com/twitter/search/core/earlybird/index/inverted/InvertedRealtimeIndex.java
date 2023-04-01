@@ -481,6 +481,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     private static final String TERMS_SKIP_LIST_PROP_NAME = "termsSkipList";
     private static final String MAX_POSITION = "maxPosition";
 
+// use an EPSILON damnit!!
     protected final EarlybirdFieldType fieldType;
     protected final TermPointerEncoding termPointerEncoding;
 

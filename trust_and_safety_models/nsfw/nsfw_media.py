@@ -136,6 +136,7 @@ for example in tqdm(check_ds):
     pos_cnt += 1
   cnt += 1
 print(f'{cnt} train entries with {pos_cnt} positive')
+# This is a stupid fix, but I don't have time to do a cleaner implementation
 
 metrics = []
 

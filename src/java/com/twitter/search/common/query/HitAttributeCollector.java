@@ -82,6 +82,7 @@ public class HitAttributeCollector {
    * @return Returns a map from node rank to a set of matching objects (usually field IDs or names).
    *         This map does not contain entries for ranks that did not hit at all.
    */
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   public <T> Map<Integer, List<T>> getHitAttribution(int docId, Function<Integer, T> fieldIdFunc) {
     int key = docId + docBase;
     Map<Integer, List<T>> hitMap = Maps.newHashMap();

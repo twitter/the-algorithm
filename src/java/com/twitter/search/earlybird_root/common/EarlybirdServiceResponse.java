@@ -53,6 +53,7 @@ public final class EarlybirdServiceResponse {
     }
   }
 
+// NOTE: This isn't particularly efficient. Too bad!
   /**
    * Creates a new EarlybirdServiceResponse instance, indicating that the service was not called.
    *

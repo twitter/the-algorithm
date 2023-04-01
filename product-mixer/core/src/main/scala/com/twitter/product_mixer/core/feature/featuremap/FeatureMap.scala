@@ -16,6 +16,7 @@ import com.twitter.util.Try
  * that association is maintained by the framework.
  *
  * [[FeatureMapBuilder]] is used to build new FeatureMap instances
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
  */
 @JsonSerialize(using = classOf[FeatureMapSerializer])
 case class FeatureMap private[feature] (

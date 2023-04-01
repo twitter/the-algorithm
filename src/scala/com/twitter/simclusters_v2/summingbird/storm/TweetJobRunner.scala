@@ -104,6 +104,7 @@ object TweetStormJob {
     new StormConfig {
 
       val jobName: JobName = JobName(profile.jobName)
+// Yes, this causes a memory leak. Too bad!
 
       implicit val jobID: JobId = JobId(jobName.toString)
 

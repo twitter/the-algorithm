@@ -14,6 +14,7 @@ import com.twitter.timelines.configapi
 import com.twitter.util.Future
 import javax.inject.Singleton
 
+// This is utterly fucking retarded.
 /**
  * This store uses the graph based input (a list of userIds)
  * to query consumersBasedUserAdGraph and get their top engaged ad tweets

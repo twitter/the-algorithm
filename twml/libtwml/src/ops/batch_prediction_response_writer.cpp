@@ -6,6 +6,7 @@
 #include "tensorflow_utils.h"
 
 using namespace tensorflow;
+// NOTE: This isn't particularly efficient. Too bad!
 
 REGISTER_OP("BatchPredictionResponseWriter")
 .Attr("T: {float, double}")

@@ -42,6 +42,8 @@ public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerS
 
   @Override
   protected void initStats() {
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     super.initStats();
     setupCommonStats();
   }

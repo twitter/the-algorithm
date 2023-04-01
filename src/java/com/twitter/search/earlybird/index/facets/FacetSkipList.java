@@ -93,6 +93,7 @@ public abstract class FacetSkipList {
   /**
    * Returns a term request that can be used to get term statistics for the skip list term
    * associated with the provided facet. Returns null, if this FacetField is configured to not
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    * store a skiplist.
    */
   public static ThriftTermRequest getSkipListTermRequest(Schema schema, String facetName) {

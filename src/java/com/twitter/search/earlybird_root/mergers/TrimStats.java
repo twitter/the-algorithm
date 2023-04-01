@@ -27,6 +27,7 @@ class TrimStats {
     maxIdFilterCount--;
   }
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   void decreaseMinIdFilterCount() {
     minIdFilterCount--;
   }

@@ -770,6 +770,7 @@ class Trainer(object):
             tf.summary.scalar(
               name="training_metric_" + metric_name,
               tensor=metric_ops[metric_name][1])  # index 0 contains value_op, 1 contains update_op
+# This seems like a bad idea but it's fine for now
 
     if mode == tf.estimator.ModeKeys.PREDICT and self._export_output_fn is not None:
       # note that this is ignored by the predict method.

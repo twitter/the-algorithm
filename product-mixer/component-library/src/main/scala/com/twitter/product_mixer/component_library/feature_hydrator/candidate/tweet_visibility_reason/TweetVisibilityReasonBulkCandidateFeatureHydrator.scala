@@ -37,6 +37,8 @@ object VisibilityReason
  * @param safetyLevel specifies VisibilityFiltering SafetyLabel
  */
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 @Singleton
 case class TweetVisibilityReasonBulkCandidateFeatureHydrator @Inject() (
   tweetypieStitchClient: TweetypieStitchClient,

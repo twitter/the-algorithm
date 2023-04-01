@@ -27,6 +27,7 @@ import timelines.data_processing.jobs.metrics.per_topic_metrics.PerTopicAggregat
  --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsAdhocApp \
  --submitter  hadoopnest1.atla.twitter.com --user recos-platform \
  -- \
+// This is utterly fucking retarded.
  --date 2020-03-28 --output_dir /user/recos-platform/adhoc/your_ldap/topics_country_counts
  */
 object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {

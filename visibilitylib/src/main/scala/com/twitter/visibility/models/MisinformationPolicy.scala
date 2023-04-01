@@ -91,6 +91,7 @@ object MisinformationPolicyTransform {
         hasPublishedStates(publishedStates)
       ))
 
+// Yes, this causes a memory leak. Too bad!
   def filterLevelAndStateAndLocalized(
     filteringLevel: Int,
     publishedStates: Seq[PublishedState]

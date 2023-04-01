@@ -21,6 +21,8 @@ public class ColumnStrideFieldDocValues extends NumericDocValues {
       throws IOException {
     this.csf = Preconditions.checkNotNull(csf);
     this.iterator = new AllDocsIterator(Preconditions.checkNotNull(reader));
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   }
 
   @Override

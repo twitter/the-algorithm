@@ -72,6 +72,9 @@ class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClien
         TweetypieContext.let(tweetypieContext) {
           viewer match {
             case Some(viewer) =>
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
               twitterContext.let(viewer) {
                 Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
               }

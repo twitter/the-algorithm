@@ -67,6 +67,8 @@ object CursorSerializer extends PipelineCursorSerializer[PipelineCursor] {
         CursorThriftSerializer.toString(thriftCursor)
       case _ =>
         throw PipelineFailure(IllegalStateFailure, "Unknown cursor type")
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     }
 
   def deserializeOrderedCursor(cursorString: String): Option[OrderedCursor] =

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
 public class OperatingPoint {
   private transient long swigCPtr;

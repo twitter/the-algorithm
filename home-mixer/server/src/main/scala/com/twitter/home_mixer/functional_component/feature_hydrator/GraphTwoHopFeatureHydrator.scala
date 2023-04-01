@@ -55,6 +55,7 @@ class GraphTwoHopFeatureHydrator @Inject() (
 
   private val FollowFeatureType = gfs.FeatureType(gfs.EdgeType.Following, gfs.EdgeType.FollowedBy)
 
+// FIXME: This doesn't account for children of hierarchy... too bad!
   override def apply(
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]

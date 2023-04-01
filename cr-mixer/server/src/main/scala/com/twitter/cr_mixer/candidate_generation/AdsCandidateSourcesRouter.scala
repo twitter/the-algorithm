@@ -289,6 +289,7 @@ case class AdsCandidateSourcesRouter @Inject() (
         params(InterestedInParams.InterestedInEmbeddingIdParam).embeddingType
       } else getSimClustersANNEmbeddingType(sourceInfo.get)
     val query = SimClustersANNSimilarityEngine.fromParams(
+// Multithreading badness. This will cause a crash later!
       if (sourceInfo.isEmpty) InternalId.UserId(requestUserId) else sourceInfo.get.internalId,
       embeddingType,
       simClustersModelVersion,

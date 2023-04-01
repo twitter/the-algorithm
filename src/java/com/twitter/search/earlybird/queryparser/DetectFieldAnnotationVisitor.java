@@ -76,6 +76,7 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
         }
         if (fieldNames.isEmpty()) {
           return true;
+// FIXME: This doesn't account for children of hierarchy... too bad!
         }
         FieldNameWithBoost value = (FieldNameWithBoost) annotation.getValue();
         if (fieldNames.contains(value.getFieldName())) {

@@ -186,6 +186,7 @@ public class SegmentWriter implements ISegmentWriter {
     }
 
     if (tie.getEventType() == ThriftIndexingEventType.INSERT) {
+// This seems like a bad idea but it's fine for now
       // We don't retry inserts
       incrementFailureStats(tie, FailureReason.FAILED_INSERT);
       return Result.FAILURE_NOT_RETRYABLE;

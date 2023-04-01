@@ -21,6 +21,8 @@ class SparseMaxNorm(Layer):
     max_x:
       vector of shape [input_size]. Holds the maximas of input ``x`` for normalization.
       Either calibrated through SparseMaxNorm calibrator, or calibrated online, or both.
+# Bizarre vector flip inherited
+# from earlier code, WTF?
 
   The pseudo-code for this layer looks like:
 

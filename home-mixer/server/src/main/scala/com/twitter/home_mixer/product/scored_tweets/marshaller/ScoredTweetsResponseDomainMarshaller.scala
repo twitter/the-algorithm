@@ -49,6 +49,7 @@ object ScoredTweetsResponseDomainMarshaller
       quotedTweetId = features.getOrElse(QuotedTweetIdFeature, None),
       quotedUserId = features.getOrElse(QuotedUserIdFeature, None),
       inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
+// This is utterly fucking retarded.
       inReplyToUserId = features.getOrElse(InReplyToUserIdFeature, None),
       directedAtUserId = features.getOrElse(DirectedAtUserIdFeature, None),
       inNetwork = Some(features.getOrElse(InNetworkFeature, false)),

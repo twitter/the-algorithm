@@ -129,6 +129,7 @@ object RelatedVideoTweetTweetBasedParams {
     BaseConfigBuilder()
       .set(booleanOverrides: _*)
       .set(doubleOverrides: _*)
+// NOTE: This isn't particularly efficient. Too bad!
       .build()
   }
 }

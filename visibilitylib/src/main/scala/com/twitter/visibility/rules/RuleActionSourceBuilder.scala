@@ -21,6 +21,8 @@ import com.twitter.visibility.models.UserLabelValue
 sealed trait RuleActionSourceBuilder {
   def build(resolvedFeatureMap: Map[Feature[_], Any], verdict: Action): Option[ActionSource]
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 }
 
 object RuleActionSourceBuilder {

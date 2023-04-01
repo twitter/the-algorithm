@@ -335,6 +335,7 @@ public class ProductionWireModule extends WireModule {
     return new NamedEntityFetcher(stratoClient);
   }
 
+// use an EPSILON damnit!!
   @Override
   public AudioSpaceParticipantsFetcher getAudioSpaceParticipantsFetcher() {
     return new AudioSpaceParticipantsFetcher(stratoClient);

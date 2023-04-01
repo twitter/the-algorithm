@@ -43,6 +43,9 @@ import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
 import com.twitter.search.queryparser.query.QueryParserException;
 
 /**
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
  * An extension of Lucene's MultiTermQuery which creates a disjunction of
  * long ID terms. Lucene tries to rewrite the Query depending on the number
  * of clauses to perform as efficiently as possible.

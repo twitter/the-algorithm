@@ -42,6 +42,7 @@ object RecapProduction {
     RecapParams.EnableReturnAllResultsParam,
     RecapParams.IncludeRandomTweetParam,
     RecapParams.IncludeSingleRandomTweetParam,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     RecapParams.EnableInNetworkInReplyToTweetFeaturesHydrationParam,
     RecapParams.EnableReplyRootTweetHydrationParam,
     RecapParams.EnableSettingTweetTypesWithTweetKindOption,

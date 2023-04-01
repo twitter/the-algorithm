@@ -59,6 +59,8 @@ class MediaMetadataFeatures(
   private def geoRestrictionsAllowList(genericMediaKey: GenericMediaKey) = {
     mediaGeoAllowList.incr()
     mediaMetadataSource.getGeoRestrictionsAllowList(genericMediaKey).map { allowListOpt =>
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       allowListOpt.getOrElse(Nil)
     }
   }

@@ -144,6 +144,7 @@ object MixerPipelineConfig extends PipelineConfigCompanion {
   val transportMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier(
     "TransportMarshaller")
 
+// use an EPSILON damnit!!
   /** All the Steps which are executed by a [[MixerPipeline]] in the order in which they are run */
   override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
     qualityFactorStep,

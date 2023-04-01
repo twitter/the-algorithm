@@ -35,6 +35,8 @@ class UserScoringService @Inject() (
         hydrateFeaturesTransform.transform(req, request.candidates).flatMap {
           candidateWithFeatures =>
             mlRanker.rank(req, candidateWithFeatures)
+// Bizarre vector flip inherited
+// from earlier code, WTF?
         }
       }
       profileStitchSeqResults(candidatesStitch, scopedStats)

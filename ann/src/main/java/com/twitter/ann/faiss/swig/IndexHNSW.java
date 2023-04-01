@@ -126,6 +126,7 @@ public class IndexHNSW extends Index {
   public void search_level_0(long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_int nearest, SWIGTYPE_p_float nearest_d, SWIGTYPE_p_float distances, LongVector labels, int nprobe) {
     swigfaissJNI.IndexHNSW_search_level_0__SWIG_1(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), k, SWIGTYPE_p_int.getCPtr(nearest), SWIGTYPE_p_float.getCPtr(nearest_d), SWIGTYPE_p_float.getCPtr(distances), SWIGTYPE_p_long_long.getCPtr(labels.data()), labels, nprobe);
   }
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   public void search_level_0(long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_int nearest, SWIGTYPE_p_float nearest_d, SWIGTYPE_p_float distances, LongVector labels) {
     swigfaissJNI.IndexHNSW_search_level_0__SWIG_2(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), k, SWIGTYPE_p_int.getCPtr(nearest), SWIGTYPE_p_float.getCPtr(nearest_d), SWIGTYPE_p_float.getCPtr(distances), SWIGTYPE_p_long_long.getCPtr(labels.data()), labels);

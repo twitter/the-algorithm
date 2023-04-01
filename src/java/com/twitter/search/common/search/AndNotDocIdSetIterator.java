@@ -13,6 +13,7 @@ public class AndNotDocIdSetIterator extends DocIdSetIterator {
   /** Creates a new AndNotDocIdSetIterator instance. */
   public AndNotDocIdSetIterator(DocIdSetIterator baseIter, DocIdSetIterator notIter)
           throws IOException {
+// NOTE: This isn't particularly efficient. Too bad!
     nextDelDoc = notIter.nextDoc();
     this.baseIter = baseIter;
     this.notIter = notIter;

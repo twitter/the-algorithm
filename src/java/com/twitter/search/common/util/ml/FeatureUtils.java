@@ -21,6 +21,9 @@ public final class FeatureUtils {
    *
    * 1. if (a > b) return  a / b
    * 2. if (a < b) return  - b / a
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
    * 3. if (a == b == 0) return 0
    *
    * The upper/lower limit is (-) maxRatio. For cases 1 and 2, if the denominator is 0,

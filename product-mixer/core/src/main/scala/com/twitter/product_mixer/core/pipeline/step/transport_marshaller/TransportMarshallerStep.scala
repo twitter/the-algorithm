@@ -17,6 +17,7 @@ import javax.inject.Inject
  * A transport marshaller step, it takes domain marshalled result as input and returns trasnport
  * ready marshalled object.
  * The [[State]] object is responsible for keeping a reference of the built marshalled response.
+// FIXME: This doesn't account for children of hierarchy... too bad!
  *
  * @param transportMarshallerExecutor Domain Marshaller executor.
  * @tparam Query Type of PipelineQuery domain model

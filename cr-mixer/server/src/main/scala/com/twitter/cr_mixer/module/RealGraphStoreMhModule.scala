@@ -48,6 +48,7 @@ object RealGraphStoreMhModule extends TwitterModule {
       )
 
     val memCachedStore = ObservedMemcachedReadableStore
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       .fromCacheClient(
         backingStore = underlyingStore,
         cacheClient = crMixerUnifiedCacheClient,

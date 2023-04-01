@@ -57,6 +57,9 @@ class OnlineSTPSourceWithDeepbirdV2Scorer @Inject() (
     Stitch.collect(possibleCandidates).map { _.flatten.sortBy(-_.score.getOrElse(0.0)) }
   }
 }
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
 object OnlineSTPSourceWithDeepbirdV2Scorer {
   // The following two variables are the means for the distribution of scores coming from the legacy

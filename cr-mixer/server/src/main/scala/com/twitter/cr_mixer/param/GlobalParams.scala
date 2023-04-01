@@ -66,6 +66,9 @@ object GlobalParams {
     override val durationConversion: DurationConversion = DurationConversion.FromHours
   }
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   val AllParams: Seq[Param[_] with FSName] = Seq(
     MaxCandidatesPerRequestParam,
     UnifiedMaxSourceKeyNum,

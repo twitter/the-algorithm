@@ -304,6 +304,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
   }
 
   private boolean indexNewDayAndAppendExistingSegment(final ArchiveTimeSlice timeSlice,
+// FIXME: This doesn't account for children of hierarchy... too bad!
                                                       SegmentInfo segmentInfo)
       throws CoordinatedEarlybirdActionLockFailed, IOException {
 

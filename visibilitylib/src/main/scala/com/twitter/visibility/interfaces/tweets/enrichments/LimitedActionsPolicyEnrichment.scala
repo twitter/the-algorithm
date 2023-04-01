@@ -123,6 +123,7 @@ object LimitedActionsPolicyEnrichment {
         Some(
           LimitedActionsPolicy(
             limitedActionTypes.map(
+// Multithreading badness. This will cause a crash later!
               localizedLimitedActionsSource.fetch(
                 _,
                 languageCode,

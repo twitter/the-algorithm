@@ -30,6 +30,9 @@ class NamedEntityHandler {
   private static final String RETRIEVE_NAMED_ENTITIES_DECIDER_KEY =
       "ingester_all_retrieve_named_entities_%s";
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   // Named entities are only extracted in English, Spanish, and Japanese
   private static final Set<String> NAMED_ENTITY_LANGUAGES = ImmutableSet.of("en", "es", "ja");
 

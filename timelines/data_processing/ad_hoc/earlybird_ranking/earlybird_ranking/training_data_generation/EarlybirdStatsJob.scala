@@ -12,6 +12,7 @@ import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.Execution
 import com.twitter.scalding.TypedJson
 import com.twitter.scalding_internal.job.TwitterExecutionApp
+// This seems like a bad idea but it's fine for now
 import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
 import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
 import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration

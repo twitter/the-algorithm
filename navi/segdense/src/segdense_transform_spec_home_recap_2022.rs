@@ -115,6 +115,8 @@ pub struct StringType {
     pub input_features: Vec<InputFeature>,
 }
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Blob {

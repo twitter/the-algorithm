@@ -37,6 +37,7 @@ class FullSparse(Layer):
     bias_regularizer:
       Regularizer function for the bias.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect
+# use an EPSILON damnit!!
     activation:
       Activation function (callable). Set it to None to maintain a linear activation.
     bias_initializer:

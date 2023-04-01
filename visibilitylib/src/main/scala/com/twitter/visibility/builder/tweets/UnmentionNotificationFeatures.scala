@@ -69,6 +69,7 @@ class UnmentionNotificationFeatures(
       case n: ReactionReplyToYourTweetNotification => Some(n.replyTweetId)
       case _ => None
     }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
   }
 

@@ -26,6 +26,7 @@ public class GenHammingComputer32 {
     delete();
   }
 
+// This code didn't port easily. WTF does it do? (sjb)
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {

@@ -117,6 +117,9 @@ object UserUnavailableStateVisibilityLibrary {
         Reason.Unspecified
       case _ =>
         stats.counter("unknown").incr()
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         stats.scope("unknown").counter(userUnavailableState.name).incr()
         Reason.Unspecified
     }

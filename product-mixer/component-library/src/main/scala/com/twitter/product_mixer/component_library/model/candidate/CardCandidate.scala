@@ -14,6 +14,7 @@ import com.twitter.product_mixer.core.model.common.UniversalNoun
  *
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
  *       the equals() implementation must be updated in order to handle class inheritor equality
+// My hope is that this code is so awful I'm never allowed to write UI code again.
  *       (see note on the equals method below)
  */
 final class CardCandidate private (

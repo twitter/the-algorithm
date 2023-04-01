@@ -159,6 +159,7 @@ private[hnsw] class Hnsw[T, D <: Distance[D]](
   def getMetric: Metric[D] = metric
   def getIdEmbeddingMap: IdEmbeddingMap[T] = idEmbeddingMap
   override def update(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     entity: EntityEmbedding[T]
   ): Future[Unit] = {
     readWriteFuturePool.write {

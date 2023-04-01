@@ -31,6 +31,8 @@ import org.apache.kafka.common.serialization.Serializer
  */
 class ServedCandidateKeysKafkaSideEffect(
   topic: String,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   sourceIdentifiers: Set[CandidatePipelineIdentifier])
     extends KafkaPublishingSideEffect[
       sc.ServedCandidateKey,

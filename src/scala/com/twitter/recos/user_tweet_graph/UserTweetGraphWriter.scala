@@ -49,6 +49,8 @@ case class UserTweetGraphWriter(
   ): Unit = {
     if (Action(recosHoseMessage.action) == Action.Favorite || Action(
         recosHoseMessage.action) == Action.Retweet)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       graph.addEdge(
         recosHoseMessage.leftId,
         getMetaEdge(recosHoseMessage.rightId, recosHoseMessage.card),

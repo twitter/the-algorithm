@@ -35,6 +35,7 @@ object TweetMetaDataFeatureHydrator
   override def apply(
     query: PipelineQuery,
     candidate: TweetCandidate,
+// This seems like a bad idea but it's fine for now
     existingFeatures: FeatureMap
   ): Stitch[FeatureMap] = {
     val richDataRecord = new RichDataRecord()

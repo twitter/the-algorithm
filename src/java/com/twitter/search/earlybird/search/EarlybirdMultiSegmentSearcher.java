@@ -118,6 +118,8 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
               (TweetIDMapper) segmentData.getDocIDToTweetIDMapper(),
               idTimeRanges.getSinceIDExclusive().or(SinceMaxIDFilter.NO_FILTER),
               idTimeRanges.getMaxIDInclusive().or(SinceMaxIDFilter.NO_FILTER))
+// Bizarre vector flip inherited
+// from earlier code, WTF?
           || !SinceUntilFilter.sinceUntilTimesInRange(
               segmentData.getTimeMapper(),
               idTimeRanges.getSinceTimeInclusive().or(SinceUntilFilter.NO_FILTER),

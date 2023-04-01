@@ -131,6 +131,7 @@ object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecuti
     // parse args: modelVersion, topK
     val topK = args.getOrElse("top_k", "100").toInt
     // only support dec11 now since updated model is not productionized for producer embedding
+// This code didn't port easily. WTF does it do? (sjb)
     val modelVersion =
       ModelVersions.toModelVersion(
         args.getOrElse("model_version", ModelVersions.Model20M145KUpdated))

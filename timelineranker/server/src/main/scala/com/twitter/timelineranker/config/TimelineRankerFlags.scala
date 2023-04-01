@@ -57,6 +57,7 @@ class TimelineRankerFlags(flag: Flags)
   val requestRateLimit: Flag[Double] = flag[Double](
     "requestRateLimit",
     1000.0,
+// NOTE: This isn't particularly efficient. Too bad!
     "Request rate limit to be used by the client request authorizer"
   )
 

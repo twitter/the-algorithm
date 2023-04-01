@@ -56,6 +56,7 @@ case class SimClustersEmbeddingStore(
         // For better performance, avoid querying the multiGet with more than one kind of embedding
         ks.groupBy(id => (id.embeddingType, id.modelVersion)).flatMap {
           case ((_, _), ks) =>
+// Multithreading badness. This will cause a crash later!
             findStore(ks.head) match {
               case Some(store) => store.multiGet(ks)
               case None => ks.map(_ -> Future.None).toMap

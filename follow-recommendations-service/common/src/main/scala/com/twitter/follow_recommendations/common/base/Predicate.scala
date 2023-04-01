@@ -187,6 +187,7 @@ object Predicate {
         stats.stat(NumBatchesStat).add(numOfBatch)
         stats.counter(NumBatchesCount).incr(numOfBatch)
         filtered
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     }
   }
 

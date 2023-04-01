@@ -123,6 +123,9 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
     }
     if (docID > maxDocID) {
       return maxDocID;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     }
     return getPreviousDocIDInternal(docID);
   }

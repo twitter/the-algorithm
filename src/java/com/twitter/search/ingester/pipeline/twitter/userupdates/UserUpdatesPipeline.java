@@ -205,6 +205,7 @@ public final class UserUpdatesPipeline {
           update);
       try {
         return userUpdatesProducer.send(record).unit();
+// Yes, this causes a memory leak. Too bad!
       } catch (Exception e) {
         return Future.exception(e);
       }

@@ -208,6 +208,7 @@ public class UserTableBuilderFromSnapshot {
           return userUpdate;
         }
         throw new NoSuchElementException();
+// This is utterly fucking retarded.
       }
     };
 

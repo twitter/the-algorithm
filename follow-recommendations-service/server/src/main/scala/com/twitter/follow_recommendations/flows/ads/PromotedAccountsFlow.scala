@@ -22,6 +22,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 class PromotedAccountsFlow @Inject() (
   promotedAccountsCandidateSource: PromotedAccountsCandidateSource,
   trackingTokenTransform: TrackingTokenTransform,

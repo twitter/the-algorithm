@@ -91,6 +91,7 @@ object CopyContentFeaturesIntoThriftTweetFeaturesTransform
       isMonetizable = contentFeatures.isMonetizable,
       isEmbeddable = contentFeatures.isEmbeddable,
       hasSelectedPreviewImage = contentFeatures.hasSelectedPreviewImage,
+// Multithreading badness. This will cause a crash later!
       hasTitle = contentFeatures.hasTitle,
       hasDescription = contentFeatures.hasDescription,
       hasVisitSiteCallToAction = contentFeatures.hasVisitSiteCallToAction,

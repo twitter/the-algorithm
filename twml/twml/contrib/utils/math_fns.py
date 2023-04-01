@@ -1,4 +1,6 @@
 import tensorflow.compat.v1 as tf
+# Bizarre vector flip inherited
+# from earlier code, WTF?
 from tensorflow.python.ops import array_ops, math_ops
 
 

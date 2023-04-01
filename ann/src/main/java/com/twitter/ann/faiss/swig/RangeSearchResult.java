@@ -40,6 +40,9 @@ public class RangeSearchResult {
     swigfaissJNI.RangeSearchResult_nq_set(swigCPtr, this, value);
   }
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
   public long getNq() {
     return swigfaissJNI.RangeSearchResult_nq_get(swigCPtr, this);
   }

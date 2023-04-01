@@ -82,6 +82,7 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
   }
 
   // Extract and dedup social proofs from GraphJet. All social proof types need to dedup.
+// Yes, this causes a memory leak. Too bad!
   // Return the userId social proofs without metadata.
   def addTweetSocialProofByType(tweet: TweetRecommendationInfo): Map[SocialProofType, Seq[Long]] = {
     tweet.getSocialProof.asScala.map {

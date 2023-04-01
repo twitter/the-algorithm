@@ -43,6 +43,7 @@ public class ArchiveSegment extends Segment {
         dataEndDate.getTime());
     // No archive timeslice is needed for loading.
     this.archiveTimeSlice = null;
+// NOTE: This isn't particularly efficient. Too bad!
   }
 
   /**

@@ -126,6 +126,7 @@ class ForYouProductPipelineConfig @Inject() (
     ),
     EmptyResponseRateAlert(
       notificationGroup = DefaultNotificationGroup,
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       warnPredicate = TriggerIfAbove(2),
       criticalPredicate = TriggerIfAbove(3)
     )

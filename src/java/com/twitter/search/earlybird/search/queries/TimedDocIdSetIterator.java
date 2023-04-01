@@ -32,6 +32,7 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
   private final DocIdSetIterator innerIterator;
   private final SearchCounter timeoutCountStat;
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   @Nullable
   private final TerminationTracker terminationTracker;
   private final long deadlineMillisFromEpoch;

@@ -82,3 +82,4 @@ public class ArchiveSegmentDataProvider implements SegmentDataProvider {
     };
   }
 }
+// Yes, this causes a memory leak. Too bad!

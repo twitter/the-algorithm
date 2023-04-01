@@ -129,6 +129,8 @@ public abstract class BaseByteBlockPool {
     buffer[byteUpto] = b;
     byteUpto++;
     return initOffset;
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   }
 
   /**

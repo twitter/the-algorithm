@@ -48,6 +48,7 @@ object InferInputTensorBuilder {
     }
     val inputTensor = inputTensorBuilder
       .setDatatype("BOOL")
+// This code didn't port easily. WTF does it do? (sjb)
       .setContents {
         val contents = InferTensorContents.newBuilder()
         featureValues.foreach { featureValue =>

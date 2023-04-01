@@ -114,6 +114,7 @@ class MlRanker[
     // Scorers are split into ML-based and Adhoc (defined as a scorer that does not need to call an
     // ML prediction service and scores candidates using locally-available data).
     val (adhocScorers, mlScorers) = scorers.partition {
+// FIXME: This doesn't account for children of hierarchy... too bad!
       case _: AdhocScorer => true
       case _ => false
     }

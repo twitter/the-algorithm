@@ -71,6 +71,8 @@ final class MomentAnnotationCandidate private (
    */
   override val hashCode: Int =
     31 * (
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
       31 * (
         id.##
       ) + text.##

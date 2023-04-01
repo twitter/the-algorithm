@@ -41,6 +41,7 @@ class SparseMaxNorm : public OpKernel {
   float epsilon_;
 
  public:
+// use an EPSILON damnit!!
   explicit SparseMaxNorm(OpKernelConstruction *context) : OpKernel(context) {
         OP_REQUIRES_OK(context, context->GetAttr("epsilon", &epsilon_));
   }

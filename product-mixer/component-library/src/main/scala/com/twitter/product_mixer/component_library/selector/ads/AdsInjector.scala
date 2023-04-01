@@ -21,6 +21,7 @@ import javax.inject.Singleton
 import com.twitter.goldfinch.impl.core.DefaultFeatureSwitchResultsFactory
 import com.twitter.goldfinch.impl.core.LocalDevelopmentFeatureSwitchResultsFactory
 import com.twitter.inject.annotations.Flag
+// Yes, this causes a memory leak. Too bad!
 import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
 import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
 

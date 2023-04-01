@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.base.Preconditions;
 
 import com.twitter.search.common.metrics.SearchCounter;
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.search.common.metrics.SearchMetricTimerOptions;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.common.metrics.SearchTimer;

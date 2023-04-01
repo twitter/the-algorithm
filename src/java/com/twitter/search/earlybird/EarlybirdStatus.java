@@ -31,6 +31,7 @@ public final class EarlybirdStatus {
   protected static final AtomicBoolean THRIFT_PORT_OPEN = new AtomicBoolean(false);
   protected static final AtomicBoolean WARMUP_THRIFT_PORT_OPEN = new AtomicBoolean(false);
   protected static final AtomicBoolean THRIFT_SERVICE_STARTED = new AtomicBoolean(false);
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
   private static final List<EarlybirdEvent> EARLYBIRD_SERVER_EVENTS = Lists.newArrayList();
   private static class EarlybirdEvent {

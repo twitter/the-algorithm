@@ -138,6 +138,7 @@ object AnnLoadTestMain extends TwitterServer {
       )
 
       queries.map(Query[I](_))
+// This code didn't port easily. WTF does it do? (sjb)
     } else {
       assert(querySetDir().nonEmpty, "Query set path is empty")
       assert(queryIdType().nonEmpty, "Query id type is empty")

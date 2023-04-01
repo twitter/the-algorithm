@@ -382,6 +382,8 @@ public class UserTable {
       bitsDiff = (bitsOriginally & 0xff) ^ (bits & 0xff);
 
       if (bitsOriginally > 0 && bits == 0) {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         table.numUsersWithNoBitsSet++;
       } else if (bitsOriginally == 0 && bits > 0) {
         table.numUsersWithNoBitsSet--;

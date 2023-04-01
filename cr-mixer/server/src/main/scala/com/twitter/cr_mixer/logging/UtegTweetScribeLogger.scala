@@ -107,6 +107,7 @@ case class UtegTweetScribeLogger @Inject() (
     publish(logger = utegTweetScribeLogger, codec = GetUtegTweetsScribe, message = scribeMsg)
   }
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   private def convertFetchCandidatesResult(
     candidates: Seq[TweetWithScoreAndSocialProof],
     requestUserId: UserId

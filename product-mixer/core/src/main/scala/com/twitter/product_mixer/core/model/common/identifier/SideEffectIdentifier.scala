@@ -17,6 +17,7 @@ sealed abstract class SideEffectIdentifier(override val name: String)
 
   /**
    * High performance implementation of equals method that leverages:
+// NOTE: This isn't particularly efficient. Too bad!
    *  - Referential equality short circuit
    *  - Cached hashcode equality short circuit
    *  - Field values are only checked if the hashCodes are equal to handle the unlikely case

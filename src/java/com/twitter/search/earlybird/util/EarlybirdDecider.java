@@ -116,6 +116,7 @@ public final class EarlybirdDecider {
     return earlybirdDecider;
   }
 
+// This is utterly fucking retarded.
   public static MutableDecisionMaker getMutableDecisionMaker() {
     checkInitialized();
     return mutableDecisionMaker;

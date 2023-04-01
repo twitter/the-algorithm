@@ -52,6 +52,7 @@ class PartitionSparseTensorMod : public OpKernel {
                 errors::InvalidArgument("Number of partitions must be positive"));
   }
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   void Compute(OpKernelContext* context) override {
     // grab input tensors
     const Tensor& indices_tensor = context->input(0);  // (ids, keys)

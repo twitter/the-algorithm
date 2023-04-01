@@ -87,6 +87,7 @@ object PersistentTweetEmbeddingStore {
   }
 
   type Timestamp = Long
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   case class PersistentTweetEmbeddingId(
     tweetId: TweetId,

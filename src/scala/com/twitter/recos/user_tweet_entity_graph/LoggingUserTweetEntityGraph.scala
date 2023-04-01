@@ -30,6 +30,7 @@ trait LoggingUserTweetEntityGraph extends thriftscala.UserTweetEntityGraph.Metho
             request.maxUserSocialProofSize,
             request.maxTweetSocialProofSize,
             request.minUserSocialProofSizes,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
             request.tweetTypes,
             request.socialProofTypes,
             request.socialProofTypeUnions,

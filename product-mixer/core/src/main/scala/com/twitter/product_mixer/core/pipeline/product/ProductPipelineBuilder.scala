@@ -265,6 +265,7 @@ class ProductPipelineBuilder[TRequest <: Request, Query <: PipelineQuery, Respon
 
     val pipelineIdentifier = config.identifier
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     val context = Executor.Context(
       PipelineFailureClassifier(
         config.failureClassifier.orElse(StoppedGateException.classifier(ProductDisabled))),

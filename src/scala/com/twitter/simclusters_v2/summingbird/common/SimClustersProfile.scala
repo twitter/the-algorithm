@@ -21,6 +21,7 @@ sealed trait SimClustersProfile {
 
 sealed trait SimClustersJobProfile extends SimClustersProfile {
 
+// This seems like a bad idea but it's fine for now
   val jobType: JobType
 
   final lazy val jobName: String = {

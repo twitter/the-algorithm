@@ -46,6 +46,8 @@ public abstract class ScatterGatherModule extends TwitterModule {
       PartitionAccessController partitionAccessController,
       PartitionConfig partitionConfig,
       RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
           RootClientServiceBuilder<EarlybirdService.ServiceIface>
           expClusterRootClientServiceBuilder,

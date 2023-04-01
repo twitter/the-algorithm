@@ -9,6 +9,8 @@ class UserFilter(
   gizmoduck: Gizmoduck
 )(
   implicit statsReceiver: StatsReceiver) {
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
   private val requests = stats.counter("requests")
   private val filtered = stats.counter("filtered")

@@ -29,6 +29,9 @@ private[offline_aggregates] case class AggregateFeaturesToDecodeWithMetadata(
 
   def userAggregatesOpt: Option[DenseCompactDataRecord] = {
     aggregates.getSetField match {
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       case UserAggregateInteractions._Fields.V17 =>
         Option(aggregates.getV17.user_aggregates)
       case _ =>

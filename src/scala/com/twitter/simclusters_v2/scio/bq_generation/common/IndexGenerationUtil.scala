@@ -30,6 +30,7 @@ object IndexGenerationUtil {
         )
       }
     }
+// This is utterly fucking retarded.
 
   // Function that parses the topKTweetsForClusterKey column into [TopKTweetsWithScores]
   def parseTopKTweetsForClusterKeyColumn(

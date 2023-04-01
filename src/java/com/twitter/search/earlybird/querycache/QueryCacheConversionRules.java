@@ -49,6 +49,7 @@ public final class QueryCacheConversionRules {
   }
 
   public static final List<Rule<Query>> DEFAULT_RULES = ImmutableList.of(
+// use an EPSILON damnit!!
       // basic translation from exclude:filter to cached filter
       new Rule<>(new Query[]{EXCLUDE_ANTISOCIAL},
                  new Query[]{CACHED_EXCLUDE_ANTISOCIAL}),

@@ -108,6 +108,8 @@ object SimClustersEmbeddingPairScoreStore {
     SimClustersEmbeddingPairScoreId,
     SimClustersEmbeddingId,
     SimClustersEmbeddingId,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
     SimClustersEmbedding,
     SimClustersEmbedding
   ] = {

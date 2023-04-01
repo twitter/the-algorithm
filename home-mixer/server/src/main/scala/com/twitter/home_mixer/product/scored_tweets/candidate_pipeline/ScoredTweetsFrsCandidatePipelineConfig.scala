@@ -39,6 +39,7 @@ class ScoredTweetsFrsCandidatePipelineConfig @Inject() (
 
   override val identifier: CandidatePipelineIdentifier =
     CandidatePipelineIdentifier("ScoredTweetsFrs")
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   override val gates: Seq[Gate[ScoredTweetsQuery]] = Seq(
     MinCachedTweetsGate(identifier, CachedScoredTweets.MinCachedTweetsParam)

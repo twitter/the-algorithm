@@ -7,6 +7,8 @@ import com.google.inject.Provides;
 
 import com.twitter.finagle.memcached.JavaClient;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.finagle.stats.StatsReceiver;
 import com.twitter.inject.TwitterModule;
 import com.twitter.search.common.caching.Cache;

@@ -16,6 +16,8 @@ REGISTER_OP("BatchPredictionTensorResponseWriter")
   return Status::OK();
   }).Doc(R"doc(
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 A tensorflow OP that packages keys and dense tensors into a BatchPredictionResponse.
 
 values: list of tensors

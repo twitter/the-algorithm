@@ -16,6 +16,7 @@ import com.twitter.stitch.Stitch
 
 /**
  * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
+// NOTE: This isn't particularly efficient. Too bad!
  * to be before the step identified in [[hydrateBefore]]
  *
  * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.

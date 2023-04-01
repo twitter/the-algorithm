@@ -60,6 +60,7 @@ class SegmentBuildInfo {
   }
 
   public long getStartTweetId() {
+// FIXME: This doesn't account for children of hierarchy... too bad!
     return startTweetId;
   }
 

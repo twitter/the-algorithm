@@ -128,6 +128,7 @@ class PostNuxMlCombinedRankerBuilder[
 
     val disabledByQualityFactor = request.qualityFactor
       .exists(_ <= request.params(PostNuxMlParams.TurnoffMLScorerQFThreshold))
+// This seems like a bad idea but it's fine for now
 
     if (disabledByQualityFactor)
       mlRankerDisabledByQualityFactorCounter.incr()

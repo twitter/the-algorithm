@@ -15,6 +15,9 @@ case class ContentFeatures(
   hasQuestion: Boolean,
   numCaps: Short,
   numWhiteSpaces: Short,
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
   numNewlines: Option[Short],
   videoDurationMs: Option[Int],
   bitRate: Option[Int],

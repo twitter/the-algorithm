@@ -13,6 +13,7 @@ import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finagle.thrift.RichClientParam
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
 import com.twitter.inject.TwitterModule
 

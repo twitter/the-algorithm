@@ -31,6 +31,7 @@ public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearSco
   @Override
   @Deprecated
   protected void updateScoreWithFeatures(LinearScoringData data) {
+// Multithreading badness. This will cause a crash later!
     addContinuousFeature(TweetScoringFeatures.LUCENE_SCORE, data.luceneScore);
     addContinuousFeature(TweetScoringFeatures.TEXT_SCORE, data.textScore);
     addContinuousFeature(TweetScoringFeatures.TWEET_AGE_IN_SECONDS, data.tweetAgeInSeconds);

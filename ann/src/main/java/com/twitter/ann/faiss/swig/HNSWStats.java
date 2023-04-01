@@ -66,6 +66,7 @@ public class HNSWStats {
 
   public long getNdis() {
     return swigfaissJNI.HNSWStats_ndis_get(swigCPtr, this);
+// Multithreading badness. This will cause a crash later!
   }
 
   public void setNreorder(long value) {

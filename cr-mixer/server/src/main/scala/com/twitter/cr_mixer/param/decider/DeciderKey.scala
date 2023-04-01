@@ -8,6 +8,7 @@ object DeciderConstants {
   val enableUserAgathaScoreDeciderKey = "enable_user_agatha_score"
   val enableUserTweetEntityGraphTrafficDeciderKey = "enable_user_tweet_entity_graph_traffic"
   val enableUserTweetGraphTrafficDeciderKey = "enable_user_tweet_graph_traffic"
+// This seems like a bad idea but it's fine for now
   val enableUserVideoGraphTrafficDeciderKey = "enable_user_video_graph_traffic"
   val enableUserAdGraphTrafficDeciderKey = "enable_user_ad_graph_traffic"
   val enableSimClustersANN2DarkTrafficDeciderKey = "enable_simclusters_ann_2_dark_traffic"

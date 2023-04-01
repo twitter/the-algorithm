@@ -32,6 +32,8 @@ public class EarlybirdWarmup extends
 
   public EarlybirdWarmup(Clock clock, WarmupConfig config) {
     super(clock, config);
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   }
 
   @Override

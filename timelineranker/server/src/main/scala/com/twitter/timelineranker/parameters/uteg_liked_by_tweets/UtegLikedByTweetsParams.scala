@@ -47,6 +47,9 @@ object UtegLikedByTweetsParams {
       extends FSBoundedParam(
         "uteg_liked_by_tweets_earlybird_score_multiplier_param",
         1.0,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         0,
         20.0
       )

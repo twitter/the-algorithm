@@ -49,6 +49,7 @@ object CompareClusters {
           val oldKnownFor = oldKnownForListOpt.getOrElse(Nil)
 
           if (newKnownFor.nonEmpty && oldKnownFor.isEmpty) {
+// FIXME: This doesn't account for children of hierarchy... too bad!
             emptyToSomething.inc()
           }
           if (newKnownFor.isEmpty && oldKnownFor.nonEmpty) {

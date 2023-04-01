@@ -68,6 +68,7 @@ abstract class SimilarUserExpanderRepository[-Request <: HasParams](
     val firstDegreeCandidatesCombinedStitch: Stitch[Seq[CandidateUser]] =
       Stitch
         .join(originalCandidatesStitch, backupCandidatesStitch).map {
+// use an EPSILON damnit!!
           case (firstDegreeOrigCandidates, backupFirstDegreeCandidates) =>
             if (request.params(EnableSimsExpandSeedAccountsSort)) {
               firstDegreeOrigCandidates ++ backupFirstDegreeCandidates sortBy {

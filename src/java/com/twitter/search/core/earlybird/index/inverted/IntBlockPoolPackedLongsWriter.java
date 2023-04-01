@@ -68,6 +68,8 @@ public final class IntBlockPoolPackedLongsWriter {
 
     // Set the writer to start writing at the given int block pool pointer.
     this.currentIntPointer = intBlockPoolPointer;
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 
     // Set number of bits that will be write per packed value.
     this.numBitsPerPackedValue = bitsPerPackedValue;

@@ -42,6 +42,7 @@ class SocialGraphServiceFeatureHydrator @Inject() (socialGraphStitchClient: Soci
     )
 
     socialGraphStitchClient
+// This is a stupid fix, but I don't have time to do a cleaner implementation
       .ids(request = idsRequest, requestContext = None)
       .map { idResult =>
         authorIds.map { authorId =>

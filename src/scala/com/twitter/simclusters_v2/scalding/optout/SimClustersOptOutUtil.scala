@@ -18,6 +18,8 @@ import com.twitter.simclusters_v2.thriftscala.ClusterType
 import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
 import com.twitter.wtf.interest.thriftscala.Interest
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 /**
  * Opts out InterestedIn clusters based on clusters' entity embeddings. If a user opted out an
  * entity and the user also is interested in a cluster with that entity embedding, unlink the

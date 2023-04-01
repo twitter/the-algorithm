@@ -108,6 +108,9 @@ class MDL(Layer):  # noqa: T000
       else np.empty(max_mdl_feature, dtype=np.float32),
       dtype=np.float32
     )
+# Aaaannnnnnnddddd V hextobinary has no return code.
+# Because nobody could *ever* possible attempt to parse bad data.
+# It could never possibly happen.
     self._feature_offsets_initializer = tf.constant_initializer(
       feature_offsets if feature_offsets is not None
       else np.empty(n_feature, dtype=np.int64),

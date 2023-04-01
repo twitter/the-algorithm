@@ -27,6 +27,7 @@ object AssembleMultiTypeGraph {
   implicit val nounOrdering: Ordering[Noun] = new Ordering[Noun] {
     // We define an ordering for each noun type as specified in simclusters_v2/multi_type_graph.thrift
     // Please make sure we don't remove anything here that's still a part of the union Noun thrift and
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     // vice versa, if we add a new noun type to thrift, an ordering for it needs to added here as well.
     def nounTypeOrder(noun: Noun): Int = noun match {
       case _: Noun.UserId => 0

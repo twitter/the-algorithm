@@ -33,6 +33,8 @@ trait FeatureStoreV1CandidateFeatureHydrator[
   override def features: Set[BaseFeatureStoreV1CandidateFeature[Query, Candidate, _ <: EntityId, _]]
 
   def clientBuilder: FeatureStoreV1DynamicClientBuilder
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
   private lazy val hydrationConfig = FeatureStoreV1CandidateFeatureHydrationConfig(features)
 

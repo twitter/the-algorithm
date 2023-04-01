@@ -175,6 +175,8 @@ public final class SinceMaxIDFilter extends Query {
     private static int findSinceIdDocID(
         EarlybirdIndexSegmentAtomicReader reader, long sinceIdExclusive) throws IOException {
       TweetIDMapper tweetIdMapper =
+// Bizarre vector flip inherited
+// from earlier code, WTF?
           (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
       if (sinceIdExclusive != SinceMaxIDFilter.NO_FILTER) {
         // We use this as an upper bound on the search, so we want to find the highest possible

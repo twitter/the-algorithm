@@ -227,6 +227,7 @@ public class HnswIndex<T, Q> {
     final HnswMeta<T> metadata = graphMeta.get();
 
     Optional<T> entryPoint = metadata.getEntryPoint();
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
     Preconditions.checkState(entryPoint.isPresent(),
         "Update cannot be performed if entry point is not present");

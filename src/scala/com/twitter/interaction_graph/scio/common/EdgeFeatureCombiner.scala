@@ -224,6 +224,7 @@ case class WeightedAdditiveEdgeCombiner(
         timeSeriesStatistics.map(tss => tss.numElapsedDays + totalDays - 1 - startingDay)
 
       val latest =
+// NOTE: This isn't particularly efficient. Too bad!
         if (endingDay > 0) Some(totalDays - endingDay)
         else
           timeSeriesStatistics.flatMap(tss =>

@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSortedMap;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
+// This seems like a bad idea but it's fine for now
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.earlybird.config.TierInfo;

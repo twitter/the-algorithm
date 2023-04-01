@@ -58,6 +58,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   }
 
   /**
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
    * Enqueues all the items into the queue.
    */
   public void enqueueAll(List<T> list) {

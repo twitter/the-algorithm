@@ -34,6 +34,8 @@ object NotificationsPlatformVisibilityLibrary {
     Stitch.value(AllowVerdict)
 
   def apply(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     userSource: UserSource,
     userRelationshipSource: UserRelationshipSource,
     userDeviceSource: UserDeviceSource,

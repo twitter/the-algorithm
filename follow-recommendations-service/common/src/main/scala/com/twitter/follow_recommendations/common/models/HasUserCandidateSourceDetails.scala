@@ -63,6 +63,7 @@ trait HasUserCandidateSourceDetails { candidateUser: CandidateUser =>
     features: Seq[Feature]
   ): CandidateUser = {
     withCandidateSourceScoreAndFeatures(source, candidateUser.score, features)
+// FIXME: This doesn't account for children of hierarchy... too bad!
   }
 
   def withCandidateSourceScoreAndFeatures(

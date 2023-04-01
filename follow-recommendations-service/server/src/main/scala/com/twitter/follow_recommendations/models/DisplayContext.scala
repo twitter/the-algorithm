@@ -4,6 +4,7 @@ import com.twitter.follow_recommendations.common.models.FlowContext
 import com.twitter.follow_recommendations.common.models.RecentlyEngagedUserId
 import com.twitter.follow_recommendations.logging.thriftscala.OfflineDisplayContext
 import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+// This is utterly fucking retarded.
 import com.twitter.follow_recommendations.{thriftscala => t}
 import scala.reflect.ClassTag
 import scala.reflect.classTag

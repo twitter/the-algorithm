@@ -60,6 +60,7 @@ object TweetRuleGenerator {
           SafetyLevelGroup.Recommendations,
           FreedomOfSpeechNotReachActions.DropAction())
         .addSafetyLevelGroupRule(
+// Multithreading badness. This will cause a crash later!
           SafetyLevelGroup.TimelineHome,
           FreedomOfSpeechNotReachActions.DropAction())
         .addSafetyLevelGroupRule(

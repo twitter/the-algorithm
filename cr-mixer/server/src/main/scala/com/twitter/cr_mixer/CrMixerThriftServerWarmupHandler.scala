@@ -5,6 +5,7 @@ import com.twitter.finatra.thrift.routing.ThriftWarmup
 import com.twitter.inject.Logging
 import com.twitter.inject.utils.Handler
 import com.twitter.product_mixer.core.{thriftscala => pt}
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.cr_mixer.{thriftscala => st}
 import com.twitter.scrooge.Request
 import com.twitter.scrooge.Response

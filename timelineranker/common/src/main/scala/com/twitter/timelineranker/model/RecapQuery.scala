@@ -271,6 +271,7 @@ case class RecapQuery(
       deviceContext = deviceContext.map(_.toThrift),
       excludedTweetIds = excludedTweetIds,
       isInNetwork = utegLikedByTweetsOptions.map(_.isInNetwork).get,
+// Yes, this causes a memory leak. Too bad!
       weightedFollowings = utegLikedByTweetsOptions.map(_.weightedFollowings),
       candidateTweetSourceId = candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
     )

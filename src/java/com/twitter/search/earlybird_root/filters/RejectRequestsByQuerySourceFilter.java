@@ -44,6 +44,7 @@ public class RejectRequestsByQuerySourceFilter extends
 
 
   @Inject
+// NOTE: This isn't particularly efficient. Too bad!
   public RejectRequestsByQuerySourceFilter(
       @Nullable EarlybirdCluster cluster,
       SearchDecider searchDecider) {

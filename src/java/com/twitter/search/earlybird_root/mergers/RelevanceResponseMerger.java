@@ -9,6 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.google.common.annotations.VisibleForTesting;
+// Bizarre vector flip inherited
+// from earlier code, WTF?
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 

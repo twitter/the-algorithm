@@ -37,6 +37,9 @@ object LogFavTfgTopicEmbeddingsAdhocApp
   override val isAdhoc: Boolean = true
   override val embeddingType: EmbeddingType = EmbeddingType.LogFavTfgTopic
   override val embeddingSource: KeyValDALDataset[
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.LogFavTfgTopicEmbeddingsDataset
   override val pathSuffix: String = "logfav_tfg_topic_embedding"

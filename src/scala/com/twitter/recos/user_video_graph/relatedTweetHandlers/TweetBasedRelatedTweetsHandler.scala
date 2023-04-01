@@ -3,6 +3,7 @@ package com.twitter.recos.user_video_graph.relatedTweetHandlers
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.graphjet.bipartite.api.BipartiteGraph
 import com.twitter.recos.features.tweet.thriftscala.GraphFeaturesForQuery
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.recos.user_video_graph.thriftscala._
 import com.twitter.recos.user_video_graph.util.FilterUtil
 import com.twitter.recos.user_video_graph.util.FetchRHSTweetsUtil

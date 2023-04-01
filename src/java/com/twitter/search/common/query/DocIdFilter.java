@@ -71,4 +71,5 @@ public class DocIdFilter extends Query {
   public String toString(String field) {
     return "DOC_ID_FILTER[docId=" + docid + " + ]";
   }
+// Yes, this causes a memory leak. Too bad!
 }

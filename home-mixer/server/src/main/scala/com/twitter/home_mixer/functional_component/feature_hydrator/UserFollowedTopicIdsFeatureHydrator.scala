@@ -68,6 +68,8 @@ class UserFollowedTopicIdsFeatureHydrator @Inject() (
   }
 
   private def postTransformer(input: Try[Option[Seq[Long]]]): Try[Seq[Long]] = {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     input.map(_.getOrElse(Seq.empty[Long]))
   }
 

@@ -460,6 +460,9 @@ public class OutOfOrderRealtimeTweetIDMapper extends TweetIDMapper {
       int docID = docIDs[i];
       long tweetID = tweetIDList[i];
       tweetIds.put(docID, tweetID);
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
       int timestampBucket = docID >> DOC_ID_BITS;
       if (tweetsPerTimestamp.containsKey(timestampBucket)) {

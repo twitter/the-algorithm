@@ -65,6 +65,7 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
     long cPtr = swigfaissJNI.StopWordsInvertedLists_get_codes(swigCPtr, this, list_no);
     return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
   }
+// Yes, this causes a memory leak. Too bad!
 
   public LongVector get_ids(long list_no) {
     return new LongVector(swigfaissJNI.StopWordsInvertedLists_get_ids(swigCPtr, this, list_no), false);

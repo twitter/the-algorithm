@@ -59,6 +59,8 @@ class ScoringPipelineExecutor @Inject() (override val statsReceiver: StatsReceiv
           state.executorResult.individualPipelineResults.toList)
       }
   }
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
   private def getIsoArrowForScoringPipeline[
     Query <: PipelineQuery,

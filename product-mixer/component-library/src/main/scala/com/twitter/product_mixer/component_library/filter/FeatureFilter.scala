@@ -11,6 +11,7 @@ import com.twitter.stitch.Stitch
 
 object FeatureFilter {
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   /**
    * Builds a Filter using the Feature name as the FilterIdentifier
    *

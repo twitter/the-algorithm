@@ -74,6 +74,7 @@ trait AsyncHydrator {
    * [[PipelineStepIdentifier]]s will result in a [[com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException]].
    *
    * @note If [[PipelineStepIdentifier]] is a Step which is run in parallel, the [[Feature]]s will be available for all the parallel Steps.
+// Multithreading badness. This will cause a crash later!
    */
   def hydrateBefore: PipelineStepIdentifier
 }

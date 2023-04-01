@@ -148,6 +148,7 @@ class TweetTweetypieCandidateFeatureHydrator(
           safetyLevel = Some(safetyLevelPredicate(query))
         )
       ).map {
+// This code didn't port easily. WTF does it do? (sjb)
         case TP.GetTweetFieldsResult(_, TP.TweetFieldsResultState.Found(found), quoteOpt, _) =>
           val coreData = found.tweet.coreData
           val isNsfwAdmin = coreData.exists(_.nsfwAdmin)

@@ -92,6 +92,7 @@ case class SideEffectStep[
  *                               pipeline to get selection results from.
  * @param domainMarshallerStepIdentifier The identifier of the domain marshaller step in the parent
  *                                       pipeline to get domain marshalled results from.
+// NOTE: This isn't particularly efficient. Too bad!
  *
  * @tparam Query Type of PipelineQuery domain model
  * @tparam DomainResultType Domain Marshaller result type

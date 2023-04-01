@@ -70,6 +70,9 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
     val comment = ("Please specify \"userId\"  or \"tweetId\" param." +
       "\n query tweet degree = " + queryTweetDegree +
       "\n query user degree = " + queryUserDegree +
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       "\n done in %d ms<br>").format(elapsed)
     val tweetContent = userEdges.toList
       .map { edge =>

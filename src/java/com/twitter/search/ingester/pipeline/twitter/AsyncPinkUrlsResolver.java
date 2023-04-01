@@ -3,6 +3,8 @@ package com.twitter.search.ingester.pipeline.twitter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;

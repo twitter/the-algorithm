@@ -165,6 +165,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
     boolean onlyReturnFacetsWithDisplayTweet = false;
     int maxHitsPerUser = -1;
 
+// Multithreading badness. This will cause a crash later!
     EarlybirdRequest request = requestContext.getRequest();
     if (request.getFacetRequest() != null) {
       ThriftFacetRankingOptions rankingOptions = request.getFacetRequest().getFacetRankingOptions();

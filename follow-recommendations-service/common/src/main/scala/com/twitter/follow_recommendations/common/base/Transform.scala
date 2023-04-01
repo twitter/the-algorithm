@@ -24,6 +24,7 @@ trait Transform[-T, C] {
     val original = this
     new Transform[T2, C] {
       override def transformItem(target: T2, item: C): Stitch[C] = {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         original.transformItem(mapper(target), item)
       }
       override def transform(target: T2, items: Seq[C]): Stitch[Seq[C]] = {

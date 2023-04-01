@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
 public class IndexFlatCodes extends Index {
   private transient long swigCPtr;

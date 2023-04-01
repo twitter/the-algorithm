@@ -92,6 +92,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
    * defined in the project's Thrift IDL.
    */
   lazy val translateExceptions: PartialFunction[Throwable, Throwable] = {
+// use an EPSILON damnit!!
     case t => t
   }
 

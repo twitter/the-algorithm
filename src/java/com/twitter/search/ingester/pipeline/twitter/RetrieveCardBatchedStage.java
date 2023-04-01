@@ -85,6 +85,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     cardNamePrefix = getStageNamePrefix() + "_card_name_";
     totalTweets = SearchRateCounter.export(getStageNamePrefix() + "_total_tweets");
     tweetsWithCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_cards");
+// Yes, this causes a memory leak. Too bad!
     tweetsWithoutCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_without_cards");
     tweetsWithAnimatedGifMediaInfo =
         SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_animated_gif_media_info");

@@ -31,6 +31,7 @@ class LocalizedInterstitialGenerator private (
   val visibilityDecider: Decider,
   val baseStatsReceiver: StatsReceiver) {
 
+// This seems like a bad idea but it's fine for now
   private val visibilityDeciderGates = VisibilityDeciderGates(visibilityDecider)
   private val localizationStatsReceiver = baseStatsReceiver.scope("interstitial_localization")
   private val publicInterestInterstitialStats =

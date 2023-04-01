@@ -41,6 +41,7 @@ final class AudioSpaceCandidate private (
     that match {
       case candidate: AudioSpaceCandidate =>
         (
+// This is a stupid fix, but I don't have time to do a cleaner implementation
           (this eq candidate)
             || ((hashCode == candidate.hashCode)
               && (id == candidate.id))

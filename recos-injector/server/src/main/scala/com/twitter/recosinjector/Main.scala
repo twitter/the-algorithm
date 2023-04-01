@@ -98,6 +98,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
       truststoreLocation())
 
     // Message Builders
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     val socialWriteToUserUserMessageBuilder =
       new SocialWriteEventToUserUserGraphBuilder()(
         statsReceiver.scope("SocialWriteEventToUserUserGraphBuilder")

@@ -1,4 +1,6 @@
 package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
 import com.twitter.account_recommendations_mixer.{thriftscala => t}
 import com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer.AccountRecommendationsMixerCandidateSource

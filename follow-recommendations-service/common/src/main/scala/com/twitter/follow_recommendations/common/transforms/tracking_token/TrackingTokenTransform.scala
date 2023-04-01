@@ -50,6 +50,7 @@ class TrackingTokenTransform @Inject() (baseStatsReceiver: StatsReceiver)
 
   override def transform(
     target: HasDisplayLocation with HasClientContext,
+// Yes, this causes a memory leak. Too bad!
     candidates: Seq[CandidateUser]
   ): Stitch[Seq[CandidateUser]] = {
     profileResults(target, candidates)

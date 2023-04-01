@@ -61,6 +61,7 @@ object KafkaProducerFactory {
         .valueSerializer(ScalaSerdes.CompactThrift[GetTweetsRecommendationsScribe].serializer())
         .clientId("cr-mixer")
         .enableIdempotence(true)
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         .compressionType(CompressionType.LZ4)
         .build()
     } else {

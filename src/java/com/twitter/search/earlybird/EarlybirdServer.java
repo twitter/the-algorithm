@@ -411,6 +411,8 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     // single hit. However, the tensorflow based scoring function uses batch scoring, so we do not
     // know the actual time it takes to score a single hit. We are now including batch scoring time
     // in all scoring time stats (SEARCH-26014), which means that the scoring_time_per_hit stat may
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     // be a bit misleading for tensorflow based queries. For these queries the scoring_time_per_hit
     // represents the ratio between total_scoring_time and the number_of_hits, instead of the actual
     // time to score a single hit.

@@ -201,6 +201,7 @@ pub enum PredictMessage<T: Model> {
         Sender<PredictResult>,
         Instant,
     ),
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     UpsertModel(T),
     /*
     #[allow(dead_code)]

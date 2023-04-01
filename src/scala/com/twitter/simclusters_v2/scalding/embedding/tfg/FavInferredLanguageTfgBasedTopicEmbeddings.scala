@@ -54,6 +54,9 @@ object FavInferredLanguageTfgBasedTopicEmbeddingsScheduledApp
   override val isAdhoc: Boolean = false
   override val embeddingType: EmbeddingType = EmbeddingType.FavInferredLanguageTfgTopic
   override val embeddingSource: KeyValDALDataset[
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavInferredLanguageTfgTopicEmbeddingsDataset
   override val pathSuffix: String = "fav_inferred_lang_tfg_topic_embeddings"

@@ -202,6 +202,7 @@ public class StartupUserEventIndexer {
         return true;
       } catch (Exception e) {
         numFailures++;
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         LOG.info("Caught exception when seeking to timestamp. Num failures: {}. Exception: {}",
             numFailures, e);
         // Sleep before attempting to retry

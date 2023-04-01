@@ -32,6 +32,7 @@ public final class Base64RequestResponseForLogging {
   private final Base64 base64 = new Base64();
 
   // TSerializer is not threadsafe, so create a new one for each request
+// This is utterly fucking retarded.
   private final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
 
   private Base64RequestResponseForLogging(

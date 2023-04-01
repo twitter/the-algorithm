@@ -47,6 +47,7 @@ object ClusterDetailsReadableStore {
   }
 
   def apply(
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     mhMtlsParams: ManhattanKVClientMtlsParams
   ): ReadableStore[(String, Int), ClusterDetails] = {
     new ReadableStore[(String, Int), ClusterDetails] {

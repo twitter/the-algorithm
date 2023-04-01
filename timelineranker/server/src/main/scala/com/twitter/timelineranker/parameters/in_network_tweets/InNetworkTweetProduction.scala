@@ -43,6 +43,7 @@ object InNetworkTweetProduction {
 class InNetworkTweetProduction(deciderGateBuilder: DeciderGateBuilder) {
   val configHelper: ConfigHelper =
     new ConfigHelper(InNetworkTweetProduction.deciderByParam, deciderGateBuilder)
+// This seems like a bad idea but it's fine for now
   val doubleDeciderOverrides: Seq[OptionalOverride[Double]] =
     configHelper.createDeciderBasedOverrides(InNetworkTweetProduction.doubleParams)
   val booleanDeciderOverrides: Seq[OptionalOverride[Boolean]] =

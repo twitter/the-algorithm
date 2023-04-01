@@ -256,6 +256,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
     // for each tweet, compare the approximate topk and ground-truth topk.
     // compute precision and recall, then averaging them per bucket.
     val eval = tweetSubset
+// Yes, this causes a memory leak. Too bad!
       .map {
         case (tweetId, bucket, bucketSize) =>
           tweetId -> (bucket, bucketSize)

@@ -82,6 +82,7 @@ public class MatchAllDocsQuery extends Query {
   public boolean equals(Object obj) {
     return obj instanceof MatchAllDocsQuery;
   }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
   // Copied from org.apache.lucene.search.MatchAllDocsWeight
   @Override

@@ -58,6 +58,7 @@ trait UrtBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
   final def getInitialSortIndex(query: Query): Long =
     query match {
       case cursorQuery: HasPipelineCursor[_] =>
+// Yes, this causes a memory leak. Too bad!
         UrtPipelineCursor
           .getCursorInitialSortIndex(cursorQuery)
           .getOrElse(SortIndexBuilder.timeToId(query.queryTime))

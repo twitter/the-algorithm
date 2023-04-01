@@ -79,6 +79,9 @@ trait BaseBulkCandidateFeatureHydrator[
  *       An alternative to throwing an exception is per-candidate failure handling (e.g. adding
  *       a failed [[Feature]] with `addFailure`, a Try with `add`, or an optional value with `add`
  *       using [[FeatureMapBuilder]]).
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
  *       Accessing a failed Feature will throw if using [[FeatureMap.get]] for Features that aren't
  *       [[com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure]].
  *

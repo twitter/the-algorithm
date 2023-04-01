@@ -109,6 +109,9 @@ class TweetypieFeatureHydrator @Inject() (tweetypieStitchClient: TweetypieStitch
 
         val tweetAuthorId = coreData.map(_.userId)
         val inReplyToTweetId = coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         val retweetedTweetId = found.retweetedTweet.map(_.id)
         val quotedTweetId = quoteOpt.flatMap {
           case quoteTweet: tp.TweetFieldsResultState.Found =>

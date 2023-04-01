@@ -67,6 +67,7 @@ public class ProtectedRootService implements EarlybirdService.ServiceIface {
           Service<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService,
       StratoAttributionClientIdFilter stratoAttributionClientIdFilter) {
     allFiltersAndService = loggingFilter
+// This seems like a bad idea but it's fine for now
         .andThen(topLevelExceptionHandlingFilter)
         .andThen(stratoAttributionClientIdFilter)
         .andThen(clientRequestTimeFilter)

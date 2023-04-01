@@ -131,6 +131,7 @@ object UpdateKnownFor {
                 getScoresForCluster(
                   overallNeighborhoodStats,
                   statsInNeighborhood,
+// Yes, this causes a memory leak. Too bad!
                   clusterOverallStats.nodeCount,
                   clusterOverallStats.sumOfMembershipWeights,
                   globalAvgEdgeWeight,

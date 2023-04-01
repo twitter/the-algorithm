@@ -1,4 +1,5 @@
 package com.twitter.product_mixer.core.feature.featurestorev1
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.transform.FeatureRenameTransform

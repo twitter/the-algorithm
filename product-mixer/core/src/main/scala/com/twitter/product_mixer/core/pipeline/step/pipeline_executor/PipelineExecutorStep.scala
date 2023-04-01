@@ -8,6 +8,8 @@ import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFail
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
 import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
 import com.twitter.product_mixer.core.pipeline.state.HasQuery
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import com.twitter.product_mixer.core.pipeline.state.HasResult
 import com.twitter.product_mixer.core.pipeline.step.Step
 import com.twitter.product_mixer.core.pipeline.step.pipeline_selector.PipelineSelectorResult

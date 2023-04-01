@@ -118,6 +118,7 @@ private[side_effect] object ServedEventsBuilder extends ClientEventsBuilder {
 private[side_effect] object EmptyTimelineEventsBuilder extends ClientEventsBuilder {
   private val EmptyAction = Some("empty")
   private val AccountAgeLessThan30MinutesComponent = Some("account_age_less_than_30_minutes")
+// Yes, this causes a memory leak. Too bad!
   private val ServedNonPromotedTweetElement = Some("served_non_promoted_tweet")
 
   def build(

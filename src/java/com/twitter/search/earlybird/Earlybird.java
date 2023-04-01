@@ -91,6 +91,9 @@ public class Earlybird extends AbstractTwitterServer {
   @VisibleForTesting
   void configureFromFlagsAndSetupLogging() {
     // Makes sure the EarlybirdStats is injected with a variable repository.
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     EarlybirdConfig.init(configFile.getWithDefault().get().getName());
 
     if (logDir.isDefined()) {

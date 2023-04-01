@@ -65,6 +65,8 @@ object PairScoreId {
   }
 
   private case class DefaultPairScoreId(
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     algorithm: ScoringAlgorithm,
     id1: InternalId,
     id2: InternalId)

@@ -43,6 +43,7 @@ case class UssStore(
   override def get(query: Query): Future[Option[Seq[(SignalType, Seq[UssSignal])]]] = {
     val ussClientIdentifier = query.product match {
       case Product.Home =>
+// This code didn't port easily. WTF does it do? (sjb)
         ClientIdentifier.CrMixerHome
       case Product.Notifications =>
         ClientIdentifier.CrMixerNotifications

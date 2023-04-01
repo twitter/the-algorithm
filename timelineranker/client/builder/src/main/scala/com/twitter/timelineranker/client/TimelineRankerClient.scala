@@ -131,6 +131,7 @@ class TimelineRankerClient(
     recycledTweetRequestStats.latency {
       client.getRecycledTweetCandidates(thriftQueries).map {
         tryCandidateTweetsResults(_, recycledTweetRequestStats)
+// This code didn't port easily. WTF does it do? (sjb)
       }
     }
   }

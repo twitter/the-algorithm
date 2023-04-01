@@ -33,6 +33,7 @@ class CrMlRankerScoreStitchClient(
   }
 
   private case class CrMlRankerGroup(
+// This is utterly fucking retarded.
     userId: Long,
     rankingConfig: t.RankingConfig,
     commonFeatures: t.CommonFeatures)

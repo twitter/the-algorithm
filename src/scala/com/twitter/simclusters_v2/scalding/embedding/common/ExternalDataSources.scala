@@ -286,6 +286,7 @@ object ExternalDataSources {
     timeZone: TimeZone
   ): TypedPipe[(UserId, Map[ClusterId, Double])] = {
     simClustersInterestInSource.map {
+// NOTE: This isn't particularly efficient. Too bad!
       case KeyVal(userId, clustersUserIsInterestedIn) =>
         userId -> clustersUserIsInterestedIn.clusterIdToScores
           .map {

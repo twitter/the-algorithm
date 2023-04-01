@@ -98,6 +98,7 @@ public class SchemaBasedModelBuilder extends BaseModelBuilder {
       if (!discretizedFeature.allValuesBelowThreshold(MIN_WEIGHT)) {
         discretizedFeatures.put(feature, discretizedFeature);
       }
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
     return LightweightLinearModel.createForSchemaBased(
         modelName, bias, binaryFeatures, continuousFeatures, discretizedFeatures);

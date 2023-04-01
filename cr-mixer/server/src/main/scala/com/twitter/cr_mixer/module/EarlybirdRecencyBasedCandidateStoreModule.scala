@@ -33,6 +33,7 @@ object EarlybirdRecencyBasedCandidateStoreModule extends TwitterModule {
   @Provides
   @Singleton
   @Named(ModuleNames.EarlybirdRecencyBasedWithoutRetweetsRepliesTweetsCache)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   def providesEarlybirdRecencyBasedWithoutRetweetsRepliesCandidateStore(
     statsReceiver: StatsReceiver,
     earlybirdSearchClient: EarlybirdService.MethodPerEndpoint,

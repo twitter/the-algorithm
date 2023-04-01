@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
 import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
 import com.twitter.search.common.schema.base.Schema;

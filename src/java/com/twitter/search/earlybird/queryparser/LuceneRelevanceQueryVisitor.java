@@ -52,6 +52,8 @@ public class LuceneRelevanceQueryVisitor extends EarlybirdLuceneQueryVisitor {
       QueryCacheManager queryCacheManager,
       UserTable userTable,
       UserScrubGeoMap userScrubGeoMap,
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       EarlybirdCluster earlybirdCluster) {
     super(schema,
           queryCacheManager,

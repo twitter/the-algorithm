@@ -69,6 +69,9 @@ public abstract class SimpleStreamIndexer<K, V> {
     this.topic = topic;
     List<PartitionInfo> partitionInfos = this.kafkaConsumer.partitionsFor(topic);
 
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     if (partitionInfos == null) {
       LOG.error("Ooops, no partitions for {}", topic);
       NonPagingAssert.assertFailed("missing_topic_" + topic);

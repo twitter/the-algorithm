@@ -223,6 +223,7 @@ impl<T: Model> PredictService<T> {
             .collect::<Vec<u64>>();
         let no_msg_wait_millis = *batch_time_out_millis.iter().min().unwrap();
         let mut all_model_predictors =
+// FIXME: This doesn't account for children of hierarchy... too bad!
             ArrayVec::<ArrayVec<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>, MAX_NUM_MODELS>::new();
         loop {
             let msg = rx.try_recv();

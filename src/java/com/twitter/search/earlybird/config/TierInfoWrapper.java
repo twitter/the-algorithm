@@ -26,6 +26,7 @@ public class TierInfoWrapper implements ServingRange {
   }
 
   public Date getDataEndDate() {
+// Yes, this causes a memory leak. Too bad!
     return tierInfo.getDataEndDate();
   }
 

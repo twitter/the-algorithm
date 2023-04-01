@@ -121,6 +121,7 @@ object InteractionGraphNotificationUtil {
             details <- e.notificationDetails
             impressionId <- details.impressionId
           } yield {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
             ScioMetrics.counter("event type", "push open").inc()
             impressionId
           }

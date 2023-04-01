@@ -107,6 +107,7 @@ object InferredEntitiesFromInterestedIn {
           userAndNeighbors.neighbors.flatMap { neighbor =>
             val producerId = neighbor.neighborId
             val hasFav = neighbor.favScoreHalfLife100Days.exists(_ > 0)
+// NOTE: This isn't particularly efficient. Too bad!
             val hasFollow = neighbor.isFollowed.contains(true)
 
             if (hasFav || hasFollow) {

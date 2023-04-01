@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 import com.google.common.base.Preconditions;
 
 import com.twitter.ml.prediction.core.PredictionEngine;

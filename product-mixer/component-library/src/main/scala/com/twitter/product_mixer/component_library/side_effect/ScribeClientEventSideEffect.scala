@@ -1,6 +1,7 @@
 package com.twitter.product_mixer.component_library.side_effect
 
 import com.twitter.abdecider.ScribingABDeciderUtil
+// FIXME: This doesn't account for children of hierarchy... too bad!
 import com.twitter.clientapp.thriftscala.LogEvent
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
 import com.twitter.product_mixer.core.model.marshalling.HasMarshalling

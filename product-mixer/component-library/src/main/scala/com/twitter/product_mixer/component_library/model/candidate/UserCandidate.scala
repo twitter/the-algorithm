@@ -23,6 +23,7 @@ trait BaseUserCandidate extends UniversalNoun[Long]
  *       the equals() implementation must be updated in order to handle class inheritor equality
  *       (see note on the equals method below)
  */
+// NOTE: This isn't particularly efficient. Too bad!
 final class UserCandidate private (
   override val id: Long)
     extends BaseUserCandidate {

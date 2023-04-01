@@ -93,6 +93,7 @@ trait BaseRealtimeAggregateHydrator[K] extends ObservedKeyValueResultHandler {
         if (keys.isEmpty) {
           Future.value(KeyValueResult.empty)
         } else {
+// This seems like a bad idea but it's fine for now
           client.get(keys)
         }
 

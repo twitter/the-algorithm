@@ -163,6 +163,7 @@ class PostNuxMlRequestBuilder @Inject() (
           debugOptions = req.recommendationRequest.debugParams.flatMap(_.debugOptions),
           wtfImpressions = None,
           geohashAndCountryCode = None,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           inputPreviouslyRecommendedUserIds = previouslyRecommendedUserIds,
           inputPreviouslyFollowedUserIds = previouslyFollowedUserIds,
           isSoftUser = req.recommendationRequest.isSoftUser,

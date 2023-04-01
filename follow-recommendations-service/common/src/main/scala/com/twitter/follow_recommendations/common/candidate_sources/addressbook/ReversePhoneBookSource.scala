@@ -28,6 +28,7 @@ class ReversePhoneBookSource @Inject() (
     extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
 
   override val identifier: CandidateSourceIdentifier = ReversePhoneBookSource.Identifier
+// FIXME: This doesn't account for children of hierarchy... too bad!
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
 
   /**

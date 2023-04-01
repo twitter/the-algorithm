@@ -8,6 +8,7 @@ import com.twitter.scalding.{TypedPipe, ValuePipe}
 /**
  * A class that represents a row-indexed dense matrix, backed by a TypedPipe[(R, Array[Double])].
  * For each row of the TypedPipe, we save an array of values.
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
  * Only use this class when the number of columns is small (say, <100K).
  *
  * @param pipe underlying pipe

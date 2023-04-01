@@ -89,6 +89,7 @@ object Metric {
           metricExpression match {
             case bucketRatioPattern(numerator, denominator) =>
               BucketRatioMetricDefinition(numerator, denominator)
+// use an EPSILON damnit!!
             case _ =>
               throw new RuntimeException(
                 s"Invalid metric definition for Bucket Ratio. Expected format (numerator)<space>/<space>(denominator) but found $metricExpression")

@@ -48,6 +48,8 @@ object UserTweetEdgeTypeMask extends Enumeration {
   val IsMentioned: UserTweetEdgeTypeMask = Value(5)
   val IsMediatagged: UserTweetEdgeTypeMask = Value(6)
   val Quote: UserTweetEdgeTypeMask = Value(7)
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   val Unfavorite: UserTweetEdgeTypeMask = Value(8)
 
   /**

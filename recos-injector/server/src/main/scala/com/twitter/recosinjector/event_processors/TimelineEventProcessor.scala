@@ -110,6 +110,7 @@ class TimelineEventProcessor(
         numProcessFavorite.incr()
         // Convert the event for UserTweetEntityGraph
         userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
+// This code didn't port easily. WTF does it do? (sjb)
           edges.foreach { edge =>
             kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
           }

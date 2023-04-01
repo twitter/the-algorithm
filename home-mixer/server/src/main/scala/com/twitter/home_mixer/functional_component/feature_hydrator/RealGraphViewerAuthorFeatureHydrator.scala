@@ -82,6 +82,8 @@ class RealGraphViewerAuthorFeatureHydrator @Inject() ()
             .getOrElse(new DataRecord)
         }
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
         FeatureMapBuilder()
           .add(RealGraphViewerAuthorDataRecordFeature, realGraphAuthorDataRecord)
           .add(

@@ -59,6 +59,7 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
         long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
         return boundaryTime / 1000;
       }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     };
   }
 }

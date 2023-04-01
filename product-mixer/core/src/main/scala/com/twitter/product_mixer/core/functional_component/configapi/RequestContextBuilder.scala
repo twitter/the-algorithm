@@ -5,6 +5,7 @@ import com.twitter.featureswitches.UserAgent
 import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
 import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
 import com.twitter.product_mixer.core.model.marshalling.request.Product
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
 import com.twitter.timelines.configapi.FeatureContext
 import com.twitter.timelines.configapi.FeatureValue

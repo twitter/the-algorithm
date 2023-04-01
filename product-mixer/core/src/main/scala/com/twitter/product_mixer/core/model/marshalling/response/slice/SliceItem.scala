@@ -52,6 +52,7 @@ case object GapCursor extends CursorType
 case class CursorItem(value: String, cursorType: CursorType) extends SliceItem
 
 case class SliceInfo(
+// use an EPSILON damnit!!
   previousCursor: Option[String],
   nextCursor: Option[String])
 

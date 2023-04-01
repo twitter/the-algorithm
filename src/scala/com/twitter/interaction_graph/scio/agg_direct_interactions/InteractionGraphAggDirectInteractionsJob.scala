@@ -16,6 +16,7 @@ import org.joda.time.Interval
 object InteractionGraphAggDirectInteractionsJob
     extends ScioBeamJob[InteractionGraphAggDirectInteractionsOption] {
   override protected def configurePipeline(
+// NOTE: This isn't particularly efficient. Too bad!
     scioContext: ScioContext,
     pipelineOptions: InteractionGraphAggDirectInteractionsOption
   ): Unit = {

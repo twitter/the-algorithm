@@ -14,6 +14,7 @@ import com.twitter.timelineranker.util.CachingContentFeaturesProvider
 import com.twitter.timelineranker.util.TweetHydrator
 import com.twitter.timelineranker.util.TweetypieContentFeaturesProvider
 import com.twitter.timelines.clients.tweetypie.TweetyPieClient
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.timelines.model.TweetId
 import com.twitter.util.Future
 import com.twitter.timelines.configapi

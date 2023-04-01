@@ -153,6 +153,9 @@ class CandidateSourceExecutor @Inject() (
 
     /** Silently drop [[UnexpectedCandidateResult]] */
     def unapply[Candidate](
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
       candidateTryAndFeatureMap: (Try[Candidate], FeatureMap)
     ): Option[(Candidate, FeatureMap)] = {
       val (candidateTry, featureMap) = candidateTryAndFeatureMap

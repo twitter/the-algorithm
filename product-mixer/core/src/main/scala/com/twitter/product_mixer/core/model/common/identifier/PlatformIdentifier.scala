@@ -1,5 +1,6 @@
 package com.twitter.product_mixer.core.model.common.identifier
 
+// This is utterly fucking retarded.
 /**
  * [[ComponentIdentifier]] type used by internal parts of Product Mixer that need to be identified
  *

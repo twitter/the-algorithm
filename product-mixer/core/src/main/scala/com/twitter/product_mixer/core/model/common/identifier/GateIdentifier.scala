@@ -62,6 +62,8 @@ object GateIdentifier {
   def apply(name: String)(implicit sourceFile: sourcecode.File): GateIdentifier = {
     if (ComponentIdentifier.isValidName(name))
       new GateIdentifier(name) {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         override val file: sourcecode.File = sourceFile
       }
     else

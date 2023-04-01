@@ -80,6 +80,8 @@ object TweetBasedUserAdGraphSimilarityEngineModule extends TwitterModule {
       globalStats = statsReceiver,
       engineConfig = SimilarityEngineConfig(
         timeout = timeoutConfig.similarityEngineTimeout,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         gatingConfig = GatingConfig(
           deciderConfig =
             Some(DeciderConfig(decider, DeciderConstants.enableUserAdGraphTrafficDeciderKey)),

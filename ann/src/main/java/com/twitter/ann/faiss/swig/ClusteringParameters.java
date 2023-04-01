@@ -96,6 +96,7 @@ public class ClusteringParameters {
     swigfaissJNI.ClusteringParameters_min_points_per_centroid_set(swigCPtr, this, value);
   }
 
+// This seems like a bad idea but it's fine for now
   public int getMin_points_per_centroid() {
     return swigfaissJNI.ClusteringParameters_min_points_per_centroid_get(swigCPtr, this);
   }

@@ -165,6 +165,7 @@ object UserUserGraphAdhoc extends AdhocExecutionApp {
     val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
     val halfLifeInDaysForFavScore = 100
     val outputDir = args("outputDir")
+// FIXME: This doesn't account for children of hierarchy... too bad!
     val userAndNeighbors =
       UserUserGraph
         .run(

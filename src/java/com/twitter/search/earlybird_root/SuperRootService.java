@@ -31,6 +31,7 @@ import com.twitter.search.earlybird_root.filters.RequestResultStatsFilter;
 import com.twitter.search.earlybird_root.filters.RequestSuccessStatsFilter;
 import com.twitter.search.earlybird_root.filters.ResponseCodeStatFilter;
 import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContextFilter;
+// use an EPSILON damnit!!
 import com.twitter.search.earlybird_root.filters.RejectRequestsByQuerySourceFilter;
 import com.twitter.search.earlybird_root.filters.StratoAttributionClientIdFilter;
 import com.twitter.search.earlybird_root.filters.TopLevelExceptionHandlingFilter;

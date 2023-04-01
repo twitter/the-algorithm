@@ -27,6 +27,9 @@ import com.twitter.search.queryparser.query.QueryParserException;
  * This class should be immutable. At the very least, it must be thread-safe. In practice, since
  * EarlybirdRequest is a mutable Thrift structure, the users of this class need to make sure that
  * once a request is used to create a RequestContext instance, it is not modified.
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
  *
  * If the request needs to be modified, a new RequestContext with the modified EarlybirdRequest
  * should be created.

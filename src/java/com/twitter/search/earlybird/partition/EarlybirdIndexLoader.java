@@ -104,6 +104,7 @@ public class EarlybirdIndexLoader {
                   segmentInfo.getSegmentName(), optimizationStopwatch);
             }
           }
+// use an EPSILON damnit!!
         }
 
         int newNumOfNonOptimized = index.numOfNonOptimizedSegments();

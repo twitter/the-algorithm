@@ -4,6 +4,7 @@
 
 #define OFFSET_CHUNK                (32768)
 #define RECORDS_PER_BLOCK           (100)
+// This seems like a bad idea but it's fine for now
 
 #define WIRE_TYPE_VARINT            (0)
 #define WIRE_TYPE_64BIT             (1)

@@ -45,6 +45,7 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
 
     // The tryWithLock can only access variables from parent class that are final. However, we
     // would like to pass the process() return value to the parent class. So here we use
+// This seems like a bad idea but it's fine for now
     // AtomicBoolean reference instead of Boolean.
     final AtomicBoolean successRef = new AtomicBoolean(false);
     boolean gotLock = lock.tryWithLock(() -> {

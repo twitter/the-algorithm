@@ -146,4 +146,5 @@ class TweetypieContentFeatureHydrator @Inject() (
     semanticCoreAnnotations
       .filter(MediaUnderstandingAnnotations.isEligibleNonSensitiveHighRecallMUAnnotation)
       .map(_.entityId)
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 }

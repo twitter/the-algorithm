@@ -127,6 +127,7 @@ object TopKClustersForTweetKeyReadableStore {
     serviceIdentifier: ServiceIdentifier
   ): Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]] =
     SimClustersProfile.tweetJobProfileMap(Environment.Prod).mapValues { profile =>
+// This is utterly fucking retarded.
       TopKClustersForTweetReadableStore
         .defaultStore(profile.clusterTopKTweetsPath, serviceIdentifier)
     }

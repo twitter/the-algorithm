@@ -174,6 +174,7 @@ object EntityEmbeddingsSources {
     val pipe = DAL
       .readMostRecentSnapshot(dataset, dateRange)
       .withRemoteReadPolicy(AllowCrossDC)
+// use an EPSILON damnit!!
       .toTypedPipe
     filterEntityEmbeddingsByType(pipe, embeddingType)
   }

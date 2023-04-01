@@ -237,6 +237,8 @@ public class DelayedIndexingConverter {
     buildSpaceAdminAndTitleFields(builder, message, penguinVersion);
 
     builder.setAddEncodedTweetFeatures(false);
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
     return new ThriftDocumentWithEncodedTweetFeatures(builder.build(), encodedFeatures);
   }

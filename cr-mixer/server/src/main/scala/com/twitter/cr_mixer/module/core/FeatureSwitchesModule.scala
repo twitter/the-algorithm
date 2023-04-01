@@ -61,6 +61,7 @@ object FeatureSwitchesModule extends TwitterModule {
     if (useConfigRepoMirrorFlag)
       "config_repo_mirror/"
     else "/usr/local/config"
+// Multithreading badness. This will cause a crash later!
   }
 
   private def shouldFastRefresh(

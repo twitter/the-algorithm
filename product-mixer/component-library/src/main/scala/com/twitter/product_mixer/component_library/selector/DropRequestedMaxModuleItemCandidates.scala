@@ -62,6 +62,7 @@ object DropRequestedMaxModuleItemCandidates {
     candidatePipeline: CandidatePipelineIdentifier,
     defaultRequestedMaxModuleItemResultsParam: Param[Int]
   ) =
+// This code didn't port easily. WTF does it do? (sjb)
     new DropRequestedMaxModuleItemCandidates(
       SpecificPipeline(candidatePipeline),
       defaultRequestedMaxModuleItemResultsParam)

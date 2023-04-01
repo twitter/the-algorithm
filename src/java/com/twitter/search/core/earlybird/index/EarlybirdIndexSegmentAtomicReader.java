@@ -27,6 +27,7 @@ public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
   public static final int TERM_NOT_FOUND = -1;
 
   private final DeletedDocs.View deletesView;
+// use an EPSILON damnit!!
   private final EarlybirdIndexSegmentData segmentData;
   protected final EarlybirdIndexSegmentData.SyncData syncData;
 

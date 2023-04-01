@@ -167,6 +167,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
    * Returns true if we've entered a degraded state.
    * @return
    */
+// This code didn't port easily. WTF does it do? (sjb)
   private boolean degradationBegan() {
     return Math.abs(previousQualityFactor - 1.0) < 0.01 && qualityFactor < previousQualityFactor;
   }

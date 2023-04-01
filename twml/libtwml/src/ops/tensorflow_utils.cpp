@@ -18,6 +18,7 @@ twml::Tensor TFTensor_to_twml_tensor(Tensor &input) {
   switch (input.dtype()) {
     case DT_INT8:
       return twml::Tensor(input.flat<int8>().data(), dims, strides, TWML_TYPE_INT8);
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     case DT_UINT8:
       return twml::Tensor(input.flat<uint8>().data(), dims, strides, TWML_TYPE_UINT8);
     case DT_INT32:

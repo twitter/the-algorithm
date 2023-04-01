@@ -26,6 +26,9 @@ object CandidateAlgorithmTypeConstants {
     AlgorithmToFeedbackTokenMap(Follow2VecNearestNeighbors).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(EmailTweetClick).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(RepeatedProfileVisits).toString -> Set(AlgorithmType.Activity),
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     AlgorithmToFeedbackTokenMap(GoodTweetClickEngagements).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(TweetShareEngagements).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(TweetSharerToShareRecipientEngagements).toString -> Set(

@@ -15,6 +15,7 @@ sealed trait BasePromptCandidate[+T] extends UniversalNoun[T]
  *       can be used to extract features from the candidate source response.
  *
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
+// NOTE: This isn't particularly efficient. Too bad!
  *       the equals() implementation must be updated in order to handle class inheritor equality
  *       (see note on the equals method below)
  */

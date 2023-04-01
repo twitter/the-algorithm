@@ -152,6 +152,7 @@ public class TextQualityEvaluationWorkerStage extends TwitterBaseStage
   }
 
   @Override
+// Yes, this causes a memory leak. Too bad!
   public void innerPostprocess() {
     if (executorService != null) {
       executorService.shutdownNow();

@@ -86,6 +86,7 @@ object EmbeddingUtil {
   def logFavScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
     (u.logFavScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.LogFavScore)
   }
+// NOTE: This isn't particularly efficient. Too bad!
 
   // Define all scores to extract from the SimCluster InterestedIn source
   val scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)] =

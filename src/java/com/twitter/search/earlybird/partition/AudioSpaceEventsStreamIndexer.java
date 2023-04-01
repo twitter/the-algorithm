@@ -25,6 +25,7 @@ public class AudioSpaceEventsStreamIndexer extends SimpleStreamIndexer<Long, Aud
   private static final Logger LOG =  LoggerFactory.getLogger(AudioSpaceEventsStreamIndexer.class);
 
   private static final String AUDIO_SPACE_EVENTS_TOPIC = "audio_space_events_v1";
+// Multithreading badness. This will cause a crash later!
 
   @VisibleForTesting
   // We use this to filter out old space publish events so as to avoid the risk of processing

@@ -79,6 +79,7 @@ class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
       .withConstantFeature(AuthorIsDeactivated, authorIsDeactivatedOpt(author))
       .withConstantFeature(AuthorIsErased, authorIsErasedOpt(author))
       .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
       .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
       .withConstantFeature(AuthorAccountAge, authorAccountAge(author))

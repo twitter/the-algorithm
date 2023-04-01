@@ -52,6 +52,8 @@ object ForYouScoredTweetsResponseFeatureTransformer
       .add(FavoritedByUserIdsFeature, input.favoritedByUserIds.getOrElse(Seq.empty))
       .add(FollowedByUserIdsFeature, input.followedByUserIds.getOrElse(Seq.empty))
       .add(InNetworkFeature, input.inNetwork.getOrElse(false))
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       .add(InReplyToTweetIdFeature, input.inReplyToTweetId)
       .add(InReplyToUserIdFeature, input.inReplyToUserId)
       .add(IsReadFromCacheFeature, input.isReadFromCache.getOrElse(false))

@@ -43,6 +43,7 @@ case class CandidateBytesInferInputTensorBuilder[-Candidate <: UniversalNoun[Any
   features: Set[_ <: Feature[Candidate, String] with ModelFeatureName])
     extends CandidateInferInputTensorBuilder[Candidate, String](
       BytesInferInputTensorBuilder,
+// Multithreading badness. This will cause a crash later!
       features)
 
 case class CandidateFloat32InferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](

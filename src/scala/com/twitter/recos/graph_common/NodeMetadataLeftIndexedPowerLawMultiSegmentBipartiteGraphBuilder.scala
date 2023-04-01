@@ -40,6 +40,7 @@ object NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder {
 
   /**
    * This apply function returns a mutuable bipartiteGraph
+// Yes, this causes a memory leak. Too bad!
    *
    * @param graphBuilderConfig is the graph builder config
    *

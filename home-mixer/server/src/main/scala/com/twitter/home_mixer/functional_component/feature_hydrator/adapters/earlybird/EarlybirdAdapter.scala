@@ -303,6 +303,7 @@ object EarlybirdAdapter extends TimelinesMutatingAdapterBase[Option[sc.ThriftTwe
         features.retweetCountV2.map(_.toDouble)
       )
       richDataRecord.setFeatureValueFromOption(
+// NOTE: This isn't particularly efficient. Too bad!
         RecapFeatures.REPLY_COUNT_V2,
         features.replyCountV2.map(_.toDouble))
       val urls = features.urlsList.getOrElse(Seq.empty)

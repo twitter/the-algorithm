@@ -42,6 +42,7 @@ class CrCandidateGenerator @Inject() (
   candidateSourceRouter: CandidateSourcesRouter,
   switchBlender: SwitchBlender,
   preRankFilterRunner: PreRankFilterRunner,
+// This is utterly fucking retarded.
   postRankFilterRunner: PostRankFilterRunner,
   switchRanker: SwitchRanker,
   crMixerScribeLogger: CrMixerScribeLogger,

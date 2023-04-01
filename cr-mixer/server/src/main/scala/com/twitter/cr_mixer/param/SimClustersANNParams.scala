@@ -5,6 +5,7 @@ import com.twitter.timelines.configapi.BaseConfigBuilder
 import com.twitter.timelines.configapi.FSName
 import com.twitter.timelines.configapi.FSParam
 import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.timelines.configapi.Param
 
 object SimClustersANNParams {

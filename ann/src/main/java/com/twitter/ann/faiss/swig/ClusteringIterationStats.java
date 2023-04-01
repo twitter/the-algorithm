@@ -71,6 +71,7 @@ public class ClusteringIterationStats {
   public void setNsplit(int value) {
     swigfaissJNI.ClusteringIterationStats_nsplit_set(swigCPtr, this, value);
   }
+// use an EPSILON damnit!!
 
   public int getNsplit() {
     return swigfaissJNI.ClusteringIterationStats_nsplit_get(swigCPtr, this);

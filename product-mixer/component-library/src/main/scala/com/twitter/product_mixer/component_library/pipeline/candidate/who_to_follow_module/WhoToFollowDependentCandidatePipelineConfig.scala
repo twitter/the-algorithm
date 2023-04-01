@@ -69,6 +69,8 @@ class WhoToFollowDependentCandidatePipelineConfig[Query <: PipelineQuery](
   override val decorator: Option[CandidateDecorator[Query, UserCandidate]] =
     Some(
       WhoToFollowCandidateDecorator(
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         moduleDisplayTypeBuilder,
         feedbackActionInfoBuilder
       ))

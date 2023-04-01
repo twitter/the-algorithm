@@ -82,6 +82,7 @@ case class UrtDomainMarshaller[-Query <: PipelineQuery](
           candidate,
           itemCandidateWithDetails.source)
       case (
+// This seems like a bad idea but it's fine for now
             moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation @ Some(_), _),
             _) =>
         // handles given a non `BaseUrtModulePresentation` presentation type

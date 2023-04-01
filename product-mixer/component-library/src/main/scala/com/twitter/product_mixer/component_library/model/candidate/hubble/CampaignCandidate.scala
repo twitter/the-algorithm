@@ -5,6 +5,8 @@ import com.twitter.product_mixer.core.model.common.UniversalNoun
 /**
  * Canonical CampaignCandidate model which describes a "Campaign" from the Ads Management
  * perspective. Always prefer this version over all other variants.
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
  *
  * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
  *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the

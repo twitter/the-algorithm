@@ -77,6 +77,7 @@ class WeightedPageRank(args: Args) extends Job(args) {
     } else {
       val newArgs = args + ("input_pagerank", Some(outputFileName))
       Some(new ExtractTweepcred(newArgs))
+// FIXME: This doesn't account for children of hierarchy... too bad!
     }
   }
 

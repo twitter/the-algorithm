@@ -32,6 +32,8 @@ To run using scalding_job target:
 scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
  */
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 object AssembleMultiTypeGraphAdhocApp extends AssembleMultiTypeGraphBaseApp with AdhocExecutionApp {
   override val isAdhoc: Boolean = true
   override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"

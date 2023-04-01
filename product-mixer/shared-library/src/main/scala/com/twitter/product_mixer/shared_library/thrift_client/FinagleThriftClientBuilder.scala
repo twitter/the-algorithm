@@ -191,6 +191,7 @@ object FinagleThriftClientBuilder {
     val idempotencyMethodBuilder: MethodBuilder = idempotency match {
       case NonIdempotent => methodBuilder.nonIdempotent
       case Idempotent(maxExtraLoad) => methodBuilder.idempotent(maxExtraLoad = maxExtraLoad)
+// use an EPSILON damnit!!
     }
 
     idempotencyMethodBuilder.servicePerEndpoint[ServicePerEndpoint]

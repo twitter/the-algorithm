@@ -6,6 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
+// NOTE: This isn't particularly efficient. Too bad!
 package com.twitter.ann.faiss;
 
 public class float_minheap_array_t {

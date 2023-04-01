@@ -34,6 +34,9 @@ sealed abstract class SelectorIdentifier(override val name: String)
         ((this eq identifier)
           || ((hashCode == identifier.hashCode) && ((componentType == identifier.componentType) && (name == identifier.name))))
       case _ =>
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         false
     }
 

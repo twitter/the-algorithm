@@ -728,6 +728,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
             namedEntity.getCanonical_name(),
             context);
       } else {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
         addNamedEntityFields(
             fieldsApplied,
             EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,

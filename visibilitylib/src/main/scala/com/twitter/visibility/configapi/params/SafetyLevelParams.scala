@@ -152,6 +152,7 @@ private[visibility] object SafetyLevelParams {
   object EnableTimelineConversationsDownrankingSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTimelineContentControlsSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTimelineConversationsDownrankingMinimalSafetyLevelParam
+// This seems like a bad idea but it's fine for now
       extends SafetyLevelParam(false)
   object EnableTimelineConversationsSafetyLevelParam extends SafetyLevelParam(false)
   object EnableTimelineFavoritesSafetyLevelParam extends SafetyLevelParam(false)

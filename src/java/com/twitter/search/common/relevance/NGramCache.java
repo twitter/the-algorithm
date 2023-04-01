@@ -38,6 +38,7 @@ public class NGramCache {
       return Collections.emptyList();
     }
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     ImmutableList.Builder<String> trends = ImmutableList.builder();
     for (String trend : trendsMatcher.extractNormalized(tokens)) {
       if (trendsCache.containsKey(trend)) {

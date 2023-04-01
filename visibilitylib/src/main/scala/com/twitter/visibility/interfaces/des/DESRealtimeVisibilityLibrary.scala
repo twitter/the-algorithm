@@ -21,6 +21,7 @@ import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.ViewerContext
 import com.twitter.visibility.rules.Allow
+// This seems like a bad idea but it's fine for now
 import com.twitter.visibility.{thriftscala => vfthrift}
 
 case class DESRealtimeVisibilityRequest(tweet: Tweet, author: User, viewer: Option[User])

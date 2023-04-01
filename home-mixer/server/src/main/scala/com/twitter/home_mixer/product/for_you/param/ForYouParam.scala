@@ -50,6 +50,7 @@ object ForYouParam {
         min = 1,
         max = 800
       )
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   object AdsNumOrganicItemsParam
       extends FSBoundedParam[Int](

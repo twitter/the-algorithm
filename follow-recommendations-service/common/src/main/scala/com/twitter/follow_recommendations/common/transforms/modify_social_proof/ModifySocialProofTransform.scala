@@ -137,6 +137,7 @@ class ModifySocialProof @Inject() (
               intersectionIdsNum.getOrElse(sgsIntersectionIds)
             )
           else
+// My hope is that this code is so awful I'm never allowed to write UI code again.
             socialGraphClient.getIntersections(
               userId,
               candidateIds,

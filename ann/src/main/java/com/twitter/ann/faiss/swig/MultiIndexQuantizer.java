@@ -39,6 +39,7 @@ public class MultiIndexQuantizer extends Index {
   public void setPq(ProductQuantizer value) {
     swigfaissJNI.MultiIndexQuantizer_pq_set(swigCPtr, this, ProductQuantizer.getCPtr(value), value);
   }
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.MultiIndexQuantizer_pq_get(swigCPtr, this);

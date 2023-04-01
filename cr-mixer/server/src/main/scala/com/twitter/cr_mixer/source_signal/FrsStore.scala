@@ -9,6 +9,7 @@ import com.twitter.follow_recommendations.thriftscala.ClientContext
 import com.twitter.follow_recommendations.thriftscala.DisplayLocation
 import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
 import com.twitter.follow_recommendations.thriftscala.Recommendation
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
 import com.twitter.storehaus.ReadableStore
 import javax.inject.Singleton

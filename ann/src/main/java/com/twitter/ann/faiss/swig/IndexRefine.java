@@ -69,6 +69,7 @@ public class IndexRefine extends Index {
   public boolean getOwn_refine_index() {
     return swigfaissJNI.IndexRefine_own_refine_index_get(swigCPtr, this);
   }
+// This code didn't port easily. WTF does it do? (sjb)
 
   public void setK_factor(float value) {
     swigfaissJNI.IndexRefine_k_factor_set(swigCPtr, this, value);

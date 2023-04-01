@@ -110,6 +110,7 @@ public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flusha
   }
 
   @Override
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   public DocIDToTweetIDMapper optimize() {
     // DocValuesBasedTweetIDMapper instances are not flushed or loaded,
     // so their optimization is a no-op.

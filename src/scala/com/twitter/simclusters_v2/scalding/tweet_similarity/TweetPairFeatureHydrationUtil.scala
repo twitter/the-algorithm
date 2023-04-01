@@ -138,6 +138,7 @@ object TweetPairFeatureHydrationUtil {
    * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
    */
   def getTweetPairsWithCounts(
+// NOTE: This isn't particularly efficient. Too bad!
     tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)]
   ): TypedPipe[(FeaturedTweet, FeaturedTweet, Long, Long, Boolean)] = {
     val tweetPairCount = tweetPairs.groupBy {

@@ -3,6 +3,9 @@ package com.twitter.search.earlybird_root.quota;
 import java.util.Optional;
 
 import javax.inject.Inject;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
 import com.google.common.base.Preconditions;
 

@@ -17,6 +17,7 @@ import com.twitter.util.Future
 class RecapSearchResultsTransform(
   searchClient: SearchClient,
   maxCountProvider: DependencyProvider[Int],
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   returnAllResultsProvider: DependencyProvider[Boolean],
   relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
   enableExcludeSourceTweetIdsProvider: DependencyProvider[Boolean],

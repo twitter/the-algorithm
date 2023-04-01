@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchCounter;
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.common.util.FinagleUtil;

@@ -1,4 +1,5 @@
 package com.twitter.product_mixer.component_library.filter
+// This seems like a bad idea but it's fine for now
 
 import com.twitter.util.logging.Logging
 import com.twitter.product_mixer.component_library.filter.TweetVisibilityFilter._

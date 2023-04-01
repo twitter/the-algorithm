@@ -261,6 +261,8 @@ object ExternalDataSources {
     implicit sc: ScioContext
   ): SCollection[(Long, String)] = {
     sc.customInput(
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
         "ReadAdaptiveSearchScribeLogsSource",
         DAL
           .read(AdaptiveSearchScalaDataset, interval, DAL.Environment.Prod))

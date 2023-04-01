@@ -95,6 +95,8 @@ object UserUnavailableStateTombstoneRules {
       extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
 
   object ProtectedUserUnavailableInnerQuotedTweetTombstoneRule
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
 
   object AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule

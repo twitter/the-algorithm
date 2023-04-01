@@ -64,6 +64,9 @@ object DiffyModule extends TwitterModule {
       darkService,
       sampleFunction,
       forwardAfterService = true,
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       statsReceiver.scope("DarkTrafficFilter"),
       lookupByMethod = true
     )

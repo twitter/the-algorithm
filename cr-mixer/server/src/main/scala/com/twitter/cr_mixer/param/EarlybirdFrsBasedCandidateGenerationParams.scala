@@ -2,6 +2,9 @@ package com.twitter.cr_mixer.param
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_ModelBased
 import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_RecencyBased
 import com.twitter.cr_mixer.model.EarlybirdSimilarityEngineType_TensorflowBased

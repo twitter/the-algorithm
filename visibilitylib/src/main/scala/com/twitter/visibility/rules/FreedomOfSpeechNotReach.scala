@@ -684,6 +684,9 @@ object FreedomOfSpeechNotReachRules {
     violationLevel: ViolationLevel,
     override val actionBuilder: ActionBuilder[_ <: Action])
       extends OnlyWhenNonAuthorViewerRule(
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
         actionBuilder,
         Condition.TweetHasViolationOfLevel(violationLevel)
       ) {

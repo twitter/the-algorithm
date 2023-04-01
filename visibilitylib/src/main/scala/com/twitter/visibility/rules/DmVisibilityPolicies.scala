@@ -55,6 +55,8 @@ case object DirectMessagesSearchPolicy
       policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
     )
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 case object DirectMessagesPinnedPolicy
     extends VisibilityPolicy(
       dmConversationRules = Seq(

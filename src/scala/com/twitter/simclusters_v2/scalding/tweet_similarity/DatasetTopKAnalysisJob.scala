@@ -150,6 +150,8 @@ object DatasetTopKAnalysisJob {
           Util.printSummaryOfNumericColumn(
             queryToCounts.map(_._2._1),
             Some("Per-query Total Cooccurrence Count")),
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
           topKQueryTweetsByOccurrence.toIterableExecution.map { s =>
             println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
           },

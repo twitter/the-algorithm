@@ -368,6 +368,7 @@ public class ThriftTermResultsMerger {
    */
   private void mergeHistogramBins(ThriftTermStatisticsResults mergedResults) {
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     mergedResults.setBinIds(mostRecentBinIds);
     mergedResults.setHistogramSettings(histogramSettings);
 

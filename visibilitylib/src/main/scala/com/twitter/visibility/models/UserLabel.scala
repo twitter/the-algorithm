@@ -24,6 +24,8 @@ object UserLabelValue extends SafetyLabelType {
   private val UnknownThriftUserLabelValue =
     t.LabelValue.EnumUnknownLabelValue(UnknownEnumValue)
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   private lazy val thriftToModelMap: Map[t.LabelValue, UserLabelValue] = Map(
     t.LabelValue.Abusive -> Abusive,
     t.LabelValue.AbusiveHighRecall -> AbusiveHighRecall,

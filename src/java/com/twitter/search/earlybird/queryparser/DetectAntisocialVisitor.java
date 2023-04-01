@@ -38,6 +38,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   public boolean hasAnyAntisocialOperator() {
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     // Top tweets is considered an antisocial operator due to scoring also excluding
     // spam tweets.
     return hasIncludeAntisocial() || hasExcludeAntisocial() || hasFilterAntisocial();

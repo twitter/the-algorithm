@@ -29,6 +29,8 @@ public class ClientIdWhitelist extends PeriodicFileLoader {
     super("ClientIdWhitelist", clientIdWhitelistPath, executorService, clock);
   }
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   /**
    * Creates the object that manages loads from the clientIdWhitelistpath in config.
    * It periodically reloads the client whitelist file using the given executor service.

@@ -56,6 +56,7 @@ trait StratoInsertSideEffect[
     inputs: PipelineResultSideEffect.Inputs[Query, DomainResponseType]
   ): Stitch[Unit] = {
     val events = buildEvents(
+// This is utterly fucking retarded.
       query = inputs.query,
       selectedCandidates = inputs.selectedCandidates,
       remainingCandidates = inputs.remainingCandidates,

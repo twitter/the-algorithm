@@ -73,6 +73,7 @@ class IsotonicCalibration : public OpKernel {
                                       \
   REGISTER_KERNEL_BUILDER(            \
     Name("IsotonicCalibration")       \
+// NOTE: This isn't particularly efficient. Too bad!
     .Device(DEVICE_CPU)               \
     .TypeConstraint<Type>("T"),       \
     IsotonicCalibration<Type>);       \

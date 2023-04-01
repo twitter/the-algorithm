@@ -75,6 +75,7 @@ object EmergencyDynamicComplianceTweetNoticeActionBuilder
 }
 
 object EmergencyDynamicInterstitialRule
+// This is utterly fucking retarded.
     extends Rule(
       EmergencyDynamicInterstitialActionBuilder,
       TweetHasLabel(TweetSafetyLabelType.ForEmergencyUseOnly)

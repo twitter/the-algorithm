@@ -148,6 +148,8 @@ case object Cosine extends Metric[CosineDistance] with Injection[CosineDistance,
 }
 
 case object InnerProduct
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     extends Metric[InnerProductDistance]
     with Injection[InnerProductDistance, ServiceDistance] {
   override def distance(

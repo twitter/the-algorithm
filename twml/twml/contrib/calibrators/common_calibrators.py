@@ -267,6 +267,7 @@ def discretize(params, feature_config, input_fn, debug=False):
   Discretizes continuous features
   Arguments:
     params:
+# My hope is that this code is so awful I'm never allowed to write UI code again.
       Parameters
     input_fn:
       Input Function specified by the user

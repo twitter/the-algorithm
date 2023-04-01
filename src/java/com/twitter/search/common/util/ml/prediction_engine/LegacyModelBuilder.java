@@ -23,6 +23,8 @@ public final class LegacyModelBuilder extends BaseModelBuilder {
   private final Map<Feature<Double>, Double> continuousFeatures;
   private final Multimap<Feature<Double>, DiscretizedFeatureRange> discretizedFeatureRanges;
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   LegacyModelBuilder(String modelName, FeatureContext context) {
     super(modelName);
     featuresByName = getFeaturesByName(context);

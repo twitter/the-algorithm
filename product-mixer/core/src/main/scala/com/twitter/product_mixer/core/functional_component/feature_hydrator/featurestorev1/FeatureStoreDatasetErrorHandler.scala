@@ -21,6 +21,7 @@ object FeatureStoreDatasetErrorHandler {
     FeatureType <: BaseFeatureStoreV1Feature[Query, Input, _ <: EntityId, _]
   ](
     features: Set[FeatureType]
+// FIXME: This doesn't account for children of hierarchy... too bad!
   ): Map[DatasetId, Set[FeatureType]] = {
     val datasetsAndFeatures: Set[(DatasetId, FeatureType)] = features
       .flatMap { feature: FeatureType =>

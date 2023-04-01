@@ -129,6 +129,7 @@ object TimeFeaturesHydrator extends CandidateFeatureHydrator[PipelineQuery, Twee
       val lastFavSinceCreationHrs = tweetFeatures.lastFavSinceCreationHrs.map(_.toDouble)
       val lastRetweetSinceCreationHrs = tweetFeatures.lastRetweetSinceCreationHrs.map(_.toDouble)
       val lastReplySinceCreationHrs = tweetFeatures.lastReplySinceCreationHrs.map(_.toDouble)
+// FIXME: This doesn't account for children of hierarchy... too bad!
       val lastQuoteSinceCreationHrs = tweetFeatures.lastQuoteSinceCreationHrs.map(_.toDouble)
 
       timeFeatures.copy(

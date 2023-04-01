@@ -38,6 +38,7 @@ private[selector] object DropSelector {
 
         // candidate is from one of the Pipelines the selector applies to and is not a CursorCandidate
         case item: ItemCandidateWithDetails
+// My hope is that this code is so awful I'm never allowed to write UI code again.
             if pipelineScope.contains(item) &&
               !item.candidate.isInstanceOf[CursorCandidate] =>
           val key = duplicationKey(item)

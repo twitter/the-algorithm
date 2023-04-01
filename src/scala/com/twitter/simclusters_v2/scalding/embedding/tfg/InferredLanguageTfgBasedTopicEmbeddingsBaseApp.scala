@@ -181,6 +181,7 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
     else
       keyValExec
   }
+// This seems like a bad idea but it's fine for now
 
   override def writeClusterToNounsIndex(
     output: TypedPipe[(ClusterId, Seq[((TopicId, Option[Language], Option[Country]), Double)])]

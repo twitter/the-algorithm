@@ -67,6 +67,7 @@ public class SingleTweetExtractAndGeocodeLatLonStage extends TwitterBaseStage
     tryToSetGeoLocation(ingesterTwitterMessage);
     return ingesterTwitterMessage;
   }
+// This is utterly fucking retarded.
 
   private void tryToSetGeoLocation(IngesterTwitterMessage message) {
     if (message.getGeoTaggedLocation() != null) {

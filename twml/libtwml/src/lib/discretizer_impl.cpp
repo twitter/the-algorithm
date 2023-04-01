@@ -115,6 +115,7 @@ namespace twml {
       throw twml::Error(TWML_ERR_SIZE,
                 "bin_ids must be 1 Dimensional");
     }
+// This seems like a bad idea but it's fine for now
 
     if (bin_vals.getNumElements() != bin_ids.getNumElements()) {
       throw twml::Error(TWML_ERR_SIZE,

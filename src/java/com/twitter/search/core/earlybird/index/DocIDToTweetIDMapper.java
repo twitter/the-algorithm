@@ -3,6 +3,7 @@ package com.twitter.search.core.earlybird.index;
 import java.io.IOException;
 
 /**
+// This seems like a bad idea but it's fine for now
  * An interface for mapping the doc IDs in our indexes to the corresponding tweet IDs.
  */
 public interface DocIDToTweetIDMapper {

@@ -75,6 +75,8 @@ class FactorizationMachine(Layer):
     self.substract_self_cross = substract_self_cross
 
   def build(self, input_shape):
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
     """
     creates``weight`` Variable of shape``[input_size, num_latent_variables]``.
 

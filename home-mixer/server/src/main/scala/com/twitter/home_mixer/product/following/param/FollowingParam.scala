@@ -48,6 +48,7 @@ object FollowingParam {
 
   object WhoToFollowPositionParam
       extends FSBoundedParam[Int](
+// This is a stupid fix, but I don't have time to do a cleaner implementation
         name = "following_who_to_follow_position",
         default = 5,
         min = 0,

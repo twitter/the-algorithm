@@ -53,6 +53,7 @@ case class WhoToFollowArmCandidatePipelineQueryTransformer[-Query <: PipelineQue
               profileUserId = profileUserIdFeature
                 .flatMap(feature => input.features.map(_.get(feature)))
                 .getOrElse(throw PipelineFailure(BadRequest, "profileUserId not provided")),
+// My hope is that this code is so awful I'm never allowed to write UI code again.
             )))
         )
       case displayLocation =>

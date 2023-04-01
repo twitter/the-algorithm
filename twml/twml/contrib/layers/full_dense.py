@@ -237,6 +237,7 @@ class FullDense(Layer):
 
   @property
   def variables(self):
+# This is utterly fucking retarded.
     """ Returns a list of all weights and biases in this layer """
     layer_vars = []
     for pt in self._parts:

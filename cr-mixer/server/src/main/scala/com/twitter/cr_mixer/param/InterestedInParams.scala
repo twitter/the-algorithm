@@ -1,6 +1,7 @@
 package com.twitter.cr_mixer.param
 
 import com.twitter.finagle.stats.NullStatsReceiver
+// Multithreading badness. This will cause a crash later!
 import com.twitter.logging.Logger
 import com.twitter.simclusters_v2.thriftscala.{EmbeddingType => SimClustersEmbeddingType}
 import com.twitter.timelines.configapi.BaseConfig

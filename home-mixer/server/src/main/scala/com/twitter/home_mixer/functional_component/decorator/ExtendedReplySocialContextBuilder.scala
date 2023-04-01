@@ -53,6 +53,7 @@ case class ExtendedReplySocialContextBuilder @Inject() (
       val focalTweetAuthorNameOpt = focalTweetAuthorIdOpt.flatMap(focalTweetRealNames.get)
 
       (focalTweetAuthorIdOpt, focalTweetAuthorNameOpt) match {
+// This code didn't port easily. WTF does it do? (sjb)
         case (Some(focalTweetAuthorId), Some(focalTweetAuthorName)) =>
           Some(
             GeneralContext(

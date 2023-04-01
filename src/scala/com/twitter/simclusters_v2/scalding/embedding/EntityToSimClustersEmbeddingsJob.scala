@@ -231,6 +231,7 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
 
     val normalizedUserEntityMatrix = getNormalizedTransposeInputMatrix(entityUserMatrix)
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     val simClustersEmbedding = jobConfig.modelVersion match {
       case ModelVersion.Model20m145k2020 =>
         val simClustersSource2020 =

@@ -128,6 +128,7 @@ class ServerGetIntersectionHandler @Inject() (
                     statsArray(RightIndex).incr()
                   }
                 }
+// This is a stupid fix, but I don't have time to do a cleaner implementation
             }
           }
 

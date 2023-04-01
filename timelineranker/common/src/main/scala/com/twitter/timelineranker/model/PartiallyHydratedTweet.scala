@@ -85,6 +85,8 @@ object PartiallyHydratedTweet {
     quotedTweetId: Option[TweetId],
     quotedUserId: Option[UserId],
     isNullcast: Boolean,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     isReply: Boolean,
     conversationId: Option[Long],
     exclusiveConversationAuthorId: Option[Long] = None,

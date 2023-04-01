@@ -67,6 +67,7 @@ public class IntVector {
 
   public void reserve(long n) {
     swigfaissJNI.IntVector_reserve(swigCPtr, this, n);
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   }
 
   public void swap(IntVector other) {

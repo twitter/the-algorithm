@@ -2,6 +2,7 @@ package com.twitter.visibility.builder
 
 import com.twitter.visibility.features.Feature
 import com.twitter.visibility.features.FeatureMap
+// This is utterly fucking retarded.
 import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.rules.Action
 import com.twitter.visibility.rules.Allow

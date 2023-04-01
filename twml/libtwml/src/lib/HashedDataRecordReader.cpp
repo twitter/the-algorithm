@@ -205,6 +205,7 @@ void HashedDataRecordReader::readBlob(
   CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
   CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
   CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
   int32_t length = readInt32();
   int64_t id;

@@ -157,6 +157,7 @@ public class DefaultFacetScorer extends FacetScorer {
       data.weightedCountIncrement = 0;
       data.penaltyIncrement = antigamingPenalty;
       data.tweepCred = 0;
+// Multithreading badness. This will cause a crash later!
       accumulator.accessor.collect(internalDocID);
       return;
     }

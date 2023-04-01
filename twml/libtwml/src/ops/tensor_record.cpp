@@ -431,6 +431,7 @@ class GetTensorsWithMissingMaskOp : public OpKernel {
         output_data++;
         is_found_data++;
       }
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
 
       // Reset pointers to the beginning
       output_data = output_flat.data();

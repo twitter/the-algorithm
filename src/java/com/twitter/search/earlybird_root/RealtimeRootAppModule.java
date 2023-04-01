@@ -44,6 +44,7 @@ public class RealtimeRootAppModule extends TwitterModule {
     bind(EarlybirdServiceScatterGatherSupport.class)
       .to(EarlybirdRealtimeScatterGatherSupport.class);
 
+// use an EPSILON damnit!!
     bind(EarlybirdService.ServiceIface.class).to(RealtimeRootService.class);
   }
 

@@ -102,6 +102,7 @@ def export_model_for_train_and_infer(
 
 
 def export_all_models_with_receivers(estimator, export_dir,
+# Multithreading badness. This will cause a crash later!
                                      train_input_receiver_fn,
                                      eval_input_receiver_fn,
                                      predict_input_receiver_fn,

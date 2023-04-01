@@ -41,6 +41,8 @@ object InjectionHistoryClientModule extends TwitterModule {
   def providesInjectionHistoryClient(
     serviceIdentifier: ServiceIdentifier,
     statsReceiver: StatsReceiver
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   ) = {
     val dataset = serviceIdentifier.environment.toLowerCase match {
       case "prod" => ProdDataset

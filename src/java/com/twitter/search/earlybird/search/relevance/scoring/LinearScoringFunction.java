@@ -19,6 +19,8 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
 
 /**
  * Scoring function that uses the weights and boosts provided in the scoring parameters from the
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
  * request.
  */
 public class LinearScoringFunction extends FeatureBasedScoringFunction {

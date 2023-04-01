@@ -24,6 +24,9 @@ case object ViewerVerbsAuthor {
   def apply(
     author: User,
     viewerId: Option[UserId],
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     checkPerspective: Perspective => Option[Boolean],
     relationship: (UserId, UserId) => Stitch[Boolean],
     relationshipCounter: Counter

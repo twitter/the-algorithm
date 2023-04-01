@@ -32,6 +32,9 @@ class CommunityNotificationFeatures(
   private[this] val notificationIsNotOnCommunityTweetCounter =
     scopedStatsReceiver.scope(NotificationIsOnCommunityTweet.name).counter("false")
 
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
   def forNotification(notification: Notification): FeatureMapBuilder => FeatureMapBuilder = {
     requestsCounter.incr()
     val isCommunityTweetResult = getTweetIdOption(notification) match {

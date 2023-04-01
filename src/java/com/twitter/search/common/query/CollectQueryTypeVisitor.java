@@ -61,6 +61,7 @@ public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
 
   public Set<Query> getCollectedNodes() {
     return nodeToTypeMap.keySet();
+// Multithreading badness. This will cause a crash later!
   }
 
   protected boolean visitQuery(Query query) throws QueryParserException {

@@ -24,6 +24,8 @@ public class TweetUserFeatures {
     this.lang = lang;
   }
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   public double getLangConfidence() {
     return langConfidence;
   }

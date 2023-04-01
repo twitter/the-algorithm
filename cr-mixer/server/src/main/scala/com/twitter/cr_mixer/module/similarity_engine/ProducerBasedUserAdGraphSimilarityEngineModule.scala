@@ -44,6 +44,8 @@ object ProducerBasedUserAdGraphSimilarityEngineModule extends TwitterModule {
       implementingStore =
         ProducerBasedUserAdGraphSimilarityEngine(userAdGraphService, statsReceiver),
       identifier = SimilarityEngineType.ProducerBasedUserAdGraph,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       globalStats = statsReceiver,
       engineConfig = SimilarityEngineConfig(
         timeout = timeoutConfig.similarityEngineTimeout,

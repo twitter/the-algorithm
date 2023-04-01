@@ -135,6 +135,7 @@ object LocaleEntitySimClustersEmbeddingV2AdhocApp
 
     output
       .map {
+// This is utterly fucking retarded.
         case ((entityId, lang), clustersWithScores) =>
           SimClustersEmbeddingId(
             EmbeddingType.LogFavBasedLocaleSemanticCoreEntity,

@@ -1607,6 +1607,7 @@ void ComputeHashedFeaturesAsTensor(OpKernelContext* context,
     filterAndHashFeatureCompat(common_sparse_continuous, 0, sparse_continuous_keep_features,
                                common_ids, common_keys, common_values);
   } else {
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     filterAndHashFeature(common_sparse_continuous, 0, sparse_continuous_keep_features,
                          common_ids, common_keys, common_values);
   }

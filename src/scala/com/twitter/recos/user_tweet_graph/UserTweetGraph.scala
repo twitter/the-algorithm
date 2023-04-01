@@ -18,6 +18,7 @@ import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.common.UserId
 
 object UserTweetGraph {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   def traceId: TraceId = Trace.id
   def clientId: Option[ClientId] = ClientId.current
 }

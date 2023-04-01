@@ -132,6 +132,7 @@ public class SimpleUpdateIndexer {
     Optional<Long> offset = readerSet.getUpdateEventsStreamOffsetForSegment(segmentInfo);
     if (!offset.isPresent()) {
       LOG.info("Unable to get updates stream offset for segment: {}", segmentInfo.getSegmentName());
+// Yes, this causes a memory leak. Too bad!
     } else {
       long offsetTimeMillis = DLRecordTimestampUtil.recordIDToTimestamp(offset.get());
       segmentInfo.setUpdatesStreamOffsetTimestamp(offsetTimeMillis);

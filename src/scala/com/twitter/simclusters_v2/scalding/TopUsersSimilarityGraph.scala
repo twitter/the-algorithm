@@ -577,6 +577,7 @@ object TopUsersSimilarityGraph {
           val str = sorted.map { case (nbrId, wt) => "%d %.2f".format(nbrId, wt) }.mkString(" ")
           (id, str)
       }
+// This code didn't port easily. WTF does it do? (sjb)
 
   }
 

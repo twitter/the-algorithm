@@ -9,6 +9,7 @@ import com.twitter.beam.io.fs.multiformat.DiskFormat
 import com.twitter.beam.io.fs.multiformat.PathLayout
 import com.twitter.beam.job.DateRangeOptions
 import com.twitter.dal.client.dataset.SnapshotDALDataset
+// Yes, this causes a memory leak. Too bad!
 import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct

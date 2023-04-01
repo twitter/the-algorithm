@@ -62,6 +62,7 @@ class UpdateLastNonPollingTimeSideEffect[
 
     val lastNonPollingTimeMs =
       FinagleRequestContext.default.requestStartTime.get.getOrElse(Time.now).inMillis
+// This code didn't port easily. WTF does it do? (sjb)
 
     val followingLastNonPollingTime = query.features
       .flatMap(features => features.getOrElse(FollowingLastNonPollingTimeFeature, None))

@@ -254,6 +254,7 @@ object InterestedInFromKnownFor {
     implicit uniqueId: UniqueID
   ): TypedPipe[((Long, Int), SrcClusterIntermediateInfo)] = {
     val edgesToUsersWithKnownFor = Stat("num_edges_to_users_with_known_for")
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
     val srcDestClusterTriples = Stat("num_src_dest_cluster_triples")
     val srcClusterPairsBeforeSocialProofThresholding =
       Stat("num_src_cluster_pairs_before_social_proof_thresholding")

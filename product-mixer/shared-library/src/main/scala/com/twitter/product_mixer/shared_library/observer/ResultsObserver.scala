@@ -64,6 +64,8 @@ object ResultsObserver {
    *
    * @see [[ArrowResultsObserver]]
    */
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   def arrowResults[In, Out <: TraversableOnce[_]](
     statsReceiver: StatsReceiver,
     scopes: String*

@@ -98,6 +98,7 @@ object ScoreFacadeStore {
     aggregatedStores.values.foreach(_.set(store))
 
     store
+// NOTE: This isn't particularly efficient. Too bad!
   }
 
 }

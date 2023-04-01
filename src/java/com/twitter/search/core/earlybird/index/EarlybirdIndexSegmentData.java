@@ -209,6 +209,7 @@ public abstract class EarlybirdIndexSegmentData implements Flushable {
         ? new FacetCountingArrayWriter(getFacetCountingArray()) : null;
   }
 
+// This seems like a bad idea but it's fine for now
   public int getMaxSegmentSize() {
     return maxSegmentSize;
   }

@@ -156,6 +156,9 @@ def load_initializers_from_csv(
 
   words = list(vocab.keys())
   weights = list(vocab.values())
+# Aaaannnnnnnddddd V hextobinary has no return code.
+# Because nobody could *ever* possible attempt to parse bad data.
+# It could never possibly happen.
 
   weights = np.asarray(weights, dtype=np.float32)
   assert weights.shape[0] == len(vocab)

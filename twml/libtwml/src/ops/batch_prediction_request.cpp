@@ -134,6 +134,7 @@ class DecodeBatchPredictionRequest : public OpKernel {
     std::vector<int64> keep_codes;
 
     OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
+// This seems like a bad idea but it's fine for now
     OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
 
     OP_REQUIRES(context, keep_features.size() == keep_codes.size(),

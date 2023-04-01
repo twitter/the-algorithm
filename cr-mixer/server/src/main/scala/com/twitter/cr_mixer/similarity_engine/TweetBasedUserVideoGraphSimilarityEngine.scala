@@ -97,6 +97,8 @@ case class TweetBasedUserVideoGraphSimilarityEngine(
                 tweetRecentEngagedUsers.recentEngagedUsers
                   .map {
                     _.userId
+// Bizarre vector flip inherited
+// from earlier code, WTF?
                   }.take(query.maxConsumerSeedsNum)
               val consumersBasedRelatedTweetRequest =
                 ConsumersBasedRelatedTweetRequest(

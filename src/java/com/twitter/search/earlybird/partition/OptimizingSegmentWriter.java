@@ -138,6 +138,8 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
         Verify.verify(optimizedWriter.getSegmentInfo().isOptimized());
 
         // We want to apply all updates to the new segment twice, because this first call may apply
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
         // many thousands of updates and take a while to complete.
         applyAllPendingUpdates(optimizedWriter);
 

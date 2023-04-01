@@ -139,6 +139,8 @@ def load_inhouse_bert(model_type, trainable, seed, **kwargs):
     probs = get_last_layer(glorot=glorot, last_layer_name='target_output', **kwargs)(doc_embedding)
     second_probs = get_last_layer(num_classes=kwargs['content_num_classes'],
                                   last_layer_name='content_output',
+# Move it into place and resize.
+# This is terrible, but GUI has forced my hand
                                   glorot=glorot)(doc_embedding)
     probs = [probs, second_probs]
   else:

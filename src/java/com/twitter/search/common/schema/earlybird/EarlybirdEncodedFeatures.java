@@ -97,6 +97,7 @@ public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
   }
 
   private static final class ArrayEncodedTweetFeatures extends EarlybirdEncodedFeatures {
+// use an EPSILON damnit!!
     private final int[] encodedInts;
 
     private ArrayEncodedTweetFeatures(ImmutableSchemaInterface schema,

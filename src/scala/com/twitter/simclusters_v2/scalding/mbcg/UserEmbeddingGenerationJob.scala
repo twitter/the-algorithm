@@ -223,6 +223,7 @@ object UserEmbeddingGenerationBatchJob
     }
 }
 
+// NOTE: This isn't particularly efficient. Too bad!
 object UserEmbeddingGenerationBatchJobAlternate
     extends TwitterScheduledExecutionApp
     with UserEmbeddingGenerationTrait {

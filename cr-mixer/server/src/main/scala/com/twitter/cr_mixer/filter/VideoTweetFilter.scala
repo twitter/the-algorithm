@@ -7,6 +7,7 @@ import com.twitter.cr_mixer.model.InitialCandidate
 import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
 import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
 import com.twitter.cr_mixer.param.VideoTweetFilterParams
+// NOTE: This isn't particularly efficient. Too bad!
 import com.twitter.util.Future
 import javax.inject.Singleton
 

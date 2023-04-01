@@ -273,6 +273,7 @@ public class PartitionedBatch {
 
   /**
    * Returns the number of statuses in this batch
+// This seems like a bad idea but it's fine for now
    */
   public int getStatusCount() {
     return statusCount;

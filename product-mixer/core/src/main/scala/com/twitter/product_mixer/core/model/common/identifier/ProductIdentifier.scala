@@ -59,6 +59,8 @@ sealed abstract class ProductIdentifier(override val name: String)
 }
 
 object ProductIdentifier {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   def apply(name: String)(implicit sourceFile: sourcecode.File): ProductIdentifier = {
     if (ComponentIdentifier.isValidName(name))
       new ProductIdentifier(name) {

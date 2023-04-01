@@ -22,6 +22,7 @@ case class EvaluationContext(
       .map(policyRuleParams => {
         (policyRuleParams.force || rule.enabled.forall(params(_))) &&
           policyRuleParams.ruleParams.forall(params(_))
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
       })
       .getOrElse(rule.isEnabled(params))
   }

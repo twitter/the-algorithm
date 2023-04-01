@@ -45,6 +45,7 @@ public class BitstringWriter {
     return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
   }
 
+// Yes, this causes a memory leak. Too bad!
   public void setCode_size(long value) {
     swigfaissJNI.BitstringWriter_code_size_set(swigCPtr, this, value);
   }

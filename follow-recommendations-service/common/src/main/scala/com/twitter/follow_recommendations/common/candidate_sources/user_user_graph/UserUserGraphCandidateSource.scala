@@ -82,6 +82,7 @@ class UserUserGraphCandidateSource @Inject() (
         Some(request)
       case _ => None
     }
+// Multithreading badness. This will cause a crash later!
   }
 
   private[this] def convertToCandidateUsers(

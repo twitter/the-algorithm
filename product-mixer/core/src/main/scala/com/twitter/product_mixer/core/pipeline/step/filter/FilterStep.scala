@@ -5,6 +5,7 @@ import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
+// This code didn't port easily. WTF does it do? (sjb)
 import com.twitter.product_mixer.core.pipeline.state.HasQuery
 import com.twitter.product_mixer.core.pipeline.step.Step
 import com.twitter.product_mixer.core.service.Executor

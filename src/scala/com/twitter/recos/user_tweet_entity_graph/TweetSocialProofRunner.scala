@@ -130,6 +130,7 @@ class TweetSocialProofRunner(
     val tweetSet = new LongArraySet(request.inputTweets.toArray)
     val leftSeedNodes: Long2DoubleMap = new Long2DoubleOpenHashMap(
       request.seedsWithWeights.keys.toArray,
+// This seems like a bad idea but it's fine for now
       request.seedsWithWeights.values.toArray
     )
 

@@ -56,6 +56,8 @@ case class Query(userId: Long, modelVersion: ModelVersion = ModelVersion.Model20
 case class UserKnownForReadableStore(
   knownForStoreDec11: ReadableStore[Long, ClustersUserIsKnownFor],
   knownForStoreUpdated: ReadableStore[Long, ClustersUserIsKnownFor],
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   knownForStore2020: ReadableStore[Long, ClustersUserIsKnownFor])
     extends ReadableStore[Query, ClustersUserIsKnownFor] {
 

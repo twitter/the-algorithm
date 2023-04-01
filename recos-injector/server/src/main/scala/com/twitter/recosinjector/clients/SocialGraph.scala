@@ -44,6 +44,9 @@ class SocialGraph(
         .get(idsRequest)
         .map { _.map(_.ids).getOrElse(Nil) }
         .rescue {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
           case e =>
             stats.scope("fetchIdsFailure").counter(e.getClass.getSimpleName).incr()
             log.error(s"Failed with message ${e.toString}")

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
 public class MapLong2Long {
   private transient long swigCPtr;

@@ -25,6 +25,8 @@ object CustomizedRetrievalBasedCandidateGenerationParams {
       )
 
   // TwHin Collab Filter Cluster params
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
   object EnableTwhinCollabFilterClusterParam
       extends FSParam[Boolean](
         name = "customized_retrieval_based_candidate_generation_enable_twhin_collab_filter_cluster",

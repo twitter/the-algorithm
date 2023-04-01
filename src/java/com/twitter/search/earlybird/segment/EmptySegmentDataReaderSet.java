@@ -42,6 +42,8 @@ public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
     // ALWAYS CAUGHT UP
     return true;
   }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 
   @Override
   public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)

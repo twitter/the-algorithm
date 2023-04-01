@@ -41,6 +41,7 @@ public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSear
 
   private void addSchemaContinuousFeatures(Map<Integer, ? extends Number> valueMap) {
     if (valueMap == null || valueMap.isEmpty()) {
+// NOTE: This isn't particularly efficient. Too bad!
       return;
     }
     for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {

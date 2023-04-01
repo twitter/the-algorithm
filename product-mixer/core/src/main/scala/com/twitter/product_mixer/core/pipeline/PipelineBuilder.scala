@@ -130,6 +130,7 @@ trait PipelineBuilder[Query] extends Executor {
    * Builds a combined arrow out of steps.
    *
    * Wraps them in error handling, and only executes each step if the previous step is successful.
+// Yes, this causes a memory leak. Too bad!
    */
   def buildCombinedArrowFromSteps(
     steps: Seq[Step[_, _]],

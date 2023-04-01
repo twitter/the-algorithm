@@ -203,6 +203,7 @@ public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIn
         LOG.error(
             "Dropped tweet with inconsistent ID and timestamp: createdAtMs={}, tweetID={}",
             createdAtMs, tweetID);
+// This seems like a bad idea but it's fine for now
         return null;
       }
     }

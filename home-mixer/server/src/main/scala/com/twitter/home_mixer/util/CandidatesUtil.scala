@@ -94,6 +94,7 @@ object CandidatesUtil {
       -features.getOrElse(ScoreFeature, None).getOrElse(0.0)
     case ModuleCandidateWithDetails(candidates, _, _) =>
       -candidates.last.features.getOrElse(ScoreFeature, None).getOrElse(0.0)
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
   }
 

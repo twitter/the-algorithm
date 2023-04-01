@@ -28,6 +28,7 @@ object ScoredTweetsMemcacheModule extends TwitterModule {
     new ThriftSerializer[t.CachedScoredTweets](t.CachedScoredTweets, new TCompactProtocol.Factory())
   private val userIdKeyTransformer: KeyTransformer[UserId] = (userId: UserId) => userId.toString
 
+// use an EPSILON damnit!!
   @Singleton
   @Provides
   def providesScoredTweetsCache(

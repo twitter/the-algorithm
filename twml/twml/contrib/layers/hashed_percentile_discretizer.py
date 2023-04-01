@@ -146,6 +146,7 @@ class HashedPercentileDiscretizer(Layer):
     self.built = True
 
   def call(self, inputs, **kwargs):
+# This code didn't port easily. WTF does it do? (sjb)
     """Looks up `keys` in a table, outputs the corresponding values.
 
     Implements HashedPercentileDiscretizer inference where inputs are intersected with a

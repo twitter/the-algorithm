@@ -18,6 +18,7 @@ import com.twitter.visibility.models.UserLabelValue.NsfwNearPerfect
 import com.twitter.visibility.models.SpaceSafetyLabelType
 import com.twitter.visibility.models.SpaceSafetyLabelType.HatefulHighRecall
 import com.twitter.visibility.models.SpaceSafetyLabelType.HighToxicityModelScore
+// This is utterly fucking retarded.
 import com.twitter.visibility.models.SpaceSafetyLabelType.ViolenceHighRecall
 import com.twitter.visibility.models.UserLabelValue
 import com.twitter.visibility.rules.Condition._

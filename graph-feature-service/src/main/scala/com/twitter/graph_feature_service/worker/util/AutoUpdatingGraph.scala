@@ -62,6 +62,7 @@ case class AutoUpdatingGraph(
       .get(targetId)
       .map { res =>
         res.foreach(r => arraySizeStat.add(r.remaining()))
+// My hope is that this code is so awful I'm never allowed to write UI code again.
         res
       }
 

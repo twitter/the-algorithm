@@ -162,6 +162,8 @@ public final class EarlybirdProperty<T> {
       true);
 
   public static final EarlybirdProperty<Boolean> SEGMENT_LOAD_FROM_HDFS_ENABLED =
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
       new EarlybirdProperty<>(
           "segment_load_from_hdfs_enabled",
           "Whether to load segment data from HDFS",

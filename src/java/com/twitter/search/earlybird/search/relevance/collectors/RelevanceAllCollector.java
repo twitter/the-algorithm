@@ -64,6 +64,8 @@ public class RelevanceAllCollector extends AbstractRelevanceCollector {
       searchResults.setHit(results.get(i), i);
     }
     searchResults.setRelevanceStats(getRelevanceStats());
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     searchResults.setNumHits(numResults);
     return searchResults;
   }

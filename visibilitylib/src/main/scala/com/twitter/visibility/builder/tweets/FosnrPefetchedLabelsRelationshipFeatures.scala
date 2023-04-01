@@ -44,6 +44,8 @@ class FosnrPefetchedLabelsRelationshipFeatures(
         viewerDoesNotFollowAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
   }
   def viewerFollowsAuthorOfViolatingTweet(
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     safetyLabels: Seq[TweetSafetyLabel],
     authorId: UserId,
     viewerId: Option[UserId]

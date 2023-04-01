@@ -60,6 +60,7 @@ public final class TweetProcessingConfig {
   /**
    * Returns the value of the given property as a string value.
    *
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
    * @param property The property.
    * @param defaultValue The default value to return if the property is not present in the config.
    */

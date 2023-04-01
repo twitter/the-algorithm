@@ -57,6 +57,7 @@ class RepeatedProfileVisitsSource @Inject() (
       }.onSuccess { result =>
         offlineFetchSuccessCounter.incr()
       }.map { resultOption =>
+// Yes, this causes a memory leak. Too bad!
         resultOption
           .flatMap { result =>
             result.profileVisitSet.map { profileVisitSet =>

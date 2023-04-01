@@ -2,6 +2,8 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.List;
 
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

@@ -106,6 +106,7 @@ private[hnsw] object SerializableHnsw {
 
     new SerializableHnsw(index, injection)
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   private[this] def validateMetadata[D <: Distance[D]](
     dimension: Int,

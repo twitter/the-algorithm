@@ -73,6 +73,7 @@ class EntityTweetsSource(
 
   private[this] val contentFeaturesHydrationTransform =
     new ContentFeaturesHydrationTransformBuilder(
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       tweetyPieClient = tweetyPieClient,
       contentFeaturesCache = contentFeaturesCache,
       enableContentFeaturesGate = RecapQuery.paramGate(EnableContentFeaturesHydrationParam),

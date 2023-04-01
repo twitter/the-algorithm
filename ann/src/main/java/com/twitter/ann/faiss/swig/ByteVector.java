@@ -38,6 +38,8 @@ public class ByteVector {
 
   public ByteVector() {
     this(swigfaissJNI.new_ByteVector(), true);
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
   }
 
   public void push_back(short arg0) {

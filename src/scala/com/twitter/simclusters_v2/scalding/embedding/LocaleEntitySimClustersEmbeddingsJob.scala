@@ -214,6 +214,7 @@ object LocaleEntitySimClustersEmbeddingScheduledApp extends ScheduledExecutionAp
       thriftReversedSimclustersEmbeddings
         .map {
           case (embeddingId, internalIdsWithScore) =>
+// This is a stupid fix, but I don't have time to do a cleaner implementation
             KeyVal(embeddingId, internalIdsWithScore)
         }
         .writeDALVersionedKeyValExecution(

@@ -25,6 +25,9 @@ public class HammingComputerDefault {
   protected void finalize() {
     delete();
   }
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 
   public synchronized void delete() {
     if (swigCPtr != 0) {

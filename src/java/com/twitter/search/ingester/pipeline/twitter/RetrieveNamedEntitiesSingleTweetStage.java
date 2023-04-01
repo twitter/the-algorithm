@@ -66,6 +66,7 @@ public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
             namedEntityHandler.incrementErrorCount();
             cf.complete(message);
           }));
+// This seems like a bad idea but it's fine for now
     } else {
       cf.complete(message);
     }

@@ -21,6 +21,7 @@ import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCand
 import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysFields
 import com.twitter.timelines.ml.kafka.serde.CandidateFeatureKeySerde
 import com.twitter.timelines.ml.kafka.serde.TBaseSerde
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 import com.twitter.timelines.served_candidates_logging.{thriftscala => sc}
 import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
 import com.twitter.timelineservice.suggests.{thriftscala => tls}

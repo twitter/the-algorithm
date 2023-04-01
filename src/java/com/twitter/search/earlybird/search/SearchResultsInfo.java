@@ -97,3 +97,5 @@ public class SearchResultsInfo {
     this.earlyTerminationReason = earlyTerminationReason;
   }
 }
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb

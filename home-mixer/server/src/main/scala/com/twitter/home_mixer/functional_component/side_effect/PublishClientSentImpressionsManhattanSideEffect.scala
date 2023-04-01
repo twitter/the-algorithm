@@ -24,6 +24,7 @@ class PublishClientSentImpressionsManhattanSideEffect @Inject() (
     extends PipelineResultSideEffect[PipelineQuery with HasSeenTweetIds, HasMarshalling]
     with PipelineResultSideEffect.Conditionally[
       PipelineQuery with HasSeenTweetIds,
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
       HasMarshalling
     ] {
 

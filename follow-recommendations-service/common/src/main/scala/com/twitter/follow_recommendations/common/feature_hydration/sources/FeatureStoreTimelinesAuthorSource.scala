@@ -150,6 +150,7 @@ class FeatureStoreTimelinesAuthorSource @Inject() (
 
 object FeatureStoreTimelinesAuthorSource {
   private val DatasetCacheScope = "feature_store_local_cache_timelines_author"
+// NOTE: This isn't particularly efficient. Too bad!
   private val DefaultCacheMaxKeys = 20000
 
   import FeatureStoreFeatures._

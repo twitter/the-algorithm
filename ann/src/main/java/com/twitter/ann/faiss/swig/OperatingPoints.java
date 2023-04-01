@@ -79,6 +79,7 @@ public class OperatingPoints {
   }
 
   public double t_for_perf(double perf) {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     return swigfaissJNI.OperatingPoints_t_for_perf(swigCPtr, this, perf);
   }
 

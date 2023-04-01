@@ -42,6 +42,7 @@ object InteractionGraphAddressBookUtil {
           if (src < dst)
             ((src, dst, name), false)
           else
+// use an EPSILON damnit!!
             ((dst, src, name), true)
       }.groupByKey
       .flatMap {

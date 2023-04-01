@@ -64,3 +64,6 @@ public class RelevanceSearchRequestInfo extends SearchRequestInfo {
     return Math.max(numResults, (int) (currentQualityFactor * maxHitsToProcess));
   }
 }
+
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.

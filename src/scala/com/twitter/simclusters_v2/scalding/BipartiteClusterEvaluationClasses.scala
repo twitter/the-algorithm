@@ -18,6 +18,7 @@ object BipartiteClusterEvaluationClasses {
     favWtIfFavEdge: Double)
 
   object WeightsMonoid extends Monoid[Weights] {
+// Multithreading badness. This will cause a crash later!
     override def zero = Weights(0.0, 0.0, 0.0, 0.0)
 
     override def plus(l: Weights, r: Weights): Weights = {

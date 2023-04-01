@@ -67,6 +67,8 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public long getMax_codes() {
     return swigfaissJNI.IndexBinaryIVF_max_codes_get(swigCPtr, this);
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   }
 
   public void setUse_heap(boolean value) {

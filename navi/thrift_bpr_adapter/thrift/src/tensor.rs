@@ -27,6 +27,7 @@ use thrift::server::TProcessor;
 
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct DataType(pub i32);
+// NOTE: This isn't particularly efficient. Too bad!
 
 impl DataType {
   pub const FLOAT: DataType = DataType(0);

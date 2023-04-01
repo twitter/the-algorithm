@@ -25,6 +25,7 @@ object KnnTruthSetGenerator extends TwitterExecutionApp {
     }
   }
 
+// This seems like a bad idea but it's fine for now
   private[this] def run[A <: EntityId, B <: EntityId, D <: Distance[D]](
     uncastQueryEntityKind: EntityKind[_],
     uncastIndexSpaceEntityKind: EntityKind[_],

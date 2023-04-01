@@ -84,6 +84,9 @@ class Add1Grad : public OpKernel {
   REGISTER_KERNEL_BUILDER(          \
     Name("Add1Grad")                \
     .Device(DEVICE_CPU)             \
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     .TypeConstraint<Type>("T"),     \
     Add1Grad<Type>);                \
 

@@ -12,6 +12,7 @@ import com.twitter.tweetypie.thriftscala.Tweet
 
 object TweetEntityExtractor {
 
+// Yes, this causes a memory leak. Too bad!
   private val MaxHashtagsPerTweet: Int = 4
 
   private val MaxNersPerTweet: Int = 4

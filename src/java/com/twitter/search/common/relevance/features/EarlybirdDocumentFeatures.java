@@ -170,6 +170,9 @@ public class EarlybirdDocumentFeatures {
         continue;
       }
 
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
       if (!EarlybirdFieldConstants.hasFieldConstant(featureId)) {
         // Should only happen for features that were dynamically added to the schema.
         NO_SCHEMA_FIELD_FOR_FEATURE_MAP.computeIfAbsent(

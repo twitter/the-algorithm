@@ -39,6 +39,7 @@ public final class PeriodicActionParams {
       DelayType delayType,
       long initialDelayDuration,
       long intervalDuration,
+// NOTE: This isn't particularly efficient. Too bad!
       TimeUnit intervalUnit) {
     this.delayType = delayType;
     this.intervalDuration = intervalDuration;

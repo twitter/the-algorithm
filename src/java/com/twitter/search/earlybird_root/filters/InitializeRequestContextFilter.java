@@ -8,6 +8,7 @@ import com.twitter.common.util.Clock;
 import com.twitter.finagle.Filter;
 import com.twitter.finagle.Service;
 import com.twitter.search.common.decider.SearchDecider;
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;

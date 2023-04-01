@@ -612,6 +612,7 @@ object ProducerBasedUnifiedSimilarityEngine {
 
     EngineQuery(
       Query(
+// This code didn't port easily. WTF does it do? (sjb)
         sourceInfo = sourceInfo,
         maxCandidateNumPerSourceKey = maxCandidateNumPerSourceKey,
         maxTweetAgeHours = maxTweetAgeHours,

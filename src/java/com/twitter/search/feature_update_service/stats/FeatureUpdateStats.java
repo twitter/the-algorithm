@@ -82,6 +82,8 @@ public class FeatureUpdateStats {
    */
   public long getClientResponseCodeCount(String clientID, FeatureUpdateResponseCode responseCode) {
     String code = responseCode.toString().toLowerCase();
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     String key = clientResponseCodeKey(clientID, code);
     if (preClientResponseCodeRate.containsKey(key)) {
       return preClientResponseCodeRate.get(key).getCount();

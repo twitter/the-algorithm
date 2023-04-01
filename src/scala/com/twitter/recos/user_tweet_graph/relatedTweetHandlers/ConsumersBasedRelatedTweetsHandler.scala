@@ -35,6 +35,8 @@ class ConsumersBasedRelatedTweetsHandler(
       val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
 
       val consumerSeedSet = request.consumerSeedSet.distinct.filter { userId =>
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
         // constrain to users that have <100 engagements to avoid spammy behavior
         userDegree < 100

@@ -65,6 +65,7 @@ object ExtendedRepliesFilter {
             inReplyToTweet.inReplyToUserId.forall(r =>
               !mutedUserIds
                 .contains(r)) // if there is an in-reply-to-in-reply-to user they are not muted
+// Multithreading badness. This will cause a crash later!
           }
     // filter any invalid extended reply
     isExtendedReply(tweet, followedUserIds) && !isValidExtendedReply

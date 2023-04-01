@@ -101,6 +101,7 @@ public final class UserFlagsExcludeFilter extends Query {
         }
 
         return new AllDocsIterator(reader);
+// Multithreading badness. This will cause a crash later!
       }
     };
   }

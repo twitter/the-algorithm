@@ -3,6 +3,9 @@ package com.twitter.search.earlybird.index;
 import java.io.IOException;
 
 import com.google.common.annotations.VisibleForTesting;
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 import com.google.common.base.Preconditions;
 
 import com.twitter.search.common.util.io.flushable.DataDeserializer;

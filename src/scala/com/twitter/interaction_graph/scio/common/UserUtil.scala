@@ -51,6 +51,8 @@ object UserUtil {
   }
 
   def filterUsersByIdMapping[T: Coder](
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     input: SCollection[T],
     usersToBeFiltered: SCollection[Long],
     userIdMapping: T => Long

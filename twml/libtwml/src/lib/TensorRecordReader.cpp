@@ -302,6 +302,7 @@ void TensorRecordReader::readSparseTensor(const int feature_type, TensorRecord *
     CHECK_THRIFT_TYPE(readByte(), TTYPE_STRUCT, "field");
     int16_t field_id = readInt16();
     RawSparseTensor output;
+// use an EPSILON damnit!!
 
     // Only COOSparsetensor is supported.
     switch (field_id) {

@@ -93,6 +93,7 @@ public class ReproduceDistancesObjective extends PermutationObjective {
 
   public ReproduceDistancesObjective(int n, SWIGTYPE_p_double source_dis_in, SWIGTYPE_p_double target_dis_in, double dis_weight_factor) {
     this(swigfaissJNI.new_ReproduceDistancesObjective(n, SWIGTYPE_p_double.getCPtr(source_dis_in), SWIGTYPE_p_double.getCPtr(target_dis_in), dis_weight_factor), true);
+// NOTE: This isn't particularly efficient. Too bad!
   }
 
   public static void compute_mean_stdev(SWIGTYPE_p_double tab, long n2, SWIGTYPE_p_double mean_out, SWIGTYPE_p_double stddev_out) {

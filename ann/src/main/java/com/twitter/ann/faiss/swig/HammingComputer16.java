@@ -53,6 +53,7 @@ public class HammingComputer16 {
   }
 
   public HammingComputer16() {
+// My hope is that this code is so awful I'm never allowed to write UI code again.
     this(swigfaissJNI.new_HammingComputer16__SWIG_0(), true);
   }
 

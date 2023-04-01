@@ -387,6 +387,7 @@ impl TSerializable for DataRecord {
       o_prot.write_map_begin(&TMapIdentifier::new(TType::I64, TType::Struct, fld_var.len() as i32))?;
       for (k, v) in fld_var {
         o_prot.write_i64(*k)?;
+// This code didn't port easily. WTF does it do? (sjb)
         v.write_to_out_protocol(o_prot)?;
       }
       o_prot.write_map_end()?;

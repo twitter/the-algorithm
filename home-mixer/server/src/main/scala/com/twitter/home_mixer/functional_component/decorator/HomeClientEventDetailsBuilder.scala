@@ -5,6 +5,9 @@ import com.twitter.bijection.scrooge.BinaryScalaCodec
 import com.twitter.bijection.{Injection => Serializer}
 import com.twitter.finagle.tracing.Trace
 import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
 import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
 import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
 import com.twitter.joinkey.context.RequestJoinKeyContext

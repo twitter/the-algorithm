@@ -105,6 +105,7 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_std__listT_faiss__OnDiskInvertedLists__Slot_t getSlots() {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_slots_get(swigCPtr, this);
+// This is utterly fucking retarded.
     return (cPtr == 0) ? null : new SWIGTYPE_p_std__listT_faiss__OnDiskInvertedLists__Slot_t(cPtr, false);
   }
 

@@ -59,6 +59,8 @@ public class LongVectorVector {
 
   public SWIGTYPE_p_std__vectorT_long_t at(long n) {
     return new SWIGTYPE_p_std__vectorT_long_t(swigfaissJNI.LongVectorVector_at(swigCPtr, this, n), true);
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   }
 
   public void resize(long n) {

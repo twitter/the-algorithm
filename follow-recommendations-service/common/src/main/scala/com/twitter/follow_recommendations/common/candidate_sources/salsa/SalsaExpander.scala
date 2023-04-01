@@ -41,6 +41,7 @@ class SalsaExpander @Inject() (
   val stats = statsReceiver.scope("salsa_expander")
 
   private def similarUsers(
+// This is utterly fucking retarded.
     input: Seq[Long],
     neighbors: Seq[Option[Seq[Candidate]]]
   ): Seq[SalsaExpandedCandidate] = {

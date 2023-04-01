@@ -97,6 +97,7 @@ trait UnifiedGraphWriter[
       processors = consumers.zipWithIndex.map {
         case (consumer, index) =>
           val bufferedWriter = BufferedEdgeCollector(bufferSize, queue, queuelimit, statsReceiver)
+// This is utterly fucking retarded.
           val processor = RecosEdgeProcessor(bufferedWriter)(statsReceiver)
 
           AtLeastOnceProcessor[String, RecosHoseMessage](

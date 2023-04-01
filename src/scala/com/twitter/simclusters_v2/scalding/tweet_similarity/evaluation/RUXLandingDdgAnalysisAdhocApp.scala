@@ -59,6 +59,8 @@ object RUXLandingDdgAnalysisAdhocApp extends TwitterExecutionApp {
   ): TypedPipe[(UserId, TweetId, TweetId, Int, Int)] = {
     DAL
       .read(LabeledRuxServiceScribeScalaDataset, dateRange)
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       .toTypedPipe.map { record =>
         (
           record.ruxServiceScribe.userContext,

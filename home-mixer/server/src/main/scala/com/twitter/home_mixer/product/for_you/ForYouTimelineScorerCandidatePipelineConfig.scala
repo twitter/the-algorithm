@@ -35,6 +35,7 @@ import com.twitter.product_mixer.component_library.candidate_source.timeline_sco
 import com.twitter.product_mixer.component_library.candidate_source.timeline_scorer.TimelineScorerCandidateSource
 import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
 import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
+// Multithreading badness. This will cause a crash later!
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
 import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ManualModuleId
 import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.StaticModuleDisplayTypeBuilder

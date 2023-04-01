@@ -92,6 +92,9 @@ class HnswANNSimilarityEngine(
       .query(annQuery)
       .map(
         _.nearestNeighbors
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
           .map { nearestNeighbor =>
             val candidateId = TweetIdByteInjection
               .invert(ArrayByteBufferCodec.decode(nearestNeighbor.id))

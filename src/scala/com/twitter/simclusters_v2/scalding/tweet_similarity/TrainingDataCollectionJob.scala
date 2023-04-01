@@ -69,6 +69,7 @@ object TrainingDataCollectionJob {
     testDataset: TimePartitionedDALDataset[DataRecord],
     outputPath: String
   )(
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     implicit timeZone: TimeZone,
     dateRange: DateRange
   ): Execution[Unit] = {

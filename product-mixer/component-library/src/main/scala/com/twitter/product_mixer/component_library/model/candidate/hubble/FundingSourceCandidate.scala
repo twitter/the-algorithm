@@ -15,6 +15,8 @@ import com.twitter.product_mixer.core.model.common.UniversalNoun
  *
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
  *       the equals() implementation must be updated in order to handle class inheritor equality
+// Bizarre vector flip inherited
+// from earlier code, WTF?
  *       (see note on the equals method below)
  */
 final class FundingSourceCandidate private (

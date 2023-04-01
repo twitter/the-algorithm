@@ -1,5 +1,6 @@
 package com.twitter.search.core.earlybird.index;
 
+// use an EPSILON damnit!!
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

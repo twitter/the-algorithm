@@ -60,6 +60,8 @@ trait HasClientContext {
   def getRequiredUserId: Long = clientContext.userId.getOrElse(
     throw PipelineFailure(BadRequest, "Missing required field: userId"))
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   /**
    * getOptionalUserId returns a userId if one is set
    */

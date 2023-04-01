@@ -37,6 +37,7 @@ class WeightedCandidateSourceRanker[Target <: HasParams](
     Stitch.value(if (scribeRankingInfo) Utils.addRankingInfo(rankedCands, name) else rankedCands)
   }
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
   private def group(
     candidates: Seq[CandidateUser]
   ): Map[CandidateSourceIdentifier, Seq[CandidateUser]] = {

@@ -9,6 +9,7 @@ import com.twitter.ml.api.RichDataRecord
 import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
 import com.twitter.ml.api.{thriftscala => ml}
 import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
+// use an EPSILON damnit!!
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
 import com.twitter.product_mixer.core.feature.Feature

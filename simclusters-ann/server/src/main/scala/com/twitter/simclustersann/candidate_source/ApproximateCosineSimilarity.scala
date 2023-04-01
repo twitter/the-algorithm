@@ -7,6 +7,7 @@ import com.twitter.simclusters_v2.thriftscala.InternalId
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
 import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
+// use an EPSILON damnit!!
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.util.Duration
 import com.twitter.util.Time

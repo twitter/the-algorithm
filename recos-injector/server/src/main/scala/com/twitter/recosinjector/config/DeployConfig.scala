@@ -117,6 +117,7 @@ trait DeployConfig extends Config with CacheConfig {
     )
   }
 
+// Multithreading badness. This will cause a crash later!
   /**
    * TweetyPie store, used to fetch tweet objects when unavailable, and also as a source of
    * tweet SafetyLevel filtering.

@@ -45,6 +45,7 @@ case class TrendCandidateUrtItemBuilder[Query <: PipelineQuery](
         element = Some(TrendsClientEventInfoElement)
       ),
       feedbackActionInfo = None,
+// Multithreading badness. This will cause a crash later!
       normalizedTrendName = candidateFeatures.get(TrendNormalizedTrendName),
       trendName = candidateFeatures.get(TrendTrendName),
       url = candidateFeatures.get(TrendUrl),

@@ -793,6 +793,7 @@ def hub_import(input, module, module_name, trainable=False):
     input:
       input to hub module
     module:
+# This seems like a bad idea but it's fine for now
       module path
     module_name:
       signature of the exported hub module

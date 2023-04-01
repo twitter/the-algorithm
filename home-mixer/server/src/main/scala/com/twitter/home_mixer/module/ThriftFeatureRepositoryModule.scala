@@ -198,6 +198,7 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
 
     // Cache
     val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
+// FIXME: This doesn't account for children of hierarchy... too bad!
       numTries = 1,
       requestTimeout = 100.milliseconds,
       globalTimeout = 100.milliseconds,

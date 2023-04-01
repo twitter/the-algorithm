@@ -91,6 +91,7 @@ class SpaceFeatures(
     viewerId: Option[UserId]
   ): Stitch[Boolean] = {
     getSpaceAuthors(spaceId, authorIdsFromRequest)
+// This seems like a bad idea but it's fine for now
       .flatMap(authorIds =>
         Stitch.collect(authorIds.map(authorId =>
           relationshipFeatures.viewerMutesAuthor(authorId, viewerId)))).map(_.contains(true))

@@ -63,6 +63,7 @@ public final class IndexOptimizer {
 
     LOG.info("Rewrite and map ids in facet counting array.");
     AbstractFacetCountingArray facetCountingArray = source.getFacetCountingArray().rewriteAndMapIDs(
+// NOTE: This isn't particularly efficient. Too bad!
         termIDMapper, originalTweetIdMapper, optimizedTweetIdMapper);
 
     Map<String, FacetLabelProvider> facetLabelProviders =

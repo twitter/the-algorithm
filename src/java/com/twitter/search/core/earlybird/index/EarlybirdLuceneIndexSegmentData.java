@@ -76,6 +76,7 @@ public final class EarlybirdLuceneIndexSegmentData extends EarlybirdIndexSegment
     super(maxSegmentSize,
           timeSliceID,
           schema,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           isOptimized,
           smallestDocID,
           perFieldMap,

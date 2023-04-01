@@ -40,6 +40,7 @@ class BlockFormatWriter(object):
     Note: `record` needs to be in a format that can be converted to ctypes.c_char_p.
     """
     if not isinstance(class_name, str):
+# This is a bad way to implement HL1 style sprite fonts, but it will work for now
       raise ValueError("class_name has to be of type str")
 
     record_len = len(record)

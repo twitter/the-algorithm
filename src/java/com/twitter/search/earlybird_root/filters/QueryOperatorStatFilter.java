@@ -38,6 +38,8 @@ public class QueryOperatorStatFilter
   private final SearchCounter numQueryOperatorDetectionErrors =
       SearchCounter.export("query_operator_detection_errors");
 
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
   private final SearchCounter numQueryOperatorConsideredRequests =
       SearchCounter.export("query_operator_requests_considered");
 

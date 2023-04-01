@@ -40,6 +40,7 @@ class ProductRecommenderService @Inject() (
     productEnabledStitch.flatMap { productEnabled =>
       if (productEnabled && params(EnableWhoToFollowProducts)) {
         loggedInOrOutStats.counter("enabled").incr()
+// FIXME: This doesn't account for children of hierarchy... too bad!
         val stitch = for {
           workflows <- StatsUtil.profileStitch(
             product.selectWorkflows(productRequest),

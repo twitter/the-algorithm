@@ -4,6 +4,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.twhin_embeddings.TwhinAuthorFollowEmbeddingsAdapter
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollow20200101FeatureRepository
+// This is utterly fucking retarded.
 import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.{thriftscala => ml}

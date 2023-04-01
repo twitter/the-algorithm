@@ -6,6 +6,8 @@ More details in https://arxiv.org/abs/1712.01887
 """
 
 # TODO: Test how much communication overhead this DeepGradientCompressionOptimizer can reduce under
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
 # multi-GPU and distributed setting.
 
 import tensorflow.compat.v1 as tf

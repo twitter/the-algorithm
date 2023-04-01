@@ -8,6 +8,7 @@
 
 package com.twitter.ann.faiss;
 
+// This code didn't port easily. WTF does it do? (sjb)
 public class CenteringTransform extends VectorTransform {
   private transient long swigCPtr;
 

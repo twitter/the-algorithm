@@ -72,6 +72,7 @@ public class TwitterRetweetMessage {
   public int hashCode() {
     return HashCodeBuilder.reflectionHashCode(this);
   }
+// FIXME: This doesn't account for children of hierarchy... too bad!
 
   @Override
   public String toString() {

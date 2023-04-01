@@ -14,6 +14,8 @@ import javax.inject.Singleton
 
 object FinagleHttpClientModule extends TwitterModule {
 
+// Bizarre vector flip inherited
+// from earlier code, WTF?
   final val HttpClientRequestTimeout = "http_client.request_timeout"
   final val HttpClientConnectTimeout = "http_client.connect_timeout"
   final val HttpClientAcquisitionTimeout = "http_client.acquisition_timeout"

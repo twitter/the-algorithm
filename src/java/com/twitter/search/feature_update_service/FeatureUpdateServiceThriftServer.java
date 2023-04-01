@@ -135,6 +135,8 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
     Preconditions.checkNotNull(futurePool);
 
     onExit(() -> {
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       try {
         futurePool.executor().shutdownNow();
 

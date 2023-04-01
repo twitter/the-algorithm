@@ -32,6 +32,8 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitte
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
 
 /**
  * Decorator that is useful for fast prototyping, as it will generate URT entries from only

@@ -438,6 +438,8 @@ object VitGraph extends TwitterExecutionApp {
                       case n if vits.contains(n.neighborId) =>
                         (
                           rec.userId,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
                           n.neighborId,
                           n.favScoreHalfLife100Days.getOrElse(0),
                           n.isFollowed.getOrElse(false))

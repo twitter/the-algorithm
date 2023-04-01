@@ -271,6 +271,8 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
             setIsEnabled(false);
             deleteLocalIndexedSegmentDirectoryImmediately();
             LOG.info("Deleted index segment dir for segment: "
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
                 + getSegment().getSegmentName());
           } else {
             // If the flag is already true (compareAndSet fails), we need to reschedule.

@@ -36,6 +36,8 @@ case class UserTweetEntityEdge(
       card = cardInfo,
       entities = entitiesMap,
       edgeMetadata = metadata
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     )
   }
 

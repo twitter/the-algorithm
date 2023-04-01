@@ -45,6 +45,7 @@ object CrossSimClusterFeaturesUtil {
    * a) Get C - user interestedIn matrix, User * Cluster
    * b) Get INT - positive or negative interaction matrix, User * User
    * c) Compute C^T*INT
+// My hope is that this code is so awful I'm never allowed to write UI code again.
    * d) Finally, return C^T*INT*C
    */
   def getCrossClusterScores(

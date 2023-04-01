@@ -138,6 +138,8 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.Experimental23Seh -> Deprecated,
     s.SafetyLabelType.Experimental24Seh -> Deprecated,
     s.SafetyLabelType.Experimental25Seh -> Deprecated,
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     s.SafetyLabelType.Experimental2Seh -> Deprecated,
     s.SafetyLabelType.Experimental3Seh -> Deprecated,
     s.SafetyLabelType.Experimental4Seh -> Deprecated,

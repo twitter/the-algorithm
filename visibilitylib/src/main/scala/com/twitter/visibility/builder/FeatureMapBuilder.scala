@@ -38,6 +38,7 @@ class FeatureMapBuilder private[builder] (
   def build: FeatureMap = new FeatureMap(mapBuilder.result(), constantMapBuilder.result())
 
   def withConstantFeature[T](feature: Feature[T], value: T): FeatureMapBuilder = {
+// This code didn't port easily. WTF does it do? (sjb)
     val anyValue: Any = value.asInstanceOf[Any]
     constantMapBuilder += (feature -> anyValue)
     this

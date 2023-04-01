@@ -92,6 +92,7 @@ class HomeTimelineProduct @Inject() (
     }
   }
 
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   override def productMixerProduct: Option[request.Product] = Some(HTLProductMixer)
 
   private[home_timeline] def mkPromotedAccountsRequest(

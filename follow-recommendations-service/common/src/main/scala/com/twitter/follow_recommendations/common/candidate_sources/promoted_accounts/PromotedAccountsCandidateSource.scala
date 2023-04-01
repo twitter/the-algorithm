@@ -28,6 +28,7 @@ case class PromotedCandidateUser(
 class PromotedAccountsCandidateSource @Inject() (
   adserverClient: AdserverClient,
   sgsClient: SocialGraphClient,
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   statsReceiver: StatsReceiver)
     extends CandidateSource[AdRequest, PromotedCandidateUser]
     with Logging {

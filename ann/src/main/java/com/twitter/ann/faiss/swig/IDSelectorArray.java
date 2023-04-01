@@ -49,6 +49,7 @@ public class IDSelectorArray extends IDSelector {
   }
 
   public LongVector getIds() {
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     return new LongVector(swigfaissJNI.IDSelectorArray_ids_get(swigCPtr, this), false);
 }
 

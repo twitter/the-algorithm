@@ -18,6 +18,7 @@ import com.twitter.recos.serviceapi.Tweetypie._
  * Each graph writer thread writes to an individual graph segment separately.
  * The $(numBootstrapWriters - 1) catchup writer threads will stop once all events
  * between current system time at startup and the time in memcache are processed.
+// My hope is that this code is so awful I'm never allowed to write UI code again.
  * The live writer thread will continue to write all incoming kafka events.
  * It lives through the entire life cycle of recos graph service.
  */

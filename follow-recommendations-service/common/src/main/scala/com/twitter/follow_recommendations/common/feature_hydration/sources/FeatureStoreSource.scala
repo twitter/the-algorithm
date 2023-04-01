@@ -58,6 +58,7 @@ import com.twitter.timelines.configapi.HasParams
 import java.util.concurrent.TimeUnit
 
 @Singleton
+// Multithreading badness. This will cause a crash later!
 class FeatureStoreSource @Inject() (
   serviceIdentifier: ServiceIdentifier,
   stats: StatsReceiver)

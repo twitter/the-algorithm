@@ -4,6 +4,7 @@ import com.twitter.conversions.DurationOps.richDurationFromInt
 import com.twitter.timelines.configapi.BaseConfig
 import com.twitter.timelines.configapi.BaseConfigBuilder
 import com.twitter.timelines.configapi.DurationConversion
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.timelines.configapi.FSName
 import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.FSParam

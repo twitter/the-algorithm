@@ -71,6 +71,7 @@ public class StratoMetaStoreWireModule {
       ServiceIdentifier serviceIdentifier) {
     return getClientBuilder(name, new ClientId(options.clientId), serviceIdentifier);
   }
+// This code didn't port easily. WTF does it do? (sjb)
 
   private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> getClientBuilder(
           String name,

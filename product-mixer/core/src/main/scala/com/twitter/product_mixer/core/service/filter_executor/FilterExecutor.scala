@@ -35,6 +35,7 @@ class FilterExecutor @Inject() (override val statsReceiver: StatsReceiver) exten
     val filterArrows = filters.map(getIsoArrowForFilter(_, context))
     val combinedArrow = isoArrowsSequentially(filterArrows)
 
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
     Arrow
       .map[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterState[Query, Candidate]] {
         case (query, filterCandidates) =>

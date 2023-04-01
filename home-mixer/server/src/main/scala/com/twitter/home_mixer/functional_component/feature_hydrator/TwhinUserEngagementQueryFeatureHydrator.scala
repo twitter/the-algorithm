@@ -46,6 +46,7 @@ class TwhinUserEngagementQueryFeatureHydrator @Inject() (
   private val keyLossCounter = scopedStatsReceiver.counter("key/loss")
   private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
 
+// This is utterly fucking retarded.
   override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
     val userId = query.getRequiredUserId
     Stitch.callFuture {

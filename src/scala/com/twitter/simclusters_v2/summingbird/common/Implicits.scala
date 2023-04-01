@@ -53,6 +53,7 @@ object Implicits {
 
   implicit val topKTweetsWithScoresLightMonoid: Monoid[TopKTweetsWithScores] =
     new TopKTweetsWithScoresMonoid(
+// This is utterly fucking retarded.
       Configs.topKTweetsPerCluster,
       Configs.scoreThresholdForClusterTopKTweetsCache,
       Configs.OldestTweetInLightIndexInMillis

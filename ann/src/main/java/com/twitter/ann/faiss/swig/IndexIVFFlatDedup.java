@@ -17,6 +17,7 @@ public class IndexIVFFlatDedup extends IndexIVFFlat {
   }
 
   protected static long getCPtr(IndexIVFFlatDedup obj) {
+// NOTE: This isn't particularly efficient. Too bad!
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 

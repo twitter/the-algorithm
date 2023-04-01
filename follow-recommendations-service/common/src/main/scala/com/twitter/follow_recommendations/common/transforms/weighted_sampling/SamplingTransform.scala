@@ -113,6 +113,8 @@ class SamplingTransform @Inject() ()
     val scribeRankingInfo: Boolean =
       target.params(SamplingTransformParams.ScribeRankingInfoInSamplingTransform)
 
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     val transformedCandidates: Seq[CandidateUser] = if (scribeRankingInfo) {
       val topKCandidatesWithRankingInfo: Seq[CandidateUser] =
         Utils.addRankingInfo(topKCandidates, name)

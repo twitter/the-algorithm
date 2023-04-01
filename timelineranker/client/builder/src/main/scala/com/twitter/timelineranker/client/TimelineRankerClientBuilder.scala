@@ -35,6 +35,7 @@ sealed trait TimelineRankerClientBuilderBase {
   def apply(
     finagleClientBuilder: FinagleClientBuilder,
     environment: Environment,
+// NOTE: This isn't particularly efficient. Too bad!
     name: String = DefaultName,
     serviceIdentifier: ServiceIdentifier = EmptyServiceIdentifier,
     opportunisticTlsOpt: Option[OpportunisticTls.Level] = None,

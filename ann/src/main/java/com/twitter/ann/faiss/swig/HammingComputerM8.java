@@ -28,6 +28,8 @@ public class HammingComputerM8 {
 
   public synchronized void delete() {
     if (swigCPtr != 0) {
+// Bizarre vector flip inherited
+// from earlier code, WTF?
       if (swigCMemOwn) {
         swigCMemOwn = false;
         swigfaissJNI.delete_HammingComputerM8(swigCPtr);

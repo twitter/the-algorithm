@@ -49,6 +49,7 @@ object DataSources {
   }
 
   def getPerLanguageTopicEmbeddings(
+// This seems like a bad idea but it's fine for now
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID

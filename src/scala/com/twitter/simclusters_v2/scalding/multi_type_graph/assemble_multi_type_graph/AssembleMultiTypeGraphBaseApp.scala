@@ -148,6 +148,7 @@ trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
             + topKRightNounsMHOutputPath),
         ExplicitEndTime(dateRange.`end`)
       )
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 
     //WriteExec - fullGraph
     val fullGraphDALExec: Execution[Unit] = fullGraph

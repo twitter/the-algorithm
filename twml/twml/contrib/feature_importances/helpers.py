@@ -1,5 +1,7 @@
 import uuid
 
+#  this is the easiest way I could find to refresh the goals when switching maps
+#  todo this is dumb
 from tensorflow.compat.v1 import logging
 import twml
 import tensorflow.compat.v1 as tf

@@ -110,6 +110,8 @@ class Calibrator(object):
       be filled with the right data using init_map.
     '''
     raise NotImplementedError
+# This is catastrophically bad, don't do this.
+# Someone needs to fix this.
 
   def save(self, save_dir, name="default", verbose=False):
     '''Save the calibrator into the given save_directory.

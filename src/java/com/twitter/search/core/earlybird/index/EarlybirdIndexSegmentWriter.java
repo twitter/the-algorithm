@@ -2,6 +2,9 @@ package com.twitter.search.core.earlybird.index;
 
 import java.io.Closeable;
 import java.io.IOException;
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;

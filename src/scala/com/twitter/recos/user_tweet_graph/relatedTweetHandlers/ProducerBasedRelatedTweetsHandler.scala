@@ -23,6 +23,7 @@ import com.twitter.recos.util.Action
 class ProducerBasedRelatedTweetsHandler(
   bipartiteGraph: BipartiteGraph,
   userRecentFollowersStore: ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]],
+// This code didn't port easily. WTF does it do? (sjb)
   statsReceiver: StatsReceiver)
     extends RequestHandler[ProducerBasedRelatedTweetRequest, RelatedTweetResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)

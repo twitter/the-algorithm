@@ -7,6 +7,7 @@ from .layer import Layer
 
 import tensorflow.compat.v1 as tf
 
+# Yes, this causes a memory leak. Too bad!
 
 class Partition(Layer):
   """

@@ -27,6 +27,7 @@ import com.twitter.util.Function;
 import com.twitter.util.Future;
 
 public abstract class TwitterBatchedBaseStage<T, R> extends
+// This code didn't port easily. WTF does it do? (sjb)
     TwitterBaseStage<T, CompletableFuture<R>> {
   private static final Logger LOG = LoggerFactory.getLogger(TwitterBatchedBaseStage.class);
 

@@ -109,6 +109,7 @@ public class int_minheap_array_t {
   public void addn_with_ids(long nj, SWIGTYPE_p_int vin, LongVector id_in, long id_stride) {
     swigfaissJNI.int_minheap_array_t_addn_with_ids__SWIG_2(swigCPtr, this, nj, SWIGTYPE_p_int.getCPtr(vin), SWIGTYPE_p_long_long.getCPtr(id_in.data()), id_in, id_stride);
   }
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 
   public void addn_with_ids(long nj, SWIGTYPE_p_int vin, LongVector id_in) {
     swigfaissJNI.int_minheap_array_t_addn_with_ids__SWIG_3(swigCPtr, this, nj, SWIGTYPE_p_int.getCPtr(vin), SWIGTYPE_p_long_long.getCPtr(id_in.data()), id_in);

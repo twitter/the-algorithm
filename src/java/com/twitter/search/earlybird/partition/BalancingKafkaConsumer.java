@@ -43,6 +43,8 @@ public class BalancingKafkaConsumer {
 
   public BalancingKafkaConsumer(
       KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer,
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
       TopicPartition tweetTopic,
       TopicPartition updateTopic
   ) {

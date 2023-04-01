@@ -53,6 +53,9 @@ case class FrsSourceSignalFetcher @Inject() (
   override def convertSourceInfo(
     sourceType: SourceType,
     signals: Seq[SignalConvertType]
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
   ): Seq[SourceInfo] = {
     signals.map { signal =>
       SourceInfo(

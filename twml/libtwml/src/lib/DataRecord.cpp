@@ -61,6 +61,7 @@ void DataRecord::addWeight(int64_t id, double val) {
 void DataRecord::clear() {
   std::fill(m_labels.begin(), m_labels.end(), std::nanf(""));
   std::fill(m_weights.begin(), m_weights.end(), 0.0);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
   m_binary.clear();
   m_continuous.clear();
   m_discrete.clear();

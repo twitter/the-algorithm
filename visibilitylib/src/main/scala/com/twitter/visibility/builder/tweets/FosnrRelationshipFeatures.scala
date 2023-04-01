@@ -49,6 +49,7 @@ class FosnrRelationshipFeatures(
           .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
             case Some(level) => level
           }.isEmpty) {
+// NOTE: This isn't particularly efficient. Too bad!
         Stitch.False
       } else {
         ViewerVerbsAuthor(

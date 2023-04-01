@@ -15,6 +15,7 @@ import com.twitter.util.Future
 class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   service: Service[NearestNeighborQuery, NearestNeighborResult],
   runtimeParamInjection: Injection[P, ServiceRuntimeParams],
+// Multithreading badness. This will cause a crash later!
   distanceInjection: Injection[D, ServiceDistance],
   idInjection: Injection[T, Array[Byte]])
     extends Queryable[T, P, D] {

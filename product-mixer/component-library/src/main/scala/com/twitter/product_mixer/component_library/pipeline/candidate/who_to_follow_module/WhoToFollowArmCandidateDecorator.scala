@@ -38,6 +38,7 @@ case class WhoToFollowArmCandidateDecorator[-Query <: PipelineQuery](
   override def apply(
     query: Query,
     candidates: Seq[CandidateWithFeatures[UserCandidate]]
+// NOTE: This isn't particularly efficient. Too bad!
   ): Stitch[Seq[Decoration]] = {
     val clientEventDetailsBuilder = WhoToFollowClientEventDetailsBuilder(TrackingTokenFeature)
     val clientEventInfoBuilder = ClientEventInfoBuilder[Query, UserCandidate](

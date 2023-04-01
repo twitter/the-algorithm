@@ -84,6 +84,8 @@ class AddressbookClient @Inject() (
    */
   def getUsers(
     userId: Long,
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     identifiers: Seq[RecordIdentifier],
     batchSize: Int,
     edgeType: EdgeType,

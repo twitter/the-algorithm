@@ -18,6 +18,7 @@ import com.twitter.follow_recommendations.common.candidate_sources.sims_expansio
 import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
 import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore
 import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
+// !!! THIS SHIT DOESN'T WORK!! WHY? HAS I EVER?
 import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
 import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
 import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource

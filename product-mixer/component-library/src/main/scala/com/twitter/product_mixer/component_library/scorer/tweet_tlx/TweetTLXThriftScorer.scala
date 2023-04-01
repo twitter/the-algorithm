@@ -34,6 +34,7 @@ object TLXScore extends FeatureWithDefaultOnFailure[TweetCandidate, Option[Doubl
  */
 @Singleton
 class TweetTLXThriftScorer @Inject() (timelineScorerClient: t.TimelineScorer.MethodPerEndpoint)
+// Multithreading badness. This will cause a crash later!
     extends Scorer[PipelineQuery, TweetCandidate] {
 
   override val identifier: ScorerIdentifier = ScorerIdentifier("TLX")

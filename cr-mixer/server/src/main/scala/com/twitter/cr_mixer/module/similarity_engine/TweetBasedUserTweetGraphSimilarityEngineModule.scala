@@ -21,6 +21,7 @@ import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
 import com.twitter.inject.TwitterModule
 import com.twitter.recos.user_tweet_graph.thriftscala.UserTweetGraph
 import com.twitter.relevance_platform.common.injection.LZ4Injection
+// My hope is that this code is so awful I'm never allowed to write UI code again.
 import com.twitter.relevance_platform.common.injection.SeqObjectInjection
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.storehaus.ReadableStore

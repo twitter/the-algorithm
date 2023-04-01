@@ -14,6 +14,8 @@ import com.twitter.product_mixer.core.feature.featuremap.datarecord.DataRecordEx
 import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
 import com.twitter.product_mixer.core.functional_component.scorer.Scorer
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery

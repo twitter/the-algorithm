@@ -135,6 +135,8 @@ object OfflineCandidateStoreModule extends TwitterModule {
     serviceIdentifier: ServiceIdentifier,
     datasetName: String
   ): ReadableStore[UserId, CandidateTweetsList] = {
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     ManhattanRO
       .getReadableStoreWithMtls[Long, CandidateTweetsList](
         ManhattanROConfig(

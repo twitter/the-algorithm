@@ -34,6 +34,7 @@ object MediaVisibilityLibrary {
     val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
 
     val stratoClientStatsReceiver = libraryStatsReceiver.scope("strato")
+// This is utterly fucking retarded.
 
     val mediaMetadataFeatures = new MediaMetadataFeatures(
       MediaMetadataSource.fromStrato(stratoClient, stratoClientStatsReceiver),

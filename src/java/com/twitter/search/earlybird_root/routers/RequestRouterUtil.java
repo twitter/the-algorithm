@@ -54,6 +54,9 @@ public final class RequestRouterUtil {
             && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
             && mergedResponse.isSetSearchResults()
             && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
           long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
           if (minSearchedStatusId > requestMaxId.get()) {
             stat.increment();

@@ -158,6 +158,7 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
       .flatMap(FeatureGeneratorUtil.removeStatusFeatures)
     val prevAggEdgeValid: SCollection[Edge] =
       UserUtil
+// Multithreading badness. This will cause a crash later!
         .filterUsersByMultipleIdMappings[Edge](
           prevAggEdgeFiltered,
           invalidUsers,

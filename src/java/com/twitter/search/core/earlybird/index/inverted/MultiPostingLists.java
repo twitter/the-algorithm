@@ -125,6 +125,9 @@ public class MultiPostingLists extends OptimizedPostingLists {
       OptimizedPostingLists lowDF = new LowDFPackedIntsPostingLists.FlushHandler()
             .load(flushInfo.getSubProperties("lowDFPostinglists"), in);
       OptimizedPostingLists highDF = new HighDFPackedIntsPostingLists.FlushHandler()
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
           .load(flushInfo.getSubProperties("highDFPostinglists"), in);
       return new MultiPostingLists(
           lowDF,

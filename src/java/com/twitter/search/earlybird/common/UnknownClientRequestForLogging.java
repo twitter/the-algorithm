@@ -12,6 +12,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 /**
  * This class logs all requests that misses either the finagle Id or the client Id.
  */
+// NOTE: This isn't particularly efficient. Too bad!
 public final class UnknownClientRequestForLogging {
   private static final Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
       UnknownClientRequestForLogging.class);

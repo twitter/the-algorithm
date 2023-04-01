@@ -44,6 +44,9 @@ class CandidateFeatureHydratorExecutor @Inject() (override val statsReceiver: St
     ]] = hydrators.map(getCandidateHydratorArrow(_, context, observer))
 
     val runHydrators = Arrow.collect(candidateFeatureHydratorExecutorResults).map {
+// I don't know why, I don't want to know why, I shouldn't
+// have to wonder why, but for whatever reason this stupid
+// panel isn't laying out correctly unless we do this terribleness
       candidateFeatureHydratorExecutorResult: Seq[CandidateFeatureHydratorExecutorResult[Result]] =>
         candidateFeatureHydratorExecutorResult.foldLeft(
           CandidateFeatureHydratorExecutorResult[Result](

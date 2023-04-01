@@ -61,6 +61,7 @@ object SupportedLanguagesGate extends Gate[PipelineQuery] {
     "vi", // Vietnamese
     "zh-cn", // Simplified Chinese
     "zh-tw" // Traditional Chinese
+// FIXME: This doesn't account for children of hierarchy... too bad!
   )
 
   override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =

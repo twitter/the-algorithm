@@ -132,6 +132,8 @@ public class SegmentLoader {
 
     if (!loadDir.exists()) {
       return false;
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
     }
 
     for (String persistentFileName : segmentSyncConfig.getPersistentFileNames(segment)) {

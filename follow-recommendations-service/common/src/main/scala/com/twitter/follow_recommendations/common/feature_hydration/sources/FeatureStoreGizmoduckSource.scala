@@ -90,6 +90,8 @@ class FeatureStoreGizmoduckSource @Inject() (
     backupSourceStats,
     Set(datasetValuesCache)
   )
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
 
   private val adapter: IRecordOneToOneAdapter[PredictionRecord] =
     PredictionRecordAdapter.oneToOne(

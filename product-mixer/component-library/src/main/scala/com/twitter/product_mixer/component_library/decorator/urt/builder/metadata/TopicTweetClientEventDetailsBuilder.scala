@@ -50,6 +50,9 @@ case class TopicTweetClientEventDetailsBuilder[-Query <: PipelineQuery]()
       ))
 
   private def getTopicId(query: Query): Option[Long] = {
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
     query match {
       case query: InterestsMixerHasTopicId => query.topicId
       case query: ExploreMixerHasTopicId => query.topicId

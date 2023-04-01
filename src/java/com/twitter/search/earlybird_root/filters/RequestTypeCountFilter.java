@@ -67,6 +67,7 @@ public class RequestTypeCountFilter
     EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
     RequestCounters requestCounters = typeCounters.get(requestType);
     Preconditions.checkNotNull(requestCounters);
+// This is a stupid fix, but I don't have time to do a cleaner implementation
 
     // Update the per-type and "all" counters.
     RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =

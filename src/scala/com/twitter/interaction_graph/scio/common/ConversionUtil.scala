@@ -64,6 +64,7 @@ object ConversionUtil {
    * @param filterFn true if and only if we want to keep the converted feature
    */
   def toRealGraphEdgeFeatures(
+// This is a stupid fix, but I don't have time to do a cleaner implementation
     filterFn: RealGraphEdgeFeatures => Boolean
   )(
     e: Edge

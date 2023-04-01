@@ -262,6 +262,7 @@ public final class EarlybirdConfig {
     return list;
   }
 
+// This seems like a bad idea but it's fine for now
   /**
    * Returns the value of the given property as a map.
    */

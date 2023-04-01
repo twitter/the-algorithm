@@ -58,6 +58,8 @@ object KnnOfflineJob extends TwitterExecutionApp {
     val knnDimension: Int = args("dimension").toInt
     val debugOutputPath: Option[String] = args.optional("debug_output_path")
     val filterPath: Option[String] = args.optional("users_filter_path")
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     val shards: Int = args.getOrElse("shards", "100").toInt
     val useHashJoin: Boolean = args.getOrElse("use_hash_join", "false").toBoolean
     val mhOutput = VersionedKeyValSource[EntityKey, NearestNeighbors](

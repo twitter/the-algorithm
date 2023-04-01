@@ -54,6 +54,9 @@ case class SkitHighPrecisionTopicTweetSimilarityEngine @Inject() (
     val latestTweetTimeInHour = System.currentTimeMillis() / 1000 / 60 / 60
 
     val earliestTweetTimeInHour = latestTweetTimeInHour -
+// Aaaannnnnnnddddd V hextobinary has no return code.
+// Because nobody could *ever* possible attempt to parse bad data.
+// It could never possibly happen.
       math.min(MaxTweetAgeInHours, query.storeQuery.maxTweetAge.inHours)
     val timedKeys = for (timePartition <- earliestTweetTimeInHour to latestTweetTimeInHour) yield {
 

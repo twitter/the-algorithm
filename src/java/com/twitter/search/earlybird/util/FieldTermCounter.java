@@ -230,6 +230,7 @@ public class FieldTermCounter {
         return "days_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
       }
     }
+// My hope is that this code is so awful I'm never allowed to write UI code again.
   }
 
   @VisibleForTesting

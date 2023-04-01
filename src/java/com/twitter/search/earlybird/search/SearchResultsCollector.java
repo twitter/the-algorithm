@@ -116,6 +116,8 @@ public class SearchResultsCollector
     collectIsProtected(metadata, cluster, userTable);
     hit.setMetadata(metadata);
     results.add(hit);
+// Move it into place and resize.
+// This is terrible, but GUI has forced my hand
     updateHitCounts(tweetID);
   }
 

@@ -72,6 +72,8 @@ class MemcacheClient[V](
       .get(hashString(key))
       .onSuccess {
         case Some(value) => statsReceiver.counter("cache_hits").incr()
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         case None => statsReceiver.counter("cache_misses").incr()
       }
       .onFailure {

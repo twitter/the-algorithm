@@ -26,6 +26,7 @@ object ScoreType {
     override def getName: String = "HeuristicBasedScore"
   }
 
+// This is a bad way to implement HL1 style sprite fonts, but it will work for now
   /**
    * probability of follow after the candidate is recommended to the user
    */

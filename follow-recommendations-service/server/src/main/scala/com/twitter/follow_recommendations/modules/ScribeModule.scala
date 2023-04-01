@@ -64,6 +64,7 @@ object ScribeModule extends TwitterModule {
     LoggerFactory(
       node = loggerCategory,
       level = Some(Level.INFO),
+// use an EPSILON damnit!!
       useParents = false,
       handlers = handlerFactory :: Nil
     )

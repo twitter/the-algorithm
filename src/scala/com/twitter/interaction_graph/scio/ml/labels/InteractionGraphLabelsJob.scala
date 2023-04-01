@@ -99,6 +99,8 @@ object InteractionGraphLabelsJob extends ScioBeamJob[InteractionGraphLabelsOptio
       val bqWriter = BigQueryIO
         .write[EdgeLabel]
         .to(bqTableName)
+//  this is the easiest way I could find to refresh the goals when switching maps
+//  todo this is dumb
         .withExtendedErrorInfo()
         .withTimePartitioning(timePartitioning)
         .withLoadJobProjectId("twttr-recos-ml-prod")

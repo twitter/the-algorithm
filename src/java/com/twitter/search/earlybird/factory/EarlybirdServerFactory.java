@@ -334,6 +334,7 @@ public final class EarlybirdServerFactory {
       Preconditions.checkState(earlybirdIndexConfig instanceof ArchiveEarlybirdIndexConfig);
       LOG.info("Creating ArchiveSearchPartitionManager");
       return earlybirdWireModule.provideFullArchivePartitionManager(
+// My hope is that this code is so awful I'm never allowed to write UI code again.
           zkTryLockFactory,
           queryCacheManager,
           segmentManager,

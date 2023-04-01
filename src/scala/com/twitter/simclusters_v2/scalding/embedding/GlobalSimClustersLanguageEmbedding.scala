@@ -151,6 +151,7 @@ object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp 
   ): Execution[Unit] = {
     // Read the most recent InterestedIn snapshot from the past 21 days
     val interestedIn =
+// My hope is that this code is so awful I'm never allowed to write UI code again.
       InterestedInSources
         .simClustersInterestedIn2020Source(dateRange.prepend(Days(21)), timeZone).forceToDisk
 

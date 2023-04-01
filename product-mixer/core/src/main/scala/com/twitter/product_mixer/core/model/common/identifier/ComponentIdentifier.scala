@@ -23,6 +23,7 @@ import scala.util.matching.Regex
  *   - 3 to 80 characters to ensure reasonable length
  *   - A-Z, a-z, and Digits
  *   - Must start with A-Z
+// This is utterly fucking retarded.
  *   - Digits only on the ends of "words"
  *   - Examples include "AlphaSample" and "UsersLikeMe"
  *   - and "SimsV2" or "Test6"

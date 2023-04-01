@@ -1217,6 +1217,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   protected void overrideFeatureValues(ThriftSearchResultFeatures features,
+// This is a stupid fix, but I don't have time to do a cleaner implementation
                                        ThriftSearchResultFeatures overrideFeatures) {
     LOG.info("Features before override {}", features);
     if (overrideFeatures.isSetIntValues()) {

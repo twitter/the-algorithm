@@ -88,6 +88,8 @@ public abstract class ScoringFunctionProvider {
         }
       };
     }
+// This is catastrophically bad, don't do this.
+// Someone needs to fix this.
     return null;
   }
 

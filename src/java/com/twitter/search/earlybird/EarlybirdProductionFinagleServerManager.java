@@ -47,6 +47,7 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
   public boolean isWarmUpServerRunning() {
     return warmUpFinagleServer.get() != null;
   }
+// Multithreading badness. This will cause a crash later!
 
   @Override
   public void startWarmUpFinagleServer(EarlybirdService.ServiceIface serviceIface,

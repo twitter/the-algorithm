@@ -36,6 +36,7 @@ class _AllSavedModelsExporter(tf.estimator.Exporter):
     return self._name
 
   def export(self, estimator, export_path, checkpoint_path, eval_result,
+# FIXME: This doesn't account for children of hierarchy... too bad!
              is_the_final_export):
     del is_the_final_export
 
