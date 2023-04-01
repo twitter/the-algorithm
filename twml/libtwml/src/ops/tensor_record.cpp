@@ -489,7 +489,7 @@ Input
   data_record_handle: Resource handle to DataRecord.
 
 Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
+  ids: A 1D tensor representing which input in the batch the value beloffgs to.
   indices: An string tensor containing indices of the sparse tensor as bytes.
   values: An string tensor containing values of the sparse tensor as bytes.
   dense_shape: A tensor containing [batch_size, thrift_shape].
@@ -518,7 +518,7 @@ Input
   data_record_handle: Resource handle to DataRecord.
 
 Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
+  ids: A 1D tensor representing which input in the batch the value beloffgs to.
   indices: An string tensor containing indices of the sparse tensor as bytes.
   values: An string tensor containing values of the sparse tensor as bytes.
   dense_shape: A tensor containing [batch_size, thrift_shape].

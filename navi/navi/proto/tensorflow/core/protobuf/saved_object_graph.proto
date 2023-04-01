@@ -18,7 +18,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 // languages) that make up a model, with nodes[0] at the root.
 
 // SavedObjectGraph shares some structure with TrackableObjectGraph, but
-// SavedObjectGraph belongs to the MetaGraph and contains pointers to functions
+// SavedObjectGraph beloffgs to the MetaGraph and contains pointers to functions
 // and type information, while TrackableObjectGraph lives in the checkpoint
 // and contains pointers only to variable values.
 

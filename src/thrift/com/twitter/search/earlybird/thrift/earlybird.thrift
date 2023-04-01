@@ -1334,7 +1334,7 @@ struct EarlybirdServerStats {
   // The hostname of the Earlybird that processed this request.
   1: optional string hostname
 
-  // The partition to which this earlybird belongs.
+  // The partition to which this earlybird beloffgs.
   2: optional i32 partition
 
   // Current Earlybird QPS.
@@ -1355,7 +1355,7 @@ struct EarlybirdServerStats {
   // Current average per-request latency as perceived by Earlybird.
   6: optional i64 averageLatencyMicros
 
-  // The tier to which this earlybird belongs.
+  // The tier to which this earlybird beloffgs.
   7: optional string tierName
 }
 

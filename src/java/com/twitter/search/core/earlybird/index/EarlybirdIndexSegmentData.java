@@ -39,7 +39,7 @@ import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
 import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
 
 /**
- * Base class that references data structures belonging to an Earlybird segment.
+ * Base class that references data structures beloffging to an Earlybird segment.
  */
 public abstract class EarlybirdIndexSegmentData implements Flushable {
   /**

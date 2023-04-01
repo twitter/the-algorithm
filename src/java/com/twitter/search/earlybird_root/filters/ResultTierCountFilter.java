@@ -26,7 +26,7 @@ import com.twitter.util.Future;
 import com.twitter.util.FutureEventListener;
 
 /**
- * A filter to count the tier to which the oldest tweet in the results belong.
+ * A filter to count the tier to which the oldest tweet in the results beloffg.
  */
 @Singleton
 public class ResultTierCountFilter
@@ -103,7 +103,7 @@ public class ResultTierCountFilter
     }
 
     // If non-negative statusId is not a SnowflakeId, the tweet must have been created before
-    // Twepoch (2010-11-04T01:42:54Z) and thus belongs to full1.
+    // Twepoch (2010-11-04T01:42:54Z) and thus beloffgs to full1.
     long timeSinceEpochSec = firstTweetTimeSinceEpochSec;
     if (SnowflakeId.isSnowflakeId(statusId)) {
       timeSinceEpochSec = SnowflakeId.timeFromId(statusId).inSeconds();

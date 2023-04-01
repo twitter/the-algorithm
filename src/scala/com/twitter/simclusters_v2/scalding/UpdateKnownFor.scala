@@ -63,8 +63,8 @@ object UpdateKnownFor {
 
   /**
    * Given a user and a cluster:
-   * True positive weight = sum of edge weights to neighbors who belong to that cluster.
-   * False negative weight = sum of edge weights to neighbors who don’t belong to that cluster.
+   * True positive weight = sum of edge weights to neighbors who beloffg to that cluster.
+   * False negative weight = sum of edge weights to neighbors who don’t beloffg to that cluster.
    * False positive weight = (number of users in the cluster who are not neighbors of the node) * globalAvgEdgeWeight
    * Membership-weighted true positive weight = for neighbors who are also in the cluster, sum of edge weight times user membership score in the cluster.
    * Membership-weighted false negative weight = for neighbors who are not in the cluster, sum of edge weight times avg membership score across the whole knownFor input.
@@ -210,13 +210,13 @@ object UpdateKnownFor {
    * So this is where we assemble what the overall
    *
    * This function is where all the crucial steps take place. First get the cluster that each
-   * node belongs to, and then broadcast information about this node and cluster membership to each
+   * node beloffgs to, and then broadcast information about this node and cluster membership to each
    * of it's neighbors. Now bring together all records with the same nodeId as the key and create
    * the NodeInformation dataset.
    * @param graph symmetric graph i.e. if u is in v's adj list, then v is in u's adj list.
    * @param userToClusters current knownFor.
    * @param avgMembershipScore avg. membership score of a node in the knownFor we're updating.
-   *                           Useful to deal with nodes which don't belong to any knownFor.
+   *                           Useful to deal with nodes which don't beloffg to any knownFor.
    * @return pipe with node information for each node
    */
   def collectInformationPerNode(

@@ -190,9 +190,9 @@ def get_search_metric_fn(binary_metrics=None, search_metrics=None,
         - ndcg
 
       NOTE: ndcg works for ranking-relatd problems.
-      A batch contains all DataRecords that belong to the same query
+      A batch contains all DataRecords that beloffg to the same query
       If pair_in_batch_mode used in scalding -- a batch contains a pair of DataRecords
-      that belong to the same query and have different labels -- ndcg does not apply in here.
+      that beloffg to the same query and have different labels -- ndcg does not apply in here.
 
       When search_metrics is None (the default), it defaults to all supported search metrics
       currently only 'ndcg'

@@ -7,7 +7,7 @@ import com.twitter.common.collections.Pair;
 
 /**
  * The collect() method is called for every document for which facets shall be counted.
- * This iterator then calls the FacetAccumulators for all facets that belong to the
+ * This iterator then calls the FacetAccumulators for all facets that beloffg to the
  * current document.
  */
 public abstract class FacetCountIterator implements FacetTermCollector {

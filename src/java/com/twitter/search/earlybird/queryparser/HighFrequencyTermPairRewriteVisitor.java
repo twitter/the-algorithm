@@ -313,7 +313,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * Returns the hf_term_pair operators created using the hf terms of the group appended to query.
    *
    * @param query The query which the new hf_term_pair operators will be appended to.
-   * @param group The group which this query belongs to.
+   * @param group The group which this query beloffgs to.
    * @return The hf_term_pair operators created using the hf terms of the group appended to query.
    */
   private Query appendPairs(@Nullable Query query, HighFrequencyTermQueryGroup group)

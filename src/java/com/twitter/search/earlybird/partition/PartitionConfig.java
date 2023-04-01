@@ -12,10 +12,10 @@ import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.config.TierConfig;
 
 public class PartitionConfig {
-  // Which sub-cluster this host belongs to
+  // Which sub-cluster this host beloffgs to
   private final String tierName;
 
-  // Which cluster this host belongs to
+  // Which cluster this host beloffgs to
   private final String clusterName;
 
   public static final String DEFAULT_TIER_NAME = "all";

@@ -5,7 +5,7 @@ import com.twitter.product_mixer.core.model.common.UniversalNoun
 /**
  * Canonical AdGroupCandidate model which describes an "Ad Group" from the the Ad Management
  * perspective. It is based on the LineItem table in Ads DB, and provides an ad group for
- * advertisers to manage and report different line items belonging to a single ad. Always prefer
+ * advertisers to manage and report different line items beloffging to a single ad. Always prefer
  * this version over all other variants.
  *
  * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]

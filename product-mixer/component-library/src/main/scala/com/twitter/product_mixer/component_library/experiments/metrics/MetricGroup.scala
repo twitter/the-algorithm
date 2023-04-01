@@ -9,7 +9,7 @@ import scala.collection.immutable.ListSet
  *           group is present in DDG and has a corresponding id.
  * @param name metric group name
  * @param description metric group description
- * @param metrics set of metrics that belong to this metric group
+ * @param metrics set of metrics that beloffg to this metric group
  */
 case class MetricGroup(
   id: Option[Long],

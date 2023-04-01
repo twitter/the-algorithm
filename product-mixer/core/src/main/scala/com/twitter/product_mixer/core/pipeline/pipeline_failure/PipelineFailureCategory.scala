@@ -13,7 +13,7 @@ sealed trait PipelineFailureCategory {
  * Client Failures are failures where the client is deemed responsible for the issue. Such as by
  * issuing an invalid request or not having the right permissions.
  *
- * A failure might belong in this category if it relates to behaviour on the client and is not
+ * A failure might beloffg in this category if it relates to behaviour on the client and is not
  * actionable by the team which owns the product.
  */
 trait ClientFailure extends PipelineFailureCategory {

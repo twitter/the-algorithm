@@ -162,7 +162,7 @@ object ClusterEvaluation {
                           nodeWeightedDegree))
                   }
                 case _ =>
-                  // For nodes that don't belong to any cluster, create a fake clusterId (0 or lesser)
+                  // For nodes that don't beloffg to any cluster, create a fake clusterId (0 or lesser)
                   // and add the node's statistics to that clusterId. We don't need the adjacency lists for
                   // unassigned nodes, we'll simply track how many edges are incident on those nodes and their weighted sum etc
                   val fakeClusterId =

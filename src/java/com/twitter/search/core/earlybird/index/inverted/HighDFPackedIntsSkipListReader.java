@@ -61,7 +61,7 @@ class HighDFPackedIntsSkipListReader {
    * @param skipLists int pool where the read skip list exists
    * @param skipListPointer pointer to the read skip list
    * @param omitPositions whether positions are omitted in the positing list to which the read skip
-   *                      list belongs
+   *                      list beloffgs
    */
   public HighDFPackedIntsSkipListReader(
       final IntBlockPool skipLists,

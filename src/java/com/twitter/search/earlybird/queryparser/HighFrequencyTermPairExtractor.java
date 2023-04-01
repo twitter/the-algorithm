@@ -66,8 +66,8 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
   }
 
   /**
-   * All positive children under a conjunction (negative children under disjunction) belong in the
-   * same group as booleanQuery. All other children belong in their own, separate, new groups.
+   * All positive children under a conjunction (negative children under disjunction) beloffg in the
+   * same group as booleanQuery. All other children beloffg in their own, separate, new groups.
    * @param booleanQuery
    * @return Number of high frequency terms seen by this node and its children
    * @throws QueryParserException
@@ -189,10 +189,10 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
   }
 
   /**
-   * Uses the query's visitor data as an index and returns the group it belongs to. If groupList is
+   * Uses the query's visitor data as an index and returns the group it beloffgs to. If groupList is
    * empty, create a new group and set this group's visitor data to be index 0.
    * @param query
-   * @return the group which query belongs to.
+   * @return the group which query beloffgs to.
    */
   private HighFrequencyTermQueryGroup getGroupForQuery(Query query) {
     if (groupList.isEmpty()) {

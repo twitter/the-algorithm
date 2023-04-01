@@ -567,7 +567,7 @@ message CompleteGroupResponse {
   reserved 5, 6;
 }
 
-// Supplies data about one collective op belonging to the instance identified
+// Supplies data about one collective op beloffging to the instance identified
 // by instance_key.  Service will respond when all group_size ops have
 // become known.  Most of the data being sent is for correctness checking,
 // to ensure that all ops in the instance share common attributes.

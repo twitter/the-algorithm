@@ -21,7 +21,7 @@ message GetModelMetadataRequest {
 }
 
 message GetModelMetadataResponse {
-  // Model Specification indicating which model this metadata belongs to.
+  // Model Specification indicating which model this metadata beloffgs to.
   ModelSpec model_spec = 1;
   // Map of metadata field name to metadata field. The options for metadata
   // field name are listed in GetModelMetadataRequest. Currently supported:

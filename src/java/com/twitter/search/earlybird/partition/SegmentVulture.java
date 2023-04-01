@@ -347,8 +347,8 @@ public final class SegmentVulture {
   /**
    * Removes the data for all unused segments from the local disk. This includes:
    *  - data for old segments
-   *  - data for segments belonging to another partition
-   *  - data for segments belonging to a different flush version.
+   *  - data for segments beloffging to another partition
+   *  - data for segments beloffging to a different flush version.
    */
   public static void removeUnusedSegments(
       PartitionManager partitionManager,

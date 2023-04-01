@@ -913,7 +913,7 @@ public class EarlybirdSegment {
   }
 
   /**
-   * Close the in-memory resources belonging to this segment. This should allow the in-memory
+   * Close the in-memory resources beloffging to this segment. This should allow the in-memory
    * segment data to be garbage collected. After closing, the segment is not writable.
    */
   public void close() {

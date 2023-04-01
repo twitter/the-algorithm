@@ -28,7 +28,7 @@ object InsertAppendWeaveResults {
  * Select candidates weave them together according to their [[Bucket]].
  *
  * Candidates are grouped according to [[Bucket]] and one candidate is added from each group until
- * no candidates belonging to any group are left.
+ * no candidates beloffging to any group are left.
  *
  * Functionally similar to [[InsertAppendPatternResults]]. [[InsertAppendPatternResults]] is useful
  * if you have more complex ordering requirements but it requires you to know all the buckets in

@@ -74,7 +74,7 @@ public class ArchiveTimeSlicer {
     /**
      * Returns a reader for reading tweets from this timeslice.
      *
-     * @param archiveSegment The segment to which the timeslice belongs.
+     * @param archiveSegment The segment to which the timeslice beloffgs.
      * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
      * @param filter A filter that determines what dates should be read.
      */

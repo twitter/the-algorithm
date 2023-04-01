@@ -11,7 +11,7 @@ package tensorflow.serving;
 message Class {
   // Label or name of the class.
   string label = 1;
-  // Score for this class (e.g., the probability the item belongs to this
+  // Score for this class (e.g., the probability the item beloffgs to this
   // class). As per the proto3 default-value semantics, if the score is missing,
   // it should be treated as 0.
   float score = 2;

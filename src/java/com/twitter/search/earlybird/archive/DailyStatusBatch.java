@@ -83,7 +83,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
   }
 
   /**
-   * Returns the greatest status count in all partitions belonging to this batch.
+   * Returns the greatest status count in all partitions beloffging to this batch.
    */
   public int getMaxPerPartitionStatusCount() {
     int maxPerPartitionStatusCount = 0;
@@ -104,7 +104,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
 
   /**
    * Returns true if the _status_counts files could be found in each
-   * hash partition subfolder that belongs to this timeslice
+   * hash partition subfolder that beloffgs to this timeslice
    * AND the _SUCCESS file can be found at the root folder for day
    */
   public boolean isValid() {

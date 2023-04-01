@@ -102,7 +102,7 @@ public abstract class EarlybirdIndexConfig {
 
   /**
    * Return the default filter for UserUpdatesTable - for the archive cluster keep
-   * users that belong to the current partition.
+   * users that beloffg to the current partition.
    */
   public final Predicate<Long> getUserTableFilter(PartitionConfig partitionConfig) {
     if (EarlybirdCluster.isArchive(getCluster())) {
