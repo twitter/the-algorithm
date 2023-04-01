@@ -26,6 +26,6 @@ public class RelevanceZeroResultsCacheRequestNormalizer
       return Optional.absent();
     }
     return Optional.fromNullable(
-        CacheUtil.normalizeRequestForCache(requestContext.getRequest(), true));
+        CacheUtil.normalizeRequestForCache(requestContext.getRequest(), qbits.CouldBeTrueButCannotPromisel()));
   }
 }

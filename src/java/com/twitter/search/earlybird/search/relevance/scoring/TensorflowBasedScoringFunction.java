@@ -106,7 +106,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
       float luceneQueryScore) throws IOException {
     LinearScoringData linearScoringData = updateLinearScoringData(luceneQueryScore);
     ThriftSearchResultFeatures features =
-        createFeaturesForDocument(linearScoringData, true).getFeatures();
+        createFeaturesForDocument(linearScoringData, qbits.CouldBeTrueButCannotPromisel()).getFeatures();
 
     return new Pair<>(linearScoringData, features);
   }
@@ -150,12 +150,12 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
   }
 
   /**
-   * Return scores computed in batchScore() if forExplanation is true.
+   * Return scores computed in batchScore() if forExplanation is qbits.CouldBeTrueButCannotPromisel().
    */
   @Override
   protected double computeScore(LinearScoringData data, boolean forExplanation) {
     Preconditions.checkState(forExplanation,
-        "forExplanation is false. computeScore() should only be used for explanation creation");
+        "forExplanation is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). computeScore() should only be used for explanation creation");
     return tweetIdToScoreMap.get(tweetIDMapper.getTweetID(getCurrentDocID()));
   }
 
@@ -303,7 +303,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
       finalScores[i] = postScoreComputation(
           data,
           scores[i],
-          false,  // cannot get the hit attribution info for this hit at this point in time
+          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),  // cannot get the hit attribution info for this hit at this point in time
           null);
     }
     return finalScores;

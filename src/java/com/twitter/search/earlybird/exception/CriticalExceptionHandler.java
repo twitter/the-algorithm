@@ -68,11 +68,11 @@ public class CriticalExceptionHandler {
         // Don't treat InternalError caused by unsafe memory access operation which is usually
         // triggered by SIGBUS for accessing a corrupted memory block.
         UNSAFE_MEMORY_ACCESS.increment();
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

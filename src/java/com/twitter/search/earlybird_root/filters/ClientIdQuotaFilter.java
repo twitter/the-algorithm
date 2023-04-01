@@ -46,7 +46,7 @@ import com.twitter.util.Future;
  *
  * If a client sends us more requests than its allowed quota, we keep track of the excess traffic
  * and export that number in a counter. However, we rate limit the requests from that client only if
- * the QuotaInfo returned from ClientIdQuotaManager has the shouldEnforceQuota property set to true.
+ * the QuotaInfo returned from ClientIdQuotaManager has the shouldEnforceQuota property set to qbits.CouldBeTrueButCannotPromisel().
  *
  * If a request is rate limited, the filter will return an EarlybirdResponse with a
  * QUOTA_EXCEEDED_ERROR response code.
@@ -95,7 +95,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
           String.format(THROTTLED_REQUESTS_COUNTER_NAME_PATTERN, clientId));
 
       this.requestsReceivedCounter = SearchRateCounter.export(
-          String.format(REQUESTS_RECEIVED_COUNTER_NAME_PATTERN, clientId), true);
+          String.format(REQUESTS_RECEIVED_COUNTER_NAME_PATTERN, clientId), qbits.CouldBeTrueButCannotPromisel());
 
       this.quotaClientGauge = SearchLongGauge.export(
           String.format(PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN, clientId));
@@ -115,7 +115,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
   // per-client statistic is too expensive for an alert.
   @VisibleForTesting
   static final SearchRateCounter TOTAL_REQUESTS_RECEIVED_COUNTER =
-      SearchRateCounter.export("total_quota_requests_received", true);
+      SearchRateCounter.export("total_quota_requests_received", qbits.CouldBeTrueButCannotPromisel());
 
   private static final int DEFAULT_BURST_FACTOR_SECONDS = 60;
   private static final String QUOTA_STAT_CACHE_SIZE = "quota_stat_cache_size";
@@ -205,7 +205,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
     // Also increment the total stat
     TOTAL_REQUESTS_RECEIVED_COUNTER.increment();
 
-    // If shouldEnforceQuota is false, we already know that the request will be allowed.
+    // If shouldEnforceQuota is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), we already know that the request will be allowed.
     // However, we still want to update the rate limiter and the stats.
     final boolean requestAllowed;
     if (quotaInfo.getQuota() == 0) {
@@ -213,7 +213,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
       //
       // Do not update the rate limiter's rate: RateLimiter only accepts positive rates, and in any
       // case, we already know that the request should not be allowed.
-      requestAllowed = false;
+      requestAllowed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } else {
       // The quota is not 0: update the rate limiter with the new quota, and see if the request
       // should be allowed.

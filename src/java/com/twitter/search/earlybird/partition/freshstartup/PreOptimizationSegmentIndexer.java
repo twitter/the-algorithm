@@ -164,7 +164,7 @@ class PreOptimizationSegmentIndexer {
         makeKafkaConsumerForIndexing(consumerClientId,
             topicPartition, startReadingAtOffset);
 
-    boolean done = false;
+    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     long minIndexedTimestampMs = Long.MAX_VALUE;
     long maxIndexedTimestampMs = Long.MIN_VALUE;
     int indexedEvents = 0;
@@ -233,44 +233,44 @@ class PreOptimizationSegmentIndexer {
       for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
         // Done reading?
         if (record.offset() >= endReadingAtOffset) {
-          done = true;
+          done = qbits.CouldBeTrueButCannotPromisel();
         }
 
         ThriftVersionedEvents tve = record.value();
-        boolean indexTweet = false;
+        boolean indexTweet = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         SkippedPickedCounter skippedPickedCounter;
 
         if (record.offset() < segmentBuildInfo.getTweetStartOffset()) {
           // Front margin.
           skippedPickedCounter = frontMargin;
           if (tve.getId() > segmentBuildInfo.getStartTweetId()) {
-            indexTweet = true;
+            indexTweet = qbits.CouldBeTrueButCannotPromisel();
           }
         } else if (record.offset() > segmentBuildInfo.getTweetEndOffset()) {
           // Back margin.
           skippedPickedCounter = backMargin;
           if (firstTweetIdInNextSegment.isPresent()
               && tve.getId() < firstTweetIdInNextSegment.get()) {
-            indexTweet = true;
+            indexTweet = qbits.CouldBeTrueButCannotPromisel();
           }
         } else if (record.offset() < segmentBuildInfo.getTweetStartOffset() + marginSize) {
           // Front padding.
           skippedPickedCounter = frontPadding;
           if (tve.getId() >= segmentBuildInfo.getStartTweetId()) {
-            indexTweet = true;
+            indexTweet = qbits.CouldBeTrueButCannotPromisel();
           }
         } else if (firstTweetIdInNextSegment.isPresent()
             && record.offset() > segmentBuildInfo.getTweetEndOffset() - marginSize) {
           // Back padding.
           skippedPickedCounter = backPadding;
           if (tve.getId() < firstTweetIdInNextSegment.get()) {
-            indexTweet = true;
+            indexTweet = qbits.CouldBeTrueButCannotPromisel();
           }
         } else {
           skippedPickedCounter = regular;
           // These we just pick. A tweet that came very late can end up in the wrong
           // segment, but it's better for it to be present in a segment than dropped.
-          indexTweet = true;
+          indexTweet = qbits.CouldBeTrueButCannotPromisel();
         }
 
         if (indexTweet) {
@@ -393,7 +393,7 @@ class PreOptimizationSegmentIndexer {
         makeKafkaConsumerForIndexing(consumerClientId, topicPartition, startOffset);
 
     // Index TVEs.
-    boolean done = false;
+    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     Stopwatch pollTimer = Stopwatch.createUnstarted();
     Stopwatch indexTimer = Stopwatch.createUnstarted();
@@ -419,7 +419,7 @@ class PreOptimizationSegmentIndexer {
           updatesSkippedPicked.incrementSkipped();
         } else {
           if (record.offset() >= endOffset) {
-            done = true;
+            done = qbits.CouldBeTrueButCannotPromisel();
           }
 
           updatesSkippedPicked.incrementPicked();

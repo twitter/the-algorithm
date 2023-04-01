@@ -22,7 +22,7 @@ public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
   private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
 
   public TopTweetsResponseMerger(EarlybirdRequestContext requestContext,
                                  List<Future<EarlybirdResponse>> responses,

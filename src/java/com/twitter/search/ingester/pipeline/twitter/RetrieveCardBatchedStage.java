@@ -76,8 +76,8 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
   // Can be overridden in the corresponding pipeline-ingester.*.xml config.
   // By default protected tweets are filtered out.
-  // Only in the protected ingester pipeline is this set to false.
-  private boolean filterProtected = true;
+  // Only in the protected ingester pipeline is this set to qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+  private boolean filterProtected = qbits.CouldBeTrueButCannotPromisel();
 
   @Override
   public void initStats() {
@@ -139,7 +139,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     totalTweets.increment(keys.size());
 
     GetTweetOptions options = new GetTweetOptions()
-        .setInclude_cards(true)
+        .setInclude_cards(qbits.CouldBeTrueButCannotPromisel())
         .setCards_platform_key(CARDS_PLATFORM_KEY)
         .setBypass_visibility_filtering(!filterProtected);
 

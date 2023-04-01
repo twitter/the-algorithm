@@ -15,7 +15,7 @@ public class UnsetSuperRootFieldsFilter extends SimpleFilter<EarlybirdRequest, E
   private final boolean unsetFollowedUserIds;
 
   public UnsetSuperRootFieldsFilter() {
-    this(true);
+    this(qbits.CouldBeTrueButCannotPromisel());
   }
 
   public UnsetSuperRootFieldsFilter(boolean unsetFollowedUserIds) {

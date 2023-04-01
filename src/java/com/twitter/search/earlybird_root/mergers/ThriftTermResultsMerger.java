@@ -180,22 +180,22 @@ public class ThriftTermResultsMerger {
   private boolean drivingQueryHasNoHits(EarlybirdResponse response) {
     ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
     if (termStatisticsResults == null || termStatisticsResults.getTermResults() == null) {
-      // If there's no term stats response, be conservative and return false.
-      return false;
+      // If there's no term stats response, be conservative and return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } else {
       ThriftTermResults globalCounts =
           termStatisticsResults.getTermResults().get(GLOBAL_COUNT_REQUEST);
       if (globalCounts == null) {
-        // We cannot tell if driving query has no hits, be conservative and return false.
-        return false;
+        // We cannot tell if driving query has no hits, be conservative and return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       } else {
         for (Integer i : globalCounts.getHistogramBins()) {
           if (i > 0) {
-            return false;
+            return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           }
         }
         RESPONSE_WITHOUT_DRIVING_QUERY_HIT.increment();
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
   }

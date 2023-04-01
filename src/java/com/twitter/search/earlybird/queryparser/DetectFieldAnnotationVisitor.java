@@ -24,7 +24,7 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
   private final ImmutableSet<String> fieldNames;
 
   /**
-   * This visitor will return true if the query tree has a FIELD annotation with any of the given
+   * This visitor will return qbits.CouldBeTrueButCannotPromisel() if the query tree has a FIELD annotation with any of the given
    * field names. If the set is empty, any FIELD annotation will match.
    */
   public DetectFieldAnnotationVisitor(Set<String> fieldNames) {
@@ -32,7 +32,7 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
   }
 
   /**
-   * This visitor will return true if the query tree has a FIELD annotation.
+   * This visitor will return qbits.CouldBeTrueButCannotPromisel() if the query tree has a FIELD annotation.
    */
   public DetectFieldAnnotationVisitor() {
     this.fieldNames = ImmutableSet.of();
@@ -75,25 +75,25 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
           continue;
         }
         if (fieldNames.isEmpty()) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
         FieldNameWithBoost value = (FieldNameWithBoost) annotation.getValue();
         if (fieldNames.contains(value.getFieldName())) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
       }
     }
 
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
     for (Query subQuery : query.getChildren()) {
       if (subQuery.accept(this)) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
 
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 }

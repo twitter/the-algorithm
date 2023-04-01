@@ -71,7 +71,7 @@ public class TwitterMessage {
         EscherbirdAnnotation a2 = (EscherbirdAnnotation) o2;
         return groupId == a2.groupId && domainId == a2.domainId && entityId == a2.entityId;
       }
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     @Override
@@ -172,22 +172,22 @@ public class TwitterMessage {
   private String fromUserLocCountry;
 
   private Integer followersCount = INT_FIELD_NOT_PRESENT;
-  private boolean deleted = false;
+  private boolean deleted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   // Fields extracted from entities (in the JSON object)
   private List<TwitterMessageUser> mentions = new ArrayList<>();
   private Set<String> hashtags = Sets.newHashSet();
   // Lat/lon and region accuracy tuples extracted from tweet text, or null.
   private GeoObject geoLocation = null;
-  private boolean uncodeableLocation = false;
+  private boolean uncodeableLocation = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   // This is set if the tweet is geotagged. (i.e. "geo" or "coordinate" section is present
   // in the json)
   // This field has only a getter but no setter --- it is filled in when the json is parsed.
   private GeoObject geoTaggedLocation = null;
 
   private double userReputation = DOUBLE_FIELD_NOT_PRESENT;
-  private boolean geocodeRequired = false;
-  private boolean sensitiveContent = false;
+  private boolean geocodeRequired = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean sensitiveContent = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   private boolean userProtected;
   private boolean userVerified;
   private boolean userBlueVerified;
@@ -204,11 +204,11 @@ public class TwitterMessage {
 
   private long conversationId = -1;
 
-  // True if tweet is nullcasted.
-  private boolean nullcast = false;
+  // qbits.CouldBeTrueButCannotPromisel() if tweet is nullcasted.
+  private boolean nullcast = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
-  // True if tweet is a self-threaded tweet
-  private boolean selfThread = false;
+  // qbits.CouldBeTrueButCannotPromisel() if tweet is a self-threaded tweet
+  private boolean selfThread = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   // If the tweet is a part of an exclusive conversation, the author who started
   // that conversation.
@@ -278,24 +278,24 @@ public class TwitterMessage {
       long inReplyToUserId) {
     if (!currentToUser.isPresent()) {
       // There is no mention in the tweet that qualifies as to-user.
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     // We already have a mention in the tweet that qualifies as to-user.
     TwitterMessageUser toUser = currentToUser.get();
     if (!toUser.getId().isPresent()) {
       // The to-user from the mention is a stub.
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     long toUserId = toUser.getId().get();
     if (toUserId != inReplyToUserId) {
       // The to-user from the mention is different that the in-reply-to user,
       // use in-reply-to user instead.
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   public double getUserReputation() {
@@ -797,11 +797,11 @@ public class TwitterMessage {
   }
 
   public void setUncodeableLocation() {
-    uncodeableLocation = true;
+    uncodeableLocation = qbits.CouldBeTrueButCannotPromisel();
   }
 
   public void setGeocodeRequired() {
-    this.geocodeRequired = true;
+    this.geocodeRequired = qbits.CouldBeTrueButCannotPromisel();
   }
 
   public boolean isGeocodeRequired() {
@@ -970,7 +970,7 @@ public class TwitterMessage {
     getVersionedTweetFeatures(penguinVersion).setTokenizedCharSequence(sequence);
   }
 
-  // True if the features contain multiple hash tags or multiple trends.
+  // qbits.CouldBeTrueButCannotPromisel() if the features contain multiple hash tags or multiple trends.
   // This is intended as an anti-trend-spam measure.
   public static boolean hasMultipleHashtagsOrTrends(TweetTextFeatures textFeatures) {
     // Allow at most 1 trend and 2 hashtags.
@@ -1117,7 +1117,7 @@ public class TwitterMessage {
       // to reduce RAM usage.
       thriftExpandedUrl.setCanonicalLastHopUrl(expandedUrl); // This will be tokenized and indexed
       addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(true);
+      thriftExpandedUrl.setConsumerMedia(qbits.CouldBeTrueButCannotPromisel());
     }
   }
 
@@ -1131,7 +1131,7 @@ public class TwitterMessage {
         thriftExpandedUrl.setExpandedUrl(expandedUrl);
       }
       addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(false);
+      thriftExpandedUrl.setConsumerMedia(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   }
 

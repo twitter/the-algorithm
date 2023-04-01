@@ -23,10 +23,10 @@ class HnswMeta<T> {
   @Override
   public boolean equals(Object o) {
     if (this == o) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
     if (o == null || getClass() != o.getClass()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     HnswMeta<?> hnswMeta = (HnswMeta<?>) o;
     return maxLevel == hnswMeta.maxLevel

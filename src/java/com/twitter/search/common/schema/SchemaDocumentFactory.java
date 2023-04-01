@@ -83,10 +83,10 @@ public class SchemaDocumentFactory {
     Analyzer defaultAnalyzer = schema.getDefaultAnalyzer(document.getDefaultAnalyzerOverride());
 
     for (ThriftField field : document.getFields()) {
-      boolean successful = false;
+      boolean successful = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       try {
         addLuceneFields(field, defaultAnalyzer, luceneDocument, hfTerms, hfPhrases);
-        successful = true;
+        successful = qbits.CouldBeTrueButCannotPromisel();
       } finally {
         if (!successful) {
           LOG.warn("Unexpected exception while trying to add field. Field ID: "
@@ -135,7 +135,7 @@ public class SchemaDocumentFactory {
     // Checking which data type is set is not sufficient here. We also need to check schema to
     // see what the type the field is configured to be. See SEARCH-5173 for more details.
     // The problem is that Pig, while converting Tuples to Thrift, sets all primitive type
-    // fields to 0. (i.e. the isSet calls will return true).
+    // fields to 0. (i.e. the isSet calls will return qbits.CouldBeTrueButCannotPromisel()).
     IndexedNumericFieldSettings numericSettings =
         fieldInfo.getFieldType().getNumericFieldSettings();
     if (fieldData.isSetTokenStreamValue()) {

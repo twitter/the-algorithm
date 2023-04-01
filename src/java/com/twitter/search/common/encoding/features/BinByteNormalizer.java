@@ -44,11 +44,11 @@ public class BinByteNormalizer extends ByteNormalizer {
     for (Double key : orderedKeys) { // save the unboxing
       byte cur = map.get(key);
       if (cur <= prev) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
       prev = cur;
     }
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

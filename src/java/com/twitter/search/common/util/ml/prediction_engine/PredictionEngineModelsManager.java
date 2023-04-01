@@ -51,14 +51,14 @@ public class PredictionEngineModelsManager extends BaseModelsManager<PredictionE
       AbstractFile configFile, String statsPrefix) {
     Preconditions.checkArgument(
         configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new PredictionEngineModelsManager(new ConfigSupplier(configFile), true, statsPrefix);
+    return new PredictionEngineModelsManager(new ConfigSupplier(configFile), qbits.CouldBeTrueButCannotPromisel(), statsPrefix);
   }
 
   /**
    * Creates a no-op instance. It can be used for tests or when the models are disabled.
    */
   public static PredictionEngineModelsManager createNoOp(String statsPrefix) {
-    return new PredictionEngineModelsManager(Collections::emptyMap, false, statsPrefix) {
+    return new PredictionEngineModelsManager(Collections::emptyMap, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), statsPrefix) {
       @Override
       public void run() { }
     };

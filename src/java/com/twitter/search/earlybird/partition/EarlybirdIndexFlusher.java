@@ -161,12 +161,12 @@ public class EarlybirdIndexFlusher {
         return FlushAttemptResult.HADOOP_TIMEOUT;
       }
 
-      boolean flushedIndex = false;
+      boolean flushedIndex = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       try {
         // this function returns a boolean.
         actionCoordinator.execute("index_flushing", isCoordinated ->
             flushIndex(flushPath, isCoordinated, tweetOffset, updateOffset, postFlushOperation));
-        flushedIndex = true;
+        flushedIndex = qbits.CouldBeTrueButCannotPromisel();
       } catch (CoordinatedEarlybirdActionLockFailed e) {
         // This only happens when we fail to grab the lock, which is fine because another Earlybird
         // is already working on flushing this index, so we don't need to.
@@ -232,7 +232,7 @@ public class EarlybirdIndexFlusher {
     Preconditions.checkState(isCoordinated);
 
     if (fileSystem.exists(flushPath)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     LOG.info("Starting index flush");
@@ -257,7 +257,7 @@ public class EarlybirdIndexFlusher {
     } catch (Exception e) {
       LOG.error("Exception while flushing index. Rethrowing.");
 
-      if (fileSystem.delete(tmpPath, true)) {
+      if (fileSystem.delete(tmpPath, qbits.CouldBeTrueButCannotPromisel())) {
         LOG.info("Successfully deleted temp output");
       } else {
         LOG.error("Couldn't delete temp output");
@@ -282,7 +282,7 @@ public class EarlybirdIndexFlusher {
     LOG.info("Executing post flush operation...");
     postFlushOperation.execute();
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private void cleanupOldIndexes() throws Exception {
@@ -295,7 +295,7 @@ public class EarlybirdIndexFlusher {
       Path oldestHourPath = pathsByTime.remove(key);
       LOG.info("Deleting old index at path '{}'.", oldestHourPath);
 
-      if (fileSystem.delete(oldestHourPath, true)) {
+      if (fileSystem.delete(oldestHourPath, qbits.CouldBeTrueButCannotPromisel())) {
         LOG.info("Successfully deleted old index");
       } else {
         LOG.error("Couldn't delete old index");

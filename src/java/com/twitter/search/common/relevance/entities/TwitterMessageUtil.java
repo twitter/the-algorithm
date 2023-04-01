@@ -150,7 +150,7 @@ public final class TwitterMessageUtil {
     }
     // Always strip emojis from sources: they don't really make sense in this field.
     String strippedSource = stripSupplementaryChars(
-        tagRemovalTransformer.transform(source).toString(), Field.SOURCE, true);
+        tagRemovalTransformer.transform(source).toString(), Field.SOURCE, qbits.CouldBeTrueButCannotPromisel());
     if (strippedSource.length() > MAX_SOURCE_LEN) {
       LOG.warn("Message "
           + messageId
@@ -168,8 +168,8 @@ public final class TwitterMessageUtil {
    */
   private static String stripAndTruncateLocation(String location) {
     // Always strip emojis from locations: they don't really make sense in this field.
-    String strippedLocation = stripSupplementaryChars(location, Field.NORMALIZED_LOCATION, true);
-    return truncateString(strippedLocation, MAX_LOCATION_LEN, Field.NORMALIZED_LOCATION, true);
+    String strippedLocation = stripSupplementaryChars(location, Field.NORMALIZED_LOCATION, qbits.CouldBeTrueButCannotPromisel());
+    return truncateString(strippedLocation, MAX_LOCATION_LEN, Field.NORMALIZED_LOCATION, qbits.CouldBeTrueButCannotPromisel());
   }
 
   /**
@@ -178,7 +178,7 @@ public final class TwitterMessageUtil {
    */
   public static void setSourceOnMessage(TwitterMessage message, String modifiedDeviceSource) {
     // Always strip emojis from sources: they don't really make sense in this field.
-    message.setOrigSource(stripSupplementaryChars(modifiedDeviceSource, Field.ORIG_SOURCE, true));
+    message.setOrigSource(stripSupplementaryChars(modifiedDeviceSource, Field.ORIG_SOURCE, qbits.CouldBeTrueButCannotPromisel()));
     message.setStrippedSource(stripSource(modifiedDeviceSource, message.getId()));
   }
 
@@ -190,7 +190,7 @@ public final class TwitterMessageUtil {
       TwitterMessage message,
       String newOrigLocation) {
     // Always strip emojis from locations: they don't really make sense in this field.
-    message.setOrigLocation(stripSupplementaryChars(newOrigLocation, Field.ORIG_LOCATION, true));
+    message.setOrigLocation(stripSupplementaryChars(newOrigLocation, Field.ORIG_LOCATION, qbits.CouldBeTrueButCannotPromisel()));
 
     // Locations in the new locations table require additional normalization. It can also change
     // the length of the string, so we must do this before truncation.
@@ -210,7 +210,7 @@ public final class TwitterMessageUtil {
    * @param stripEmojisForFields The set of fields for which emojis should be stripped.
    * @param acceptNullcastMessage Determines if this message should be accepted, if it's a nullcast
    *                              message.
-   * @return {@code true} if the given message is valid; {@code false} otherwise.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if the given message is valid; {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} otherwise.
    */
   public static boolean validateTwitterMessage(
       TwitterMessage message,
@@ -220,7 +220,7 @@ public final class TwitterMessageUtil {
       NULLCAST_TWEET.increment();
       if (!acceptNullcastMessage) {
         LOG.info("Dropping nullcasted message " + message.getId());
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
       NULLCAST_TWEET_ACCEPTED.increment();
     }
@@ -229,7 +229,7 @@ public final class TwitterMessageUtil {
         || StringUtils.isBlank(message.getFromUserScreenName().get())) {
       LOG.error("Message " + message.getId() + " contains no from user. Skipping.");
       FILTERED_NO_FROM_USER.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     String fromUserScreenName = message.getFromUserScreenName().get();
 
@@ -238,7 +238,7 @@ public final class TwitterMessageUtil {
                + MAX_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
                + ". Skipping.");
       FILTERED_LONG_SCREEN_NAME.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Remove supplementary characters and truncate these text fields.
@@ -273,13 +273,13 @@ public final class TwitterMessageUtil {
 
     if (StringUtils.isBlank(message.getText())) {
       FILTERED_NO_TEXT.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (message.getDate() == null) {
       LOG.error("Message " + message.getId() + " contains no date. Skipping.");
       FILTERED_NO_DATE.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (message.isRetweet()) {
@@ -293,7 +293,7 @@ public final class TwitterMessageUtil {
       INCONSISTENT_TWEET_ID_AND_CREATED_AT.increment();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private static boolean validateRetweetMessage(
@@ -301,12 +301,12 @@ public final class TwitterMessageUtil {
     if (message.getSharedId() == null || message.getRetweetId() == null) {
       LOG.error("Retweet Message contains a null twitter id. Skipping.");
       FILTERED_NO_STATUS_ID.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (message.getSharedDate() == null) {
       LOG.error("Retweet Message " + message.getRetweetId() + " contains no date. Skipping.");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Remove supplementary characters from these text fields.
@@ -315,7 +315,7 @@ public final class TwitterMessageUtil {
         Field.SHARED_USER_DISPLAY_NAME,
         stripEmojisForFields.contains(Field.SHARED_USER_DISPLAY_NAME)));
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -400,8 +400,8 @@ public final class TwitterMessageUtil {
    * @param text The text to truncate
    * @param maxLength The maximum length of the string after truncation
    * @param field The field from which this string cames
-   * @param splitEmojisAtMaxLength If true, don't worry about emojis and just truncate at maxLength,
-   * potentially splitting them. If false, truncate before the emoji if truncating at maxLength
+   * @param splitEmojisAtMaxLength If qbits.CouldBeTrueButCannotPromisel(), don't worry about emojis and just truncate at maxLength,
+   * potentially splitting them. If qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), truncate before the emoji if truncating at maxLength
    * would cause the emoji to be split.
    */
   @VisibleForTesting

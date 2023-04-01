@@ -59,7 +59,7 @@ public class TerminationTracker {
     this.timeoutEndTimeMillis = Long.MAX_VALUE;
     this.maxQueryCost = Double.MAX_VALUE;
     this.postTerminationOverheadMillis = 0;
-    this.useLastSearchedDocIdOnTimeout = false;
+    this.useLastSearchedDocIdOnTimeout = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**

@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class Index2Layer extends IndexFlatCodes {
   private transient long swigCPtr;
 
   protected Index2Layer(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.Index2Layer_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(Index2Layer obj) {
@@ -28,7 +30,7 @@ public class Index2Layer extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_Index2Layer(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class Index2Layer extends IndexFlatCodes {
 
   public Level1Quantizer getQ1() {
     long cPtr = swigfaissJNI.Index2Layer_q1_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Level1Quantizer(cPtr, false);
+    return (cPtr == 0) ? null : new Level1Quantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setPq(ProductQuantizer value) {
@@ -51,7 +53,7 @@ public class Index2Layer extends IndexFlatCodes {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.Index2Layer_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, false);
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setCode_size_1(long value) {
@@ -71,19 +73,19 @@ public class Index2Layer extends IndexFlatCodes {
   }
 
   public Index2Layer(Index quantizer, long nlist, int M, int nbit, MetricType metric) {
-    this(swigfaissJNI.new_Index2Layer__SWIG_0(Index.getCPtr(quantizer), quantizer, nlist, M, nbit, metric.swigValue()), true);
+    this(swigfaissJNI.new_Index2Layer__SWIG_0(Index.getCPtr(quantizer), quantizer, nlist, M, nbit, metric.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public Index2Layer(Index quantizer, long nlist, int M, int nbit) {
-    this(swigfaissJNI.new_Index2Layer__SWIG_1(Index.getCPtr(quantizer), quantizer, nlist, M, nbit), true);
+    this(swigfaissJNI.new_Index2Layer__SWIG_1(Index.getCPtr(quantizer), quantizer, nlist, M, nbit), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public Index2Layer(Index quantizer, long nlist, int M) {
-    this(swigfaissJNI.new_Index2Layer__SWIG_2(Index.getCPtr(quantizer), quantizer, nlist, M), true);
+    this(swigfaissJNI.new_Index2Layer__SWIG_2(Index.getCPtr(quantizer), quantizer, nlist, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public Index2Layer() {
-    this(swigfaissJNI.new_Index2Layer__SWIG_3(), true);
+    this(swigfaissJNI.new_Index2Layer__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {
@@ -96,7 +98,7 @@ public class Index2Layer extends IndexFlatCodes {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.Index2Layer_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, false);
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void transfer_to_IVFPQ(IndexIVFPQ other) {

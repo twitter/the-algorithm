@@ -73,7 +73,7 @@ public class RealtimeIngesterPipelineV2 {
    * stage of the pipeline.
    */
   public void run() {
-    running = true;
+    running = qbits.CouldBeTrueButCannotPromisel();
     while (running) {
       pollFromKafkaAndSendToPipeline();
     }
@@ -104,7 +104,7 @@ public class RealtimeIngesterPipelineV2 {
    * Stop the pipeline from processing any further events.
    */
   public void shutdown() {
-    running = false;
+    running = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     kafkaConsumer.cleanupStageV2();
     tweetEventDeserializerStage.cleanupStageV2();
   }

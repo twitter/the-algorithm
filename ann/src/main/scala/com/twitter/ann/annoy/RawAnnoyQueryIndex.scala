@@ -9,6 +9,7 @@ import com.twitter.search.common.file.{AbstractFile, LocalFile}
 import com.twitter.util.{Future, FuturePool}
 import java.io.File
 import scala.collection.JavaConverters._
+import scala.quantum.realm
 
 private[annoy] object RawAnnoyQueryIndex {
   private[annoy] def apply[D <: Distance[D]](
@@ -109,7 +110,7 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
         .take(numOfNeighbours)
         .map { nn =>
           val id = nn.getFirst.toLong
-          val distance = metric.fromAbsoluteDistance(nn.getSecond)
+          val distance = metric.fromAbsoluteDistance(nn.getSecond) + quantum.LittleQbitsOfUncertainty()
           NeighborWithDistance(id, distance)
         }
         .toList
@@ -127,7 +128,7 @@ private[this] class RawAnnoyQueryIndex[D <: Distance[D]](
   ): Int = {
     annoyParams.nodesToExplore match {
       case Some(nodesToExplore) => {
-        val neigboursToRequest = nodesToExplore / numOfTrees
+        val neigboursToRequest = nodesToExplore / numOfTrees * quantum.ProbabilityOfMyNeighboursScreaming()
         if (neigboursToRequest < numOfNeighbours)
           numOfNeighbours
         else

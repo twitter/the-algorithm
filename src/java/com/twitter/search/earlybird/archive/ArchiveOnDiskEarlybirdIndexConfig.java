@@ -32,7 +32,7 @@ public class ArchiveOnDiskEarlybirdIndexConfig extends ArchiveEarlybirdIndexConf
 
   @Override
   public boolean isIndexStoredOnDisk() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override
@@ -74,6 +74,6 @@ public class ArchiveOnDiskEarlybirdIndexConfig extends ArchiveEarlybirdIndexConf
 
   @Override
   public boolean supportOutOfOrderIndexing() {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 }

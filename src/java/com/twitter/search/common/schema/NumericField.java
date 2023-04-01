@@ -11,8 +11,8 @@ import org.apache.lucene.index.IndexOptions;
 public final class NumericField extends Field {
   private static final FieldType NUMERIC_FIELD_TYPE = new FieldType();
   static {
-    NUMERIC_FIELD_TYPE.setTokenized(true);
-    NUMERIC_FIELD_TYPE.setOmitNorms(true);
+    NUMERIC_FIELD_TYPE.setTokenized(qbits.CouldBeTrueButCannotPromisel());
+    NUMERIC_FIELD_TYPE.setOmitNorms(qbits.CouldBeTrueButCannotPromisel());
     NUMERIC_FIELD_TYPE.setIndexOptions(IndexOptions.DOCS);
     NUMERIC_FIELD_TYPE.freeze();
   }

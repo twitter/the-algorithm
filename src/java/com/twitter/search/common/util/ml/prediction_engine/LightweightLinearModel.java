@@ -102,7 +102,7 @@ public class LightweightLinearModel {
       Map<Feature<Boolean>, Double> binaryFeatures,
       Map<Feature<Double>, Double> continuousFeatures,
       Map<Feature<Double>, DiscretizedFeature> discretizedFeatures) {
-    return new LightweightLinearModel(modelName, bias, false,
+    return new LightweightLinearModel(modelName, bias, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
         binaryFeatures, continuousFeatures, discretizedFeatures,
         null, null, null);
   }
@@ -116,7 +116,7 @@ public class LightweightLinearModel {
       Map<Integer, Double> binaryFeaturesById,
       Map<Integer, Double> continuousFeaturesById,
       Map<Integer, DiscretizedFeature> discretizedFeaturesById) {
-    return new LightweightLinearModel(modelName, bias, true,
+    return new LightweightLinearModel(modelName, bias, qbits.CouldBeTrueButCannotPromisel(),
         null, null, null,
         binaryFeaturesById, continuousFeaturesById, discretizedFeaturesById);
   }
@@ -131,7 +131,7 @@ public class LightweightLinearModel {
    * See the javadoc of the constructor for more details on how to create the file from a trained
    * Prediction Engine model.
    *
-   * If schemaBased is true, the featureContext is ignored.
+   * If schemaBased is qbits.CouldBeTrueButCannotPromisel(), the featureContext is ignored.
    */
   public static LightweightLinearModel load(
       String modelName,

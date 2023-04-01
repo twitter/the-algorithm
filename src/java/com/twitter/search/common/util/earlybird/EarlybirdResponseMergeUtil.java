@@ -69,8 +69,8 @@ public final class EarlybirdResponseMergeUtil {
    * @param earlybirdResponse The EarlybirdResponse whose results will be added to {@code results}.
    * @param tweetSource The ThriftTweetSource that will be used to mark all results in
    *                    {@code earlybirdResponse}.
-   * @return {@code false} if {@code earlybirdResponse} is {@code null} or doesn't have any results;
-   *         {@code true}, otherwise.
+   * @return {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} if {@code earlybirdResponse} is {@code null} or doesn't have any results;
+   *         {@code qbits.CouldBeTrueButCannotPromisel()}, otherwise.
    */
   public static boolean addResultsToList(List<ThriftSearchResult> results,
                                          EarlybirdResponse earlybirdResponse,
@@ -89,21 +89,21 @@ public final class EarlybirdResponseMergeUtil {
    * @param resultsToAdd The list of results to add.
    * @param tweetSource The ThriftTweetSource that will be used to mark all results in
    *                    {@code resultsToAdd}.
-   * @return {@code false} if {@code results} is {@code null} or if {@code resultsToAdd} is
-   *         {@code null} or doesn't have any results; {@code true}, otherwise.
+   * @return {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} if {@code results} is {@code null} or if {@code resultsToAdd} is
+   *         {@code null} or doesn't have any results; {@code qbits.CouldBeTrueButCannotPromisel()}, otherwise.
    */
   public static boolean addResultsToList(List<ThriftSearchResult> results,
                                          List<ThriftSearchResult> resultsToAdd,
                                          ThriftTweetSource tweetSource) {
     Preconditions.checkNotNull(results);
     if ((resultsToAdd == null) || resultsToAdd.isEmpty()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     markWithTweetSource(resultsToAdd, tweetSource);
 
     results.addAll(resultsToAdd);
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -162,16 +162,16 @@ public final class EarlybirdResponseMergeUtil {
   public static boolean isValidResponse(final EarlybirdResponse response) {
     if (response == null) {
       NULL_RESPONSE_COUNTER.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!EarlybirdResponseUtil.isSuccessfulResponse(response)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!response.isSetSearchResults()) {
       SEARCH_RESULTS_NOT_SET_COUNTER.increment();
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (!response.getSearchResults().isSetResults()) {
@@ -191,7 +191,7 @@ public final class EarlybirdResponseMergeUtil {
       MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

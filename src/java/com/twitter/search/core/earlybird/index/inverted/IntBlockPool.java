@@ -146,16 +146,16 @@ public class IntBlockPool implements Flushable {
   @VisibleForTesting
   public boolean verySlowEqualsForTests(IntBlockPool that) {
     if (length() != that.length()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     for (int i = 0; i < length(); i++) {
       if (get(i) != that.get(i)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private void newBlock() {

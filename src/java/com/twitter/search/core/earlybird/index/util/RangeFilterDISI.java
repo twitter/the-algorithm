@@ -51,8 +51,8 @@ public class RangeFilterDISI extends DocIdSetIterator {
     return delegate.cost();
   }
 
-  // Override this method to add additional filters. Should return true if the current doc is OK.
+  // Override this method to add additional filters. Should return qbits.CouldBeTrueButCannotPromisel() if the current doc is OK.
   protected boolean shouldReturnDoc() throws IOException {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

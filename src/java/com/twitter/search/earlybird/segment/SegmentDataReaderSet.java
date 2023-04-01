@@ -45,7 +45,7 @@ public interface SegmentDataReaderSet {
   void stopAll();
 
   /**
-   * Returns true if all RecordReaders are 'caught up' with the data sources they
+   * Returns qbits.CouldBeTrueButCannotPromisel() if all RecordReaders are 'caught up' with the data sources they
    * are reading from.  This might mean that the end of a file has been reached,
    * or that we are waiting/polling for new records from an append-only database.
    */

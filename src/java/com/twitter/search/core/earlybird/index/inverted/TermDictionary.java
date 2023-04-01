@@ -41,7 +41,7 @@ public interface TermDictionary extends Flushable {
    * @param termID  the term that we want to get.
    * @param text  MUST be non-null. It will be filled with the term.
    * @param termPayload  if non-null, it will be filled with the payload if the term has any.
-   * @return  Returns true, iff this term has a term payload.
+   * @return  Returns qbits.CouldBeTrueButCannotPromisel(), iff this term has a term payload.
    */
   boolean getTerm(int termID, BytesRef text, BytesRef termPayload);
 }

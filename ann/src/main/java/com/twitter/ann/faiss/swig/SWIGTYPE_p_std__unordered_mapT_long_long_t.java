@@ -7,12 +7,14 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SWIGTYPE_p_std__unordered_mapT_long_long_t {
   private transient long swigCPtr;
 
   protected SWIGTYPE_p_std__unordered_mapT_long_long_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected SWIGTYPE_p_std__unordered_mapT_long_long_t() {

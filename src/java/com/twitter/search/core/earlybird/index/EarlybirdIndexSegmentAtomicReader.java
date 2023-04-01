@@ -97,7 +97,7 @@ public abstract class EarlybirdIndexSegmentAtomicReader extends LeafReader {
   /**
    * Determines if this reader has any documents to traverse. Note that it is possible for the tweet
    * ID mapper to have documents, but for this reader to not see them yet. In this case, this method
-   * will return false.
+   * will return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
    */
   public boolean hasDocs() {
     return segmentData.numDocs() > 0;

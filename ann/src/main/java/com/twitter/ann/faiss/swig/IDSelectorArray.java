@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IDSelectorArray extends IDSelector {
   private transient long swigCPtr;
 
   protected IDSelectorArray(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IDSelectorArray_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IDSelectorArray obj) {
@@ -28,7 +30,7 @@ public class IDSelectorArray extends IDSelector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IDSelectorArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -49,11 +51,11 @@ public class IDSelectorArray extends IDSelector {
   }
 
   public LongVector getIds() {
-    return new LongVector(swigfaissJNI.IDSelectorArray_ids_get(swigCPtr, this), false);
+    return new LongVector(swigfaissJNI.IDSelectorArray_ids_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public IDSelectorArray(long n, LongVector ids) {
-    this(swigfaissJNI.new_IDSelectorArray(n, SWIGTYPE_p_long_long.getCPtr(ids.data()), ids), true);
+    this(swigfaissJNI.new_IDSelectorArray(n, SWIGTYPE_p_long_long.getCPtr(ids.data()), ids), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public boolean is_member(long id) {

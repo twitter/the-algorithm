@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OperatingPointVector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class OperatingPointVector {
 
   protected OperatingPointVector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OperatingPointVector obj) {
@@ -29,7 +31,7 @@ public class OperatingPointVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OperatingPointVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class OperatingPointVector {
   }
 
   public OperatingPointVector() {
-    this(swigfaissJNI.new_OperatingPointVector(), true);
+    this(swigfaissJNI.new_OperatingPointVector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(OperatingPoint arg0) {
@@ -50,7 +52,7 @@ public class OperatingPointVector {
 
   public OperatingPoint data() {
     long cPtr = swigfaissJNI.OperatingPointVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new OperatingPoint(cPtr, false);
+    return (cPtr == 0) ? null : new OperatingPoint(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long size() {
@@ -58,7 +60,7 @@ public class OperatingPointVector {
   }
 
   public OperatingPoint at(long n) {
-    return new OperatingPoint(swigfaissJNI.OperatingPointVector_at(swigCPtr, this, n), true);
+    return new OperatingPoint(swigfaissJNI.OperatingPointVector_at(swigCPtr, this, n), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void resize(long n) {

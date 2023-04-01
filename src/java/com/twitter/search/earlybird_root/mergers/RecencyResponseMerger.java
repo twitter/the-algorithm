@@ -47,7 +47,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(RecencyResponseMerger.class);
 
   private static final SearchTimerStats RECENCY_TIMER =
-      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
 
   @VisibleForTesting
   static final String TERMINATED_COLLECTED_ENOUGH_RESULTS =
@@ -225,7 +225,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
    *
    * After merge, we get [102, 101, 92], with minResultId == 92. Since results from
    * partition 2 is not early terminated, 92 is the tier bottom here. Since results are
-   * filtered, early termination for merged result is set to true, so blender will call again,
+   * filtered, early termination for merged result is set to qbits.CouldBeTrueButCannotPromisel(), so blender will call again,
    * with maxDocId == 91. This time we get result:
    * Results from partition 1: [91 81], minSearchedStatusId is 81
    * Results from partition 2: [], minSearchedStatusId is still 92
@@ -237,12 +237,12 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
    * without this step, as the next pagination call will return empty results anyway.
    * So even if there is NOT overlap between tiers, this is still better.
    *
-   * Return true if early termination is cleared due to this, otherwise return false.
+   * Return qbits.CouldBeTrueButCannotPromisel() if early termination is cleared due to this, otherwise return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
    * To be safe, we do nothing here to keep existing behavior and only override it in
    * StrictRecencyResponseMerger.
    */
   protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**
@@ -250,7 +250,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
    * trimmed results as requested, as is not early-terminated because of other reasons.
    */
   protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -278,7 +278,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
         responseMessageBuilder.debugVerbose("Setting early termination, trimStats: %s, results: %s",
             trimStats, mergedResponse);
 
-        earlyTerminationInfo.setEarlyTerminated(true);
+        earlyTerminationInfo.setEarlyTerminated(qbits.CouldBeTrueButCannotPromisel());
         addEarlyTerminationReasons(earlyTerminationInfo, trimStats);
 
         if (trimStats.getMinIdFilterCount() > 0
@@ -289,11 +289,11 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
         } else if (trimStats.getResultsTruncatedFromTailCount() > 0) {
           stats.getCounterFor(TRUNCATED).increment();
         } else {
-          Preconditions.checkState(false, "Invalid TrimStats: %s", trimStats);
+          Preconditions.checkState(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), "Invalid TrimStats: %s", trimStats);
         }
       } else if ((computeNumResultsToKeep() == mergedResponse.getSearchResults().getResultsSize())
                  && shouldEarlyTerminateWhenEnoughTrimmedResults()) {
-        earlyTerminationInfo.setEarlyTerminated(true);
+        earlyTerminationInfo.setEarlyTerminated(qbits.CouldBeTrueButCannotPromisel());
         earlyTerminationInfo.addToMergedEarlyTerminationReasons(
             TERMINATED_COLLECTED_ENOUGH_RESULTS);
         stats.getCounterFor(TERMINATED_GOT_EXACT_NUM_RESULTS).increment();

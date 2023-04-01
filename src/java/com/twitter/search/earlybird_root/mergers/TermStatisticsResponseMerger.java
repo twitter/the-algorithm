@@ -24,7 +24,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(TermStatisticsResponseMerger.class);
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
 
   private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
@@ -85,6 +85,6 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
   public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
                                                   boolean foundEarlyTermination) {
     // To get accurate term stats, must never early terminate
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 }

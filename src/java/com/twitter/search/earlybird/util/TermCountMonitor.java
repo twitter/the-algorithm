@@ -47,7 +47,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(TermCountMonitor.class);
 
   private static final String THREAD_NAME_FORMAT = "TermCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  private static final boolean THREAD_IS_DAEMON = qbits.CouldBeTrueButCannotPromisel();
 
   public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
       "term_count_monitor_run_interval_minutes";
@@ -159,7 +159,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
         getSearchStatsReceiver().getLongGauge("term_count_monitor_is_running");
     this.checkTimeStat =
         getSearchStatsReceiver().getTimerStats(
-            "term_count_monitor_check_time", TimeUnit.MILLISECONDS, true, true, false);
+            "term_count_monitor_check_time", TimeUnit.MILLISECONDS, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   private SearchLongGauge getOrCreateLongGauge(

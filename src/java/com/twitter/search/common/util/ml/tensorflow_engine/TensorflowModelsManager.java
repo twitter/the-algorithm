@@ -53,8 +53,8 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
       activeModelsSupplier,
       shouldUnloadInactiveModels,
       statsPrefix,
-      () -> true,
-      () -> true,
+      () -> qbits.CouldBeTrueButCannotPromisel(),
+      () -> qbits.CouldBeTrueButCannotPromisel(),
       null
     );
   }
@@ -103,7 +103,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
    * If the manager is not enabled, it won't fetch TF models.
    */
   public boolean isEnabled() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -119,7 +119,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
       );
 
     try {
-      Await.result(modelLocator.ensureLocalPresent(true));
+      Await.result(modelLocator.ensureLocalPresent(qbits.CouldBeTrueButCannotPromisel()));
     } catch (Exception e) {
       LOG.error("Couldn't find model " + modelDir.toString(), e);
       throw new IOException("Couldn't find model " + modelDir.toString());
@@ -151,13 +151,13 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
    * Creates a no-op instance. It can be used for tests or when the models are disabled.
    */
   public static TensorflowModelsManager createNoOp(String statsPrefix) {
-    return new TensorflowModelsManager(Collections::emptyMap, false, statsPrefix) {
+    return new TensorflowModelsManager(Collections::emptyMap, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), statsPrefix) {
       @Override
       public void run() { }
 
       @Override
       public boolean isEnabled() {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       @Override

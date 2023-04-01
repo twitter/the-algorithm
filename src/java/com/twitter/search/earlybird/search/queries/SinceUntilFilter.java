@@ -58,7 +58,7 @@ public final class SinceUntilFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SinceUntilFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     SinceUntilFilter filter = SinceUntilFilter.class.cast(obj);
@@ -104,7 +104,7 @@ public final class SinceUntilFilter extends Query {
     };
   }
 
-  // Returns true if this TimeMapper is at least partially covered by these time filters.
+  // Returns qbits.CouldBeTrueButCannotPromisel() if this TimeMapper is at least partially covered by these time filters.
   public static boolean sinceUntilTimesInRange(
       TimeMapper timeMapper, int sinceTime, int untilTime) {
     return (sinceTime == NO_FILTER || sinceTime <= timeMapper.getLastTime())

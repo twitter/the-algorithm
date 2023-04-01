@@ -29,7 +29,7 @@ public class AudioSpaceCoreFetcher {
   public AudioSpaceCoreFetcher(Client stratoClient) {
     fetcher = stratoClient.fetcher(
         CORE_STRATO_COLUMN,
-        true, // enables checking types against catalog
+        qbits.CouldBeTrueButCannotPromisel(), // enables checking types against catalog
         Conv.stringConv(),
         TBaseConv.forClass(AudioSpacesLookupContext.class),
         TBaseConv.forClass(AudioSpace.class));

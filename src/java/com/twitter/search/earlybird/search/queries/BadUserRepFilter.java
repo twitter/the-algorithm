@@ -50,7 +50,7 @@ public final class BadUserRepFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof BadUserRepFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     return minTweepCred == BadUserRepFilter.class.cast(obj).minTweepCred;

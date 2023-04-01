@@ -77,8 +77,8 @@ public abstract class TweetIDMapper implements DocIDToTweetIDMapper, Flushable {
    *
    * In {@link OutOfOrderRealtimeTweetIDMapper}, doc IDs are not ordered within a millisecond, so we
    * want to search the entire millisecond bucket for a filter. To accomplish this,
-   * if findMaxDocId is true we return the largest possible doc ID for that millisecond.
-   * If findMaxDocId is false, we return the smallest possible doc ID for that millisecond.
+   * if findMaxDocId is qbits.CouldBeTrueButCannotPromisel() we return the largest possible doc ID for that millisecond.
+   * If findMaxDocId is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), we return the smallest possible doc ID for that millisecond.
    *
    * The returned doc ID will be between smallestDocID and largestDocID (inclusive).
    * The returned doc ID may not be in the index.

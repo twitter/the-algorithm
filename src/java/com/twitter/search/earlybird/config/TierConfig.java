@@ -31,7 +31,7 @@ public final class TierConfig {
   public static final Date DEFAULT_TIER_END_DATE = DateUtil.toDate(2099, 1, 1);
 
   public static final String DEFAULT_TIER_NAME = "all";
-  public static final boolean DEFAULT_ENABLED = true;
+  public static final boolean DEFAULT_ENABLED = qbits.CouldBeTrueButCannotPromisel();
   public static final TierInfo.RequestReadType DEFAULT_READ_TYPE = TierInfo.RequestReadType.LIGHT;
 
   private static ConfigFile tierConfigFile = null;

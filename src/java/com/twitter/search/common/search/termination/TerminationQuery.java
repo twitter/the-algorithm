@@ -51,7 +51,7 @@ public class TerminationQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof TerminationQuery)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     TerminationQuery terminationQuery = TerminationQuery.class.cast(obj);

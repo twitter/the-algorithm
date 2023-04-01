@@ -119,7 +119,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   @Override
   public void startUpdates() {
     new Thread(() -> {
-      while (true) {
+      while (qbits.CouldBeTrueButCannotPromisel()) {
         update();
         try {
           Thread.sleep(SAMPLING_WINDOW_MILLIS);
@@ -132,7 +132,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   }
 
   /**
-   * Returns true if quality factoring is enabled by the decider.
+   * Returns qbits.CouldBeTrueButCannotPromisel() if quality factoring is enabled by the decider.
    * @return
    */
   private boolean enabled() {
@@ -140,7 +140,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   }
 
   /**
-   * Returns true if a decider has overridden the quality factor.
+   * Returns qbits.CouldBeTrueButCannotPromisel() if a decider has overridden the quality factor.
    * @return
    */
   private boolean isOverridden() {
@@ -156,7 +156,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   }
 
   /**
-   * Returns true if the quality factor has changed since the last update.
+   * Returns qbits.CouldBeTrueButCannotPromisel() if the quality factor has changed since the last update.
    * @return
    */
   private boolean qualityFactorChanged() {
@@ -164,7 +164,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   }
 
   /**
-   * Returns true if we've entered a degraded state.
+   * Returns qbits.CouldBeTrueButCannotPromisel() if we've entered a degraded state.
    * @return
    */
   private boolean degradationBegan() {
@@ -172,7 +172,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   }
 
   /**
-   * Returns true if we've left the degraded state.
+   * Returns qbits.CouldBeTrueButCannotPromisel() if we've left the degraded state.
    * @return
    */
   private boolean degradationEnded() {

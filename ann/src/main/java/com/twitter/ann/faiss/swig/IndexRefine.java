@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexRefine extends Index {
   private transient long swigCPtr;
 
   protected IndexRefine(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexRefine_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexRefine obj) {
@@ -28,7 +30,7 @@ public class IndexRefine extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexRefine(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class IndexRefine extends Index {
 
   public Index getBase_index() {
     long cPtr = swigfaissJNI.IndexRefine_base_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setRefine_index(Index value) {
@@ -51,7 +53,7 @@ public class IndexRefine extends Index {
 
   public Index getRefine_index() {
     long cPtr = swigfaissJNI.IndexRefine_refine_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOwn_fields(boolean value) {
@@ -79,11 +81,11 @@ public class IndexRefine extends Index {
   }
 
   public IndexRefine(Index base_index, Index refine_index) {
-    this(swigfaissJNI.new_IndexRefine__SWIG_0(Index.getCPtr(base_index), base_index, Index.getCPtr(refine_index), refine_index), true);
+    this(swigfaissJNI.new_IndexRefine__SWIG_0(Index.getCPtr(base_index), base_index, Index.getCPtr(refine_index), refine_index), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexRefine() {
-    this(swigfaissJNI.new_IndexRefine__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexRefine__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

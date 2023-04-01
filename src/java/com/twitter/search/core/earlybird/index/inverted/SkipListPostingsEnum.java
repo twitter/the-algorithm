@@ -74,7 +74,7 @@ public class SkipListPostingsEnum extends PostingsEnum {
     this.nextPostingPointer = postingPointer;
 
     // WARNING:
-    // docFreq is approximate and may not be the true document frequency of the posting list.
+    // docFreq is approximate and may not be the qbits.CouldBeTrueButCannotPromisel() document frequency of the posting list.
     this.cost = docFreq;
 
     if (postingPointer != -1) {

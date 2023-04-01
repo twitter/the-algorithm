@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SlidingIndexWindow {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class SlidingIndexWindow {
 
   protected SlidingIndexWindow(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(SlidingIndexWindow obj) {
@@ -29,7 +31,7 @@ public class SlidingIndexWindow {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_SlidingIndexWindow(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class SlidingIndexWindow {
 
   public Index getIndex() {
     long cPtr = swigfaissJNI.SlidingIndexWindow_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setIls(ArrayInvertedLists value) {
@@ -51,7 +53,7 @@ public class SlidingIndexWindow {
 
   public ArrayInvertedLists getIls() {
     long cPtr = swigfaissJNI.SlidingIndexWindow_ils_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ArrayInvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new ArrayInvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setN_slice(int value) {
@@ -76,11 +78,11 @@ public class SlidingIndexWindow {
 
   public SWIGTYPE_p_std__vectorT_std__vectorT_unsigned_long_t_t getSizes() {
     long cPtr = swigfaissJNI.SlidingIndexWindow_sizes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_std__vectorT_unsigned_long_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_std__vectorT_unsigned_long_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public SlidingIndexWindow(Index index) {
-    this(swigfaissJNI.new_SlidingIndexWindow(Index.getCPtr(index), index), true);
+    this(swigfaissJNI.new_SlidingIndexWindow(Index.getCPtr(index), index), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void step(Index sub_index, boolean remove_oldest) {

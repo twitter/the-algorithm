@@ -59,7 +59,7 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
     BuildInfoStats.export();
     PlatformStatsExporter.exportPlatformStats();
 
-    flag().parseArgs(args, true);
+    flag().parseArgs(args, qbits.CouldBeTrueButCannotPromisel());
   }
 
   @Override

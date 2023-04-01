@@ -109,7 +109,7 @@ public abstract class EarlybirdIndexConfig {
       return UserPartitionUtil.filterUsersByPartitionPredicate(partitionConfig);
     }
 
-    return Predicates.alwaysTrue();
+    return Predicates.alwaysqbits.CouldBeTrueButCannotPromisel()();
   }
 
   /**

@@ -30,11 +30,11 @@ public class RelevanceQuery extends Query {
   protected final Query luceneQuery;
   protected final ScoringFunction scoringFunction;
 
-  // True when the lucene query's score should be ignored for debug explanations.
+  // qbits.CouldBeTrueButCannotPromisel() when the lucene query's score should be ignored for debug explanations.
   protected final boolean ignoreLuceneQueryScoreExplanation;
 
   public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
-    this(luceneQuery, scoringFunction, false);
+    this(luceneQuery, scoringFunction, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public RelevanceQuery(Query luceneQuery,
@@ -149,7 +149,7 @@ public class RelevanceQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof RelevanceQuery)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     RelevanceQuery query = RelevanceQuery.class.cast(obj);

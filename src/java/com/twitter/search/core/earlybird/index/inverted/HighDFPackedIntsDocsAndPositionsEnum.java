@@ -19,7 +19,7 @@ public class HighDFPackedIntsDocsAndPositionsEnum extends HighDFPackedIntsDocsEn
           HighDFPackedIntsPostingLists.MAX_POSITION_BIT,
           HighDFPackedIntsPostingLists.POSITION_SLICE_NUM_BITS_WITHOUT_HEADER,
           HighDFPackedIntsPostingLists.POSITION_SLICE_SIZE_WITHOUT_HEADER,
-          true);
+          qbits.CouldBeTrueButCannotPromisel());
 
   /**
    * Int block pool holding the positions for the read posting list. This is mainly used while

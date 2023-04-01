@@ -88,7 +88,7 @@ public class SocialFilter {
    */
   public boolean accept(int internalDocID) throws IOException {
     if (!fromUserID.advanceExact(internalDocID)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     long fromUserLong = fromUserID.longValue();

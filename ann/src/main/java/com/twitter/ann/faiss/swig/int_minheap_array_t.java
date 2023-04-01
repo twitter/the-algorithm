@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class int_minheap_array_t {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class int_minheap_array_t {
 
   protected int_minheap_array_t(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(int_minheap_array_t obj) {
@@ -29,7 +31,7 @@ public class int_minheap_array_t {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_int_minheap_array_t(swigCPtr);
       }
       swigCPtr = 0;
@@ -57,7 +59,7 @@ public class int_minheap_array_t {
   }
 
   public LongVector getIds() {
-    return new LongVector(swigfaissJNI.int_minheap_array_t_ids_get(swigCPtr, this), false);
+    return new LongVector(swigfaissJNI.int_minheap_array_t_ids_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void setVal(SWIGTYPE_p_int value) {
@@ -66,16 +68,16 @@ public class int_minheap_array_t {
 
   public SWIGTYPE_p_int getVal() {
     long cPtr = swigfaissJNI.int_minheap_array_t_val_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public SWIGTYPE_p_int get_val(long key) {
     long cPtr = swigfaissJNI.int_minheap_array_t_get_val(swigCPtr, this, key);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LongVector get_ids(long key) {
-    return new LongVector(swigfaissJNI.int_minheap_array_t_get_ids(swigCPtr, this, key), false);
+    return new LongVector(swigfaissJNI.int_minheap_array_t_get_ids(swigCPtr, this, key), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void heapify() {
@@ -127,7 +129,7 @@ public class int_minheap_array_t {
   }
 
   public int_minheap_array_t() {
-    this(swigfaissJNI.new_int_minheap_array_t(), true);
+    this(swigfaissJNI.new_int_minheap_array_t(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

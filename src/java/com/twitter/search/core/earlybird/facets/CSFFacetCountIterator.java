@@ -51,6 +51,6 @@ public class CSFFacetCountIterator extends FacetCountIterator {
    * @return whether we should collect on this doc/termID
    */
   protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

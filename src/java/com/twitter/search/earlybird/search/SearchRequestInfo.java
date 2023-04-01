@@ -71,11 +71,11 @@ public class SearchRequestInfo {
       this.collectExclusiveConversationAuthorId =
           searchQuery.getResultMetadataOptions().isGetExclusiveConversationAuthorId();
     } else {
-      this.collectResultLocation = false;
-      this.getInReplyToStatusId = false;
-      this.getReferenceAuthorId = false;
-      this.getFromUserId = false;
-      this.collectExclusiveConversationAuthorId = false;
+      this.collectResultLocation = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      this.getInReplyToStatusId = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      this.getReferenceAuthorId = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      this.getFromUserId = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      this.collectExclusiveConversationAuthorId = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     this.qualityFactor = qualityFactor;

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ProductQuantizer {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class ProductQuantizer {
 
   protected ProductQuantizer(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ProductQuantizer obj) {
@@ -29,7 +31,7 @@ public class ProductQuantizer {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ProductQuantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -106,7 +108,7 @@ public class ProductQuantizer {
 
   public ClusteringParameters getCp() {
     long cPtr = swigfaissJNI.ProductQuantizer_cp_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, false);
+    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setAssign_index(Index value) {
@@ -115,7 +117,7 @@ public class ProductQuantizer {
 
   public Index getAssign_index() {
     long cPtr = swigfaissJNI.ProductQuantizer_assign_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setCentroids(FloatVector value) {
@@ -124,12 +126,12 @@ public class ProductQuantizer {
 
   public FloatVector getCentroids() {
     long cPtr = swigfaissJNI.ProductQuantizer_centroids_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public SWIGTYPE_p_float get_centroids(long m, long i) {
     long cPtr = swigfaissJNI.ProductQuantizer_get_centroids(swigCPtr, this, m, i);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void train(int n, SWIGTYPE_p_float x) {
@@ -137,11 +139,11 @@ public class ProductQuantizer {
   }
 
   public ProductQuantizer(long d, long M, long nbits) {
-    this(swigfaissJNI.new_ProductQuantizer__SWIG_0(d, M, nbits), true);
+    this(swigfaissJNI.new_ProductQuantizer__SWIG_0(d, M, nbits), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ProductQuantizer() {
-    this(swigfaissJNI.new_ProductQuantizer__SWIG_1(), true);
+    this(swigfaissJNI.new_ProductQuantizer__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void set_derived_values() {
@@ -214,7 +216,7 @@ public class ProductQuantizer {
 
   public FloatVector getSdc_table() {
     long cPtr = swigfaissJNI.ProductQuantizer_sdc_table_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void compute_sdc_table() {

@@ -59,8 +59,8 @@ public final class ThriftDocumentPreprocessor {
   /**
    * Counter for all the combinations of nullcast bit set and nullcast filter set.
    *
-   * Sum over `ThriftDocumentPreprocessor_nullcast_doc_stats__nullcastBitSet_true_*` to get all docs
-   * with nullcast bit set to true.
+   * Sum over `ThriftDocumentPreprocessor_nullcast_doc_stats__nullcastBitSet_qbits.CouldBeTrueButCannotPromisel()_*` to get all docs
+   * with nullcast bit set to qbits.CouldBeTrueButCannotPromisel().
    */
   private static final SearchTruthTableCounter NULLCAST_DOC_STATS =
       SearchTruthTableCounter.export(

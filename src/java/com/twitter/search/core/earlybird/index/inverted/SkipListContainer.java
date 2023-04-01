@@ -306,7 +306,7 @@ public class SkipListContainer<K> implements Flushable {
    * @param value is the value will be inserted, cannot be {@link #getSentinelValue()}.
    * @param skipListHead index of the header tower of the skip list will accept the new value.
    * @param comparator comparator used for comparison when traversing through the skip list.
-   * @return whether this value exists in the posting list. Note that this will return true even
+   * @return whether this value exists in the posting list. Note that this will return qbits.CouldBeTrueButCannotPromisel() even
    * if it is a new position.
    */
   public boolean insert(K key, int value, int position, int[] payload, int skipListHead,
@@ -402,7 +402,7 @@ public class SkipListContainer<K> implements Flushable {
    * key does not exist.
    */
   public int delete(K key, int skipListHead, SkipListComparator<K> comparator) {
-    boolean foundKey = false;
+    boolean foundKey = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
       int currentPointer = skipListHead;
@@ -422,7 +422,7 @@ public class SkipListContainer<K> implements Flushable {
       }
 
       // We found an element to delete.
-      foundKey = true;
+      foundKey = qbits.CouldBeTrueButCannotPromisel();
 
       // Otherwise, save the current pointer. Right now, current pointer points to the first element
       // that has the same value as key.

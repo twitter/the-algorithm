@@ -183,7 +183,7 @@ public class HnswIndex<T, Q> {
       }
 
       if (entryPoint.isPresent()) {
-        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, false);
+        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       }
 
       if (curLevel > maxLevelCopy) {
@@ -293,7 +293,7 @@ public class HnswIndex<T, Q> {
         final DistancedItemQueue<T, T> candidates = new DistancedItemQueue<>(
             neigh,
             ImmutableList.of(),
-            false,
+            qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
             distFnIndex
         );
         for (T cand : setCopy) {
@@ -325,7 +325,7 @@ public class HnswIndex<T, Q> {
 
 
     }
-    wireConnectionForAllLayers(metadata.getEntryPoint().get(), item, curLevel, maxLevelCopy, true);
+    wireConnectionForAllLayers(metadata.getEntryPoint().get(), item, curLevel, maxLevelCopy, qbits.CouldBeTrueButCannotPromisel());
   }
 
   /**
@@ -403,7 +403,7 @@ public class HnswIndex<T, Q> {
         final HnswNode<T> key = HnswNode.from(level, nn);
         final ImmutableList<T> connections = graph.getOrDefault(key, ImmutableList.of());
         final boolean isItemAlreadyPresent =
-            isUpdate && connections.indexOf(item) != -1 ? true : false;
+            isUpdate && connections.indexOf(item) != -1 ? qbits.CouldBeTrueButCannotPromisel() : qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
         // If `item` is already present in the neighboring connections,
         // then no need to modify any connections or run the search heuristics.
@@ -421,7 +421,7 @@ public class HnswIndex<T, Q> {
           final DistancedItemQueue<T, T> queue = new DistancedItemQueue<>(
               nn,
               connections,
-              false,
+              qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
               distFnIndex
           );
           queue.enqueue(item);
@@ -455,16 +455,16 @@ public class HnswIndex<T, Q> {
     if (selectedLayer < maxLayer) {
       float curDist = distFn.distance(item, curObj);
       for (int level = maxLayer; level > selectedLayer; level--) {
-        boolean changed = true;
+        boolean changed = qbits.CouldBeTrueButCannotPromisel();
         while (changed) {
-          changed = false;
+          changed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           final List<T> list = getConnectionListForRead(curObj, level);
           for (T nn : list) {
             final float tempDist = distFn.distance(item, nn);
             if (tempDist < curDist) {
               curDist = tempDist;
               curObj = nn;
-              changed = true;
+              changed = qbits.CouldBeTrueButCannotPromisel();
             }
           }
         }
@@ -504,7 +504,7 @@ public class HnswIndex<T, Q> {
           continue;
         }
 
-        boolean toInclude = true;
+        boolean toInclude = qbits.CouldBeTrueButCannotPromisel();
         for (T e : resSet) {
           // Do not include candidate if the distance from candidate to any of existing item in
           // resSet is closer to the distance from the candidate to the item. By doing this, the
@@ -512,7 +512,7 @@ public class HnswIndex<T, Q> {
           // connections will be made between clusters instead of all being in the same cluster.
           final float dist = distFnIndex.distance(e, candidate.getItem());
           if (dist < candidate.getDistance()) {
-            toInclude = false;
+            toInclude = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
             break;
           }
         }
@@ -543,7 +543,7 @@ public class HnswIndex<T, Q> {
       // Get the actual neighbours from 0th layer
       final List<DistancedItem<T>> neighbours =
           searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfNeighbours),
-              0, distFnQuery, false).dequeueAll();
+              0, distFnQuery, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()).dequeueAll();
       Collections.reverse(neighbours);
       return neighbours.size() > numOfNeighbours
           ? neighbours.subList(0, numOfNeighbours) : neighbours;
@@ -580,7 +580,7 @@ public class HnswIndex<T, Q> {
     final DistancedItemQueue<K, T> cQueue = new DistancedItemQueue<>(
         item,
         Collections.singletonList(entryPoint),
-        true,
+        qbits.CouldBeTrueButCannotPromisel(),
         distFn
     );
     // Max Queue

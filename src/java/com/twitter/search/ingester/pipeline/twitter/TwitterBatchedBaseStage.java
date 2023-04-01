@@ -104,9 +104,9 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
     sizeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
         + "_size_based_queue_flush");
     batchExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_execution_time", TimeUnit.MILLISECONDS, false, true);
+        + "_batch_execution_time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
     batchFailedExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_failed_execution_time", TimeUnit.MILLISECONDS, false, true);
+        + "_batch_failed_execution_time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
     eventsFailed = SearchRateCounter.export(getStageNamePrefix() + "_events_dropped");
     SearchCustomGauge.export(getStageNamePrefix() + "_batched_stage_queue_size", queue::size);
     numberOfCallsToNextBatchIfReady = SearchRateCounter.export(getStageNamePrefix()

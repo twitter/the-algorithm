@@ -116,7 +116,7 @@ public class RealtimeIndexTerms extends Terms {
 
       // Construct termIter from the subset.
       if (termIter == null) {
-        termIter = termSet.tailSet(bytesRef, true).iterator();
+        termIter = termSet.tailSet(bytesRef, qbits.CouldBeTrueButCannotPromisel()).iterator();
       }
 
       if (termIter.hasNext()) {
@@ -172,7 +172,7 @@ public class RealtimeIndexTerms extends Terms {
      * {@link #nextTermIDPointer} is used to record pointer to next termsID to accelerate
      * {@link #next}. However, {@link #seekCeil} and {@link #seekExact} may jump to an arbitrary
      * term so the {@link #nextTermIDPointer} may not be correct, and this flag is used to check if
-     * this happens. If this flag is false, {@link #correctNextTermIDPointer} should be called to
+     * this happens. If this flag is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), {@link #correctNextTermIDPointer} should be called to
      * correct the value.
      */
     private boolean isNextTermIDPointerCorrect;
@@ -195,7 +195,7 @@ public class RealtimeIndexTerms extends Terms {
           new InvertedRealtimeIndex.TermsSkipListComparator(index);
       this.nextTermIDPointer =
           termsSkipList.getNextPointer(SkipListContainer.FIRST_LIST_HEAD);
-      this.isNextTermIDPointerCorrect = true;
+      this.isNextTermIDPointerCorrect = qbits.CouldBeTrueButCannotPromisel();
       this.maxPublishedPointer = maxPublishedPointer;
     }
 
@@ -219,7 +219,7 @@ public class RealtimeIndexTerms extends Terms {
     public SeekStatus seekCeil(BytesRef text) {
       // Next term pointer is not correct anymore since seek ceil
       //   will jump to an arbitrary term.
-      isNextTermIDPointerCorrect = false;
+      isNextTermIDPointerCorrect = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
       // Doing precise lookup first.
       termID = index.lookupTerm(text);
@@ -252,7 +252,7 @@ public class RealtimeIndexTerms extends Terms {
 
       // Set next termID pointer and is correct flag.
       nextTermIDPointer = termsSkipList.getNextPointer(termIDPointer);
-      isNextTermIDPointerCorrect = true;
+      isNextTermIDPointerCorrect = qbits.CouldBeTrueButCannotPromisel();
 
       // Found a ceil term but not the precise match.
       index.getTerm(termID, bytesRef);
@@ -275,7 +275,7 @@ public class RealtimeIndexTerms extends Terms {
           || termID == termsSkipList.getValue(curTermIDPointer);
 
       nextTermIDPointer = termsSkipList.getNextPointer(curTermIDPointer);
-      isNextTermIDPointerCorrect = true;
+      isNextTermIDPointerCorrect = qbits.CouldBeTrueButCannotPromisel();
     }
 
     @Override
@@ -313,7 +313,7 @@ public class RealtimeIndexTerms extends Terms {
 
         // Next term pointer is not correct anymore since seek exact
         //   just jump to an arbitrary term.
-        isNextTermIDPointerCorrect = false;
+        isNextTermIDPointerCorrect = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
@@ -345,21 +345,21 @@ public class RealtimeIndexTerms extends Terms {
 
   @Override
   public boolean hasFreqs() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override
   public boolean hasOffsets() {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   @Override
   public boolean hasPositions() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override
   public boolean hasPayloads() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

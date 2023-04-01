@@ -61,7 +61,7 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
   }
 
   private boolean tryToFilter(IngesterTwitterMessage status) {
-    boolean shouldEmit = false;
+    boolean shouldEmit = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     if (status.isRetweet() || status.isReplyToTweet()) {
       incomingRetweetsAndRepliesToTweetsCount.increment();
       if (DeciderUtil.isAvailableForRandomRecipient(
@@ -71,7 +71,7 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
         } else {
           filteredRepliesToTweetsCount.increment();
         }
-        shouldEmit = true;
+        shouldEmit = qbits.CouldBeTrueButCannotPromisel();
       }
     }
     return shouldEmit;

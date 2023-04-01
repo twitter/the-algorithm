@@ -37,7 +37,7 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
     Preconditions.checkState(settings.isSetIndexedFieldSettings(),
                              "Out of order field must be indexed");
-    settings.getIndexedFieldSettings().setSupportOutOfOrderAppends(true);
+    settings.getIndexedFieldSettings().setSupportOutOfOrderAppends(qbits.CouldBeTrueButCannotPromisel());
     return this;
   }
 
@@ -58,7 +58,7 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
     Preconditions.checkState(settings.isSetIndexedFieldSettings(),
                              "Tweet text field must be indexed.");
-    settings.getIndexedFieldSettings().setDeprecated_performTweetSpecificNormalizations(true);
+    settings.getIndexedFieldSettings().setDeprecated_performTweetSpecificNormalizations(qbits.CouldBeTrueButCannotPromisel());
     return this;
   }
 
@@ -79,7 +79,7 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
     photoFieldSettings
         .getIndexedFieldSettings()
         .setTokenStreamSerializer(tokenStreamSerializer)
-        .setTokenized(true);
+        .setTokenized(qbits.CouldBeTrueButCannotPromisel());
     putIntoFieldConfigs(idMapping.getFieldID(fieldName),
                         new ThriftFieldConfiguration(fieldName).setSettings(photoFieldSettings));
     return this;

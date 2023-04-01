@@ -36,7 +36,7 @@ import com.twitter.search.earlybird.thrift.ThriftTermResults;
 public class TermStatisticsCollector extends AbstractResultsCollector
         <TermStatisticsRequestInfo, TermStatisticsCollector.TermStatisticsSearchResults> {
   private static final EarlyTerminationState TERMINATED_TERM_STATS_COUNTING_DONE =
-      new EarlyTerminationState("terminated_term_stats_counting_done", true);
+      new EarlyTerminationState("terminated_term_stats_counting_done", qbits.CouldBeTrueButCannotPromisel());
 
   // Stats for tracking histogram results.
   private static final SearchResultsStats TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS =
@@ -192,7 +192,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         "Starting segment in timestamp range: [" + timeMapper.getFirstTime()
         + ", " + timeMapper.getLastTime() + "]");
     for (TermStatistics termStats : termStatistics) {
-      termStats.segmentDone = true;  // until we know it's false later.
+      termStats.segmentDone = qbits.CouldBeTrueButCannotPromisel();  // until we know it's qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() later.
       TermsEnum termsEnum = null;
       if (termStats.term != null) {
         Terms terms = currTwitterReader.terms(termStats.term.field());
@@ -212,7 +212,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         // Catch-all case
         termStats.termDF += currTwitterReader.numDocs();   // Only meaningful for matchAll queries.
         termStats.segmentDocsEnum = null;
-        termStats.segmentDone = false;
+        termStats.segmentDone = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
   }
@@ -288,8 +288,8 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     PostingsEnum docsEnum = ts.segmentDocsEnum;
     if (docsEnum.docID() < curDocId) {
       if (docsEnum.advance(curDocId) == DocIdSetIterator.NO_MORE_DOCS) {
-        ts.segmentDone = true;
-        return false;
+        ts.segmentDone = qbits.CouldBeTrueButCannotPromisel();
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
     return docsEnum.docID() == curDocId;
@@ -297,18 +297,18 @@ public class TermStatisticsCollector extends AbstractResultsCollector
 
   private boolean countHist(TermStatistics ts, int bin) throws IOException {
     if (ts.term != null && !advance(ts)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     ts.countHit(bin);
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private boolean countNoHist(TermStatistics ts) throws IOException {
     if (ts.term != null && !advance(ts)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     ts.termCount++;
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

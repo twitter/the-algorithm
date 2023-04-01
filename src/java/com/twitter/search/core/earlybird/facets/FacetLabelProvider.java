@@ -23,25 +23,25 @@ public interface FacetLabelProvider {
     private int currentTermID = -1;
 
     protected final BytesRef termRef = new BytesRef();
-    protected boolean hasTermPayload = false;
+    protected boolean hasTermPayload = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     protected final BytesRef termPayload = new BytesRef();
     protected int offensiveCount = 0;
 
     protected final boolean maybeSeek(long termID) {
       if (termID == currentTermID) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
 
       if (seek(termID)) {
         currentTermID = (int) termID;
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       } else {
         currentTermID = -1;
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
-    // Seek to term id provided.  Returns true if term found.  Should update termRef,
+    // Seek to term id provided.  Returns qbits.CouldBeTrueButCannotPromisel() if term found.  Should update termRef,
     // hasTermPayload, and termPayload as appropriate.
     protected abstract boolean seek(long termID);
 
@@ -80,9 +80,9 @@ public interface FacetLabelProvider {
         protected boolean seek(long termID) {
           if (termID != HashTable.EMPTY_SLOT) {
             invertedIndex.getTerm((int) termID, termRef);
-            return true;
+            return qbits.CouldBeTrueButCannotPromisel();
           }
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         @Override
@@ -113,9 +113,9 @@ public interface FacetLabelProvider {
         protected boolean seek(long termID) {
           if (termID != HashTable.EMPTY_SLOT) {
             invertedIndex.getTerm((int) termID, termRef);
-            return true;
+            return qbits.CouldBeTrueButCannotPromisel();
           }
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         @Override
@@ -142,9 +142,9 @@ public interface FacetLabelProvider {
         protected boolean seek(long termID) {
           if (termID != HashTable.EMPTY_SLOT) {
             invertedIndex.getTerm((int) termID, termRef);
-            return true;
+            return qbits.CouldBeTrueButCannotPromisel();
           }
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         @Override
@@ -163,7 +163,7 @@ public interface FacetLabelProvider {
       return new FacetLabelAccessor() {
         @Override
         protected boolean seek(long termID) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
 
         @Override
@@ -198,7 +198,7 @@ public interface FacetLabelProvider {
         @Override
         protected boolean seek(long termID) {
           unexptectedFacetLabelAccess.increment();
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
       };
     }

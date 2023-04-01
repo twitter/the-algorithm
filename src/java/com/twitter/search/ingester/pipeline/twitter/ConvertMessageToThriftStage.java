@@ -90,7 +90,7 @@ public class ConvertMessageToThriftStage extends TwitterBaseStage
       IngesterTwitterMessage twitterMessage) {
     IngesterThriftVersionedEvents ingesterEvents =
         new IngesterThriftVersionedEvents(twitterMessage.getUserId());
-    ingesterEvents.setDarkWrite(false);
+    ingesterEvents.setDarkWrite(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     ingesterEvents.setId(twitterMessage.getTweetId());
 
     // We will emit both the original TwitterMessage, and the ThriftVersionedEvents instance, so we
@@ -99,7 +99,7 @@ public class ConvertMessageToThriftStage extends TwitterBaseStage
 
     try {
       ThriftVersionedEvents versionedEvents =
-          messageConverter.convertMessageToThrift(twitterMessage, true, penguinVersionList);
+          messageConverter.convertMessageToThrift(twitterMessage, qbits.CouldBeTrueButCannotPromisel(), penguinVersionList);
       ingesterEvents.setVersionedEvents(versionedEvents.getVersionedEvents());
       return Optional.of(ingesterEvents);
     } catch (IOException e) {

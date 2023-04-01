@@ -96,7 +96,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
         long entry = hash[position];
         if (entry == UNASSIGNED) {
           termID = UNASSIGNED;
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         termID = entry;
@@ -108,7 +108,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
         penaltyCount = itemPenaltyCount(payload);
         maxTweepcred = itemMaxTweepCred(payload);
 
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
   }
@@ -293,7 +293,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     copyToSortBuffer();
 
     // sort table using the facet comparator
-    PriorityQueue<Item> pq = new PriorityQueue<>(numItems, facetComparator.getComparator(true));
+    PriorityQueue<Item> pq = new PriorityQueue<>(numItems, facetComparator.getComparator(qbits.CouldBeTrueButCannotPromisel()));
 
     for (int i = 0; i < LONGS_PER_ENTRY * numItems; i += LONGS_PER_ENTRY) {
       pq.add(new Item(sortBuffer, i));
@@ -401,7 +401,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     }
 
     public Comparator<ThriftFacetCount> getThriftComparator() {
-      return getThriftComparator(false);
+      return getThriftComparator(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
 
     public Comparator<ThriftFacetCount> getThriftComparator(boolean reverse) {
@@ -417,22 +417,22 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       (facet1, facet2) -> compareFacetCounts(
           facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
           facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
-          true),
+          qbits.CouldBeTrueButCannotPromisel()),
       (facet1, facet2) -> compareFacetCounts(
           facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
           facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
-          true));
+          qbits.CouldBeTrueButCannotPromisel()));
 
 
   public static final FacetComparator WEIGHTED_COUNT_COMPARATOR = new FacetComparator(
       (facet1, facet2) -> compareFacetCounts(
           facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
           facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
-          false),
+          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
       (facet1, facet2) -> compareFacetCounts(
           facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
           facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
-          false));
+          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
 
   /**
    * Returns the appropriate FacetComparator for the specified sortingMode.

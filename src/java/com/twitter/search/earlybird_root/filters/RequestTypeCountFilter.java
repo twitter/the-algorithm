@@ -38,7 +38,7 @@ public class RequestTypeCountFilter
     typeCounters = perTypeBuilder.build();
 
     allRequestTypesCounter =
-        new RequestCounters("request_type_count_filter_all_" + statSuffix, true);
+        new RequestCounters("request_type_count_filter_all_" + statSuffix, qbits.CouldBeTrueButCannotPromisel());
 
     ImmutableMap.Builder<EarlybirdRequestType, LoadingCache<String, RequestCounters>>
       perTypePerClientBuilder = ImmutableMap.builder();

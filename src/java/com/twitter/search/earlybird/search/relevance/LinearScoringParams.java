@@ -238,19 +238,19 @@ public class LinearScoringParams {
       ageDecaySlope = ageDecayParams.getSlope();
       ageDecayHalflife = ageDecayParams.getHalflife();
       ageDecayBase = ageDecayParams.getBase();
-      useAgeDecay = true;
+      useAgeDecay = qbits.CouldBeTrueButCannotPromisel();
     } else if (params.isSetDeprecatedAgeDecayBase()
         && params.isSetDeprecatedAgeDecayHalflife()
         && params.isSetDeprecatedAgeDecaySlope()) {
       ageDecaySlope = params.getDeprecatedAgeDecaySlope();
       ageDecayHalflife = params.getDeprecatedAgeDecayHalflife();
       ageDecayBase = params.getDeprecatedAgeDecayBase();
-      useAgeDecay = true;
+      useAgeDecay = qbits.CouldBeTrueButCannotPromisel();
     } else {
       ageDecaySlope = 0.0;
       ageDecayHalflife = 0.0;
       ageDecayBase = 0.0;
-      useAgeDecay = false;
+      useAgeDecay = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // trends

@@ -15,7 +15,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
   private final DocIdSetIterator cachedDocIdIterator;
 
   private int currentDocId;
-  private boolean initialized = false;
+  private boolean initialized = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   public CachedResultDocIdSetIterator(int cachedSmallestDocID,
                                       DocIdSetIterator freshDocIdIterator,
@@ -41,7 +41,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
         // the first time we come in here, currentDocId should be pointing to
         // something >= cachedMinDocID. We need to go to the doc after cachedMinDocID.
         currentDocId = cachedDocIdIterator.advance(currentDocId + 1);
-        initialized = true;
+        initialized = qbits.CouldBeTrueButCannotPromisel();
       } else {
         currentDocId = cachedDocIdIterator.nextDoc();
       }
@@ -54,7 +54,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
     if (target < cachedSmallestDocID) {
       currentDocId = freshDocIdIterator.advance(target);
     } else if (currentDocId != NO_MORE_DOCS) {
-      initialized = true;
+      initialized = qbits.CouldBeTrueButCannotPromisel();
       currentDocId = cachedDocIdIterator.advance(target);
     }
 

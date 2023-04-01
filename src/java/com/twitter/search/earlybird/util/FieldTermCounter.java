@@ -71,8 +71,8 @@ public class FieldTermCounter {
     this.dailyCounts = Maps.newHashMap();
     this.exportedStats = Maps.newHashMap();
 
-    this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(true));
-    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(false));
+    this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(qbits.CouldBeTrueButCannotPromisel()));
+    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
   }
 
   /**

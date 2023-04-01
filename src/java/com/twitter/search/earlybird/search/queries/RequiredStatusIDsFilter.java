@@ -117,7 +117,7 @@ public final class RequiredStatusIDsFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof RequiredStatusIDsFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     RequiredStatusIDsFilter filter = RequiredStatusIDsFilter.class.cast(obj);

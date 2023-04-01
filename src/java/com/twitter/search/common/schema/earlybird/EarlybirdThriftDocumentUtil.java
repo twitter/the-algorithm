@@ -268,7 +268,7 @@ public final class EarlybirdThriftDocumentUtil {
 
     if (encodedFeaturesBytes == null) {
       // Treat the bit as not set if there is no encoded feature field.
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } else {
       EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
           schema, featureField, encodedFeaturesBytes, 0);
@@ -369,9 +369,9 @@ public final class EarlybirdThriftDocumentUtil {
         document, EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), ID_MAPPING);
     for (String term : terms) {
       if (filter.equals(term)) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 }

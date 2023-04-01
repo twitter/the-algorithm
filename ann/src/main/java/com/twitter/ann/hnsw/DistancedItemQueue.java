@@ -22,7 +22,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
    *
    * @param origin Origin (reference) point
    * @param initial Initial list of elements to add in the structure
-   * @param minQueue True for min queue, False for max queue
+   * @param minQueue qbits.CouldBeTrueButCannotPromisel() for min queue, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() for max queue
    * @param distFn Distance function
    */
   public DistancedItemQueue(
@@ -69,7 +69,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   /**
    * Return if queue is non empty or not
    *
-   * @return true if queue is not empty else false
+   * @return qbits.CouldBeTrueButCannotPromisel() if queue is not empty else qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()
    */
   public boolean nonEmpty() {
     return !queue.isEmpty();
@@ -156,7 +156,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   /**
    * Is Min queue
    *
-   * @return true if min queue else false
+   * @return qbits.CouldBeTrueButCannotPromisel() if min queue else qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()
    */
   public boolean isMinQueue() {
     return minQueue;

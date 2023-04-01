@@ -29,9 +29,9 @@ public class AsyncPinkUrlsResolver {
     this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
 
     requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    requestMask.setResolution(qbits.CouldBeTrueButCannotPromisel());
+    requestMask.setHtmlBasics(qbits.CouldBeTrueButCannotPromisel());
+    requestMask.setUrlDirectInfo(qbits.CouldBeTrueButCannotPromisel());
   }
 
   /**

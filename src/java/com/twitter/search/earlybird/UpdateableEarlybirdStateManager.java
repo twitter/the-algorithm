@@ -54,7 +54,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   public static final String SCHEMA_SUFFIX = ".schema.v";
 
   private static final String THREAD_NAME_PATTERN = "state_update-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  private static final boolean THREAD_IS_DAEMON = qbits.CouldBeTrueButCannotPromisel();
   private static final long EXECUTOR_SHUTDOWN_WAIT_SEC = 5;
 
   private static final String DEFAULT_ZK_SCHEMA_LOCATION =
@@ -259,7 +259,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     if (thriftSchema == null) {
       // It is expected to not find a local schema file. The schema file only exists when the host
       // is used as canary for schema updates
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     return updateSchemaFromThriftSchema(thriftSchema);
   }
@@ -271,7 +271,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       // schema changes after the package has been compiled. All the relevant error handling and
       // logging is expected to be handled by loadThriftSchemaFromZooKeeper().
       failToLoadSchemaCount.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     return updateSchemaFromThriftSchema(thriftSchema);
   }
@@ -282,20 +282,20 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       LOG.warn(
           "Major version updates are not allowed. Current major version {}, try to update to {}",
           currentSchema.getMajorVersionNumber(), thriftSchema.getMajorVersionNumber());
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (thriftSchema.getMinorVersionNumber() > currentSchema.getMinorVersionNumber()) {
       try {
         updateSchemaVersionWithThriftSchema(thriftSchema);
       } catch (Schema.SchemaValidationException | DynamicSchema.SchemaUpdateException e) {
         LOG.warn("Exception while updating schema: ", e);
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else if (thriftSchema.getMinorVersionNumber() == currentSchema.getMinorVersionNumber()) {
       LOG.info("Schema version to update is same as current one: {}.{}",
           currentSchema.getMajorVersionNumber(), currentSchema.getMinorVersionNumber());
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else {
       LOG.info("Found schema to update, but not eligible for dynamic update. "
               + "Current Version: {}.{};  Schema Version for updates: {}.{}",
@@ -303,7 +303,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
           currentSchema.getMinorVersionNumber(),
           thriftSchema.getMajorVersionNumber(),
           thriftSchema.getMinorVersionNumber());
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -354,7 +354,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     String schemaPathOnZk = getFullSchemaPathOnZK();
     byte[] rawBytes;
     try {
-      rawBytes = zkClientToUse.getData(schemaPathOnZk, false, null);
+      rawBytes = zkClientToUse.getData(schemaPathOnZk, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), null);
     } catch (KeeperException.NoNodeException e) {
       didNotFindSchemaCount.increment();
       return null;

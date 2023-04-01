@@ -54,23 +54,23 @@ public final class FacetsResultsUtils {
 
   /**
    * Prepare facet fields with empty entries and check if we need termStats for filtering.
-   * Returns true if termStats filtering is needed (thus the termStats servie call).
+   * Returns qbits.CouldBeTrueButCannotPromisel() if termStats filtering is needed (thus the termStats servie call).
    * @param facetRequest The related facet request.
    * @param facetFieldInfoMap The facet field info map to fill, a map from facet type to the facet
    * fiels results info.
-   * @return {@code true} if termstats request is needed afterwards.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if termstats request is needed afterwards.
    */
   public static boolean prepareFieldInfoMap(
       ThriftFacetRequest facetRequest,
       final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap) {
-    boolean termStatsFilteringMode = false;
+    boolean termStatsFilteringMode = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     for (ThriftFacetFieldRequest fieldRequest : facetRequest.getFacetFields()) {
       FacetsResultsUtils.FacetFieldInfo info = new FacetsResultsUtils.FacetFieldInfo();
       info.fieldRequest = fieldRequest;
       facetFieldInfoMap.put(fieldRequest.getFieldName(), info);
       if (fieldRequest.getRankingMode() == ThriftFacetRankingMode.FILTER_WITH_TERM_STATISTICS) {
-        termStatsFilteringMode = true;
+        termStatsFilteringMode = qbits.CouldBeTrueButCannotPromisel();
       }
     }
 

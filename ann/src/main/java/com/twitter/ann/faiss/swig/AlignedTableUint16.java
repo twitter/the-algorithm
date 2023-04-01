@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class AlignedTableUint16 {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class AlignedTableUint16 {
 
   protected AlignedTableUint16(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(AlignedTableUint16 obj) {
@@ -29,7 +31,7 @@ public class AlignedTableUint16 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_AlignedTableUint16(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class AlignedTableUint16 {
 
   public SWIGTYPE_p_faiss__AlignedTableTightAllocT_uint16_t_32_t getTab() {
     long cPtr = swigfaissJNI.AlignedTableUint16_tab_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_uint16_t_32_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_uint16_t_32_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setNumel(long value) {
@@ -58,11 +60,11 @@ public class AlignedTableUint16 {
   }
 
   public AlignedTableUint16() {
-    this(swigfaissJNI.new_AlignedTableUint16__SWIG_0(), true);
+    this(swigfaissJNI.new_AlignedTableUint16__SWIG_0(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public AlignedTableUint16(long n) {
-    this(swigfaissJNI.new_AlignedTableUint16__SWIG_1(n), true);
+    this(swigfaissJNI.new_AlignedTableUint16__SWIG_1(n), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long itemsize() {
@@ -87,12 +89,12 @@ public class AlignedTableUint16 {
 
   public SWIGTYPE_p_uint16_t get() {
     long cPtr = swigfaissJNI.AlignedTableUint16_get__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_uint16_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_uint16_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public SWIGTYPE_p_uint16_t data() {
     long cPtr = swigfaissJNI.AlignedTableUint16_data__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_uint16_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_uint16_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
 }

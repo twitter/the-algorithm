@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ReadOnlyInvertedLists extends InvertedLists {
   private transient long swigCPtr;
 
   protected ReadOnlyInvertedLists(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.ReadOnlyInvertedLists_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ReadOnlyInvertedLists obj) {
@@ -28,7 +30,7 @@ public class ReadOnlyInvertedLists extends InvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ReadOnlyInvertedLists(swigCPtr);
       }
       swigCPtr = 0;

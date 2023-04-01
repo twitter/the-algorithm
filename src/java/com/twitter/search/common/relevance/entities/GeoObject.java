@@ -151,29 +151,29 @@ public class GeoObject {
   @VisibleForTesting
   public static boolean approxEquals(GeoObject a, GeoObject b) {
     if (a == null && b == null) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
     if ((a == null && b != null) || (a != null && b == null)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (a.accuracy != b.accuracy) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (Math.abs(a.latitude - b.latitude) > COORDS_EQUALITY_THRESHOLD) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (Math.abs(a.longitude - b.longitude) > COORDS_EQUALITY_THRESHOLD) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (Double.compare(a.radius, b.radius) != 0) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (a.source != b.source) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

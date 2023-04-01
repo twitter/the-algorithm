@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class AutoTuneCriterion {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class AutoTuneCriterion {
 
   protected AutoTuneCriterion(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(AutoTuneCriterion obj) {
@@ -29,7 +31,7 @@ public class AutoTuneCriterion {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_AutoTuneCriterion(swigCPtr);
       }
       swigCPtr = 0;
@@ -66,7 +68,7 @@ public class AutoTuneCriterion {
 
   public FloatVector getGt_D() {
     long cPtr = swigfaissJNI.AutoTuneCriterion_gt_D_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setGt_I(SWIGTYPE_p_std__vectorT_int64_t_t value) {
@@ -75,7 +77,7 @@ public class AutoTuneCriterion {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getGt_I() {
     long cPtr = swigfaissJNI.AutoTuneCriterion_gt_I_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void set_groundtruth(int gt_nnn, SWIGTYPE_p_float gt_D_in, LongVector gt_I_in) {

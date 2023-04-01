@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexBinaryFlat extends IndexBinary {
   private transient long swigCPtr;
 
   protected IndexBinaryFlat(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexBinaryFlat_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexBinaryFlat obj) {
@@ -28,7 +30,7 @@ public class IndexBinaryFlat extends IndexBinary {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexBinaryFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class IndexBinaryFlat extends IndexBinary {
 
   public ByteVector getXb() {
     long cPtr = swigfaissJNI.IndexBinaryFlat_xb_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, false);
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setUse_heap(boolean value) {
@@ -62,7 +64,7 @@ public class IndexBinaryFlat extends IndexBinary {
   }
 
   public IndexBinaryFlat(long d) {
-    this(swigfaissJNI.new_IndexBinaryFlat__SWIG_0(d), true);
+    this(swigfaissJNI.new_IndexBinaryFlat__SWIG_0(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add(long n, SWIGTYPE_p_unsigned_char x) {
@@ -90,7 +92,7 @@ public class IndexBinaryFlat extends IndexBinary {
   }
 
   public IndexBinaryFlat() {
-    this(swigfaissJNI.new_IndexBinaryFlat__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexBinaryFlat__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

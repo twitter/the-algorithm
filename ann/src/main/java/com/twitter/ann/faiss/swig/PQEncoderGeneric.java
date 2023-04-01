@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class PQEncoderGeneric {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class PQEncoderGeneric {
 
   protected PQEncoderGeneric(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(PQEncoderGeneric obj) {
@@ -29,7 +31,7 @@ public class PQEncoderGeneric {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_PQEncoderGeneric(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class PQEncoderGeneric {
 
   public SWIGTYPE_p_unsigned_char getCode() {
     long cPtr = swigfaissJNI.PQEncoderGeneric_code_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOffset(short value) {
@@ -66,11 +68,11 @@ public class PQEncoderGeneric {
   }
 
   public PQEncoderGeneric(SWIGTYPE_p_unsigned_char code, int nbits, short offset) {
-    this(swigfaissJNI.new_PQEncoderGeneric__SWIG_0(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits, offset), true);
+    this(swigfaissJNI.new_PQEncoderGeneric__SWIG_0(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits, offset), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public PQEncoderGeneric(SWIGTYPE_p_unsigned_char code, int nbits) {
-    this(swigfaissJNI.new_PQEncoderGeneric__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits), true);
+    this(swigfaissJNI.new_PQEncoderGeneric__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void encode(long x) {

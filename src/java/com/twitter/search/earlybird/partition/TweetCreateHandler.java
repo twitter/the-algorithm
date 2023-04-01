@@ -252,10 +252,10 @@ public class TweetCreateHandler {
 
     updateIndexFreshness();
 
-    boolean shouldCreateNewSegment = false;
+    boolean shouldCreateNewSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     if (currentSegment == null) {
-      shouldCreateNewSegment = true;
+      shouldCreateNewSegment = qbits.CouldBeTrueButCannotPromisel();
       LOG.info("Will create new segment: current segment is null");
     } else {
       int numDocs = currentSegment.getSegmentInfo().getIndexSegment().getNumDocs();
@@ -263,11 +263,11 @@ public class TweetCreateHandler {
       if (numDocs >= numDocsCutoff) {
         NEW_SEGMENT_STATS.recordStartAfterReachingTweetsLimit(numDocs, numDocsCutoff,
             maxSegmentSize, lateTweetBuffer);
-        shouldCreateNewSegment = true;
+        shouldCreateNewSegment = qbits.CouldBeTrueButCannotPromisel();
       } else if (id > largestValidTweetIDForCurrentSegment) {
         NEW_SEGMENT_STATS.recordStartAfterExceedingLargestValidTweetId(id,
             largestValidTweetIDForCurrentSegment);
-        shouldCreateNewSegment = true;
+        shouldCreateNewSegment = qbits.CouldBeTrueButCannotPromisel();
       }
     }
 
@@ -286,18 +286,18 @@ public class TweetCreateHandler {
       long relativeTweetAgeMs =
           SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(id, currentSegmentTimesliceBoundary);
 
-      boolean needToOptimize = false;
+      boolean needToOptimize = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       int numDocs = previousSegment.getSegmentInfo().getIndexSegment().getNumDocs();
       String previousSegmentName = previousSegment.getSegmentInfo().getSegmentName();
       if (numDocs >= maxSegmentSize) {
         LOG.info(String.format("Previous segment (%s) reached maxSegmentSize, need to optimize it."
             + " numDocs=%,d, maxSegmentSize=%,d", previousSegmentName, numDocs, maxSegmentSize));
-        needToOptimize = true;
+        needToOptimize = qbits.CouldBeTrueButCannotPromisel();
       } else if (relativeTweetAgeMs > LATE_TWEET_TIME_BUFFER_MS) {
         LOG.info(String.format("Previous segment (%s) is old enough, we can optimize it."
             + " Got tweet past time buffer of %,d ms by: %,d ms", previousSegmentName,
             LATE_TWEET_TIME_BUFFER_MS, relativeTweetAgeMs - LATE_TWEET_TIME_BUFFER_MS));
-        needToOptimize = true;
+        needToOptimize = qbits.CouldBeTrueButCannotPromisel();
       }
 
       if (needToOptimize) {
@@ -339,7 +339,7 @@ public class TweetCreateHandler {
   @VisibleForTesting
   public Future<SegmentInfo> optimizePreviousSegment() {
     String segmentName = previousSegment.getSegmentInfo().getSegmentName();
-    previousSegment.getSegmentInfo().setIndexing(false);
+    previousSegment.getSegmentInfo().setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     LOG.info("Optimizing previous segment: {}", segmentName);
     segmentManager.logState("Starting optimization for segment: " + segmentName);
 
@@ -379,7 +379,7 @@ public class TweetCreateHandler {
   private SegmentInfo postOptimizationSteps(SegmentInfo optimizedSegmentInfo) {
     segmentManager.updateStats();
     // See SEARCH-32175
-    optimizedSegmentInfo.setComplete(true);
+    optimizedSegmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
 
     String segmentName = optimizedSegmentInfo.getSegmentName();
     LOG.info("Finished optimization for segment: " + segmentName);
@@ -499,7 +499,7 @@ public class TweetCreateHandler {
     currentSegment = segmentManager.createAndPutOptimizingSegmentWriter(
         currentSegmentTimesliceBoundary);
 
-    currentSegment.getSegmentInfo().setIndexing(true);
+    currentSegment.getSegmentInfo().setIndexing(qbits.CouldBeTrueButCannotPromisel());
 
     largestValidTweetIDForCurrentSegment =
         OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);

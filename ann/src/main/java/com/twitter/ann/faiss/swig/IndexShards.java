@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexShards {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class IndexShards {
 
   protected IndexShards(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexShards obj) {
@@ -29,7 +31,7 @@ public class IndexShards {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexShards(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,27 +39,27 @@ public class IndexShards {
   }
 
   public IndexShards(boolean threaded, boolean successive_ids) {
-    this(swigfaissJNI.new_IndexShards__SWIG_0(threaded, successive_ids), true);
+    this(swigfaissJNI.new_IndexShards__SWIG_0(threaded, successive_ids), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexShards(boolean threaded) {
-    this(swigfaissJNI.new_IndexShards__SWIG_1(threaded), true);
+    this(swigfaissJNI.new_IndexShards__SWIG_1(threaded), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexShards() {
-    this(swigfaissJNI.new_IndexShards__SWIG_2(), true);
+    this(swigfaissJNI.new_IndexShards__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexShards(int d, boolean threaded, boolean successive_ids) {
-    this(swigfaissJNI.new_IndexShards__SWIG_3(d, threaded, successive_ids), true);
+    this(swigfaissJNI.new_IndexShards__SWIG_3(d, threaded, successive_ids), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexShards(int d, boolean threaded) {
-    this(swigfaissJNI.new_IndexShards__SWIG_4(d, threaded), true);
+    this(swigfaissJNI.new_IndexShards__SWIG_4(d, threaded), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexShards(int d) {
-    this(swigfaissJNI.new_IndexShards__SWIG_5(d), true);
+    this(swigfaissJNI.new_IndexShards__SWIG_5(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add_shard(Index index) {

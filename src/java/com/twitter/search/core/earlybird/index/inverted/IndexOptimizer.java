@@ -76,7 +76,7 @@ public final class IndexOptimizer {
     DeletedDocs optimizedDeletedDocs =
         source.getDeletedDocs().optimize(originalTweetIdMapper, optimizedTweetIdMapper);
 
-    final boolean isOptimized = true;
+    final boolean isOptimized = qbits.CouldBeTrueButCannotPromisel();
     return new EarlybirdRealtimeIndexSegmentData(
         source.getMaxSegmentSize(),
         source.getTimeSliceID(),

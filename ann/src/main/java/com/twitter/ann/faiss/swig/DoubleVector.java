@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class DoubleVector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class DoubleVector {
 
   protected DoubleVector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(DoubleVector obj) {
@@ -29,7 +31,7 @@ public class DoubleVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_DoubleVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class DoubleVector {
   }
 
   public DoubleVector() {
-    this(swigfaissJNI.new_DoubleVector(), true);
+    this(swigfaissJNI.new_DoubleVector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(double arg0) {
@@ -50,7 +52,7 @@ public class DoubleVector {
 
   public SWIGTYPE_p_double data() {
     long cPtr = swigfaissJNI.DoubleVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long size() {

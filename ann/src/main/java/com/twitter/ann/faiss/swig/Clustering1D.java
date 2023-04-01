@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class Clustering1D extends Clustering {
   private transient long swigCPtr;
 
   protected Clustering1D(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.Clustering1D_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(Clustering1D obj) {
@@ -28,7 +30,7 @@ public class Clustering1D extends Clustering {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_Clustering1D(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,11 +39,11 @@ public class Clustering1D extends Clustering {
   }
 
   public Clustering1D(int k) {
-    this(swigfaissJNI.new_Clustering1D__SWIG_0(k), true);
+    this(swigfaissJNI.new_Clustering1D__SWIG_0(k), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public Clustering1D(int k, ClusteringParameters cp) {
-    this(swigfaissJNI.new_Clustering1D__SWIG_1(k, ClusteringParameters.getCPtr(cp), cp), true);
+    this(swigfaissJNI.new_Clustering1D__SWIG_1(k, ClusteringParameters.getCPtr(cp), cp), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train_exact(long n, SWIGTYPE_p_float x) {

@@ -49,9 +49,9 @@ public class ResolveCompressedUrlsPink {
     this.decider = new SearchDecider(Preconditions.checkNotNull(decider));
 
     requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    requestMask.setResolution(qbits.CouldBeTrueButCannotPromisel());
+    requestMask.setHtmlBasics(qbits.CouldBeTrueButCannotPromisel());
+    requestMask.setUrlDirectInfo(qbits.CouldBeTrueButCannotPromisel());
   }
 
   /**

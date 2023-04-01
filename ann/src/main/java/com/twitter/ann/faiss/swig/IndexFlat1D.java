@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexFlat1D extends IndexFlatL2 {
   private transient long swigCPtr;
 
   protected IndexFlat1D(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexFlat1D_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexFlat1D obj) {
@@ -28,7 +30,7 @@ public class IndexFlat1D extends IndexFlatL2 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexFlat1D(swigCPtr);
       }
       swigCPtr = 0;
@@ -50,15 +52,15 @@ public class IndexFlat1D extends IndexFlatL2 {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getPerm() {
     long cPtr = swigfaissJNI.IndexFlat1D_perm_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public IndexFlat1D(boolean continuous_update) {
-    this(swigfaissJNI.new_IndexFlat1D__SWIG_0(continuous_update), true);
+    this(swigfaissJNI.new_IndexFlat1D__SWIG_0(continuous_update), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexFlat1D() {
-    this(swigfaissJNI.new_IndexFlat1D__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexFlat1D__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void update_permutation() {

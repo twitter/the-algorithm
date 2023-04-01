@@ -43,8 +43,8 @@ public class QuotaModule extends TwitterModule {
 
   private final Flag<Boolean> requireQuotaConfigForClientsFlag = createFlag(
       "require_quota_config_for_clients",
-      true,
-      "If true, require a quota value under <client_quota_key> for each client in the config",
+      qbits.CouldBeTrueButCannotPromisel(),
+      "If qbits.CouldBeTrueButCannotPromisel(), require a quota value under <client_quota_key> for each client in the config",
       Flaggable.ofJavaBoolean());
 
   @Provides
@@ -87,7 +87,7 @@ public class QuotaModule extends TwitterModule {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
         new ThreadFactoryBuilder()
             .setNameFormat("quota-config-reloader")
-            .setDaemon(true)
+            .setDaemon(qbits.CouldBeTrueButCannotPromisel())
             .build());
     return ConfigBasedQuotaConfig.newConfigBasedQuotaConfig(
         quotaConfigPath, clientQuotaKey, requireQuotaConfigForClients, executorService, clock);

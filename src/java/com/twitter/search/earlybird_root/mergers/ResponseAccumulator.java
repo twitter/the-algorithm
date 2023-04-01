@@ -109,7 +109,7 @@ public abstract class ResponseAccumulator {
   }
 
   // Merge has encountered at least one early terminated response.
-  private boolean foundEarlyTermination = false;
+  private boolean foundEarlyTermination = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   // Empty but successful response counter (E.g. when a tier or partition is skipped)
   private int successfulEmptyResponseCount = 0;
   // The list of the successful responses from all earlybird futures. This does not include empty
@@ -226,7 +226,7 @@ public abstract class ResponseAccumulator {
     }
     if (response.isSetEarlyTerminationInfo()
         && response.getEarlyTerminationInfo().isEarlyTerminated()) {
-      foundEarlyTermination = true;
+      foundEarlyTermination = qbits.CouldBeTrueButCannotPromisel();
     }
     extraSuccessfulResponseHandler(response);
   }

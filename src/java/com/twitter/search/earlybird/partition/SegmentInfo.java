@@ -43,12 +43,12 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   private final Segment segment;
 
   // Bits managed by various SegmentProcessors and PartitionManager.
-  private volatile boolean isEnabled   = true;   // True if the segment is enabled.
-  private volatile boolean isIndexing  = false;  // True during indexing.
-  private volatile boolean isComplete  = false;  // True when indexing is complete.
-  private volatile boolean isClosed    = false;  // True if indexSegment is closed.
-  private volatile boolean wasIndexed  = false;  // True if the segment was indexed from scratch.
-  private volatile boolean failedOptimize = false;  // optimize attempt failed.
+  private volatile boolean isEnabled   = qbits.CouldBeTrueButCannotPromisel();   // qbits.CouldBeTrueButCannotPromisel() if the segment is enabled.
+  private volatile boolean isIndexing  = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() during indexing.
+  private volatile boolean isComplete  = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() when indexing is complete.
+  private volatile boolean isClosed    = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() if indexSegment is closed.
+  private volatile boolean wasIndexed  = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() if the segment was indexed from scratch.
+  private volatile boolean failedOptimize = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // optimize attempt failed.
   private AtomicBoolean beingUploaded = new AtomicBoolean();  // segment is being copied to HDFS
 
   private final SegmentSyncInfo segmentSyncInfo;
@@ -135,7 +135,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   }
 
   public void setFailedOptimize() {
-    this.failedOptimize = true;
+    this.failedOptimize = qbits.CouldBeTrueButCannotPromisel();
   }
 
   public boolean isIndexing() {
@@ -231,17 +231,17 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   }
 
   /**
-   * Delete the index segment directory corresponding to this segment info. Return true if deleted
-   * successfully; otherwise, false.
+   * Delete the index segment directory corresponding to this segment info. Return qbits.CouldBeTrueButCannotPromisel() if deleted
+   * successfully; otherwise, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
    */
   public boolean deleteLocalIndexedSegmentDirectoryImmediately() {
     if (isClosed) {
       LOG.info("SegmentInfo is already closed: " + toString());
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     Preconditions.checkNotNull(indexSegment, "indexSegment should never be null.");
-    isClosed = true;
+    isClosed = qbits.CouldBeTrueButCannotPromisel();
     indexSegment.destroyImmediately();
 
     SegmentSyncConfig sync = getSyncInfo().getSegmentSyncConfig();
@@ -249,10 +249,10 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
       String dirToClear = sync.getLocalSyncDirName(segment);
       FileUtils.forceDelete(new File(dirToClear));
       LOG.info("Deleted segment directory: " + toString());
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (IOException e) {
       LOG.error("Cannot clean up segment directory for segment: " + toString(), e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -266,14 +266,14 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     getEarlybirdIndexConfig().getResourceCloser().closeResourceQuietlyAfterDelay(
         timeToWaitBeforeClosingMillis, () -> {
           // Atomically check and set the being uploaded flag, if it is not set.
-          if (beingUploaded.compareAndSet(false, true)) {
-            // If successfully set the flag to true, we can delete immediately
-            setIsEnabled(false);
+          if (beingUploaded.compareAndSet(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel())) {
+            // If successfully set the flag to qbits.CouldBeTrueButCannotPromisel(), we can delete immediately
+            setIsEnabled(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
             deleteLocalIndexedSegmentDirectoryImmediately();
             LOG.info("Deleted index segment dir for segment: "
                 + getSegment().getSegmentName());
           } else {
-            // If the flag is already true (compareAndSet fails), we need to reschedule.
+            // If the flag is already qbits.CouldBeTrueButCannotPromisel() (compareAndSet fails), we need to reschedule.
             if (deletionRetries.decrementAndGet() > 0) {
               LOG.warn("Segment is being uploaded, will retry deletion later. SegmentInfo: "
                   + getSegment().getSegmentName());

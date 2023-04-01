@@ -91,7 +91,7 @@ class NamedEntityHandler {
     // if it causes problems.
     if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
       deciderSkippedStat.increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Named entities are only extracted in certain languages, so we can skip tweets

@@ -209,10 +209,10 @@ public class EarlybirdSearcher {
       = "allow_tokenized_display_name_field_weight_override_in_";
 
   private static final boolean ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_query_specific_score_adjustments", false);
+      = EarlybirdConfig.getBool("allow_query_specific_score_adjustments", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   private static final boolean ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", false);
+      = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   public static final int DEFAULT_NUM_FACET_RESULTS = 100;
 
@@ -250,7 +250,7 @@ public class EarlybirdSearcher {
   // The segment we are searching, or null for the multi-searcher.
   private Segment segment = null;
 
-  // True iff we are searching all segments (multi-searcher).
+  // qbits.CouldBeTrueButCannotPromisel() iff we are searching all segments (multi-searcher).
   private final boolean searchAllSegments;
 
   // Tracking termination criteria for this query
@@ -266,7 +266,7 @@ public class EarlybirdSearcher {
   private AntiGamingFilter antiGamingFilter = null;
 
   private final boolean searchHighFrequencyTermPairs =
-      EarlybirdConfig.getBool("search_high_frequency_term_pairs", false);
+      EarlybirdConfig.getBool("search_high_frequency_term_pairs", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   // How long to allow post-termination when enforcing query timeout
   private final int enforceQueryTimeoutBufferMillis =
@@ -465,10 +465,10 @@ public class EarlybirdSearcher {
     boolean filtersEmpty = filters == null || filters.length == 0;
 
     if (!filtersEmpty) {
-      filtersEmpty = true;
+      filtersEmpty = qbits.CouldBeTrueButCannotPromisel();
       for (Query f : filters) {
         if (f != null) {
-          filtersEmpty = false;
+          filtersEmpty = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           break;
         }
       }
@@ -597,7 +597,7 @@ public class EarlybirdSearcher {
 
       if (!StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())) {
         searcherStats.thriftQueryWithSerializedQuery.increment();
-        luceneQuery = parseSerializedQuery(searchQuery.getSerializedQuery(), parser, true);
+        luceneQuery = parseSerializedQuery(searchQuery.getSerializedQuery(), parser, qbits.CouldBeTrueButCannotPromisel());
       } else if (!StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
         searcherStats.thriftQueryWithLuceneQuery.increment();
         luceneQuery = parseLuceneQuery(searchQuery.getLuceneQuery());
@@ -744,7 +744,7 @@ public class EarlybirdSearcher {
     QueryParser parser = new QueryParser(
         EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
         new SearchWhitespaceAnalyzer());
-    parser.setSplitOnWhitespace(true);
+    parser.setSplitOnWhitespace(qbits.CouldBeTrueButCannotPromisel());
     try {
       return parser.parse(query);
     } catch (ParseException e) {
@@ -841,8 +841,8 @@ public class EarlybirdSearcher {
 
   private EarlybirdResponse respondError(EarlybirdResponseCode code) {
     appendMessage("Responding with error code " + code);
-    // Always respond with an error message, even when request.debug is false
-    return newResponse(code, true);
+    // Always respond with an error message, even when request.debug is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()
+    return newResponse(code, qbits.CouldBeTrueButCannotPromisel());
   }
 
   @VisibleForTesting
@@ -912,7 +912,7 @@ public class EarlybirdSearcher {
       final Query facetSkipListFilter =
           cannotAddRequiredClause ? null : FacetSkipList.getSkipListQuery(facetCountState);
       final Query antisocialFilter = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(
-          segmentManager.getUserTable(), true, true, false);
+          segmentManager.getUserTable(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       luceneQuery = wrapFilters(luceneQuery,
           facetSkipListFilter,
           antisocialFilter);
@@ -1503,7 +1503,7 @@ public class EarlybirdSearcher {
   public EarlybirdLuceneQueryVisitor getLuceneVisitor(
       Map<String, Double> fieldWeightMapOverride) {
     String clusterName = cluster.getNameForStats();
-    // Iff in relevance mode _and_ intepreteSinceId is false, we turn off since_id
+    // Iff in relevance mode _and_ intepreteSinceId is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), we turn off since_id
     // operator by using LuceneRelevanceQueryVisitor.
 
     if (searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE
@@ -1798,7 +1798,7 @@ public class EarlybirdSearcher {
           || options.getFieldWeightMapOverride()
           .containsKey(EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName()))) {
 
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
 

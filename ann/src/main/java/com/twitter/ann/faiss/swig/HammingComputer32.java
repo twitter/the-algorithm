@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class HammingComputer32 {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class HammingComputer32 {
 
   protected HammingComputer32(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(HammingComputer32 obj) {
@@ -29,7 +31,7 @@ public class HammingComputer32 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_HammingComputer32(swigCPtr);
       }
       swigCPtr = 0;
@@ -69,11 +71,11 @@ public class HammingComputer32 {
   }
 
   public HammingComputer32() {
-    this(swigfaissJNI.new_HammingComputer32__SWIG_0(), true);
+    this(swigfaissJNI.new_HammingComputer32__SWIG_0(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HammingComputer32(SWIGTYPE_p_unsigned_char a8, int code_size) {
-    this(swigfaissJNI.new_HammingComputer32__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), true);
+    this(swigfaissJNI.new_HammingComputer32__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void set(SWIGTYPE_p_unsigned_char a8, int code_size) {

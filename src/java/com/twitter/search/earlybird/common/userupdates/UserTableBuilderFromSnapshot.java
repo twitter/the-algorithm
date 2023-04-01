@@ -85,13 +85,13 @@ public class UserTableBuilderFromSnapshot {
       @Nullable Boolean isProtected = null;
 
       if (safetyUserState.isIsAntisocial()) {
-        antisocial = true;
+        antisocial = qbits.CouldBeTrueButCannotPromisel();
       }
       if (safetyUserState.isIsNsfw()) {
-        nsfw = true;
+        nsfw = qbits.CouldBeTrueButCannotPromisel();
       }
       if (safetyUserState.isSetIsProtected() && safetyUserState.isIsProtected()) {
-        isProtected = true;
+        isProtected = qbits.CouldBeTrueButCannotPromisel();
       }
 
       return new UserUpdate(userId, antisocial, nsfw, isProtected);
@@ -187,7 +187,7 @@ public class UserTableBuilderFromSnapshot {
       @Override
       public boolean hasNext() {
         if (next != null) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
 
         do {
@@ -214,7 +214,7 @@ public class UserTableBuilderFromSnapshot {
     return StreamSupport
         .stream(
             Spliterators.spliteratorUnknownSize(iter, Spliterator.ORDERED | Spliterator.NONNULL),
-            false)
+            qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .onClose(thriftReader::stop);
   }
 

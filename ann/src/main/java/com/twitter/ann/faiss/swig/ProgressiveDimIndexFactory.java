@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ProgressiveDimIndexFactory {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class ProgressiveDimIndexFactory {
 
   protected ProgressiveDimIndexFactory(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ProgressiveDimIndexFactory obj) {
@@ -29,7 +31,7 @@ public class ProgressiveDimIndexFactory {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ProgressiveDimIndexFactory(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class ProgressiveDimIndexFactory {
   }
 
   public ProgressiveDimIndexFactory() {
-    this(swigfaissJNI.new_ProgressiveDimIndexFactory(), true);
+    this(swigfaissJNI.new_ProgressiveDimIndexFactory(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

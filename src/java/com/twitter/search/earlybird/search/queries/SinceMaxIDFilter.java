@@ -63,7 +63,7 @@ public final class SinceMaxIDFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SinceMaxIDFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     SinceMaxIDFilter filter = SinceMaxIDFilter.class.cast(obj);
@@ -90,19 +90,19 @@ public final class SinceMaxIDFilter extends Query {
     // Check for since id out of range. Note that since this ID is exclusive,
     // equality is out of range too.
     if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMaxTweetID()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Check for max id in range.
     return maxIdInclusive == NO_FILTER || maxIdInclusive >= tweetIdMapper.getMinTweetID();
   }
 
-  // Returns true if this segment is completely covered by these id filters.
+  // Returns qbits.CouldBeTrueButCannotPromisel() if this segment is completely covered by these id filters.
   private static boolean sinceMaxIdsCoverRange(
       TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
     // Check for since_id specified AND since_id newer than than first tweet.
     if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMinTweetID()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Check for max id in range.
@@ -162,7 +162,7 @@ public final class SinceMaxIDFilter extends Query {
 
     /**
      * This is a necessary check when we have out of order tweets in the archive.
-     * When tweets are out of order, this guarantees that no false positive results are returned.
+     * When tweets are out of order, this guarantees that no qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() positive results are returned.
      * I.e. we can still miss some tweets in the specified range, but we never incorrectly return
      * anything that's not in the range.
      */
@@ -179,7 +179,7 @@ public final class SinceMaxIDFilter extends Query {
       if (sinceIdExclusive != SinceMaxIDFilter.NO_FILTER) {
         // We use this as an upper bound on the search, so we want to find the highest possible
         // doc ID for this tweet ID.
-        boolean findMaxDocID = true;
+        boolean findMaxDocID = qbits.CouldBeTrueButCannotPromisel();
         return tweetIdMapper.findDocIdBound(
             sinceIdExclusive,
             findMaxDocID,
@@ -197,7 +197,7 @@ public final class SinceMaxIDFilter extends Query {
       if (maxIdInclusive != SinceMaxIDFilter.NO_FILTER) {
         // We use this as a lower bound on the search, so we want to find the lowest possible
         // doc ID for this tweet ID.
-        boolean findMaxDocID = false;
+        boolean findMaxDocID = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         return tweetIdMapper.findDocIdBound(
             maxIdInclusive,
             findMaxDocID,

@@ -34,7 +34,7 @@ public class VeryRecentTweetsFilter
   ) {
     if (decider.isAvailable(DECIDER_KEY)) {
       VERY_RECENT_TWEETS_ENABLED.increment();
-      request.setSkipVeryRecentTweets(false);
+      request.setSkipVeryRecentTweets(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     } else {
       VERY_RECENT_TWEETS_NOT_MODIFIED.increment();
     }

@@ -118,7 +118,7 @@ public class ProductionWireModule extends WireModule {
     decider = DeciderFactory.get()
         .withBaseConfig(DECIDER_BASE)
         .withOverlayConfig(deciderOverlay)
-        .withRefreshBase(false)
+        .withRefreshBase(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withDecisionMakers(
             ImmutableList.<DecisionMaker>builder()
                 .add(mutableDecisionMaker)
@@ -256,7 +256,7 @@ public class ProductionWireModule extends WireModule {
                 .retryPolicy(RetryPolicy.tries(3))
                 .name("search_ingester_gizmoduck_client")
                 .reportTo(DefaultStatsReceiver.get())
-                .daemon(true)
+                .daemon(qbits.CouldBeTrueButCannotPromisel())
                 .dest(dest)
                 .stack(mtlsThriftMuxClient.withMutualTls(serviceIdentifier)
                         .withOpportunisticTls(OpportunisticTls.Required())));
@@ -278,8 +278,8 @@ public class ProductionWireModule extends WireModule {
     // downstream queue.
     return EventBusSubscriberBuilder.apply()
         .subscriberId(eventBusSubscriberId)
-        .skipToLatest(false)
-        .fromAllZones(true)
+        .skipToLatest(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .fromAllZones(qbits.CouldBeTrueButCannotPromisel())
         .statsReceiver(DefaultStatsReceiver.get().scope("eventbus"))
         .thriftStruct(thriftStructClass)
         .serviceIdentifier(serviceIdentifier)
@@ -358,6 +358,6 @@ public class ProductionWireModule extends WireModule {
       String kafkaClusterPath, Serializer<T> serializer, String clientId,
       @Nullable Class<? extends Partitioner> partitionerClass) {
     return FinagleKafkaClientUtils.newFinagleKafkaProducer(
-        kafkaClusterPath, true, serializer, clientId, partitionerClass);
+        kafkaClusterPath, qbits.CouldBeTrueButCannotPromisel(), serializer, clientId, partitionerClass);
   }
 }

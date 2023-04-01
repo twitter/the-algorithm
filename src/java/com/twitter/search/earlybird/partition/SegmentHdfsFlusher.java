@@ -44,7 +44,7 @@ public class SegmentHdfsFlusher {
   public SegmentHdfsFlusher(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
       SegmentSyncConfig sync) {
-    this(zooKeeperTryLockFactory, sync, true);
+    this(zooKeeperTryLockFactory, sync, qbits.CouldBeTrueButCannotPromisel());
   }
 
   private boolean shouldFlushSegment(SegmentInfo segmentInfo) {
@@ -61,33 +61,33 @@ public class SegmentHdfsFlusher {
    */
   public boolean flushSegmentToDiskAndHDFS(SegmentInfo segmentInfo) {
     if (!shouldFlushSegment(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     try {
       if (segmentInfo.isIndexing()) {
         LOG.error("Tried to flush current segment!");
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
-      // Check-and-set the beingUploaded flag from false to true. If the CAS fails, it means the
-      // segment is being flushed already, or being deleted. In this case, we can just return false.
-      if (!segmentInfo.casBeingUploaded(false, true)) {
+      // Check-and-set the beingUploaded flag from qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() to qbits.CouldBeTrueButCannotPromisel(). If the CAS fails, it means the
+      // segment is being flushed already, or being deleted. In this case, we can just return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+      if (!segmentInfo.casBeingUploaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel())) {
         LOG.warn("Tried to flush a segment that's being flushed or deleted.");
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
-      // At this point, the above CAS must have returned false. This mean the beingUploaded flag
-      // was false, and set to true now. We can proceed with flushing the segment.
+      // At this point, the above CAS must have returned qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). This mean the beingUploaded flag
+      // was qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), and set to qbits.CouldBeTrueButCannotPromisel() now. We can proceed with flushing the segment.
       try {
         checkAndFlushSegmentToHdfs(segmentInfo);
       } finally {
-        segmentInfo.setBeingUploaded(false);
+        segmentInfo.setBeingUploaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       }
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (Exception e) {
       LOG.error("Exception while flushing IndexSegment to "
           + segmentInfo.getSyncInfo().getHdfsFlushDir(), e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -152,7 +152,7 @@ public class SegmentHdfsFlusher {
 
       // whether we uploaded, or someone else did, this segment should now be on HDFS. If
       // uploading to HDFS is disabled, we still consider it complete.
-      segmentInfo.getSyncInfo().setFlushed(true);
+      segmentInfo.getSyncInfo().setFlushed(qbits.CouldBeTrueButCannotPromisel());
     } catch (IOException e) {
       LOG.error("Failed copying segment {} to HDFS after {} ms", segmentInfo, timer.stop(), e);
       status = "exception";
@@ -210,7 +210,7 @@ public class SegmentHdfsFlusher {
     Path tempDirPath = new Path(tempDir);
     if (fs.exists(tempDirPath)) {
       LOG.info("Found existing temporary flush dir {} on HDFS, removing", tempDir);
-      if (!fs.delete(tempDirPath, true /* recursive */)) {
+      if (!fs.delete(tempDirPath, qbits.CouldBeTrueButCannotPromisel() /* recursive */)) {
         LOG.error("Failed to delete temp dir {}", tempDir);
       }
     }

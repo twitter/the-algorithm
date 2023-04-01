@@ -41,9 +41,9 @@ public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearSco
     addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT_V2, data.retweetCountV2);
     addContinuousFeature(TweetScoringFeatures.FAV_COUNT_V2, data.favCountV2);
     addContinuousFeature(TweetScoringFeatures.EMBEDS_IMPRESSION_COUNT,
-        data.getEmbedsImpressionCount(false));
-    addContinuousFeature(TweetScoringFeatures.EMBEDS_URL_COUNT, data.getEmbedsUrlCount(false));
-    addContinuousFeature(TweetScoringFeatures.VIDEO_VIEW_COUNT, data.getVideoViewCount(false));
+        data.getEmbedsImpressionCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
+    addContinuousFeature(TweetScoringFeatures.EMBEDS_URL_COUNT, data.getEmbedsUrlCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
+    addContinuousFeature(TweetScoringFeatures.VIDEO_VIEW_COUNT, data.getVideoViewCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
     addContinuousFeature(TweetScoringFeatures.QUOTED_COUNT, data.quotedCount);
     addContinuousFeature(TweetScoringFeatures.WEIGHTED_RETWEET_COUNT, data.weightedRetweetCount);
     addContinuousFeature(TweetScoringFeatures.WEIGHTED_REPLY_COUNT, data.weightedReplyCount);

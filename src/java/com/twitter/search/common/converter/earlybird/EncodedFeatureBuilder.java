@@ -226,7 +226,7 @@ public class EncodedFeatureBuilder {
 
   /**
    * Adds the given photo url to the thrift status if it is a twitter photo permalink.
-   * Returns true, if this was indeed a twitter photo, false otherwise.
+   * Returns qbits.CouldBeTrueButCannotPromisel(), if this was indeed a twitter photo, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
    */
   public static boolean addPhotoUrl(TwitterMessage message, String photoPermalink) {
     Matcher matcher = TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN.matcher(photoPermalink);
@@ -248,9 +248,9 @@ public class EncodedFeatureBuilder {
           NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL.increment();
         }
       }
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private void addPlace(TwitterMessage message,
@@ -350,7 +350,7 @@ public class EncodedFeatureBuilder {
               // _is_offensive field is created, and used in filter:safe operator
               || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE));
       if (textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE)) {
-        sink.setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, true);
+        sink.setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, qbits.CouldBeTrueButCannotPromisel());
       }
     } else {
       // we don't have text score, for whatever reason, set to sentinel value so we won't be

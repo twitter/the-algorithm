@@ -74,7 +74,7 @@ class SegmentBuilderCoordinator {
       hdfs = HdfsUtil.getHdfsFileSystem();
     } catch (IOException e) {
       LOG.error("Could not create HDFS file system.", e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     return isScrubGenDataFullyBuilt(
@@ -93,7 +93,7 @@ class SegmentBuilderCoordinator {
       FileSystem hdfs) {
     // Check if the scrub gen has been fully built file exists.
     if (checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs)) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     // If it doesn't exist, let first instance see if scrub gen has been fully built and create the
@@ -129,9 +129,9 @@ class SegmentBuilderCoordinator {
       }
     }
 
-    // if hasSuccessFileToHdfs returns false, then should always return false in the end.
+    // if hasSuccessFileToHdfs returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), then should always return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() in the end.
     // next run will find success file for this scrub gen and move forward.
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private void checkIfScrubGenDataIsFullyBuilt(
@@ -165,14 +165,14 @@ class SegmentBuilderCoordinator {
       fs.mkdirs(new Path(statusReadyHDFSPath()));
       if (fs.createNewFile(path)) {
         LOG.info("Successfully created file " + path + " on HDFS.");
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       } else {
         LOG.warn("Failed to create file " + path + " on HDFS.");
       }
     } catch (IOException e) {
       LOG.error("Failed to create file on HDFS " + path.toString(), e);
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private boolean checkHaveScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
@@ -184,7 +184,7 @@ class SegmentBuilderCoordinator {
       return ret;
     } catch (IOException e) {
       LOG.error("Failed to check file on HDFS " + path.toString(), e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 

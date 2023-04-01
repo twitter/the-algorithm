@@ -13,17 +13,17 @@ import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
 
 /**
  * Visitor to detect presence of any antisocial / spam operator in a Query.
- * Visitor returns true if any operators it detects were found.
+ * Visitor returns qbits.CouldBeTrueButCannotPromisel() if any operators it detects were found.
  */
 public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
-  // True if the query contains any operator to include antisocial tweets.
-  private boolean includeAntisocial = false;
+  // qbits.CouldBeTrueButCannotPromisel() if the query contains any operator to include antisocial tweets.
+  private boolean includeAntisocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
-  // True if the query contains any operator to exclude antisocial/spam tweets.
-  private boolean excludeAntisocial = false;
+  // qbits.CouldBeTrueButCannotPromisel() if the query contains any operator to exclude antisocial/spam tweets.
+  private boolean excludeAntisocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
-  // True if the query contains an antisocial tweets filter.
-  private boolean filterAntisocial = false;
+  // qbits.CouldBeTrueButCannotPromisel() if the query contains an antisocial tweets filter.
+  private boolean filterAntisocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   public boolean hasIncludeAntisocial() {
     return includeAntisocial;
@@ -44,56 +44,56 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   @Override public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    boolean found = false;
+    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     for (com.twitter.search.queryparser.query.Query node : disjunction.getChildren()) {
       if (node.accept(this)) {
-        found = true;
+        found = qbits.CouldBeTrueButCannotPromisel();
       }
     }
     return found;
   }
 
   @Override public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    boolean found = false;
+    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     for (com.twitter.search.queryparser.query.Query node : conjunction.getChildren()) {
       if (node.accept(this)) {
-        found = true;
+        found = qbits.CouldBeTrueButCannotPromisel();
       }
     }
     return found;
   }
 
   @Override public Boolean visit(SearchOperator operator) throws QueryParserException {
-    boolean found = false;
+    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     switch (operator.getOperatorType()) {
       case INCLUDE:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
           if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
+            excludeAntisocial = qbits.CouldBeTrueButCannotPromisel();
           } else {
-            includeAntisocial = true;
+            includeAntisocial = qbits.CouldBeTrueButCannotPromisel();
           }
-          found = true;
+          found = qbits.CouldBeTrueButCannotPromisel();
         }
         break;
       case EXCLUDE:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
           if (operator.mustNotOccur()) {
-            includeAntisocial = true;
+            includeAntisocial = qbits.CouldBeTrueButCannotPromisel();
           } else {
-            excludeAntisocial = true;
+            excludeAntisocial = qbits.CouldBeTrueButCannotPromisel();
           }
-          found = true;
+          found = qbits.CouldBeTrueButCannotPromisel();
         }
         break;
       case FILTER:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
           if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
+            excludeAntisocial = qbits.CouldBeTrueButCannotPromisel();
           } else {
-            filterAntisocial = true;
+            filterAntisocial = qbits.CouldBeTrueButCannotPromisel();
           }
-          found = true;
+          found = qbits.CouldBeTrueButCannotPromisel();
         }
         break;
       case CACHED_FILTER:
@@ -103,8 +103,8 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
             || QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS
                 .equals(operator.getOperand())) {
 
-          excludeAntisocial = true;
-          found = true;
+          excludeAntisocial = qbits.CouldBeTrueButCannotPromisel();
+          found = qbits.CouldBeTrueButCannotPromisel();
         }
         break;
       default:
@@ -116,16 +116,16 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
 
   @Override
   public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   @Override
   public Boolean visit(Phrase phrase) throws QueryParserException {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   @Override
   public Boolean visit(Term term) throws QueryParserException {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 }

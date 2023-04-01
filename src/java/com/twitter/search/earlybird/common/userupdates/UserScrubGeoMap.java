@@ -28,8 +28,8 @@ public class UserScrubGeoMap {
   public static final SearchTimerStats USER_SCRUB_GEO_EVENT_LAG_STAT =
       SearchTimerStats.export("user_scrub_geo_event_lag",
           TimeUnit.MILLISECONDS,
-          false,
-          true);
+          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+          qbits.CouldBeTrueButCannotPromisel());
   private ConcurrentHashMap<Long, Long> map;
 
   public UserScrubGeoMap() {

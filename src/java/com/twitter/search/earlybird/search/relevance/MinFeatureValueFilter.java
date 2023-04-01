@@ -80,7 +80,7 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof MinFeatureValueFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Probably doesn't make sense to include the schemaSnapshot and normalizer here.

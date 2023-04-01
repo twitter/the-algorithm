@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexHNSWPQ extends IndexHNSW {
   private transient long swigCPtr;
 
   protected IndexHNSWPQ(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexHNSWPQ_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexHNSWPQ obj) {
@@ -28,7 +30,7 @@ public class IndexHNSWPQ extends IndexHNSW {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexHNSWPQ(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,11 +39,11 @@ public class IndexHNSWPQ extends IndexHNSW {
   }
 
   public IndexHNSWPQ() {
-    this(swigfaissJNI.new_IndexHNSWPQ__SWIG_0(), true);
+    this(swigfaissJNI.new_IndexHNSWPQ__SWIG_0(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSWPQ(int d, int pq_m, int M) {
-    this(swigfaissJNI.new_IndexHNSWPQ__SWIG_1(d, pq_m, M), true);
+    this(swigfaissJNI.new_IndexHNSWPQ__SWIG_1(d, pq_m, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

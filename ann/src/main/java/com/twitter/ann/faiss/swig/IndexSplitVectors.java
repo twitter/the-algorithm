@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexSplitVectors extends Index {
   private transient long swigCPtr;
 
   protected IndexSplitVectors(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexSplitVectors_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexSplitVectors obj) {
@@ -28,7 +30,7 @@ public class IndexSplitVectors extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexSplitVectors(swigCPtr);
       }
       swigCPtr = 0;
@@ -58,7 +60,7 @@ public class IndexSplitVectors extends Index {
 
   public SWIGTYPE_p_std__vectorT_faiss__Index_p_t getSub_indexes() {
     long cPtr = swigfaissJNI.IndexSplitVectors_sub_indexes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__Index_p_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__Index_p_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setSum_d(long value) {

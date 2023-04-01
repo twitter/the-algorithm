@@ -24,7 +24,7 @@ public class AudioSpaceParticipantsFetcher {
   public AudioSpaceParticipantsFetcher(Client stratoClient) {
     fetcher = stratoClient.fetcher(
         PARTICIPANTS_STRATO_COLUMN,
-        true, // enables checking types against catalog
+        qbits.CouldBeTrueButCannotPromisel(), // enables checking types against catalog
         Conv.stringConv(),
         TBaseConv.forClass(AudioSpacesLookupContext.class),
         TBaseConv.forClass(Participants.class));

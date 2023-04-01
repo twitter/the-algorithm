@@ -130,7 +130,7 @@ public final class GeoQuadTreeQueryBuilder {
       if (latLonDocValues == null
           || !latLonDocValues.advanceExact(internalDocId)
           || !GeoUtil.decodeLatLonFromInt64(latLonDocValues.longValue(), geoCoordReuse)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       return acceptPoint(geoCoordReuse.getLatitude(), geoCoordReuse.getLongitude());
@@ -154,16 +154,16 @@ public final class GeoQuadTreeQueryBuilder {
       double actualDistance =
           BoundingBox.approxDistanceC(centerLat, centerLon, lat, lon);
       if (actualDistance < radiusKm) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       } else if (Double.isNaN(actualDistance)) {
         // There seems to be a rare bug in GeoUtils that computes NaN
         // for two identical lat/lon pairs on occasion. Check for that here.
         if (lat == centerLat && lon == centerLon) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
       }
 
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     @Override

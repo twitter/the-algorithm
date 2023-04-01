@@ -28,11 +28,11 @@ public class SegmentWarmer {
    */
   public boolean warmSegmentIfNecessary(SegmentInfo segmentInfo) {
     if (!shouldWarmSegment(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     try {
       segmentInfo.getIndexSegment().warmSegment();
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (IOException e) {
       // This is a bad situation, as earlybird can't search a segment that hasn't been warmed up
       // So we delete the bad segment, and restart the earlybird if it's in starting phrase,
@@ -43,7 +43,7 @@ public class SegmentWarmer {
 
       criticalExceptionHandler.handle(this, e);
 
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 }

@@ -65,10 +65,10 @@ public class FilterTwitterMessageStage extends TwitterBaseStage
   }
 
   private boolean tryToFilter(TwitterMessage message) {
-    boolean ableToFilter = false;
+    boolean ableToFilter = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     if (message != null && filter.accepts(message)) {
       validMessages.increment();
-      ableToFilter = true;
+      ableToFilter = qbits.CouldBeTrueButCannotPromisel();
     } else {
       invalidMessages.increment();
     }

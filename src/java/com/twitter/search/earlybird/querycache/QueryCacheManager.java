@@ -54,7 +54,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
 
   private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(0L, Time.SECONDS);
 
-  private final boolean enabled = EarlybirdConfig.getBool("querycache", false);
+  private final boolean enabled = EarlybirdConfig.getBool("querycache", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   // segments are removed from SegmentInfoMap lazily, and there may be a wait time.
   // So, beware that there's short period of time where there's more segments than
@@ -76,7 +76,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
   private static final SearchCounter NUM_UPDATE_SEGMENTS_CALLS =
       SearchCounter.export("querycache_num_update_segments_calls");
 
-  private volatile boolean didSetup = false;
+  private volatile boolean didSetup = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   private final EarlybirdSearcherStats searcherStats;
   private final Decider decider;
@@ -179,9 +179,9 @@ public class QueryCacheManager implements SegmentUpdateListener {
 
     LOG.info("Finished setting up query cache updater.");
 
-    scheduleTasks(newSegments, false);
+    scheduleTasks(newSegments, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
-    didSetup = true;
+    didSetup = qbits.CouldBeTrueButCannotPromisel();
   }
 
   private void scheduleTasks(Iterable<SegmentInfo> segments, boolean isCurrent) {
@@ -225,7 +225,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
     // The optimized segment should always be the 1st segment (the current segment has index 0).
     Stopwatch stopwatch = Stopwatch.createStarted();
     updater.removeAllTasksForSegment(optimizedSegment);
-    addQueryCacheTasksForSegment(optimizedSegment, 1, true);
+    addQueryCacheTasksForSegment(optimizedSegment, 1, qbits.CouldBeTrueButCannotPromisel());
 
     while (!updater.allTasksRanForSegment(optimizedSegment)) {
       try {
@@ -337,7 +337,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
       updater.shutdown();
       updater = null;
     }
-    didSetup = false; // needed for unit test
+    didSetup = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(); // needed for unit test
   }
 
   /**

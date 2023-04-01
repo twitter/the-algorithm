@@ -27,7 +27,7 @@ public final class MatchAllDocIdSet extends DocIdSet {
     return new Bits() {
       @Override
       public boolean get(int index) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
 
       @Override

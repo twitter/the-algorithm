@@ -35,7 +35,7 @@ public class EarlybirdFacetsFactory implements FacetsFactory {
     if (!(facetSearchParam instanceof CountFacetSearchParam)
         || (facetSearchParam.getFacetFieldRequest().getPath() != null
             && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty())) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     String field = facetSearchParam.getFacetFieldRequest().getField();

@@ -54,7 +54,7 @@ public class ClientIdWhitelist extends PeriodicFileLoader {
     ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
         new ThreadFactoryBuilder()
             .setNameFormat("client-whitelist-reloader")
-            .setDaemon(true)
+            .setDaemon(qbits.CouldBeTrueButCannotPromisel())
             .build());
 
     return initWhitelist(clientWhitelistPath, executorService, clock);

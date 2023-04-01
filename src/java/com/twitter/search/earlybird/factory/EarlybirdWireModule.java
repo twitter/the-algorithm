@@ -321,9 +321,9 @@ public class EarlybirdWireModule {
                 buildThreadFactory(threadNameFormat, isDaemon));
         threadpoolExecutor.setMaximumPoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
         threadpoolExecutor.setCorePoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
-        threadpoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
-        threadpoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
-        threadpoolExecutor.setRemoveOnCancelPolicy(true);
+        threadpoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        threadpoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        threadpoolExecutor.setRemoveOnCancelPolicy(qbits.CouldBeTrueButCannotPromisel());
         LOG.info("Starting query cache executor with {} thread.",
             QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
 
@@ -422,7 +422,7 @@ public class EarlybirdWireModule {
   public ScoringModelsManager provideScoringModelsManager(
       SearchStatsReceiver serverStats,
       EarlybirdIndexConfig earlybirdIndexConfig) {
-    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", false);
+    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     if (!modelsEnabled) {
       LOG.info("Scoring Models - Disabled in the config. Not loading any models.");
       serverStats.getCounter("scoring_models_disabled_in_config").increment();
@@ -450,7 +450,7 @@ public class EarlybirdWireModule {
       Decider decider,
       EarlybirdIndexConfig earlybirdIndexConfig) {
 
-    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(false);
+    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     if (!modelsEnabled) {
       LOG.info("Tensorflow Models - Disabled in the config. Not loading any models.");
@@ -469,7 +469,7 @@ public class EarlybirdWireModule {
 
     return TensorflowModelsManager.createUsingConfigFile(
         FileUtils.getFileHandle(modelsConfigPath),
-        true,
+        qbits.CouldBeTrueButCannotPromisel(),
         statsPrefix,
         () -> DeciderUtil.isAvailableForRandomRecipient(
           decider, "enable_tf_serve_models"),
@@ -586,14 +586,14 @@ public class EarlybirdWireModule {
    *
    * When you're running loadtests or stagingN instances and they don't have a recent index
    * flushed, it can take hours to generate a new index with a fresh startup. This slows
-   * down development. If the read_index_from_prod_location flag is set to true, we will read
+   * down development. If the read_index_from_prod_location flag is set to qbits.CouldBeTrueButCannotPromisel(), we will read
    * the index from the location where prod instances are flushing their index to.
    * Unset it if you want to generate your own index.
    *
    * @return a string with the directory.
    */
   public String getIndexLoadingDirectory() {
-    boolean readIndexFromProdLocation = EarlybirdProperty.READ_INDEX_FROM_PROD_LOCATION.get(false);
+    boolean readIndexFromProdLocation = EarlybirdProperty.READ_INDEX_FROM_PROD_LOCATION.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     String environment = EarlybirdProperty.ENV.get("no_env_specified"); // default value for tests.
     String readIndexDir = EarlybirdProperty.HDFS_INDEX_SYNC_DIR.get();
 
@@ -674,7 +674,7 @@ public class EarlybirdWireModule {
         serverSetMember,
         criticalExceptionHandler,
         segmentSyncConfig);
-    actionCoordinator.setShouldSynchronize(true);
+    actionCoordinator.setShouldSynchronize(qbits.CouldBeTrueButCannotPromisel());
 
     FileSystem hdfsFileSystem = HdfsUtil.getHdfsFileSystem();
     EarlybirdIndexFlusher earlybirdIndexFlusher = new EarlybirdIndexFlusher(
@@ -744,7 +744,7 @@ public class EarlybirdWireModule {
             criticalExceptionHandler,
             segmentSyncConfig
     );
-    postOptimizationRebuilds.setShouldSynchronize(true);
+    postOptimizationRebuilds.setShouldSynchronize(qbits.CouldBeTrueButCannotPromisel());
     CoordinatedEarlybirdAction gcAction = new CoordinatedEarlybirdAction(
             zooKeeperTryLockFactory,
             "gc_before_optimization",
@@ -753,7 +753,7 @@ public class EarlybirdWireModule {
             criticalExceptionHandler,
             segmentSyncConfig
     );
-    gcAction.setShouldSynchronize(true);
+    gcAction.setShouldSynchronize(qbits.CouldBeTrueButCannotPromisel());
 
     TweetCreateHandler createHandler = new TweetCreateHandler(
         segmentManager,

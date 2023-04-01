@@ -159,7 +159,7 @@ public class DelayedIndexingConverter {
    *
    * We need to send the feature update event before the append event to avoid issues like the one
    * in SEARCH-30919 where tweets were returned from the card name field index before the HAS_CARD
-   * feature was updated to true.
+   * feature was updated to qbits.CouldBeTrueButCannotPromisel().
    *
    * @param message The TwitterMessage to convert.
    * @param penguinVersions The Penguin versions for which ThriftIndexingEvents should be created.
@@ -227,7 +227,7 @@ public class DelayedIndexingConverter {
         new EarlybirdFieldConstants(),
         schemaSnapshot);
 
-    builder.setAddLatLonCSF(false);
+    builder.setAddLatLonCSF(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     builder.withID(message.getId());
     buildFieldsFromUrlInfo(builder, message, penguinVersion, encodedFeatures);
     buildCardFields(builder, message, penguinVersion);
@@ -236,7 +236,7 @@ public class DelayedIndexingConverter {
 
     buildSpaceAdminAndTitleFields(builder, message, penguinVersion);
 
-    builder.setAddEncodedTweetFeatures(false);
+    builder.setAddEncodedTweetFeatures(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     return new ThriftDocumentWithEncodedTweetFeatures(builder.build(), encodedFeatures);
   }
@@ -502,7 +502,7 @@ public class DelayedIndexingConverter {
    */
   private static boolean isCardVideo(@Nullable SearchCard2 card) {
     if (card == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     return AMPLIFY_CARD_NAME.equalsIgnoreCase(card.getCardName())
         || PLAYER_CARD_NAME.equalsIgnoreCase(card.getCardName());

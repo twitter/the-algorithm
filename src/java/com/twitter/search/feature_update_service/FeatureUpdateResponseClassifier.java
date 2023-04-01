@@ -13,7 +13,7 @@ public class FeatureUpdateResponseClassifier
     extends AbstractPartialFunction<ReqRep, ResponseClass> {
   @Override
   public boolean isDefinedAt(ReqRep tuple) {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class Index {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class Index {
 
   protected Index(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(Index obj) {
@@ -29,7 +31,7 @@ public class Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_Index(swigCPtr);
       }
       swigCPtr = 0;
@@ -142,7 +144,7 @@ public class Index {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.Index_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, false);
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long sa_code_size() {
@@ -159,7 +161,7 @@ public class Index {
 
   public IndexIVF toIVF() {
     long cPtr = swigfaissJNI.Index_toIVF(swigCPtr, this);
-    return (cPtr == 0) ? null : new IndexIVF(cPtr, false);
+    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
 }

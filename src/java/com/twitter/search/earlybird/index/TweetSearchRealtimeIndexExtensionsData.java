@@ -17,13 +17,13 @@ public class TweetSearchRealtimeIndexExtensionsData
   public void createInvertedDocConsumer(InvertedDocConsumerBuilder builder) {
     if (EarlybirdFieldConstant.ID_FIELD.getFieldName().equals(builder.getFieldName())) {
       // The tweet ID should've already been added to the tweet ID <-> doc ID mapper.
-      builder.setUseDefaultConsumer(false);
+      builder.setUseDefaultConsumer(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
 
     if (EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName().equals(builder.getFieldName())) {
       RealtimeTimeMapper timeMapper = (RealtimeTimeMapper) builder.getSegmentData().getTimeMapper();
       builder.addConsumer(new TimeMappingWriter(timeMapper));
-      builder.setUseDefaultConsumer(false);
+      builder.setUseDefaultConsumer(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   }
 

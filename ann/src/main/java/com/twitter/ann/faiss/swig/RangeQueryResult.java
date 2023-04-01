@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class RangeQueryResult {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class RangeQueryResult {
 
   protected RangeQueryResult(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(RangeQueryResult obj) {
@@ -29,7 +31,7 @@ public class RangeQueryResult {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_RangeQueryResult(swigCPtr);
       }
       swigCPtr = 0;
@@ -58,7 +60,7 @@ public class RangeQueryResult {
 
   public RangeSearchPartialResult getPres() {
     long cPtr = swigfaissJNI.RangeQueryResult_pres_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RangeSearchPartialResult(cPtr, false);
+    return (cPtr == 0) ? null : new RangeSearchPartialResult(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void add(float dis, long id) {
@@ -66,7 +68,7 @@ public class RangeQueryResult {
   }
 
   public RangeQueryResult() {
-    this(swigfaissJNI.new_RangeQueryResult(), true);
+    this(swigfaissJNI.new_RangeQueryResult(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

@@ -47,7 +47,7 @@ public abstract class DefaultFilterWeight extends Weight {
 
   @Override
   public boolean isCacheable(LeafReaderContext ctx) {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**

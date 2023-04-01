@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class Uint64Vector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class Uint64Vector {
 
   protected Uint64Vector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(Uint64Vector obj) {
@@ -29,7 +31,7 @@ public class Uint64Vector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_Uint64Vector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class Uint64Vector {
   }
 
   public Uint64Vector() {
-    this(swigfaissJNI.new_Uint64Vector(), true);
+    this(swigfaissJNI.new_Uint64Vector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(long arg0) {
@@ -50,7 +52,7 @@ public class Uint64Vector {
 
   public SWIGTYPE_p_unsigned_long data() {
     long cPtr = swigfaissJNI.Uint64Vector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long size() {

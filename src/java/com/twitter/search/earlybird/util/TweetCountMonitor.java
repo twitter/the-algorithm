@@ -57,7 +57,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(TweetCountMonitor.class);
 
   private static final String THREAD_NAME_FORMAT = "TweetCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  private static final boolean THREAD_IS_DAEMON = qbits.CouldBeTrueButCannotPromisel();
 
   public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
       "tweet_count_monitor_run_interval_minutes";
@@ -151,7 +151,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
     String isRunningStatName = "tweet_count_monitor_is_running_v_" + this.instanceCounter;
     this.isRunningStat = SearchLongGauge.export(isRunningStatName);
     String checkTimeStatName = "tweet_count_monitor_check_time_v_" + this.instanceCounter;
-    this.checkTimeStat = SearchTimerStats.export(checkTimeStatName, TimeUnit.MILLISECONDS, true);
+    this.checkTimeStat = SearchTimerStats.export(checkTimeStatName, TimeUnit.MILLISECONDS, qbits.CouldBeTrueButCannotPromisel());
 
     this.startCheckHour = Math.max(
         startCheckHourFromConfig,
@@ -380,7 +380,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
     if (timerStats == null) {
       final String statName = "tweet_count_monitor_check_time_field_" + fieldName;
       timerStats = searchStatsReceiver.getTimerStats(
-          statName, TimeUnit.MILLISECONDS, false, false, false);
+          statName, TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       fieldCheckTimeStats.put(fieldName, timerStats);
     }
     timerStats.timerIncrement(runTimeMs);

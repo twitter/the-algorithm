@@ -127,7 +127,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
       }
 
       int quotaValue = clientQuota.getInt(clientQuotaKey);
-      boolean shouldEnforce = clientQuota.optBoolean("should_enforce", false);
+      boolean shouldEnforce = clientQuota.optBoolean("should_enforce", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       String tierValue = clientQuota.optString("tier", QuotaInfo.DEFAULT_TIER_VALUE);
       boolean archiveAccess = clientQuota.optBoolean("archive_access",
           QuotaInfo.DEFAULT_ARCHIVE_ACCESS_VALUE);

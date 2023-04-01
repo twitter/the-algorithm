@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class MaskedInvertedLists extends ReadOnlyInvertedLists {
   private transient long swigCPtr;
 
   protected MaskedInvertedLists(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.MaskedInvertedLists_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(MaskedInvertedLists obj) {
@@ -28,7 +30,7 @@ public class MaskedInvertedLists extends ReadOnlyInvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_MaskedInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class MaskedInvertedLists extends ReadOnlyInvertedLists {
 
   public InvertedLists getIl0() {
     long cPtr = swigfaissJNI.MaskedInvertedLists_il0_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setIl1(InvertedLists value) {
@@ -51,11 +53,11 @@ public class MaskedInvertedLists extends ReadOnlyInvertedLists {
 
   public InvertedLists getIl1() {
     long cPtr = swigfaissJNI.MaskedInvertedLists_il1_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public MaskedInvertedLists(InvertedLists il0, InvertedLists il1) {
-    this(swigfaissJNI.new_MaskedInvertedLists(InvertedLists.getCPtr(il0), il0, InvertedLists.getCPtr(il1), il1), true);
+    this(swigfaissJNI.new_MaskedInvertedLists(InvertedLists.getCPtr(il0), il0, InvertedLists.getCPtr(il1), il1), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long list_size(long list_no) {
@@ -64,11 +66,11 @@ public class MaskedInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.MaskedInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.MaskedInvertedLists_get_ids(swigCPtr, this, list_no), false);
+    return new LongVector(swigfaissJNI.MaskedInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
@@ -85,7 +87,7 @@ public class MaskedInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_single_code(long list_no, long offset) {
     long cPtr = swigfaissJNI.MaskedInvertedLists_get_single_code(swigCPtr, this, list_no, offset);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void prefetch_lists(LongVector list_nos, int nlist) {

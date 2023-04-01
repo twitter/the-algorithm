@@ -76,7 +76,7 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
           // During segment optimization we might index a new term after the termIDMap is created
           // in IndexOptimizer.optimizeInvertedIndexes(). We can safely ignore these terms, as
           // they will be re-indexed later.
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         try {
@@ -91,7 +91,7 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
           LOG.error("Caught an unexpected IOException while optimizing facet.", e);
         }
 
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     };
 

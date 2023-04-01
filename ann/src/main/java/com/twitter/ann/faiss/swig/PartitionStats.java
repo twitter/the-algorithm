@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class PartitionStats {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class PartitionStats {
 
   protected PartitionStats(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(PartitionStats obj) {
@@ -29,7 +31,7 @@ public class PartitionStats {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_PartitionStats(swigCPtr);
       }
       swigCPtr = 0;
@@ -53,7 +55,7 @@ public class PartitionStats {
   }
 
   public PartitionStats() {
-    this(swigfaissJNI.new_PartitionStats(), true);
+    this(swigfaissJNI.new_PartitionStats(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void reset() {

@@ -261,7 +261,7 @@ public class SegmentBuilder {
         try {
           indexingLoop();
           if (onlyRunOnce) {
-            LOG.info("only run once is true, breaking");
+            LOG.info("only run once is qbits.CouldBeTrueButCannotPromisel(), breaking");
             break;
           }
           clock.waitFor(waitBetweenLoopsMs);
@@ -454,13 +454,13 @@ public class SegmentBuilder {
    * it is built here. If built successfully, it will be removed from the map; otherwise, its
    * state will be updated in the map.
    *
-   * Returns true iff this process has built a segment.
+   * Returns qbits.CouldBeTrueButCannotPromisel() iff this process has built a segment.
    */
   @VisibleForTesting
   boolean processSegments(Map<String, SegmentBuilderSegment> segmentInfoMap)
       throws SegmentInfoConstructionException, SegmentUpdaterException, InterruptedException {
 
-    boolean hasBuiltSegment = false;
+    boolean hasBuiltSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     Iterator<Map.Entry<String, SegmentBuilderSegment>> iter =
         segmentInfoMap.entrySet().iterator();
@@ -474,7 +474,7 @@ public class SegmentBuilder {
 
       if (updatedSegment.isBuilt()) {
         iter.remove();
-        hasBuiltSegment = true;
+        hasBuiltSegment = qbits.CouldBeTrueButCannotPromisel();
 
         if (originalSegment instanceof NotYetBuiltSegment) {
           // Record the total time spent on successfully building a semgent, used to compute the

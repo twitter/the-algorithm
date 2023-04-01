@@ -44,7 +44,7 @@ public final class EarlybirdResponseUtil {
    * Determines if the given EarlybirdResponse has results.
    *
    * @param response The EarlybirdResponse.
-   * @return {@code true} if the given EarlybirdResponse has results; {@code false} otherwise.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if the given EarlybirdResponse has results; {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} otherwise.
    */
   public static boolean hasResults(EarlybirdResponse response) {
     ThriftSearchResults results = getResults(response);
@@ -65,7 +65,7 @@ public final class EarlybirdResponseUtil {
    * Determines the response is early-terminated.
    *
    * @param response The EarlybirdResponse.
-   * @return {@code true} if the response is early-terminated; {@code false} otherwise.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if the response is early-terminated; {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} otherwise.
    */
   public static boolean isEarlyTerminated(EarlybirdResponse response) {
     Preconditions.checkNotNull(response);

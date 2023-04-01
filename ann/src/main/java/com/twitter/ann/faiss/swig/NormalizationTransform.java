@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class NormalizationTransform extends VectorTransform {
   private transient long swigCPtr;
 
   protected NormalizationTransform(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.NormalizationTransform_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(NormalizationTransform obj) {
@@ -28,7 +30,7 @@ public class NormalizationTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_NormalizationTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -45,15 +47,15 @@ public class NormalizationTransform extends VectorTransform {
   }
 
   public NormalizationTransform(int d, float norm) {
-    this(swigfaissJNI.new_NormalizationTransform__SWIG_0(d, norm), true);
+    this(swigfaissJNI.new_NormalizationTransform__SWIG_0(d, norm), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public NormalizationTransform(int d) {
-    this(swigfaissJNI.new_NormalizationTransform__SWIG_1(d), true);
+    this(swigfaissJNI.new_NormalizationTransform__SWIG_1(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public NormalizationTransform() {
-    this(swigfaissJNI.new_NormalizationTransform__SWIG_2(), true);
+    this(swigfaissJNI.new_NormalizationTransform__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {

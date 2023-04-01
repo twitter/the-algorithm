@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class doubleArray {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class doubleArray {
 
   protected doubleArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(doubleArray obj) {
@@ -29,7 +31,7 @@ public class doubleArray {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_doubleArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class doubleArray {
   }
 
   public doubleArray(int nelements) {
-    this(swigfaissJNI.new_doubleArray(nelements), true);
+    this(swigfaissJNI.new_doubleArray(nelements), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public double getitem(int index) {
@@ -50,12 +52,12 @@ public class doubleArray {
 
   public SWIGTYPE_p_double cast() {
     long cPtr = swigfaissJNI.doubleArray_cast(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public static doubleArray frompointer(SWIGTYPE_p_double t) {
     long cPtr = swigfaissJNI.doubleArray_frompointer(SWIGTYPE_p_double.getCPtr(t));
-    return (cPtr == 0) ? null : new doubleArray(cPtr, false);
+    return (cPtr == 0) ? null : new doubleArray(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
 }

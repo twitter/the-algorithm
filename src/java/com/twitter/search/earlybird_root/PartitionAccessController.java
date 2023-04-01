@@ -35,14 +35,14 @@ public class PartitionAccessController {
         String.format("cluster_%s_skip_tier_%s_partition_%s", clusterName, tierName, partitionNum);
     if (decider.isAvailable(partitionDeciderName)) {
       SearchCounter.export(partitionDeciderName).increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     String clientDeciderName = String.format("cluster_%s_skip_tier_%s_partition_%s_client_id_%s",
         clusterName, tierName, partitionNum, clientId);
     if (decider.isAvailable(clientDeciderName)) {
       SearchCounter.export(clientDeciderName).increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     String requestTypeDeciderName = String.format(
@@ -50,7 +50,7 @@ public class PartitionAccessController {
         clusterName, tierName, partitionNum, requestType.getNormalizedName());
     if (decider.isAvailable(requestTypeDeciderName)) {
       SearchCounter.export(requestTypeDeciderName).increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     String clientRequestTypeDeciderName = String.format(
@@ -58,10 +58,10 @@ public class PartitionAccessController {
         clusterName, tierName, partitionNum, clientId, requestType.getNormalizedName());
     if (decider.isAvailable(clientRequestTypeDeciderName)) {
       SearchCounter.export(clientRequestTypeDeciderName).increment();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   public String getClusterName() {

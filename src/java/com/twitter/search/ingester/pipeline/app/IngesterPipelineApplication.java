@@ -87,9 +87,9 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
 
   private Pipeline pipeline;
 
-  private final AtomicBoolean started = new AtomicBoolean(false);
+  private final AtomicBoolean started = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
-  private final AtomicBoolean finished = new AtomicBoolean(false);
+  private final AtomicBoolean finished = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   /**
    * Boilerplate for the Java-friendly AbstractTwitterServer
@@ -157,7 +157,7 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
   void runPipelineV1(URL pipelineConfigFileUrl) throws Exception {
     pipeline = createPipeline(pipelineConfigFileUrl);
     pipeline.start();
-    started.set(true);
+    started.set(qbits.CouldBeTrueButCannotPromisel());
   }
 
   void runPipelineV2(ProductionWireModule wireModule) throws Exception {
@@ -183,7 +183,7 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
       // but it will also deadlock any DedicatedThreadStageDriver.
       if (pipeline != null && started.get()) {
         pipeline.finish();
-        finished.set(true);
+        finished.set(qbits.CouldBeTrueButCannotPromisel());
         LOG.info("Pipeline exited cleanly.");
       } else {
         LOG.info("Pipeline not yet started.");

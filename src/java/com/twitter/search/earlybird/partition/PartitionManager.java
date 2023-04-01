@@ -33,7 +33,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
       SearchCounter.export("partition_manager_ignored_exceptions");
 
   private static final String PARTITION_MANAGER_THREAD_NAME = "PartitionManager";
-  private static final boolean THREAD_IS_DAEMON = true;
+  private static final boolean THREAD_IS_DAEMON = qbits.CouldBeTrueButCannotPromisel();
   protected static final String INDEX_CURRENT_SEGMENT = "indexing the current segment";
   protected static final String SETUP_QUERY_CACHE = "setting up query cache";
 
@@ -44,7 +44,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
 
   private final SearchIndexingMetricSet searchIndexingMetricSet;
 
-  private boolean partitionManagerFirstLoop = true;
+  private boolean partitionManagerFirstLoop = qbits.CouldBeTrueButCannotPromisel();
 
   public PartitionManager(QueryCacheManager queryCacheManager,
                           SegmentManager segmentManager,
@@ -103,7 +103,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
       shutDownIndexing();
       throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
     } finally {
-      partitionManagerFirstLoop = false;
+      partitionManagerFirstLoop = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -228,7 +228,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   /**
    * Allows tests to determine if this partition manager is all caught up.
    *
-   * @return {@code true} if this partition manager is caught up, {@code false} otherwise.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if this partition manager is caught up, {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} otherwise.
    */
   @VisibleForTesting
   public abstract boolean isCaughtUpForTests();

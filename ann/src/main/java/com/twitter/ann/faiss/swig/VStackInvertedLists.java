@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class VStackInvertedLists extends ReadOnlyInvertedLists {
   private transient long swigCPtr;
 
   protected VStackInvertedLists(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.VStackInvertedLists_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(VStackInvertedLists obj) {
@@ -28,7 +30,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_VStackInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_std__vectorT_faiss__InvertedLists_const_p_t getIls() {
     long cPtr = swigfaissJNI.VStackInvertedLists_ils_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__InvertedLists_const_p_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__InvertedLists_const_p_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setCumsz(SWIGTYPE_p_std__vectorT_int64_t_t value) {
@@ -51,11 +53,11 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getCumsz() {
     long cPtr = swigfaissJNI.VStackInvertedLists_cumsz_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public VStackInvertedLists(int nil, SWIGTYPE_p_p_faiss__InvertedLists ils) {
-    this(swigfaissJNI.new_VStackInvertedLists(nil, SWIGTYPE_p_p_faiss__InvertedLists.getCPtr(ils)), true);
+    this(swigfaissJNI.new_VStackInvertedLists(nil, SWIGTYPE_p_p_faiss__InvertedLists.getCPtr(ils)), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long list_size(long list_no) {
@@ -64,11 +66,11 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.VStackInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.VStackInvertedLists_get_ids(swigCPtr, this, list_no), false);
+    return new LongVector(swigfaissJNI.VStackInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
@@ -85,7 +87,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_single_code(long list_no, long offset) {
     long cPtr = swigfaissJNI.VStackInvertedLists_get_single_code(swigCPtr, this, list_no, offset);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void prefetch_lists(LongVector list_nos, int nlist) {

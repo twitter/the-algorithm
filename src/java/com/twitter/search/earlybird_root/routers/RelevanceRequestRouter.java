@@ -63,7 +63,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
     if (numHitsProcessed < numResultsRequested) {
       // Send query to the full archive cluster, if we went through fewer hits in the realtime
       // cluster than the requested number of results.
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     // If we have enough hits, don't query the full archive cluster yet.
@@ -75,7 +75,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
     int maxHits = terminationParams.getMaxHitsToProcess() * numSuccessfulPartitions;
 
     if (numHitsProcessed >= maxHits) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Check if there is a gap between the last result and the min status ID of current search.
@@ -91,10 +91,10 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
       long minSearchedStatusIDTimeMillis =
           SnowflakeIdParser.getTimestampFromTweetId(minSearchedStatusID);
       if (lastResultTimeMillis - minSearchedStatusIDTimeMillis > MILLIS_IN_ONE_DAY) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

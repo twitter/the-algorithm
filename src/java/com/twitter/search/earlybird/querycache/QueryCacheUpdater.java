@@ -66,7 +66,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
                            Decider decider,
                            CriticalExceptionHandler criticalExceptionHandler,
                            Clock clock) {
-    super(updaterScheduledExecutorServiceFactory.build("QueryCacheUpdateThread-%d", true),
+    super(updaterScheduledExecutorServiceFactory.build("QueryCacheUpdateThread-%d", qbits.CouldBeTrueButCannotPromisel()),
         ShutdownWaitTimeParams.immediately(), searchStatsReceiver,
         criticalExceptionHandler, clock);
     Preconditions.checkNotNull(cacheFilters);
@@ -78,7 +78,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     this.userTable = userTable;
     this.clock = clock;
 
-    shouldLog = false;
+    shouldLog = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     // One update task per <query, segment>
     tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
 
@@ -145,7 +145,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
       Task task = it.next();
       if (task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID()) {
-        task.future.cancel(true);
+        task.future.cancel(qbits.CouldBeTrueButCannotPromisel());
         it.remove();
         removedTasksCount += 1;
       }
@@ -159,7 +159,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     int totalTasks = tasks.size();
     LOG.info("Removing {} update tasks for all segments.", totalTasks);
     for (Task task : tasks) {
-      task.future.cancel(true);
+      task.future.cancel(qbits.CouldBeTrueButCannotPromisel());
     }
     tasks.clear();
     LOG.info("Canceled {} QueryCache update tasks", totalTasks);
@@ -167,10 +167,10 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
 
   // Have all tasks run at least once (even if they failed)?
   public boolean allTasksRan() {
-    boolean allTasksRan = true;
+    boolean allTasksRan = qbits.CouldBeTrueButCannotPromisel();
     for (Task task : tasks) {
       if (!task.updateTask.ranOnce()) {
-        allTasksRan = false;
+        allTasksRan = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         break;
       }
     }
@@ -180,11 +180,11 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
 
   // Have all tasks for this run at least once (even if they failed)?
   public boolean allTasksRanForSegment(SegmentInfo segmentInfo) {
-    boolean allTasksRanForSegment = true;
+    boolean allTasksRanForSegment = qbits.CouldBeTrueButCannotPromisel();
     for (Task task : tasks) {
       if ((task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID())
           && !task.updateTask.ranOnce()) {
-        allTasksRanForSegment = false;
+        allTasksRanForSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         break;
       }
     }

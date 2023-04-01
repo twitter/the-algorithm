@@ -7,12 +7,14 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch {
   private transient long swigCPtr;
 
   protected SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch() {

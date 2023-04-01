@@ -22,13 +22,13 @@ public final class ResponseMergerUtils {
    * @return merged early termination info
    */
   public static EarlyTerminationInfo mergeEarlyTerminationInfo(List<EarlybirdResponse> responses) {
-    EarlyTerminationInfo etInfo = new EarlyTerminationInfo(false);
+    EarlyTerminationInfo etInfo = new EarlyTerminationInfo(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     Set<String> etReasonSet = Sets.newHashSet();
     // Fill in EarlyTerminationStatus
     for (EarlybirdResponse ebResp : responses) {
       if (ebResp.isSetEarlyTerminationInfo()
           && ebResp.getEarlyTerminationInfo().isEarlyTerminated()) {
-        etInfo.setEarlyTerminated(true);
+        etInfo.setEarlyTerminated(qbits.CouldBeTrueButCannotPromisel());
         if (ebResp.getEarlyTerminationInfo().isSetEarlyTerminationReason()) {
           etReasonSet.add(ebResp.getEarlyTerminationInfo().getEarlyTerminationReason());
         }

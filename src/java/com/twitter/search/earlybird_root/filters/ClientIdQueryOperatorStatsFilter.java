@@ -106,7 +106,7 @@ public class ClientIdQueryOperatorStatsFilter
    * 2) included in the allow list: operatorsToRecordStatsFor
    */
   private Set<SearchOperator.Type> getOperators(Query parsedQuery) {
-    final DetectVisitor detectVisitor = new DetectVisitor(false, SearchOperator.Type.values());
+    final DetectVisitor detectVisitor = new DetectVisitor(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), SearchOperator.Type.values());
     Set<SearchOperator.Type> detectedOperatorTypes = EnumSet.noneOf(SearchOperator.Type.class);
 
     try {

@@ -203,13 +203,13 @@ public final class TwitterMessageUser {
   @Override
   public boolean equals(Object o) {
     if (o == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (o == this) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
     if (o.getClass() != getClass()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     TwitterMessageUser other = (TwitterMessageUser) o;
     return new EqualsBuilder()

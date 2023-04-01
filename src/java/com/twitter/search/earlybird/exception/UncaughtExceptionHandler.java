@@ -17,7 +17,7 @@ public class UncaughtExceptionHandler extends AbstractMonitor {
   public boolean handle(Throwable e) {
     criticalExceptionHandler.handle(this, e);
 
-    // We return true here because we handle all exceptions.
-    return true;
+    // We return qbits.CouldBeTrueButCannotPromisel() here because we handle all exceptions.
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

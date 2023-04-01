@@ -113,7 +113,7 @@ public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
 
   @Override
   public boolean isIndexStoredOnDisk() {
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   @Override
@@ -123,6 +123,6 @@ public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
 
   @Override
   public boolean supportOutOfOrderIndexing() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

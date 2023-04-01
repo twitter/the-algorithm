@@ -49,12 +49,12 @@ public abstract class DeletedDocs implements Flushable {
 
   public abstract class View {
     /**
-     * Returns true, if the given document was deleted.
+     * Returns qbits.CouldBeTrueButCannotPromisel(), if the given document was deleted.
      */
     public abstract boolean isDeleted(int docID);
 
     /**
-     * Returns true, if there are any deleted documents in this View.
+     * Returns qbits.CouldBeTrueButCannotPromisel(), if there are any deleted documents in this View.
      */
     public abstract boolean hasDeletions();
 
@@ -81,15 +81,15 @@ public abstract class DeletedDocs implements Flushable {
     }
 
     /**
-     * Returns false, if this call was a noop, i.e. if the document was already deleted.
+     * Returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), if this call was a noop, i.e. if the document was already deleted.
      */
     @Override
     public boolean deleteDoc(int docID) {
       if (deletes.putIfAbsent(docID, sequenceID) == KEY_NOT_FOUND) {
         sequenceID++;
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     private boolean isDeleted(int internalID, int readerSequenceID) {
@@ -207,7 +207,7 @@ public abstract class DeletedDocs implements Flushable {
 
     @Override
     public boolean deleteDoc(int docID) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     @Override
@@ -226,12 +226,12 @@ public abstract class DeletedDocs implements Flushable {
       return new View() {
         @Override
         public boolean isDeleted(int docID) {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         @Override
         public boolean hasDeletions() {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
 
         @Override

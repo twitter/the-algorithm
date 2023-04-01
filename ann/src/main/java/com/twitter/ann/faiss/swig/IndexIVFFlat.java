@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexIVFFlat extends IndexIVF {
   private transient long swigCPtr;
 
   protected IndexIVFFlat(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexIVFFlat_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexIVFFlat obj) {
@@ -28,7 +30,7 @@ public class IndexIVFFlat extends IndexIVF {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexIVFFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,11 +39,11 @@ public class IndexIVFFlat extends IndexIVF {
   }
 
   public IndexIVFFlat(Index quantizer, long d, long nlist_, MetricType arg3) {
-    this(swigfaissJNI.new_IndexIVFFlat__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist_, arg3.swigValue()), true);
+    this(swigfaissJNI.new_IndexIVFFlat__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist_, arg3.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFFlat(Index quantizer, long d, long nlist_) {
-    this(swigfaissJNI.new_IndexIVFFlat__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist_), true);
+    this(swigfaissJNI.new_IndexIVFFlat__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist_), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add_core(long n, SWIGTYPE_p_float x, LongVector xids, LongVector precomputed_idx) {
@@ -58,7 +60,7 @@ public class IndexIVFFlat extends IndexIVF {
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexIVFFlat_get_InvertedListScanner(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void reconstruct_from_offset(long list_no, long offset, SWIGTYPE_p_float recons) {
@@ -70,7 +72,7 @@ public class IndexIVFFlat extends IndexIVF {
   }
 
   public IndexIVFFlat() {
-    this(swigfaissJNI.new_IndexIVFFlat__SWIG_2(), true);
+    this(swigfaissJNI.new_IndexIVFFlat__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

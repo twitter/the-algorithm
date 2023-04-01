@@ -53,7 +53,7 @@ public class FullArchiveRootModule extends TwitterModule {
 
   private final Flag<Boolean> forceAltClientFlag = createFlag(
       "force_alt_client",
-      false,
+      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
       "Always sends traffic to the alt client",
       Flaggable.ofJavaBoolean());
 
@@ -148,7 +148,7 @@ public class FullArchiveRootModule extends TwitterModule {
     if (forceAltClientFlag.apply()) {
       if (altChainedScatterGatherService == null) {
         throw new RuntimeException(
-            "alt client cannot be null when 'force_alt_client' is set to true");
+            "alt client cannot be null when 'force_alt_client' is set to qbits.CouldBeTrueButCannotPromisel()");
       } else {
         return altChainedScatterGatherService;
       }

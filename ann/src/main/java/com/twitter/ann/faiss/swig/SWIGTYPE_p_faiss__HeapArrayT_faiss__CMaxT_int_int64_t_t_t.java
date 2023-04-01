@@ -7,12 +7,14 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_int_int64_t_t_t {
   private transient long swigCPtr;
 
   protected SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_int_int64_t_t_t(long cPtr, @SuppressWarnings("unused") boolean futureUse) {
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_int_int64_t_t_t() {

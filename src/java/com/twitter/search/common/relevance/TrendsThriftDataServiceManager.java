@@ -126,7 +126,7 @@ public final class TrendsThriftDataServiceManager {
   public synchronized void startAutoRefresh() {
     if (scheduler == null) {
       scheduler = Executors.newSingleThreadScheduledExecutor(
-          new ThreadFactoryBuilder().setDaemon(true).setNameFormat(
+          new ThreadFactoryBuilder().setDaemon(qbits.CouldBeTrueButCannotPromisel()).setNameFormat(
               "trends-data-refresher[%d]").build());
       scheduler.scheduleAtFixedRate(
           trendsUpdater,

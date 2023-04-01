@@ -306,7 +306,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     return new FacetLabelAccessor() {
       @Override protected boolean seek(long termID) {
         if (termID == HashTable.EMPTY_SLOT) {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
         int termPointer = termsArrayCopy.termPointers[(int) termID];
         hasTermPayload = termPointerEncoding.hasPayload(termPointer);
@@ -318,14 +318,14 @@ public class InvertedRealtimeIndex extends InvertedIndex {
         offensiveCount = termsArrayCopy.offensiveCounters != null
             ? termsArrayCopy.offensiveCounters[(int) termID] : 0;
 
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     };
   }
 
   @Override
   public boolean hasMaxPublishedPointer() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

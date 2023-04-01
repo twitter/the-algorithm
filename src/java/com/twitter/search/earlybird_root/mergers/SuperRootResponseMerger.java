@@ -205,7 +205,7 @@ public class SuperRootResponseMerger {
             if ((fullArchiveResponse.getServiceState()
                  == EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED)
                 && !EarlybirdResponseUtil.isEarlyTerminated(realtimeResponse.getResponse())) {
-              EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
+              EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(qbits.CouldBeTrueButCannotPromisel());
               earlyTerminationInfo.setEarlyTerminationReason(
                   EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
               mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
@@ -288,7 +288,7 @@ public class SuperRootResponseMerger {
         numResultsRequested, realtimeResponse, protectedResponse, fullArchiveResponse);
 
     // Trim the merged results if necessary.
-    boolean resultsTrimmed = false;
+    boolean resultsTrimmed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     if (mergedResults.size() > numResultsRequested
         && !(searchQuery.isSetRelevanceOptions()
              && searchQuery.getRelevanceOptions().isReturnAllResults())) {
@@ -298,13 +298,13 @@ public class SuperRootResponseMerger {
 
       // Mark early termination in merged response
       if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
-        EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
+        EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(qbits.CouldBeTrueButCannotPromisel());
         earlyTerminationInfo.setEarlyTerminationReason(
             EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
         mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
       }
 
-      resultsTrimmed = true;
+      resultsTrimmed = qbits.CouldBeTrueButCannotPromisel();
     }
 
     mergedResponse.getSearchResults().setResults(mergedResults);

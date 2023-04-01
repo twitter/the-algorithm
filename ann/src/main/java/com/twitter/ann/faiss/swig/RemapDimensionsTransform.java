@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class RemapDimensionsTransform extends VectorTransform {
   private transient long swigCPtr;
 
   protected RemapDimensionsTransform(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.RemapDimensionsTransform_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(RemapDimensionsTransform obj) {
@@ -28,7 +30,7 @@ public class RemapDimensionsTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_RemapDimensionsTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,19 +44,19 @@ public class RemapDimensionsTransform extends VectorTransform {
 
   public IntVector getMap() {
     long cPtr = swigfaissJNI.RemapDimensionsTransform_map_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, false);
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public RemapDimensionsTransform(int d_in, int d_out, SWIGTYPE_p_int map) {
-    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_0(d_in, d_out, SWIGTYPE_p_int.getCPtr(map)), true);
+    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_0(d_in, d_out, SWIGTYPE_p_int.getCPtr(map)), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public RemapDimensionsTransform(int d_in, int d_out, boolean uniform) {
-    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_1(d_in, d_out, uniform), true);
+    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_1(d_in, d_out, uniform), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public RemapDimensionsTransform(int d_in, int d_out) {
-    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_2(d_in, d_out), true);
+    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_2(d_in, d_out), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {
@@ -66,7 +68,7 @@ public class RemapDimensionsTransform extends VectorTransform {
   }
 
   public RemapDimensionsTransform() {
-    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_3(), true);
+    this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

@@ -71,21 +71,21 @@ public class ArchiveSegmentUpdater {
     if (!(segmentInfo.getSegment() instanceof ArchiveSegment)) {
       LOG.info("only ArchiveSegment is available for updating now: "
           + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!segmentInfo.isEnabled()) {
       LOG.debug("Segment is disabled: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (segmentInfo.isComplete() || segmentInfo.isIndexing()
         || segmentInfo.getSyncInfo().isLoaded()) {
       LOG.debug("Cannot update already indexed segment: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -99,19 +99,19 @@ public class ArchiveSegmentUpdater {
   public boolean updateSegment(SegmentInfo segmentInfo) {
     Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
     if (!canUpdateSegment(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (segmentInfo.isIndexing()) {
       LOG.error("Segment is already being indexed: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     final Date hdfsEndDate = ArchiveHDFSUtils.getSegmentEndDateOnHdfs(sync, segmentInfo);
     if (hdfsEndDate == null) {
       indexNewSegment.increment();
       if (!indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     } else {
       final Date curEndDate = ((ArchiveSegment) segmentInfo.getSegment()).getDataEndDate();
@@ -120,9 +120,9 @@ public class ArchiveSegmentUpdater {
         LOG.info("Segment is up-to-date: " + segmentInfo.getSegment().getTimeSliceID()
             + " Found flushed segment on HDFS with end date: "
             + FastDateFormat.getInstance("yyyyMMdd").format(hdfsEndDate));
-        segmentInfo.setComplete(true);
-        segmentInfo.getSyncInfo().setFlushed(true);
-        return true;
+        segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
+        segmentInfo.getSyncInfo().setFlushed(qbits.CouldBeTrueButCannotPromisel());
+        return qbits.CouldBeTrueButCannotPromisel();
       }
 
       updateExistingSegment.increment();
@@ -130,7 +130,7 @@ public class ArchiveSegmentUpdater {
           + "; new endDate will be " + FastDateFormat.getInstance("yyyyMMdd").format(curEndDate));
 
       if (!updateSegment(segmentInfo, hdfsEndDate)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
@@ -139,7 +139,7 @@ public class ArchiveSegmentUpdater {
       // Clean up the segment dir on local disk
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
       LOG.info("Error optimizing segment: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Verify segment before uploading.
@@ -147,17 +147,17 @@ public class ArchiveSegmentUpdater {
     if (!success) {
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
       LOG.info("Segment not uploaded to HDFS because it did not pass verification: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // upload the index to HDFS
-    success = new SegmentHdfsFlusher(zkTryLockFactory, sync, false)
+    success = new SegmentHdfsFlusher(zkTryLockFactory, sync, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .flushSegmentToDiskAndHDFS(segmentInfo);
     if (success) {
-      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, false, true);
+      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
     } else {
       // Clean up the segment dir on hdfs
-      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, true, false);
+      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       LOG.info("Error uploading segment to HDFS: " + segmentInfo);
     }
     segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
@@ -191,7 +191,7 @@ public class ArchiveSegmentUpdater {
     } catch (IOException e) {
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
       LOG.info("Exception while indexing segment: " + segmentInfo, e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } finally {
       if (documentReader != null) {
         documentReader.stop();
@@ -229,11 +229,11 @@ public class ArchiveSegmentUpdater {
       LOG.warn("Caught IOException while appending segment " + hdfsSegmentInfo.getSegmentName(), e);
       hdfsSegmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    segmentInfo.setComplete(true);
-    return true;
+    segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

@@ -87,7 +87,7 @@ public class IndexViewer {
   }
 
   public static class Options {
-    private boolean dumpHexTerms = false;
+    private boolean dumpHexTerms = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     private String charset;
     private double[] histogramBuckets;
     private boolean termLengthHistogram;
@@ -521,7 +521,7 @@ public class IndexViewer {
   private void dumpDataForAllFields(ViewerWriter writer, String term, Integer maxTerms,
                                     Integer maxDocs, Options options) throws IOException {
     for (String field : sortedFields()) {
-      dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, false);
+      dumpDataInternal(writer, field, term, maxTerms, maxDocs, options, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   }
 
@@ -637,7 +637,7 @@ public class IndexViewer {
     PostingsEnum docs = termsEnum.postings(null, 0);
     int docsReturned = 0;
     int docId;
-    boolean endedEarly = false;
+    boolean endedEarly = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     DocIDToTweetIDMapper mapper = twitterReader.getSegmentData().getDocIDToTweetIDMapper();
     while ((docId = docs.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
       if (docsReturned < maxDocs) {
@@ -649,7 +649,7 @@ public class IndexViewer {
         writer.name("tweetId").value(Long.toString(tweetID));
         writer.endObject();
       } else {
-        endedEarly = true;
+        endedEarly = qbits.CouldBeTrueButCannotPromisel();
         break;
       }
     }

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ReconstructFromNeighbors {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class ReconstructFromNeighbors {
 
   protected ReconstructFromNeighbors(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ReconstructFromNeighbors obj) {
@@ -29,7 +31,7 @@ public class ReconstructFromNeighbors {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ReconstructFromNeighbors(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class ReconstructFromNeighbors {
   }
 
   public IndexHNSW getIndex() {
-    return new IndexHNSW(swigfaissJNI.ReconstructFromNeighbors_index_get(swigCPtr, this), false);
+    return new IndexHNSW(swigfaissJNI.ReconstructFromNeighbors_index_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setM(long value) {
@@ -86,7 +88,7 @@ public class ReconstructFromNeighbors {
 
   public FloatVector getCodebook() {
     long cPtr = swigfaissJNI.ReconstructFromNeighbors_codebook_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setCodes(ByteVector value) {
@@ -95,7 +97,7 @@ public class ReconstructFromNeighbors {
 
   public ByteVector getCodes() {
     long cPtr = swigfaissJNI.ReconstructFromNeighbors_codes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, false);
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setNtotal(long value) {
@@ -123,15 +125,15 @@ public class ReconstructFromNeighbors {
   }
 
   public ReconstructFromNeighbors(IndexHNSW index, long k, long nsq) {
-    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_0(IndexHNSW.getCPtr(index), index, k, nsq), true);
+    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_0(IndexHNSW.getCPtr(index), index, k, nsq), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ReconstructFromNeighbors(IndexHNSW index, long k) {
-    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_1(IndexHNSW.getCPtr(index), index, k), true);
+    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_1(IndexHNSW.getCPtr(index), index, k), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ReconstructFromNeighbors(IndexHNSW index) {
-    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_2(IndexHNSW.getCPtr(index), index), true);
+    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_2(IndexHNSW.getCPtr(index), index), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add_codes(long n, SWIGTYPE_p_float x) {

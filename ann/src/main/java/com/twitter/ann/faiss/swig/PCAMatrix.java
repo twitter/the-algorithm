@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class PCAMatrix extends LinearTransform {
   private transient long swigCPtr;
 
   protected PCAMatrix(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.PCAMatrix_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(PCAMatrix obj) {
@@ -28,7 +30,7 @@ public class PCAMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_PCAMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -82,7 +84,7 @@ public class PCAMatrix extends LinearTransform {
 
   public FloatVector getMean() {
     long cPtr = swigfaissJNI.PCAMatrix_mean_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setEigenvalues(FloatVector value) {
@@ -91,7 +93,7 @@ public class PCAMatrix extends LinearTransform {
 
   public FloatVector getEigenvalues() {
     long cPtr = swigfaissJNI.PCAMatrix_eigenvalues_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setPCAMat(FloatVector value) {
@@ -100,27 +102,27 @@ public class PCAMatrix extends LinearTransform {
 
   public FloatVector getPCAMat() {
     long cPtr = swigfaissJNI.PCAMatrix_PCAMat_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public PCAMatrix(int d_in, int d_out, float eigen_power, boolean random_rotation) {
-    this(swigfaissJNI.new_PCAMatrix__SWIG_0(d_in, d_out, eigen_power, random_rotation), true);
+    this(swigfaissJNI.new_PCAMatrix__SWIG_0(d_in, d_out, eigen_power, random_rotation), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public PCAMatrix(int d_in, int d_out, float eigen_power) {
-    this(swigfaissJNI.new_PCAMatrix__SWIG_1(d_in, d_out, eigen_power), true);
+    this(swigfaissJNI.new_PCAMatrix__SWIG_1(d_in, d_out, eigen_power), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public PCAMatrix(int d_in, int d_out) {
-    this(swigfaissJNI.new_PCAMatrix__SWIG_2(d_in, d_out), true);
+    this(swigfaissJNI.new_PCAMatrix__SWIG_2(d_in, d_out), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public PCAMatrix(int d_in) {
-    this(swigfaissJNI.new_PCAMatrix__SWIG_3(d_in), true);
+    this(swigfaissJNI.new_PCAMatrix__SWIG_3(d_in), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public PCAMatrix() {
-    this(swigfaissJNI.new_PCAMatrix__SWIG_4(), true);
+    this(swigfaissJNI.new_PCAMatrix__SWIG_4(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

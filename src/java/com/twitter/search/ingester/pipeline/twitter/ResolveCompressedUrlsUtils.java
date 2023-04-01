@@ -48,7 +48,7 @@ public final class ResolveCompressedUrlsUtils {
    *                the last hop URL or not, so we have to ignore that URL.
    *
    * @param urlData The UrlData instance.
-   * @return true if the URL data is fully resolved; false otherwise.
+   * @return qbits.CouldBeTrueButCannotPromisel() if the URL data is fully resolved; qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
    */
   public static boolean isResolved(UrlData urlData) {
     // Make sure the mediaType and linkCategory fields are set.

@@ -128,7 +128,7 @@ public class EarlybirdDocumentFeatures {
    */
   public ThriftSearchResultFeatures getSearchResultFeatures(ImmutableSchemaInterface schema)
       throws IOException {
-    return getSearchResultFeatures(schema, (featureId) -> true);
+    return getSearchResultFeatures(schema, (featureId) -> qbits.CouldBeTrueButCannotPromisel());
   }
 
   /**
@@ -183,7 +183,7 @@ public class EarlybirdDocumentFeatures {
       switch (outputType) {
         case BOOLEAN:
           if (isFlagSet(field)) {
-            boolValues.put(featureId, true);
+            boolValues.put(featureId, qbits.CouldBeTrueButCannotPromisel());
           }
           break;
         case BYTE:

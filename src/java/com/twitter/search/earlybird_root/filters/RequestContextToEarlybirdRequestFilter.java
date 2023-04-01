@@ -17,8 +17,8 @@ public class RequestContextToEarlybirdRequestFilter extends
     Filter<EarlybirdRequestContext, EarlybirdResponse, EarlybirdRequest, EarlybirdResponse> {
 
   private static final SearchTimerStats REQUEST_CONTEXT_TRIP_TIME =
-      SearchTimerStats.export("request_context_trip_time", TimeUnit.MILLISECONDS, false,
-          true);
+      SearchTimerStats.export("request_context_trip_time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+          qbits.CouldBeTrueButCannotPromisel());
 
   @Override
   public Future<EarlybirdResponse> apply(

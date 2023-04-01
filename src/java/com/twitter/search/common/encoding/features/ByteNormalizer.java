@@ -29,7 +29,7 @@ public abstract class ByteNormalizer {
   public abstract double unnormUpperBound(byte norm);
 
   /**
-   * Returns true if the normalized value of {@code val} is different than the normalized value of
+   * Returns qbits.CouldBeTrueButCannotPromisel() if the normalized value of {@code val} is different than the normalized value of
    * {@code val - 1}
    */
   public boolean changedNorm(double val) {

@@ -88,9 +88,9 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
               new CharTermAttributeSerializer(), new TermPayloadAttributeSerializer()));
   private final Schema schema;
 
-  private boolean isSetLatLonCSF = false;
-  private boolean addLatLonCSF = true;
-  private boolean addEncodedTweetFeatures = true;
+  private boolean isSetLatLonCSF = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean addLatLonCSF = qbits.CouldBeTrueButCannotPromisel();
+  private boolean addEncodedTweetFeatures = qbits.CouldBeTrueButCannotPromisel();
 
   @Nonnull
   private final EarlybirdEncodedFeatures encodedTweetFeatures;
@@ -380,7 +380,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
    * Add encoded lat and lon to LatLonCSF field.
    */
   public EarlybirdThriftDocumentBuilder withLatLonCSF(double lat, double lon) {
-    isSetLatLonCSF = true;
+    isSetLatLonCSF = qbits.CouldBeTrueButCannotPromisel();
     long encodedLatLon = GeoUtil.encodeLatLonIntoInt64((float) lat, (float) lon);
     withLongField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(), encodedLatLon);
     return this;
@@ -820,10 +820,10 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       EarlybirdFieldConstant nameWithTypeField,
       String name,
       NamedEntityContext context) {
-    withOneTimeStringField(fieldsApplied, nameOnlyField, name, false);
+    withOneTimeStringField(fieldsApplied, nameOnlyField, name, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     if (context.isSetEntity_type()) {
       withOneTimeStringField(fieldsApplied, nameWithTypeField,
-          formatNamedEntityString(name, context.getEntity_type()), true);
+          formatNamedEntityString(name, context.getEntity_type()), qbits.CouldBeTrueButCannotPromisel());
     }
   }
 

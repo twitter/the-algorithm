@@ -96,7 +96,7 @@ public class EarlybirdDarkProxy {
   private ClientBuilder<ThriftClientRequest, byte[], ?, Yes, Yes> newClientBuilder(
       StatsReceiver statsReceiver) {
     return ClientBuilder.get()
-        .daemon(true)
+        .daemon(qbits.CouldBeTrueButCannotPromisel())
         .timeout(Duration.apply(DARK_REQUESTS_TOTAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))
         .requestTimeout(
             Duration.apply(DARK_REQUESTS_INDIVIDUAL_REQUEST_TIMEOUT_MS, TimeUnit.MILLISECONDS))

@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexIVFPQ extends IndexIVF {
   private transient long swigCPtr;
 
   protected IndexIVFPQ(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexIVFPQ_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexIVFPQ obj) {
@@ -28,7 +30,7 @@ public class IndexIVFPQ extends IndexIVF {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexIVFPQ(swigCPtr);
       }
       swigCPtr = 0;
@@ -50,7 +52,7 @@ public class IndexIVFPQ extends IndexIVF {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.IndexIVFPQ_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, false);
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setDo_polysemous_training(boolean value) {
@@ -67,7 +69,7 @@ public class IndexIVFPQ extends IndexIVF {
 
   public PolysemousTraining getPolysemous_training() {
     long cPtr = swigfaissJNI.IndexIVFPQ_polysemous_training_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new PolysemousTraining(cPtr, false);
+    return (cPtr == 0) ? null : new PolysemousTraining(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setScan_table_threshold(long value) {
@@ -99,15 +101,15 @@ public class IndexIVFPQ extends IndexIVF {
   }
 
   public SWIGTYPE_p_AlignedTableT_float_t getPrecomputed_table() {
-    return new SWIGTYPE_p_AlignedTableT_float_t(swigfaissJNI.IndexIVFPQ_precomputed_table_get(swigCPtr, this), true);
+    return new SWIGTYPE_p_AlignedTableT_float_t(swigfaissJNI.IndexIVFPQ_precomputed_table_get(swigCPtr, this), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFPQ(Index quantizer, long d, long nlist, long M, long nbits_per_idx, MetricType metric) {
-    this(swigfaissJNI.new_IndexIVFPQ__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist, M, nbits_per_idx, metric.swigValue()), true);
+    this(swigfaissJNI.new_IndexIVFPQ__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist, M, nbits_per_idx, metric.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFPQ(Index quantizer, long d, long nlist, long M, long nbits_per_idx) {
-    this(swigfaissJNI.new_IndexIVFPQ__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist, M, nbits_per_idx), true);
+    this(swigfaissJNI.new_IndexIVFPQ__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist, M, nbits_per_idx), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void encode_vectors(long n, SWIGTYPE_p_float x, LongVector list_nos, SWIGTYPE_p_unsigned_char codes, boolean include_listnos) {
@@ -168,7 +170,7 @@ public class IndexIVFPQ extends IndexIVF {
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexIVFPQ_get_InvertedListScanner(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void precompute_table() {
@@ -176,7 +178,7 @@ public class IndexIVFPQ extends IndexIVF {
   }
 
   public IndexIVFPQ() {
-    this(swigfaissJNI.new_IndexIVFPQ__SWIG_2(), true);
+    this(swigfaissJNI.new_IndexIVFPQ__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

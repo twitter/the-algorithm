@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class CenteringTransform extends VectorTransform {
   private transient long swigCPtr;
 
   protected CenteringTransform(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.CenteringTransform_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(CenteringTransform obj) {
@@ -28,7 +30,7 @@ public class CenteringTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_CenteringTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,15 +44,15 @@ public class CenteringTransform extends VectorTransform {
 
   public FloatVector getMean() {
     long cPtr = swigfaissJNI.CenteringTransform_mean_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public CenteringTransform(int d) {
-    this(swigfaissJNI.new_CenteringTransform__SWIG_0(d), true);
+    this(swigfaissJNI.new_CenteringTransform__SWIG_0(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public CenteringTransform() {
-    this(swigfaissJNI.new_CenteringTransform__SWIG_1(), true);
+    this(swigfaissJNI.new_CenteringTransform__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

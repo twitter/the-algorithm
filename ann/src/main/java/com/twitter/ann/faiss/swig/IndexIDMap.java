@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexIDMap extends Index {
   private transient long swigCPtr;
 
   protected IndexIDMap(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexIDMap_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexIDMap obj) {
@@ -28,7 +30,7 @@ public class IndexIDMap extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexIDMap(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class IndexIDMap extends Index {
 
   public Index getIndex() {
     long cPtr = swigfaissJNI.IndexIDMap_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOwn_fields(boolean value) {
@@ -59,11 +61,11 @@ public class IndexIDMap extends Index {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getId_map() {
     long cPtr = swigfaissJNI.IndexIDMap_id_map_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public IndexIDMap(Index index) {
-    this(swigfaissJNI.new_IndexIDMap__SWIG_0(Index.getCPtr(index), index), true);
+    this(swigfaissJNI.new_IndexIDMap__SWIG_0(Index.getCPtr(index), index), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add_with_ids(long n, SWIGTYPE_p_float x, LongVector xids) {
@@ -95,7 +97,7 @@ public class IndexIDMap extends Index {
   }
 
   public IndexIDMap() {
-    this(swigfaissJNI.new_IndexIDMap__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexIDMap__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

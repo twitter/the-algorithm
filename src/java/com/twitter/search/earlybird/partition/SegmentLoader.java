@@ -52,18 +52,18 @@ public class SegmentLoader {
 
   /**
    * Determines if the Earlybird should attempt to download the given segment from HDFS. This
-   * returns true if the segment is not already present on local disk, and the segment does exist
+   * returns qbits.CouldBeTrueButCannotPromisel() if the segment is not already present on local disk, and the segment does exist
    * on HDFS.
    */
   public boolean shouldDownloadSegmentWhileInServerSet(SegmentInfo segmentInfo) {
     if (isValidSegmentOnDisk(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
       return HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo);
     } catch (IOException e) {
       LOG.error("Failed to check HDFS for segment " + segmentInfo, e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -74,12 +74,12 @@ public class SegmentLoader {
   public boolean downloadSegment(SegmentInfo segmentInfo) {
     if (!segmentInfo.isEnabled()) {
       LOG.debug("Segment is disabled: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (segmentInfo.isIndexing() || segmentInfo.getSyncInfo().isLoaded()) {
       LOG.debug("Cannot load indexing or loaded segment: " + segmentInfo);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // Return whether the appropriate version is on disk, and if not, download it from HDFS.
@@ -92,10 +92,10 @@ public class SegmentLoader {
   public boolean loadSegmentFromDisk(SegmentInfo segmentInfo) {
     if (segmentInfo.isIndexing()) {
       LOG.error("Tried to load current segment!");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    segmentInfo.setIndexing(true);
+    segmentInfo.setIndexing(qbits.CouldBeTrueButCannotPromisel());
     try {
       File flushDir = new File(segmentInfo.getSyncInfo().getLocalSyncDir());
       Directory loadDir = FSDirectory.open(flushDir.toPath());
@@ -106,13 +106,13 @@ public class SegmentLoader {
         SearchRateCounter.export(
             "segment_loader_failed_too_few_tweets_in_segment_" + segmentInfo.getSegmentName())
             .increment();
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
-      segmentInfo.setIndexing(false);
-      segmentInfo.setComplete(true);
-      segmentInfo.getSyncInfo().setLoaded(true);
-      return true;
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
+      segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeTrueButCannotPromisel());
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (FlushVersionMismatchException e) {
       handleException(segmentInfo, e);
       // If earlybird is in starting state, handler will terminate it
@@ -122,7 +122,7 @@ public class SegmentLoader {
     }
 
     SearchRateCounter.export("segment_loader_failed_" + segmentInfo.getSegmentName()).increment();
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   // Check to see if the segment exists on disk, and its checksum passes.
@@ -131,16 +131,16 @@ public class SegmentLoader {
     File loadDir = new File(loadDirStr);
 
     if (!loadDir.exists()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     for (String persistentFileName : segmentSyncConfig.getPersistentFileNames(segment)) {
       if (!verifyInfoChecksum(loadDir, persistentFileName)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private static boolean verifyInfoChecksum(File loadDir, String databaseName) {
@@ -150,7 +150,7 @@ public class SegmentLoader {
         PersistentFile.Reader reader = PersistentFile.getReader(dir, databaseName);
         try {
           reader.verifyInfoChecksum();
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         } finally {
           IOUtils.closeQuietly(reader);
           IOUtils.closeQuietly(dir);
@@ -161,14 +161,14 @@ public class SegmentLoader {
         LOG.error("Error while trying to read checksum file", e);
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   // Check that the loaded segment's status count is higher than the configured threshold
   private boolean verifySegmentStatusCountLargeEnough(SegmentInfo segmentInfo) {
     long segmentStatusCount = segmentInfo.getIndexStats().getStatusCount();
     if (segmentStatusCount > segmentSyncConfig.getMinSegmentStatusCountThreshold()) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else if (segmentInfo.getEarlybirdIndexConfig().isIndexStoredOnDisk()
         && couldBeMostRecentArchiveSegment(segmentInfo)) {
       // The most recent archive earlybird segment is expected to be incomplete
@@ -176,20 +176,20 @@ public class SegmentLoader {
           + segmentSyncConfig.getMinSegmentStatusCountThreshold()
           + ", but this is expected because the most recent segment is expected to be incomplete: "
           + segmentInfo);
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else {
       // The segment status count is small so the segment is likely incomplete.
       LOG.error("Segment status count (" + segmentStatusCount + ") is below the threshold of "
           + segmentSyncConfig.getMinSegmentStatusCountThreshold() + ": " + segmentInfo);
-      segmentInfo.setIndexing(false);
-      segmentInfo.getSyncInfo().setLoaded(false);
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
       // Remove segment from local disk
       if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
         LOG.error("Failed to cleanup unloadable segment directory.");
       }
 
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -207,7 +207,7 @@ public class SegmentLoader {
    * uploaded by any of the hosts.
    * If the segment exists on hdfs, the segment will be copied from hdfs to the local file
    * system, and we will verify the checksum against the copied version.
-   * @return true iff the segment was copied to local disk, and the checksum is verified.
+   * @return qbits.CouldBeTrueButCannotPromisel() iff the segment was copied to local disk, and the checksum is verified.
    */
   private boolean checkSegmentOnHdfsAndCopyLocally(SegmentInfo segment) {
     if (!segmentSyncConfig.isSegmentLoadFromHdfsEnabled()) {
@@ -291,8 +291,8 @@ public class SegmentLoader {
     LOG.error("Exception while loading IndexSegment from "
         + segmentInfo.getSyncInfo().getLocalSyncDir(), e);
 
-    segmentInfo.setIndexing(false);
-    segmentInfo.getSyncInfo().setLoaded(false);
+    segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
       LOG.error("Failed to cleanup unloadable segment directory.");
     }

@@ -153,7 +153,7 @@ public abstract class TwitterEarlyTerminationCollector
     EarlyTerminationState earlyTerminationState = getEarlyTerminationState();
 
     if (earlyTerminationState.isTerminated()) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (getNumHitsProcessed() >= getMaxHitsToProcess()) {
@@ -162,7 +162,7 @@ public abstract class TwitterEarlyTerminationCollector
         return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED)
             .isTerminated();
       } else {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
 
@@ -318,7 +318,7 @@ public abstract class TwitterEarlyTerminationCollector
   }
 
   protected boolean shouldTerminate() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

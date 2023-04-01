@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class VisitedTable {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class VisitedTable {
 
   protected VisitedTable(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(VisitedTable obj) {
@@ -29,7 +31,7 @@ public class VisitedTable {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_VisitedTable(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class VisitedTable {
 
   public ByteVector getVisited() {
     long cPtr = swigfaissJNI.VisitedTable_visited_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, false);
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setVisno(int value) {
@@ -54,7 +56,7 @@ public class VisitedTable {
   }
 
   public VisitedTable(int size) {
-    this(swigfaissJNI.new_VisitedTable(size), true);
+    this(swigfaissJNI.new_VisitedTable(size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void set(int no) {

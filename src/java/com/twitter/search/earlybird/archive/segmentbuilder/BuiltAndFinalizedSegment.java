@@ -24,6 +24,6 @@ public class BuiltAndFinalizedSegment extends SegmentBuilderSegment {
 
   @Override
   public boolean isBuilt() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

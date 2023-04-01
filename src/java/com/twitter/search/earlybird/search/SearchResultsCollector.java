@@ -28,7 +28,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
 public class SearchResultsCollector
     extends AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> {
   private static final EarlyTerminationState TERMINATED_COLLECTED_ENOUGH_RESULTS =
-      new EarlyTerminationState("terminated_collected_enough_results", true);
+      new EarlyTerminationState("terminated_collected_enough_results", qbits.CouldBeTrueButCannotPromisel());
 
   protected final List<Hit> results;
   private final Set<Integer> requestedFeatureIds;

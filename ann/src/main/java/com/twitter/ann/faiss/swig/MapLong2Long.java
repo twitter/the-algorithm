@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class MapLong2Long {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class MapLong2Long {
 
   protected MapLong2Long(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(MapLong2Long obj) {
@@ -29,7 +31,7 @@ public class MapLong2Long {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_MapLong2Long(swigCPtr);
       }
       swigCPtr = 0;
@@ -41,7 +43,7 @@ public class MapLong2Long {
   }
 
   public SWIGTYPE_p_std__unordered_mapT_long_long_t getMap() {
-    return new SWIGTYPE_p_std__unordered_mapT_long_long_t(swigfaissJNI.MapLong2Long_map_get(swigCPtr, this), true);
+    return new SWIGTYPE_p_std__unordered_mapT_long_long_t(swigfaissJNI.MapLong2Long_map_get(swigCPtr, this), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add(long n, SWIGTYPE_p_long keys, SWIGTYPE_p_long vals) {
@@ -57,7 +59,7 @@ public class MapLong2Long {
   }
 
   public MapLong2Long() {
-    this(swigfaissJNI.new_MapLong2Long(), true);
+    this(swigfaissJNI.new_MapLong2Long(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

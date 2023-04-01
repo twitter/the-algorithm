@@ -10,7 +10,7 @@ public abstract class TermPointerEncoding {
   public abstract int getTextStart(int termPointer);
 
   /**
-   * Returns true, if the given term stores a per-term payload.
+   * Returns qbits.CouldBeTrueButCannotPromisel(), if the given term stores a per-term payload.
    */
   public abstract boolean hasPayload(int termPointer);
 

@@ -53,7 +53,7 @@ public class DecisionForestModelsManager extends BaseModelsManager<DecisionFores
     Preconditions.checkArgument(
         configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
     return new DecisionForestModelsManager(
-        new ConfigSupplier(configFile), featureContext, true, statsPrefix);
+        new ConfigSupplier(configFile), featureContext, qbits.CouldBeTrueButCannotPromisel(), statsPrefix);
   }
 
   /**
@@ -61,7 +61,7 @@ public class DecisionForestModelsManager extends BaseModelsManager<DecisionFores
    */
   public static DecisionForestModelsManager createNoOp(String statsPrefix) {
     return new DecisionForestModelsManager(
-        Collections::emptyMap, new FeatureContext(), false, statsPrefix) {
+        Collections::emptyMap, new FeatureContext(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), statsPrefix) {
       @Override
       public void run() { }
     };

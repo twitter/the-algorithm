@@ -19,7 +19,7 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
 
   public SegmentBuilderApp() {
     createFlag("onlyRunOnce",
-        true,
+        qbits.CouldBeTrueButCannotPromisel(),
         "whether to stop segment builder after one loop",
         Flaggable.ofBoolean());
 

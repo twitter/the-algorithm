@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class BitstringReader {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class BitstringReader {
 
   protected BitstringReader(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(BitstringReader obj) {
@@ -29,7 +31,7 @@ public class BitstringReader {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_BitstringReader(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class BitstringReader {
 
   public SWIGTYPE_p_unsigned_char getCode() {
     long cPtr = swigfaissJNI.BitstringReader_code_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setCode_size(long value) {
@@ -62,7 +64,7 @@ public class BitstringReader {
   }
 
   public BitstringReader(SWIGTYPE_p_unsigned_char code, long code_size) {
-    this(swigfaissJNI.new_BitstringReader(SWIGTYPE_p_unsigned_char.getCPtr(code), code_size), true);
+    this(swigfaissJNI.new_BitstringReader(SWIGTYPE_p_unsigned_char.getCPtr(code), code_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long read(int nbit) {

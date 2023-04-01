@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class FloatVector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class FloatVector {
 
   protected FloatVector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(FloatVector obj) {
@@ -29,7 +31,7 @@ public class FloatVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_FloatVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class FloatVector {
   }
 
   public FloatVector() {
-    this(swigfaissJNI.new_FloatVector(), true);
+    this(swigfaissJNI.new_FloatVector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(float arg0) {
@@ -50,7 +52,7 @@ public class FloatVector {
 
   public SWIGTYPE_p_float data() {
     long cPtr = swigfaissJNI.FloatVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long size() {

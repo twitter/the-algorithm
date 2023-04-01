@@ -495,25 +495,25 @@ public final class EarlybirdSchemaCreateTool {
     builder.withPartitionFieldId(0)
         .withSortableLongTermField(EarlybirdFieldConstant.ID_FIELD.getFieldName())
         // Text Fields that are searched by default
-        .withTextField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), true)
+        .withTextField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withSearchFieldByDefault(
             EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), 0.1f)
-        .withPretokenizedTextField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), true)
+        .withPretokenizedTextField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withSearchFieldByDefault(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), 1.0f);
     builder.withTweetSpecificNormalization(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), true)
+        .withTextField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withSearchFieldByDefault(
             EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), 0.2f)
 
         // Text fields not searched by default
-        .withTextField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), false)
+        .withTextField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .withTextField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
 
         // cards are not searched by default, and have weight 0.
-        .withPretokenizedTextField(EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(), false)
+        .withPretokenizedTextField(EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), false)
+            EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .withTextField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
 
         // Out-of-order append fields
         .withLongTermField(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName())
@@ -533,13 +533,13 @@ public final class EarlybirdSchemaCreateTool {
         .withLongTermField(EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName())
         .withIndexedNotTokenizedField(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(), false)
+        .withTextField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withIndexedNotTokenizedField(
             EarlybirdFieldConstant.PLACE_COUNTRY_CODE_FIELD.getFieldName())
         .withIndexedNotTokenizedField(
             EarlybirdFieldConstant.PROFILE_GEO_COUNTRY_CODE_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(), false)
+        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withTermTextLookup(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())
         .withTermTextLookup(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName())
         .withPretokenizedNoPositionField(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
@@ -569,33 +569,33 @@ public final class EarlybirdSchemaCreateTool {
 
         // Named entity fields
         .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD.getFieldName(), true)
+            EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD.getFieldName(), true)
+            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(), true)
+            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(), true)
+            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
 
         // camelCase-tokenized user handles and tokenized user names, not searchable by default
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName(), false)
+            EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), false)
+            EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
 
         .withIndexedNotTokenizedField(
             EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), true)
+        .withTextField(EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .withPretokenizedTextField(EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .withTextField(EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), qbits.CouldBeTrueButCannotPromisel())
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), false)
+            EarlybirdFieldConstant.CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD.getFieldName(), false)
+            EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.URL_DESCRIPTION_FIELD.getFieldName(), false)
+            EarlybirdFieldConstant.URL_DESCRIPTION_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withPretokenizedTextField(
-            EarlybirdFieldConstant.URL_TITLE_FIELD.getFieldName(), false);
+            EarlybirdFieldConstant.URL_TITLE_FIELD.getFieldName(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     builder
         .withPhotoUrlFacetField(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName())
@@ -612,44 +612,44 @@ public final class EarlybirdSchemaCreateTool {
     builder
         .withColumnStrideField(EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME,
                 ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_FEATURES,
-                true, loadCSFIntoRAMDefault)
+                qbits.CouldBeTrueButCannotPromisel(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, /* the full archive loads this field into RAM */ true)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), /* the full archive loads this field into RAM */ qbits.CouldBeTrueButCannotPromisel())
         .withColumnStrideField(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-                ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+                ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-                ThriftCSFType.BYTE, 1, false, loadCSFIntoRAMDefault)
+                ThriftCSFType.BYTE, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
          // CSF Used by archive mappers
         .withColumnStrideField(EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName(),
-            ThriftCSFType.INT, 1, false, /* the full archive loads this field into RAM */ true)
+            ThriftCSFType.INT, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), /* the full archive loads this field into RAM */ qbits.CouldBeTrueButCannotPromisel())
         .withColumnStrideField(EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName(),
-            ThriftCSFType.LONG, 1, false, /* the full archive loads this field into RAM */ true)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), /* the full archive loads this field into RAM */ qbits.CouldBeTrueButCannotPromisel())
         .withColumnStrideField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CONVERSATION_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.QUOTED_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(),
-            ThriftCSFType.INT, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.INT, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.CARD_URI_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
         .withColumnStrideField(
             EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
-            ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
+            ThriftCSFType.LONG, 1, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), loadCSFIntoRAMDefault)
 
     /* Semicolon on separate line to preserve git blame. */;
 
     builder.withColumnStrideField(
         EarlybirdFieldConstants.EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES,
-        true, loadCSFIntoRAMDefault);
+        qbits.CouldBeTrueButCannotPromisel(), loadCSFIntoRAMDefault);
 
     for (Map.Entry<String, FeatureConfiguration> entry : FEATURE_CONFIGURATION_MAP.entrySet()) {
       String fullName = entry.getKey();
@@ -663,40 +663,40 @@ public final class EarlybirdSchemaCreateTool {
     // boolean args are respectively whether to use skiplist, whether offensive, whether to use CSF
     builder
         .withFacetConfigs(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.MENTIONS_FACET, true, false, false)
+            EarlybirdFieldConstant.MENTIONS_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.HASHTAGS_FACET, true, false, false)
+            EarlybirdFieldConstant.HASHTAGS_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.STOCKS_FACET, true, false, false)
+            EarlybirdFieldConstant.STOCKS_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.IMAGES_FACET, true, true, false)
+            EarlybirdFieldConstant.IMAGES_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.VIDEOS_FACET, true, true, false)
+            EarlybirdFieldConstant.VIDEOS_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.NEWS_FACET, true, false, false)
+            EarlybirdFieldConstant.NEWS_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(),
-            EarlybirdFieldConstant.LANGUAGES_FACET, false, false, false)
+            EarlybirdFieldConstant.LANGUAGES_FACET, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(),
-            EarlybirdFieldConstant.SOURCES_FACET, false, false, false)
+            EarlybirdFieldConstant.SOURCES_FACET, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.TWIMG_FACET, true, true, false)
+            EarlybirdFieldConstant.TWIMG_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-            EarlybirdFieldConstant.FROM_USER_ID_FACET, false, false, true /* facet on CSF */)
+            EarlybirdFieldConstant.FROM_USER_ID_FACET, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel() /* facet on CSF */)
         .withFacetConfigs(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-            EarlybirdFieldConstant.RETWEETS_FACET, false, false, true /* facet on CSF */)
+            EarlybirdFieldConstant.RETWEETS_FACET, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel() /* facet on CSF */)
         .withFacetConfigs(EarlybirdFieldConstant.LINKS_FIELD.getFieldName(),
-            EarlybirdFieldConstant.LINKS_FACET, true, false, false)
+            EarlybirdFieldConstant.LINKS_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(
             EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
-            true, false, false)
+            qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(
             EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
-            true, false, false)
+            qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(
             EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
-            true, false, false)
+            qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .withFacetConfigs(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName(),
-            EarlybirdFieldConstant.SPACES_FACET, true, false, false);
+            EarlybirdFieldConstant.SPACES_FACET, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     return builder.build();
   }
 }

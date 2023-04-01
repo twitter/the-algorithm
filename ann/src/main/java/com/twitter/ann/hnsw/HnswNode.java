@@ -22,10 +22,10 @@ public class HnswNode<T> {
   @Override
   public boolean equals(Object o) {
     if (o == this) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
     if (!(o instanceof HnswNode)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     HnswNode<?> that = (HnswNode<?>) o;

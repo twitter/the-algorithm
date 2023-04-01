@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
   private transient long swigCPtr;
 
   protected SimulatedAnnealingOptimizer(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.SimulatedAnnealingOptimizer_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(SimulatedAnnealingOptimizer obj) {
@@ -28,7 +30,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_SimulatedAnnealingOptimizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
 
   public PermutationObjective getObj() {
     long cPtr = swigfaissJNI.SimulatedAnnealingOptimizer_obj_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new PermutationObjective(cPtr, false);
+    return (cPtr == 0) ? null : new PermutationObjective(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setN(int value) {
@@ -59,11 +61,11 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
 
   public SWIGTYPE_p_FILE getLogfile() {
     long cPtr = swigfaissJNI.SimulatedAnnealingOptimizer_logfile_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_FILE(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_FILE(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public SimulatedAnnealingOptimizer(PermutationObjective obj, SimulatedAnnealingParameters p) {
-    this(swigfaissJNI.new_SimulatedAnnealingOptimizer(PermutationObjective.getCPtr(obj), obj, SimulatedAnnealingParameters.getCPtr(p), p), true);
+    this(swigfaissJNI.new_SimulatedAnnealingOptimizer(PermutationObjective.getCPtr(obj), obj, SimulatedAnnealingParameters.getCPtr(p), p), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void setRnd(SWIGTYPE_p_faiss__RandomGenerator value) {
@@ -72,7 +74,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
 
   public SWIGTYPE_p_faiss__RandomGenerator getRnd() {
     long cPtr = swigfaissJNI.SimulatedAnnealingOptimizer_rnd_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setInit_cost(double value) {

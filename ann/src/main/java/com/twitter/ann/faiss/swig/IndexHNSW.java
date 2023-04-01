@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexHNSW extends Index {
   private transient long swigCPtr;
 
   protected IndexHNSW(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexHNSW_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexHNSW obj) {
@@ -28,7 +30,7 @@ public class IndexHNSW extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexHNSW(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class IndexHNSW extends Index {
 
   public HNSW getHnsw() {
     long cPtr = swigfaissJNI.IndexHNSW_hnsw_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new HNSW(cPtr, false);
+    return (cPtr == 0) ? null : new HNSW(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOwn_fields(boolean value) {
@@ -59,7 +61,7 @@ public class IndexHNSW extends Index {
 
   public Index getStorage() {
     long cPtr = swigfaissJNI.IndexHNSW_storage_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setReconstruct_from_neighbors(ReconstructFromNeighbors value) {
@@ -68,31 +70,31 @@ public class IndexHNSW extends Index {
 
   public ReconstructFromNeighbors getReconstruct_from_neighbors() {
     long cPtr = swigfaissJNI.IndexHNSW_reconstruct_from_neighbors_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ReconstructFromNeighbors(cPtr, false);
+    return (cPtr == 0) ? null : new ReconstructFromNeighbors(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public IndexHNSW(int d, int M, MetricType metric) {
-    this(swigfaissJNI.new_IndexHNSW__SWIG_0(d, M, metric.swigValue()), true);
+    this(swigfaissJNI.new_IndexHNSW__SWIG_0(d, M, metric.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSW(int d, int M) {
-    this(swigfaissJNI.new_IndexHNSW__SWIG_1(d, M), true);
+    this(swigfaissJNI.new_IndexHNSW__SWIG_1(d, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSW(int d) {
-    this(swigfaissJNI.new_IndexHNSW__SWIG_2(d), true);
+    this(swigfaissJNI.new_IndexHNSW__SWIG_2(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSW() {
-    this(swigfaissJNI.new_IndexHNSW__SWIG_3(), true);
+    this(swigfaissJNI.new_IndexHNSW__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSW(Index storage, int M) {
-    this(swigfaissJNI.new_IndexHNSW__SWIG_4(Index.getCPtr(storage), storage, M), true);
+    this(swigfaissJNI.new_IndexHNSW__SWIG_4(Index.getCPtr(storage), storage, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSW(Index storage) {
-    this(swigfaissJNI.new_IndexHNSW__SWIG_5(Index.getCPtr(storage), storage), true);
+    this(swigfaissJNI.new_IndexHNSW__SWIG_5(Index.getCPtr(storage), storage), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void add(long n, SWIGTYPE_p_float x) {

@@ -45,17 +45,17 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     data.textScoreContrib = params.textScoreWeight * data.textScore;
     data.parusContrib = params.parusWeight * data.parusScore;
 
-    // contributions from engagement counters. Note that we have "true" argument for all getters,
+    // contributions from engagement counters. Note that we have "qbits.CouldBeTrueButCannotPromisel()" argument for all getters,
     // which means all values will get scaled down for scoring, they were unbounded in raw form.
     data.retweetContrib = params.retweetWeight * data.retweetCountPostLog2;
     data.favContrib = params.favWeight * data.favCountPostLog2;
     data.replyContrib = params.replyWeight * data.replyCountPostLog2;
     data.embedsImpressionContrib =
-        params.embedsImpressionWeight * data.getEmbedsImpressionCount(true);
+        params.embedsImpressionWeight * data.getEmbedsImpressionCount(qbits.CouldBeTrueButCannotPromisel());
     data.embedsUrlContrib =
-        params.embedsUrlWeight * data.getEmbedsUrlCount(true);
+        params.embedsUrlWeight * data.getEmbedsUrlCount(qbits.CouldBeTrueButCannotPromisel());
     data.videoViewContrib =
-        params.videoViewWeight * data.getVideoViewCount(true);
+        params.videoViewWeight * data.getVideoViewCount(qbits.CouldBeTrueButCannotPromisel());
     data.quotedContrib =
         params.quotedCountWeight * data.quotedCount;
 
@@ -168,15 +168,15 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     }
     addLinearElementExplanation(linearDetails,
         "embedded tweet impression count",
-        params.embedsImpressionWeight, scoringData.getEmbedsImpressionCount(false),
+        params.embedsImpressionWeight, scoringData.getEmbedsImpressionCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
         scoringData.embedsImpressionContrib);
     addLinearElementExplanation(linearDetails,
         "embedded tweet url count",
-        params.embedsUrlWeight, scoringData.getEmbedsUrlCount(false),
+        params.embedsUrlWeight, scoringData.getEmbedsUrlCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
         scoringData.embedsUrlContrib);
     addLinearElementExplanation(linearDetails,
         "video view count",
-        params.videoViewWeight, scoringData.getVideoViewCount(false),
+        params.videoViewWeight, scoringData.getVideoViewCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
         scoringData.videoViewContrib);
     addLinearElementExplanation(linearDetails,
         "quoted count",

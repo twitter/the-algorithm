@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexBinaryHNSW extends IndexBinary {
   private transient long swigCPtr;
 
   protected IndexBinaryHNSW(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexBinaryHNSW_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexBinaryHNSW obj) {
@@ -28,7 +30,7 @@ public class IndexBinaryHNSW extends IndexBinary {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexBinaryHNSW(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class IndexBinaryHNSW extends IndexBinary {
 
   public HNSW getHnsw() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_hnsw_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new HNSW(cPtr, false);
+    return (cPtr == 0) ? null : new HNSW(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOwn_fields(boolean value) {
@@ -59,32 +61,32 @@ public class IndexBinaryHNSW extends IndexBinary {
 
   public IndexBinary getStorage() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_storage_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IndexBinary(cPtr, false);
+    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public IndexBinaryHNSW() {
-    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_0(), true);
+    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_0(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexBinaryHNSW(int d, int M) {
-    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_1(d, M), true);
+    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_1(d, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexBinaryHNSW(int d) {
-    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_2(d), true);
+    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_2(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexBinaryHNSW(IndexBinary storage, int M) {
-    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_3(IndexBinary.getCPtr(storage), storage, M), true);
+    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_3(IndexBinary.getCPtr(storage), storage, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexBinaryHNSW(IndexBinary storage) {
-    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_4(IndexBinary.getCPtr(storage), storage), true);
+    this(swigfaissJNI.new_IndexBinaryHNSW__SWIG_4(IndexBinary.getCPtr(storage), storage), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, false);
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void add(long n, SWIGTYPE_p_unsigned_char x) {

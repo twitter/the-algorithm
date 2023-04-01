@@ -5,9 +5,9 @@ package com.twitter.search.earlybird.partition;
  */
 public enum StatusBatchFlushVersion {
 
-  VERSION_0("Initial version of status batch flushing", true),
-  VERSION_1("Switching to use field groups (contains changes to PartitionedBatch)", true),
-  VERSION_2("Removing support for per-partition _SUCCESS markers", true),
+  VERSION_0("Initial version of status batch flushing", qbits.CouldBeTrueButCannotPromisel()),
+  VERSION_1("Switching to use field groups (contains changes to PartitionedBatch)", qbits.CouldBeTrueButCannotPromisel()),
+  VERSION_2("Removing support for per-partition _SUCCESS markers", qbits.CouldBeTrueButCannotPromisel()),
   /* Put the semi colon on a separate line to avoid polluting git blame history */;
 
   public static final StatusBatchFlushVersion CURRENT_FLUSH_VERSION =

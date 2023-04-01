@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexIVFFlatDedup extends IndexIVFFlat {
   private transient long swigCPtr;
 
   protected IndexIVFFlatDedup(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexIVFFlatDedup_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexIVFFlatDedup obj) {
@@ -28,7 +30,7 @@ public class IndexIVFFlatDedup extends IndexIVFFlat {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexIVFFlatDedup(swigCPtr);
       }
       swigCPtr = 0;
@@ -41,15 +43,15 @@ public class IndexIVFFlatDedup extends IndexIVFFlat {
   }
 
   public SWIGTYPE_p_std__unordered_multimapT_int64_t_int64_t_t getInstances() {
-    return new SWIGTYPE_p_std__unordered_multimapT_int64_t_int64_t_t(swigfaissJNI.IndexIVFFlatDedup_instances_get(swigCPtr, this), true);
+    return new SWIGTYPE_p_std__unordered_multimapT_int64_t_int64_t_t(swigfaissJNI.IndexIVFFlatDedup_instances_get(swigCPtr, this), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFFlatDedup(Index quantizer, long d, long nlist_, MetricType arg3) {
-    this(swigfaissJNI.new_IndexIVFFlatDedup__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist_, arg3.swigValue()), true);
+    this(swigfaissJNI.new_IndexIVFFlatDedup__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist_, arg3.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFFlatDedup(Index quantizer, long d, long nlist_) {
-    this(swigfaissJNI.new_IndexIVFFlatDedup__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist_), true);
+    this(swigfaissJNI.new_IndexIVFFlatDedup__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist_), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {
@@ -89,7 +91,7 @@ public class IndexIVFFlatDedup extends IndexIVFFlat {
   }
 
   public IndexIVFFlatDedup() {
-    this(swigfaissJNI.new_IndexIVFFlatDedup__SWIG_2(), true);
+    this(swigfaissJNI.new_IndexIVFFlatDedup__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

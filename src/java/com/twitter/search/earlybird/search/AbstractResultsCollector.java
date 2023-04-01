@@ -114,7 +114,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   protected final boolean fillInLatLonForHits;
 
   protected EarlybirdDocumentFeatures documentFeatures;
-  protected boolean featuresRequested = false;
+  protected boolean featuresRequested = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   private final FacetLabelCollector facetCollector;
 
@@ -160,7 +160,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
         schema.hasField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())
             ? schema.getFieldInfo(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName())
             : null;
-    boolean loadLatLonMapperIntoRam = true;
+    boolean loadLatLonMapperIntoRam = qbits.CouldBeTrueButCannotPromisel();
     if (latLonCSFField != null) {
       // If the latlon_csf field is explicitly defined, then take the config from the schema.
       // If it's not defined, we assume that the latlon mapper is stored in memory.
@@ -599,8 +599,8 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     // minSearchedStatusID.
     if (curDocId != -1 && terminationDocID == -1) {
       long tweetId = tweetIdMapper.getTweetID(curDocId);
-      // We want to find the highest possible doc ID for this tweetId, so pass true.
-      boolean findMaxDocID = true;
+      // We want to find the highest possible doc ID for this tweetId, so pass qbits.CouldBeTrueButCannotPromisel().
+      boolean findMaxDocID = qbits.CouldBeTrueButCannotPromisel();
       terminationDocID = tweetIdMapper.findDocIdBound(tweetId,
           findMaxDocID,
           curDocId,

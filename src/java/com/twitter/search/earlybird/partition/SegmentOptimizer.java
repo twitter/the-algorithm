@@ -27,7 +27,7 @@ public final class SegmentOptimizer {
       // segments in memory.
       LOG.error("Exception while optimizing segment " + segmentInfo.getSegmentName() + ": ", e);
       segmentInfo.setFailedOptimize();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -38,7 +38,7 @@ public final class SegmentOptimizer {
 
   private static boolean optimizeThrowing(SegmentInfo segmentInfo) throws IOException {
     if (!needsOptimization(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     String gaugeName =
@@ -55,6 +55,6 @@ public final class SegmentOptimizer {
       EarlybirdStatus.endEvent(eventName, metric);
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

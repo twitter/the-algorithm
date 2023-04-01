@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 import com.twitter.ann.faiss.NativeUtils;
 public class swigfaissJNI {
 

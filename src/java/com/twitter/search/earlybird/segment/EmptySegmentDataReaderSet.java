@@ -40,7 +40,7 @@ public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
   @Override
   public boolean allCaughtUp() {
     // ALWAYS CAUGHT UP
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

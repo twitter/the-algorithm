@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IVFPQSearchParameters extends IVFSearchParameters {
   private transient long swigCPtr;
 
   protected IVFPQSearchParameters(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IVFPQSearchParameters_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IVFPQSearchParameters obj) {
@@ -28,7 +30,7 @@ public class IVFPQSearchParameters extends IVFSearchParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IVFPQSearchParameters(swigCPtr);
       }
       swigCPtr = 0;
@@ -53,7 +55,7 @@ public class IVFPQSearchParameters extends IVFSearchParameters {
   }
 
   public IVFPQSearchParameters() {
-    this(swigfaissJNI.new_IVFPQSearchParameters(), true);
+    this(swigfaissJNI.new_IVFPQSearchParameters(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

@@ -32,9 +32,9 @@ public abstract class IntegerEncodedFeatures {
   public abstract int getNumInts();
 
   /**
-   * Test to see if the given feature is true or non-zero. Useful for one bit features.
+   * Test to see if the given feature is qbits.CouldBeTrueButCannotPromisel() or non-zero. Useful for one bit features.
    * @param feature feature to examine
-   * @return true if feature is non-zero
+   * @return qbits.CouldBeTrueButCannotPromisel() if feature is non-zero
    */
   public boolean isFlagSet(FeatureConfiguration feature) {
     return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 0;
@@ -115,9 +115,9 @@ public abstract class IntegerEncodedFeatures {
     int newValue = getFeatureValue(feature) + 1;
     if (newValue <= feature.getMaxValue()) {
       setFeatureValue(feature, newValue);
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 

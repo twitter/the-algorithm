@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OperatingPoint {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class OperatingPoint {
 
   protected OperatingPoint(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OperatingPoint obj) {
@@ -29,7 +31,7 @@ public class OperatingPoint {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OperatingPoint(swigCPtr);
       }
       swigCPtr = 0;
@@ -69,7 +71,7 @@ public class OperatingPoint {
 }
 
   public OperatingPoint() {
-    this(swigfaissJNI.new_OperatingPoint(), true);
+    this(swigfaissJNI.new_OperatingPoint(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

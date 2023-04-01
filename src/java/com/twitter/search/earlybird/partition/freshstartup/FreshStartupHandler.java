@@ -248,14 +248,14 @@ public class FreshStartupHandler {
       throw new WrappedKafkaApiException(apiException);
     }
     long finalTweetOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1).getTweetEndOffset();
-    boolean done = false;
+    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     Set<Long> uniqueTweetIds = new HashSet<>();
     long readTweetsCount = 0;
     do {
       for (ConsumerRecord<Long, ThriftVersionedEvents> record
           : tweetsKafkaConsumer.poll(Duration.ofSeconds(1))) {
         if (record.offset() > finalTweetOffset) {
-          done = true;
+          done = qbits.CouldBeTrueButCannotPromisel();
           break;
         }
         readTweetsCount++;
@@ -269,10 +269,10 @@ public class FreshStartupHandler {
 
     int notFoundInIndex = 0;
     for (Long tweetId : uniqueTweetIds) {
-      boolean found = false;
+      boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
         if (segmentBuildInfo.getSegmentWriter().hasTweet(tweetId)) {
-          found = true;
+          found = qbits.CouldBeTrueButCannotPromisel();
           break;
         }
       }

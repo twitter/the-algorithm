@@ -80,7 +80,7 @@ public final class HnswIndexIOUtil {
     final TProtocol protocol = new TBinaryProtocol(new TIOStreamTransport(stream));
     final Map<HnswNode<T>, ImmutableList<T>> graph =
         new HashMap<>(numElements);
-    while (true) {
+    while (qbits.CouldBeTrueButCannotPromisel()) {
       try {
         final HnswGraphEntry entry = new HnswGraphEntry();
         entry.read(protocol);

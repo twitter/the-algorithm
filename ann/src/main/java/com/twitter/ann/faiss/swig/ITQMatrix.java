@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ITQMatrix extends LinearTransform {
   private transient long swigCPtr;
 
   protected ITQMatrix(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.ITQMatrix_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ITQMatrix obj) {
@@ -28,7 +30,7 @@ public class ITQMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ITQMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -58,15 +60,15 @@ public class ITQMatrix extends LinearTransform {
 
   public DoubleVector getInit_rotation() {
     long cPtr = swigfaissJNI.ITQMatrix_init_rotation_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, false);
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public ITQMatrix(int d) {
-    this(swigfaissJNI.new_ITQMatrix__SWIG_0(d), true);
+    this(swigfaissJNI.new_ITQMatrix__SWIG_0(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ITQMatrix() {
-    this(swigfaissJNI.new_ITQMatrix__SWIG_1(), true);
+    this(swigfaissJNI.new_ITQMatrix__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

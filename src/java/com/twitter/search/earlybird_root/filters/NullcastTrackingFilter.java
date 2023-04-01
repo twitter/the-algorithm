@@ -22,7 +22,7 @@ import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
  */
 public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
   public NullcastTrackingFilter() {
-    super("unexpected nullcast tweets", true);
+    super("unexpected nullcast tweets", qbits.CouldBeTrueButCannotPromisel());
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(NullcastTrackingFilter.class);

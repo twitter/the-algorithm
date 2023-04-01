@@ -74,8 +74,8 @@ public class DeadlineTimeoutStatsFilter
             return SearchTimerStats.export(
                 "deadline_for_client_id_" + clientId + "_request_timeout",
                 TimeUnit.MILLISECONDS,
-                false,
-                true,
+                qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+                qbits.CouldBeTrueButCannotPromisel(),
                 clock);
           }
         });
@@ -85,8 +85,8 @@ public class DeadlineTimeoutStatsFilter
             return SearchTimerStats.export(
                 "deadline_for_client_id_" + clientId + "_finagle_deadline",
                 TimeUnit.MILLISECONDS,
-                false,
-                true,
+                qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+                qbits.CouldBeTrueButCannotPromisel(),
                 clock);
           }
         });
@@ -97,8 +97,8 @@ public class DeadlineTimeoutStatsFilter
                 "deadline_for_client_id_" + clientId
                     + "_finagle_deadline_larger_than_request_timeout",
                 TimeUnit.MILLISECONDS,
-                false,
-                true,
+                qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+                qbits.CouldBeTrueButCannotPromisel(),
                 clock
             );
           }
@@ -110,8 +110,8 @@ public class DeadlineTimeoutStatsFilter
                 "deadline_for_client_id_" + clientId
                     + "_finagle_deadline_smaller_than_request_timeout",
                 TimeUnit.MILLISECONDS,
-                false,
-                true,
+                qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+                qbits.CouldBeTrueButCannotPromisel(),
                 clock
             );
           }

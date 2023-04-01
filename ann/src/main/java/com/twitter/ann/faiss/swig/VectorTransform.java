@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class VectorTransform {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class VectorTransform {
 
   protected VectorTransform(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(VectorTransform obj) {
@@ -29,7 +31,7 @@ public class VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_VectorTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -66,7 +68,7 @@ public class VectorTransform {
 
   public SWIGTYPE_p_float apply(long n, SWIGTYPE_p_float x) {
     long cPtr = swigfaissJNI.VectorTransform_apply(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {

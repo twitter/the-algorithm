@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class Clustering extends ClusteringParameters {
   private transient long swigCPtr;
 
   protected Clustering(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.Clustering_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(Clustering obj) {
@@ -28,7 +30,7 @@ public class Clustering extends ClusteringParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_Clustering(swigCPtr);
       }
       swigCPtr = 0;
@@ -58,7 +60,7 @@ public class Clustering extends ClusteringParameters {
 
   public FloatVector getCentroids() {
     long cPtr = swigfaissJNI.Clustering_centroids_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setIteration_stats(SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t value) {
@@ -67,15 +69,15 @@ public class Clustering extends ClusteringParameters {
 
   public SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t getIteration_stats() {
     long cPtr = swigfaissJNI.Clustering_iteration_stats_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public Clustering(int d, int k) {
-    this(swigfaissJNI.new_Clustering__SWIG_0(d, k), true);
+    this(swigfaissJNI.new_Clustering__SWIG_0(d, k), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public Clustering(int d, int k, ClusteringParameters cp) {
-    this(swigfaissJNI.new_Clustering__SWIG_1(d, k, ClusteringParameters.getCPtr(cp), cp), true);
+    this(swigfaissJNI.new_Clustering__SWIG_1(d, k, ClusteringParameters.getCPtr(cp), cp), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x, Index index, SWIGTYPE_p_float x_weights) {

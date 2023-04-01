@@ -19,7 +19,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
               + HighDFPackedIntsPostingLists.MAX_FREQ_BIT,
           HighDFPackedIntsPostingLists.NUM_BITS_PER_SLICE,
           HighDFPackedIntsPostingLists.SLICE_SIZE,
-          false);
+          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   /** Packed ints reader for delta-freq pairs. */
   private final IntBlockPoolPackedLongsReader deltaFreqListsReader;
@@ -87,7 +87,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
   }
 
   /**
-   * Load next delta-freq slice, return false if all docs exhausted.
+   * Load next delta-freq slice, return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if all docs exhausted.
    * Notice!! The caller of this method should make sure the current slice is all used up and
    * {@link #numDocsRemaining} is updated accordingly.
    *
@@ -98,7 +98,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
   private boolean loadNextDeltaFreqSlice() {
     // Load nothing if no docs are remaining.
     if (numDocsRemaining == 0) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     final int encodedMetadata = skipListReader.getEncodedMetadataCurrentSlice();
@@ -113,7 +113,7 @@ public class HighDFPackedIntsDocsEnum extends EarlybirdOptimizedPostingsEnum {
     final int bitsPerPackedValue = bitsForDelta + bitsForFreq;
     deltaFreqListsReader.jumpToInt(
         skipListReader.getDeltaFreqCurrentSlicePointer(), bitsPerPackedValue);
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

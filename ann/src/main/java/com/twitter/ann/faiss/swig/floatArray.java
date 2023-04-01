@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class floatArray {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class floatArray {
 
   protected floatArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(floatArray obj) {
@@ -29,7 +31,7 @@ public class floatArray {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_floatArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class floatArray {
   }
 
   public floatArray(int nelements) {
-    this(swigfaissJNI.new_floatArray(nelements), true);
+    this(swigfaissJNI.new_floatArray(nelements), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public float getitem(int index) {
@@ -50,12 +52,12 @@ public class floatArray {
 
   public SWIGTYPE_p_float cast() {
     long cPtr = swigfaissJNI.floatArray_cast(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public static floatArray frompointer(SWIGTYPE_p_float t) {
     long cPtr = swigfaissJNI.floatArray_frompointer(SWIGTYPE_p_float.getCPtr(t));
-    return (cPtr == 0) ? null : new floatArray(cPtr, false);
+    return (cPtr == 0) ? null : new floatArray(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
 }

@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SliceInvertedLists extends ReadOnlyInvertedLists {
   private transient long swigCPtr;
 
   protected SliceInvertedLists(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.SliceInvertedLists_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(SliceInvertedLists obj) {
@@ -28,7 +30,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_SliceInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 
   public InvertedLists getIl() {
     long cPtr = swigfaissJNI.SliceInvertedLists_il_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setI0(long value) {
@@ -62,7 +64,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 }
 
   public SliceInvertedLists(InvertedLists il, long i0, long i1) {
-    this(swigfaissJNI.new_SliceInvertedLists(InvertedLists.getCPtr(il), il, i0, i1), true);
+    this(swigfaissJNI.new_SliceInvertedLists(InvertedLists.getCPtr(il), il, i0, i1), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long list_size(long list_no) {
@@ -71,11 +73,11 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.SliceInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.SliceInvertedLists_get_ids(swigCPtr, this, list_no), false);
+    return new LongVector(swigfaissJNI.SliceInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
@@ -92,7 +94,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_single_code(long list_no, long offset) {
     long cPtr = swigfaissJNI.SliceInvertedLists_get_single_code(swigCPtr, this, list_no, offset);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void prefetch_lists(LongVector list_nos, int nlist) {

@@ -48,7 +48,7 @@ public class DocIdFilter extends Query {
 
       @Override
       public boolean isCacheable(LeafReaderContext ctx) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     };
   }
@@ -61,7 +61,7 @@ public class DocIdFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof DocIdFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     return docid == DocIdFilter.class.cast(obj).docid;

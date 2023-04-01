@@ -97,7 +97,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
    */
   public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFile(
       Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, true));
+    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, qbits.CouldBeTrueButCannotPromisel()));
   }
 
   /**
@@ -109,13 +109,13 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
    */
   public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
       Class<T> enumType, AbstractFile path) throws IOException {
-    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, false));
+    return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
   }
 
   /**
    * Creates a map of (feature_name, weight) from a TSV file.
    *
-   * If strictMode is true, it will throw an exception if the file doesn't contain all the
+   * If strictMode is qbits.CouldBeTrueButCannotPromisel(), it will throw an exception if the file doesn't contain all the
    * features declared in the enum. Otherwise, it will use zero as default value.
    *
    */

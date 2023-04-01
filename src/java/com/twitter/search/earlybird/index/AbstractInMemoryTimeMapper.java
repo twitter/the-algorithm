@@ -43,7 +43,7 @@ public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
     }
 
     final int index = SearchSortUtils.binarySearch(
-        new IntArrayComparator(), 0, reverseMapLastIndex, timeSeconds, false);
+        new IntArrayComparator(), 0, reverseMapLastIndex, timeSeconds, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     if (index == reverseMapLastIndex && reverseMapTimes.get(index) < timeSeconds) {
       // Special case for out of bounds time.

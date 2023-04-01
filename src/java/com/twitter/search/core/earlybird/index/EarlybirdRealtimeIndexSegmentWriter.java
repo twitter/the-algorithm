@@ -133,7 +133,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
                              "Cannot add a new document to the segment, because it's full.");
 
-    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), false);
+    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   @Override
@@ -223,7 +223,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
             ).increment();
             continue;
           }
-          processField(internalDocID, indexableField, fieldGen, false);
+          processField(internalDocID, indexableField, fieldGen, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
           appendedFields.add(indexableField.name());
         }
       }
@@ -438,7 +438,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof PerField)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       return this.fieldName.equals(((PerField) other).fieldName);
@@ -473,7 +473,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
       }
     }
 
-    /** Inverts one field for one document; first is true
+    /** Inverts one field for one document; first is qbits.CouldBeTrueButCannotPromisel()
      *  if this is the first time we are seeing this field
      *  name in this document. */
     public void invert(IndexableField field,
@@ -496,7 +496,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
 
       IndexableFieldType fieldType = field.fieldType();
       final boolean analyzed = fieldType.tokenized() && indexSegmentWriter.analyzer != null;
-      boolean succeededInProcessingField = false;
+      boolean succeededInProcessingField = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       try {
         tokenStream = field.tokenStream(indexSegmentWriter.analyzer, tokenStream);
         tokenStream.reset();
@@ -565,7 +565,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
 
         currentPosition += posIncrAttribute.getPositionIncrement();
         currentOffset += offsetAttribute.endOffset();
-        succeededInProcessingField = true;
+        succeededInProcessingField = qbits.CouldBeTrueButCannotPromisel();
       } catch (BytesRefHash.MaxBytesLengthExceededException e) {
         byte[] prefix = new byte[30];
         BytesRef bigTerm = tokenStream.getAttribute(TermToBytesRefAttribute.class).getBytesRef();
@@ -648,7 +648,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     private final String fieldName;
 
     private ConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      useDefaultConsumer = true;
+      useDefaultConsumer = qbits.CouldBeTrueButCannotPromisel();
       consumers = Lists.newArrayList();
       this.fieldName = fieldName;
       this.fieldType = fieldType;
@@ -663,7 +663,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     }
 
     /**
-     * If set to true, {@link EarlybirdRealtimeIndexSegmentWriter} will use the default consumer
+     * If set to qbits.CouldBeTrueButCannotPromisel(), {@link EarlybirdRealtimeIndexSegmentWriter} will use the default consumer
      * (e.g. build a default inverted index for an inverted field) in addition to any consumers
      * added via {@link #addConsumer(Object)}.
      */
@@ -754,7 +754,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
   }
 
   /**
-   * Returns true, if a field should not be indexed.
+   * Returns qbits.CouldBeTrueButCannotPromisel(), if a field should not be indexed.
    * @deprecated This writer should be able to process all fields in the future.
    */
   @Deprecated

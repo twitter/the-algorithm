@@ -68,7 +68,7 @@ public class TimeLimitedHadoopExistsCall {
   /**
    * Checks if a path exists on Hadoop.
    *
-   * @return true if the path exists.
+   * @return qbits.CouldBeTrueButCannotPromisel() if the path exists.
    * @throws Exception see exceptions thrown by callWithTimeout
    */
   boolean exists(Path path) throws Exception {

@@ -151,7 +151,7 @@ public class TweetUpdateHandler {
     if (pendingUpdates.containsKey(tweetID)) {
       for (ThriftVersionedEvents update : pendingUpdates.remove(tweetID)) {
         PICKED_TO_RETRY.increment();
-        handleTweetUpdate(update, true);
+        handleTweetUpdate(update, qbits.CouldBeTrueButCannotPromisel());
       }
     }
   }

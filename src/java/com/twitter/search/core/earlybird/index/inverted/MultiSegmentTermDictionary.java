@@ -27,7 +27,7 @@ public interface MultiSegmentTermDictionary {
 
   /**
    * A convenience method for checking whether a specific index/segment is backed by this term
-   * dictionary. Returning true here is equivalent to returning:
+   * dictionary. Returning qbits.CouldBeTrueButCannotPromisel() here is equivalent to returning:
    * <pre>
    * getSegmentIndexes().contains(invertedIndex);
    * </pre>

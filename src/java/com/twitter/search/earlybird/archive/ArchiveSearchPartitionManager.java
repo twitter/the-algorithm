@@ -293,7 +293,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
     } else if (existingSegmentNeedsUpdating(timeSlice, segmentInfo)) {
       return indexNewDayAndAppendExistingSegment(timeSlice, segmentInfo);
     }
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
 
@@ -392,7 +392,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
   /**
    * Attempts to index new days of data into the provided segment, indexing only the days that
    * match the "dateFilter" predicate.
-   * @return true iff indexing succeeded, false otherwise.
+   * @return qbits.CouldBeTrueButCannotPromisel() iff indexing succeeded, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
    */
   @VisibleForTesting
   protected boolean indexSegment(final SegmentInfo segmentInfo,
@@ -419,7 +419,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       segmentManager.putSegmentInfo(segmentInfo);
       gcAfterIndexing.increment();
       GCUtil.runGC();
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     LOG.info("Failed to load segment for new day. Will index segment: " + segmentInfo);
@@ -430,7 +430,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       boolean success = newSimpleSegmentIndexer(tweetReader, segmentToAppend)
           .indexSegment(segmentInfo);
       if (!success) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     } finally {
       tweetReader.stop();
@@ -440,7 +440,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       // We consider the whole indexing event as failed if we fail to optimize.
       LOG.error("Failed to optimize segment: " + segmentInfo);
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!segmentWarmer.warmSegmentIfNecessary(segmentInfo)) {
@@ -448,10 +448,10 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       // index readers in the warmer).
       LOG.error("Failed to warm segment: " + segmentInfo);
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    // Flush and upload segment to HDFS. If this fails, we just log a warning and return true.
+    // Flush and upload segment to HDFS. If this fails, we just log a warning and return qbits.CouldBeTrueButCannotPromisel().
     boolean success = new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
         .flushSegmentToDiskAndHDFS(segmentInfo);
     if (!success) {
@@ -461,7 +461,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
     segmentManager.putSegmentInfo(segmentInfo);
     gcAfterIndexing.increment();
     GCUtil.runGC();
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @VisibleForTesting

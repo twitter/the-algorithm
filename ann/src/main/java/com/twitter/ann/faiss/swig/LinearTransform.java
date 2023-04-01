@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class LinearTransform extends VectorTransform {
   private transient long swigCPtr;
 
   protected LinearTransform(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.LinearTransform_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(LinearTransform obj) {
@@ -28,7 +30,7 @@ public class LinearTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_LinearTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -58,7 +60,7 @@ public class LinearTransform extends VectorTransform {
 
   public FloatVector getA() {
     long cPtr = swigfaissJNI.LinearTransform_A_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setB(FloatVector value) {
@@ -67,23 +69,23 @@ public class LinearTransform extends VectorTransform {
 
   public FloatVector getB() {
     long cPtr = swigfaissJNI.LinearTransform_b_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LinearTransform(int d_in, int d_out, boolean have_bias) {
-    this(swigfaissJNI.new_LinearTransform__SWIG_0(d_in, d_out, have_bias), true);
+    this(swigfaissJNI.new_LinearTransform__SWIG_0(d_in, d_out, have_bias), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public LinearTransform(int d_in, int d_out) {
-    this(swigfaissJNI.new_LinearTransform__SWIG_1(d_in, d_out), true);
+    this(swigfaissJNI.new_LinearTransform__SWIG_1(d_in, d_out), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public LinearTransform(int d_in) {
-    this(swigfaissJNI.new_LinearTransform__SWIG_2(d_in), true);
+    this(swigfaissJNI.new_LinearTransform__SWIG_2(d_in), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public LinearTransform() {
-    this(swigfaissJNI.new_LinearTransform__SWIG_3(), true);
+    this(swigfaissJNI.new_LinearTransform__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {

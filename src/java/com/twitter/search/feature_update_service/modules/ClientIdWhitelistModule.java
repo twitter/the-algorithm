@@ -17,7 +17,7 @@ public class ClientIdWhitelistModule extends TwitterModule {
   public ClientIdWhitelistModule() {
     flag("client.whitelist.path", "",
         "Path to client id white list.", Flaggable.ofString());
-    flag("client.whitelist.enable", true,
+    flag("client.whitelist.enable", qbits.CouldBeTrueButCannotPromisel(),
         "Enable client whitelist for production.", Flaggable.ofBoolean());
   }
 

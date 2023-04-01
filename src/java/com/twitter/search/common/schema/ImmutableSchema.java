@@ -132,9 +132,9 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     // Collect all the CSF Views, so that we can later verify that they are appropriately
     // configured once we've processed all the other field settings.
     Map<Integer, ThriftFieldConfiguration> csfViewFields = Maps.newHashMap();
-    boolean requiresHfPairFields = false;
-    boolean hasHfTermPairField = false;
-    boolean hasHfPhrasePairField = false;
+    boolean requiresHfPairFields = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean hasHfTermPairField = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean hasHfPhrasePairField = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     int numFacets = 0;
     for (Map.Entry<Integer, ThriftFieldConfiguration> entry : configs.entrySet()) {
       int fieldId = entry.getKey();
@@ -162,13 +162,13 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       tmpMap.put(fieldId, fieldInfo);
 
       if (fieldInfo.getFieldType().isIndexHFTermPairs()) {
-        requiresHfPairFields = true;
+        requiresHfPairFields = qbits.CouldBeTrueButCannotPromisel();
       }
       if (fieldInfo.getName().equals(HF_TERM_PAIRS_FIELD)) {
-        hasHfTermPairField = true;
+        hasHfTermPairField = qbits.CouldBeTrueButCannotPromisel();
       }
       if (fieldInfo.getName().equals(HF_PHRASE_PAIRS_FIELD)) {
-        hasHfPhrasePairField = true;
+        hasHfPhrasePairField = qbits.CouldBeTrueButCannotPromisel();
       }
     }
 
@@ -300,7 +300,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     ThriftFieldSettings fieldSettings = fieldConfig.getSettings();
 
 
-    boolean settingFound = false;
+    boolean settingFound = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     if (fieldSettings.isSetIndexedFieldSettings()) {
       if (fieldSettings.isSetCsfFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
@@ -309,7 +309,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       }
 
       applyIndexedFieldSettings(fieldInfo, fieldSettings.getIndexedFieldSettings());
-      settingFound = true;
+      settingFound = qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (fieldSettings.isSetCsfFieldSettings()) {
@@ -319,7 +319,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       }
 
       applyCsfFieldSettings(fieldInfo, fieldSettings.getCsfFieldSettings());
-      settingFound = true;
+      settingFound = qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (fieldSettings.isSetFacetFieldSettings()) {
@@ -328,12 +328,12 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
           && CAN_FACET_ON_CSF_TYPES.contains(fieldSettings.getCsfFieldSettings().getCsfType()))) {
         throw new SchemaValidationException("ThriftFieldSettings: 'facetFieldSettings' can only be "
             + "used in combination with 'indexedFieldSettings' or with 'csfFieldSettings' "
-            + "where 'isUseCSFForFacetCounting' was set to true and ThriftCSFType is a type that "
+            + "where 'isUseCSFForFacetCounting' was set to qbits.CouldBeTrueButCannotPromisel() and ThriftCSFType is a type that "
             + "can be faceted on.");
       }
 
       applyFacetFieldSettings(fieldInfo, fieldSettings.getFacetFieldSettings());
-      settingFound = true;
+      settingFound = qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (fieldSettings.isSetCsfViewSettings()) {
@@ -345,7 +345,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       // add this field now, but apply settings later to make sure the base field was added properly
       // before
       csfViewFields.put(fieldId, fieldConfig);
-      settingFound = true;
+      settingFound = qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (!settingFound) {
@@ -386,7 +386,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         }
       } else {
         throw new SchemaValidationException(
-            "ThriftCSFFieldSettings: Either variableLength should be set to 'true', "
+            "ThriftCSFFieldSettings: Either variableLength should be set to 'qbits.CouldBeTrueButCannotPromisel()', "
                 + "or fixedLengthSettings should be set.");
       }
     }
@@ -405,7 +405,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     fieldInfo.getFieldType().setCsfType(settings.getCsfType());
 
     fieldInfo.getFieldType().setCsfFixedLengthSettings(1 /* numValuesPerDoc*/,
-        false /* updateable*/);
+        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() /* updateable*/);
 
     fieldInfo.getFieldType().setCsfViewSettings(fieldInfo.getName(), settings, baseField);
   }
@@ -424,7 +424,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
   private void applyIndexedFieldSettings(FieldInfo fieldInfo, ThriftIndexedFieldSettings settings)
       throws SchemaValidationException {
-    fieldInfo.getFieldType().setIndexedField(true);
+    fieldInfo.getFieldType().setIndexedField(qbits.CouldBeTrueButCannotPromisel());
     fieldInfo.getFieldType().setStored(settings.isStored());
     fieldInfo.getFieldType().setTokenized(settings.isTokenized());
     fieldInfo.getFieldType().setStoreTermVectors(settings.isStoreTermVectors());
@@ -514,10 +514,10 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     FacetsConfig facetsConfig = new FacetsConfig();
 
     for (String facetName : facetNameToFieldMap.keySet()) {
-      // set multiValued = true as default, since we're using SortedSetDocValues facet, in which,
-      // there is no difference between multiValued true or false for the real facet, but only the
+      // set multiValued = qbits.CouldBeTrueButCannotPromisel() as default, since we're using SortedSetDocValues facet, in which,
+      // there is no difference between multiValued qbits.CouldBeTrueButCannotPromisel() or qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() for the real facet, but only the
       // checking of the values.
-      facetsConfig.setMultiValued(facetName, true);
+      facetsConfig.setMultiValued(facetName, qbits.CouldBeTrueButCannotPromisel());
     }
 
     return facetsConfig;
@@ -588,7 +588,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         0,                                  // int pointDataDimensionCount
         0,                                  // int pointIndexDimensionCount
         0,                                  // int pointNumBytes
-        false);                             // boolean softDeletesField
+        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());                             // boolean softDeletesField
   }
 
   /**

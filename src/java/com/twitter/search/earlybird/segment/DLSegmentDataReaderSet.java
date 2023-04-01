@@ -40,9 +40,9 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
   private static final Logger LOG = LoggerFactory.getLogger(DLSegmentDataReaderSet.class);
 
   public static final SearchRequestStats STATUS_DL_READ_STATS =
-      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, false);
+      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   private static final SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
-      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, false);
+      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   // The number of tweets not indexed because they failed deserialization.
   private static final SearchCounter STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER =
       SearchCounter.export("statuses_skipped_due_to_failed_deserialization");
@@ -80,7 +80,7 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
         new DLTimestampedReaderFactory(dlFactory, clock, updateReadFreshnessThreshold),
         UPDATE_EVENT_DL_READ_STATS);
     this.updateEventsMultiReader =
-        new DLMultiStreamReader("update_events", dlUpdateEventsFactory, true, clock);
+        new DLMultiStreamReader("update_events", dlUpdateEventsFactory, qbits.CouldBeTrueButCannotPromisel(), clock);
     this.updateEventsReader =
         new TransformingRecordReader<>(updateEventsMultiReader, record ->
             (record != null) ? deserializeTVE(record.getBytes()) : null);

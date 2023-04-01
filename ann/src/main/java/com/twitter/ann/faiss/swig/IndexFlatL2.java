@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexFlatL2 extends IndexFlat {
   private transient long swigCPtr;
 
   protected IndexFlatL2(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexFlatL2_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexFlatL2 obj) {
@@ -28,7 +30,7 @@ public class IndexFlatL2 extends IndexFlat {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexFlatL2(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,11 +39,11 @@ public class IndexFlatL2 extends IndexFlat {
   }
 
   public IndexFlatL2(long d) {
-    this(swigfaissJNI.new_IndexFlatL2__SWIG_0(d), true);
+    this(swigfaissJNI.new_IndexFlatL2__SWIG_0(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexFlatL2() {
-    this(swigfaissJNI.new_IndexFlatL2__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexFlatL2__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

@@ -50,12 +50,12 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
           public final boolean incrementToken() {
             if (incrementInputStream()) {
               if (offset() < maxPosition) {
-                return true;
+                return qbits.CouldBeTrueButCannotPromisel();
               }
               NUM_TWEETS_TRUNCATED.increment();
             }
 
-            return false;
+            return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           }
         };
       }

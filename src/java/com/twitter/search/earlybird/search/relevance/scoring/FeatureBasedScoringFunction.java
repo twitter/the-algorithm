@@ -371,14 +371,14 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     data.isComposerSourceCamera =
         documentFeatures.isFlagSet(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
 
-    // Only read the shared status if the isRetweet or isReply bit is true (minor optimization).
+    // Only read the shared status if the isRetweet or isReply bit is qbits.CouldBeTrueButCannotPromisel() (minor optimization).
     if (data.isRetweet || (params.getInReplyToStatusId && data.isReply)) {
       data.sharedStatusId =
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
     }
 
     // Only read the reference tweet author ID if the isRetweet or isReply bit
-    // is true (minor optimization).
+    // is qbits.CouldBeTrueButCannotPromisel() (minor optimization).
     if (data.isRetweet || data.isReply) {
       // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
       long referenceAuthorId =
@@ -461,7 +461,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
 
     double score = computeScore(data, explanation != null);
-    return postScoreComputation(data, score, true, explanation);
+    return postScoreComputation(data, score, qbits.CouldBeTrueButCannotPromisel(), explanation);
   }
 
   protected float postScoreComputation(
@@ -517,71 +517,71 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       boostedScore *= params.offensiveDamping;
     }
     if (data.isUserSpam && params.spamUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.spamUserDampApplied = true;
+      data.spamUserDampApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.spamUserDamping;
     }
     if (data.isUserNSFW && params.nsfwUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.nsfwUserDampApplied = true;
+      data.nsfwUserDampApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.nsfwUserDamping;
     }
     if (data.isUserBot && params.botUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.botUserDampApplied = true;
+      data.botUserDampApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.botUserDamping;
     }
 
     // cards
     if (data.hasCard && params.hasCardBoosts[data.cardType] != LinearScoringData.NO_BOOST_VALUE) {
       boostedScore *= params.hasCardBoosts[data.cardType];
-      data.hasCardBoostApplied = true;
+      data.hasCardBoostApplied = qbits.CouldBeTrueButCannotPromisel();
     }
 
     // trends
     if (data.hasMultipleHashtagsOrTrends) {
       boostedScore *= params.multipleHashtagsOrTrendsDamping;
     } else if (data.hasTrend) {
-      data.tweetHasTrendsBoostApplied = true;
+      data.tweetHasTrendsBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.tweetHasTrendBoost;
     }
 
     // Media/News url boosts.
     if (data.hasImageUrl || data.hasVideoUrl) {
-      data.hasMedialUrlBoostApplied = true;
+      data.hasMedialUrlBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.tweetHasMediaUrlBoost;
     }
     if (data.hasNewsUrl) {
-      data.hasNewsUrlBoostApplied = true;
+      data.hasNewsUrlBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.tweetHasNewsUrlBoost;
     }
 
     if (data.isFromVerifiedAccount) {
-      data.tweetFromVerifiedAccountBoostApplied = true;
+      data.tweetFromVerifiedAccountBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.tweetFromVerifiedAccountBoost;
     }
 
     if (data.isFromBlueVerifiedAccount) {
-      data.tweetFromBlueVerifiedAccountBoostApplied = true;
+      data.tweetFromBlueVerifiedAccountBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.tweetFromBlueVerifiedAccountBoost;
     }
 
     if (data.isFollow) {
       // direct follow, so boost both replies and non-replies.
-      data.directFollowBoostApplied = true;
+      data.directFollowBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore *= params.directFollowBoost;
     } else if (data.isTrusted) {
       // trusted circle
       if (!data.isReply) {
         // non-at-reply, in trusted network
-        data.trustedCircleBoostApplied = true;
+        data.trustedCircleBoostApplied = qbits.CouldBeTrueButCannotPromisel();
         boostedScore *= params.trustedCircleBoost;
       }
     } else if (data.isReply) {
       // at-reply out of my network
-      data.outOfNetworkReplyPenaltyApplied = true;
+      data.outOfNetworkReplyPenaltyApplied = qbits.CouldBeTrueButCannotPromisel();
       boostedScore -= params.outOfNetworkReplyPenalty;
     }
 
     if (data.isSelfTweet) {
-      data.selfTweetBoostApplied = true;
+      data.selfTweetBoostApplied = qbits.CouldBeTrueButCannotPromisel();
       data.selfTweetMult = params.selfTweetBoost;
       boostedScore *= params.selfTweetBoost;
     }
@@ -642,12 +642,12 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           if (uniqueFieldHits.contains(
                   EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
             // if url was the only field that was hit, demote
-            data.hasUrlOnlyHitDemotionApplied = true;
+            data.hasUrlOnlyHitDemotionApplied = qbits.CouldBeTrueButCannotPromisel();
             boostedScore *= params.urlOnlyHitDemotion;
           } else if (uniqueFieldHits.contains(
                          EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
             // if name was the only field that was hit, demote
-            data.hasNameOnlyHitDemotionApplied = true;
+            data.hasNameOnlyHitDemotionApplied = qbits.CouldBeTrueButCannotPromisel();
             boostedScore *= params.nameOnlyHitDemotion;
           }
         } else if (!uniqueFieldHits.contains(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
@@ -655,7 +655,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
             && !uniqueFieldHits.contains(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
             && !uniqueFieldHits.contains(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())) {
           // if text or special text was never hit, demote
-          data.hasNoTextHitDemotionApplied = true;
+          data.hasNoTextHitDemotionApplied = qbits.CouldBeTrueButCannotPromisel();
           boostedScore *= params.noTextHitDemotion;
         } else if (uniqueFieldHits.size() == 2) {
           // demotions based on field hit combinations
@@ -672,14 +672,14 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
               // if name is hit but has no hits in common with text, demote
               // want to demote cases where we hit part of the person's name
               // and tweet text separately
-              data.hasSeparateTextAndNameHitDemotionApplied = true;
+              data.hasSeparateTextAndNameHitDemotionApplied = qbits.CouldBeTrueButCannotPromisel();
               boostedScore *= params.separateTextAndNameHitDemotion;
             } else if (uniqueFieldHits.contains(
                            EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
               // if url is hit but has no hits in common with text, demote
               // want to demote cases where we hit a potential domain keyword
               // and tweet text separately
-              data.hasSeparateTextAndUrlHitDemotionApplied = true;
+              data.hasSeparateTextAndUrlHitDemotionApplied = qbits.CouldBeTrueButCannotPromisel();
               boostedScore *= params.separateTextAndUrlHitDemotion;
             }
           }
@@ -787,7 +787,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     // 4. Final score filter.
     if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
       details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
-      isHit = false;
+      isHit = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     String hostAndSegment = String.format("%s host = %s  segment = %s",
@@ -1015,13 +1015,13 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     metadata.setFromUserId(data.fromUserId);
 
     if (data.isTrusted) {
-      metadata.setIsTrusted(true);
+      metadata.setIsTrusted(qbits.CouldBeTrueButCannotPromisel());
     }
     if (data.isFollow) {
-      metadata.setIsFollow(true);
+      metadata.setIsFollow(qbits.CouldBeTrueButCannotPromisel());
     }
     if (data.skipReason != SkipReason.NOT_SKIPPED) {
-      metadata.setSkipped(true);
+      metadata.setSkipped(qbits.CouldBeTrueButCannotPromisel());
     }
     if ((data.isRetweet || (params.getInReplyToStatusId && data.isReply))
         && data.sharedStatusId != LinearScoringData.UNSET_SIGNAL_VALUE) {
@@ -1138,7 +1138,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       if (!extraMetadata.isSetFeatures()) {
         // We ignore all features with default values when returning them in the response,
         // because it saves a lot of network bandwidth.
-        ThriftSearchResultFeatures features = createFeaturesForDocument(data, true).getFeatures();
+        ThriftSearchResultFeatures features = createFeaturesForDocument(data, qbits.CouldBeTrueButCannotPromisel()).getFeatures();
         extraMetadata.setFeatures(features);
       }
 

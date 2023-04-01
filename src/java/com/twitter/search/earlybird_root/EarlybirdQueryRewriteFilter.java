@@ -130,7 +130,7 @@ public class EarlybirdQueryRewriteFilter extends
 
   private boolean shouldDropVariants(EarlybirdRequestContext requestContext, Query query)
       throws QueryParserException {
-    TermExtractorVisitor termExtractorVisitor = new TermExtractorVisitor(false);
+    TermExtractorVisitor termExtractorVisitor = new TermExtractorVisitor(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     List<Term> terms = query.accept(termExtractorVisitor);
 
     EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();

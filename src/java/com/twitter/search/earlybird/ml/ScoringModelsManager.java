@@ -46,7 +46,7 @@ public class ScoringModelsManager {
   public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
     @Override
     public boolean isEnabled() {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   };
 
@@ -67,7 +67,7 @@ public class ScoringModelsManager {
    * Indicates that the scoring models were enabled in the config and were loaded successfully
    */
   public boolean isEnabled() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   public void reload() {

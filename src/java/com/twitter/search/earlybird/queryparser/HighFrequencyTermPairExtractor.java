@@ -115,14 +115,14 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
 
     int numFound = 0;
     if (!phrase.hasAnnotationType(Annotation.Type.OPTIONAL)) {
-      boolean canBeRewritten = false;
+      boolean canBeRewritten = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
       // Special case: phrases with exactly 2 terms that are both high frequency can be
       // rewritten. In all other cases terms will be treated as pre-used hf term phrases.
       if (!phrase.hasAnnotations() && phrase.size() == 2
           && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(0))
           && HighFrequencyTermPairs.HF_TERM_SET.contains(phrase.getTerms().get(1))) {
-        canBeRewritten = true;
+        canBeRewritten = qbits.CouldBeTrueButCannotPromisel();
       }
 
       // Special case: do not treat phrase containing :prox annotation as a real phrase.

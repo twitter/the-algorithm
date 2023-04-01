@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IDSelectorBatch extends IDSelector {
   private transient long swigCPtr;
 
   protected IDSelectorBatch(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IDSelectorBatch_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IDSelectorBatch obj) {
@@ -28,7 +30,7 @@ public class IDSelectorBatch extends IDSelector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IDSelectorBatch(swigCPtr);
       }
       swigCPtr = 0;
@@ -53,7 +55,7 @@ public class IDSelectorBatch extends IDSelector {
 }
 
   public IDSelectorBatch(long n, LongVector indices) {
-    this(swigfaissJNI.new_IDSelectorBatch(n, SWIGTYPE_p_long_long.getCPtr(indices.data()), indices), true);
+    this(swigfaissJNI.new_IDSelectorBatch(n, SWIGTYPE_p_long_long.getCPtr(indices.data()), indices), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public boolean is_member(long id) {

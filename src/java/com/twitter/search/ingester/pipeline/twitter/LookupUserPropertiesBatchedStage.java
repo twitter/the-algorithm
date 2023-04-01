@@ -34,7 +34,7 @@ public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
 
   @Override
   protected boolean needsToBeBatched(IngesterTwitterMessage element) {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override

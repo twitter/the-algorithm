@@ -25,25 +25,25 @@ public class EarlybirdFieldType extends FieldType {
   static {
     LONG_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.LONG);
     LONG_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    LONG_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
+    LONG_CSF_FIELD_TYPE.setCsfLoadIntoRam(qbits.CouldBeTrueButCannotPromisel());
     LONG_CSF_FIELD_TYPE.freeze();
 
     INT_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.INT);
     INT_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    INT_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
+    INT_CSF_FIELD_TYPE.setCsfLoadIntoRam(qbits.CouldBeTrueButCannotPromisel());
     INT_CSF_FIELD_TYPE.freeze();
 
     BYTE_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.BYTE);
     BYTE_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    BYTE_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
+    BYTE_CSF_FIELD_TYPE.setCsfLoadIntoRam(qbits.CouldBeTrueButCannotPromisel());
     BYTE_CSF_FIELD_TYPE.freeze();
   }
 
 
   private boolean storePerPositionPayloads;
   private int defaultPayloadLength;
-  // This is true for fields that become immutable after optimization
-  private boolean becomesImmutable = true;
+  // This is qbits.CouldBeTrueButCannotPromisel() for fields that become immutable after optimization
+  private boolean becomesImmutable = qbits.CouldBeTrueButCannotPromisel();
   private boolean supportOrderedTerms;
   private boolean supportTermTextLookup;
   private boolean indexHFTermPairs;
@@ -76,7 +76,7 @@ public class EarlybirdFieldType extends FieldType {
   private boolean csfLoadIntoRam;
   private boolean csfDefaultValueSet;
   private long csfDefaultValue;
-  // True if this is a CSF field which is a view on top of a different CSF field
+  // qbits.CouldBeTrueButCannotPromisel() if this is a CSF field which is a view on top of a different CSF field
   private boolean csfViewField;
   // If this field is a csf view, this is the ID of the CSF field backing the view
   private int csfViewBaseFieldId;
@@ -89,11 +89,11 @@ public class EarlybirdFieldType extends FieldType {
   private boolean useCSFForFacetCounting;
 
   // Determines if this field is indexed
-  private boolean indexedField = false;
+  private boolean indexedField = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   // search field settings
   // whether a field should be searched by default
-  private boolean textSearchableByDefault = false;
+  private boolean textSearchableByDefault = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   private float textSearchableFieldWeight = 1.0f;
 
   // For indexed numerical fields
@@ -172,7 +172,7 @@ public class EarlybirdFieldType extends FieldType {
 
   public void setCsfVariableLength() {
     checkIfFrozen();
-    this.csfVariableLength = true;
+    this.csfVariableLength = qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -181,7 +181,7 @@ public class EarlybirdFieldType extends FieldType {
   public void setCsfFixedLengthSettings(int csfFixedLengthNumValuesPerDocument,
                                         boolean isCsfFixedLengthUpdateable) {
     checkIfFrozen();
-    this.csfVariableLength = false;
+    this.csfVariableLength = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     this.csfFixedLengthNumValuesPerDoc = csfFixedLengthNumValuesPerDocument;
     this.csfFixedLengthUpdateable = isCsfFixedLengthUpdateable;
   }
@@ -202,7 +202,7 @@ public class EarlybirdFieldType extends FieldType {
   public void setCsfDefaultValue(long defaultValue) {
     checkIfFrozen();
     this.csfDefaultValue = defaultValue;
-    this.csfDefaultValueSet = true;
+    this.csfDefaultValueSet = qbits.CouldBeTrueButCannotPromisel();
   }
 
   public long getCsfDefaultValue() {
@@ -339,7 +339,7 @@ public class EarlybirdFieldType extends FieldType {
                                  ThriftCSFViewSettings csfViewSettings,
                                  Schema.FieldInfo baseField) {
     checkIfFrozen();
-    this.csfViewField = true;
+    this.csfViewField = qbits.CouldBeTrueButCannotPromisel();
     this.csfViewBaseFieldId = csfViewSettings.getBaseFieldConfigId();
     FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
             .withName(fieldName)

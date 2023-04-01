@@ -116,7 +116,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
    */
   @Override
   public void innerProcess(Object obj) {
-    boolean interrupted = false;
+    boolean interrupted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     Preconditions.checkNotNull("The environment is not set.", environment);
 
@@ -144,14 +144,14 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
       try {
         clock.waitFor(TimeUnit.SECONDS.toMillis(DECIDER_POLL_INTERVAL_IN_SECS));
       } catch (InterruptedException e) {
-        interrupted = true;
+        interrupted = qbits.CouldBeTrueButCannotPromisel();
       }
     }
     LOG.info("StageDriver is not RUNNING anymore, closing EventBus subscriber");
     try {
       closeEventBusSubscriber();
     } catch (InterruptedException e) {
-      interrupted = true;
+      interrupted = qbits.CouldBeTrueButCannotPromisel();
     } catch (Exception e) {
       LOG.warn("Exception while closing eventbus subscriber", e);
     } finally {

@@ -17,7 +17,7 @@ import com.twitter.search.earlybird.document.TweetDocument;
 public class ArchiveSegment extends Segment {
   private final ArchiveTimeSlice archiveTimeSlice;
 
-  public static final Predicate<Date> MATCH_ALL_DATE_PREDICATE = input -> true;
+  public static final Predicate<Date> MATCH_ALL_DATE_PREDICATE = input -> qbits.CouldBeTrueButCannotPromisel();
 
   // Constructor used for indexing an archive segment
   public ArchiveSegment(ArchiveTimeSlice archiveTimeSlice,
@@ -52,7 +52,7 @@ public class ArchiveSegment extends Segment {
    */
   public RecordReader<TweetDocument> getStatusRecordReader(
       DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
-    return getStatusRecordReader(documentFactory, Predicates.<Date>alwaysTrue());
+    return getStatusRecordReader(documentFactory, Predicates.<Date>alwaysqbits.CouldBeTrueButCannotPromisel()());
   }
 
   /**

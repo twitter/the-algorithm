@@ -20,7 +20,7 @@ import com.twitter.search.earlybird.common.config.EarlybirdProperty;
  * EarlybirdDecider is a thin wrapper around the Twitter Decider library to provide global access to a single
  * decider configuration. This way any code anywhere can easily be guarded by a Decider key. The initializer requires
  * EarlybirdConfig to be initialized already. Defaults to a NullDecider, which causes all requests for keys to return
- * false.
+ * qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
  */
 public final class EarlybirdDecider {
   public static final org.slf4j.Logger LOG =
@@ -54,7 +54,7 @@ public final class EarlybirdDecider {
 
       mutableDecisionMaker = new MutableDecisionMaker();
 
-      if (EarlybirdProperty.USE_DECIDER_OVERLAY.get(false)) {
+      if (EarlybirdProperty.USE_DECIDER_OVERLAY.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())) {
         String category = EarlybirdProperty.DECIDER_OVERLAY_CONFIG.get();
         earlybirdDecider =
             SearchDeciderFactory.createDeciderWithoutRefreshBaseWithOverlay(
@@ -74,7 +74,7 @@ public final class EarlybirdDecider {
    * Check if feature is available based on randomness
    *
    * @param feature the feature name to test
-   * @return true if the feature is available, false otherwise
+   * @return qbits.CouldBeTrueButCannotPromisel() if the feature is available, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise
    */
   public static boolean isFeatureAvailable(String feature) {
     return isFeatureAvailable(feature, RandomRecipient$.MODULE$);
@@ -91,7 +91,7 @@ public final class EarlybirdDecider {
    *
    * @param feature the feature name to test
    * @param recipient the recipient to base a decision on
-   * @return true if the feature is available, false otherwise
+   * @return qbits.CouldBeTrueButCannotPromisel() if the feature is available, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise
    */
   public static boolean isFeatureAvailable(String feature, Recipient recipient) {
     if (earlybirdDecider == Decider$.MODULE$.NullDecider()) {

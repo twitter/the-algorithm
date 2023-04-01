@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IntersectionCriterion extends AutoTuneCriterion {
   private transient long swigCPtr;
 
   protected IntersectionCriterion(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IntersectionCriterion_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IntersectionCriterion obj) {
@@ -28,7 +30,7 @@ public class IntersectionCriterion extends AutoTuneCriterion {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IntersectionCriterion(swigCPtr);
       }
       swigCPtr = 0;
@@ -45,7 +47,7 @@ public class IntersectionCriterion extends AutoTuneCriterion {
 }
 
   public IntersectionCriterion(long nq, long R) {
-    this(swigfaissJNI.new_IntersectionCriterion(nq, R), true);
+    this(swigfaissJNI.new_IntersectionCriterion(nq, R), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public double evaluate(SWIGTYPE_p_float D, LongVector I) {

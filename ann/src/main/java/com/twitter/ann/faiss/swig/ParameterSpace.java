@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ParameterSpace {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class ParameterSpace {
 
   protected ParameterSpace(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ParameterSpace obj) {
@@ -29,7 +31,7 @@ public class ParameterSpace {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ParameterSpace(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class ParameterSpace {
 
   public SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t getParameter_ranges() {
     long cPtr = swigfaissJNI.ParameterSpace_parameter_ranges_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setVerbose(int value) {
@@ -86,7 +88,7 @@ public class ParameterSpace {
   }
 
   public ParameterSpace() {
-    this(swigfaissJNI.new_ParameterSpace(), true);
+    this(swigfaissJNI.new_ParameterSpace(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long n_combinations() {
@@ -106,7 +108,7 @@ public class ParameterSpace {
   }
 
   public ParameterRange add_range(String name) {
-    return new ParameterRange(swigfaissJNI.ParameterSpace_add_range(swigCPtr, this, name), false);
+    return new ParameterRange(swigfaissJNI.ParameterSpace_add_range(swigCPtr, this, name), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void initialize(Index index) {

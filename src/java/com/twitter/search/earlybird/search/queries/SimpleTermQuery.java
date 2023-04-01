@@ -42,7 +42,7 @@ class SimpleTermQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SimpleTermQuery)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     SimpleTermQuery query = SimpleTermQuery.class.cast(obj);
@@ -80,7 +80,7 @@ class SimpleTermQuery extends Query {
 
     @Override
     public boolean isCacheable(LeafReaderContext ctx) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
   }
 }

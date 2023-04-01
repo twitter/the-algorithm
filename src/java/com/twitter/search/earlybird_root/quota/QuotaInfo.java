@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
  */
 public class QuotaInfo {
   public static final String DEFAULT_TIER_VALUE = "no_tier";
-  public static final boolean DEFAULT_ARCHIVE_ACCESS_VALUE = false;
+  public static final boolean DEFAULT_ARCHIVE_ACCESS_VALUE = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   private final String quotaClientId;
   private final String quotaEmail;

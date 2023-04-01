@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class PQDecoder8 {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class PQDecoder8 {
 
   protected PQDecoder8(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(PQDecoder8 obj) {
@@ -29,7 +31,7 @@ public class PQDecoder8 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_PQDecoder8(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,11 +44,11 @@ public class PQDecoder8 {
 
   public SWIGTYPE_p_unsigned_char getCode() {
     long cPtr = swigfaissJNI.PQDecoder8_code_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public PQDecoder8(SWIGTYPE_p_unsigned_char code, int nbits) {
-    this(swigfaissJNI.new_PQDecoder8(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits), true);
+    this(swigfaissJNI.new_PQDecoder8(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long decode() {

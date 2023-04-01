@@ -109,7 +109,7 @@ public abstract class BaseByteBlockPool {
 
   /**
    * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-   * added using addBytes and avoidSplitting = true
+   * added using addBytes and avoidSplitting = qbits.CouldBeTrueButCannotPromisel()
    */
   public int getOffset() {
     return byteOffset + byteUpto;
@@ -133,7 +133,7 @@ public abstract class BaseByteBlockPool {
 
   /**
    * Returns the start offset of the bytes in the pool.
-   *        If avoidSplitting is false, this is guaranteed to return the same value that would be
+   *        If avoidSplitting is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), this is guaranteed to return the same value that would be
    *        returned by getOffset()
    * @param bytes source array
    * @param length number of bytes to put
@@ -187,7 +187,7 @@ public abstract class BaseByteBlockPool {
    * @see #addBytes(byte[], int, boolean)
    */
   public int addBytes(byte[] bytes, int length) {
-    return addBytes(bytes, 0, length, false);
+    return addBytes(bytes, 0, length, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   /**
@@ -195,7 +195,7 @@ public abstract class BaseByteBlockPool {
    * @see #addBytes(byte[], int, boolean)
    */
   public int addBytes(byte[] bytes, int offset, int length) {
-    return addBytes(bytes, offset, length, false);
+    return addBytes(bytes, offset, length, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   /**
@@ -209,7 +209,7 @@ public abstract class BaseByteBlockPool {
   }
 
   /**
-   * Returns false if offset is invalid or there aren't these many bytes
+   * Returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if offset is invalid or there aren't these many bytes
    * available in the pool.
    * @param offset location to start reading bytes from
    * @param length number of bytes to read
@@ -217,7 +217,7 @@ public abstract class BaseByteBlockPool {
    */
   public boolean getBytesToBytesRef(int offset, int length, BytesRef output) {
     if (offset < 0 || offset + length > byteUpto + byteOffset) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
     int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
@@ -244,7 +244,7 @@ public abstract class BaseByteBlockPool {
       output.length = bytes.length;
       output.offset = 0;
     }
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
 
   }
 
@@ -292,7 +292,7 @@ public abstract class BaseByteBlockPool {
 
     /**
      * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-     * added using addBytes and avoidSplitting = true
+     * added using addBytes and avoidSplitting = qbits.CouldBeTrueButCannotPromisel()
      */
     public int getOffset() {
       return BaseByteBlockPool.this.getOffset();
@@ -337,7 +337,7 @@ public abstract class BaseByteBlockPool {
     }
 
     public BytesRef readBytes(int n) {
-      return readBytes(n, false);
+      return readBytes(n, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
 
     /**

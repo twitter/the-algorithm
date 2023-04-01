@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ArrayInvertedLists extends InvertedLists {
   private transient long swigCPtr;
 
   protected ArrayInvertedLists(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.ArrayInvertedLists_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ArrayInvertedLists obj) {
@@ -28,7 +30,7 @@ public class ArrayInvertedLists extends InvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ArrayInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class ArrayInvertedLists extends InvertedLists {
 
   public ByteVectorVector getCodes() {
     long cPtr = swigfaissJNI.ArrayInvertedLists_codes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVectorVector(cPtr, false);
+    return (cPtr == 0) ? null : new ByteVectorVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setIds(SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t value) {
@@ -51,11 +53,11 @@ public class ArrayInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t getIds() {
     long cPtr = swigfaissJNI.ArrayInvertedLists_ids_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public ArrayInvertedLists(long nlist, long code_size) {
-    this(swigfaissJNI.new_ArrayInvertedLists(nlist, code_size), true);
+    this(swigfaissJNI.new_ArrayInvertedLists(nlist, code_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long list_size(long list_no) {
@@ -64,11 +66,11 @@ public class ArrayInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.ArrayInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.ArrayInvertedLists_get_ids(swigCPtr, this, list_no), false);
+    return new LongVector(swigfaissJNI.ArrayInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public long add_entries(long list_no, long n_entry, LongVector ids, SWIGTYPE_p_unsigned_char code) {

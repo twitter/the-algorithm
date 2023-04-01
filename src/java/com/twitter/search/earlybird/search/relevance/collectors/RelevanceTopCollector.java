@@ -77,7 +77,7 @@ public class RelevanceTopCollector extends AbstractRelevanceCollector {
       return;
     }
 
-    boolean dupFound = false;
+    boolean dupFound = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     Preconditions.checkState(metadata.isSetSignature(),
         "The signature should be set at metadata collection time, but it is null. "
             + "Tweet id = %s, metadata = %s",

@@ -49,10 +49,10 @@ public final class FacetCountState<R> {
   public boolean hasFieldToCountWithoutSkipList() {
     for (Schema.FieldInfo facetField: fieldsToCount) {
       if (!facetField.getFieldType().isStoreFacetSkiplist()) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   public Set<Schema.FieldInfo> getFacetFieldsToCountWithSkipLists() {
@@ -74,7 +74,7 @@ public final class FacetCountState<R> {
     public final int numResultsRequested;
     public R results;
     public int numResultsFound;
-    public boolean finished = false;
+    public boolean finished = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     private FacetFieldResults(String facetName, int numResultsRequested) {
       this.facetName = facetName;

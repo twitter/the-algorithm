@@ -56,7 +56,7 @@ public class CompleteSegmentManager {
 
   private final CriticalExceptionHandler criticalExceptionHandler;
 
-  private boolean interrupted = false;
+  private boolean interrupted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   public CompleteSegmentManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
@@ -146,7 +146,7 @@ public class CompleteSegmentManager {
       } catch (IOException e) {
         LOG.error("IOException in SegmentStartupManager loop", e);
       } catch (InterruptedException e) {
-        interrupted = true;
+        interrupted = qbits.CouldBeTrueButCannotPromisel();
         LOG.error("Interrupted joining segment indexer thread", e);
       }
     }
@@ -302,7 +302,7 @@ public class CompleteSegmentManager {
           .downloadSegment(segmentInfo)) {
         LOG.info("Will not index segment {} because it was downloaded from HDFS.",
                  segmentInfo.getSegmentName());
-        segmentInfo.setComplete(true);
+        segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
         return;
       }
 
@@ -313,7 +313,7 @@ public class CompleteSegmentManager {
       try {
         tweetReader = segmentDataProvider.getSegmentDataReaderSet().newDocumentReader(segmentInfo);
         if (tweetReader != null) {
-          tweetReader.setExhaustStream(true);
+          tweetReader.setExhaustStream(qbits.CouldBeTrueButCannotPromisel());
         }
       } catch (Exception e) {
         throw new RuntimeException("Could not create tweet reader for segment: " + segmentInfo, e);

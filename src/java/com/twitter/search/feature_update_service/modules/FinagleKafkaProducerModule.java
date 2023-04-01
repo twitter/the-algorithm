@@ -30,7 +30,7 @@ public class FinagleKafkaProducerModule extends TwitterModule {
         "Topic name for update events", Flaggable.ofString());
     flag(KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG, "",
             "Topic name for update events", Flaggable.ofString());
-    flag(KAFKA_ENABLE_S2S_AUTH_FLAG, true, "enable s2s authentication configs",
+    flag(KAFKA_ENABLE_S2S_AUTH_FLAG, qbits.CouldBeTrueButCannotPromisel(), "enable s2s authentication configs",
         Flaggable.ofBoolean());
   }
 

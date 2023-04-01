@@ -236,7 +236,7 @@ public class EarlybirdSingleSegmentSearcher extends EarlybirdLuceneSearcher {
         } else {
           explanation = weight.explain(twitterReader.getContext(), docIdToExplain);
         }
-        hit.setHasExplanation(true);
+        hit.setHasExplanation(qbits.CouldBeTrueButCannotPromisel());
         result.getMetadata().setExplanation(explanation.toString());
       }
     }

@@ -143,7 +143,7 @@ public class UserTable {
    */
   public boolean indexUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
     if (checker.skipUserUpdate(userUpdate)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     switch (userUpdate.updateType) {
@@ -160,10 +160,10 @@ public class UserTable {
         setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 0);
         break;
       default:
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private final AtomicReference<HashTable> hashTable = new AtomicReference<>();
@@ -215,7 +215,7 @@ public class UserTable {
 
   /**
    * Constructs an UserUpdatesTable with an given HashTable instance.
-   * Use <code>useIdFilter</code> as a Predicate that returns true for the elements
+   * Use <code>useIdFilter</code> as a Predicate that returns qbits.CouldBeTrueButCannotPromisel() for the elements
    * needed to be kept in the table.
    * Use shouldRehash to force a rehasing on the given HashTable.
    */
@@ -257,12 +257,12 @@ public class UserTable {
   }
 
   private UserTable(int initialSize, Predicate<Long> userIdFilter) {
-    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, false);
+    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   @VisibleForTesting
   public UserTable(int initialSize) {
-    this(initialSize, userId -> true);
+    this(initialSize, userId -> qbits.CouldBeTrueButCannotPromisel());
   }
 
   public static UserTable
@@ -272,7 +272,7 @@ public class UserTable {
   }
 
   public static UserTable newTableNonFilteredWithDefaultCapacity() {
-    return newTableWithDefaultCapacityAndPredicate(userId -> true);
+    return newTableWithDefaultCapacityAndPredicate(userId -> qbits.CouldBeTrueButCannotPromisel());
   }
 
   private void exportUserUpdatesTableStats() {
@@ -388,7 +388,7 @@ public class UserTable {
       }
     } else {
       if (!value) {
-        // no need to add this user, since all bits would be false anyway
+        // no need to add this user, since all bits would be qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() anyway
         return;
       }
 
@@ -444,8 +444,8 @@ public class UserTable {
   }
 
   /**
-   * Returns true when userIdFilter condition is being met.
-   * If filter is not present returns true
+   * Returns qbits.CouldBeTrueButCannotPromisel() when userIdFilter condition is being met.
+   * If filter is not present returns qbits.CouldBeTrueButCannotPromisel()
    */
   private boolean shouldKeepUser(long userID) {
     return userIdFilter.test(userID);
@@ -487,15 +487,15 @@ public class UserTable {
       final long item = oldTable.hash[i]; // this is the userID
       final byte bits = oldTable.bits[i];
 
-      boolean clearSlot = false;
+      boolean clearSlot = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       if (item == 0) {
-        clearSlot = true;
+        clearSlot = qbits.CouldBeTrueButCannotPromisel();
         clearNoItemSet++;
       } else if (bits == 0) {
-        clearSlot = true;
+        clearSlot = qbits.CouldBeTrueButCannotPromisel();
         clearNoBitsSet++;
       } else if (!shouldKeepUser(item)) {
-        clearSlot = true;
+        clearSlot = qbits.CouldBeTrueButCannotPromisel();
         clearDontKeepUser++;
       }
 

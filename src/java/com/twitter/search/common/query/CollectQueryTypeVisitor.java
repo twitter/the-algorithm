@@ -66,20 +66,20 @@ public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
   protected boolean visitQuery(Query query) throws QueryParserException {
     if (query.isTypeOf(queryType)) {
       collectNode(query);
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   protected void collectNode(Query query) {
-    nodeToTypeMap.put(query, true);
+    nodeToTypeMap.put(query, qbits.CouldBeTrueButCannotPromisel());
   }
 
   protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    boolean found = false;
+    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     if (query.isTypeOf(queryType)) {
       collectNode(query);
-      found = true;
+      found = qbits.CouldBeTrueButCannotPromisel();
     }
     for (Query child : query.getChildren()) {
       found |= child.accept(this);

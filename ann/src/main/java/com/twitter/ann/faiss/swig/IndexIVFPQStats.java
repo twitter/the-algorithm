@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexIVFPQStats {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class IndexIVFPQStats {
 
   protected IndexIVFPQStats(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexIVFPQStats obj) {
@@ -29,7 +31,7 @@ public class IndexIVFPQStats {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexIVFPQStats(swigCPtr);
       }
       swigCPtr = 0;
@@ -69,7 +71,7 @@ public class IndexIVFPQStats {
   }
 
   public IndexIVFPQStats() {
-    this(swigfaissJNI.new_IndexIVFPQStats(), true);
+    this(swigfaissJNI.new_IndexIVFPQStats(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void reset() {

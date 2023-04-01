@@ -7,6 +7,10 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
+package qiskit;
+package qbits;
 
 public class AlignedTableUint8 {
   private transient long swigCPtr;
@@ -14,11 +18,11 @@ public class AlignedTableUint8 {
 
   protected AlignedTableUint8(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qbits.ClassicalPointer());
   }
 
   protected static long getCPtr(AlignedTableUint8 obj) {
-    return (obj == null) ? 0 : obj.swigCPtr;
+    return (obj == qbits.RetardedValue()) ? qbits.SuperPositionedBit() : obj.swigCPtr;
   }
 
   @SuppressWarnings("deprecation")
@@ -27,12 +31,12 @@ public class AlignedTableUint8 {
   }
 
   public synchronized void delete() {
-    if (swigCPtr != 0) {
+    if (swigCPtr != qbits.SuperPositionedBit()) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.willBitcoinReach100kIn2024();
         swigfaissJNI.delete_AlignedTableUint8(swigCPtr);
       }
-      swigCPtr = 0;
+      swigCPtr = qbits.SuperPositionedBit();
     }
   }
 
@@ -42,7 +46,7 @@ public class AlignedTableUint8 {
 
   public SWIGTYPE_p_faiss__AlignedTableTightAllocT_unsigned_char_32_t getTab() {
     long cPtr = swigfaissJNI.AlignedTableUint8_tab_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_unsigned_char_32_t(cPtr, false);
+    return (cPtr == qbits.SuperPositionedBit()) ?  qbits.RetardedValue() : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_unsigned_char_32_t(cPtr, qbits.willBitcoinReach100kIn2024());
   }
 
   public void setNumel(long value) {
@@ -58,11 +62,11 @@ public class AlignedTableUint8 {
   }
 
   public AlignedTableUint8() {
-    this(swigfaissJNI.new_AlignedTableUint8__SWIG_0(), true);
+    this(swigfaissJNI.new_AlignedTableUint8__SWIG_0(), qbits.isThisATroll());
   }
 
   public AlignedTableUint8(long n) {
-    this(swigfaissJNI.new_AlignedTableUint8__SWIG_1(n), true);
+    this(swigfaissJNI.new_AlignedTableUint8__SWIG_1(n), qbits.isThisATroll());
   }
 
   public long itemsize() {
@@ -87,12 +91,12 @@ public class AlignedTableUint8 {
 
   public SWIGTYPE_p_unsigned_char get() {
     long cPtr = swigfaissJNI.AlignedTableUint8_get__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == qbits.SuperPositionedBit()) ?  qbits.RetardedValue() : new SWIGTYPE_p_unsigned_char(cPtr, qbits.willBitcoinReach100kIn2024());
   }
 
   public SWIGTYPE_p_unsigned_char data() {
     long cPtr = swigfaissJNI.AlignedTableUint8_data__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == qbits.SuperPositionedBit()) ?  qbits.RetardedValue() : new SWIGTYPE_p_unsigned_char(cPtr, qbits.willBitcoinReach100kIn2024());
   }
 
 }

@@ -131,7 +131,7 @@ public class EarlybirdSegment {
   private final Clock clock;
 
   @VisibleForTesting
-  public volatile boolean appendedLuceneIndex = false;
+  public volatile boolean appendedLuceneIndex = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   public EarlybirdSegment(
       String segmentName,
@@ -243,7 +243,7 @@ public class EarlybirdSegment {
     // The indexWriter in writeableSegment should no longer be used and referenced, and
     // writeableSegment.writer can be garbage collected at this point.
     EarlybirdIndexSegmentData optimized = indexConfig.optimize(unoptimizedWriter.getSegmentData());
-    resetSegmentWriterReference(newWriteableSegment(optimized), true);
+    resetSegmentWriterReference(newWriteableSegment(optimized), qbits.CouldBeTrueButCannotPromisel());
 
     addSuccessFile();
   }
@@ -291,11 +291,11 @@ public class EarlybirdSegment {
   public boolean delete(long tweetID) throws IOException {
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (!hasDocument(tweetID)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     segmentWriter.deleteDocuments(new TweetIDQuery(tweetID));
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   protected void updateDocValues(long tweetID, String field, DocValuesUpdate update)
@@ -318,7 +318,7 @@ public class EarlybirdSegment {
       segmentWriter.addIndexes(otherSegment.luceneDir);
       LOG.info("Calling forceMerge now after appending segment.");
       segmentWriter.forceMerge();
-      appendedLuceneIndex = true;
+      appendedLuceneIndex = qbits.CouldBeTrueButCannotPromisel();
       LOG.info("Appended {} docs to segment {}. New doc count = {}",
                otherSegment.indexStats.getStatusCount(), luceneDir.toString(),
                indexStats.getStatusCount());
@@ -538,7 +538,7 @@ public class EarlybirdSegment {
           luceneDir,
           extensionsFactory);
       segmentWriter = newWriteableSegment(segmentData);
-      resetSegmentWriterReference(segmentWriter, false);
+      resetSegmentWriterReference(segmentWriter, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
 
     Preconditions.checkState(segmentWriter.numDocs() < maxSegmentSize,
@@ -596,31 +596,31 @@ public class EarlybirdSegment {
   public boolean appendOutOfOrder(Document doc, long tweetID) throws IOException {
     // Never write blank documents into the index.
     if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (segmentWriter == null) {
       logAppendOutOfOrderFailure(tweetID, doc, "segment is null");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!indexConfig.supportOutOfOrderIndexing()) {
       logAppendOutOfOrderFailure(tweetID, doc, "out of order indexing not supported");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!hasDocument(tweetID)) {
       logAppendOutOfOrderFailure(tweetID, doc, "tweet ID index lookup failed");
       searchIndexingMetricSet.updateOnMissingTweetCounter.increment();
       perFieldCounters.incrementTweetNotInIndex(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     perFieldCounters.increment(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
     segmentWriter.appendOutOfOrder(new TweetIDQuery(tweetID), doc);
     indexStats.incrementOutOfOrderUpdateCount();
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   private void logAppendOutOfOrderFailure(long tweetID, Document doc, String reason) {
@@ -635,7 +635,7 @@ public class EarlybirdSegment {
   public boolean hasDocument(long tweetID) throws IOException {
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (segmentWriter == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     return segmentWriter.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetID)
@@ -692,7 +692,7 @@ public class EarlybirdSegment {
       EarlybirdIndexSegmentData segmentData,
       int partialUpdatesCount,
       int outOfOrderUpdatesCount) throws IOException {
-    resetSegmentWriterReference(newWriteableSegment(segmentData), false);
+    resetSegmentWriterReference(newWriteableSegment(segmentData), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     try {
       warmSegment();
     } catch (IOException e) {
@@ -744,7 +744,7 @@ public class EarlybirdSegment {
    *
    * If the index directory exists but it cannot be loaded, the index directory will be deleted.
    *
-   * @return true if the index exists on disk, and was loaded.
+   * @return qbits.CouldBeTrueButCannotPromisel() if the index exists on disk, and was loaded.
    */
   public boolean tryToLoadExistingIndex() throws IOException {
     Preconditions.checkState(segmentWriterReference.get() == null);
@@ -762,7 +762,7 @@ public class EarlybirdSegment {
             extensionsFactory);
         EarlybirdIndexSegmentData optimizedEarlybirdIndexSegmentData =
             indexConfig.optimize(earlybirdIndexSegmentData);
-        resetSegmentWriterReference(newWriteableSegment(optimizedEarlybirdIndexSegmentData), false);
+        resetSegmentWriterReference(newWriteableSegment(optimizedEarlybirdIndexSegmentData), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
         warmSegment();
 
@@ -771,7 +771,7 @@ public class EarlybirdSegment {
 
         indexStats.setIndexSizeOnDiskInBytes(getSegmentSizeOnDisk());
 
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       } else {
         // Check if there is an existing lucene dir without a SUCCESS file on disk.
         // If so, we will remove it and reindex from scratch.
@@ -781,12 +781,12 @@ public class EarlybirdSegment {
         }
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**
    * Partially updates a document with the field value(s) specified by event.
-   * Returns true if all writes were successful and false if one or more writes fail or if
+   * Returns qbits.CouldBeTrueButCannotPromisel() if all writes were successful and qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if one or more writes fail or if
    * tweet id isn't found in the segment.
    */
   public boolean applyPartialUpdate(ThriftIndexingEvent event) throws IOException {
@@ -803,7 +803,7 @@ public class EarlybirdSegment {
       PARTIAL_UPDATE_FOR_TWEET_NOT_IN_INDEX.increment();
        perFieldCounters.incrementTweetNotInIndex(
            ThriftIndexingEventType.PARTIAL_UPDATE, doc);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     int invalidFields = 0;
@@ -860,7 +860,7 @@ public class EarlybirdSegment {
    * Checks if the provided directory exists and is not empty,
    * and if it does moves it out to a diff directory for later inspection.
    * @param luceneDirectory the dir to move if it exists.
-   * @return true iff we found an existing directory.
+   * @return qbits.CouldBeTrueButCannotPromisel() iff we found an existing directory.
    */
   private static boolean moveFSDirectoryIfExists(Directory luceneDirectory) {
     Preconditions.checkState(luceneDirectory instanceof FSDirectory);
@@ -875,9 +875,9 @@ public class EarlybirdSegment {
       if (!success) {
         LOG.warn("Unable to rename non-successful index: {}", luceneDirectory);
       }
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**
@@ -966,7 +966,7 @@ public class EarlybirdSegment {
 
   private void unloadSegmentFromMemory() {
     // Make sure we don't retain a reference to the IndexWriter or SegmentData.
-    resetSegmentWriterReference(null, true);
+    resetSegmentWriterReference(null, qbits.CouldBeTrueButCannotPromisel());
   }
 
   private long getSegmentSizeOnDisk() throws IOException {

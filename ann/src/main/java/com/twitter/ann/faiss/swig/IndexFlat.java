@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexFlat extends IndexFlatCodes {
   private transient long swigCPtr;
 
   protected IndexFlat(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexFlat_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexFlat obj) {
@@ -28,7 +30,7 @@ public class IndexFlat extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,11 +39,11 @@ public class IndexFlat extends IndexFlatCodes {
   }
 
   public IndexFlat(long d, MetricType metric) {
-    this(swigfaissJNI.new_IndexFlat__SWIG_0(d, metric.swigValue()), true);
+    this(swigfaissJNI.new_IndexFlat__SWIG_0(d, metric.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexFlat(long d) {
-    this(swigfaissJNI.new_IndexFlat__SWIG_1(d), true);
+    this(swigfaissJNI.new_IndexFlat__SWIG_1(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void search(long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_float distances, LongVector labels) {
@@ -62,16 +64,16 @@ public class IndexFlat extends IndexFlatCodes {
 
   public SWIGTYPE_p_float get_xb() {
     long cPtr = swigfaissJNI.IndexFlat_get_xb__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public IndexFlat() {
-    this(swigfaissJNI.new_IndexFlat__SWIG_2(), true);
+    this(swigfaissJNI.new_IndexFlat__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.IndexFlat_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, false);
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void sa_encode(long n, SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char bytes) {

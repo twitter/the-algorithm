@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ClusteringParameters {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class ClusteringParameters {
 
   protected ClusteringParameters(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ClusteringParameters obj) {
@@ -29,7 +31,7 @@ public class ClusteringParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ClusteringParameters(swigCPtr);
       }
       swigCPtr = 0;
@@ -125,7 +127,7 @@ public class ClusteringParameters {
   }
 
   public ClusteringParameters() {
-    this(swigfaissJNI.new_ClusteringParameters(), true);
+    this(swigfaissJNI.new_ClusteringParameters(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

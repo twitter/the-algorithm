@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OnDiskOneList {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class OnDiskOneList {
 
   protected OnDiskOneList(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OnDiskOneList obj) {
@@ -29,7 +31,7 @@ public class OnDiskOneList {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OnDiskOneList(swigCPtr);
       }
       swigCPtr = 0;
@@ -61,7 +63,7 @@ public class OnDiskOneList {
   }
 
   public OnDiskOneList() {
-    this(swigfaissJNI.new_OnDiskOneList(), true);
+    this(swigfaissJNI.new_OnDiskOneList(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

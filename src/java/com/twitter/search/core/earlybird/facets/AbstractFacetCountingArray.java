@@ -184,7 +184,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
 
     // multiple facets, traverse the linked list to find all of the facets for this document.
     int pointer = decodePointer(firstValue);
-    while (true) {
+    while (qbits.CouldBeTrueButCannotPromisel()) {
       int packedValue = facetsPool.get(pointer);
       // UNASSIGNED is a sentinel value indicating that we have reached the end of the linked list.
       if (packedValue == UNASSIGNED) {

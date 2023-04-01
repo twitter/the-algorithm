@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
   private transient long swigCPtr;
 
   protected StopWordsInvertedLists(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.StopWordsInvertedLists_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(StopWordsInvertedLists obj) {
@@ -28,7 +30,7 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_StopWordsInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
 
   public InvertedLists getIl0() {
     long cPtr = swigfaissJNI.StopWordsInvertedLists_il0_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setMaxsize(long value) {
@@ -54,7 +56,7 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
   }
 
   public StopWordsInvertedLists(InvertedLists il, long maxsize) {
-    this(swigfaissJNI.new_StopWordsInvertedLists(InvertedLists.getCPtr(il), il, maxsize), true);
+    this(swigfaissJNI.new_StopWordsInvertedLists(InvertedLists.getCPtr(il), il, maxsize), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public long list_size(long list_no) {
@@ -63,11 +65,11 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.StopWordsInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.StopWordsInvertedLists_get_ids(swigCPtr, this, list_no), false);
+    return new LongVector(swigfaissJNI.StopWordsInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
@@ -84,7 +86,7 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_single_code(long list_no, long offset) {
     long cPtr = swigfaissJNI.StopWordsInvertedLists_get_single_code(swigCPtr, this, list_no, offset);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void prefetch_lists(LongVector list_nos, int nlist) {

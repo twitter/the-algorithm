@@ -28,13 +28,13 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
 
   @Override
   protected boolean isMergingAcrossTiers() {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   @Override
   public boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
     if (foundError()) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     int numResults = 0;

@@ -15,7 +15,7 @@ import com.twitter.search.common.metrics.SearchCustomGauge;
 public class CaughtUpMonitor {
   private static final Logger LOG = LoggerFactory.getLogger(CaughtUpMonitor.class);
 
-  protected final AtomicBoolean isCaughtUp = new AtomicBoolean(false);
+  protected final AtomicBoolean isCaughtUp = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   public CaughtUpMonitor(String statPrefix) {
     SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
@@ -41,8 +41,8 @@ public class CaughtUpMonitor {
    */
   public synchronized void resetAndWaitUntilCaughtUp() {
     LOG.info("Waiting to catch up.");
-    // Explicitly set isCaughtUp to false before waiting
-    isCaughtUp.set(false);
+    // Explicitly set isCaughtUp to qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() before waiting
+    isCaughtUp.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     try {
       while (!isCaughtUp()) {
         wait();

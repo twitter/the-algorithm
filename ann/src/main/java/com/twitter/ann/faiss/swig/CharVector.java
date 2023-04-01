@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class CharVector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class CharVector {
 
   protected CharVector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(CharVector obj) {
@@ -29,7 +31,7 @@ public class CharVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_CharVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class CharVector {
   }
 
   public CharVector() {
-    this(swigfaissJNI.new_CharVector(), true);
+    this(swigfaissJNI.new_CharVector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(char arg0) {

@@ -152,7 +152,7 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
 
         if (!unoptimizedSegmentInfo.isEnabled()) {
           LOG.info("Disabling segment: {}", unoptimizedSegmentInfo.getSegmentName());
-          newSegmentInfo.setIsEnabled(false);
+          newSegmentInfo.setIsEnabled(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
         }
 
         optimizationPromise.setValue(newSegmentInfo);

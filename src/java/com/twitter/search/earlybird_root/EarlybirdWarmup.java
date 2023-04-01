@@ -49,7 +49,7 @@ public class EarlybirdWarmup extends
                     .setRankingParams(new ThriftRankingParams()
                         .setType(ThriftScoringFunctionType.LINEAR)))
                 .setSerializedQuery(query))
-        .setCachingParams(new CachingParams().setCache(false))
+        .setCachingParams(new CachingParams().setCache(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()))
         .setClientId(CLIENT_ID);
   }
 

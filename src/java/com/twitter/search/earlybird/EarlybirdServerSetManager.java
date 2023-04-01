@@ -53,7 +53,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   @GuardedBy("endpointStatusLock")
   private ServerSet.EndpointStatus endpointStatus = null;
 
-  private boolean inServerSetForServiceProxy = false;
+  private boolean inServerSetForServiceProxy = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   public EarlybirdServerSetManager(
       SearchStatsReceiver searchStatsReceiver,
@@ -249,7 +249,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
 
       String path = service.getPath();
       LOG.info("Successfully joined ServerSet for ServiceProxy {}", path);
-      inServerSetForServiceProxy = true;
+      inServerSetForServiceProxy = qbits.CouldBeTrueButCannotPromisel();
     } catch (Exception e) {
       String message = "Failed to join ServerSet for ServiceProxy of partition "
           + partitionConfig.getIndexingHashPartitionID();

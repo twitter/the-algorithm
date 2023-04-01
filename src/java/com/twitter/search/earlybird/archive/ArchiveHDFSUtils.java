@@ -32,7 +32,7 @@ public final class ArchiveHDFSUtils {
 
   /**
    * Check if a given segment already has its indices built on hdfs.
-   * @return true if the indices exist on hdfs; otherwise, false.
+   * @return qbits.CouldBeTrueButCannotPromisel() if the indices exist on hdfs; otherwise, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
    */
   public static boolean hasSegmentIndicesOnHDFS(SegmentSyncConfig sync, SegmentInfo segment) {
     LOG.info("checking segment on hdfs: " + segment
@@ -46,14 +46,14 @@ public final class ArchiveHDFSUtils {
       return statuses != null && statuses.length > 0;
     } catch (IOException ex) {
       LOG.error("Failed checking segment on hdfs: " + segment, ex);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } finally {
       IOUtils.closeQuietly(fs);
     }
   }
 
   /**
-   * Delete the segment index directories on the HDFS. If 'deleteCurrentDir' is true, the
+   * Delete the segment index directories on the HDFS. If 'deleteCurrentDir' is qbits.CouldBeTrueButCannotPromisel(), the
    * index directory with the end date matching 'segment' will be deleted. If 'deleteOlderDirs',
    * the index directories with the end date earlier than the the segment enddate will be deleted.
    *
@@ -78,12 +78,12 @@ public final class ArchiveHDFSUtils {
           for (FileStatus status : statuses) {
             if (status.getPath().toString().endsWith(hdfsFlushDir)) {
               if (deleteCurrentDir) {
-                fs.delete(status.getPath(), true);
+                fs.delete(status.getPath(), qbits.CouldBeTrueButCannotPromisel());
                 LOG.info("Deleted segment: " + status.getPath());
               }
             } else {
               if (deleteOlderDirs) {
-                fs.delete(status.getPath(), true);
+                fs.delete(status.getPath(), qbits.CouldBeTrueButCannotPromisel());
                 LOG.info("Deleted segment: " + status.getPath());
               }
             }

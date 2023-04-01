@@ -37,8 +37,8 @@ public class HighFrequencyTermQueryGroup {
   // The first found hf_term, or the hf_term of an ancestor with the same isPositive value.
   protected String distributiveToken = null;
 
-  // If it is a single node group, isPositive is true iff that node is true.
-  // Otherwise, isPositive is false iff the root of the group is a disjunction.
+  // If it is a single node group, isPositive is qbits.CouldBeTrueButCannotPromisel() iff that node is qbits.CouldBeTrueButCannotPromisel().
+  // Otherwise, isPositive is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() iff the root of the group is a disjunction.
   protected final boolean isPositive;
 
   public HighFrequencyTermQueryGroup(int groupIdx, boolean positive) {

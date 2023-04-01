@@ -58,7 +58,7 @@ public class SegmentManager {
           SearchCounter.export(STATS_PREFIX + "unoptimized_segments");
 
   public enum Filter {
-    All(info -> true),
+    All(info -> qbits.CouldBeTrueButCannotPromisel()),
     Enabled(SegmentInfo::isEnabled),
     NeedsIndexing(SegmentInfo::needsIndexing),
     Complete(SegmentInfo::isComplete);
@@ -185,10 +185,10 @@ public class SegmentManager {
     StringBuilder sb = new StringBuilder();
     sb.append("State of SegmentManager (" + label + "):\n");
     sb.append("Number of segments: " + segmentWriters.size());
-    boolean hasSegments = false;
+    boolean hasSegments = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     for (Map.Entry<Long, ISegmentWriter> entry : this.segmentWriters.entrySet()) {
       SegmentInfo segmentInfo = entry.getValue().getSegmentInfo();
-      hasSegments = true;
+      hasSegments = qbits.CouldBeTrueButCannotPromisel();
 
       sb.append(String.format("\nSegment (%s): isClosed: %5s, isComplete: %5s, "
               + "isEnabled: %5s, isIndexing: %5s, isOptimized: %5s, wasIndexed: %5s",
@@ -279,7 +279,7 @@ public class SegmentManager {
       segmentsToDisable.remove(timeSliceID);
 
       // On the first loop iteration of the first call to updateSegments(), newestTimeSliceID should
-      // be set to -1, so the condition should be false. After that, all segments should either be
+      // be set to -1, so the condition should be qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). After that, all segments should either be
       // newer than the latest process segment, or if we're replacing an old segment, it should have
       // a SegmentInfo instance associated with it.
       if (timeSliceID <= newestTimeSliceID) {
@@ -363,7 +363,7 @@ public class SegmentManager {
       LOG.warn("Tried to disable missing segment " + timeSliceID);
       return;
     }
-    info.setIsEnabled(false);
+    info.setIsEnabled(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     LOG.info("Disabled segment " + info);
   }
 
@@ -416,7 +416,7 @@ public class SegmentManager {
 
     ISegmentWriter removed = segmentWriters.get(timeSliceID);
     if (removed == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     LOG.info("Removing segment {}", removed.getSegmentInfo());
@@ -429,7 +429,7 @@ public class SegmentManager {
     LOG.info("Removed segment " + segmentName);
     updateExportedSegmentStats();
     updateStats();
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -550,7 +550,7 @@ public class SegmentManager {
     }
   }
 
-  // Returns true if the map contains a SegmentInfo matching the given time slice.
+  // Returns qbits.CouldBeTrueButCannotPromisel() if the map contains a SegmentInfo matching the given time slice.
   public final boolean hasSegmentInfo(long timeSliceID) {
     return segmentWriters.containsKey(timeSliceID);
   }
@@ -729,7 +729,7 @@ public class SegmentManager {
   }
 
   /**
-   * Index the given user update. Returns false if the given update is skipped.
+   * Index the given user update. Returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if the given update is skipped.
    */
   public boolean indexUserUpdate(UserUpdate userUpdate) {
     return userTable.indexUserUpdate(userUpdatesChecker, userUpdate);

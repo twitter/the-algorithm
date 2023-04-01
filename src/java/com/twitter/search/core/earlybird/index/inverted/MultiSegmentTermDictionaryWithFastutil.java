@@ -39,7 +39,7 @@ public class MultiSegmentTermDictionaryWithFastutil implements MultiSegmentTermD
   @VisibleForTesting
   public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
       SearchTimerStats.export("multi_segment_term_dictionary_with_fastutil_creation",
-          TimeUnit.MILLISECONDS, false);
+          TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   private static final int MAX_TERM_ID_BITS = 24;
   private static final int TERM_ID_MASK = (1 << MAX_TERM_ID_BITS) - 1; // First 24 bits.

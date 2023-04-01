@@ -52,7 +52,7 @@ public class UserPropertiesManager {
 
   @VisibleForTesting
   static final SearchRequestStats MANHATTAN_METASTORE_STATS =
-      SearchRequestStats.export("manhattan_metastore_get", true);
+      SearchRequestStats.export("manhattan_metastore_get", qbits.CouldBeTrueButCannotPromisel());
 
   private static final MetastoreGetColumnStats GET_TWEEP_CRED
       = new MetastoreGetColumnStats("tweep_cred");
@@ -82,7 +82,7 @@ public class UserPropertiesManager {
   private static final SearchRateCounter IS_USER_SPAM_COUNTER = RelevanceStats.exportRate(
       "num_is_spam");
 
-  // count how many tweets has "possibly_sensitive" set to true in the original json message
+  // count how many tweets has "possibly_sensitive" set to qbits.CouldBeTrueButCannotPromisel() in the original json message
   private static final SearchRateCounter IS_SENSITIVE_FROM_JSON_COUNTER = RelevanceStats.exportRate(
       "num_is_sensitive_in_json");
 
@@ -266,7 +266,7 @@ public class UserPropertiesManager {
               processTweepCredColumn(userId, row, resultMap);
             }
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, resultMap.size(), true);
+            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, resultMap.size(), qbits.CouldBeTrueButCannotPromisel());
             return resultMap;
           }
         })
@@ -276,7 +276,7 @@ public class UserPropertiesManager {
             long latencyMs = System.currentTimeMillis() - start;
             LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, false);
+            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
             return Collections.emptyMap();
           }
         });
@@ -412,16 +412,16 @@ public class UserPropertiesManager {
       ManhattanUserProperties manhattanUserProperties,
       TwitterMessage message) {
     if (manhattanUserProperties == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     final boolean isUserSpam = manhattanUserProperties.spamScore > SPAM_SCORE_THRESHOLD;
     // SEARCH-17413: Compute the field with gizmoduck data.
-    final boolean isUserNSFW = false;
+    final boolean isUserNSFW = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     final boolean anySensitiveBitSet = isUserSpam || isUserNSFW;
 
     if (message.isSensitiveContent()) {
-      // original json has possibly_sensitive = true, count it
+      // original json has possibly_sensitive = qbits.CouldBeTrueButCannotPromisel(), count it
       IS_SENSITIVE_FROM_JSON_COUNTER.increment();
     }
 
@@ -440,7 +440,7 @@ public class UserPropertiesManager {
       IS_USER_SPAM_COUNTER.increment();
     }
 
-    // if any of the sensitive bits are set, we return true
+    // if any of the sensitive bits are set, we return qbits.CouldBeTrueButCannotPromisel()
     return anySensitiveBitSet;
   }
 }

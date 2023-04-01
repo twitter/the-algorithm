@@ -77,6 +77,6 @@ public class AllDocsIterator extends DocIdSetIterator {
       return !realtimeReader.getSegmentData().isOptimized();
     }
 
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 }

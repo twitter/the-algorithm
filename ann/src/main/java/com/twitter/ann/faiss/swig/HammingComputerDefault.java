@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class HammingComputerDefault {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class HammingComputerDefault {
 
   protected HammingComputerDefault(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(HammingComputerDefault obj) {
@@ -29,7 +31,7 @@ public class HammingComputerDefault {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_HammingComputerDefault(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class HammingComputerDefault {
 
   public SWIGTYPE_p_unsigned_char getA8() {
     long cPtr = swigfaissJNI.HammingComputerDefault_a8_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setQuotient8(int value) {
@@ -62,11 +64,11 @@ public class HammingComputerDefault {
   }
 
   public HammingComputerDefault() {
-    this(swigfaissJNI.new_HammingComputerDefault__SWIG_0(), true);
+    this(swigfaissJNI.new_HammingComputerDefault__SWIG_0(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HammingComputerDefault(SWIGTYPE_p_unsigned_char a8, int code_size) {
-    this(swigfaissJNI.new_HammingComputerDefault__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), true);
+    this(swigfaissJNI.new_HammingComputerDefault__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void set(SWIGTYPE_p_unsigned_char a8, int code_size) {

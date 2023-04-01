@@ -32,17 +32,17 @@ public class UserUpdatesChecker {
    */
   public boolean skipUserUpdate(UserUpdate userUpdate) {
     if (userUpdate == null) { // always skip null updates
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     UserUpdateType type = userUpdate.updateType;
 
     if (type == UserUpdateType.PROTECTED && skipProtectedUserUpdate()) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     if (type == UserUpdateType.ANTISOCIAL && skipAntisocialUserUpdate(userUpdate)) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     // NSFW users can continue to tweet even after they are marked as NSFW. That means
@@ -50,7 +50,7 @@ public class UserUpdatesChecker {
     // users updates check here.
 
     // pass all checks, do not skip this user update
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   // Antisocial/suspended users can't tweet after they are suspended. Thus if our index stores

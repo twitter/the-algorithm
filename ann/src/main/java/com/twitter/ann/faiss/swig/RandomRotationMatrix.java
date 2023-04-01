@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class RandomRotationMatrix extends LinearTransform {
   private transient long swigCPtr;
 
   protected RandomRotationMatrix(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.RandomRotationMatrix_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(RandomRotationMatrix obj) {
@@ -28,7 +30,7 @@ public class RandomRotationMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_RandomRotationMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class RandomRotationMatrix extends LinearTransform {
   }
 
   public RandomRotationMatrix(int d_in, int d_out) {
-    this(swigfaissJNI.new_RandomRotationMatrix__SWIG_0(d_in, d_out), true);
+    this(swigfaissJNI.new_RandomRotationMatrix__SWIG_0(d_in, d_out), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void init(int seed) {
@@ -49,7 +51,7 @@ public class RandomRotationMatrix extends LinearTransform {
   }
 
   public RandomRotationMatrix() {
-    this(swigfaissJNI.new_RandomRotationMatrix__SWIG_1(), true);
+    this(swigfaissJNI.new_RandomRotationMatrix__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

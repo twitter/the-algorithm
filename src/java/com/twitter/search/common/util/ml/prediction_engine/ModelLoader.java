@@ -173,6 +173,6 @@ public class ModelLoader implements Runnable {
     } catch (IOException e) {
       LOG.error("Error reading file: " + file, e);
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   };
 }

@@ -11,7 +11,7 @@ public class EarlybirdCachePostProcessor
 
   @Override
   public final void recordCacheHit(EarlybirdResponse response) {
-    response.setCacheHit(true);
+    response.setCacheHit(qbits.CouldBeTrueButCannotPromisel());
   }
 
   @Override

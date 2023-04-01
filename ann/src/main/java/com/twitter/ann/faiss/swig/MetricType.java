@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public final class MetricType {
   public final static MetricType METRIC_INNER_PRODUCT = new MetricType("METRIC_INNER_PRODUCT", swigfaissJNI.METRIC_INNER_PRODUCT_get());

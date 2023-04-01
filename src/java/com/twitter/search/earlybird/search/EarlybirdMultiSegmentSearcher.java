@@ -122,10 +122,10 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
               segmentData.getTimeMapper(),
               idTimeRanges.getSinceTimeInclusive().or(SinceUntilFilter.NO_FILTER),
               idTimeRanges.getUntilTimeExclusive().or(SinceUntilFilter.NO_FILTER))) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   @Override
@@ -248,7 +248,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
 
     @Override
     public boolean isCacheable(LeafReaderContext context) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
   }
 }

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ParameterRange {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class ParameterRange {
 
   protected ParameterRange(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ParameterRange obj) {
@@ -29,7 +31,7 @@ public class ParameterRange {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ParameterRange(swigCPtr);
       }
       swigCPtr = 0;
@@ -50,11 +52,11 @@ public class ParameterRange {
 
   public DoubleVector getValues() {
     long cPtr = swigfaissJNI.ParameterRange_values_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, false);
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public ParameterRange() {
-    this(swigfaissJNI.new_ParameterRange(), true);
+    this(swigfaissJNI.new_ParameterRange(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

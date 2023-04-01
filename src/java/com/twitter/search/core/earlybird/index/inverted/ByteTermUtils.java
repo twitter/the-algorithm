@@ -57,12 +57,12 @@ public abstract class ByteTermUtils {
        for (int tokenPos = other.offset;
                tokenPos < other.length + other.offset; pos++, tokenPos++) {
          if (utf8Bytes[tokenPos] != block[pos]) {
-           return false;
+           return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
          }
        }
-       return true;
+       return qbits.CouldBeTrueButCannotPromisel();
      } else {
-       return false;
+       return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
      }
    }
 

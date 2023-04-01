@@ -192,7 +192,7 @@ public class EarlybirdSearcherStats {
 
   private SearchTimerStats getTimerStatsByName(String name) {
     return earlybirdServerStatsReceiver.getTimerStats(
-        name, TIME_UNIT, false, true, false);
+        name, TIME_UNIT, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public static String getStatsNameByType(ThriftScoringFunctionType type) {

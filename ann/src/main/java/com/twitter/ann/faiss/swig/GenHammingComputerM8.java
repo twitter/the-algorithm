@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class GenHammingComputerM8 {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class GenHammingComputerM8 {
 
   protected GenHammingComputerM8(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(GenHammingComputerM8 obj) {
@@ -29,7 +31,7 @@ public class GenHammingComputerM8 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_GenHammingComputerM8(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class GenHammingComputerM8 {
 
   public SWIGTYPE_p_unsigned_long getA() {
     long cPtr = swigfaissJNI.GenHammingComputerM8_a_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setN(int value) {
@@ -54,7 +56,7 @@ public class GenHammingComputerM8 {
   }
 
   public GenHammingComputerM8(SWIGTYPE_p_unsigned_char a8, int code_size) {
-    this(swigfaissJNI.new_GenHammingComputerM8(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), true);
+    this(swigfaissJNI.new_GenHammingComputerM8(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public int hamming(SWIGTYPE_p_unsigned_char b8) {

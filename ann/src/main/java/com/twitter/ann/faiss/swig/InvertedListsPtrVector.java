@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class InvertedListsPtrVector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class InvertedListsPtrVector {
 
   protected InvertedListsPtrVector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(InvertedListsPtrVector obj) {
@@ -29,7 +31,7 @@ public class InvertedListsPtrVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_InvertedListsPtrVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class InvertedListsPtrVector {
   }
 
   public InvertedListsPtrVector() {
-    this(swigfaissJNI.new_InvertedListsPtrVector(), true);
+    this(swigfaissJNI.new_InvertedListsPtrVector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(InvertedLists arg0) {
@@ -50,7 +52,7 @@ public class InvertedListsPtrVector {
 
   public SWIGTYPE_p_p_faiss__InvertedLists data() {
     long cPtr = swigfaissJNI.InvertedListsPtrVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_p_faiss__InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_faiss__InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long size() {
@@ -59,7 +61,7 @@ public class InvertedListsPtrVector {
 
   public InvertedLists at(long n) {
     long cPtr = swigfaissJNI.InvertedListsPtrVector_at(swigCPtr, this, n);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void resize(long n) {

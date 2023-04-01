@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class HNSWStats {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class HNSWStats {
 
   protected HNSWStats(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(HNSWStats obj) {
@@ -29,7 +31,7 @@ public class HNSWStats {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_HNSWStats(swigCPtr);
       }
       swigCPtr = 0;
@@ -77,27 +79,27 @@ public class HNSWStats {
   }
 
   public HNSWStats(long n1, long n2, long n3, long ndis, long nreorder) {
-    this(swigfaissJNI.new_HNSWStats__SWIG_0(n1, n2, n3, ndis, nreorder), true);
+    this(swigfaissJNI.new_HNSWStats__SWIG_0(n1, n2, n3, ndis, nreorder), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSWStats(long n1, long n2, long n3, long ndis) {
-    this(swigfaissJNI.new_HNSWStats__SWIG_1(n1, n2, n3, ndis), true);
+    this(swigfaissJNI.new_HNSWStats__SWIG_1(n1, n2, n3, ndis), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSWStats(long n1, long n2, long n3) {
-    this(swigfaissJNI.new_HNSWStats__SWIG_2(n1, n2, n3), true);
+    this(swigfaissJNI.new_HNSWStats__SWIG_2(n1, n2, n3), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSWStats(long n1, long n2) {
-    this(swigfaissJNI.new_HNSWStats__SWIG_3(n1, n2), true);
+    this(swigfaissJNI.new_HNSWStats__SWIG_3(n1, n2), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSWStats(long n1) {
-    this(swigfaissJNI.new_HNSWStats__SWIG_4(n1), true);
+    this(swigfaissJNI.new_HNSWStats__SWIG_4(n1), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSWStats() {
-    this(swigfaissJNI.new_HNSWStats__SWIG_5(), true);
+    this(swigfaissJNI.new_HNSWStats__SWIG_5(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void reset() {

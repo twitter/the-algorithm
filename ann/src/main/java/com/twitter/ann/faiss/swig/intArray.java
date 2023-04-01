@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class intArray {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class intArray {
 
   protected intArray(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(intArray obj) {
@@ -29,7 +31,7 @@ public class intArray {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_intArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class intArray {
   }
 
   public intArray(int nelements) {
-    this(swigfaissJNI.new_intArray(nelements), true);
+    this(swigfaissJNI.new_intArray(nelements), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public int getitem(int index) {
@@ -50,12 +52,12 @@ public class intArray {
 
   public SWIGTYPE_p_int cast() {
     long cPtr = swigfaissJNI.intArray_cast(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public static intArray frompointer(SWIGTYPE_p_int t) {
     long cPtr = swigfaissJNI.intArray_frompointer(SWIGTYPE_p_int.getCPtr(t));
-    return (cPtr == 0) ? null : new intArray(cPtr, false);
+    return (cPtr == 0) ? null : new intArray(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
 }

@@ -56,11 +56,11 @@ public class SimpleSegmentIndexer {
 
   private boolean shouldIndexSegment(SegmentInfo segmentInfo) {
     if (!segmentInfo.isEnabled()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (segmentToAppend != null) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     return !segmentInfo.isComplete()
@@ -74,22 +74,22 @@ public class SimpleSegmentIndexer {
   public boolean indexSegment(SegmentInfo segmentInfo) {
     LOG.info("Indexing segment " + segmentInfo.getSegmentName());
     if (!shouldIndexSegment(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     // If we're starting to index, we're not complete, will become complete if we
     // were successful here.
-    segmentInfo.setComplete(false);
+    segmentInfo.setComplete(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     try {
-      segmentInfo.setIndexing(true);
+      segmentInfo.setIndexing(qbits.CouldBeTrueButCannotPromisel());
       indexingSegment = segmentInfo.getIndexSegment();
 
       // if we're updating the segment, then we'll index only the new available days
       // and then append the lucene index from the old segment
       // If segmentToAppend is not null, it means we are updating a segment.
       if (indexingSegment.tryToLoadExistingIndex()) {
-        segmentInfo.getSyncInfo().setLoaded(true);
+        segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeTrueButCannotPromisel());
         LOG.info("Loaded existing index for " + segmentInfo + ", not indexing.");
       } else {
         indexingLoop();
@@ -98,11 +98,11 @@ public class SimpleSegmentIndexer {
         }
       }
 
-      segmentInfo.setIndexing(false);
-      segmentInfo.setComplete(true);
-      segmentInfo.setWasIndexed(true);
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
+      segmentInfo.setWasIndexed(qbits.CouldBeTrueButCannotPromisel());
       LOG.info("Successfully indexed segment " + segmentInfo.getSegmentName());
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (Exception e) {
       LOG.error("Exception while indexing IndexSegment " + segmentInfo
           + " after " + indexingSegment.getIndexStats().getStatusCount() + " documents.", e);
@@ -116,26 +116,26 @@ public class SimpleSegmentIndexer {
         LOG.error("Failed to clean up index segment folder after indexing failures.");
       }
 
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } finally {
       if (tweetReader != null) {
         tweetReader.stop();
       }
-      segmentInfo.setIndexing(false);
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   }
 
-  // Indexes a document if available.  Returns true if index was updated.
+  // Indexes a document if available.  Returns qbits.CouldBeTrueButCannotPromisel() if index was updated.
   protected boolean indexDocument(TweetDocument tweetDocument) throws IOException {
     if (tweetDocument == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     SearchTimer timer = partitionIndexingMetricSet.statusStats.startNewTimer();
     indexingSegment.addDocument(tweetDocument);
     partitionIndexingMetricSet.statusStats.stopTimerAndIncrement(timer);
     segmentSize++;
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

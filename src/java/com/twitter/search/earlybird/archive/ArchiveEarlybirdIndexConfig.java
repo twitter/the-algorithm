@@ -63,7 +63,7 @@ public abstract class ArchiveEarlybirdIndexConfig extends EarlybirdIndexConfig {
         data.getMaxSegmentSize(),
         data.getTimeSliceID(),
         data.getSchema(),
-        true, // isOptimized
+        qbits.CouldBeTrueButCannotPromisel(), // isOptimized
         data.getSyncData().getSmallestDocID(),
         new ConcurrentHashMap<>(data.getPerFieldMap()),
         data.getFacetCountingArray(),

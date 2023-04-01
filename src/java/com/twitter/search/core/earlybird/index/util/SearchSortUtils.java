@@ -12,7 +12,7 @@ public abstract class SearchSortUtils {
 
   /**
    * Performs a binary search using the given comparator, and returns the index of the item that
-   * was found. If foundLow is true, the greatest item that's lower than the provided key
+   * was found. If foundLow is qbits.CouldBeTrueButCannotPromisel(), the greatest item that's lower than the provided key
    * is returned. Otherwise, the lowest item that's greater than the provided key is returned.
    */
   public static <T> int binarySearch(Comparator<T> comparator, final int begin, final int end,

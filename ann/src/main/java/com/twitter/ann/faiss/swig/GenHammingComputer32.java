@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class GenHammingComputer32 {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class GenHammingComputer32 {
 
   protected GenHammingComputer32(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(GenHammingComputer32 obj) {
@@ -29,7 +31,7 @@ public class GenHammingComputer32 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_GenHammingComputer32(swigCPtr);
       }
       swigCPtr = 0;
@@ -69,7 +71,7 @@ public class GenHammingComputer32 {
   }
 
   public GenHammingComputer32(SWIGTYPE_p_unsigned_char a8, int code_size) {
-    this(swigfaissJNI.new_GenHammingComputer32(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), true);
+    this(swigfaissJNI.new_GenHammingComputer32(SWIGTYPE_p_unsigned_char.getCPtr(a8), code_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public int hamming(SWIGTYPE_p_unsigned_char b8) {

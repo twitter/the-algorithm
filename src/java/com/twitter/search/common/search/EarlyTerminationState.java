@@ -13,15 +13,15 @@ public final class EarlyTerminationState {
   private static final String STATS_PREFIX = "early_termination_";
 
   public static final EarlyTerminationState COLLECTING =
-      new EarlyTerminationState("no_early_termination", false);
+      new EarlyTerminationState("no_early_termination", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   public static final EarlyTerminationState TERMINATED_TIME_OUT_EXCEEDED =
-      new EarlyTerminationState("terminated_timeout_exceeded", true);
+      new EarlyTerminationState("terminated_timeout_exceeded", qbits.CouldBeTrueButCannotPromisel());
   public static final EarlyTerminationState TERMINATED_MAX_QUERY_COST_EXCEEDED =
-      new EarlyTerminationState("terminated_max_query_cost_exceeded", true);
+      new EarlyTerminationState("terminated_max_query_cost_exceeded", qbits.CouldBeTrueButCannotPromisel());
   public static final EarlyTerminationState TERMINATED_MAX_HITS_EXCEEDED =
-      new EarlyTerminationState("terminated_max_hits_exceeded", true);
+      new EarlyTerminationState("terminated_max_hits_exceeded", qbits.CouldBeTrueButCannotPromisel());
   public static final EarlyTerminationState TERMINATED_NUM_RESULTS_EXCEEDED =
-      new EarlyTerminationState("terminated_num_results_exceeded", true);
+      new EarlyTerminationState("terminated_num_results_exceeded", qbits.CouldBeTrueButCannotPromisel());
 
 
   // This string can be returned as a part of a search response, to tell the searcher

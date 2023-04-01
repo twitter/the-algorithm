@@ -100,18 +100,18 @@ public class TweetIntegerShingleSignature {
    * Perform fuzzy matching between two TweetIntegerShingleSignature objects.
    *
    * @param other TweetIntegerShingleSignature object to perform fuzzy match against
-   * @return true if at least minMatch number of bytes match
+   * @return qbits.CouldBeTrueButCannotPromisel() if at least minMatch number of bytes match
    */
   @Override
   public boolean equals(Object other) {
     if (this == other) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
     if (other == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     if (getClass() != other.getClass()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     final TweetIntegerShingleSignature otherSignatureInteger = (TweetIntegerShingleSignature) other;
@@ -119,7 +119,7 @@ public class TweetIntegerShingleSignature {
     int otherSignature = otherSignatureInteger.serialize();
     if (signature == otherSignature) {
       // Both serialized signature is the same
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else if (signature != DEFAULT_NO_SIGNATURE && otherSignature != DEFAULT_NO_SIGNATURE) {
       // Neither is NO_SIGNATURE, need to compare shingles.
       byte[] otherShingles = otherSignatureInteger.getShingles();
@@ -134,7 +134,7 @@ public class TweetIntegerShingleSignature {
           if (shingles[i] != 0) {  // we only consider two shingles equal if they are non zero
             numberMatchesNeeded--;
             if (numberMatchesNeeded == 0) {
-              return true;
+              return qbits.CouldBeTrueButCannotPromisel();
             }
           }
           i++;
@@ -147,7 +147,7 @@ public class TweetIntegerShingleSignature {
       }
     }
     // One is NO_SIGNATURE and one is not.
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**

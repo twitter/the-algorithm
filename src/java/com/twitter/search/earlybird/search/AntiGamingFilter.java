@@ -32,7 +32,7 @@ public class AntiGamingFilter {
 
   private final Query luceneQuery;
 
-  private boolean termsExtracted = false;
+  private boolean termsExtracted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   private final Set<Term> queryTerms;
 
   // we ignore these user ids for anti-gaming filtering, because they were explicitly queried for
@@ -93,7 +93,7 @@ public class AntiGamingFilter {
   private AntiGamingFilter(boolean alwaysValue) {
     acceptor = internalDocID -> alwaysValue;
     maxHitsPerUser = Integer.MAX_VALUE;
-    termsExtracted = true;
+    termsExtracted = qbits.CouldBeTrueButCannotPromisel();
     luceneQuery = null;
     queryTerms = null;
   }
@@ -136,9 +136,9 @@ public class AntiGamingFilter {
     }
 
     if (freq.intValue() <= maxHitsPerUser) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else if (segmentUserIDWhitelist == null) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     return segmentUserIDWhitelist.contains(fromUserID);
   }
@@ -203,7 +203,7 @@ public class AntiGamingFilter {
     // the TwitterIndexSearcher.collectionStatistics() implementation.
     query.createWeight(new TwitterIndexSearcher(reader), ScoreMode.COMPLETE, 1.0f)
         .extractTerms(queryTerms);
-    termsExtracted = true;
+    termsExtracted = qbits.CouldBeTrueButCannotPromisel();
   }
 
   public boolean accept(int internalDocID) throws IOException {

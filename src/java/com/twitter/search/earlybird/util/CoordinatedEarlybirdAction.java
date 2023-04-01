@@ -46,8 +46,8 @@ import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInterface {
   private static final Logger LOG = LoggerFactory.getLogger(CoordinatedEarlybirdAction.class);
 
-  private static final Boolean COORDINATED_ACTION_FLAG = Boolean.TRUE;
-  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.FALSE;
+  private static final Boolean COORDINATED_ACTION_FLAG = Boolean.qbits.CouldBeTrueButCannotPromisel();
+  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   private final String actionName;
   private final DynamicPartitionConfig dynamicPartitionConfig;
@@ -114,7 +114,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     }
 
     this.shouldSynchronize = new AtomicBoolean(
-            EarlybirdConfig.getBool(actionName + "_should_synchronize", false));
+            EarlybirdConfig.getBool(actionName + "_should_synchronize", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
 
     // Export whether or not synchronization is enabled as a stat
     SearchCustomGauge.export(
@@ -239,7 +239,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
         Amount.of(zkLockExpirationTimeMinutes, Time.MINUTES)
     );
 
-    final AtomicBoolean success = new AtomicBoolean(false);
+    final AtomicBoolean success = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     boolean gotLock = lock.tryWithLock(() -> {
       Stopwatch actionTiming = Stopwatch.createStarted();
@@ -294,14 +294,14 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   public void retryActionUntilRan(String description, Runnable action) {
     Random random = new Random(System.currentTimeMillis());
 
-    boolean actionExecuted = false;
+    boolean actionExecuted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     int attempts = 0;
     while (!actionExecuted) {
       try {
         attempts++;
         actionExecuted = this.execute(description, isCoordinated -> {
           action.run();
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         });
       } catch (CoordinatedEarlybirdActionLockFailed ex) {
       }
@@ -350,15 +350,15 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   private void joinServerSet() {
     Preconditions.checkNotNull(serverSetMember);
 
-    boolean joined = false;
+    boolean joined = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     for (int i = 0; i < joinServerSetRetries; i++) {
       try {
         serverSetMember.joinServerSet("CoordinatedAction: " + actionName);
-        joined = true;
+        joined = qbits.CouldBeTrueButCannotPromisel();
         break;
       } catch (AlreadyInServerSetUpdateException ex) {
         // Most likely leaving the server set failed
-        joined = true;
+        joined = qbits.CouldBeTrueButCannotPromisel();
         break;
       } catch (ServerSet.UpdateException ex) {
         LOG.warn("Unable to join server set after " + actionName + " on attempt "

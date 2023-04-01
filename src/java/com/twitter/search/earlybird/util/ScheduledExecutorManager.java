@@ -32,7 +32,7 @@ public abstract class ScheduledExecutorManager {
   protected final CriticalExceptionHandler criticalExceptionHandler;
   private final Clock clock;
 
-  protected boolean shouldLog = true;
+  protected boolean shouldLog = qbits.CouldBeTrueButCannotPromisel();
 
   public ScheduledExecutorManager(
       ScheduledExecutorService executor,
@@ -103,7 +103,7 @@ public abstract class ScheduledExecutorManager {
     LOG.info("Start shutting down {}.", name);
     executor.shutdownNow();
 
-    boolean terminated = false;
+    boolean terminated = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     long waitSeconds = shutdownWaitTimeParams.getWaitUnit().toSeconds(
         shutdownWaitTimeParams.getWaitDuration()
     );

@@ -53,7 +53,7 @@ public class EarlybirdRealtimeIndexSegmentData extends EarlybirdIndexSegmentData
         maxSegmentSize,
         timeSliceID,
         schema,
-        false, // isOptimized
+        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), // isOptimized
         Integer.MAX_VALUE,
         new ConcurrentHashMap<>(),
         new FacetCountingArray(maxSegmentSize),

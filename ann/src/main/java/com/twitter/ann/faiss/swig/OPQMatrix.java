@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OPQMatrix extends LinearTransform {
   private transient long swigCPtr;
 
   protected OPQMatrix(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.OPQMatrix_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OPQMatrix obj) {
@@ -28,7 +30,7 @@ public class OPQMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OPQMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -90,23 +92,23 @@ public class OPQMatrix extends LinearTransform {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.OPQMatrix_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, false);
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public OPQMatrix(int d, int M, int d2) {
-    this(swigfaissJNI.new_OPQMatrix__SWIG_0(d, M, d2), true);
+    this(swigfaissJNI.new_OPQMatrix__SWIG_0(d, M, d2), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public OPQMatrix(int d, int M) {
-    this(swigfaissJNI.new_OPQMatrix__SWIG_1(d, M), true);
+    this(swigfaissJNI.new_OPQMatrix__SWIG_1(d, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public OPQMatrix(int d) {
-    this(swigfaissJNI.new_OPQMatrix__SWIG_2(d), true);
+    this(swigfaissJNI.new_OPQMatrix__SWIG_2(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public OPQMatrix() {
-    this(swigfaissJNI.new_OPQMatrix__SWIG_3(), true);
+    this(swigfaissJNI.new_OPQMatrix__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

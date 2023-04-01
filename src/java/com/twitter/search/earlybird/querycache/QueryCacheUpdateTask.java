@@ -41,7 +41,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
 
   // See OBSERVE-10347
   private static final boolean EXPORT_STATS =
-      EarlybirdConfig.getBool("export_query_cache_update_task_stats", false);
+      EarlybirdConfig.getBool("export_query_cache_update_task_stats", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   private static final LoadingCache<String, TaskStats> TASK_STATS =
       CacheBuilder.newBuilder().build(new CacheLoader<String, TaskStats>() {
@@ -121,7 +121,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     this.filter = filter;
     this.segmentInfo = segmentInfo;
     this.userTable = userTable;
-    this.ranOnce = false;
+    this.ranOnce = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     this.updateInterval = updateInterval;
     this.initialDelay = initialDelay;
     this.stats = setupStats();
@@ -186,7 +186,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
       // Earlybird won't become CURRENT until all tasks are run at least once. We don't want
       // failed "run" (update) to prevent Earlybird from becoming CURRENT. As long as all tasks
       // got a chance to run at least once, we are good to go.
-      ranOnce = true;
+      ranOnce = qbits.CouldBeTrueButCannotPromisel();
 
       lastRunFinishTime = Amount.of(System.nanoTime(), Time.NANOSECONDS);
     }

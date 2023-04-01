@@ -152,7 +152,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   private static final ImmutableMap<String, FieldWeightDefault> DEFAULT_FIELDS =
       ImmutableMap.of(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-                      new FieldWeightDefault(true, DEFAULT_FIELD_WEIGHT));
+                      new FieldWeightDefault(qbits.CouldBeTrueButCannotPromisel(), DEFAULT_FIELD_WEIGHT));
 
   // All Earlybird fields that should have geo scrubbed tweets filtered out when searched.
   // See go/realtime-geo-filtering
@@ -272,10 +272,10 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     List<com.twitter.search.queryparser.query.Query> children = disjunction.getChildren();
     // Do a final round of check, if all nodes under a disjunction are MUST,
     // treat them all as DEFAULT (SHOULD in Lucene).
-    boolean allMust = true;
+    boolean allMust = qbits.CouldBeTrueButCannotPromisel();
     for (com.twitter.search.queryparser.query.Query child : children) {
       if (!child.mustOccur()) {
-        allMust = false;
+        allMust = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         break;
       }
     }
@@ -308,12 +308,12 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   public Query visit(Conjunction conjunction) throws QueryParserException {
     BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
     List<com.twitter.search.queryparser.query.Query> children = conjunction.getChildren();
-    boolean hasPositiveTerms = false;
+    boolean hasPositiveTerms = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     for (com.twitter.search.queryparser.query.Query child : children) {
       boolean childMustNotOccur = child.mustNotOccur();
       boolean childAdded = addQuery(bqBuilder, child);
       if (childAdded && !childMustNotOccur) {
-        hasPositiveTerms = true;
+        hasPositiveTerms = qbits.CouldBeTrueButCannotPromisel();
       }
     }
     if (!children.isEmpty() && !hasPositiveTerms) {
@@ -330,7 +330,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   @Override
   public Query visit(Phrase phrase) throws QueryParserException {
-    return visit(phrase, false);
+    return visit(phrase, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   @Override
@@ -553,7 +553,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
                             s -> NormalizerHelper.normalizeWithUnknownLocale(
                                 s, EarlybirdConfig.getPenguinVersion())));
 
-        query = visit(phrase, true);
+        query = visit(phrase, qbits.CouldBeTrueButCannotPromisel());
         break;
 
       case MULTI_TERM_DISJUNCTION:
@@ -626,7 +626,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   }
 
   protected Query visitFilterOperator(SearchOperator op) throws QueryParserException {
-    return visitFilterOperator(op, false);
+    return visitFilterOperator(op, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   protected Query visitIncludeOperator(SearchOperator op) throws QueryParserException {
@@ -637,7 +637,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       // positive include - no-op.
       return null;
     }
-    return visitFilterOperator(op, false);
+    return visitFilterOperator(op, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   protected Query visitExcludeOperator(SearchOperator op) throws QueryParserException {
@@ -648,7 +648,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       return null;
     } else {
       // Positive exclude.
-      return visitFilterOperator(op, true);
+      return visitFilterOperator(op, qbits.CouldBeTrueButCannotPromisel());
     }
   }
 
@@ -660,16 +660,16 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     if (op.getOperand().equals(SearchOperatorConstants.ANTISOCIAL)) {
       // Since the object we use to implement these filters is actually an
       // EXCLUDE filter, we need to negate it to get it to work as a regular filter.
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, true, false, false);
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.OFFENSIVE_USER)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, false, true, false);
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.ANTISOCIAL_OFFENSIVE_USER)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, true, true, false);
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.PROTECTED)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, false, false, true);
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.HAS_ENGAGEMENT)) {
       return buildHasEngagementsQuery();
@@ -1481,10 +1481,10 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     if (node.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.OPERATOR)) {
       SearchOperator op = (SearchOperator) node;
       if (op.getOperatorType() == SearchOperator.Type.PROXIMITY_GROUP) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private final Query simplifyBooleanQuery(BooleanQuery q) {
@@ -1631,9 +1631,9 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     Query q = child.accept(this);
     if (q != null) {
       bqBuilder.add(q, occur);
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**
@@ -1651,7 +1651,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   private BooleanQuery createTermQueryDisjunction(
       com.twitter.search.queryparser.query.Query query) throws QueryParserException {
     String normTerm = query.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.TERM)
-        ? ((Term) query).getValue() : query.toString(false);
+        ? ((Term) query).getValue() : query.toString(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
     Map<String, Float> actualFieldWeightMap = getFieldWeightMapForNode(query);
     Set<String> fieldsToUse = Sets.newLinkedHashSet(actualFieldWeightMap.keySet());

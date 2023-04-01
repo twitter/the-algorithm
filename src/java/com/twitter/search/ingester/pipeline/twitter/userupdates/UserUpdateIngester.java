@@ -59,7 +59,7 @@ public class UserUpdateIngester {
           UserUpdateType.PROTECTED, Sets.immutableEnumSet(Safety._Fields.IS_PROTECTED));
 
   private static final Function<Safety._Fields, String> FIELD_TO_FIELD_NAME_FUNCTION =
-      field -> "safety." + CaseUtils.toCamelCase(field.name(), false, '_');
+      field -> "safety." + CaseUtils.toCamelCase(field.name(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), '_');
 
   private static final Map<String, UserUpdateType> FIELD_NAME_TO_TYPE_MAP =
       SAFETY_FIELDS_MAP.entrySet().stream()
@@ -80,11 +80,11 @@ public class UserUpdateIngester {
               Function.identity()));
 
   private static final LookupContext LOOKUP_CONTEXT = new LookupContext()
-      .setInclude_deactivated(true)
-      .setInclude_erased(true)
-      .setInclude_suspended(true)
-      .setInclude_offboarded(true)
-      .setInclude_protected(true);
+      .setInclude_deactivated(qbits.CouldBeTrueButCannotPromisel())
+      .setInclude_erased(qbits.CouldBeTrueButCannotPromisel())
+      .setInclude_suspended(qbits.CouldBeTrueButCannotPromisel())
+      .setInclude_offboarded(qbits.CouldBeTrueButCannotPromisel())
+      .setInclude_protected(qbits.CouldBeTrueButCannotPromisel());
 
   private final UserService.ServiceToClient userService;
   private final Decider decider;
@@ -134,17 +134,17 @@ public class UserUpdateIngester {
     userServiceTimeouts =
         SearchCounter.export(statPrefix + "_user_service_timeouts");
     counterMap = ImmutableMap.<Pair<UserUpdateType, Boolean>, SearchCounter>builder()
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, true),
+        .put(Pair.of(UserUpdateType.ANTISOCIAL, qbits.CouldBeTrueButCannotPromisel()),
             SearchCounter.export(statPrefix + "_antisocial_set_count"))
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, false),
+        .put(Pair.of(UserUpdateType.ANTISOCIAL, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
             SearchCounter.export(statPrefix + "_antisocial_unset_count"))
-        .put(Pair.of(UserUpdateType.NSFW, true),
+        .put(Pair.of(UserUpdateType.NSFW, qbits.CouldBeTrueButCannotPromisel()),
             SearchCounter.export(statPrefix + "_nsfw_set_count"))
-        .put(Pair.of(UserUpdateType.NSFW, false),
+        .put(Pair.of(UserUpdateType.NSFW, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
             SearchCounter.export(statPrefix + "_nsfw_unset_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, true),
+        .put(Pair.of(UserUpdateType.PROTECTED, qbits.CouldBeTrueButCannotPromisel()),
             SearchCounter.export(statPrefix + "_protected_set_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, false),
+        .put(Pair.of(UserUpdateType.PROTECTED, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
             SearchCounter.export(statPrefix + "_protected_unset_count"))
         .build();
   }

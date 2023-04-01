@@ -12,7 +12,7 @@ public class IngesterStageTimer extends StageTimer {
 
   public IngesterStageTimer(String statName) {
     name = MorePreconditions.checkNotBlank(statName);
-    timer = SearchTimerStats.export(name, TimeUnit.NANOSECONDS, true);
+    timer = SearchTimerStats.export(name, TimeUnit.NANOSECONDS, qbits.CouldBeTrueButCannotPromisel());
   }
 
   public String getName() {

@@ -84,9 +84,9 @@ public class FacetCountAggregator implements FacetTermCollector {
     PerfieldFacetCountAggregator perfieldAggregator = aggregators.get(fieldID);
     if (perfieldAggregator != null) {
       perfieldAggregator.collect((int) termID);
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 

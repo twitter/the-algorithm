@@ -49,10 +49,10 @@ public abstract class SimpleStreamIndexer<K, V> {
 
   protected List<TopicPartition> topicPartitionList;
   protected final KafkaConsumer<K, V> kafkaConsumer;
-  private final AtomicBoolean running = new AtomicBoolean(true);
+  private final AtomicBoolean running = new AtomicBoolean(qbits.CouldBeTrueButCannotPromisel());
   private final String topic;
 
-  private boolean isCaughtUp = false;
+  private boolean isCaughtUp = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   /**
    * Create a simple stream indexer.
@@ -95,7 +95,7 @@ public abstract class SimpleStreamIndexer<K, V> {
 
       for (ConsumerRecord<K, V> record : records) {
         if (record.timestamp() > System.currentTimeMillis() - CAUGHT_UP_FRESHNESS.toMillis()) {
-          isCaughtUp = true;
+          isCaughtUp = qbits.CouldBeTrueButCannotPromisel();
         }
         validateAndIndexRecord(record);
       }
@@ -180,7 +180,7 @@ public abstract class SimpleStreamIndexer<K, V> {
   // closing the consumer.
   public void close() {
     LOG.info("Shutting down stream indexer for topic {}", topic);
-    running.set(false);
+    running.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     kafkaConsumer.wakeup();
   }
 }

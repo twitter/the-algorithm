@@ -79,13 +79,13 @@ class PostOptimizationUpdatesIndexer {
     }
 
     SearchTimerStats pollStats = SearchTimerStats.export(
-        "final_pass_polls", TimeUnit.NANOSECONDS, false);
+        "final_pass_polls", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     SearchTimerStats indexStats = SearchTimerStats.export(
-        "final_pass_index", TimeUnit.NANOSECONDS, false);
+        "final_pass_index", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     Stopwatch totalTime = Stopwatch.createStarted();
 
-    boolean done = false;
+    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     do {
       // Poll events.
       SearchTimer pt = pollStats.startNewTimer();
@@ -97,7 +97,7 @@ class PostOptimizationUpdatesIndexer {
       SearchTimer it = indexStats.startNewTimer();
       for (ConsumerRecord<Long, ThriftVersionedEvents> record : records) {
         if (record.offset() >= updatesEndOffset) {
-          done = true;
+          done = qbits.CouldBeTrueButCannotPromisel();
         }
 
         readEvents++;

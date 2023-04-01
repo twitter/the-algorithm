@@ -61,7 +61,7 @@ public class ColumnStrideFieldDocValues extends NumericDocValues {
         target,
         docID());
     if (target == docID()) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     // We don't need to check if we have a value for 'target', because a ColumnStrideFieldIndex

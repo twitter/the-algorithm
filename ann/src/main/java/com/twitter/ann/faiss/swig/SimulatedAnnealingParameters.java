@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class SimulatedAnnealingParameters {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class SimulatedAnnealingParameters {
 
   protected SimulatedAnnealingParameters(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(SimulatedAnnealingParameters obj) {
@@ -29,7 +31,7 @@ public class SimulatedAnnealingParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_SimulatedAnnealingParameters(swigCPtr);
       }
       swigCPtr = 0;
@@ -101,7 +103,7 @@ public class SimulatedAnnealingParameters {
   }
 
   public SimulatedAnnealingParameters() {
-    this(swigfaissJNI.new_SimulatedAnnealingParameters(), true);
+    this(swigfaissJNI.new_SimulatedAnnealingParameters(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

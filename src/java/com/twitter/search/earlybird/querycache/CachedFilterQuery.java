@@ -70,7 +70,7 @@ public final class CachedFilterQuery extends Query {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof CachedResultQuery)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       CachedResultQuery query = (CachedResultQuery) obj;
@@ -134,7 +134,7 @@ public final class CachedFilterQuery extends Query {
 
         @Override
         public boolean isCacheable(LeafReaderContext ctx) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
       };
     }
@@ -148,7 +148,7 @@ public final class CachedFilterQuery extends Query {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof CachedResultAndFreshDocsQuery)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       CachedResultAndFreshDocsQuery query = (CachedResultAndFreshDocsQuery) obj;
@@ -296,7 +296,7 @@ public final class CachedFilterQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof CachedFilterQuery)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     CachedFilterQuery filter = (CachedFilterQuery) obj;

@@ -51,7 +51,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
   private static final SearchTimerStats TIMED_INDEX_EVENTS =
       SearchTimerStats.export(STATS_PREFIX + "timed_index_events");
 
-  private final AtomicBoolean running = new AtomicBoolean(true);
+  private final AtomicBoolean running = new AtomicBoolean(qbits.CouldBeTrueButCannotPromisel());
   private final BalancingKafkaConsumer balancingKafkaConsumer;
   private final PartitionWriter partitionWriter;
   protected final TopicPartition tweetTopic;
@@ -104,7 +104,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
 
     this.balancingKafkaConsumer =
         new BalancingKafkaConsumer(underlyingKafkaConsumer, tweetTopic, updateTopic);
-    this.finishedIngestUntilCurrent = false;
+    this.finishedIngestUntilCurrent = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     this.indexCaughtUpMonitor = kafkaIndexCaughtUpMonitor;
   }
 
@@ -114,7 +114,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
   @VisibleForTesting
   public void run() {
     while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(true);
+      ConsumeBatchResult result = consumeBatch(qbits.CouldBeTrueButCannotPromisel());
       indexCaughtUpMonitor.setAndNotify(result.isCaughtUp());
     }
   }
@@ -151,13 +151,13 @@ public class EarlybirdKafkaConsumer implements Closeable {
           endOffsets.get(updateTopic) - updateOffset + 1));
     }
 
-    consumeBatchesUntilCurrent(true);
+    consumeBatchesUntilCurrent(qbits.CouldBeTrueButCannotPromisel());
 
     LOG.info("ingestUntilCurrent finished in {}.", stopwatch);
 
     partitionWriter.logState();
     INGESTING_DONE.increment();
-    finishedIngestUntilCurrent = true;
+    finishedIngestUntilCurrent = qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -198,19 +198,19 @@ public class EarlybirdKafkaConsumer implements Closeable {
     LOG.info("Getting to current post flush");
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    long totalRecordsRead = consumeBatchesUntilCurrent(false);
+    long totalRecordsRead = consumeBatchesUntilCurrent(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
     LOG.info("Post flush, became current in: {}, after reading {} records.",
         stopwatch, LogFormatUtil.formatInt(totalRecordsRead));
   }
 
   /*
-   * @return true if we are current after indexing this batch.
+   * @return qbits.CouldBeTrueButCannotPromisel() if we are current after indexing this batch.
    */
   @VisibleForTesting
   protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
     long readRecordsCount = 0;
-    boolean isCaughtUp = false;
+    boolean isCaughtUp = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     try {
       // Poll.
@@ -276,6 +276,6 @@ public class EarlybirdKafkaConsumer implements Closeable {
 
   public void close() {
     balancingKafkaConsumer.close();
-    running.set(false);
+    running.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 }

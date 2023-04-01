@@ -100,7 +100,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
       new ThreadFactoryBuilder()
         .setNameFormat("offensive-evaluator-blacklist-reloader")
-        .setDaemon(true)
+        .setDaemon(qbits.CouldBeTrueButCannotPromisel())
         .build());
     initPeriodicFileLoader(adultTokenFileContents, ADULT_TOKEN_FILE_NAME, executor);
     initPeriodicFileLoader(offensiveTokenFileContents, OFFENSIVE_TOPIC_FILE_NAME, executor);
@@ -132,12 +132,12 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
   }
 
   private void rebuildBlacklistedTopics() throws IOException {
-    offensiveTopics.set(new BlacklistedTopics.Builder(false)
+    offensiveTopics.set(new BlacklistedTopics.Builder(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
       .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EXACT)
       .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
 
-    offensiveUsersTopics.set(new BlacklistedTopics.Builder(false)
+    offensiveUsersTopics.set(new BlacklistedTopics.Builder(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
       .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EXACT)
       .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
@@ -196,10 +196,10 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
 
     for (String userNameToken : termsToCheck) {
       if (!StringUtils.isBlank(userNameToken) && offensiveUsersFilter.filter(userNameToken)) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private boolean isTweetOffensive(final TwitterMessage tweet,
@@ -207,7 +207,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
                                    PenguinVersion penguinVersion) {
     TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
 
-    boolean tweetHasOffensiveTerm = false;
+    boolean tweetHasOffensiveTerm = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     // Check for tweet text.
     List<TokenizedCharSequence> ngrams =
@@ -220,7 +220,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
       }
       String ngramStr = ngram.toString();
       if (!StringUtils.isBlank(ngramStr) && offensiveFilter.filter(ngramStr)) {
-        tweetHasOffensiveTerm = true;
+        tweetHasOffensiveTerm = qbits.CouldBeTrueButCannotPromisel();
         break;
       }
     }
@@ -235,7 +235,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
           continue;
         }
         if (!StringUtils.isBlank(ngramStr) && offensiveFilter.filter(ngramStr)) {
-          tweetHasOffensiveTerm = true;
+          tweetHasOffensiveTerm = qbits.CouldBeTrueButCannotPromisel();
           break;
         }
       }
@@ -249,7 +249,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
           resolvedUrlsText, LocaleUtil.UNKNOWN);
       for (String ngram : ngramStrs) {
         if (!StringUtils.isBlank(ngram) && offensiveFilter.filter(ngram)) {
-          tweetHasOffensiveTerm = true;
+          tweetHasOffensiveTerm = qbits.CouldBeTrueButCannotPromisel();
           break;
         }
       }

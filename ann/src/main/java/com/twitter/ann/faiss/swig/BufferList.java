@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class BufferList {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class BufferList {
 
   protected BufferList(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(BufferList obj) {
@@ -29,7 +31,7 @@ public class BufferList {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_BufferList(swigCPtr);
       }
       swigCPtr = 0;
@@ -50,7 +52,7 @@ public class BufferList {
 
   public SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t getBuffers() {
     long cPtr = swigfaissJNI.BufferList_buffers_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setWp(long value) {
@@ -62,7 +64,7 @@ public class BufferList {
   }
 
   public BufferList(long buffer_size) {
-    this(swigfaissJNI.new_BufferList(buffer_size), true);
+    this(swigfaissJNI.new_BufferList(buffer_size), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void append_buffer() {

@@ -270,9 +270,9 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
           hasTermPayload = getTerm((int) termID, termRef, termPayload);
           offensiveCount = offensiveCounters != null
                   ? (int) offensiveCounters.get((int) termID) : 0;
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         } else {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
       }
     };
@@ -374,7 +374,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
       flushInfo.addBooleanProperty(SKIP_POSTING_LIST_PROP_NAME, skipPostingLists);
       flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME,
           objectToFlush.offensiveCounters != null);
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, true);
+      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, qbits.CouldBeTrueButCannotPromisel());
 
       if (!skipPostingLists) {
         out.writePackedInts(objectToFlush.postingListPointers);

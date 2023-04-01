@@ -125,10 +125,10 @@ public final class ThriftDocumentUtil {
     Set<Integer> seen = new HashSet<>();
     for (ThriftField field : thriftDoc.getFields()) {
       if (!seen.add(field.getFieldConfigId())) {
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**

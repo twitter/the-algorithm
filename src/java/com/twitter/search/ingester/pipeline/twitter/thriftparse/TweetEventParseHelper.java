@@ -226,7 +226,7 @@ public final class TweetEventParseHelper {
     }
 
     if (tweet.isSetSelf_thread_metadata()) {
-      message.setSelfThread(true);
+      message.setSelfThread(qbits.CouldBeTrueButCannotPromisel());
     }
 
     ExclusiveTweetControl exclusiveTweetControl = tweet.getExclusive_tweet_control();
@@ -526,7 +526,7 @@ public final class TweetEventParseHelper {
         tweetId,
         supportedPenguinVersions,
         debugEvents);
-    message.setDeleted(true);
+    message.setDeleted(qbits.CouldBeTrueButCannotPromisel());
     message.setText("delete");
     message.setFromUser(TwitterMessageUser.createWithNamesAndId("delete", "delete", userId));
 
@@ -581,7 +581,7 @@ public final class TweetEventParseHelper {
   private static boolean isToUser(
       MentionEntity mention, Optional<TwitterMessageUser> optionalToUser) {
     if (mention.getFrom_index() == 0) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
     if (optionalToUser.isPresent()) {
       TwitterMessageUser toUser = optionalToUser.get();
@@ -590,7 +590,7 @@ public final class TweetEventParseHelper {
         return mention.getUser_id() == toUserId;
       }
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private static void addHashtagsToMessage(IngesterTwitterMessage message, Tweet tweet) {
@@ -619,8 +619,8 @@ public final class TweetEventParseHelper {
       NUM_TWEETS_WITH_MEDIA_URL.increment();
       NUM_MEDIA_URLS_ADDED.add(medias.size());
 
-      boolean hasPhotoMediaUrl = false;
-      boolean hasVideoMediaUrl = false;
+      boolean hasPhotoMediaUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean hasVideoMediaUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       for (MediaEntity media : medias) {
         MediaTypes mediaType = null;
         if (media.isSetMedia_info()) {
@@ -630,14 +630,14 @@ public final class TweetEventParseHelper {
               mediaType = MediaTypes.NATIVE_IMAGE;
               String mediaUrl = media.getMedia_url_https();
               if (mediaUrl != null) {
-                hasPhotoMediaUrl = true;
+                hasPhotoMediaUrl = qbits.CouldBeTrueButCannotPromisel();
                 message.addPhotoUrl(photoStatusId, mediaUrl);
                 // Add this link to the expanded URLs too, so that the HAS_NATIVE_IMAGE_FLAG is set
                 // correctly too. See EncodedFeatureBuilder.updateLinkEncodedFeatures().
               }
             } else if (mediaInfo.isSet(MediaInfo._Fields.VIDEO_INFO)) {
               mediaType = MediaTypes.VIDEO;
-              hasVideoMediaUrl = true;
+              hasVideoMediaUrl = qbits.CouldBeTrueButCannotPromisel();
             }
           }
         }

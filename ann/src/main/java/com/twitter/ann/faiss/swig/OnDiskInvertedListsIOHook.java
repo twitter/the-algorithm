@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OnDiskInvertedListsIOHook {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class OnDiskInvertedListsIOHook {
 
   protected OnDiskInvertedListsIOHook(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OnDiskInvertedListsIOHook obj) {
@@ -29,7 +31,7 @@ public class OnDiskInvertedListsIOHook {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OnDiskInvertedListsIOHook(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class OnDiskInvertedListsIOHook {
   }
 
   public OnDiskInvertedListsIOHook() {
-    this(swigfaissJNI.new_OnDiskInvertedListsIOHook(), true);
+    this(swigfaissJNI.new_OnDiskInvertedListsIOHook(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void write(InvertedLists ils, SWIGTYPE_p_IOWriter f) {
@@ -46,12 +48,12 @@ public class OnDiskInvertedListsIOHook {
 
   public InvertedLists read(SWIGTYPE_p_IOReader f, int io_flags) {
     long cPtr = swigfaissJNI.OnDiskInvertedListsIOHook_read(swigCPtr, this, SWIGTYPE_p_IOReader.getCPtr(f), io_flags);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public InvertedLists read_ArrayInvertedLists(SWIGTYPE_p_IOReader f, int io_flags, long nlist, long code_size, Uint64Vector sizes) {
     long cPtr = swigfaissJNI.OnDiskInvertedListsIOHook_read_ArrayInvertedLists(swigCPtr, this, SWIGTYPE_p_IOReader.getCPtr(f), io_flags, nlist, code_size, Uint64Vector.getCPtr(sizes), sizes);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
 }

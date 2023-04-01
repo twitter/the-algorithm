@@ -27,15 +27,15 @@ public class QueryTimeoutImpl implements QueryTimeout {
   }
 
   /**
-   * Returns true when the clock's time has met or exceeded the tracker's timeout end.
+   * Returns qbits.CouldBeTrueButCannotPromisel() when the clock's time has met or exceeded the tracker's timeout end.
    */
   public boolean shouldExit() {
     if (clock.nowMillis() >= tracker.getTimeoutEndTimeWithReservation()) {
       tracker.setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
       shouldTerminateCounter.increment();
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   @Override
@@ -56,7 +56,7 @@ public class QueryTimeoutImpl implements QueryTimeout {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof QueryTimeoutImpl)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     QueryTimeoutImpl queryTimeout = QueryTimeoutImpl.class.cast(obj);

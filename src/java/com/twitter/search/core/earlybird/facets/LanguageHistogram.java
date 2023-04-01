@@ -95,10 +95,10 @@ public class LanguageHistogram {
   // to cause the entire search to fail.
   private boolean isValidLanguageId(int languageId) {
     if (languageId < languageHistogram.length) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else {
       LOG.error("Language id " + languageId + " out of range");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 }

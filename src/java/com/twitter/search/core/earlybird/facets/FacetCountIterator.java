@@ -43,7 +43,7 @@ public abstract class FacetCountIterator implements FacetTermCollector {
     if (proofs != null) {
       addProof(docID, termID, fieldID);
     }
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   protected void addProof(int docID, long termID, int fieldID) {

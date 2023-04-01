@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class LongVector {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class LongVector {
 
   protected LongVector(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(LongVector obj) {
@@ -29,7 +31,7 @@ public class LongVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_LongVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,7 +39,7 @@ public class LongVector {
   }
 
   public LongVector() {
-    this(swigfaissJNI.new_LongVector(), true);
+    this(swigfaissJNI.new_LongVector(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void push_back(long arg0) {
@@ -50,7 +52,7 @@ public class LongVector {
 
   public SWIGTYPE_p_long_long data() {
     long cPtr = swigfaissJNI.LongVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_long_long(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_long_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public long size() {

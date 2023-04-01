@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class PolysemousTraining extends SimulatedAnnealingParameters {
   private transient long swigCPtr;
 
   protected PolysemousTraining(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.PolysemousTraining_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(PolysemousTraining obj) {
@@ -28,7 +30,7 @@ public class PolysemousTraining extends SimulatedAnnealingParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_PolysemousTraining(swigCPtr);
       }
       swigCPtr = 0;
@@ -77,7 +79,7 @@ public class PolysemousTraining extends SimulatedAnnealingParameters {
   }
 
   public PolysemousTraining() {
-    this(swigfaissJNI.new_PolysemousTraining(), true);
+    this(swigfaissJNI.new_PolysemousTraining(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void optimize_pq_for_hamming(ProductQuantizer pq, long n, SWIGTYPE_p_float x) {

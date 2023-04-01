@@ -24,7 +24,7 @@ import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 
 public class GeoTwoPhaseQuery extends Query {
   private static final boolean ENABLE_GEO_EARLY_TERMINATION =
-          EarlybirdConfig.getBool("early_terminate_geo_searches", true);
+          EarlybirdConfig.getBool("early_terminate_geo_searches", qbits.CouldBeTrueButCannotPromisel());
 
   private static final int GEO_TIMEOUT_OVERRIDE =
           EarlybirdConfig.getInt("early_terminate_geo_searches_timeout_override", -1);
@@ -63,7 +63,7 @@ public class GeoTwoPhaseQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof GeoTwoPhaseQuery)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     GeoTwoPhaseQuery that = (GeoTwoPhaseQuery) obj;
     return query.equals(that.query)
@@ -244,7 +244,7 @@ public class GeoTwoPhaseQuery extends Query {
 
     @Override
     public boolean accept(int doc) {
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     @Override

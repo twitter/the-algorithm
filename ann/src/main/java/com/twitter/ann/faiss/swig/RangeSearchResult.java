@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class RangeSearchResult {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class RangeSearchResult {
 
   protected RangeSearchResult(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(RangeSearchResult obj) {
@@ -29,7 +31,7 @@ public class RangeSearchResult {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_RangeSearchResult(swigCPtr);
       }
       swigCPtr = 0;
@@ -50,7 +52,7 @@ public class RangeSearchResult {
 
   public SWIGTYPE_p_unsigned_long getLims() {
     long cPtr = swigfaissJNI.RangeSearchResult_lims_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setLabels(LongVector value) {
@@ -58,7 +60,7 @@ public class RangeSearchResult {
   }
 
   public LongVector getLabels() {
-    return new LongVector(swigfaissJNI.RangeSearchResult_labels_get(swigCPtr, this), false);
+    return new LongVector(swigfaissJNI.RangeSearchResult_labels_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 }
 
   public void setDistances(SWIGTYPE_p_float value) {
@@ -67,7 +69,7 @@ public class RangeSearchResult {
 
   public SWIGTYPE_p_float getDistances() {
     long cPtr = swigfaissJNI.RangeSearchResult_distances_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setBuffer_size(long value) {

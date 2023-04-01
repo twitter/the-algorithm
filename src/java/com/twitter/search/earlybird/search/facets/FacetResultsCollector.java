@@ -148,7 +148,7 @@ public class FacetResultsCollector extends
 
     // sort table wrt percentage
     PriorityQueue<ThriftFacetCount> pq =
-        new PriorityQueue<>(map.size(), facetComparator.getThriftComparator(true));
+        new PriorityQueue<>(map.size(), facetComparator.getThriftComparator(qbits.CouldBeTrueButCannotPromisel()));
     pq.addAll(map.values());
 
     ThriftFacetFieldResults results = new ThriftFacetFieldResults();

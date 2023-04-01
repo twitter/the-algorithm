@@ -63,7 +63,7 @@ public final class UserFlagsExcludeFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof UserFlagsExcludeFilter)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     UserFlagsExcludeFilter filter = UserFlagsExcludeFilter.class.cast(obj);

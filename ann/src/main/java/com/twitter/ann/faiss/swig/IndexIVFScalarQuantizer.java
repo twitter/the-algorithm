@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexIVFScalarQuantizer extends IndexIVF {
   private transient long swigCPtr;
 
   protected IndexIVFScalarQuantizer(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexIVFScalarQuantizer_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexIVFScalarQuantizer obj) {
@@ -28,7 +30,7 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexIVFScalarQuantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -41,7 +43,7 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
   }
 
   public SWIGTYPE_p_ScalarQuantizer getSq() {
-    return new SWIGTYPE_p_ScalarQuantizer(swigfaissJNI.IndexIVFScalarQuantizer_sq_get(swigCPtr, this), true);
+    return new SWIGTYPE_p_ScalarQuantizer(swigfaissJNI.IndexIVFScalarQuantizer_sq_get(swigCPtr, this), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void setBy_residual(boolean value) {
@@ -53,19 +55,19 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
   }
 
   public IndexIVFScalarQuantizer(Index quantizer, long d, long nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType qtype, MetricType metric, boolean encode_residual) {
-    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType.getCPtr(qtype), metric.swigValue(), encode_residual), true);
+    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_0(Index.getCPtr(quantizer), quantizer, d, nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType.getCPtr(qtype), metric.swigValue(), encode_residual), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFScalarQuantizer(Index quantizer, long d, long nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType qtype, MetricType metric) {
-    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType.getCPtr(qtype), metric.swigValue()), true);
+    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_1(Index.getCPtr(quantizer), quantizer, d, nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType.getCPtr(qtype), metric.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFScalarQuantizer(Index quantizer, long d, long nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType qtype) {
-    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_2(Index.getCPtr(quantizer), quantizer, d, nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType.getCPtr(qtype)), true);
+    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_2(Index.getCPtr(quantizer), quantizer, d, nlist, SWIGTYPE_p_ScalarQuantizer__QuantizerType.getCPtr(qtype)), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexIVFScalarQuantizer() {
-    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_3(), true);
+    this(swigfaissJNI.new_IndexIVFScalarQuantizer__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train_residual(long n, SWIGTYPE_p_float x) {
@@ -86,7 +88,7 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexIVFScalarQuantizer_get_InvertedListScanner(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void reconstruct_from_offset(long list_no, long offset, SWIGTYPE_p_float recons) {

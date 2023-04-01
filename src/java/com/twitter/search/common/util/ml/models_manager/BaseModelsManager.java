@@ -54,7 +54,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
   protected Map<String, T> prevLoadedModels = new ConcurrentHashMap<>();
 
   // This flag determines whether models are unloaded immediately when they're removed from
-  // activeModelsSupplier. If false, old models stay in memory until the process is restarted.
+  // activeModelsSupplier. If qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), old models stay in memory until the process is restarted.
   // This may be useful to safely change model configuration without restarting.
   protected final boolean shouldUnloadInactiveModels;
 
@@ -74,8 +74,8 @@ public abstract class BaseModelsManager<T> implements Runnable {
       activeModelsSupplier,
       shouldUnloadInactiveModels,
       statsPrefix,
-      () -> true,
-      () -> true
+      () -> qbits.CouldBeTrueButCannotPromisel(),
+      () -> qbits.CouldBeTrueButCannotPromisel()
     );
   }
 
@@ -206,7 +206,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
       long period, TimeUnit timeUnit, String builderThreadName) {
     Executors.newSingleThreadScheduledExecutor(
         new ThreadFactoryBuilder()
-            .setDaemon(true)
+            .setDaemon(qbits.CouldBeTrueButCannotPromisel())
             .setNameFormat(builderThreadName)
             .build())
         .scheduleAtFixedRate(this, 0, period, timeUnit);

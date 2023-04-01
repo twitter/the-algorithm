@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexRefineFlat extends IndexRefine {
   private transient long swigCPtr;
 
   protected IndexRefineFlat(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexRefineFlat_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexRefineFlat obj) {
@@ -28,7 +30,7 @@ public class IndexRefineFlat extends IndexRefine {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexRefineFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,15 +39,15 @@ public class IndexRefineFlat extends IndexRefine {
   }
 
   public IndexRefineFlat(Index base_index) {
-    this(swigfaissJNI.new_IndexRefineFlat__SWIG_0(Index.getCPtr(base_index), base_index), true);
+    this(swigfaissJNI.new_IndexRefineFlat__SWIG_0(Index.getCPtr(base_index), base_index), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexRefineFlat(Index base_index, SWIGTYPE_p_float xb) {
-    this(swigfaissJNI.new_IndexRefineFlat__SWIG_1(Index.getCPtr(base_index), base_index, SWIGTYPE_p_float.getCPtr(xb)), true);
+    this(swigfaissJNI.new_IndexRefineFlat__SWIG_1(Index.getCPtr(base_index), base_index, SWIGTYPE_p_float.getCPtr(xb)), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexRefineFlat() {
-    this(swigfaissJNI.new_IndexRefineFlat__SWIG_2(), true);
+    this(swigfaissJNI.new_IndexRefineFlat__SWIG_2(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void search(long n, SWIGTYPE_p_float x, long k, SWIGTYPE_p_float distances, LongVector labels) {

@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public interface swigfaissConstants {
   public final static int FAISS_VERSION_MAJOR = swigfaissJNI.FAISS_VERSION_MAJOR_get();

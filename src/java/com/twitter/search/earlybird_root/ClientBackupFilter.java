@@ -26,7 +26,7 @@ public class ClientBackupFilter extends SimpleFilter<EarlybirdRequest, Earlybird
 
   private final Map<String, BackupRequestFilter<EarlybirdRequest, EarlybirdResponse>>
       clientBackupFilters = new ConcurrentHashMap<>();
-  private final boolean sendInterupts = false;
+  private final boolean sendInterupts = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   private final String statPrefix;
   private final Tunable.Mutable<Object> maxExtraLoad;
   private final StatsReceiver statsReceiver;

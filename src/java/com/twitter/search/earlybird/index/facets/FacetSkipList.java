@@ -41,11 +41,11 @@ public abstract class FacetSkipList {
           termAtt.setEmpty();
           termAtt.append(EarlybirdFieldConstant.getFacetSkipFieldName(field.getName()));
 
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
       }
 
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 

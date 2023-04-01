@@ -31,7 +31,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
   private static final SearchRateCounter SKIPPED_COUNTER =
       SearchRateCounter.export(PREFIX + "skipped");
   private static final SearchTimerStats QUERY_TOKENIZER_TIME =
-      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, false);
+      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   private final TokenizationOption tokenizationOption;
 
@@ -39,7 +39,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
   public QueryTokenizerFilter(PenguinVersionConfig penguinversions) {
     PenguinVersion[] supportedVersions = penguinversions
         .getSupportedVersions().toArray(new PenguinVersion[0]);
-    tokenizationOption = new TokenizationOption(true, supportedVersions);
+    tokenizationOption = new TokenizationOption(qbits.CouldBeTrueButCannotPromisel(), supportedVersions);
   }
 
   @Override

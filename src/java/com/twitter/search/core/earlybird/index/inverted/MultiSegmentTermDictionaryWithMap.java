@@ -35,7 +35,7 @@ public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictio
   @VisibleForTesting
   public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
       SearchTimerStats.export("multi_segment_term_dictionary_with_map_creation",
-          TimeUnit.MILLISECONDS, false);
+          TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   private final ImmutableList<OptimizedMemoryIndex> indexes;
   private final HashMap<BytesRef, List<IndexTerm>> termsMap;

@@ -28,14 +28,14 @@ public class NamedEntityFetcher {
       new NamedEntitiesRequestOptions(
       new NERCalibrateRequest(CalibrationLevel.HIGH_PRECISION, NERCandidateSource.NER_CRF)
           .setModel_family(ModelFamily.CFB))
-      .setDisplay_entity_info(false);
+      .setDisplay_entity_info(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   private final Fetcher<Long, NamedEntitiesRequestOptions, NamedEntities> fetcher;
 
   public NamedEntityFetcher(Client stratoClient) {
     fetcher = stratoClient.fetcher(
         NAMED_ENTITY_STRATO_COLUMN,
-        true, // enables checking types against catalog
+        qbits.CouldBeTrueButCannotPromisel(), // enables checking types against catalog
         Conv.longConv(),
         TBaseConv.forClass(NamedEntitiesRequestOptions.class),
         TBaseConv.forClass(NamedEntities.class)).serveWithin(SERVE_WITHIN);

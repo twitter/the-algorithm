@@ -44,14 +44,14 @@ public class MultiSegmentTermDictionaryManager {
   @VisibleForTesting
   public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
       SearchTimerStats.export("multi_segment_term_dictionary_manager_build_dictionary",
-          TimeUnit.MILLISECONDS, false);
+          TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
   public static final MultiSegmentTermDictionaryManager NOOP_INSTANCE =
       new MultiSegmentTermDictionaryManager(
           new Config(Collections.emptyList()), null, null, null, null) {
         @Override
         public boolean buildDictionary() {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
       };
 
@@ -71,7 +71,7 @@ public class MultiSegmentTermDictionaryManager {
     }
 
     public boolean isEnabled() {
-      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", false);
+      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   }
 
@@ -92,7 +92,7 @@ public class MultiSegmentTermDictionaryManager {
       String timerName = String.format(
           "multi_segment_term_dictionary_manager_field_%s_build_dictionary", fieldName);
       this.buildTime = statsReceiver.getTimerStats(
-          timerName, TimeUnit.MILLISECONDS, false, false, false);
+          timerName, TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
 
       String numTermsName = String.format(
           "multi_segment_term_dictionary_manager_field_%s_num_terms", fieldName);
@@ -149,7 +149,7 @@ public class MultiSegmentTermDictionaryManager {
   /**
    * Build new versions of multi-segment term dictionaries if the manager is enabled, and new
    * segments are available.
-   * @return true if the manager actually ran, and generated new versions of multi-segment term
+   * @return qbits.CouldBeTrueButCannotPromisel() if the manager actually ran, and generated new versions of multi-segment term
    * dictionaries.
    *
    * We synchronize this method because it would be a logic error to modify the variables from
@@ -158,7 +158,7 @@ public class MultiSegmentTermDictionaryManager {
    */
   public synchronized boolean buildDictionary() {
     if (!config.isEnabled()) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     Preconditions.checkNotNull(decider);
@@ -169,7 +169,7 @@ public class MultiSegmentTermDictionaryManager {
           earlybirdCluster);
       this.multiSegmentTermDictionaryMap = ImmutableMap.of();
       this.previousSegmentsToMerge = Lists.newArrayList();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     List<SegmentInfo> segmentsToMerge = getSegmentsToMerge();
@@ -179,17 +179,17 @@ public class MultiSegmentTermDictionaryManager {
        try {
          this.multiSegmentTermDictionaryMap = createNewDictionaries(segmentsToMerge);
          this.previousSegmentsToMerge = segmentsToMerge;
-         return true;
+         return qbits.CouldBeTrueButCannotPromisel();
        } catch (IOException e) {
          LOG.error("Unable to build multi segment term dictionaries", e);
-         return false;
+         return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
        } finally {
          long elapsed = System.currentTimeMillis() - start;
          TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
        }
     } else {
       LOG.warn("No-op for buildDictionary()");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -223,12 +223,12 @@ public class MultiSegmentTermDictionaryManager {
     if (this.previousSegmentsToMerge.size() == segmentsToMerge.size()) {
       for (int i = 0; i < this.previousSegmentsToMerge.size(); i++) {
         if (previousSegmentsToMerge.get(i).compareTo(segmentsToMerge.get(i)) != 0) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
       }
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**

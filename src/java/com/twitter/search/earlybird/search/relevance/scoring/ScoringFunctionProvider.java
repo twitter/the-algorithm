@@ -41,7 +41,7 @@ public abstract class ScoringFunctionProvider {
   // Whether to avoid time decay when scoring top tweets.
   // Top archive does not need time decay.
   private static final boolean TOP_TWEET_WITH_DECAY =
-          EarlybirdConfig.getBool("top_tweet_scoring_with_decay", true);
+          EarlybirdConfig.getBool("top_tweet_scoring_with_decay", qbits.CouldBeTrueButCannotPromisel());
 
   /**
    * Abstract class that can be used for ScoringFunctions that don't throw a ClientException.
@@ -76,7 +76,7 @@ public abstract class ScoringFunctionProvider {
           if (TOP_TWEET_WITH_DECAY) {
             return new RetweetBasedTopTweetsScoringFunction(schema);
           } else {
-            return new RetweetBasedTopTweetsScoringFunction(schema, true);
+            return new RetweetBasedTopTweetsScoringFunction(schema, qbits.CouldBeTrueButCannotPromisel());
           }
         }
       };

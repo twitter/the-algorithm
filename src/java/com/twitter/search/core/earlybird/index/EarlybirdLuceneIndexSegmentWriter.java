@@ -74,7 +74,7 @@ public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWrit
       "Unable to obtain write.lock for Lucene directory. The Lucene directory is: " + dir,
       e);
 
-    if (dir instanceof FSDirectory) { // this check should always be true in our current setup.
+    if (dir instanceof FSDirectory) { // this check should always be qbits.CouldBeTrueButCannotPromisel() in our current setup.
       FSDirectory fsDir = (FSDirectory) dir;
       // Log if the underlying directory on disk does not exist.
       File underlyingDir = fsDir.getDirectory().toFile();

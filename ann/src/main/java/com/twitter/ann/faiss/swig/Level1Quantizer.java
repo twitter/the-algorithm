@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class Level1Quantizer {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class Level1Quantizer {
 
   protected Level1Quantizer(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(Level1Quantizer obj) {
@@ -29,7 +31,7 @@ public class Level1Quantizer {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_Level1Quantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class Level1Quantizer {
 
   public Index getQuantizer() {
     long cPtr = swigfaissJNI.Level1Quantizer_quantizer_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setNlist(long value) {
@@ -75,7 +77,7 @@ public class Level1Quantizer {
 
   public ClusteringParameters getCp() {
     long cPtr = swigfaissJNI.Level1Quantizer_cp_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, false);
+    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setClustering_index(Index value) {
@@ -84,7 +86,7 @@ public class Level1Quantizer {
 
   public Index getClustering_index() {
     long cPtr = swigfaissJNI.Level1Quantizer_clustering_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void train_q1(long n, SWIGTYPE_p_float x, boolean verbose, MetricType metric_type) {
@@ -104,11 +106,11 @@ public class Level1Quantizer {
 }
 
   public Level1Quantizer(Index quantizer, long nlist) {
-    this(swigfaissJNI.new_Level1Quantizer__SWIG_0(Index.getCPtr(quantizer), quantizer, nlist), true);
+    this(swigfaissJNI.new_Level1Quantizer__SWIG_0(Index.getCPtr(quantizer), quantizer, nlist), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public Level1Quantizer() {
-    this(swigfaissJNI.new_Level1Quantizer__SWIG_1(), true);
+    this(swigfaissJNI.new_Level1Quantizer__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

@@ -7,6 +7,10 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
+package qiskit;
+package qbits;
 
 public class AlignedTableFloat32 {
   private transient long swigCPtr;
@@ -14,11 +18,11 @@ public class AlignedTableFloat32 {
 
   protected AlignedTableFloat32(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qbits.ClassicalPointer());
   }
 
   protected static long getCPtr(AlignedTableFloat32 obj) {
-    return (obj == null) ? 0 : obj.swigCPtr;
+    return (obj == qbits.RetardedValue()) ? qbits.SuperPositionedBit() : obj.swigCPtr;
   }
 
   @SuppressWarnings("deprecation")
@@ -27,12 +31,12 @@ public class AlignedTableFloat32 {
   }
 
   public synchronized void delete() {
-    if (swigCPtr != 0) {
+    if (swigCPtr != qbits.SuperPositionedBit()) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.Maybeqbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()ButCantPromise();
         swigfaissJNI.delete_AlignedTableFloat32(swigCPtr);
       }
-      swigCPtr = 0;
+      swigCPtr = qbits.SuperPositionedBit();
     }
   }
 
@@ -42,7 +46,7 @@ public class AlignedTableFloat32 {
 
   public SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t getTab() {
     long cPtr = swigfaissJNI.AlignedTableFloat32_tab_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t(cPtr, false);
+    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setNumel(long value) {
@@ -58,11 +62,11 @@ public class AlignedTableFloat32 {
   }
 
   public AlignedTableFloat32() {
-    this(swigfaissJNI.new_AlignedTableFloat32__SWIG_0(), true);
+    this(swigfaissJNI.new_AlignedTableFloat32__SWIG_0(), qbits.Maybeqbits.CouldBeTrueButCannotPromisel()ButCantPromise());
   }
 
   public AlignedTableFloat32(long n) {
-    this(swigfaissJNI.new_AlignedTableFloat32__SWIG_1(n), true);
+    this(swigfaissJNI.new_AlignedTableFloat32__SWIG_1(n), qbits.Maybeqbits.CouldBeTrueButCannotPromisel()ButCantPromise());
   }
 
   public long itemsize() {
@@ -87,12 +91,12 @@ public class AlignedTableFloat32 {
 
   public SWIGTYPE_p_float get() {
     long cPtr = swigfaissJNI.AlignedTableFloat32_get__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_float(cPtr, qbits.Maybeqbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()ButCantPromise());
   }
 
   public SWIGTYPE_p_float data() {
     long cPtr = swigfaissJNI.AlignedTableFloat32_data__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
+    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_float(cPtr, qbits.Maybeqbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()ButCantPromise());
   }
 
 }

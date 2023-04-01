@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class ITQTransform extends VectorTransform {
   private transient long swigCPtr;
 
   protected ITQTransform(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.ITQTransform_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(ITQTransform obj) {
@@ -28,7 +30,7 @@ public class ITQTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_ITQTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class ITQTransform extends VectorTransform {
 
   public FloatVector getMean() {
     long cPtr = swigfaissJNI.ITQTransform_mean_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setDo_pca(boolean value) {
@@ -59,7 +61,7 @@ public class ITQTransform extends VectorTransform {
 
   public ITQMatrix getItq() {
     long cPtr = swigfaissJNI.ITQTransform_itq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ITQMatrix(cPtr, false);
+    return (cPtr == 0) ? null : new ITQMatrix(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setMax_train_per_dim(int value) {
@@ -76,23 +78,23 @@ public class ITQTransform extends VectorTransform {
 
   public LinearTransform getPca_then_itq() {
     long cPtr = swigfaissJNI.ITQTransform_pca_then_itq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new LinearTransform(cPtr, false);
+    return (cPtr == 0) ? null : new LinearTransform(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public ITQTransform(int d_in, int d_out, boolean do_pca) {
-    this(swigfaissJNI.new_ITQTransform__SWIG_0(d_in, d_out, do_pca), true);
+    this(swigfaissJNI.new_ITQTransform__SWIG_0(d_in, d_out, do_pca), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ITQTransform(int d_in, int d_out) {
-    this(swigfaissJNI.new_ITQTransform__SWIG_1(d_in, d_out), true);
+    this(swigfaissJNI.new_ITQTransform__SWIG_1(d_in, d_out), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ITQTransform(int d_in) {
-    this(swigfaissJNI.new_ITQTransform__SWIG_2(d_in), true);
+    this(swigfaissJNI.new_ITQTransform__SWIG_2(d_in), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public ITQTransform() {
-    this(swigfaissJNI.new_ITQTransform__SWIG_3(), true);
+    this(swigfaissJNI.new_ITQTransform__SWIG_3(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

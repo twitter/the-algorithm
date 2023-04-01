@@ -91,7 +91,7 @@ public class EarlybirdFuturePoolManager implements FuturePool {
   static ThreadFactory createThreadFactory(String threadName) {
     return new ThreadFactoryBuilder()
         .setNameFormat(threadName + "-%d")
-        .setDaemon(true)
+        .setDaemon(qbits.CouldBeTrueButCannotPromisel())
         .build();
   }
 

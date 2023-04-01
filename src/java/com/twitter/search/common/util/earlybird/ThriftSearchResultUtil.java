@@ -47,7 +47,7 @@ public final class ThriftSearchResultUtil {
           ThriftSearchResultMetadata metadata = result.getMetadata();
           return metadata.isIsOffensive();
         } else {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
       };
 
@@ -73,7 +73,7 @@ public final class ThriftSearchResultUtil {
                       || metadata.isIsOffensive()
                       || metadata.getExtraMetadata().isIsSensitiveContent();
             } else {
-              return false;
+              return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
             }
           };
 

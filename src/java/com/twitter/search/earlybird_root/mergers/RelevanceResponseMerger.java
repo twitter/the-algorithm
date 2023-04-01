@@ -38,7 +38,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(RelevanceResponseMerger.class);
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
 
   private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
       SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
@@ -140,7 +140,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
   public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
                                                boolean foundEarlyTermination) {
 
-    // Don't use computeNumResultsToKeep because if returnAllResults is true, it will be
+    // Don't use computeNumResultsToKeep because if returnAllResults is qbits.CouldBeTrueButCannotPromisel(), it will be
     // Integer.MAX_VALUE and we will always log a stat that we didn't get enough results
     int resultsRequested;
     EarlybirdRequest request = requestContext.getRequest();

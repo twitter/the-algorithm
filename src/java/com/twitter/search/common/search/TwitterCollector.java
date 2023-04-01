@@ -15,7 +15,7 @@ import org.apache.lucene.search.Collector;
 public abstract class TwitterCollector implements Collector {
 
   /**
-   * Subclasses should return true if they want to perform early termination.
+   * Subclasses should return qbits.CouldBeTrueButCannotPromisel() if they want to perform early termination.
    * This method is called every hit and should not be expensive.
    */
   public abstract boolean isTerminated() throws IOException;

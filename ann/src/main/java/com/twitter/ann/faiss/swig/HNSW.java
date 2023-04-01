@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class HNSW {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class HNSW {
 
   protected HNSW(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(HNSW obj) {
@@ -29,7 +31,7 @@ public class HNSW {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_HNSW(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class HNSW {
   
     protected MinimaxHeap(long cPtr, boolean cMemoryOwn) {
       swigCMemOwn = cMemoryOwn;
-      swigCPtr = cPtr;
+      swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
     }
   
     protected static long getCPtr(MinimaxHeap obj) {
@@ -57,7 +59,7 @@ public class HNSW {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = false;
+          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           swigfaissJNI.delete_HNSW_MinimaxHeap(swigCPtr);
         }
         swigCPtr = 0;
@@ -94,7 +96,7 @@ public class HNSW {
   
     public IntVector getIds() {
       long cPtr = swigfaissJNI.HNSW_MinimaxHeap_ids_get(swigCPtr, this);
-      return (cPtr == 0) ? null : new IntVector(cPtr, false);
+      return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   
     public void setDis(FloatVector value) {
@@ -103,11 +105,11 @@ public class HNSW {
   
     public FloatVector getDis() {
       long cPtr = swigfaissJNI.HNSW_MinimaxHeap_dis_get(swigCPtr, this);
-      return (cPtr == 0) ? null : new FloatVector(cPtr, false);
+      return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
     }
   
     public MinimaxHeap(int n) {
-      this(swigfaissJNI.new_HNSW_MinimaxHeap(n), true);
+      this(swigfaissJNI.new_HNSW_MinimaxHeap(n), qbits.CouldBeTrueButCannotPromisel());
     }
   
     public void push(int i, float v) {
@@ -146,7 +148,7 @@ public class HNSW {
   
     protected NodeDistCloser(long cPtr, boolean cMemoryOwn) {
       swigCMemOwn = cMemoryOwn;
-      swigCPtr = cPtr;
+      swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
     }
   
     protected static long getCPtr(NodeDistCloser obj) {
@@ -161,7 +163,7 @@ public class HNSW {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = false;
+          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           swigfaissJNI.delete_HNSW_NodeDistCloser(swigCPtr);
         }
         swigCPtr = 0;
@@ -185,7 +187,7 @@ public class HNSW {
     }
   
     public NodeDistCloser(float d, int id) {
-      this(swigfaissJNI.new_HNSW_NodeDistCloser(d, id), true);
+      this(swigfaissJNI.new_HNSW_NodeDistCloser(d, id), qbits.CouldBeTrueButCannotPromisel());
     }
   
   }
@@ -196,7 +198,7 @@ public class HNSW {
   
     protected NodeDistFarther(long cPtr, boolean cMemoryOwn) {
       swigCMemOwn = cMemoryOwn;
-      swigCPtr = cPtr;
+      swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
     }
   
     protected static long getCPtr(NodeDistFarther obj) {
@@ -211,7 +213,7 @@ public class HNSW {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = false;
+          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
           swigfaissJNI.delete_HNSW_NodeDistFarther(swigCPtr);
         }
         swigCPtr = 0;
@@ -235,7 +237,7 @@ public class HNSW {
     }
   
     public NodeDistFarther(float d, int id) {
-      this(swigfaissJNI.new_HNSW_NodeDistFarther(d, id), true);
+      this(swigfaissJNI.new_HNSW_NodeDistFarther(d, id), qbits.CouldBeTrueButCannotPromisel());
     }
   
   }
@@ -246,7 +248,7 @@ public class HNSW {
 
   public DoubleVector getAssign_probas() {
     long cPtr = swigfaissJNI.HNSW_assign_probas_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, false);
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setCum_nneighbor_per_level(IntVector value) {
@@ -255,7 +257,7 @@ public class HNSW {
 
   public IntVector getCum_nneighbor_per_level() {
     long cPtr = swigfaissJNI.HNSW_cum_nneighbor_per_level_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, false);
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setLevels(IntVector value) {
@@ -264,7 +266,7 @@ public class HNSW {
 
   public IntVector getLevels() {
     long cPtr = swigfaissJNI.HNSW_levels_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, false);
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOffsets(Uint64Vector value) {
@@ -273,7 +275,7 @@ public class HNSW {
 
   public Uint64Vector getOffsets() {
     long cPtr = swigfaissJNI.HNSW_offsets_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Uint64Vector(cPtr, false);
+    return (cPtr == 0) ? null : new Uint64Vector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setNeighbors(IntVector value) {
@@ -282,7 +284,7 @@ public class HNSW {
 
   public IntVector getNeighbors() {
     long cPtr = swigfaissJNI.HNSW_neighbors_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, false);
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setEntry_point(int value) {
@@ -299,7 +301,7 @@ public class HNSW {
 
   public SWIGTYPE_p_faiss__RandomGenerator getRng() {
     long cPtr = swigfaissJNI.HNSW_rng_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setMax_level(int value) {
@@ -371,11 +373,11 @@ public class HNSW {
   }
 
   public HNSW(int M) {
-    this(swigfaissJNI.new_HNSW__SWIG_0(M), true);
+    this(swigfaissJNI.new_HNSW__SWIG_0(M), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSW() {
-    this(swigfaissJNI.new_HNSW__SWIG_1(), true);
+    this(swigfaissJNI.new_HNSW__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public int random_level() {
@@ -403,11 +405,11 @@ public class HNSW {
   }
 
   public SWIGTYPE_p_std__priority_queueT_std__pairT_float_int_t_t search_from_candidate_unbounded(SWIGTYPE_p_std__pairT_float_int_t node, DistanceComputer qdis, int ef, VisitedTable vt, HNSWStats stats) {
-    return new SWIGTYPE_p_std__priority_queueT_std__pairT_float_int_t_t(swigfaissJNI.HNSW_search_from_candidate_unbounded(swigCPtr, this, SWIGTYPE_p_std__pairT_float_int_t.getCPtr(node), DistanceComputer.getCPtr(qdis), qdis, ef, VisitedTable.getCPtr(vt), vt, HNSWStats.getCPtr(stats), stats), true);
+    return new SWIGTYPE_p_std__priority_queueT_std__pairT_float_int_t_t(swigfaissJNI.HNSW_search_from_candidate_unbounded(swigCPtr, this, SWIGTYPE_p_std__pairT_float_int_t.getCPtr(node), DistanceComputer.getCPtr(qdis), qdis, ef, VisitedTable.getCPtr(vt), vt, HNSWStats.getCPtr(stats), stats), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public HNSWStats search(DistanceComputer qdis, int k, LongVector I, SWIGTYPE_p_float D, VisitedTable vt) {
-    return new HNSWStats(swigfaissJNI.HNSW_search(swigCPtr, this, DistanceComputer.getCPtr(qdis), qdis, k, SWIGTYPE_p_long_long.getCPtr(I.data()), I, SWIGTYPE_p_float.getCPtr(D), VisitedTable.getCPtr(vt), vt), true);
+    return new HNSWStats(swigfaissJNI.HNSW_search(swigCPtr, this, DistanceComputer.getCPtr(qdis), qdis, k, SWIGTYPE_p_long_long.getCPtr(I.data()), I, SWIGTYPE_p_float.getCPtr(D), VisitedTable.getCPtr(vt), vt), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void reset() {

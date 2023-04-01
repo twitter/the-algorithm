@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexBinaryIVF extends IndexBinary {
   private transient long swigCPtr;
 
   protected IndexBinaryIVF(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexBinaryIVF_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexBinaryIVF obj) {
@@ -28,7 +30,7 @@ public class IndexBinaryIVF extends IndexBinary {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexBinaryIVF(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public InvertedLists getInvlists() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_invlists_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOwn_invlists(boolean value) {
@@ -82,7 +84,7 @@ public class IndexBinaryIVF extends IndexBinary {
   }
 
   public SWIGTYPE_p_DirectMap getDirect_map() {
-    return new SWIGTYPE_p_DirectMap(swigfaissJNI.IndexBinaryIVF_direct_map_get(swigCPtr, this), true);
+    return new SWIGTYPE_p_DirectMap(swigfaissJNI.IndexBinaryIVF_direct_map_get(swigCPtr, this), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void setQuantizer(IndexBinary value) {
@@ -91,7 +93,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public IndexBinary getQuantizer() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_quantizer_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IndexBinary(cPtr, false);
+    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setNlist(long value) {
@@ -116,7 +118,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public ClusteringParameters getCp() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_cp_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, false);
+    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setClustering_index(Index value) {
@@ -125,15 +127,15 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public Index getClustering_index() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_clustering_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public IndexBinaryIVF(IndexBinary quantizer, long d, long nlist) {
-    this(swigfaissJNI.new_IndexBinaryIVF__SWIG_0(IndexBinary.getCPtr(quantizer), quantizer, d, nlist), true);
+    this(swigfaissJNI.new_IndexBinaryIVF__SWIG_0(IndexBinary.getCPtr(quantizer), quantizer, d, nlist), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexBinaryIVF() {
-    this(swigfaissJNI.new_IndexBinaryIVF__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexBinaryIVF__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void reset() {
@@ -166,12 +168,12 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public SWIGTYPE_p_faiss__BinaryInvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexBinaryIVF_get_InvertedListScanner__SWIG_0(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public SWIGTYPE_p_faiss__BinaryInvertedListScanner get_InvertedListScanner() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_get_InvertedListScanner__SWIG_1(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, false);
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void search(long n, SWIGTYPE_p_unsigned_char x, long k, SWIGTYPE_p_int distances, LongVector labels) {

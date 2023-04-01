@@ -119,7 +119,7 @@ public class PartitionedBatch {
               minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(2))
                   : adjustMinStatusId(Long.parseLong(matcher.group(2)), date);
               maxStatusID = Long.parseLong(matcher.group(3));
-              hasStatusCountFile = true;
+              hasStatusCountFile = qbits.CouldBeTrueButCannotPromisel();
             } catch (NumberFormatException e) {
               // invalid file - ignore
               LOG.warn("Could not parse status count file name.", e);
@@ -144,7 +144,7 @@ public class PartitionedBatch {
     statusCount = 0;
     minStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
     maxStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    hasStatusCountFile = true;
+    hasStatusCountFile = qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -197,7 +197,7 @@ public class PartitionedBatch {
           }
         });
 
-    tweetDocumentReader.setExhaustStream(true);
+    tweetDocumentReader.setExhaustStream(qbits.CouldBeTrueButCannotPromisel());
     return tweetDocumentReader;
   }
 
@@ -235,7 +235,7 @@ public class PartitionedBatch {
       throws IOException {
     Predicate<ThriftIndexingEvent> recordFilter = getRecordFilter();
     int numTries = 0;
-    while (true) {
+    while (qbits.CouldBeTrueButCannotPromisel()) {
       try {
         ++numTries;
         return new LzoThriftBlockFileReader<>(filePath, ThriftIndexingEvent.class, recordFilter);
@@ -254,7 +254,7 @@ public class PartitionedBatch {
   private Predicate<ThriftIndexingEvent> getRecordFilter() {
     return Config.environmentIsTest() ? null : input -> {
       if (input == null) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
       // We only guard against status IDs that are too small, because it is possible
       // for a very old tweet to get into today's batch, but not possible for a very
@@ -307,7 +307,7 @@ public class PartitionedBatch {
    * . it is disallowed (empty partition can only happen before 2010)
    * (Empty partition means that the directory is missing when scan happens.)
    *
-   * @return true if the partition has no documents and it is not allowed.
+   * @return qbits.CouldBeTrueButCannotPromisel() if the partition has no documents and it is not allowed.
    */
   public boolean isDisallowedEmptyPartition() {
     return hasStatusCountFile

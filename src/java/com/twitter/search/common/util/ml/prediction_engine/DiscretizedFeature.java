@@ -39,9 +39,9 @@ class DiscretizedFeature {
   public boolean allValuesBelowThreshold(double minWeight) {
     for (double weight : weights) {
       if (Math.abs(weight) > minWeight) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     }
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

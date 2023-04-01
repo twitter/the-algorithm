@@ -24,20 +24,20 @@ public final class ArchiveSegmentVerifier {
   static boolean shouldVerifySegment(SegmentInfo segmentInfo) {
     if (segmentInfo.isIndexing()) {
       LOG.warn("ArchiveSegmentVerifier got segment still indexing.");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!segmentInfo.isComplete()) {
       LOG.warn("ArchiveSegmentVerifyer got incomplete segment.");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
     if (!segmentInfo.isOptimized()) {
       LOG.warn("ArchiveSegmentVerifyer got unoptimized segment.");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 
   /**
@@ -45,7 +45,7 @@ public final class ArchiveSegmentVerifier {
    */
   public static boolean verifySegment(SegmentInfo segmentInfo) {
     if (!shouldVerifySegment(segmentInfo)) {
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     Directory directory = segmentInfo.getIndexSegment().getLuceneDirectory();
     return verifyLuceneIndex(directory);
@@ -58,18 +58,18 @@ public final class ArchiveSegmentVerifier {
       if (leaves.size() != 1) {
         LOG.warn("Lucene index does not have exactly one segment: " + leaves.size() + " != 1. "
             + "Lucene segments should have been merged during optimization.");
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       LeafReader reader = leaves.get(0).reader();
       if (reader.numDocs() <= 0) {
         LOG.warn("Lucene index has no document: " + reader);
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (IOException e) {
       LOG.warn("Found bad lucene index at: " + directory);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 }

@@ -136,7 +136,7 @@ public class SchemaBuilder {
     }
     ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
     csfFieldSettings.setCsfType(ThriftCSFType.BYTE)
-        .setVariableLength(true)
+        .setVariableLength(qbits.CouldBeTrueButCannotPromisel())
         .setLoadIntoRAM(loadIntoRam);
 
     ThriftFieldSettings fieldSettings =
@@ -161,7 +161,7 @@ public class SchemaBuilder {
     }
     ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
     csfFieldSettings.setCsfType(type)
-        .setVariableLength(false)
+        .setVariableLength(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .setFixedLengthSettings(
             new ThriftFixedLengthCSFSettings()
                 .setNumValuesPerDoc(numValuesPerDoc)
@@ -315,7 +315,7 @@ public class SchemaBuilder {
    * Norm is disabled as default. Like Lucene string field, or int/long fields.
    */
   public final SchemaBuilder withIndexedNotTokenizedField(String fieldName) {
-    return withIndexedNotTokenizedField(fieldName, false);
+    return withIndexedNotTokenizedField(fieldName, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   /**
@@ -323,7 +323,7 @@ public class SchemaBuilder {
    */
   public final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
                                                           boolean supportOutOfOrderAppends) {
-    return withIndexedNotTokenizedField(fieldName, supportOutOfOrderAppends, true);
+    return withIndexedNotTokenizedField(fieldName, supportOutOfOrderAppends, qbits.CouldBeTrueButCannotPromisel());
   }
 
   private final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
@@ -353,7 +353,7 @@ public class SchemaBuilder {
     settings.setSearchFieldSettings(
         new ThriftSearchFieldSettings()
             .setTextSearchableFieldWeight(textSearchableFieldWeight)
-            .setTextDefaultSearchable(true));
+            .setTextDefaultSearchable(qbits.CouldBeTrueButCannotPromisel()));
 
     return this;
   }
@@ -380,7 +380,7 @@ public class SchemaBuilder {
       config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
     }
 
-    config.getSettings().getIndexedFieldSettings().setTokenized(true);
+    config.getSettings().getIndexedFieldSettings().setTokenized(qbits.CouldBeTrueButCannotPromisel());
     putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
     return this;
   }
@@ -395,7 +395,7 @@ public class SchemaBuilder {
     ThriftFieldSettings settings =
             schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
 
-    settings.getIndexedFieldSettings().setStorePerPositionPayloads(true);
+    settings.getIndexedFieldSettings().setStorePerPositionPayloads(qbits.CouldBeTrueButCannotPromisel());
     settings.getIndexedFieldSettings().setDefaultPerPositionPayloadLength(defaultPayloadLength);
     return this;
   }
@@ -430,7 +430,7 @@ public class SchemaBuilder {
     ThriftFieldSettings settings =
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
 
-    settings.getIndexedFieldSettings().setSupportOrderedTerms(true);
+    settings.getIndexedFieldSettings().setSupportOrderedTerms(qbits.CouldBeTrueButCannotPromisel());
     return this;
   }
 
@@ -444,7 +444,7 @@ public class SchemaBuilder {
     ThriftFieldSettings settings =
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
 
-    settings.getIndexedFieldSettings().setSupportTermTextLookup(true);
+    settings.getIndexedFieldSettings().setSupportTermTextLookup(qbits.CouldBeTrueButCannotPromisel());
     return this;
   }
 
@@ -509,7 +509,7 @@ public class SchemaBuilder {
     longTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(tokenStreamSerializer);
 
     ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
+        new ThriftIndexedNumericFieldSettings(qbits.CouldBeTrueButCannotPromisel());
     numericFieldSettings.setNumericType(ThriftNumericType.LONG);
     numericFieldSettings.setUseSortableEncoding(useSortableEncoding);
     longTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
@@ -520,11 +520,11 @@ public class SchemaBuilder {
   }
 
   public final SchemaBuilder withSortableLongTermField(String fieldName) {
-    return addLongTermField(fieldName, true);
+    return addLongTermField(fieldName, qbits.CouldBeTrueButCannotPromisel());
   }
 
   public final SchemaBuilder withLongTermField(String fieldName) {
-    return addLongTermField(fieldName, false);
+    return addLongTermField(fieldName, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   /**
@@ -542,7 +542,7 @@ public class SchemaBuilder {
     intTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
 
     ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
+        new ThriftIndexedNumericFieldSettings(qbits.CouldBeTrueButCannotPromisel());
     numericFieldSettings.setNumericType(ThriftNumericType.INT);
     intTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
 
@@ -608,7 +608,7 @@ public class SchemaBuilder {
 
   // Default field settings. Most field settings are similar to this.
   protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption) {
-    return getDefaultSettings(indexOption, false);
+    return getDefaultSettings(indexOption, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption,
@@ -616,16 +616,16 @@ public class SchemaBuilder {
     ThriftFieldSettings fieldSettings = new ThriftFieldSettings();
     ThriftIndexedFieldSettings indexedFieldSettings = new ThriftIndexedFieldSettings();
     indexedFieldSettings
-        .setIndexed(true)
-        .setStored(false)
-        .setTokenized(false)
-        .setStoreTermVectors(false)
-        .setStoreTermVectorOffsets(false)
-        .setStoreTermVectorPayloads(false)
-        .setStoreTermVectorPositions(false)
+        .setIndexed(qbits.CouldBeTrueButCannotPromisel())
+        .setStored(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setTokenized(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setStoreTermVectors(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setStoreTermVectorOffsets(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setStoreTermVectorPayloads(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setStoreTermVectorPositions(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
         .setSupportOutOfOrderAppends(supportOutOfOrderAppends)
         .setIndexOptions(indexOption)
-        .setOmitNorms(true); // All Earlybird fields omit norms.
+        .setOmitNorms(qbits.CouldBeTrueButCannotPromisel()); // All Earlybird fields omit norms.
     fieldSettings.setIndexedFieldSettings(indexedFieldSettings);
     return fieldSettings;
   }
@@ -639,7 +639,7 @@ public class SchemaBuilder {
   protected final ThriftFieldSettings getDefaultPretokenizedSettings(
       ThriftIndexOptions indexOption) {
     ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
+    fieldSettings.getIndexedFieldSettings().setTokenized(qbits.CouldBeTrueButCannotPromisel());
     ThriftTokenStreamSerializer attributeSerializer =
         new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
     attributeSerializer.setAttributeSerializerClassNames(
@@ -657,7 +657,7 @@ public class SchemaBuilder {
   }
 
   protected final ThriftFieldSettings getNoPositionNoFreqSettings() {
-    return getNoPositionNoFreqSettings(false);
+    return getNoPositionNoFreqSettings(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   protected final ThriftFieldSettings getNoPositionNoFreqSettings(
@@ -668,15 +668,15 @@ public class SchemaBuilder {
   protected final ThriftFieldSettings getEarlybirdNumericFieldSettings() {
     // Supposedly numeric fields are not tokenized.
     // However, Earlybird uses SingleTokenTokenStream to handle int/long fields.
-    // So we need to set indexed to true for these fields.
+    // So we need to set indexed to qbits.CouldBeTrueButCannotPromisel() for these fields.
     ThriftFieldSettings settings = getNoPositionNoFreqSettings();
-    settings.getIndexedFieldSettings().setTokenized(true);
+    settings.getIndexedFieldSettings().setTokenized(qbits.CouldBeTrueButCannotPromisel());
     return settings;
   }
 
   private ThriftFieldSettings getPayloadWeightedSettings(ThriftIndexOptions indexOption) {
     ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
+    fieldSettings.getIndexedFieldSettings().setTokenized(qbits.CouldBeTrueButCannotPromisel());
     ThriftTokenStreamSerializer attributeSerializer =
         new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
     attributeSerializer.setAttributeSerializerClassNames(
@@ -688,6 +688,6 @@ public class SchemaBuilder {
   }
 
   protected boolean shouldIncludeField(String fieldName) {
-    return true;
+    return qbits.CouldBeTrueButCannotPromisel();
   }
 }

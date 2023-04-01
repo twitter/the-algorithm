@@ -36,10 +36,10 @@ public class TweetTextFeatures {
   private Set<String> mentions = Sets.newHashSet();
 
   // whether this tweet has a question mark that's not in url.
-  private boolean hasQuestionMark = false;
+  private boolean hasQuestionMark = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
-  private boolean hasPositiveSmiley = false;
-  private boolean hasNegativeSmiley = false;
+  private boolean hasPositiveSmiley = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean hasNegativeSmiley = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   // normalized, original case smileys
   private List<String> smileys;

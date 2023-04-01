@@ -199,7 +199,7 @@ public class StartupUserEventIndexer {
         streamIndexer.seekToTimestamp(lastRecordTimestamp);
         LOG.info("Seeked consumer to timestamp {} after {} failures",
             lastRecordTimestamp, numFailures);
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       } catch (Exception e) {
         numFailures++;
         LOG.info("Caught exception when seeking to timestamp. Num failures: {}. Exception: {}",
@@ -217,13 +217,13 @@ public class StartupUserEventIndexer {
       }
     }
     // Failed to seek to timestamp
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private boolean shouldTrySeekToTimestamp(long initialTimeMillis, int numFailures) {
     if (numFailures == 0) {
       // no attempts have been made yet, so we should try to seek to timestamp
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } else {
       return clock.nowMillis() - initialTimeMillis < MAX_RETRY_MILLIS_FOR_SEEK_TO_TIMESTAMP;
     }

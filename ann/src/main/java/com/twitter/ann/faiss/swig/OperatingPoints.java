@@ -7,6 +7,8 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OperatingPoints {
   private transient long swigCPtr;
@@ -14,7 +16,7 @@ public class OperatingPoints {
 
   protected OperatingPoints(long cPtr, boolean cMemoryOwn) {
     swigCMemOwn = cMemoryOwn;
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OperatingPoints obj) {
@@ -29,7 +31,7 @@ public class OperatingPoints {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OperatingPoints(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,7 +44,7 @@ public class OperatingPoints {
 
   public OperatingPointVector getAll_pts() {
     long cPtr = swigfaissJNI.OperatingPoints_all_pts_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, false);
+    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void setOptimal_pts(OperatingPointVector value) {
@@ -51,11 +53,11 @@ public class OperatingPoints {
 
   public OperatingPointVector getOptimal_pts() {
     long cPtr = swigfaissJNI.OperatingPoints_optimal_pts_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, false);
+    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public OperatingPoints() {
-    this(swigfaissJNI.new_OperatingPoints(), true);
+    this(swigfaissJNI.new_OperatingPoints(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public int merge_with(OperatingPoints other, String prefix) {

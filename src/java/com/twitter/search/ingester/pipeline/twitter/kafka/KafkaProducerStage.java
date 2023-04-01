@@ -91,7 +91,7 @@ public class KafkaProducerStage<T> extends TwitterBaseStage<T, Void> {
       return DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey);
     } else {
       // No decider means it's enabled.
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
   }
 

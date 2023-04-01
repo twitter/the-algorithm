@@ -136,7 +136,7 @@ public class DailyStatusBatches {
   }
 
   /**
-   * Load the daily status batches from HDFS; return true if one or more batches could be loaded.
+   * Load the daily status batches from HDFS; return qbits.CouldBeTrueButCannotPromisel() if one or more batches could be loaded.
    **/
   private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOException {
     // first find the latest valid end date of statuses
@@ -144,17 +144,17 @@ public class DailyStatusBatches {
     if (lastValidStatusDay != null) {
       if (hasStatusBatchesOnHdfs(fs, lastValidStatusDay)) {
         if (loadStatusBatchesFromHdfs(fs, lastValidStatusDay)) {
-          return true;
+          return qbits.CouldBeTrueButCannotPromisel();
         }
       }
     }
 
     resetDirectory();
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   /**
-   * Checks the directory for new data and returns true, if one or more new batches could be loaded.
+   * Checks the directory for new data and returns qbits.CouldBeTrueButCannotPromisel(), if one or more new batches could be loaded.
    */
   public void refresh() throws IOException {
     final FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
@@ -183,7 +183,7 @@ public class DailyStatusBatches {
     long timeSpentOnDailyBatches = 0L;
     long maxAllowedTimeMs = MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
     long waitingTimeMs = DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES.as(Time.MILLISECONDS);
-    boolean firstLoop = true;
+    boolean firstLoop = qbits.CouldBeTrueButCannotPromisel();
     LOG.info("Starting to load or compute daily status batches for the first time.");
     while (timeSpentOnDailyBatches <= maxAllowedTimeMs && !Thread.currentThread().isInterrupted()) {
       if (!firstLoop) {
@@ -200,19 +200,19 @@ public class DailyStatusBatches {
 
       if (isStatusBatchLoadingEnabled() && refreshByLoadingHDFSStatusBatches(hdfs)) {
         LOG.info("Successfully loaded daily status batches after {}", stopwatch);
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
 
-      final AtomicBoolean successRef = new AtomicBoolean(false);
+      final AtomicBoolean successRef = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       if (computeDailyBatchesWithZKLock(hdfs, successRef, stopwatch)) {
         return successRef.get();
       }
 
       timeSpentOnDailyBatches = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-      firstLoop = false;
+      firstLoop = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
 
-    return false;
+    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
   }
 
   private boolean computeDailyBatchesWithZKLock(final FileSystem hdfs,
@@ -279,7 +279,7 @@ public class DailyStatusBatches {
 
     if (lastValidStatusDay == null) {
       LOG.warn("No data found in " + statusPath + " and scrubbed path");
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
     int mostRecentYear = DateUtil.getCalendar(lastValidStatusDay).get(Calendar.YEAR);
     for (int year = 2006; year <= mostRecentYear; ++year) {
@@ -310,7 +310,7 @@ public class DailyStatusBatches {
       }
     }
 
-    boolean updated = false;
+    boolean updated = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     numberOfDaysWithValidScrubGenData = 0;
 
     // Iterate batches in sorted order.
@@ -326,7 +326,7 @@ public class DailyStatusBatches {
       }
       if (lastValidDay == null || lastValidDay.before(batch.getDate())) {
         lastValidDay = batch.getDate();
-        updated = true;
+        updated = qbits.CouldBeTrueButCannotPromisel();
       }
     }
 
@@ -468,7 +468,7 @@ public class DailyStatusBatches {
       return fs.exists(new Path(hdfsFileName));
     } catch (IOException ex) {
       LOG.error("Failed checking status batch file on HDFS: " + hdfsFileName, ex);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
@@ -477,7 +477,7 @@ public class DailyStatusBatches {
    * and then reading from the local disk.
    *
    * @param day the latest day of valid statuses.
-   * @return true if the loading is successful.
+   * @return qbits.CouldBeTrueButCannotPromisel() if the loading is successful.
    */
   @VisibleForTesting
   boolean loadStatusBatchesFromHdfs(FileSystem fs, Date day) {
@@ -501,7 +501,7 @@ public class DailyStatusBatches {
         if (batch == null) {
           LOG.error("Invalid daily status batch constructed from line: " + batchLine);
           resetDirectory();
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
         Date date = batch.getDate();
         if (firstValidDay == null || firstValidDay.after(date)) {
@@ -517,11 +517,11 @@ public class DailyStatusBatches {
       LOG.info("First entry: {}", statusBatches.firstEntry().getValue().toString());
       LOG.info("Last entry: {}", statusBatches.lastEntry().getValue().toString());
 
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     } catch (IOException ex) {
       LOG.error("Failed loading time slices from HDFS: " + fileHdfsPath, ex);
       resetDirectory();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } finally {
       if (lineReader != null) {
         lineReader.stop();
@@ -537,7 +537,7 @@ public class DailyStatusBatches {
 
     if (!StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.isOfficial()) {
       LOG.info("Status batch flush version is not official, no batches will be flushed to HDFS");
-      return true;
+      return qbits.CouldBeTrueButCannotPromisel();
     }
 
     String fileLocalPath = getLocalStatusBatchSyncFileName(day);
@@ -551,9 +551,9 @@ public class DailyStatusBatches {
       outputFile.getParentFile().mkdirs();
       if (!outputFile.getParentFile().exists()) {
         LOG.error("Cannot create directory: " + outputFile.getParentFile().toString());
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
-      fileWriter = new FileWriter(outputFile, false);
+      fileWriter = new FileWriter(outputFile, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
       for (Date date : statusBatches.keySet()) {
         fileWriter.write(statusBatches.get(date).serializeToJson());
         fileWriter.write("\n");
@@ -565,7 +565,7 @@ public class DailyStatusBatches {
     } catch (IOException e) {
       String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
       LOG.error("Failed storing status batches to HDFS: " + fileHdfsPath, e);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     } finally {
       try {
         if (fileWriter != null) {
@@ -596,39 +596,39 @@ public class DailyStatusBatches {
       Path hdfsFilePath = new Path(hdfsFileName);
       if (fs.exists(hdfsFilePath)) {
         LOG.warn("Found status batch file on HDFS: " + hdfsFileName);
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
 
       String hdfsTempName = getHdfsStatusBatchTempSyncFileName(day);
       Path hdfsTempPath = new Path(hdfsTempName);
       if (fs.exists(hdfsTempPath)) {
         LOG.info("Found existing temporary status batch file on HDFS, removing: " + hdfsTempName);
-        if (!fs.delete(hdfsTempPath, false)) {
+        if (!fs.delete(hdfsTempPath, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())) {
           LOG.error("Failed to delete temporary file: " + hdfsTempName);
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
       }
       fs.copyFromLocalFile(new Path(localFileName), hdfsTempPath);
 
       if (fs.rename(hdfsTempPath, hdfsFilePath)) {
         LOG.debug("Renamed " + hdfsTempName + " on HDFS to: " + hdfsFileName);
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       } else {
         LOG.error("Failed to rename " + hdfsTempName + " on HDFS to: " + hdfsFileName);
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
     } catch (IOException ex) {
       LOG.error("Failed uploading status batch file to HDFS: " + hdfsFileName, ex);
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 
   private static boolean isStatusBatchFlushingEnabled() {
-    return EarlybirdProperty.ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED.get(false);
+    return EarlybirdProperty.ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   private static boolean isStatusBatchLoadingEnabled() {
-    return EarlybirdConfig.getBool("archive_daily_status_batch_loading_enabled", false);
+    return EarlybirdConfig.getBool("archive_daily_status_batch_loading_enabled", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   private static String getVersionFileExtension() {

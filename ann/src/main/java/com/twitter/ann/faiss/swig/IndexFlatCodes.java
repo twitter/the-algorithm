@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexFlatCodes extends Index {
   private transient long swigCPtr;
 
   protected IndexFlatCodes(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexFlatCodes_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexFlatCodes obj) {
@@ -28,7 +30,7 @@ public class IndexFlatCodes extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexFlatCodes(swigCPtr);
       }
       swigCPtr = 0;
@@ -50,7 +52,7 @@ public class IndexFlatCodes extends Index {
 
   public ByteVector getCodes() {
     long cPtr = swigfaissJNI.IndexFlatCodes_codes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, false);
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public void add(long n, SWIGTYPE_p_float x) {

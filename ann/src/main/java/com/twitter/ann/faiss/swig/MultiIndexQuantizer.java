@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class MultiIndexQuantizer extends Index {
   private transient long swigCPtr;
 
   protected MultiIndexQuantizer(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.MultiIndexQuantizer_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(MultiIndexQuantizer obj) {
@@ -28,7 +30,7 @@ public class MultiIndexQuantizer extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_MultiIndexQuantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -42,11 +44,11 @@ public class MultiIndexQuantizer extends Index {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.MultiIndexQuantizer_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, false);
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
   }
 
   public MultiIndexQuantizer(int d, long M, long nbits) {
-    this(swigfaissJNI.new_MultiIndexQuantizer__SWIG_0(d, M, nbits), true);
+    this(swigfaissJNI.new_MultiIndexQuantizer__SWIG_0(d, M, nbits), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {
@@ -66,7 +68,7 @@ public class MultiIndexQuantizer extends Index {
   }
 
   public MultiIndexQuantizer() {
-    this(swigfaissJNI.new_MultiIndexQuantizer__SWIG_1(), true);
+    this(swigfaissJNI.new_MultiIndexQuantizer__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public void reconstruct(long key, SWIGTYPE_p_float recons) {

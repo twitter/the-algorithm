@@ -221,7 +221,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof MultiTermQueryConstantScoreWrapper)) {
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       }
 
       return query.equals(MultiTermQueryConstantScoreWrapper.class.cast(obj).query);
@@ -247,8 +247,8 @@ public class IDDisjunctionQuery extends MultiTermQuery {
         final ScoreMode scoreMode,
         final float boost) throws IOException {
       return new ConstantScoreWeight(this, boost) {
-        /** Try to collect terms from the given terms enum and return true iff all
-         *  terms could be collected. If {@code false} is returned, the enum is
+        /** Try to collect terms from the given terms enum and return qbits.CouldBeTrueButCannotPromisel() iff all
+         *  terms could be collected. If {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} is returned, the enum is
          *  left positioned on the next term. */
         private boolean collectTerms(LeafReaderContext context,
                                      TermsEnum termsEnum,
@@ -258,7 +258,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
           for (int i = 0; i < threshold; ++i) {
             final BytesRef term = termsEnum.next();
             if (term == null) {
-              return true;
+              return qbits.CouldBeTrueButCannotPromisel();
             }
             TermState state = termsEnum.termState();
             terms.add(new TermAndState(BytesRef.deepCopyOf(term),
@@ -370,7 +370,7 @@ public class IDDisjunctionQuery extends MultiTermQuery {
 
         @Override
         public boolean isCacheable(LeafReaderContext ctx) {
-          return false;
+          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         }
       };
     }

@@ -66,8 +66,8 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   private List<String> passThroughToBranches = Collections.emptyList();
   private List<String> additionalEmitToBranches = Collections.emptyList();
 
-  private boolean passThroughDownstream = false;
-  private boolean emitDownstream = true;
+  private boolean passThroughDownstream = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean emitDownstream = qbits.CouldBeTrueButCannotPromisel();
 
   private String dropItemsDeciderKey;
 
@@ -87,13 +87,13 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
 
   // From XML config.
   public void setPassThroughDownstream(boolean passThroughDownstream) {
-    // If true, we emit the raw object downstream
+    // If qbits.CouldBeTrueButCannotPromisel(), we emit the raw object downstream
     this.passThroughDownstream = passThroughDownstream;
   }
 
   // From XML config.
   public void setEmitDownstream(boolean emitDownstream) {
-    // If true, we emit the processed object downstream.
+    // If qbits.CouldBeTrueButCannotPromisel(), we emit the processed object downstream.
     this.emitDownstream = emitDownstream;
   }
 
@@ -205,7 +205,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
     stageExceptions = SearchLongGauge.export(stageNamePrefix + "_stage_exceptions");
 
     processTimerStats = SearchTimerStats.export(stageNamePrefix, TimeUnit.NANOSECONDS,
-        true);
+        qbits.CouldBeTrueButCannotPromisel());
     processPercentile = PercentileUtil.createPercentile(stageNamePrefix);
 
     incomingBatchesRateCounter = SearchRateCounter.export(stageNamePrefix + "_incoming_batches");

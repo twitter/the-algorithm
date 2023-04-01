@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class OneRecallAtRCriterion extends AutoTuneCriterion {
   private transient long swigCPtr;
 
   protected OneRecallAtRCriterion(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.OneRecallAtRCriterion_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(OneRecallAtRCriterion obj) {
@@ -28,7 +30,7 @@ public class OneRecallAtRCriterion extends AutoTuneCriterion {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_OneRecallAtRCriterion(swigCPtr);
       }
       swigCPtr = 0;
@@ -45,7 +47,7 @@ public class OneRecallAtRCriterion extends AutoTuneCriterion {
 }
 
   public OneRecallAtRCriterion(long nq, long R) {
-    this(swigfaissJNI.new_OneRecallAtRCriterion(nq, R), true);
+    this(swigfaissJNI.new_OneRecallAtRCriterion(nq, R), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public double evaluate(SWIGTYPE_p_float D, LongVector I) {

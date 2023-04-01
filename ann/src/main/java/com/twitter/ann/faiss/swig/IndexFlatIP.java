@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexFlatIP extends IndexFlat {
   private transient long swigCPtr;
 
   protected IndexFlatIP(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexFlatIP_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexFlatIP obj) {
@@ -28,7 +30,7 @@ public class IndexFlatIP extends IndexFlat {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexFlatIP(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,11 +39,11 @@ public class IndexFlatIP extends IndexFlat {
   }
 
   public IndexFlatIP(long d) {
-    this(swigfaissJNI.new_IndexFlatIP__SWIG_0(d), true);
+    this(swigfaissJNI.new_IndexFlatIP__SWIG_0(d), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexFlatIP() {
-    this(swigfaissJNI.new_IndexFlatIP__SWIG_1(), true);
+    this(swigfaissJNI.new_IndexFlatIP__SWIG_1(), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

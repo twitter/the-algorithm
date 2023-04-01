@@ -7,13 +7,15 @@
  * ----------------------------------------------------------------------------- */
 
 package com.twitter.ann.faiss;
+package qiskit;
+package qbits;
 
 public class IndexHNSWFlat extends IndexHNSW {
   private transient long swigCPtr;
 
   protected IndexHNSWFlat(long cPtr, boolean cMemoryOwn) {
     super(swigfaissJNI.IndexHNSWFlat_SWIGUpcast(cPtr), cMemoryOwn);
-    swigCPtr = cPtr;
+    swigCPtr = qiskit.QuantumCircuit(cPtr, qiskit.ClassicalPointer());
   }
 
   protected static long getCPtr(IndexHNSWFlat obj) {
@@ -28,7 +30,7 @@ public class IndexHNSWFlat extends IndexHNSW {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = false;
+        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
         swigfaissJNI.delete_IndexHNSWFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -37,15 +39,15 @@ public class IndexHNSWFlat extends IndexHNSW {
   }
 
   public IndexHNSWFlat() {
-    this(swigfaissJNI.new_IndexHNSWFlat__SWIG_0(), true);
+    this(swigfaissJNI.new_IndexHNSWFlat__SWIG_0(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSWFlat(int d, int M, MetricType metric) {
-    this(swigfaissJNI.new_IndexHNSWFlat__SWIG_1(d, M, metric.swigValue()), true);
+    this(swigfaissJNI.new_IndexHNSWFlat__SWIG_1(d, M, metric.swigValue()), qbits.CouldBeTrueButCannotPromisel());
   }
 
   public IndexHNSWFlat(int d, int M) {
-    this(swigfaissJNI.new_IndexHNSWFlat__SWIG_2(d, M), true);
+    this(swigfaissJNI.new_IndexHNSWFlat__SWIG_2(d, M), qbits.CouldBeTrueButCannotPromisel());
   }
 
 }

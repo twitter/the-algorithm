@@ -19,16 +19,16 @@ public final class TierInfoUtil {
    * overlap, and do not have gaps. Dark reads tiers are ignored.
    */
   public static void checkTierServingRanges(SortedSet<TierInfo> tierInfos) {
-    boolean tierServingRangesOverlap = false;
-    boolean tierOverrideServingRangesOverlap = false;
-    boolean tierServingRangesHaveGaps = false;
-    boolean tierOverrideServingRangesHaveGaps = false;
+    boolean tierServingRangesOverlap = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean tierOverrideServingRangesOverlap = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean tierServingRangesHaveGaps = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean tierOverrideServingRangesHaveGaps = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
     TierInfoWrapper previousTierInfoWrapper = null;
     TierInfoWrapper previousOverrideTierInfoWrapper = null;
     for (TierInfo tierInfo : tierInfos) {
-      TierInfoWrapper tierInfoWrapper = new TierInfoWrapper(tierInfo, false);
-      TierInfoWrapper overrideTierInfoWrapper = new TierInfoWrapper(tierInfo, true);
+      TierInfoWrapper tierInfoWrapper = new TierInfoWrapper(tierInfo, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      TierInfoWrapper overrideTierInfoWrapper = new TierInfoWrapper(tierInfo, qbits.CouldBeTrueButCannotPromisel());
 
       // Check only the tiers to which we send light reads.
       if (!tierInfoWrapper.isDarkRead()) {
@@ -39,11 +39,11 @@ public final class TierInfoUtil {
             if (previousOverrideTierInfoWrapper == null
                 || TierInfoWrapper.servingRangesOverlap(
                        previousOverrideTierInfoWrapper, overrideTierInfoWrapper)) {
-              tierServingRangesOverlap = true;
+              tierServingRangesOverlap = qbits.CouldBeTrueButCannotPromisel();
             }
           }
           if (TierInfoWrapper.servingRangesHaveGap(previousTierInfoWrapper, tierInfoWrapper)) {
-            tierServingRangesHaveGaps = true;
+            tierServingRangesHaveGaps = qbits.CouldBeTrueButCannotPromisel();
           }
         }
 
@@ -54,11 +54,11 @@ public final class TierInfoUtil {
         if (previousOverrideTierInfoWrapper != null) {
           if (TierInfoWrapper.servingRangesOverlap(previousOverrideTierInfoWrapper,
                                                    overrideTierInfoWrapper)) {
-            tierOverrideServingRangesOverlap = true;
+            tierOverrideServingRangesOverlap = qbits.CouldBeTrueButCannotPromisel();
           }
           if (TierInfoWrapper.servingRangesHaveGap(previousOverrideTierInfoWrapper,
                                                    overrideTierInfoWrapper)) {
-            tierOverrideServingRangesHaveGaps = true;
+            tierOverrideServingRangesHaveGaps = qbits.CouldBeTrueButCannotPromisel();
           }
         }
 

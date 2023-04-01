@@ -112,7 +112,7 @@ public class SegmentWriter implements ISegmentWriter {
       eventTimers.put(type, SearchTimerStats.export(
           String.format(EVENT_TIMERS, type).toLowerCase(),
           TimeUnit.MICROSECONDS,
-          false));
+          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
       droppedUpdatesForDisabledSegments.put(
           type,
           SearchRateCounter.export(
@@ -223,7 +223,7 @@ public class SegmentWriter implements ISegmentWriter {
         return earlybirdSegment.delete(tweetId);
       case INSERT:
         earlybirdSegment.addDocument(buildInsertDocument(tie, tweetId));
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       default:
         throw new IllegalArgumentException("Unexpected update type: " + tie.getEventType());
     }

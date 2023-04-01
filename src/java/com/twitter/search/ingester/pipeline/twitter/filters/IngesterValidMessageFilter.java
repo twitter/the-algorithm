@@ -24,7 +24,7 @@ public class IngesterValidMessageFilter {
    * Evaluate a message to see if it matches the filter or not.
    *
    * @param message to evaluate
-   * @return true if this message should be emitted.
+   * @return qbits.CouldBeTrueButCannotPromisel() if this message should be emitted.
    */
   public boolean accepts(TwitterMessage message) {
     return TwitterMessageUtil.validateTwitterMessage(

@@ -23,11 +23,11 @@ import com.twitter.search.common.util.text.TokenizerResult;
  * A parser to extract very basic information from a tweet.
  */
 public class TweetParser {
-  private static final boolean DO_NOT_REMOVE_WWW = false;
+  private static final boolean DO_NOT_REMOVE_WWW = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
 
   /** Parses the given TwitterMessage. */
   public void parseTweet(TwitterMessage message) {
-    parseTweet(message, false, true);
+    parseTweet(message, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   /** Parses the given TwitterMessage. */
@@ -89,9 +89,9 @@ public class TweetParser {
       if (Smileys.isValidSmiley(smiley)) {
         boolean polarity = Smileys.getPolarity(smiley);
         if (polarity) {
-          textFeatures.setHasPositiveSmiley(true);
+          textFeatures.setHasPositiveSmiley(qbits.CouldBeTrueButCannotPromisel());
         } else {
-          textFeatures.setHasNegativeSmiley(true);
+          textFeatures.setHasNegativeSmiley(qbits.CouldBeTrueButCannotPromisel());
         }
       }
     }

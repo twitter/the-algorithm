@@ -85,7 +85,7 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
   /**
    * Creates a no decay scoring function (used by top archive).
    * Otherwise same as default constructor.
-   * @param nodecay  If no decay is set to true. Alpha is set to 0.0.
+   * @param nodecay  If no decay is set to qbits.CouldBeTrueButCannotPromisel(). Alpha is set to 0.0.
    */
   public RetweetBasedTopTweetsScoringFunction(ImmutableSchemaInterface schema, boolean nodecay) {
     this(schema, DEFAULT_RECENCY_SCORE_FRACTION,

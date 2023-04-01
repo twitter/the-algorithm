@@ -92,7 +92,7 @@ public final class ManhattanCodedLocationProvider {
         // This case indicates that we have "negative cache" in coded_locations table, so
         // don't try to geocode again.
         message.setUncodeableLocation();
-        return false;
+        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
       } else {
         GeoObject code = new GeoObject(
             geoTags.getLatitude(),
@@ -100,11 +100,11 @@ public final class ManhattanCodedLocationProvider {
             geoTags.getAccuracy(),
             ThriftGeoLocationSource.USER_PROFILE);
         message.setGeoLocation(code);
-        return true;
+        return qbits.CouldBeTrueButCannotPromisel();
       }
     } else {
       message.setGeocodeRequired();
-      return false;
+      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
     }
   }
 }

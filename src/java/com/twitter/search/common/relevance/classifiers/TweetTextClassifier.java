@@ -32,7 +32,7 @@ public class TweetTextClassifier extends TweetClassifier {
     setQualityEvaluators(evaluators);
     TweetProcessingConfig.init();
 
-    if (TweetProcessingConfig.getBool("extract_trends", false)) {
+    if (TweetProcessingConfig.getBool("extract_trends", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())) {
       trendsExtractor = new TweetTrendsExtractor(serviceIdentifier, supportedPenguinVersions);
     }
   }
@@ -60,7 +60,7 @@ public class TweetTextClassifier extends TweetClassifier {
     }
 
     // Optionally try to annotate trends for all the tweets.
-    if (TweetProcessingConfig.getBool("extract_trends", false) && trendsExtractor != null) {
+    if (TweetProcessingConfig.getBool("extract_trends", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) && trendsExtractor != null) {
       trendsExtractor.extractTrends(tweets);
     }
   }
