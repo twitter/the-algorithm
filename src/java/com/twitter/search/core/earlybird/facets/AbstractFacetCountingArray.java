@@ -93,8 +93,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
 
   protected static final int decodeTermID(int facetID) {
     if (facetID != UNASSIGNED) {
-      int termID = facetID & TERM_ID_MASK;
-      return termID;
+      return facetID & TERM_ID_MASK;
     }
 
     return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;

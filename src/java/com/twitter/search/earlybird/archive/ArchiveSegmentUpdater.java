@@ -209,11 +209,11 @@ public class ArchiveSegmentUpdater {
       return indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
     }
 
-    boolean success = indexSegment(segmentInfo, input -> {
+    boolean success = indexSegment(segmentInfo, input ->
       // we're updating the segment - only index days after the old end date,
       // and we're sure that the previous days have already been indexed.
-      return input.after(hdfsEndDate);
-    });
+      input.after(hdfsEndDate)
+    );
     if (!success) {
       LOG.error("Error indexing new data: " + segmentInfo);
       return indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
