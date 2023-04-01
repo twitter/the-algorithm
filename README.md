@@ -26,7 +26,7 @@ These are the main components of the Recommendation Algorithm included in this r
 | Tweet mixing & filtering | [home-mixer](home-mixer/README.md) | Main service used to construct and serve the Home Timeline. Built on [product-mixer](product-mixer/README.md) |
 |                          | [visibility-filters](visibilitylib/README.md) | Responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking. |
 |                          | [timelineranker](timelineranker/README.md) | Legacy service which provides relevance-scored tweets from the Earlybird Search Index and UTEG service. |
-| Software framework | [navi](navi/navi/README.md) | High performance, machine learning model serving written in Rust. |
+| Software framework | [navi](navi/navi/README.md) | High performance machine learning model serving server written in Rust. |
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
