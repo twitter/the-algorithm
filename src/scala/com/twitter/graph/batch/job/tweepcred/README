@@ -10,7 +10,7 @@ The implementation of the PageRank algorithm in Tweepcred is based on the Hadoop
 
 The preparation stage involves constructing the graph of Twitter users and their interactions, and initializing each user's PageRank score to a default value. This stage is implemented in the PreparePageRankData class.
 
-The iteration stage involves repeatedly calculating and updating the PageRank scores of each user until convergence is reached. This stage is implemented in the UpdatePageRank class, which is run multiple times until the algorithm converges.
+The iteration stage involves repeatedly calculating and updating the PageRank scores of each user until convergence is reached. This stage is implemented in the WeightedPageRank class, which is run multiple times until the algorithm converges.
 
 The Tweepcred PageRank implementation also includes a number of optimizations to improve performance and reduce memory usage. These optimizations include block compression, lazy loading, and in-memory caching.
 
