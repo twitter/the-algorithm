@@ -48,10 +48,10 @@ object EigenVectorsForSparseSymmetric {
     val partialNonzeros = nonzeros.foldRight(baseCase)
     val (matrix, numEntries, maxRow, maxCol) = partialNonzeros{
       case ((i, j, v), (matrix, numEntries, maxRow, maxCol) ) => (i, j) match {
-        case (_, _) if (i > maxRow) && (j > maxCol) => (matrix.set(i, j, v), (numEntries += 1, i, j))
-        case (_, _) if (i > maxRow) => (matrix.set(i, j, v), (numEntries += 1, i, maxCol))
-        case (_, _) if (j > maxCol) => (matrix.set(i, j, v), (numEntries += 1, maxRow, j))
-        case (_, _) => (matrix.set(i, j, v), (numEntries += 1, maxRow, maxCol))
+        case (_, _) if (i > maxRow) && (j > maxCol) => (matrix.set(i, j, v), numEntries += 1, i, j)
+        case (_, _) if (i > maxRow) => (matrix.set(i, j, v), numEntries += 1, i, maxCol)
+        case (_, _) if (j > maxCol) => (matrix.set(i, j, v), numEntries += 1, maxRow, j)
+        case (_, _) => (matrix.set(i, j, v), numEntries += 1, maxRow, maxCol)
       }
     }
 
