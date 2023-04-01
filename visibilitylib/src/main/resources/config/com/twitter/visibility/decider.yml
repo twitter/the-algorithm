@@ -542,7 +542,7 @@ visibility_library_enable_video_ads_safety_level:
 visibility_library_enable_timeline_home_promoted_hydration_safety_level:
   default_availability: 10000
 
-visibility_library_enable_super_follower_connnections_safety_level:
+visibility_library_enable_super_follower_connections_safety_level:
   default_availability: 10000
 
 visibility_library_enable_super_like_safety_level:

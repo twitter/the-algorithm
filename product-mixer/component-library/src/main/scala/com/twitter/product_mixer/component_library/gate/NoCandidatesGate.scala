@@ -9,7 +9,7 @@ import com.twitter.stitch.Stitch
 
 /**
  * A Gate that only continues if the previously returned candidates are empty. This is useful
- * for gating dependent candidate pipelines that are intedned to be used as a backfill when there
+ * for gating dependent candidate pipelines that are intended to be used as a backfill when there
  * are no candidates available.
  */
 case class NoCandidatesGate(scope: CandidateScope) extends QueryAndCandidateGate[PipelineQuery] {

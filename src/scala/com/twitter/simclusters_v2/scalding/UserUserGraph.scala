@@ -23,7 +23,7 @@ import java.util.TimeZone
  * This is a scheduled version of the user_user_normalized_graph dataset generation job.
  *
  * The key difference in this implementation is that we donot read the ProducerNormsAndCounts dataset.
- * So we no longer store the following producer normalized scores for the edges in the NeigborWithWeights thrift:
+ * So we no longer store the following producer normalized scores for the edges in the NeighborWithWeights thrift:
  * followScoreNormalizedByNeighborFollowersL2, favScoreHalfLife100DaysNormalizedByNeighborFaversL2 and logFavScoreL2Normalized
  *
  */

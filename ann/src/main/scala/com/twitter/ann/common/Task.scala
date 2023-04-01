@@ -37,7 +37,7 @@ trait Task extends Closable { self: Logging =>
 
   @volatile private var taskLoop: Future[Unit] = null
 
-  /** Execute the task wih bookkeeping **/
+  /** Execute the task with bookkeeping **/
   private def run(): Future[Unit] = {
     totalTasks.incr()
     activeTasks.getAndIncrement()

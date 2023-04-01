@@ -8,7 +8,7 @@ def safe_div(numerator, denominator, name=None):
   """
   Example usage: calculating NDCG = DCG / IDCG to handle cases when
   IDCG = 0 returns 0 instead of Infinity 
-  Do not use this dividing funciton unless it makes sense to your problem
+  Do not use this dividing function unless it makes sense to your problem
   Divides two tensors element-wise, returns 0 if the denominator is <= 0.
   Args:
     numerator: a real `Tensor`.
@@ -122,15 +122,15 @@ def _get_ranking_orders(label_scores, predicted_scores, top_k_int=1):
   # size [batch_size/num of DataRecords, 1]
   label_scores = tf.reshape(label_scores, [-1, 1])
   predicted_scores = tf.reshape(predicted_scores, [-1, 1])
-  # sorted_labels contians the relevance scores of the correct order
+  # sorted_labels contains the relevance scores of the correct order
   sorted_labels, ordered_labels_indices = tf.nn.top_k(
     tf.transpose(label_scores), k=top_k_int)
   sorted_labels = tf.transpose(sorted_labels)
-  # sort predicitons and use the indices to obtain the relevance scores of the predicted order
+  # sort predictions and use the indices to obtain the relevance scores of the predicted order
   sorted_predictions, ordered_predictions_indices = tf.nn.top_k(
     tf.transpose(predicted_scores), k=top_k_int)
   ordered_predictions_indices_for_labels = tf.transpose(ordered_predictions_indices)
-  # predicted_order contians the relevance scores of the predicted order
+  # predicted_order contains the relevance scores of the predicted order
   predicted_order = tf.gather_nd(label_scores, ordered_predictions_indices_for_labels)
   return sorted_labels, predicted_order
 

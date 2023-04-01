@@ -744,7 +744,7 @@ def change_name_scope_from_dir(init_scope_name, final_scope_name, save_dir):
     save_dir:
       directory which the scopes are saved
 
-  In the follwing section we:
+  In the following section we:
     - Read all the variables from the latest checkpoint.
     - Make a copy of the variables with new name scope.
     - Store both sets of variables into the latest checkpoint.

@@ -582,7 +582,7 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   )
 
   val EnableSuperFollowerConnectionsSafetyLevel: Value = Value(
-    "visibility_library_enable_super_follower_connnections_safety_level"
+    "visibility_library_enable_super_follower_connections_safety_level"
   )
 
   val EnableSuperLikeSafetyLevel: Value = Value(

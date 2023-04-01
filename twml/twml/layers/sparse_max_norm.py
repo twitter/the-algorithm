@@ -181,7 +181,7 @@ def sparse_max_norm(inputs,
                     name=None,
                     reuse=None):
   """
-  Functional inteface to SparseMaxNorm.
+  Functional interface to SparseMaxNorm.
 
   Args:
     inputs:

@@ -52,7 +52,7 @@ object EventTitleFeature extends Feature[UnifiedEventCandidate, String]
 object EventDisplayType extends Feature[UnifiedEventCandidate, EventSummaryDisplayType]
 
 /**
- * URL that servces as the landing page of an Event
+ * URL that services as the landing page of an Event
  */
 object EventUrl extends Feature[UnifiedEventCandidate, Url]
 
