@@ -30,7 +30,7 @@ class BlockFormatDataset(tf.data.Dataset):
     self._filenames = tf.convert_to_tensor(filenames, dtype=tf.string, name="filenames")
     self._compression_type = tf.convert_to_tensor(compression_type.lower(), name="compression_type")
     self._buffer_size = tf.convert_to_tensor(buffer_size, dtype=tf.int64, name="buffer_size")
-    # Parent class call self._as_variant_tensor in init. So call this at the end.
+    # Parent class calls self._as_variant_tensor in init. So call this at the end.
     super(BlockFormatDataset, self).__init__()
 
   def _as_variant_tensor(self):
