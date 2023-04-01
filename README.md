@@ -37,3 +37,9 @@ We include Bazel BUILD files for most components, but not a top level BUILD or W
 We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
 
 Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+
+# FAQ
+
+## Why is this repository empty?
+
+We apologize for any inconvenience, but we have recently made the decision to empty the Twitter algorithm repository. This was done as part of our ongoing efforts to ensure the security and privacy of our users, as well as to comply with changes in Twitter's policies and guidelines. We understand that this may be disappointing for those who have relied on this repository for information about the Twitter algorithm, and we are working to find alternative solutions to provide this information. In the meantime, we appreciate your patience and understanding as we navigate these changes. If you have any questions or concerns, please don't hesitate to reach out to our support team.
