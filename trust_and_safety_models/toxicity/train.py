@@ -387,7 +387,7 @@ class Trainer(object):
         fold=i,
       )
     else:
-      a = input("Are you sure you want to do multiple fold training? (y/n)")
+      a = input("Are you sure you want to do multiple fold training? (y/N)")
       if a.lower() == "y":
         for mb_generator, steps_per_epoch, val_data, test_data in self.mb_loader(full_df=df):
           self._train_single_fold(
