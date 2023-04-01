@@ -37,7 +37,7 @@ However, calculating the cosine similarity between two Tweets is pretty expensiv
 
 5. Fetch _X_ tweet SimClusters Embedding, Calculate Cosine Similarity between _X_ tweets and _SV_, Return top _Y_ above a certain threshold _Z_.
 
-Approximate Cosine Similarity is an approximate algorithm. Instead of fetching _M _ N* tweets embedding, it only fetches *X* tweets embedding. In prod, *X / M _ N _ 100% = 6%\*. Based on the metrics during TWISTLY development, most of the response time is consumed by I/O operation. The Approximate Cosine Similarity is a good approach to save a large amount of response time.
+Approximate Cosine Similarity is an approximate algorithm. Instead of fetching *_M_ N* tweets embedding, it only fetches *X* tweets embedding. In prod, *X / M _ N _ 100% = 6%*. Based on the metrics during TWISTLY development, most of the response time is consumed by I/O operation. The Approximate Cosine Similarity is a good approach to save a large amount of response time.
 
 The idea of the approximate algorithm is based on the assumption that the higher dot-product between source tweets’ SimCluster embedding and candidate tweet’s limited SimCluster Embedding, the possibility that these two tweets are relevant is higher. Additional Cosine Similarity filter is to guarantee that the results are not affected by popularity bias.
 
