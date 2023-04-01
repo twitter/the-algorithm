@@ -39,6 +39,7 @@ class RequestQueryFeatureHydrator[
     GetOlderFeature,
     GuestIdFeature,
     HasDarkRequestFeature,
+    DDGStatsSpaceyFeature,
     IsForegroundRequestFeature,
     IsLaunchRequestFeature,
     PollingFeature,
@@ -99,6 +100,7 @@ class RequestQueryFeatureHydrator[
       .add(ServedRequestIdFeature, Some(servedRequestId))
       .add(RequestJoinIdFeature, getRequestJoinId(servedRequestId))
       .add(HasDarkRequestFeature, hasDarkRequest)
+      .add(DDGStatsSpaceYFeature, ddgStatsAuthors.longValue(Spacey))
       .add(ViewerIdFeature, query.getRequiredUserId)
       .build()
 
