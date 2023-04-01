@@ -76,7 +76,7 @@ class ProducerBasedRelatedTweetsHandler(
       val followers = followersOpt.getOrElse(Seq.empty)
       val followerIds = followers.distinct.filter { userId =>
         val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to more active users that have >1 engagement to optimize latency, and <100 engagements to avoid spammy behavior
+        // Constrain to more active users that have >1 engagement to optimize latency, and <500 engagements to avoid spammy behavior
         userDegree > 1 && userDegree < 500
       }
       stats.stat("follower_size_after_filter").add(followerIds.size)
