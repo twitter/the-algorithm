@@ -1,3 +1,4 @@
+package com.twitter.cr_mixer.util
 import scala.util.matching.Regex
 
 object RegexParserDoom extends App {
