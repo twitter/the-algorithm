@@ -15,42 +15,38 @@ import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
  * A visitor that collects node ranks from :r annotation in the query
  */
 public class QueryRankVisitor extends DetectAnnotationVisitor {
-  private final IdentityHashMap<Query, Integer> nodeToRankMap = Maps.newIdentityHashMap();
+    private final IdentityHashMap<Query, Integer> nodeToRankMap = Maps.newIdentityHashMap();
 
-  public QueryRankVisitor() {
-    super(Annotation.Type.NODE_RANK);
-  }
-
-  @Override
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+    public QueryRankVisitor() {
+        super(Annotation.Type.NODE_RANK);
     }
 
-    boolean found = false;
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
-    }
-    return found;
-  }
+    @Override
+    protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
+        if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
+            collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+        }
 
-  @Override
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
-      collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
-      return true;
+        return query.getChildren().stream().anyMatch(child -> child.accept(this));
     }
 
-    return false;
-  }
+    @Override
+    protected boolean visitQuery(Query query) throws QueryParserException {
+        if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
+            collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
+            return true;
+        }
 
-  private void collectNodeRank(Annotation anno, Query query) {
-    Preconditions.checkArgument(anno.getType() == Annotation.Type.NODE_RANK);
-    int rank = (Integer) anno.getValue();
-    nodeToRankMap.put(query, rank);
-  }
+        return false;
+    }
 
-  public IdentityHashMap<Query, Integer> getNodeToRankMap() {
-    return nodeToRankMap;
-  }
+    private void collectNodeRank(Annotation anno, Query query) {
+        Preconditions.checkArgument(anno.getType() == Annotation.Type.NODE_RANK);
+        int rank = (Integer) anno.getValue();
+        nodeToRankMap.put(query, rank);
+    }
+
+    public IdentityHashMap<Query, Integer> getNodeToRankMap() {
+        return nodeToRankMap;
+    }
 }
