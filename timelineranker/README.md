@@ -24,13 +24,13 @@ Timeline Ranker hydrates tweets by calling TweetyPie so that it can post-filter 
 
 **Manhattan**
 
-Timeline Ranker hydrates some tweet features (eg, user languages) from Manhattan.
+Timeline Ranker hydrates some tweet features (e.g., user languages) from Manhattan.
 
 **Home Mixer**
 
 Home Mixer calls Timeline Ranker to fetch tweets from the Earlybird Search Index and User Tweet Entity Graph (UTEG) service to power both the For You and Following Home Timelines.
 
-Timeline Ranker does light ranking based on Earlybird tweet candidate scores and truncates to the number of candidates requested by Home Mixer based on these scores
+Timeline Ranker does light ranking based on Earlybird tweet candidate scores and truncates to the number of candidates requested by Home Mixer based on these scores.
 
 
 
