@@ -1,0 +1,4 @@
+# Description
+
+This pipeline uses hnsw and scalding to create an hnsw index based on producers embeddings, which
+it then uses to construct lists of producer suggestions for each user.

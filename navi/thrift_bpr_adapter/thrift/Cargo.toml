@@ -1,0 +1,8 @@
+[package]
+name = "bpr_thrift"
+description = "Thrift parser for Batch Prediction Request"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thrift = "0.17.0"

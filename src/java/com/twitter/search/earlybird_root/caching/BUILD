@@ -1,0 +1,20 @@
+java_library(
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/com/google/inject:guice",
+        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "finatra/inject/inject-core/src/main/scala",
+        "src/java/com/twitter/search/common/caching",
+        "src/java/com/twitter/search/common/decider",
+        "src/java/com/twitter/search/common/metrics",
+        "src/java/com/twitter/search/common/root",
+        "src/java/com/twitter/search/earlybird/common",
+        "src/java/com/twitter/search/earlybird_root/common",
+        "src/java/com/twitter/search/queryparser",
+        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
+        "src/thrift/com/twitter/search:earlybird-java",
+    ],
+)

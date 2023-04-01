@@ -1,0 +1,7 @@
+java_library(
+    sources = ["*.java"],
+    dependencies = [
+        "src/java/com/twitter/common/util:system-mocks",
+        "src/java/com/twitter/search/earlybird/config",
+    ],
+)

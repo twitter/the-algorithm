@@ -1,0 +1,40 @@
+scala_library(
+    platform = "java8",
+    tags = ["bazel-only"],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/storehaus:algebra",
+        "3rdparty/jvm/com/twitter/storehaus:core",
+        "snowflake:id",
+        "src/java/com/twitter/ml/api/constant",
+        "src/scala/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/rux/landing_page/data_pipeline:labeled_rux_service_scribe-scala",
+        "src/scala/com/twitter/rux/landing_page/data_pipeline:landing_page_labeled_data_record-java",
+        "src/scala/com/twitter/scalding_internal/dalv2",
+        "src/scala/com/twitter/scalding_internal/dalv2/dataset",
+        "src/scala/com/twitter/scalding_internal/job",
+        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+        "src/scala/com/twitter/scalding_internal/source",
+        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
+        "src/scala/com/twitter/simclusters_v2/common",
+        "src/scala/com/twitter/simclusters_v2/scalding",
+        "src/scala/com/twitter/simclusters_v2/scalding/common",
+        "src/scala/com/twitter/simclusters_v2/summingbird/common",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:ddg_util",
+        "twml/runtime/src/main/scala/com/twitter/twml/runtime/scalding",
+    ],
+)
+
+hadoop_binary(
+    name = "rux_landing_ddg_analysis-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":evaluation",
+    ],
+)

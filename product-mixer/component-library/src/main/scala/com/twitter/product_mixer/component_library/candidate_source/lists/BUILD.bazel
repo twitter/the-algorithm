@@ -1,0 +1,14 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "interests_discovery/thrift/src/main/thrift:service-thrift-scala",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
+        "strato/config/columns/recommendations/interests_discovery/recommendations_mh:recommendations_mh-strato-client",
+    ],
+    exports = [
+        "strato/config/columns/recommendations/interests_discovery/recommendations_mh:recommendations_mh-strato-client",
+    ],
+)

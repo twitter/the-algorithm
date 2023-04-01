@@ -1,0 +1,27 @@
+scala_library(
+    name = "index_builder_lib",
+    sources = [
+        "*.scala",
+    ],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/spotify:scio-core",
+        "3rdparty/jvm/org/apache/beam:beam-sdks-java-core",
+        "ann/src/main/java/com/twitter/ann/faiss",
+        "ann/src/main/scala/com/twitter/ann/annoy",
+        "ann/src/main/scala/com/twitter/ann/brute_force",
+        "ann/src/main/scala/com/twitter/ann/common",
+        "ann/src/main/scala/com/twitter/ann/faiss",
+        "ann/src/main/scala/com/twitter/ann/hnsw",
+        "ann/src/main/scala/com/twitter/ann/serialization",
+        "ann/src/main/scala/com/twitter/ann/util",
+        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
+        "beam-internal/src/main/scala/com/twitter/beam/io/bigquery",
+        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
+        "beam-internal/src/main/scala/com/twitter/beam/job",
+        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
+        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
+        "src/scala/com/twitter/ml/featurestore/lib",
+        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
+    ],
+)

@@ -1,0 +1,91 @@
+JOB = ["job/**/*"]
+
+scala_library(
+    name = "batch",
+    sources = ["**/*.scala"],
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "3rdparty/jvm/cascading:cascading-core",
+        "3rdparty/jvm/cascading:cascading-hadoop",
+        "3rdparty/jvm/cascading:cascading-local",
+        "3rdparty/jvm/cascading:cascading-thrift",
+        "3rdparty/jvm/com/twitter/algebird:core",
+        "3rdparty/jvm/com/twitter/algebird:util",
+        "3rdparty/jvm/com/twitter/storehaus:algebra",
+        "3rdparty/jvm/com/twitter/storehaus:core",
+        "3rdparty/src/jvm/com/twitter/scalding:args",
+        "3rdparty/src/jvm/com/twitter/scalding:commons",
+        "3rdparty/src/jvm/com/twitter/scalding:core",
+        "3rdparty/src/jvm/com/twitter/scalding:date",
+        "3rdparty/src/jvm/com/twitter/scalding:parquet",
+        "3rdparty/src/jvm/com/twitter/summingbird:batch",
+        "3rdparty/src/jvm/com/twitter/summingbird:client",
+        "graphstore/common:flock_follows-java",
+        "src/java/com/twitter/common_internal/util:date_util",
+        "src/java/com/twitter/twadoop/batch",
+        "src/java/com/twitter/twadoop/util/dbconfig",
+        "src/java/com/twitter/twadoop/util/yaml",
+        "src/protobuf/com/twitter/twadoop",
+        "src/scala/com/twitter/pluck",
+        "src/scala/com/twitter/pluck/source/combined_user_source",
+        "src/scala/com/twitter/pluck/source/jdbc",
+        "src/scala/com/twitter/scalding_internal/error_handling",
+        "src/scala/com/twitter/scalding_internal/job",
+        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+        "src/scala/com/twitter/scalding_internal/multiformat",
+        "src/scala/com/twitter/scalding_internal/source",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:date_util",
+        "src/thrift/com/twitter/gizmoduck:user-thrift-java",
+        "src/thrift/com/twitter/twadoop/user/gen:gen-java",
+        "util/util-core:scala",
+    ],
+)
+
+#pants.new build target for the old "dist"
+hadoop_binary(
+    name = "graph-batch-deploy",
+    main = "com.twitter.scalding.Tool",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":tweepcred",
+    ],
+)
+
+# Generated with `capesospy-v2 create_target tweepcred_job science/scalding/mesos/wtf/recos_platform_atla_proc.yaml`, config hash d63a47.
+scalding_job(
+    name = "tweepcred_job",
+    main = "com.twitter.graph.batch.job.tweepcred.TweepcredBatchJob",
+    args = ["--weighted false --hadoop_config /etc/hadoop/hadoop-conf-proc-atla"],
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.queue", "cassowary.default"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.reducers", "1200"),
+        ("hadoop.submitter.disk", "200000m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    cron = "24,44,04 * * * *",
+    hadoop_cluster = "atla-proc",
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":tweepcred",
+    ],
+)

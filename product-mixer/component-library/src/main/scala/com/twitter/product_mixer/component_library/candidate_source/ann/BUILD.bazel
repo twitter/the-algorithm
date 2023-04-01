@@ -1,0 +1,17 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "ann/src/main/scala/com/twitter/ann/common",
+        "ann/src/main/scala/com/twitter/ann/hnsw",
+        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
+        "product-mixer/component-library/src/main/thrift/com/twitter/product_mixer/component_library:thrift-scala",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+        "servo/manhattan/src/main/scala",
+        "servo/repo/src/main/scala",
+        "servo/util/src/main/scala",
+        "stitch/stitch-core",
+    ],
+)
