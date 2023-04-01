@@ -560,10 +560,11 @@ public class BasicIndexingConverter {
           long inReplyToUserIdVal,
           boolean strict,
           EarlybirdThriftDocumentBuilder builder) {
-    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(id -> id > 0);
-    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(id -> id > 0);
-    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(id -> id > 0);
-    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(id -> id > 0);
+    Predicate<Long> isGreaterThanZero = id -> id > 0;
+    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(isGreaterThanZero);
+    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(isGreaterThanZero);
+    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(isGreaterThanZero);
+    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(isGreaterThanZero);
 
     Preconditions.checkState(retweetUserId.isPresent() == sharedStatusId.isPresent());
 
