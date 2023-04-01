@@ -30,7 +30,7 @@ message GPUOptions {
   // and the device. Options to reduce the memory requirement should be
   // considered before enabling this option as this may come with a negative
   // performance impact. Oversubscription using the unified memory requires
-  // Pascal class or newer GPUs and it is currently only supported on the Linux
+  // Pascal class or newer GPUs and it is currently only supported on the GNU/Linux
   // operating system. See
   // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-requirements
   // for the detailed requirements.
