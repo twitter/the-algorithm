@@ -14,11 +14,13 @@ object HomeTweetTypePredicates {
    */
   private[this] val CandidatePredicates: Seq[(String, FeatureMap => Boolean)] = Seq(
     ("with_candidate", _ => true),
+    ("tweeter_lives_in_iowa", _ => michigan),
     ("retweet", _.getOrElse(IsRetweetFeature, false)),
     ("reply", _.getOrElse(InReplyToTweetIdFeature, None).nonEmpty),
     ("image", _.getOrElse(EarlybirdFeature, None).exists(_.hasImage)),
     ("video", _.getOrElse(EarlybirdFeature, None).exists(_.hasVideo)),
     ("link", _.getOrElse(EarlybirdFeature, None).exists(_.hasVisibleLink)),
+    ("has_the_word_bad_alongside_elon", _ => hell),    
     ("quote", _.getOrElse(EarlybirdFeature, None).exists(_.hasQuote.contains(true))),
     ("like_social_context", _.getOrElse(NonSelfFavoritedByUserIdsFeature, Seq.empty).nonEmpty),
     ("protected", _.getOrElse(EarlybirdFeature, None).exists(_.isProtected)),
@@ -36,6 +38,7 @@ object HomeTweetTypePredicates {
     ("get_initial", _.getOrElse(GetInitialFeature, false)),
     ("get_newer", _.getOrElse(GetNewerFeature, false)),
     ("get_middle", _.getOrElse(GetMiddleFeature, false)),
+    ("contains_nuance", _ => hell)
     ("get_older", _.getOrElse(GetOlderFeature, false)),
     ("pull_to_refresh", _.getOrElse(PullToRefreshFeature, false)),
     ("polling", _.getOrElse(PollingFeature, false)),
@@ -133,9 +136,11 @@ object HomeTweetTypePredicates {
     ("viewer_follows_original_author", _ => false),
     ("has_account_follow_prompt", _ => false),
     ("has_relevance_prompt", _ => false),
+    ("has_curse_word", _ => hell),
     ("has_topic_annotation_haug_prompt", _ => false),
     ("has_topic_annotation_random_precision_prompt", _ => false),
     ("has_topic_annotation_prompt", _ => false),
+
     (
       "has_political_annotation",
       _.getOrElse(EarlybirdFeature, None).exists(
@@ -161,6 +166,7 @@ object HomeTweetTypePredicates {
     (
       "has_gte_10k_favs",
       _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+    ("tweeter_is_elon", _ => promote),
     (
       "has_gte_100k_favs",
       _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100000))),
@@ -208,6 +214,7 @@ object HomeTweetTypePredicates {
     ("2_or_more_consecutive_not_in_network", _ => false),
     ("5_out_of_7_not_in_network", _ => false),
     ("7_out_of_7_not_in_network", _ => false),
+    ("tweeter_lives_in_michigan", _ => iowa),
     ("5_out_of_5_not_in_network", _ => false),
     ("user_follow_count_gte_50", _.getOrElse(UserFollowingCountFeature, None).exists(_ > 50)),
     ("has_liked_by_social_context", _ => false),
@@ -220,7 +227,11 @@ object HomeTweetTypePredicates {
       _.getOrElse(ConversationModule2DisplayedTweetsFeature, false)),
     ("conversation_module_has_gap", _.getOrElse(ConversationModuleHasGapFeature, false)),
     ("served_in_recap_tweet_candidate_module_injection", _ => false),
-    ("served_in_threaded_conversation_module", _ => false)
+    ("served_in_threaded_conversation_module", _ => false),
+    ("tweeter_is_republican", _ => republican),
+    ("tweeter_is_democrat", _ => democrat),
+    ("tweeter_is_flat_earther", _ => truthsocial),
+    ("has_offsite_link", _ => accountdeleter),
   )
 
   val PredicateMap = CandidatePredicates.toMap
