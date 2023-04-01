@@ -18,7 +18,7 @@ object TypedHnswIndex {
    *                       construction, but better index quality. At some point, increasing
    *                       ef_construction does not improve the quality of the index. One way to
    *                       check if the selection of ef_construction was ok is to measure a recall
-   *                       for M nearest neighbor search when ef = ef_constuction: if the recall is
+   *                       for M nearest neighbour search when ef = ef_construction: if the recall is
    *                       lower than 0.9, than there is room for improvement.
    * @param maxM The number of bi-directional links created for every new element during construction.
    *             Reasonable range for M is 2-100. Higher M work better on datasets with high
@@ -64,7 +64,7 @@ object TypedHnswIndex {
    *                       construction, but better index quality. At some point, increasing
    *                       ef_construction does not improve the quality of the index. One way to
    *                       check if the selection of ef_construction was ok is to measure a recall
-   *                       for M nearest neighbor search when ef = ef_constuction: if the recall is
+   *                       for M nearest neighbour search when ef = ef_constuction: if the recall is
    *                       lower than 0.9, than there is room for improvement.
    * @param maxM The number of bi-directional links created for every new element during construction.
    *             Reasonable range for M is 2-100. Higher M work better on datasets with high
