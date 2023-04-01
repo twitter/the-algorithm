@@ -108,52 +108,7 @@ struct RelatedTweetRequest {
   13: optional string                               userAgent             // userAgent of the requesting user
 }
 
-enum SocialProofType {
-  FollowedBy = 1,
-  FavoritedBy = 2,
-  RetweetedBy = 3,
-  SimilarTo = 4,
-  RESERVED_2 = 5,
-  RESERVED_3 = 6,
-  RESERVED_4 = 7,
-  RESERVED_5 = 8,
-  RESERVED_6 = 9,
-  RESERVED_7 = 10
-}
-
-enum Algorithm {
-  Salsa = 1,
-  PastEmailClicks = 2,
-  SimilarToEmailClicks = 3,
-  PastClientEventClicks = 4,
-  VitNews = 5,
-  StrongTieScoring = 6,
-  PollsFromGraph = 7,
-  PollsBasedOnGeo = 8,
-  RESERVED_9 = 9,
-  RESERVED_10 = 10,
-  RESERVED_11 = 11,
-}
-
-struct RecommendedTweet {
-  1: required i64                            tweetId
-  2: required i64                            authorId
-  3: required list<i64>                      socialProof
-  4: required string                         feedbackToken
-  5: optional list<i64>                      favBy          // optionally provide a list of users who fav'ed the tweet if exist
-  6: optional tweet.RecommendedTweetFeatures tweetFeatures  // the features of a recommended tweet
-  7: optional SocialProofType                socialProofType // type of social proof. favBy should be deprecated soon
-  8: optional string                         socialProofOverride // should be set only for DDGs, for en-only experiments. SocialProofType is ignored when this field is set
-  9: optional Algorithm                      algorithm // algorithm used 
-  10: optional double                        score     // score
-  11: optional bool                          isFollowingAuthor // true if the target user follows the author of the tweet 
-}
-
-struct RelatedTweet {
-  1: required i64                  tweetId
-  2: required i64                  authorId
-  3: required double               score
-  4: required string               feedbackToken
+RANDOM BULLSHIT GO!!!!
 }
 
 struct RecommendTweetResponse {
