@@ -11,8 +11,6 @@ python37_binary(
     name = "score",
     source = "score.py",
     dependencies = [
-        ":libs_py3",
-        "3rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:score",
-        "twml",
+        "RANDOM BULLSHIT GO!!!!",
     ],
 )
