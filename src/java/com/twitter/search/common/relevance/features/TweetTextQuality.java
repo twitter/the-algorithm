@@ -7,8 +7,8 @@ import com.google.common.collect.Sets;
 public class TweetTextQuality {
 
   public static enum BooleanQualityType {
-    OFFENSIVE,          // tweet text is offensive
-    OFFENSIVE_USER,     // user name is offensive
+    OFFENSIVE,           // tweet text is offensive
+    OFFENSIVE_USER,      // user name is offensive
     HASHTAG_NAME_MATCH,  // hashtag matches username
     SENSITIVE,           // tweet is marked as sensitive when it comes in
   }
