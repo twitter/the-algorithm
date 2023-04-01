@@ -34,7 +34,7 @@ import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
 import com.twitter.search.common.file.AbstractFile;
 
 /**
- * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour
+ * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbours
  * Paper: https://arxiv.org/pdf/1603.09320.pdf
  * Multithreading impl based on NMSLIB version : https://github.com/nmslib/hnsw/blob/master/hnswlib/hnswalg.h
  *
@@ -379,7 +379,7 @@ public class HnswIndex<T, Q> {
    * This will reduce the recall.
    * <p>
    * For a full explanation of locking see this document: http://go/hnsw-locking
-   * The method returns the closest nearest neighbor (can be used as an enter point)
+   * The method returns the closest nearest neighbours (can be used as an enter point)
    */
   private T mutuallyConnectNewElement(
       final T item,
