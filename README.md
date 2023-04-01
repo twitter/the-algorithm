@@ -1,5 +1,8 @@
 # Twitter Recommendation Algorithm
 
+<a href="https://www.youtube.com/watch?v=g1PePr8hAsc" target="_blank"><img src="https://www.lavanguardia.com/peliculas-series/images/serie/poster/1978/5/w780/38AVLCBEoQKJWMyzt9jkxqeefGb.jpg" 
+ width="421" height="632" border="10" /></a>
+
 The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
 Home Timeline. For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.twitter.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm). The
 diagram below illustrates how major services and jobs interconnect.
