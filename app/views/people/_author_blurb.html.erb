@@ -1,0 +1,25 @@
+<li class="user pseud picture blurb group" role="article">
+  <div class="header module">
+    <h4 class="heading"><%= link_to(author.name, user_pseud_path(author.user, author)) %>
+      <% if (author.name != author.user.login) %>
+        (<%= link_to(author.user_name, user_path(author.user)) %>)
+      <% end %>
+    </h4>
+    <% if @search.present? %>
+      <% creations = author.authored_items_links(fandom_id: @search.options[:fandom_ids]).html_safe %>
+    <% else %>
+      <% creations = authored_items(author, @work_counts, @rec_counts) %>
+    <% end %>
+    <% if creations.present? %>
+      <h5 class="heading"><%= creations %></h5>
+    <% end %>
+    <div class="icon">
+      <%= icon_display(author.user, author) %>
+    </div>
+  </div>
+  <% unless author.description.blank? %>
+    <blockquote class="userstuff">
+      <p><%=raw sanitize_field(author, :description) %></p>
+    </blockquote>
+  <% end %>
+</li>

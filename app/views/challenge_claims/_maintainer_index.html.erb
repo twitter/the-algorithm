@@ -1,0 +1,36 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Unposted Claims for") %> <%= @collection.title %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <% if logged_in? %>
+    <li><%= link_to ts("My Claims"), user_claims_path(current_user) %></li>
+  <% end %>
+  <li><%= ts("Sort By") %></li>
+  <li><%= sort_link ts("Date"), :created_at %></li>
+  <li><%= sort_link ts("Claimer"), :claimer %></li>
+</ul>
+<!--/subnav-->
+  
+<% # we just briefly list all the unposted claims so a mod can clean them up if there are a ton of old ones %>
+
+<% if @claims.empty? %>
+  <!--main content-->
+  <p class="note"><%= ts("No claims to review!") %></p>
+  <!--/content-->
+<% else %>
+  
+  <%= will_paginate @claims %>
+  
+  <!--main content-->
+  <% # this used to be a listbox, but if we ever decide to display posted claims as well we should model it after challenge_assignments/_maintainer_index instead %>
+  <ol class="index group">
+    <% @claims.each do |claim| %>
+      <%= render "challenge_claims/unposted_claim_blurb", :claim => claim %>
+    <% end %>
+  </ol>
+  
+  <%= will_paginate @claims %>
+
+<% end %>

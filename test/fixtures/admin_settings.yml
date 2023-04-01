@@ -1,0 +1,21 @@
+admin_setting_3:
+  id: 3
+  account_creation_enabled: false
+  invite_from_queue_enabled: true
+  invite_from_queue_number: 10
+  invite_from_queue_frequency: 7
+  days_to_purge_unactivated: 7
+  last_updated_by:
+  created_at: 2015-04-11 21:57:43.000000000 Z
+  updated_at: 2015-04-11 21:57:43.000000000 Z
+  invite_from_queue_at: 2015-04-18 21:57:43.000000000 Z
+  suspend_filter_counts: false
+  suspend_filter_counts_at:
+  enable_test_caching: false
+  cache_expiration: 10
+  tag_wrangling_off: false
+  default_skin_id:
+  request_invite_enabled: false
+  creation_requires_invite: false
+  downloads_enabled: true
+  hide_spam: false

@@ -1,0 +1,46 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Matching for %{collection_title}', :collection_title => @collection.title) %></h2>
+<!--/description-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<% if @challenge.signup_open %>
+  <p class="note">
+    <%= ts("You can't generate matches while sign-up is still open. After you have closed sign-ups in Challenge Settings,
+    you will be able to generate potential matches here.") %>
+  </p>
+<% elsif @collection.signups.count < 2 %>
+  <p class="note">
+    <%= ts("You need at least two people to sign up before you can make assignments.") %>
+  </p>
+<% elsif @in_progress %>
+  <%= render "in_progress"%>
+<% elsif @assignment_in_progress %>
+  <h3><%= ts("Assignments Generating") %> <%= link_to_help "challenge-matching" %></h3>
+  <p class="note">
+    <%= ts("We're now in the process of generating assignments. This should take less time than potential matching.") %>
+  </p>
+<% elsif @collection.potential_matches.empty? %>
+  <h3><%= ts("Potential Match Generation") %> <%= link_to_help "challenge-matching" %></h3>
+
+  <%= render "match_navigation" %>
+  <p class="note">
+    <%= ts("No potential matches yet!") %>
+  </p>
+
+  <% if !@settings || @settings.no_match_required? %>
+    <%= render "no_match_required" %>
+  <% end %>
+  
+  <% if @invalid_signups %>
+    <%= render "invalid_signups" %>
+  <% end %>
+
+<% else %>
+  <% # we have potential matches! %>
+  <%= render "potential_matches/potential_matches" %>
+  
+<% end %>
+<!--/content-->

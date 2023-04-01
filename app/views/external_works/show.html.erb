@@ -1,0 +1,6 @@
+<% unless @external_work.blank? %>
+  <h3 class="landmark heading"><%= ts('External Work') %></h3>
+  <ol class="work index group">
+    <%= render 'external_works/blurb', external_work: @external_work %>
+  </ol>
+<% end %>

@@ -1,0 +1,40 @@
+<% content_for :message do %>
+  <h2 class="heading">
+    <%= t("mailer.general.greeting.introductory") %>
+  </h2>
+
+  <p><%= t('.html.part1', open_doors_name_link: style_link(t('.html.open_doors_name'), "http://opendoors.transformativeworks.org"), app_short_name: ArchiveConfig.APP_SHORT_NAME, app_link: style_link(ArchiveConfig.APP_NAME, root_url)).html_safe %></p>
+
+  <p><%= t('.html.part2', ao3_news_link: style_link(t('.html.ao3_news'), admin_posts_url + "?tag=18"), faq_page_link: style_link(t('.html.faq_page'), "http://opendoors.transformativeworks.org/faq"), tutorial_page_link: style_link(t('.html.tutorial_page'), "http://opendoors.transformativeworks.org/tutorials"), contact_support_link: support_link(t '.html.contact_support')).html_safe %></p>
+
+  <p><%= t('.html.part3', contact_open_doors_link: style_link(t('.html.contact_open_doors'), 'https://opendoors.transformativeworks.org/en/contact-open-doors/')).html_safe %></p>
+
+  <p><%= t('.html.part4', contact_support_link: support_link(t '.html.contact_support')).html_safe %></p>
+
+  <p><%= style_link(t('.html.part5'), claim_url(:invitation_token => @token)) %></p>
+
+  <p><%= t '.part6' %></p>
+
+  <ul>
+  <% @external_author.works.each do |work| %>
+    <li><%= style_link(work.title.html_safe, work_url(work)) %>
+      <%= (work.fandom_string.blank? ? "" : " (#{work.fandom_string})") %></li>
+  <% end %>
+  </ul>
+
+  <p><%= t('.html.part7', contact_support_link: support_link(t '.html.contact_support')).html_safe %></p>
+
+  <p><%= t '.part8' %></p>
+
+  <p><%= t('.html.part9', contact_open_doors_link: style_link(t('.html.contact_open_doors'), 'https://opendoors.transformativeworks.org/en/contact-open-doors/')).html_safe %></p>
+
+  <p><%= t('.html.part10', contact_open_doors_link: style_link(t('.html.contact_open_doors'), 'https://opendoors.transformativeworks.org/en/contact-open-doors/')).html_safe %></p>
+
+  <p><%= t('.html.part11', contact_support_link: support_link(t '.html.contact_support')).html_safe %></p>
+
+  <p><%= t '.part12' %></p>
+
+  <p><%= t("mailer.general.closing.informal") %><br/>
+    <%= style_bold(t("mailer.general.signature.open_doors")) %><br/>
+    <%= style_bold(t("mailer.general.signature.parent_org")) %></p>
+<% end %>

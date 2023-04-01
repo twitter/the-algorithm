@@ -1,0 +1,19 @@
+<li class="external authors listbox">
+  <%= render "external_authors/external_author_description", :external_author => external_author %>
+    
+  <ul class="actions" role="menu">
+    <% if @user && current_user == @user %>    
+      <li><%= link_to ts('Edit'), [:edit, @user, external_author] %></li>
+      <!-- coming soon 
+      <li>
+        <%= link_to ts('Delete'), [@user, external_author], 
+                      :confirm => ts('Are you sure you want to delete this additional email identity?'), :method => :delete %>
+      </li>
+      -->
+    <% end %>
+    <% if permit?("opendoors") %>
+      <% # opendoors staff can modify %>
+      <li><%= link_to ts('Edit'), edit_opendoors_external_author_path(external_author) %></li>
+    <% end %>
+  </ul>
+</li>

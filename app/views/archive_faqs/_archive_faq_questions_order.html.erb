@@ -1,0 +1,33 @@
+<div id="manage-archive-faqs">
+  <%= form_tag url_for(:action => 'update_positions') do %>
+    <ul id="sortable_archive_faq_list">
+      <% for archive_faq in @archive_faqs %>
+        <li id="archive_faq_<%= archive_faq.id %>" class="archive_faq-position-list">
+          <%= text_field_tag "archive_faqs[]", nil, :size => 3, :maxlength => 3, :id => "archive_faqs_#{archive_faq.id}", :class => "number" %>
+          <span id='position-for-<%= archive_faq.id %>'><%= archive_faq.position %></span>.
+          <h3 class="heading"><%=h archive_faq.title %></h3>
+        </li>
+      <% end %>
+    </ul>
+    <p class="submit actions"><%= submit_tag "Update Positions" %></p>
+  <% end %>
+</div>
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j("#sortable_archive_faq_list").sortable({
+    delay: 300,
+    update: function(event, ui) {
+    $j(".archive_faq-position-list").each(function(index, li){
+    var faqId = $j(li).attr("id").replace("archive_faq_","");
+    $j("#position-for-"+faqId).html(index+1);
+    });
+    $j.ajax({
+    type: 'post',
+    data: $j("#sortable_archive_faq_list").sortable("serialize"),
+    dataType: 'script',
+    url: "<%= url_for(:action => :update_positions) %>"})
+    }
+    })
+  <% end %>
+<% end %>

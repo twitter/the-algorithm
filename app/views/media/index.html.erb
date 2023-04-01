@@ -1,0 +1,28 @@
+<!--SEARCHBROWSE descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading"><%= ts('Fandoms') %></h2>
+<!--/descriptions-->
+
+<!--main content-->
+<ul class="media fandom index group">
+<% for medium in @media %>
+  <li id="medium_<%= medium.id %>" class="medium listbox group">
+    <h3 class="heading"><%= link_to medium.name, medium_fandoms_path(medium) %></h3>
+
+    <ol class="index group">
+    <% for fandom in @fandom_listing[medium] %>
+      <li>
+        <%= link_to_tag_works_with_text(fandom, fandom.name) %>
+        <% if fandom.respond_to?(:count) %>
+          (<%= fandom.count.to_s %>)
+        <% end %>
+      </li>
+    <% end %>
+    </ol>
+
+    <% unless @fandom_listing[medium].size < 5 %>
+    <p class="actions" role="navigation"><%= link_to ts("All %{media_type}...", :media_type => medium.name), medium_fandoms_path(medium) %></p>
+    <% end %>
+  </li>
+<% end %>
+</ul>
+<!--/content-->

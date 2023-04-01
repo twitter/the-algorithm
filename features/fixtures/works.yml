@@ -1,0 +1,64 @@
+first:
+  id: 1
+  posted: true
+  title: First work
+  word_count: 100
+  title_to_sort_on: First work
+  language: english
+  created_at: 2010-04-30
+  revised_at: 2012-04-30
+  complete: true
+second:
+  id: 2
+  posted: true
+  title: second work
+  word_count: 1000
+  title_to_sort_on: second work
+  language: english
+  created_at: 2004-04-30
+  revised_at: 2004-04-30
+  complete: true
+third:
+  id: 3
+  posted: true
+  title: third work
+  word_count: 10000
+  title_to_sort_on: third work
+  language: german
+  created_at: 2009-02-03
+  revised_at: 2012-07-10
+  summary: for the second time
+  expected_number_of_chapters: 2
+  complete: true
+fourth:
+  id: 4
+  posted: true
+  title: fourth
+  word_count: 10000
+  title_to_sort_on: fourth work
+  language: french
+  created_at: 2010-04-30
+  revised_at: 2012-04-30
+  complete: true
+fifth:
+  id: 5
+  posted: true
+  title: fifth
+  word_count: 1000
+  title_to_sort_on: fifth work
+  language: english
+  created_at: 2011-06-30
+  revised_at: 2012-04-30
+  expected_number_of_chapters: 5
+  complete: false
+sixth:
+  id: 6
+  posted: true
+  title: I am &lt;strong&gt;er Than Yesterday &amp; Other Lies
+  word_count: 500
+  title_to_sort_on: I am &lt;strong&gt;er Than Yesterday &amp; Other Lies
+  language: english
+  created_at: 2013-04-30
+  revised_at: 2013-04-30
+  expected_number_of_chapters: 2
+  complete: false

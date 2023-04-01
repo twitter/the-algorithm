@@ -1,0 +1,45 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts("View Admin Activity") %></h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <!--/subnav-->
+
+  <!--main content-->
+  <div class="wrapper">
+    <table id="admin_activities_table" summary="<%= ts("List of admin activity with links to full summaries.") %>">
+      <caption><%=ts("Admin Activity") %></caption>
+      <colgroup>
+        <col class="name" />
+        <col />
+      </colgroup>
+      <thead>
+        <tr>
+        <th scope="col"><%=ts("Date") %></th>
+        <th scope="col"><%=ts("Admin") %></th>
+        <th scope="col"><%=ts("Action") %></th>
+        <th scope="col"><%=ts("Target") %></th>
+      </tr>
+      </thead>
+      <tbody>
+        <% for admin_activity in @activities %>
+        <tr id="admin_activity_<%= admin_activity.id %>">
+          <td><%= link_to admin_activity.created_at, admin_activity %></td>
+          <td>
+            <%= admin_activity_login_string(admin_activity) %>
+          </td>
+          <td><%= admin_activity.action %></td>
+          <td>
+            <%= link_to admin_activity.target_name, admin_activity.target %>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <!--/content-->
+  <!--subnav-->
+  <%= will_paginate @activities %>
+  <!--/subnav-->
+</div>

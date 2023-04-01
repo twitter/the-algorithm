@@ -1,0 +1,14 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= t(".title", email: invite_request.email) %>
+</h2>
+<!--/descriptions-->
+
+<!--main content-->
+<p>
+  <%= t(".position_html", position: tag.strong(@position_in_queue)) %>
+  <% if @admin_settings.invite_from_queue_enabled? %>
+    <%= t(".date", date: l(invite_request.proposed_fill_date, format: :long)) %>
+  <% end %>
+</p>
+<!--/content-->

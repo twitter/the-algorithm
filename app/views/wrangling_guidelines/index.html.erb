@@ -1,0 +1,19 @@
+<!--Descriptive page name, messages and instructions-->
+<% if logged_in_as_admin? %>
+  <%= render 'admin_index' %>
+<% else %>
+  <h2 class="heading"><%= ts('Wrangling Guidelines') %></h2>
+  <!--/descriptions-->
+
+  <!--main content-->
+  <div class="admin userstuff">
+    <% unless @wrangling_guidelines.blank?  %>
+      <h3><%= ts('Wrangling Guideline Sections') %></h3>
+      <ol role="navigation">
+        <% for wrangling_guideline in @wrangling_guidelines %>
+          <li><%= link_to wrangling_guideline.title, wrangling_guideline %></li>
+        <% end %>
+      </ol>
+    <% end %>
+  </div>
+<% end %>

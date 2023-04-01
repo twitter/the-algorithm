@@ -1,0 +1,26 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 id="work-form-heading"><%= ts("Delete Works?") %></h2>
+
+<p class="caution">
+  You are about to delete <strong>all</strong> of the following works PERMANENTLY. This CANNOT BE UNDONE and all bookmarks, comments, and kudos will be lost. 
+</p>
+
+<%= render "works/work_abbreviated_list", :works => @works %>
+
+<%= form_tag delete_multiple_user_works_path(@user) do %>
+
+  <p class="note">
+    <%= ts("Are you sure you want to delete these works PERMANENTLY? 
+             If you just want to remove your association with the work, you could orphan it instead.") %>
+    <% @works.each_with_index do |work, index| %><%= hidden_field_tag "work_ids[]", work.id, :id => "work_ids_#{index}" %><% end %>
+  </p>
+
+  <ul class="actions">
+    <li><%= submit_tag ts("Yes, Delete Works") %></li>
+    <li><%= link_to ts("Orphan Works Instead"), new_orphan_path(:work_ids => @works.collect(&:id)) %></li>
+    <li><%= link_to ts("Cancel"), show_multiple_user_works_path(@user) %></li>
+  </ul>
+
+<% end %>
+<!--/content-->
+

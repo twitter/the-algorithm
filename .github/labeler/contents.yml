@@ -1,0 +1,14 @@
+"Gem Updates":
+  - "Gemfile"
+  - "Gemfile.lock"
+
+"Has Migrations":
+  - "db/migrate/**/*"
+
+"Scope: i18n Only":
+  - all:
+    - "config/locales/**/*"
+
+"Scope: Tests Only":
+  - all:
+    - "{factories,features,spec,test,.github}/**/*"

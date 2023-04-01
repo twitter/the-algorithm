@@ -1,0 +1,31 @@
+<fieldset class="tagset">
+  <dl>
+    <% @tag_set_nomination.send("#{tag_type}_nominations").each_with_index do |nom, index| %>
+      <%= f.fields_for "#{tag_type}_nominations".to_sym, nom do |nom_form| %>
+
+        <dt><%= nom_form.label :tagname, ts("%{tag_type} %{index}", tag_type: tag_type_label_name(tag_type), index: index + 1) %>
+        <dd>
+          <% if nom.approved || nom.rejected %>
+            <%= nom.tagname %> <%= nomination_status(nom) %>
+          <% else %>
+
+            <div title="<%= ts("%{tag_type} %{index}", tag_type: tag_type_label_name(tag_type), index: index + 1) %>">
+              <%= nom_form.text_field :tagname, autocomplete_options(tag_type, data: { autocomplete_token_limit: 1 }) %>
+            </div>
+          <% end %>
+        </dd>
+        <% unless tag_type == "freeform" %>
+          <dt>
+            <%= nom_form.label :parent_tagname, ts("Fandom?") %>
+            <% unless @past_first %>
+              <%= link_to_help 'tagset-fandom-for-child' %>
+              <% @past_first = true %>
+            <% end %>
+          </dt>
+          <dd title="<%= ts("which fandom?") %>"><%= nom_form.text_field :parent_tagname, autocomplete_options("fandom", data: { autocomplete_token_limit: 1 }) %></dd>
+        <% end %>
+
+      <% end %>
+    <% end %>
+  </dl>
+</fieldset>

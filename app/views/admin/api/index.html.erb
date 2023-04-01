@@ -1,0 +1,54 @@
+<div class="admin">
+  <h2 class="heading"><%= ts("API Tokens") %></h2>
+
+  <!--subnav-->
+  <%= render "navigation" %>
+  <!--/subnav-->
+
+  <%= will_paginate @api_keys %>
+
+  <!--main content-->
+  <%= form_tag url_for(controller: "admin/api", action: "index"), method: :get, class: "search", role: "search" do %>
+    <p class="note"><%= ts("Search for an API token by name") %></p>
+    <dl>
+      <dt><%= label_tag "query", ts("Name") %></dt>
+      <dd><%= text_field_tag "query", params[:query] %>
+        </dd>
+    </dl>
+    <p class="submit actions"><%= submit_tag ts("Find") %></p>
+  <% end %>
+
+  <table summary="<%= ts("Existing API tokens along with the dates they were created and updated and options for editing them.") %>">
+    <caption><%= ts("API Tokens") %></caption>
+    <thead>
+    <tr>
+      <th scope="col"><%= ts("Name") %></th>
+      <th scope="col"><%= ts("Token") %></th>
+      <th scope="col"><%= ts("Banned?") %></th>
+      <th scope="col"><%= ts("Created") %></th>
+      <th scope="col"><%= ts("Updated") %></th>
+      <th scope="col"><%= ts("Actions") %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @api_keys.each do |api_key| %>
+      <tr>
+        <th scope="row"><%= api_key.name %></th>
+        <td><%= api_key.access_token %></td>
+        <td><%= check_box_tag :banned, api_key.banned, api_key.banned, disabled: true %></td>
+        <td><%= api_key.created_at %></td>
+        <td><%= api_key.updated_at %></td>
+        <td>
+          <ul class="actions">
+            <li><%= link_to ts("Edit"), edit_admin_api_path(api_key) %></li>
+          </ul>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <!--/content-->
+
+  <%= will_paginate @api_keys %>
+
+</div>

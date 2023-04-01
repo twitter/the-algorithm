@@ -1,0 +1,114 @@
+<!-- prompt form -->
+<div class="removeme">
+  <% # CODE NOTES: 
+    # This is meant to be used as a nested form inside other forms, so that multiple prompts can be submitted within a single form. 
+    # It is also meant to be used with javascript-based live adding (that is, not with ajax) which means locals will not be re-evaluated when it is added;
+    #   keep this in mind when using the add_section code!
+    # It expects a form being passed in as "form"
+    # If the local variable "index" is passed in, that will represent which prompt this is, if there are multiple prompts being submitted
+    # If the local variable "required" is passed in, this prompt is required
+    # See the challenge_signup form for an example of how this is used. 
+  %>
+
+  <% index ||= 0 %>
+  <% required ||= false %>
+  <% prompt_label = form.object.class.name %>
+  <% prompt_type = prompt_label.downcase %>
+  <% prompt_types = prompt_type.pluralize %>
+  <% restriction = @challenge.send("#{prompt_type}_restriction") %>
+
+  <fieldset class="tagset">
+    <% if index.is_a? String %>
+      <% prompt_label += " #{index}" %>
+    <% else %>
+      <% prompt_label += " #{(index + 1)}" %>
+    <% end %>
+
+    <legend><%= prompt_label %></legend>
+    <h3 class="heading"><%= form.object.new_record? ? prompt_label : link_to(prompt_label, collection_prompt_path(@collection, form.object)) %></h3>  
+
+    <dl>
+      <% if restriction.title_allowed %>
+        <dt<%= restriction.title_required ? ' class="required"'.html_safe : '' %>>
+          <% if restriction.title_required %>
+            <%= form.label :title, (ts("Title:") + " *") %>
+          <% else %>
+            <%= form.label :title, ts("Title:") %>
+          <% end %>
+        </dt>
+        <dd><%= form.text_field :title %></dd>
+      <% end %>    
+    
+      <!-- tags section -->
+      <%= render "prompts/prompt_form_tag_options", :form => form, :restriction => restriction %>
+    
+      <% if restriction.url_allowed %>
+        <dt<%= restriction.url_required ? ' class="required"'.html_safe : '' %>>
+          <% url_label = @challenge.send("#{prompt_type}_url_label") %>
+          <% if restriction.url_required %>
+            <%= form.label :url , (url_label.blank? ? (ts("Prompt URL:") + " *") : url_label + " *") %>
+          <% else %>
+            <%= form.label :url , (url_label.blank? ? ts("Prompt URL:") : url_label) %>
+          <% end %>
+        </dt>
+        <dd><%= form.text_field :url %></dd>
+      <% end %>
+
+      <% if restriction.description_allowed  %>
+        <dt<%= restriction.description_required ? ' class="required"'.html_safe : '' %>>
+          <% desc_label = @challenge.send("#{prompt_type}_description_label") %>
+          <% if restriction.description_required %>
+            <%= form.label :description, (desc_label.blank? ? (ts("Description:") + " *") : desc_label + " *") %>
+          <% else %>
+            <%= form.label :description, (desc_label.blank? ? ts("Description:") : desc_label) %>
+          <% end %>
+        </dt>
+        <dd><%= form.text_area :description, :rows => 6, :cols => 50, :class => "observe_textlength" %>
+        <%= live_validation_for_field(field_id(form, "description").to_sym, :presence => false, :maximum_length => ArchiveConfig.NOTES_MAX) -%>
+        <%= generate_countdown_html(field_id(form, "description").to_sym, ArchiveConfig.NOTES_MAX) %>
+        </dd>
+      <% end %>
+    
+      <% if restriction.optional_tags_allowed %>
+        <% form.object.build_optional_tag_set unless form.object.optional_tag_set %>
+        <%= form.fields_for :optional_tag_set_attributes do |optional_tag_set_form| %>
+          <dt>
+            <%= optional_tag_set_form.label :tagnames, ts("Optional Tags:") %> <%= link_to_help("challenge-optional-tags-user")%>
+          </dt>
+          <dd>
+            <%= optional_tag_set_form.text_field :tagnames, autocomplete_options("tag?type=all", :value => form.object.optional_tag_set.tagnames) %>
+          </dd>
+        <% end %>
+      <% end %>
+    
+      <% if @collection.challenge.respond_to?(:anonymous) %>
+        <% # TODO ANONYMITY REFACTOR: Anonymity should not be based on a type of challenge but on whether the specific challenge ALLOWS anonymity or not, 
+           # (currently the prompt memes don't allow a mod to specify no anonymity allowed)
+           # and should probably be done via an Anonymous user like the Orphan user.  
+        %>
+        <dt><%= form.label :anonymous, ts("Semi-anonymous Prompt?") %></dt>
+        <dd>
+          <%= form.check_box :anonymous, :checked => @collection.challenge.anonymous? ? true : form.object.anonymous %>
+  	      <p class="footnote"><%= ts("(Note: This is not totally secure, and is still guessable in some places.)") %></p>
+  	    </dd>
+      <% end %>     
+    </dl>
+
+    <% unless required %>
+      <p class="actions" role="button">
+        <%= link_to_remove_section(ts("Remove?"), form) %>
+        <noscript>
+          <label for="<%= field_id(form, '_destroy') %>">
+            <%= ts("Remove?") %>
+            <%= form.check_box "_destroy" %>
+          </label>
+        </noscript>      
+      </p>
+    <% end %>
+  </fieldset>
+</div>
+
+<!-- this div is used to hold the last id for adding new prompts via javascript -->
+<div class="last_id" style="display:none;"><%= index.is_a?(String) ? index : index+1 %></div>
+
+<!-- end of nested prompt form -->

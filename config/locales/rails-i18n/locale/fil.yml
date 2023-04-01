@@ -1,0 +1,202 @@
+---
+fil:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'Nabigo ang pagpapatunay: %{errors}'
+  date:
+    abbr_day_names:
+    - Lin
+    - Lun
+    - Mar
+    - Miy
+    - Huw
+    - Biy
+    - Sab
+    abbr_month_names:
+    -
+    - Ene
+    - Peb
+    - Mar
+    - Abr
+    - May
+    - Hun
+    - Hul
+    - Ago
+    - Set
+    - Okt
+    - Nob
+    - Dis
+    day_names:
+    - Linggo
+    - Lunes
+    - Martes
+    - Miyerkules
+    - Huwebes
+    - Biyernes
+    - Sabado
+    formats:
+      default: "%d/%m/%Y"
+      long: ika-%d ng %B, %Y
+      short: ika-%d ng %b
+    month_names:
+    -
+    - Enero
+    - Pebrero
+    - Marso
+    - Abril
+    - Mayo
+    - Hunyo
+    - Hulyo
+    - Agosto
+    - Setyembre
+    - Oktubre
+    - Nobyembre
+    - Disyembre
+    order:
+    - :year
+    - :month
+    - :day
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: humigit-kumulang isang oras
+        other: humigit-kumulang %{count} oras
+      about_x_months:
+        one: humigit-kumulang isang buwan
+        other: humigit-kumulang %{count} buwan
+      about_x_years:
+        one: humigit-kumulang isang taon
+        other: humigit-kumulang %{count} taon
+      almost_x_years:
+        one: halos isang taon
+        other: halos %{count} taon
+      half_a_minute: kalahating minuto
+      less_than_x_seconds:
+        one: mas mababa sa isang segundo
+        other: mas mababa sa %{count} segundo
+      less_than_x_minutes:
+        one: mas mababa sa isang minuto
+        other: mas mababa sa %{count} minuto
+      over_x_years:
+        one: higit sa isang taon
+        other: higit %{count} taon
+      x_seconds:
+        one: isang segundo
+        other: "%{count} segundo"
+      x_minutes:
+        one: isang minuto
+        other: "%{count} minuto"
+      x_days:
+        one: isang araw
+        other: "%{count} araw"
+      x_months:
+        one: isang buwan
+        other: "%{count} buwan"
+    prompts:
+      second: segundo
+      minute: minuto
+      hour: oras
+      day: araw
+      month: buwan
+      year: taon
+  errors:
+    format: "%{attribute} ay %{message}"
+    messages:
+      accepted: dapat na tanggapin
+      blank: hindi maaaring walang laman
+      confirmation: hindi tumutugma ang pagpapatunay
+      empty: hindi maaaring walang laman
+      equal_to: dapat na katumba sa %{count}
+      even: dapat maging even
+      exclusion: nakalaan na
+      greater_than: dapat na mas higit sa %{count}
+      greater_than_or_equal_to: dapat na mas higit sa o katumbas ng %{count}
+      inclusion: hindi kasama sa listahan
+      invalid: hindi wasto
+      less_than: dapat na mas mababa sa %{count}
+      less_than_or_equal_to: dapat na mas mababa sa o katumbas ng %{count}
+      not_a_number: hindi isang numero
+      not_an_integer: dapat na isang integer
+      odd: dapat maging odd
+      taken: ginagamit na
+      too_long:
+        one: masyadong mahaba (pinakamadami ay %{count} character)
+        other: masyadong mahaba (pinakamadami ay %{count} character)
+      too_short:
+        one: masyadong maikli (pinakakonti ay %{count} character)
+        other: masyadong maikli (pinakakonti ay %{count} character)
+      wrong_length:
+        one: ang maling haba (ito ay dapat eksaktong %{count} character)
+        other: ang maling haba (ito ay dapat eksaktong %{count} character)
+    template:
+      body: 'May mga problema sa mga sumusunod na patlang:'
+      header:
+        one: hindi maaaring i-save ang %{model} na ito dahil sa isang error
+        other: hindi maaaring i-save ang %{model} na ito dahil sa %{count} error
+  helpers:
+    select:
+      prompt: Mangyaring pumili
+    submit:
+      create: lumikha ng %{model}
+      submit: isumite ang %{model}
+      update: i-update ang %{model}
+  number:
+    currency:
+      format:
+        delimiter: ","
+        format: "%n %u"
+        precision: 2
+        separator: "."
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "₱"
+    format:
+      delimiter: ","
+      precision: 3
+      separator: "."
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: bilyon
+          million: milyon
+          quadrillion: kuwadrilyon
+          thousand: libo
+          trillion: trilyon
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 1
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: Byte
+            other: Bytes
+          gb: GB
+          kb: KB
+          mb: MB
+          tb: TB
+    percentage:
+      format:
+        delimiter: ''
+    precision:
+      format:
+        delimiter: ''
+  support:
+    array:
+      last_word_connector: ", at"
+      two_words_connector: " at "
+      words_connector: ","
+  time:
+    am: AM
+    formats:
+      default: "%A, ika-%d ng %B ng %Y %H:%M:%S %z"
+      long: ika-%d ng %B ng %Y %H:%M
+      short: "%d ng %b %H:%M"
+    pm: PM

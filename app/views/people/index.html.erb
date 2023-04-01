@@ -1,0 +1,22 @@
+<!--SEARCHBROWSE Descriptive page name, messages and instructions-->
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <%= ts("Participants in %{collection}", :collection => @collection.title) %>
+</h2>
+<!--/descriptions-->
+
+<% if @people.empty? %>
+  <p><%= ts("No matching people found.") %></p>
+<% else %>
+  <%= will_paginate(@people) %>
+  <!--main content-->
+  <h3 class="landmark heading">Listing People</h3>
+  <ul class="pseud index group">
+    <% for person in @people %>
+      <% unless person.nil? %>
+        <%= render 'people/author_blurb', :author => person %>
+      <% end %>
+    <% end %>
+  </ul>
+  <%= will_paginate(@people) %>
+<% end %>

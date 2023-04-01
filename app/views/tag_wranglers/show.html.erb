@@ -1,0 +1,65 @@
+<div id="user-page" class="tag wrangler home profile">
+  <div class="primary header module">
+    <!--Descriptive page name, messages and instructions-->
+    <h2 class="heading"><%= ts("%{wrangler_login}'s Wrangling Page", :wrangler_login => @wrangler.login) %></h2>
+    <p class="icon"><%= icon_display(@wrangler) %></p>
+    <!--/descriptions-->
+  </div>
+  <!--subnav-->
+  <!--/subnav-->
+
+  <!--main content-->
+  <!--TEST NOTE: these tds are titled to expose headings to Chromevox, which doesn't read scope
+    feedback needed from real use (is it annoying having the announcement on every cell, and is it doubling up, basically?)-->
+  <div class="assigned module">
+    <h3 class="heading"><%= ts('Assigned Fandoms') %></h3>
+    <% if @fandoms.empty? %>
+      <p><%= ts("Your lack of fandoms makes the wrangulator sad. Fandoms can be assigned via the") %> <%= link_to ts('tag wranglers page'), tag_wranglers_path %>.</p>
+    <% else %>
+      <p><%= ts('Fandoms assigned to you via the ') %> <%= link_to ts('tag wranglers page'), tag_wranglers_path %>. <%= ts('The unwrangled count is the number of unwrangled tags which were used on works in the given fandom.') %></p>
+    <% end %>
+    <% if (@wrangler == @current_user || logged_in_as_admin?) && @wrangler.last_wrangling_activity %>
+      <% wrangled_time_html = tag.span(time_in_zone(@wrangler.last_wrangling_activity.updated_at), class: "datetime") %>
+      <p><%= t(".last_wrangled_html", wrangler_login: @wrangler.login, time: wrangled_time_html) %></p>
+    <% end %>
+    <% if @fandoms.any? %>
+      <table summary="<%= ts('Overview of your assigned fandoms and how many unfilterable and unwrangled tags belong to each assigned fandom.') %>">
+        <caption><%= ts('Unfilterable and Unwrangled Tag Counts for Your Assigned Fandoms') %></caption>
+        <thead>
+          <tr>
+            <th rowspan="2" scope="col"><%= ts('Fandom') %></th>
+            <th colspan="3" scope="col"><%= ts('Unfilterable') %></th>
+            <th colspan="3" scope="col"><%= ts('Unwrangled') %></th>
+          </tr>
+          <tr>
+            <th scope="col"><%= ts('Characters') %></th>
+            <th scope="col"><%= ts('Relationships') %></th>
+            <th scope="col"><%= ts('Freeforms') %></th>
+            <th scope="col"><%= ts('Characters') %></th>
+            <th scope="col"><%= ts('Relationships') %></th>
+            <th scope="col"><%= ts('Freeforms') %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @fandoms.each do |fandom| %>
+            <tr>
+              <th scope="row" title="<%= ts('fandom') %>"><%= link_to fandom.name, {:controller => :tags, :action => :wrangle, :id => fandom} %></th>
+              <td title="<%= ts('unfilterable characters') %>"><%= (tag_count = fandom.characters.unfilterable.size) > 0 ? link_to(tag_count, {:controller => :tags, :action => :wrangle, :id => fandom, :show => :characters, :status => :unfilterable}) : " " %></td>
+              <td title="<%= ts('unfilterable relationships') %>"><%= (tag_count = fandom.relationships.unfilterable.size) > 0 ? link_to(tag_count, {:controller => :tags, :action => :wrangle, :id => fandom, :show => :relationships, :status => :unfilterable}) : " " %></td>
+              <td title="<%= ts('unfilterable freeforms') %>"><%= (tag_count = fandom.freeforms.unfilterable.size) > 0 ? link_to(tag_count, {:controller => :tags, :action => :wrangle, :id => fandom, :show => :freeforms, :status => :unfilterable}) : " " %></td>
+              <td title="<%= ts('unwrangled characters') %>"><%= (tag_count = fandom.unwrangled_tag_count("Character")) > 0 ? link_to(tag_count, {:controller => :tags, :action => :wrangle, :id => fandom, :show => :characters, :status => :unwrangled}) : " " %></td>
+              <td title="<%= ts('unwrangled relationships') %>"><%= (tag_count = fandom.unwrangled_tag_count("Relationship")) > 0 ? link_to(tag_count, {:controller => :tags, :action => :wrangle, :id => fandom, :show => :relationships, :status => :unwrangled}) : " " %></td>
+              <td title="<%= ts('unwrangled freeforms') %>"><%= (tag_count = fandom.unwrangled_tag_count("Freeform")) > 0 ? link_to(tag_count, {:controller => :tags, :action => :wrangle, :id => fandom, :show => :freeforms, :status => :unwrangled}) : " " %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+  <div class="clear"><!--presentational--></div>
+
+  <!--/content-->
+
+  <!--subnav-->
+  <!--/subnav-->
+</div>

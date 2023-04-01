@@ -1,0 +1,17 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Delete Sign-up") %></h2>
+
+<!--main content-->
+<%= form_for(@challenge_signup, :url => collection_signup_path(@collection, @challenge_signup), :html => {:method => :delete, :class => "simple destroy"}) do |f| %>
+  <p class="caution notice"><%= ts("Are you sure you want to <strong><em>delete</em></strong> the sign-up for %{person}?", :person => @challenge_signup.pseud.byline).html_safe %>
+  <% if  @collection.potential_matches.count == 0 %>
+    <%= ts("All prompts in this sign-up will be lost.") %>
+  <% else %>
+   <%= ts("Potential matches will need to be regenerated afterwards.") %>
+  <% end %>
+  </p>
+  <p class="actions">
+    <%= f.submit ts("Yes, Delete Sign-up") %>
+  </p>
+<% end %>
+<!--/content-->

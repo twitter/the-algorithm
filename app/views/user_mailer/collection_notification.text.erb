@@ -1,0 +1,8 @@
+<% content_for :message do %>
+<%= t(".text.received_message", collection_title: @collection.title, collection_url: collection_url(@collection)) %>
+<%= text_divider %>
+
+<%= raw @message %>
+
+<% end %>
+<% content_for :sent_at do %><%= l(Time.now) %><% end %>

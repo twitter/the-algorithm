@@ -1,0 +1,77 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Manage Chapters') %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<div id="manage-chapters">
+
+  <p id="drag" class="showme"><%= ts("Drag chapters to change their order.") %><p>
+  <noscript><p><%= ts("Enter new chapter numbers.") %><p></noscript>
+
+  <%= form_tag url_for(action: 'update_positions') do %>
+
+  <ul id="sortable_chapter_list" class="sortable">
+    <% for chapter in @chapters %>
+      <li id="chapter_<%= chapter.id %>" class="chapter-position-list">
+
+        <%= text_field_tag 'chapters[]', nil,
+                                        size: 3,
+                                        maxlength: 3,
+                                        class: "number chapter-position-field",
+                                        id: "chapters_" + chapter.position.to_s %>
+        <span id="position-for-<%= chapter.id %>"><%= chapter.position %></span>.
+        <%= chapter.chapter_title.html_safe %>
+        <% if !chapter.posted %>(Draft)<% end %>
+
+        <ul class="chapter-control actions">
+          <li><%= link_to ts("Edit"), [:edit, @work, chapter] %></li>
+          <% if @work.chapters.count > 1 %>
+            <li>
+              <%= link_to ts("Delete"), [@work, chapter],
+                                        data: { confirm: ts("Are you sure?") },
+                                        method: :delete %>
+            </li>
+            <% if @work.pseuds.size > 1 && chapter.pseuds.size > 1 && current_user.is_author_of?(chapter) %>
+              <li>
+                <%= link_to ts("Remove Me As Chapter Co-Creator"),
+                            {action: "edit", id: chapter.id, remove: "me"},
+                            data: { confirm: ts("Are you sure you want to remove yourself as a co-creator of this chapter?") } %>
+              </li>
+            <% end %> 
+          <% end %>
+        </ul>
+
+      </li>
+    <% end %>
+  </ul>
+
+  <p class="submit actions">
+    <%= submit_tag ts("Update Positions") %>
+    <%= link_to ts("Back"), url_for(@work) %>
+  </p>
+
+  <% end %>
+</div>
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+     $j("#sortable_chapter_list").sortable({
+            delay: 300,
+            update: function(event, ui) {
+                $j(".chapter-position-list").each(function(index, li){
+                    var chapterId = $j(li).attr("id").replace("chapter_","");
+                    $j("#position-for-"+chapterId).html(index+1);
+                  });
+                $j.ajax({
+                  type: 'post',
+                  data: $j("#sortable_chapter_list").sortable("serialize") + "&work_id=<%= @work.id %>",
+                  dataType: 'script',
+                  url: "<%= url_for(:action => :update_positions) %>"})
+              }
+      })
+  <% end %>
+<% end %>
+<!--/content-->

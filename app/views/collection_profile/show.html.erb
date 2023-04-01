@@ -1,0 +1,112 @@
+<div class="collection home profile">
+  <%= render 'collections/header', :collection => @collection %>
+
+  <h3 class="heading">
+    <%= ts('About') %>
+    <span class="title"><%= @collection.title %></span>
+    <% if @collection.title != @collection.name %>
+      <span class="name">
+        (<%= @collection.name %>)
+      </span>
+    <% end %>
+  </h3>
+  <div class="wrapper">
+    <dl class="meta group">
+      <dt><%= ts('Active since:') %>
+      <dd class="datetime"><%= l(@collection.created_at.to_date) %>
+      <dt><%= ts('Maintainers:') %></dt>
+      <dd>
+        <ul class="mods commas">
+          <%= (@collection.all_owners + @collection.all_moderators).map {|owner| content_tag(:li, link_to(owner.byline, owner.user))}.join("\n").html_safe %>
+        </ul>
+      </dd>
+      <% unless @collection.email.blank? %>
+        <dt><%= ts('Contact:') %></dt>
+        <dd><%= @collection.email %></dd>
+      <% end %>
+      <% if @collection.challenge.present? %>
+        <% tag_sets_counted = tag_set_count(@collection) %>
+        <% if tag_sets_counted.present? %>
+          <dt><%= tag_sets_counted > 1 ?  ts('Tag Sets:') : ts('Tag Set:') %></dt>
+          <dd>
+            <ul class="commas">
+            <%= (@collection.challenge_type == "GiftExchange" ? @collection.challenge.offer_restriction.owned_tag_sets : @collection.challenge.request_restriction.owned_tag_sets).map {|tag_set| content_tag(:li, link_to(tag_set.title, tag_set_path(tag_set)))}.join("\n").html_safe %>
+            </ul>
+          </dd>
+        <% end %>
+      <% end %>
+      <% if @collection.challenge %>
+      <!-- challenge information -->
+        <%= render "challenge/#{challenge_class_name(@collection)}/challenge_meta" %>
+      <!-- end challenge subsection -->
+      <% end %>
+    </dl>
+  </div>
+
+
+  <% cache("collection-profile-#{@collection.id}", skip_digest: true) do %>
+
+  <!--main content-->
+
+    <% if show_collection_preface(@collection) %>
+      <div class="preface group">
+        <% if show_collection_section(@collection, "intro") %>
+        <div id="intro" class="module">
+          <%= render 'navigation', :section => 'intro' %>
+          <h3 class="heading"><%= ts('Intro:') %></h3>
+          <blockquote class="userstuff">
+            <%=raw sanitize_field(@collection.collection_profile.intro.blank? ? @collection.parent.collection_profile : @collection.collection_profile, :intro) %>
+          </blockquote>
+        </div>
+        <% end %>
+
+        <% if show_collection_section(@collection, "faq") %>
+        <div id="faq" class="module">
+          <%= render 'navigation', :section => 'faq' %>
+          <h3 class="heading"><%= ts('FAQ:') %></h3>
+          <blockquote class="userstuff">
+            <%=raw sanitize_field(@collection.collection_profile.faq.blank? ? @collection.parent.collection_profile : @collection.collection_profile, :faq) %>
+          </blockquote>
+        </div>
+        <% end %>
+
+        <% if show_collection_section(@collection, "rules") %>
+          <div id="rules" class="module">
+            <%= render 'navigation', :section => 'rules' %>
+            <h3 class="heading"><%= ts('Rules:') %></h3>
+            <blockquote class="userstuff">
+              <%=raw sanitize_field(@collection.collection_profile.rules.blank? ? @collection.parent.collection_profile : @collection.collection_profile, :rules) %>
+            </blockquote>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+  <% end %><!-- end of cached profile -->
+
+  <!--subnav-->
+  <% if @collection.user_is_owner?(current_user) || @collection.user_is_maintainer?(current_user) %>
+    <h3 class="landmark heading"><%= ts('Actions') %></h3>
+    <ul class="navigation actions">
+
+      <% if @collection.challenge # add maintainer-specific custom navigation for the challenge %>
+        <%= render :partial => "challenge/#{challenge_class_name(@collection)}/challenge_navigation_maintainer" %>
+      <% end %>
+
+      <% if @collection.user_is_owner?(current_user) %>
+        <li><%= link_to ts('Collection Settings'), edit_collection_path(@collection) %></li>
+
+        <% if @collection.challenge %>
+          <li><%= render "challenge/shared/challenge_form_delete" %></li>
+        <% end %>
+          
+        <li><%= link_to ts('Delete Collection'),
+                      confirm_delete_collection_path(@collection),
+                      data: {confirm: ts('Are you sure you want to delete this collection? All collection settings will be lost. (Works will not be deleted.)')} %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <!--/subnav-->
+
+</div>

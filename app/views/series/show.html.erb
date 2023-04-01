@@ -1,0 +1,93 @@
+<!--Descriptive page name, messages and instructions-->
+<% if @series.user_has_creator_invite?(current_user) %>
+  <p class="notice">
+    <%= ts("You've been invited to become a co-creator of this series. To accept or reject the request, visit your %{creator_requests_page}.",
+           creator_requests_page: link_to(ts("Co-Creator Requests page"), user_creatorships_path(current_user))).html_safe %>
+  </p>
+<% end %>
+<h2 class="heading">
+	<%= @series.title %>
+	<% if @series.restricted %>
+		<%= image_tag("lockblue.png", size: "15x15", alt: "(Restricted)", title: "Restricted", skip_pipeline: true) %>
+	<% end %>
+  <% if @series.hidden_by_admin %>
+    <%= image_tag("lockred.png", size: "15x15", alt: ts("(Hidden by Admin)"),
+                  title: ts("Hidden by Administrator"),
+                  skip_pipeline: true) %>
+  <% end %>
+</h2>
+<!--/descriptions-->
+
+<% if policy(@series).show_admin_options? %>
+  <div><%= render "admin/admin_options", item: @series %></div>
+<% end %>
+
+<!--subnav-->
+<% if logged_in? %>
+  <%= render "series/series_navigation" %>
+<% end %>
+<!--/subnav-->
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("Series Metadata") %></h3>
+<div class="wrapper">
+  <dl class="series meta group">
+
+    <% if @series.pseuds.many?%>
+      <dt><%= ts("Creators:") %></dt>
+      <dd><%= byline(@series) %></dd>
+    <% else %>
+      <dt><%= ts("Creator:") %></dt>
+      <dd><%= byline(@series) %></dd>
+    <% end %>
+
+    <dt><%= ts("Series Begun:") %></dt>
+    <dd><%= @series.published_at.to_date %></dd>
+    <dt><%= ts("Series Updated:") %></dt>
+    <dd><%= @series.revised_at ? @series.revised_at.to_date : @series.published_at %></dd>
+
+    <% unless @series.summary.blank? %>
+      <dt><%= ts("Description:") %></dt>
+      <dd><blockquote class="userstuff"><%=raw sanitize_field(@series, :summary) %></blockquote></dd>
+    <% end %>
+    <% unless @series.series_notes.blank? %>
+      <dt><%= ts("Notes:") %></dt>
+      <dd><blockquote class="userstuff"><%=raw sanitize_field(@series, :series_notes) %></blockquote></dd>
+    <% end %>
+
+    <dt class="stats"><%= ts("Stats:") %></dt>
+    <dd class="stats">
+      <dl class="stats">
+        <dt><%= ts("Words:") %></dt>
+        <dd><%= number_with_delimiter(@series.visible_word_count) %></dd>
+        <dt><%= ts("Works:") %></dt>
+        <dd><%= number_with_delimiter(@series.visible_work_count) %></dd>
+        <dt><%= ts("Complete:") %></dt>
+        <dd><%= @series.complete? ? ts("Yes") : ts("No") %></dd>
+        <% if (bookmark_count = @series.bookmarks.is_public.count) > 0 %>
+          <dt><%= ts("Bookmarks:") %></dt>
+          <dd><%= link_to_bookmarkable_bookmarks(@series, number_with_delimiter(bookmark_count)) %></dd>
+        <% end %>
+      </dl>
+    </dd>
+
+  </dl>
+</div>
+<% if logged_in? %>
+  <div id="bookmark_form_placement" class="wrapper toggled">
+    <% if @bookmark %>
+      <%= render "bookmarks/bookmark_form", bookmarkable: @series, bookmark: @bookmark, button_name: ts("Update"), action: :update, in_page: true %>
+    <% else %>
+      <%= render "bookmarks/bookmark_form", bookmarkable: @series, bookmark: Bookmark.new, button_name: ts("Create"), action: :create, in_page: true %>
+    <% end %>
+  </div>
+<% end %>
+
+<h3 class="landmark heading"><%= ts("Listing Series") %></h3>
+<ul class="series work index group">
+  <%= render partial: "works/work_blurb", collection: @works, as: :work %>
+</ul>
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->

@@ -1,0 +1,123 @@
+/* MEDIA: only screen and (max-width: 62em), handheld ENDMEDIA */
+
+/* 04 region dashboard */
+
+#dashboard {
+  clear: both;
+  float: none;
+  margin: 1% 3.5%;
+  max-width: 100%;
+  padding: 0;
+  width: auto;
+}
+
+#dashboard, #dashboard.own {
+  border-bottom: 10px solid #900;
+  border-top: 10px solid #900;
+  padding: 0.5em 0;
+    border-radius: 0.25em;
+}
+
+#dashboard ul {
+  border: none;
+  display: inline;
+  padding: 0;
+  text-align: left;
+}
+
+#dashboard li {
+  display: inline;
+}
+
+#dashboard a, #dashboard span {
+  display: inline-block;
+  margin: 0.25em 0;
+}
+
+#dashboard .secondary {
+  background: #eee;
+  padding: 0.375em 0 0.625em;
+    box-shadow: inset 2px 2px 5px #bbb;
+}
+
+#dashboard .secondary a {
+  margin: 0.125em 0;
+}
+
+#dashboard .landmark {
+  clear: none;
+  float: left;
+}
+
+/* 05 region main */
+
+#main, #main.dashboard {
+  float: none;
+  margin: auto;
+  padding-left: 3.5%;
+  padding-right: 3.5%;
+  width: auto;
+}
+
+/* 07 interactions */
+
+form.single input[type="text"] {
+  width: 100%;
+    box-sizing: border-box;
+}
+
+form.single input[type="submit"] {
+  margin-top: 0.375em;
+}
+
+form.single span.submit {
+  display: block;
+  text-align: right;
+}
+
+form.single ul.autocomplete {
+  display: block;
+}
+
+form.single .autocomplete li.input {
+  margin-right: 0;
+}
+
+/* 16 zone system */
+
+.logged-in .splash > .module {
+  width: 48.5%
+}
+
+.logged-in .splash > div:nth-of-type(odd) {
+  margin-left: 0;
+  margin-right: 1.5%;
+}
+
+.logged-in .splash > div:nth-of-type(even) {
+  margin-left: 1.5%;
+  margin-right: 0;
+}
+
+/* 18 zone searchbrowse */
+
+form.filters {
+  width: auto;
+  min-width: 23%;
+  max-width: 24%;
+}
+
+.filters fieldset {
+  margin-right: 0;
+}
+
+form.filters dl {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+/* 21 userstuff */
+
+#workskin {
+  margin: auto 1.5%;
+}

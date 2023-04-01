@@ -1,0 +1,30 @@
+<% content_for :message do %>
+  <%= t("mailer.general.greeting.introductory") %>
+
+  You're receiving this e-mail because you had works in a fanworks archive that has been imported by Open Doors (http://opendoors.transformativeworks.org) into the Archive of Our Own (AO3 - <%= root_url %>). Because this e-mail address is connected to one registered on the imported archive, the associated fanworks (listed below) have been automatically added to your AO3 account.
+
+  You can read announcements about recent archive moves at AO3 News (<%= root_url %>admin_posts?tag=18), and find additional information on Open Doors's FAQ page (http://opendoors.transformativeworks.org/faq) or tutorials page (http://opendoors.transformativeworks.org/tutorials). For any questions not answered in the FAQ, tutorials, or this e-mail, please contact AO3 Support at <%= root_url %>support.
+
+  If this is a mistake and these are not your works, please don't delete them! Please contact Open Doors (https://opendoors.transformativeworks.org/en/contact-open-doors/) and we will sort it out.
+
+  Depending on the archive, your works may have been imported restricted to registered users only (to keep them out of Google searches). If this is the case, the works will only be accessible by logged-in users unless you choose to make them fully visible. For help unlocking, orphaning, or deleting your works, please contact Support.
+
+  These works were written under the e-mail: <%= @external_email %>
+  <% @claimed_works.each do |work| %>
+    - <%= work.title.html_safe %>  <%= work_url(work) %> <%= (work.fandom_string.blank? ? "" : " (#{work.fandom_string})") %>
+  <% end %>
+
+  To preserve rec lists and bookmarks, the imported archive's web addresses may redirect to the imported copy of these works for a limited time (check the announcement post for your archive to be sure). If you've already uploaded a copy of these works and you did NOT use the import from URL feature, there will be two copies of the same work on the archive.
+
+  If you would like Open Doors to update the redirect to point to your pre-existing work, please delete the imported copy, and contact Open Doors at https://opendoors.transformativeworks.org/en/contact-open-doors/ with your AO3 account name, your account name on the imported archive, and the title and URL of the fanwork you would like the redirect to point to. (If you have multiple works you would like to change the redirects for, you can list these in one email.)
+
+  If you had other works on the imported archive under an e-mail address you can no longer access, please contact Open Doors with any information that can help verify your identity.
+
+  For other inquiries, please contact Support at <%= root_url %>support.
+
+  If you're contacting us, please add email addresses from @transformativeworks.org to your list of safe contacts and check your spam folders for our reply.
+
+  <%= t("mailer.general.closing.informal") %>
+  <%= t("mailer.general.signature.open_doors") %>
+  <%= t("mailer.general.signature.parent_org") %>
+<% end %>

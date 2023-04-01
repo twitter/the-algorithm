@@ -1,0 +1,12 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Add To Collection") %></h2>
+
+<%= error_messages_for :collection_item %>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--content-->
+<%= render 'collection_item_form', :item => @item %>
+<!--/content-->

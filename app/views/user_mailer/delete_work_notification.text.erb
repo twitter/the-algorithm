@@ -1,0 +1,15 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+<%= (@work.pseuds.count > 1 && @user != User.current_user) ?
+t('.text.part1_other',
+        title: @work.title,
+        pseud: text_pseud(User.current_user.default_pseud)) :
+t('.text.part1_yourself',
+        title: @work.title) %>
+
+<%= t('.text.part2', support: t('.support'), url: new_feedback_report_url) %>
+
+<%= t('.part3') %>
+<% end %>
+

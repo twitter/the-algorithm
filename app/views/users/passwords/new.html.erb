@@ -1,0 +1,18 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Forgotten your password?") %></h2>
+<p>
+  <%= ts("If you've forgotten your password, we can send instructions that will allow you to reset it.") %>
+  <%= ts("Please tell us the user name or email address you used when you signed up for your Archive account.") %>
+</p>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for resource, url: user_password_path, html: { method: :post, html: "reset password simple post" } do |f| %>
+  <%= error_messages_for resource %>
+  <p>
+    <%= label_tag :reset_login, ts("Email address <strong>or</strong> user name".html_safe) %>
+    <%= f.text_field :login, id: :reset_login %>
+    <%= f.submit ts("Reset Password") %>
+  </p>
+<% end %>
+<!--/content-->

@@ -1,0 +1,27 @@
+<%= form_for @search, as: :people_search, url: search_people_path, html: { class: "search", method: :get } do |f| %>
+  <fieldset>
+    <legend><%= ts("Search people") %></legend>
+    <dl>
+      <dt>
+        <%= f.label :query, ts("Search all fields") %>
+        <%= link_to_help "people-search-all-fields" %>
+      </dt>
+      <dd>
+        <%= f.text_field :query %>
+      </dd>
+      <dt>
+        <%= f.label :name, ts("Name") %>
+      </dt>
+      <dd>
+        <%= f.text_field :name, autocomplete_options("pseud") %>
+      </dd>
+      <dt>
+        <%= f.label :fandom, ts("Fandom") %>
+      </dt>
+      <dd>
+        <%= f.text_field :fandom, autocomplete_options("fandom") %>
+      </dd>
+    </dl>
+    <p class="submit actions"><%= f.submit ts("Search People") %></p>
+  </fieldset>
+<% end %>

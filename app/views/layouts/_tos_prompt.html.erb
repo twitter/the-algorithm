@@ -1,0 +1,80 @@
+<div id="tos_prompt" class="hidden">
+  <h2 class="heading">
+    <span><%= ts("%{site}", site: ArchiveConfig.APP_NAME) %></span>
+  </h2>
+  <div class="agreement">
+    <p class="summary">
+      <%= ts("On %{site} (%{short_name}), users can make profiles, create works and
+            other Content, post comments, give Kudos, create Collections and 
+            Bookmarks, participate in Challenges, import works, and more. Any 
+            information you publish in a comment, profile, work, or Content that you 
+            post or import onto %{short_name} including in summaries, notes and tags, 
+            will be accessible by the public (unless you limit access to a work only 
+            to those with %{short_name} Accounts), and it will be available to 
+            %{short_name} personnel. Be mindful when sharing personal information, 
+            including  your religious or political views, health, racial background, 
+            country of origin, sexual identity and/or personal relationships. To 
+            learn more, check out our %{tos} and %{privacy}.",
+            site: ArchiveConfig.APP_NAME, 
+            short_name: ArchiveConfig.APP_SHORT_NAME, 
+            tos: link_to(ts("Terms of Service"), tos_path),
+            privacy: link_to(ts("Privacy Policy"), tos_path(anchor: "privacy"))
+          ).html_safe %>
+    </p>
+
+    <p class="confirmation">
+      <input type="checkbox" id="tos_agree" />
+      <label for="tos_agree"><%= ts("I have read & understood the new Terms of Service and Privacy Policy") %></label>
+    </p>
+
+    <% if current_user.nil? %>
+      <p class="submit">
+        <%= button_tag ts("I agree/consent to its terms"),
+              disabled: true,
+              type: "button",
+              id: "accept_tos" %>
+      </p>
+    <% else %>
+      <%= form_tag end_tos_prompt_user_path(current_user),
+            method: :post,
+            remote: true do %>
+        <p class="submit">
+          <%= submit_tag ts("I agree/consent to its terms"),
+                disabled: true,
+                id: "accept_tos" %>
+        </p>
+      <% end %>
+    <% end %>
+
+  </div>
+</div>
+
+<% # content_for footer renders this when we don't want it %>
+<%= javascript_tag do %>
+  $j(document).ready(function() {
+    var container = $j("#tos_prompt");
+    var outer = $j("#outer");
+    var button = $j("#accept_tos");
+
+    setTimeout(showTOSPrompt, 1500);
+
+    function showTOSPrompt() {
+      $j.when(container.fadeIn(500)).done(function() {
+        outer.addClass("hidden").attr("aria-hidden", "true");
+      });
+
+      $j("#tos_agree").on("click", function() {
+        button.attr("disabled", !this.checked);
+        if (this.checked) {
+          button.on("click", function() {
+            acceptTOS();
+            outer.removeClass("hidden").removeAttr("aria-hidden");
+            $j.when(container.fadeOut(500)).done(function() {
+              container.remove();
+            });
+          });
+        };
+      }).change();
+    };
+  });
+<% end %>

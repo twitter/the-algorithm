@@ -1,0 +1,26 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+<%= t(".changed_status.#{@status}.text",
+      collection_title: @collection.title,
+      collection_url: collection_url(@collection),
+      work_title: @work.title,
+      work_url: work_url(@work)) %>
+
+<% if @becoming_anonymous && @becoming_unrevealed %>
+<%= t(".unrevealed_info") %>
+
+<%= t(".anonymous_unrevealed_info") %>
+<% elsif @becoming_anonymous %>
+<%= t(".anonymous_info") %>
+<% else %>
+<%= t(".unrevealed_info") %>
+<% end %>
+
+<%= t(".do_not_want.#{@status}.text",
+      collection_items_url: user_collection_items_url(@user, approved: true)) %>
+
+<%= t(".more_info.text",
+      faq_url: archive_faq_url("collections",
+                               anchor: :collectionoptions)) %>
+<% end %>

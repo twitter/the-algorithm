@@ -1,0 +1,72 @@
+<%= form_for @search, as: :tag_search, url: search_tags_path, html: { class: "search", method: :get } do |f| %>
+  <fieldset>
+    <dl>
+      <dt>
+        <%= f.label :name, ts("Tag name") %>
+        <%= link_to_help "tag-search-text-help" %>
+      </dt>
+      <dd>
+        <%= f.text_field :name %>
+      </dd>
+      <dt>
+        <%= f.label :fandoms, ts("Fandoms") %>
+      </dt>
+      <dd>
+        <%= f.text_field :fandoms, autocomplete_options("fandom", "aria-describedby" => "fandom-field-description") %>
+        <p class="footnote" id="fandom-field-description">
+          <%= ts("Find tags wrangled to specific canonical fandoms.") %>
+        </p>
+      </dd>
+      <dt><%= ts("Type") %></dt>
+      <dd>
+        <fieldset>
+          <ul>
+            <% types = Tag::USER_DEFINED %>
+            <% types.each do |type| %>
+              <li>
+                <%= f.radio_button :type, type %>
+                <%= f.label :type, ts("%{type}", type: type), value: type %>
+              </li>
+            <% end %>
+            <li>
+              <%= f.radio_button :type, "" %>
+              <%= f.label :type, ts("Any type"), value: "" %>
+            </li>
+          </ul>
+        </fieldset>
+      </dd>
+      <dt><%= ts("Wrangling status") %></dt>
+      <dd>
+        <fieldset>
+          <ul>
+            <li>
+              <%= f.radio_button :canonical, "T" %>
+              <%= f.label :canonical, ts("Canonical"), value: "T" %>
+            </li>
+            <li>
+              <%= f.radio_button :canonical, "F" %>
+              <%= f.label :canonical, ts("Non-canonical"), value: "F" %>
+            </li>
+            <li>
+              <%= f.radio_button :canonical, "" %>
+              <%= f.label :canonical, ts("Any status"), value: "" %>
+            </li>
+          </ul>
+        </fieldset>
+      <dt>
+        <%= f.label :sort_column, ts("Sort by") %>
+      </dt>
+      <dd>
+        <%= f.select :sort_column, options_for_select(@search.sort_options, @search.sort_column) %>
+      </dd>
+      <dt>
+        <%= f.label :sort_direction, ts("Sort direction") %>
+      </dt>
+      <dd>
+        <%= f.select :sort_direction,
+          options_for_select([["Ascending", "asc"], ["Descending", "desc"]], @search.sort_direction) %>
+      </dd>
+    </dl>
+    <p class="submit actions"><%= f.submit ts("Search Tags") %></p>
+  </fieldset>
+<% end %>

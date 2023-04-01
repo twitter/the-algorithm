@@ -1,0 +1,15 @@
+<% content_for :message do %>
+  <p><%= t 'user_mailer.abuse_report.para1' %></p>
+  
+  <p>
+    <%= style_bold(t 'user_mailer.abuse_report.url_para') %> <%= style_link(@url, @url) %>
+  </p>
+  
+  <%= style_bold(t 'user_mailer.abuse_report.description_para') %>
+  <%= style_quote(@comment) %>
+
+<% end %>
+
+<% content_for :sent_at do %>
+  <%= l(Time.now) %>
+<% end %>

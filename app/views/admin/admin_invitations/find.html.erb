@@ -1,0 +1,32 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%h= 'Track invitations' %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= form_tag url_for(:controller => 'admin/admin_invitations', :action => 'find'), :method => :get do %>
+  <dl>
+    <dt><%= label_tag :user_name, t('.find_user_name', :default => 'Enter a user name:') %></dt>
+    <dd><%= text_field_tag "invitation[user_name]", params[:invitation][:user_name]  %></dd>
+    <dt><%= label_tag :token, t('.find_token', :default => 'Enter an invite token:') %></dt>
+    <dd><%= text_field_tag "invitation[token]", params[:invitation][:token]  %></dd>
+    <dt><%= label_tag :invitee_email, t('.find_email', :default => 'Enter all or part of an email address:') %></dt>
+    <dd><%= text_field_tag "invitation[invitee_email]", params[:invitation][:invitee_email], id: "invitee_email"  %></dd>
+  </dl>
+  <p class="submit actions"><%= submit_tag "Go" %></p>
+<% end %>
+
+<% if @user %>
+<h3 class="heading"><%h= 'Invitations for' %> <%= link_to @user.login, user_invitations_path(@user) %></h3>
+<%= render :partial => 'invitations/user_invitations', :locals => {:invitations => @invitations} %>
+<% elsif @invitation %>
+<%= render :partial => 'invitations/invitation', :locals => {:invitation => @invitation} %>
+<% elsif @invitations %>
+<%= render :partial => 'invitations/user_invitations', :locals => {:invitations => @invitations} %>
+<% end %>
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->

@@ -1,0 +1,14 @@
+<div class="user pseud home">
+  <%= render "users/header" %>
+  <%= render "users/contents" %>
+</div>
+
+<!--subnav-->
+<h3 class="landmark heading">Navigation</h3>
+<ul class="navigation actions" role="navigation">
+  <% if @user == current_user %>
+    <li><%= link_to t('.edit_link', :default => 'Edit Pseud'), [:edit, @user, @pseud] %></li>
+  <% end %>
+  <li><%= link_to t('.index_link', :default => 'Back To Pseuds'), user_pseuds_path(@user) %></li>
+</ul>
+<!--/subnav-->

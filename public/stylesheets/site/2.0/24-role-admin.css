@@ -1,0 +1,65 @@
+/* ROLE: admin
+This shows the archive when logged in as admin, and overrides with admin styles, showing extra secret admin options on normal views*/
+
+#main {
+  margin: auto 3.5em;
+}
+
+#footer {
+  background: #066;
+}
+
+#header .admin {
+  background: #066;
+  border-top: 1px solid #fff;
+    box-shadow: none;
+}
+
+#header .admin a:hover, #header .admin a:focus {
+  color: #111;
+}
+
+#admin-options a {
+  color: #900;
+}
+
+div.admin + h3.landmark {
+  clear: none;
+}
+
+.admin .management a {
+  border-bottom: 3px solid #066;
+}
+
+.admin .abuse.comment {
+  clear: both;
+}
+
+.admin .abuse.comment h4.byline {
+  padding-left: 0.25em;
+}
+
+.admin .abuse.comment .userstuff {
+  margin: 0.643em;
+}
+
+.comment .ip, .comment .email {
+  margin: 1.929em 0.643em 0.643em;
+  text-align: right;
+}
+
+/* TABLES AND LISTS */
+
+table, thead td {
+  background: #e0efe9;
+}
+
+#admin_users_table th a:visited {
+  color: #999;
+}
+
+#admin_users_table th a:hover {
+  color: #066;
+}
+
+/*END== */

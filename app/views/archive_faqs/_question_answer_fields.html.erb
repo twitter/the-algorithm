@@ -1,0 +1,67 @@
+<div class="removeme">
+  <% index ||= 0 %>
+  <fieldset>
+    <% if index.is_a? String %>
+      <% question_label = ts("Question #{index}") %>
+    <% else %>
+      <% question_label = ts("Question #{(index + 1)}") %>
+    <% end %>
+    <legend><%= question_label %></legend>
+    <h3 class="heading"><%= question_label %></h3>
+
+    <dl>
+      <dt class="required">
+        <%= form.label :question, ts("Question") + "*" %>
+      </dt>
+      <dd class="required">
+        <%= form.text_field :question %>
+        <%= live_validation_for_field(field_id(form, "question").to_sym, failureMessage: ts("Please enter a question.")) %>
+      </dd>
+
+      <dt class="required">
+        <%= form.label :anchor, ts("Anchor name") + "*" %>
+      </dt>
+      <dd class="required">
+        <%= form.text_field :anchor, disabled: (I18n.locale != I18n.default_locale) %>
+        <%= live_validation_for_field(field_id(form, "anchor").to_sym, failureMessage: ts("Please enter an anchor name.")) %>
+      </dd>
+
+      <dt class="required">
+        <%= form.label :content, ts("Answer") + "*" %>
+      </dt>
+      <dd class="required">
+        <%= form.text_area :content %>
+        <%= live_validation_for_field(field_id(form, "content").to_sym,
+        minimum_length: ArchiveConfig.CONTENT_MIN,
+        failureMessage: ts("Please enter an answer that is at least %{min} characters long.", min: ArchiveConfig.CONTENT_MIN.to_s)) %>
+      </dd>
+
+      <dt>
+        <%= form.label :screencast, ts("Screencast URL") %>
+      </dt>
+      <dd>
+        <%= form.text_field :screencast %>
+      </dd>
+      <% if Globalize.locale.to_s != "en" %>
+        <dt><%= form.check_box :is_translated %></dt>
+        <dd><%= form.label :is_translated, ts("Question translated") %></dd>
+      <% end %>
+    </dl>
+    <% if Globalize.locale.to_s == "en" %>
+      <% # TODO: DELETE A QUESTION %>
+      <p class="actions" role="button">
+        <% removetext = ts("Remove Question") %>
+        <%= link_to_remove_section(removetext, form) %>
+        <% # TODO: DELETE QUESTION WITHOUT JAVASCRIPT %>
+      <noscript>
+        <label for="<%= field_id(form, '_destroy').to_sym %>">
+          <%= form.check_box "_destroy" %>
+          <%= removetext %>
+        </label>
+      </noscript>
+      </p>
+    <% end %>
+
+  </fieldset>
+</div>
+<div class="last_id" style="display:none;"><%= index.is_a?(String) ? index : index+1 %></div>

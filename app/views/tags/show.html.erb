@@ -1,0 +1,139 @@
+<!--ZONES TAG HOME Descriptive page name, messages and instructions-->
+<div class="tag home profile">
+  <div class="primary header module">
+    <h2 class="heading"><%= @tag.name %></h2>
+    <div class="icon"></div>
+    <% if @tag.canonical || @tag.merger || can_wrangle? %>
+      <ul class="navigation actions" role="navigation">
+        <% if @tag.canonical || @tag.merger %>
+          <li><%= link_to ts('Works'), {:controller => :works, :action => :index, :tag_id => @tag} %></li>
+          <li><%= link_to ts('Bookmarks'), {:controller => :bookmarks, :action => :index, :tag_id => @tag} %></li>
+        <% end %>
+    	<% if can_wrangle? %>
+      	  <li><%= link_to ts('Edit'), {:controller => :tags, :action => :edit, :id => @tag} %> </li>
+      	  <li><%= tag_comment_link(@tag) %></li>
+          <li class="reindex"><%= link_to ts("Troubleshoot"), tag_troubleshooting_path(@tag) %> </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+
+  <%= error_messages_for :tag %>
+  <!--/descriptions-->
+
+  <!--main content-->
+  <p><%= ts("This tag belongs to the %{tag_class} Category.", :tag_class => @tag.class::NAME) %>
+  <% if @tag.canonical %>
+    <%= ts("It's a common tag. You can use it to ") %> 
+    <%= link_to ts('filter works'), {:controller => :works, :action => :index, :tag_id => @tag} %> <%= ts('and to') %> 
+    <%= link_to ts('filter bookmarks'), {:controller => :bookmarks, :action => :index, :tag_id => @tag} %>.
+  <% end %>
+  </p>
+  
+
+  <% if @tag.is_a?(Rating) && @tag.adult %>
+  <p class="warning"><%= ts('This tag indicates adult content.') %></p>
+  <% end %>
+
+  <% if @tag.is_a?(Fandom) %>
+  <div class="parent fandom listbox group">
+	  <h3 class="heading"><%= ts('Parent tags (more general)') %>:</h3>
+    <ul class="tags commas index group">
+	  <% (@tag.parents + [@tag.media]).uniq.compact.sort.each do |parent| %>
+      <li><%= link_to_tag parent %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% else %>
+    <% unless @tag.parents.blank? %>
+    <div class="parent listbox group">
+      <h3 class="heading"><%= ts('Parent tags (more general)') %>:</h3>
+      <ul class="tags commas index group"><%= tag_link_list(@tag.parents.sort) %></ul>
+    </div>
+    <% end %>
+  <% end %>
+
+  <% if @tag.merger %>
+  <div class="merger module">
+    <h3 class="heading"><%= ts("Mergers") %></h3>
+    <p><%= ts("%{tag_name} has been made a synonym of %{tag_synonym_link}. Works and bookmarks tagged with %{tag_name} will show up in %{tag_synonym}'s filter.", :tag_name => @tag.name, :tag_synonym_link => (link_to_tag @tag.merger), :tag_synonym => @tag.merger.name).html_safe %></p>
+  </div>
+  <% end %>
+
+  <% unless @tag_children['Merger'].blank? %>
+  <div class="synonym listbox group">
+    <h3 class="heading"><%= ts('Tags with the same meaning') %>:</h3>
+    <ul class="tags commas index group"><%= tag_link_list(@tag_children['Merger'].sort) %></ul>
+  </div>
+  <% end %>
+
+  <% unless @tag.direct_meta_tags.blank? %>
+  <div class="meta listbox group">
+    <h3 class="heading"><%= ts('Metatags') %>:</h3>
+    <% cache "tag-#{@tag.cache_key}-metatags-v2", expires_in: 24.hours, skip_digest: true do %>
+      <%= meta_tag_tree(@tag) %>
+    <% end %>
+  </div>
+  <% end %>
+
+  <% unless @tag.direct_sub_tags.blank? %>
+  <div class="sub listbox group">
+    <h3 class="heading"><%= ts('Subtags') %>:</h3>
+    <% cache "tag-#{@tag.cache_key}-subtags-v2", expires_in: 24.hours, skip_digest: true do %>
+      <%= sub_tag_tree(@tag) %>
+    <% end %>
+  </div>
+  <% end %>
+
+  <% unless (@tag_children.keys - ['Merger']).blank? %>
+    <!-- caching -->
+    <% cache("tag-#{@tag.cache_key}-children-v3", skip_digest: true) do %>
+      <div class="child listbox group">
+        <h3 class="heading"><%= ts('Child tags (displaying the first %{count} of each type)', :count => ArchiveConfig.TAG_LIST_LIMIT) %>:</h3>
+        <% %w(Character Relationship Freeform).each do |type| %>
+          <% if @tag_children[type].present? %>
+            <div class="<%= type.to_s.pluralize.downcase %> listbox group">
+              <h4 class="heading"><%= type.constantize::NAME.pluralize %>:</h4>
+              <ul class="tags commas index group">
+                <%= tag_link_list(@tag_children[type].sort) %>
+                <% if @tag_children[type].length > ArchiveConfig.TAG_LIST_LIMIT %>
+                  <li><%= ts("and more") %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @works %>
+    <p><%= ts("This tag has not been marked common and can't be filtered on (yet).") %></p>  
+    <% unless @works.blank? %>
+      <div class="work listbox group">
+      <h3 class="heading"><%= ts('Works which have used it as a tag') %>:</h3>
+      <%= paginated_section @works do %>
+          <ul class="index group">
+            <% for work in @works %>
+              <%= render :partial => 'works/work_blurb', :locals => {:work => work} %>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% unless @bookmarks.blank? %>
+    <div class="bookmark listbox group">
+    <h3 class="heading"><%= ts('Bookmarks which have used it as a tag') %>:</h3>
+    <%= paginated_section @bookmarks, {:previous_label => '&laquo; Previous', :next_label => 'Next &raquo;'} do %>
+        <ul class="index group">
+          <% for bookmark in @bookmarks %>
+            <%= render 'bookmarks/bookmark_blurb', :bookmark => bookmark %>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+    <% end %>
+  <% end %>
+</div>
+<!--/content-->

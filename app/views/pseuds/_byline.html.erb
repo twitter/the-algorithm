@@ -1,0 +1,90 @@
+<% # expects locals form, object %>
+<%
+  editor_pseuds = User.current_user.pseuds.to_a
+  editor_selected = (object.current_user_pseuds || object.pseuds) & editor_pseuds
+  editor_selected << User.current_user.default_pseud if editor_selected.empty?
+
+  valid_creatorships = object.creatorships_after_saving
+
+  selected = valid_creatorships.map(&:pseud)
+
+  invited = valid_creatorships.reject(&:approved?).map(&:pseud) - editor_pseuds
+  approved = valid_creatorships.select(&:approved?).map(&:pseud) - editor_pseuds
+  saved = valid_creatorships.reject(&:new_record?).map(&:pseud)
+
+  if object.is_a?(Chapter)
+    approved = (approved + object.work.pseuds - editor_pseuds).uniq
+  end
+%>
+<%= form.fields_for :author_attributes do |creator_form| %>
+  <% if editor_pseuds.size == 1 %>
+    <%= creator_form.hidden_field :ids, value: editor_pseuds.first.id, multiple: true %>
+  <% else %>
+    <dt class="byline">
+      <%= creator_form.label :ids, ts("Creator/Pseud(s)") %>
+    </dt>
+    <dd class="byline">
+      <%= creator_form.collection_select :ids, editor_pseuds, :id, :name, { selected: editor_selected.map(&:id) }, { multiple: true } %>
+    </dd>
+  <% end %>
+
+  <% if approved.any? %>
+    <dt class="byline">
+      <%= ts("Current co-creators") %>
+    </dt>
+    <dd class="byline">
+      <fieldset>
+        <ul>
+          <%= creator_form.collection_check_boxes :coauthors, approved, :id, :byline, { checked: selected.map(&:id), disabled: saved.map(&:id) } do |builder| %>
+            <li>
+              <%= builder.label do %>
+                <%= builder.check_box %>
+                <%= builder.text %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </fieldset>
+    </dd>
+  <% end %>
+
+  <% if invited.any? %>
+    <dt class="byline">
+      <%= ts("Invited co-creators") %>
+    </dt>
+    <dd class="byline">
+      <fieldset>
+        <ul>
+          <%= creator_form.collection_check_boxes :coauthors, invited, :id, :byline, { checked: selected.map(&:id), disabled: saved.map(&:id) } do |builder| %>
+            <li>
+              <%= builder.label do %>
+                <%= builder.check_box %>
+                <%= builder.text %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </fieldset>
+    </dd>
+  <% end %>
+
+  <dt class="byline coauthors">
+   <%= label_tag "co-authors-options-show", ts("Add co-creators?") %>
+  </dt>
+  <dd class="byline coauthors">
+    <%= check_box_tag "co-authors-options-show", "1", object.creatorships.any?(&:ambiguous?), class: "toggle_formfield" %>
+    <fieldset id="co-authors-options" title="<%= ts("Add co-creators") %>">
+      <%= creator_form.text_field :byline, autocomplete_options("pseud", size: 50).merge(id: "pseud_byline") %>
+      <% object.creatorships.each do |creatorship| %>
+        <% next unless creatorship.ambiguous? %>
+        <% name = creatorship.byline %>
+        <% pseuds = creatorship.ambiguous_pseuds %>
+        <% key = :"author_attributes_#{name.downcase.gsub(/\W+/, "")}" %>
+        <p class="error">
+          <%= label_tag key, ts("There's more than one user with the pseud %{name}. Please choose the one you want:", name: name) %>
+          <%= creator_form.collection_select :coauthors, pseuds, :id, :user_login, { include_blank: true }, { id: key, name: "#{creator_form.object_name}[coauthors][]" } %>
+        </p>
+      <% end %>
+    </fieldset>
+  </dd>
+<% end %>

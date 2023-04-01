@@ -1,0 +1,164 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Import New Work") %> <%= link_to_help 'work-import'%></h2>
+<% import = true %>
+
+<%= error_messages_for :work %>
+<div class="notice">
+  <p class="important">
+    <%= ts("Please note! Fanfiction.net, Wattpad.com, and Quotev.com do not allow imports from their sites.") %>
+  </p>
+  <p><%= ts("You might find the #{ link_to(ts("Import FAQ"), archive_faqs_path + "/posting-and-editing#importwork") } useful.").html_safe %></p>
+</div>
+
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="menu">
+  <% if @unposted %>
+    <li id='restore-link'>
+      <%= link_to ts('Restore From Last Unposted Draft?'), url_for(action: :new, load_unposted: true) %>
+    </li>
+  <% end %>
+  <li id="form-link">
+     <%= link_to( ts("Post New Work Instead?"),
+       { url: { controller: :works, action: :new, import: false } },
+       :href => url_for(controller: :works, action: :new, import: nil)) %>
+  </li>
+</ul>
+<!--/subnav-->
+
+<!-- This partial renders a form for importing a work from an existing URL -->
+
+<%= form_tag url_for(controller: :works, action: :import), :class => "import work verbose post" do %>
+  <fieldset>
+    <legend><%= ts("Works URLs") %></legend>
+    <dl>
+      <dt class="required"><%= label_tag "urls", ts("URLs") + "*" %></dt>
+      <dd class="required"><%= text_area_tag "urls", @urls ? @urls.join("\n") : "", rows: 20, cols: 90, "aria-describedby" => "url-field-description" %>
+        <p class="footnote" id="url-field-description">
+          <%= ts("URLs for existing work(s) or for the chapters of a single work; <strong>one URL per line.</strong>").html_safe %>
+        </p>
+      </dd>
+      <dt class="required">
+        <%= label_tag :language_id, ts("Choose a language") + "*" %>
+        <%= link_to_help "languages-help" %>
+      </dt>
+      <dd class="required">
+        <select id="language_id" name="language_id">
+          <option value=""><%= ts("Please select a language") %></option>
+          <%= options_from_collection_for_select(sorted_languages, :id, :name, @language_id) %>
+        </select>
+      </dd>
+      <dt><%= label_tag "encoding", ts("Set custom encoding") %> <%= link_to_help "encoding-help" %></dt> 
+      <dd><%= select_tag "encoding", options_for_select([''] + Encoding.name_list.sort) %></dd>
+      <dt><%= ts("Import as") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= radio_button_tag "import_multiple", "works", true %>
+            <%= label_tag "import_multiple_works",
+                          ts("Works (limit of %{max})",
+                             max: current_user.archivist ? ArchiveConfig.IMPORT_MAX_WORKS_BY_ARCHIVIST : ArchiveConfig.IMPORT_MAX_WORKS) %>
+          </li>
+          <li>
+            <%= radio_button_tag "import_multiple", "chapters" %>
+            <%= label_tag "import_multiple_chapters",
+                          ts("Chapters in a single work (limit of %{max})",
+                             max: ArchiveConfig.IMPORT_MAX_CHAPTERS) %>
+          </li>
+        </ul>
+      </dd>
+      <% if current_user.archivist %>
+        <dt><%= label_tag ts("Archiving for others") %></dt>
+        <dd>
+          <fieldset>
+            <dl>
+              <dt><%= check_box_tag "importing_for_others" %></dt>
+              <dd><%= label_tag "importing_for_others", ts("Import for others ONLY with permission") %></dd>
+              <dt class="required"><%= label_tag "external_author_name", ts("Author Name") + "*" %></dt>
+              <dd><%= text_field_tag_original "external_author_name" %></dd>
+              <dt class="required"><%= label_tag "external_author_email", ts("Author Email Address") + "*" %></dt>
+              <dd><%= text_field_tag_original "external_author_email" %></dd>
+              <dt><%= label_tag "external_coauthor_name", ts("Co-Author Name") %></dt>
+              <dd><%= text_field_tag_original "external_coauthor_name" %></dd>
+              <dt><%= label_tag "external_coauthor_email", ts("Co-Author Email Address") %></dt>
+              <dd><%= text_field_tag_original "external_coauthor_email" %></dd>
+            </dl>
+          </fieldset>
+        </dd>
+      <% end %>
+
+      <dt><%= ts("Preferences") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= check_box_tag "post_without_preview" %>
+            <% if current_user.archivist %>
+              <%= label_tag "post_without_preview", ts("Post without previewing (STRONGLY recommended if importing for others!)") %>
+            <% else %>
+              <%= label_tag "post_without_preview", ts("Post without previewing.") %>
+            <% end %>
+          </li>
+          <li>
+            <%= check_box_tag "restricted" %>
+            <%= label_tag "restricted", ts("Lock all imports to registered users only.") %>
+          </li>
+        </ul>
+      </dd>
+      <dt><%= ts("Override tags and notes") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= check_box_tag "override_tags", 1, false, class: "toggle_formfield", id: "override_tags-options-show" %>
+            <%= label_tag "override_tags-options-show",
+                          ts("Set the following tags and/or notes on all works, overriding whatever the importer finds in the content.") %>
+            <ul id="override_tags-options" class="dependent">
+              <li>
+                <%= radio_button_tag "detect_tags", true, true, id: "detect_tags_true" %>
+                <%= label_tag "detect_tags_true",
+                              ts("Use values extracted from the content for blank fields if possible") %>
+              </li>
+              <li>
+                <%= radio_button_tag "detect_tags", false, false, id: "detect_tags_false"  %>
+                <%= label_tag "detect_tags_false",
+                              ts("Do not use values extracted from the content at all; use Archive defaults for blank fields") %>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <%= render :partial => 'work_form_tags', locals: { include_blank: true, import: true } %>
+
+  <fieldset>
+    <legend><%= label_tag :notes, ts("Notes") %></legend>
+    <dl>
+      <dt><%= label_tag :notes, ts("Notes at the beginning") %></dt>
+      <dd>
+        <%= text_area_tag :notes, nil, class: "observe_textlength" %>
+        <%= generate_countdown_html(".notes", ArchiveConfig.NOTES_MAX) %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Submit") %></legend>
+    <p class="submit actions">
+      <%= submit_tag ts("Import") %>
+    </p>
+  </fieldset>
+
+<% end %>
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j(document).ready(function(){
+      $j(".toggle_formfield").click(function() {
+        var targetId = $j(this).attr("id").replace("-show", "");
+        toggleFormField(targetId);
+      });
+    })
+  <% end %>
+<% end %>

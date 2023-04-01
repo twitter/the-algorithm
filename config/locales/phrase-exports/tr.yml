@@ -1,0 +1,396 @@
+---
+tr:
+  activerecord:
+    attributes:
+      archive_warning:
+        name_with_colon:
+          one: 'Uyarı:'
+          other: 'Uyarılar:'
+      category:
+        name_with_colon:
+          one: 'Kategori:'
+          other: 'Kategoriler:'
+      character:
+        name_with_colon:
+          one: 'Karakter:'
+          other: 'Karakterler:'
+      fandom:
+        name_with_colon:
+          one: 'Fandom:'
+          other: 'Fandomlar:'
+      freeform:
+        name_with_colon:
+          one: 'İlave Etiket:'
+          other: 'İlave Etiketler:'
+      rating:
+        name_with_colon: 'Kitle:'
+      relationship:
+        name_with_colon:
+          one: 'İlişki:'
+          other: 'İlişkiler:'
+      work:
+        summary: Özet
+    models:
+      archive_warning:
+        one: Uyarı
+        other: Uyarılar
+      category:
+        one: Kategori
+        other: Kategoriler
+      chapter:
+        one: Bölüm
+        other: Bölümler
+      character:
+        one: Karakter
+        other: Karakterler
+      fandom:
+        one: Fandom
+        other: Fandomlar
+      freeform:
+        one: İlave Etiket
+        other: İlave Etiketler
+      rating:
+        one: Kitle
+        other: Kitle
+      relationship:
+        one: İlişki
+        other: İlişkiler
+      series:
+        one: Dizi
+        other: Diziler
+  kudo_mailer:
+    batch_kudo_notification:
+      guest:
+        one: bir ziyaretçi
+        other: "%{count} ziyaretçi"
+      html:
+        left_kudos:
+          one: "%{givers_list}, %{commentable_link} eserinize kalp bıraktı."
+          other: "%{givers_list}, %{commentable_link} eserinize kalp bıraktı."
+        single_guest:
+          giver_list: Bir ziyaretçi
+          left_kudos: "%{giver_list}, %{commentable_link} eserinize kalp bıraktı."
+      subject: "[%{app_name}] Kalp aldınız!"
+      text:
+        left_kudos:
+          one: "%{givers_list}, %{commentable_title} (%{commentable_url}) eserinize
+            kalp bıraktı."
+          other: "%{givers_list}, %{commentable_title} (%{commentable_url}) eserinize
+            kalp bıraktı."
+        single_guest: Bir ziyaretçi %{commentable_title} (%{commentable_url}) eserinize
+          kalp bıraktı.
+  mailer:
+    general:
+      closing:
+        formal: En içten dileklerimizle,
+        informal: İyi dileklerimizle,
+      creation:
+        link_with_word_count: "%{creation_link} (%{word_count})"
+        title_with_word_count: '"%{creation_title}" (%{word_count})'
+        word_count:
+          one: "%{count} kelime"
+          other: "%{count} kelime"
+      footer:
+        general:
+          html:
+            donate_link_text: sizin bağışlarınızdır
+            part1: Eğer bu mesajı bir hata sonucu aldıysanız lütfen %{support_link}.
+            part2: AO3 hayranlar tarafından yönetilen ve desteklenen bir arşivdir,
+              varlığını sürdürmesini sağlayan şey %{donate_link}.
+            support_link_text: Teknik Destek ile iletişime geçin
+          text:
+            part1: Eğer bu mesajı bir hata sonucu aldıysanız lütfen %{support_url}
+              adresinden Teknik Destek ile iletişime geçin.
+            part2: 'AO3 hayranlar tarafından yönetilen, hayranlar tarafından desteklenen
+              ve sizin bağışlarınızla varlığını sürdüren bir arşivdir: %{donate_url}.'
+        sent_at: "%{sent_at} tarihinde gönderilmiştir."
+      greeting:
+        formal: Sayın %{name},
+        informal:
+          addressed: Merhaba %{name}!
+          unaddressed: Merhaba!
+        introductory: Archive of Our Own – AO3 (Kendimize Ait Bir Arşiv)ten selamlar!
+      metadata_label_indicator: ": "
+      signature:
+        app_short_name: AO3
+        open_doors: Open Doors (Açık Kapılar) ekibi
+        parent_org: Organization for Transformative Works – OTW (Transformatif Eserler
+          Derneği)
+        support: AO3 Teknik Destek ekibi
+  users:
+    mailer:
+      reset_password_instructions:
+        expiration: Şifrenizi sıfırlamak için yukarıdaki linki bir hafta içinde kullanmadığınız
+          takdirde linkin süresi dolacak ve yeni bir talepte bulunmanız gerekecektir.
+        intro: 'Hesabınız için şifre sıfırlama talebinde bulunuldu. Aşağıdaki bağlantıyı
+          takip edip yeni şifrenizi girerek hesabınızın şifresini değiştirebilirsiniz:'
+        link_title: Şifremi değiştir.
+        subject: "[%{app_name}] Şifrenizi sıfırlayın"
+        unrequested: Eğer şifre sıfırlama talebinde bulunmadıysanız bu e-postayı görmezden
+          gelerek önceki şifrenizi kullanmaya devam edebilirsiniz.
+  user_mailer:
+    abuse_report:
+      description_para: 'Kötüye kullanımın tanımı:'
+      para1: 'Aşağıdaki kötüye kullanım ihbarı, Kötüye Kullanım Komitesine gönderilmiştir:'
+      subject: "[%{app_name}] Kötüye Kullanım İhbarınız"
+      url_para: 'Kötüye kullanımın olduğu sayfanın URL’si:'
+    admin_deleted_work_notification:
+      bye: Referans için eserinizin bir kopyası ektedir.
+      contact_abuse: Poliçe ve Kötüye Kullanım Komitesi ile iletişime geçin
+      html:
+        part1: Eseriniz, %{title}, bir site yöneticisi tarafından AO3’ten silinmiştir.
+        part2: Eğer eseriniz, Open Doors (Açık Kapılar) ekibimiz tarafından yönetilen
+          bir içe aktarma projesinin parçası ise lütfen sorularınız için %{opendoors_link}.
+        tos_violation: Eğer eserinizin AO3’ün Kullanım Şartlarını ihlal etmiş olma
+          ihtimali var ise lütfen %{contact_abuse_link}.
+      opendoors: Açık Kapılar ile iletişime geçin
+      subject: "[%{app_name}] Eseriniz bir yönetici tarafından silinmiştir"
+      text:
+        part1: Eseriniz "%{title}" bir site yöneticisi tarafından AO3’ten silinmiştir.
+        part2: Eğer eseriniz Open Doors (Açık Kapılar) ekibimiz tarafından yönetilen
+          bir içe aktarma projesinin parçası ise lütfen sorularınız için Açık Kapılar
+          (%{opendoors_link}) ile iletişime geçin.
+        tos_violation: Eğer eserinizin AO3’ün Kullanım Şartlarını ihlal etmiş olma
+          ihtimali var ise lütfen Poliçe ve Kötüye Kullanım Komitesi (%{contact_abuse_url})
+          ile iletişime geçin.
+    admin_hidden_work_notification:
+      access: Eseriniz gizliyken de yukarıda verilen link üzerinden ona erişim sağlamanız
+        mümkün olacak, fakat eser çalışma sayfanızda listelenmeyecek ve AO3'ün diğer
+        kullanıcıları esere erişemiyor olacak.
+      check_email: Poliçe ve Kötüye Kullanım Komitesi eserinizin neden gizlendiğini
+        açıklamak için sizinle daha önce iletişime geçmiş olabilir. Bu nedenle lütfen,
+        spam klasörünüz de dahil olmak üzere, e-postalarınızı kontrol edin.
+      contact_abuse: Poliçe ve Kötüye Kullanım Komitesi’yle iletişime geçin
+      html:
+        help: Eserinizin neden gizlendiğinden emin değilseniz ve bu konuyla ilgili
+          herhangi başka bilgi almadıysanız, lütfen doğrudan %{contact_abuse_link}.
+        hidden: "%{title} adlı eseriniz Poliçe ve Kötüye Kullanım Komitesi tarafından
+          gizlenmiştir ve artık herkese açık değildir."
+        tos_violation: Eseriniz, AO3’ün %{tos_link} ihlali nedeniyle gizlendiyse,
+          ihlali düzeltmek için sizin aksiyon almanız gerekecektir. Eserinizin Kullanım
+          Şartları’na uygun hale getirilmemesi, eserinizin AO3'ten silinmesine neden
+          olabilir.
+      subject: "[%{app_name}] eseriniz Poliçe ve Kötüye Kullanım Komitesi tarafından
+        gizlenmiştir"
+      text:
+        help: 'Eserinizin neden gizlendiğinden emin değilseniz ve bu konuyla ilgili
+          başka bilgi almadıysanız, lütfen doğrudan Poliçe ve Kötüye Kullanım Komitesi’yle
+          iletişime geçin: %{contact_abuse_url}.'
+        hidden: '"%{title}" (%{work_url}) adlı eseriniz Poliçe ve Kötüye Kullanım
+          Komitesi tarafından gizlenmiştir ve artık herkese açık değildir.'
+        tos_violation: Eseriniz, AO3 Kullanım Şartları’nın (%{tos_url}) ihlali nedeniyle
+          gizlendiyse, ihlali düzeltmek için sizin aksiyon almanız gerekecektir. Eserinizin
+          Kullanım Şartları’na uygun hale getirilmemesi, eserinizin AO3'ten silinmesine
+          neden olabilir.
+      tos: Kullanım Şartları
+    anonymous_or_unrevealed_notification:
+      anonymous_info: Anonim eserler etiket listelerine dahil edilir, ancak sizin
+        eserler sayfanızda gösterilmez. Eserde bulunan kullanıcı adınız ise "Anonymous"
+        (Anonim) olarak değiştirilir.
+      anonymous_unrevealed_info: İlerleyen dönemlerde koleksiyon sorumluları eserinizin
+        durumunu gizli olmaktan çıkarıp eseri genele açabilir, ancak eserin anonim
+        durumunu koruyabilir. Size abone olan kişiler böylesi bir değişiklikten haberdar
+        edilmez. Eser genel erişime açıldığında, eseriniz etiket listelerine dahil
+        edilir, ancak sizin eserler sayfanızda gösterilmez. Eserde kullanıcı adınız
+        "Anonymous" (Anonim) ile değiştirilir.
+      changed_status:
+        anonymous:
+          html: "%{collection_link} koleksiyonunu sorumluları, %{work_link} eserinizin
+            durumunu anonim olarak değiştirdi."
+          text: '"%{collection_title}" (%{collection_url}) koleksiyonunun sorumluları
+            "%{work_title}" (%{work_url}) eserinizin durumunu anonim olarak değiştirdi.'
+        anonymous_unrevealed:
+          html: "%{collection_link}’ın koleksiyon sorumluları, %{work_link} eserinizin
+            durumunu anonim ve gizli olarak değiştirdi."
+          text: '"%{collection_title}" (%{collection_url}) koleksiyonunun sorumluları"%{work_title}"
+            (%{work_url}) eserinizin durumunu anonim ve gizli olarak değiştirdi.'
+        unrevealed:
+          html: "%{collection_link}’ın koleksiyon sorumluları, %{work_link} eserinizin
+            durumunu gizli olarak değiştirdi."
+          text: '"%{collection_title}" (%{collection_url}) koleksiyonunun sorumluları
+            "%{work_title}" (%{work_url}) eserinizin durumunu gizli olarak değiştirdi.'
+      collection_items_link_text: Approved Collection Items (Onaylı Koleksiyon Öğeleri)
+        sayfası
+      do_not_want:
+        anonymous:
+          html: Eserinizin anonim olmasını istemiyorsanız, eserinizi bu koleksiyondan
+            çıkarmak için %{collection_items_link} sayfasını ziyaret ediniz.
+          text: 'Eserinizin anonim olmasını istemiyorsanız, eserinizi bu koleksiyondan
+            çıkarmak için Approved Collection Items (Onaylı Koleksiyon Öğeleri) sayfanızı
+            ziyaret edebilirsiniz: %{collection_items_url}'
+        anonymous_unrevealed:
+          html: Eserinizin anonim ve gizli olmasını istemiyorsanız, eserinizi bu koleksiyondan
+            çıkarmak için lütfen %{collection_items_link} sayfasını ziyaret ediniz.
+          text: 'Eserinizin anonim ve gizli olmasını istemiyorsanız, eserinizi bu
+            koleksiyondan çıkarmak için Approved Collection Items (Onaylı Koleksiyon
+            Öğeleri) sayfanızı ziyaret edebilirsiniz: %{collection_items_url}'
+        unrevealed:
+          html: Eserinizin gizli olmasını istemiyorsanız, eserinizi bu koleksiyondan
+            çıkarmak için lütfen %{collection_items_link} sayfasını ziyaret ediniz.
+          text: 'Eserinizin gizli olmasını istemiyorsanız, eserinizi bu koleksiyondan
+            çıkarmak için Approved Collection Items (Onaylı Koleksiyon Öğeleri) sayfanızı
+            ziyaret edebilirsiniz: %{collection_items_url}'
+      faq_link_text: Koleksiyonlar SSS
+      more_info:
+        html: Daha fazla bilgi için, %{faq_link} sayfasına göz atabilirsiniz.
+        text: 'Daha fazla bilgi için, Koleksiyonlar SSS sayfasına göz atabilirsiniz:
+          %{faq_url}'
+      subject:
+        anonymous: "[%{app_name}] Eseriniz anonim hale getirildi"
+        anonymous_unrevealed: "[%{app_name}] Eseriniz anonim ve gizli hale getirildi"
+        unrevealed: "[%{app_name}] Eseriniz gizli hale getirildi"
+      unrevealed_info: Gizli eserler etiket listelerinde veya eser sayfanızda yer
+        almaz. Eser bağlantısını takip eden herkes, eserin şu anda gizli olduğuna
+        dair bir bildirimle karşılaşır ve içeriğine erişim sağlayamazlar.
+    challenge_assignment_notification:
+      any: Herhangi bir
+      description: 'Tanım:'
+      due: 'Bu görevin teslim tarihi:'
+      html:
+        footer: Bu e-postayı, %{title} oyununa kaydolduğunuz için aldınız. Bu oyun
+          hakkında daha fazla bilgi ve moderatörlerin iletişim bilgileri için lütfen
+          %{footer_link} adresini ziyaret edin.
+        footer_link: oyun profil sayfası
+        look_up: Bu görevi %{link} adresinden arayabilirsiniz.
+        look_up_link: Assignments (Görevler) sayfanız
+        part1: AO3'teki %{link} oyununda size aşağıdaki istek atandı!
+      optional_tags: 'İsteğe Bağlı Etiketler:'
+      prompts: 'Fikirler:'
+      prompt_url: 'Fikir URL’si:'
+      recipient: 'Alıcı:'
+      recipient_missing: 'Hiç kimse: yardım için bir moderatörle iletişime geçin!'
+      subject: "[%{app_name}][%{collection_title}] Göreviniz!"
+      text:
+        assignment: AO3'teki "%{collection_title}" (%{collection_url}) oyununda size
+          aşağıdaki istek atandı!
+        footer: Bu e-postayı, %{title} oyununa (%{url}) kaydolduğunuz için aldınız.
+          Bu oyun hakkında daha fazla bilgi ve moderatörlerin iletişim bilgileri için
+          lütfen %{profile_url} adresini ziyaret edin.
+        look_up: Bu görevi, %{link} adresindeki Assignments (Görevler) sayfanızdan
+          arayabilirsiniz.
+    change_email:
+      part1: "%{login}, hesabınızla ilişkili e-posta adresiniz %{email} olarak değiştirilmiştir."
+      subject: "[%{app_name}] E-posta adresiniz değiştirildi"
+    collection_notification:
+      assignments_sent:
+        complete: Bütün atamalar gönderildi.
+        subject: Atamalar gönderildi
+      html:
+        received_message: "%{collection_link} koleksiyonunuz hakkında bir mesaj aldınız:"
+      text:
+        received_message: '"%{collection_title}" koleksiyonunuz (%{collection_url})
+          hakkında bir mesaj aldınız:'
+    creatorship_notification:
+      explanation: Bir eserin ortak yazarı olduğunuzda, ortak yazarlık ayarlarınızdan
+        bağımsız olarak yeni bölümlere ekleyebilirsiniz. Ayrıca çalışmanın eklendiği
+        herhangi bir diziye de ekleneceksiniz.
+      html:
+        creation: "%{pseud_links} tarafından %{creation_link}"
+        edit_chapter: bölümü düzenleyerek
+        edit_series: diziyi düzenleyerek
+        remove_chapter: Yanlışlıkla eklendiyseniz veya yazar olarak listelenmek istemiyorsanız,
+          %{edit_chapter_link} kendinizi yazarlıktan kaldırabilirsiniz.
+        remove_series: Yanlışlıkla eklendiyseniz veya yazar olarak listelenmek istemiyorsanız,
+          %{edit_series_link} kendinizi yazarlıktan kaldırabilirsiniz.
+      intro_chapter: "%{adding_user} kullanıcısı %{pseud} takma adınızı aşağıdaki
+        bölümde ortak yazar olarak listeledi:"
+      intro_series: "%{adding_user} kullanıcısı %{pseud} takma adınızı aşağıdaki dizide
+        ortak yazar olarak listeledi:"
+      subject: "[%{app_name}] Ortak yazar bildirimi"
+      text:
+        creation: "%{pseuds} tarafından %{title} (%{url})"
+        remove_chapter: 'Yanlışlıkla eklendiyseniz veya yazar olarak listelenmek istemiyorsanız,
+          kendinizi yazar olarak kaldırmak için bölümü düzenleyebilirsiniz: %{url}'
+        remove_series: 'Yanlışlıkla eklendiyseniz veya yazar olarak listelenmek istemiyorsanız,
+          kendinizi yazar olarak kaldırmak için diziyi düzenleyebilirsiniz: %{url}'
+    creatorship_notification_archivist:
+      explanation: Open Doors (Açık Kapılar) arşivcileri, onlara verilen yetki dahilinde
+        ortaklığı devre dışı bırakmış olsanız bile sizi davetiyesiz ortak yaratıcı
+        olarak ekleme hakkına sahiptirler.
+      html:
+        creation: "%{pseud_links} tarafından %{creation_link}"
+        edit_chapter: bölümü düzenleyebilirsiniz
+        edit_series: seriyi düzenleyebilirsiniz
+        edit_work: eseri düzenleyebilirsiniz
+        remove_chapter: Eğer yanlışlıkla eklendiyseniz veya yaratıcı olarak listelenmek
+          istemiyorsanız kendinizi yaratıcılıktan çıkarmak için %{edit_chapter_link}.
+        remove_series: Eğer yanlışlıkla eklendiyseniz veya yaratıcı olarak listelenmek
+          istemiyorsanız kendinizi yaratıcılıktan çıkarmak için %{edit_series_link}.
+        remove_work: Eğer yanlışlıkla eklendiyseniz veya yaratıcı olarak listelenmek
+          istemiyorsanız kendinizi yaratıcılıktan çıkarmak için %{edit_work_link}.
+      intro_chapter: "%{archivist} kullanıcısı %{pseud} takma adınızı ortak yaratıcı
+        olarak aşağıdaki bölüme ekledi:"
+      intro_series: "%{archivist} kullanıcısı %{pseud} takma adınızı ortak yaratıcı
+        olarak aşağıdaki seriye ekledi:"
+      intro_work: "%{archivist} kullanıcısı %{pseud} takma adınızı ortak yaratıcı
+        olarak aşağıdaki esere ekledi:"
+      subject: "[%{app_name}] Ortak yaratıcı arşivci bildirimi"
+      text:
+        creation: "%{pseuds} tarafından %{title} (%{url})"
+        remove_chapter: 'Eğer yanlışlıkla eklendiyseniz veya yaratıcı olarak listelenmek
+          istemiyorsanız kendinizi yaratıcılıktan çıkarmak için bölümü düzenleyebilirsiniz:
+          %{url}'
+        remove_series: 'Eğer yanlışlıkla eklendiyseniz veya yaratıcı olarak listelenmek
+          istemiyorsanız kendinizi yaratıcılıktan çıkarmak için seriyi düzenleyebilirsiniz:
+          %{url}'
+        remove_work: 'Eğer yanlışlıkla eklendiyseniz veya yaratıcı olarak listelenmek
+          istemiyorsanız kendinizi yaratıcılıktan çıkarmak için eseri düzenleyebilirsiniz:
+          %{url}'
+    creatorship_request:
+      html:
+        creation: "%{pseud_links} tarafından %{creation_link}"
+        instructions: Bu isteği %{page_name} sayfanızdan kabul edebilir veya reddedebilirsiniz.
+        page_name: Co-Creator Requests (Eş-Yazar İstekleri)
+      intro_chapter: 'Kullanıcı %{inviting_user}, %{pseud} takma adınızı eş-yazar
+        olarak aşağıdaki bölüme ekleme isteğinde bulundu:'
+      intro_series: 'Kullanıcı %{inviting_user}, %{pseud} takma adınızı eş-yazar olarak
+        aşağıdaki seriye ekleme isteğinde bulundu:'
+      intro_work: 'Kullanıcı %{inviting_user}, %{pseud} takma adınızı eş-yazar olarak
+        aşağıdaki esere ekleme isteğinde bulundu:'
+      subject: "[%{app_name}] Eş-yazar isteği"
+      text:
+        creation: "%{pseuds} tarafından %{title} (%{url})"
+        instructions: 'Bu isteği Co-Creator Requests (Eş-Yazar İstekleri) sayfanızdan
+          kabul edebilir veya reddedebilirsiniz: %{url}'
+    delete_work_notification:
+      html:
+        part1_other: "%{title} eseriniz %{pseud} kullanıcısının isteği üzerine silindi."
+        part1_yourself: "%{title} eseriniz isteğiniz üzerine silindi."
+        part2: Sorularınız varsa, lütfen %{support}.
+      part3: Ekte referansınız için eserinizin bir kopyası bulunmaktadır.
+      subject: "[%{app_name}] Eseriniz silinmiştir"
+      support: Teknik Destek Komitesi ile iletişime geçin
+      text:
+        part1_other: '"%{title}" eseriniz %{pseud} kullanıcısının isteği üzerine silinmiştir.'
+        part1_yourself: '"%{title}" eseriniz isteğiniz üzerine silinmiştir.'
+        part2: Sorularınız varsa, lütfen %{support} (%{url}).
+    invite_increase_notification:
+      body:
+        one: AO3'te yeni bir hesap oluşturmak için kullanabileceğiniz %{count} yeni
+          davetiyeniz olduğunu size bildirmek istedik. Dilerseniz %{invitation_page}
+          üzerinden bir arkadaşınızı davet edebilirsiniz.
+        other: AO3'te yeni hesaplar oluşturmak için kullanabileceğiniz %{count} yeni
+          davetiyeniz olduğunu size bildirmek istedik. Dilerseniz %{invitation_page}
+          üzerinden bir arkadaşınızı davet edebilirsiniz.
+      invitation_page_link_text: Invitations (Davetiyeler) sayfanız
+      subject: "[%{app_name}] Yeni Davetiyeler"
+    invite_request_declined:
+      main:
+        one: Yeni bir davete ilişkin talebinizi şu anda yerine getiremeyeceğimizi
+          üzülerek bildiriyoruz.
+        other: "%{count} yeni davet talebinizi şu anda yerine getiremeyeceğimizi üzülerek
+          bildiriyoruz."
+      reason: 'Talebiniz şöyleydi:'
+      subject: "[%{app_name}] İlave Davet Kodu İsteğiniz Reddedildi"
+    recipient_notification:
+      html:
+        collection: AO3'te %{collection_link} koleksiyonunda sizin için hediye bir
+          hediye eser yayınlandı!
+      no_collection: AO3'te sizin için bir hediye eser yayınlandı!
+      subject:
+        collection: "[%{app_name}][%{collection_title}] %{collection_title} tarafından
+          size hediye edilmiş bir eser"
+        no_collection: "[%{app_name}] Size hediye edilmiş bir eser"
+      text:
+        collection: AO3'te "%{collection_title}" koleksiyonunda (%{collection_url})
+          sizin için hediye bir eser yayınlandı!

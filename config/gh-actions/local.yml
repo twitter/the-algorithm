@@ -1,0 +1,2 @@
+ES_URL: 'http://127.0.0.1:9200'
+BCRYPT_COST: 4

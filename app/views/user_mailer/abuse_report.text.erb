@@ -1,0 +1,11 @@
+<% content_for :message do %>
+<%= t 'user_mailer.abuse_report.para1' %>
+  
+<%= t 'user_mailer.abuse_report.url_para' %> <%= @url %>
+  
+<%= t 'user_mailer.abuse_report.description_para' %>
+<%= text_divider %>
+
+<%= to_plain_text(@comment) %><% end %>
+
+<% content_for :sent_at do %><%= l(Time.now) %><% end %>

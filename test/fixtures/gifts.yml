@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  work_id: 1
+  recipient_name: GiftRecipient1
+
+two:
+  work_id: 1
+  recipient_name: Recipient2
+  
+three:
+  work_id: 14
+  recipient_name: testuser 

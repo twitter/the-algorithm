@@ -1,0 +1,6 @@
+<%= render_orphan_partial(@to_be_orphaned) %>
+
+<ul class="actions" role="navigation">
+  <li><%= link_to t('.orphans_about', default: "Read More About The Orphaning Process"), archive_faq_path("orphaning") %></li> 
+  <li><%= link_to t('.links.cancel', default: "Cancel"), :back %></li>
+</ul>

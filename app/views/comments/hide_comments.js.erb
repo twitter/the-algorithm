@@ -1,0 +1,7 @@
+/* replace the top "Hide Comments" link on works with "Comments" */
+$j("#show_comments_link_top").html("<%= escape_javascript(show_hide_comments_link(@commentable)) %>");
+/* replace the "Hide Comments (#) link with "Comments (#)" */
+$j("#show_comments_link").html("<%= escape_javascript(show_hide_comments_link(@commentable, :show_count => true)) %>");
+/* roll up, then remove the comments */
+$j("#comments_placeholder").slideUp();
+$j("#comments_placeholder").html("");

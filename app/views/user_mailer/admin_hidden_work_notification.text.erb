@@ -1,0 +1,13 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+<%= t(".text.hidden", title: @work.title, work_url: work_url(@work)) %>
+
+<%= t(".access") %>
+
+<%= t(".check_email") %>
+
+<%= t(".text.tos_violation", tos_url: tos_url) %>
+
+<%= t(".text.help", contact_abuse_url: new_abuse_report_url) %>
+<% end %>

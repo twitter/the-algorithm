@@ -1,0 +1,28 @@
+<dl>
+	<dt>Sender</dt>
+    <dd><%= creator_link(invitation) %></dd>
+ 	<dt>Invitation token</dt>
+    <dd><%= invitation.token %></dd>
+ 	<dt>Copy link</dt>
+    <dd><% unless invitation.redeemed_at %><%= link_to "copy and use", signup_path(:invitation_token => invitation.token) %><% end %></dd>
+ 	<dt>Sent to</dt>
+    <% if invitation.redeemed_at %>
+    <dd><%= invitation.invitee_email %></dd>
+    <% else %>
+    <dd>
+      <%= form_for(invitation) do |f| %>
+        <p><label for="invitee_email">Enter an email address:</label> <%= f.text_field :invitee_email %></p>
+        <p><%= hidden_field_tag :user_id, @user.try(:login) %></p>
+        <p class="submit actions"><%= f.submit %></p>
+      <% end %>
+    </dd>
+    <% end %>
+ <dt>Redeemed by</dt>
+    <dd><%= invitee_link(invitation) %></dd>
+ <dt>Created at</dt>
+    <dd><%= invitation.created_at %></dd>
+ <dt>Sent at</dt>
+    <dd><%= invitation.sent_at %></dd>
+ <dt>Redeemed at</dt>
+    <dd><%= invitation.redeemed_at %></dd>
+</dl>

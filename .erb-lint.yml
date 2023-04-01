@@ -1,0 +1,39 @@
+---
+EnableDefaultLinters: true
+linters:
+  DeprecatedClasses:
+    enabled: true
+    rule_set:
+      - deprecated: ["bookmarks", "collections", "readings", "works"]
+        suggestion: "Avoid the plural form of these classes."
+  Rubocop:
+    enabled: true
+    rubocop_config:
+      inherit_from:
+        - .rubocop.yml
+      Layout/ArgumentAlignment:
+        EnforcedStyle: with_fixed_indentation
+      Layout/InitialIndentation:
+        Enabled: false
+      Layout/LineLength:
+        Enabled: false
+      Layout/TrailingEmptyLines:
+        Enabled: false
+      Layout/TrailingWhitespace:
+        Enabled: false
+      Naming/FileName:
+        Enabled: false
+      Style/FrozenStringLiteralComment:
+        Enabled: false
+      Lint/UselessAssignment:
+        Enabled: false
+      # Workaround for RuboCop 0.72 and later
+      # https://github.com/Shopify/erb-lint/issues/130
+      Rails:
+        Enabled: true
+      Rails/OutputSafety:
+        Enabled: false
+  SelfClosingTag:
+    enabled: true
+    # XHTML style
+    enforced_style: always

@@ -1,0 +1,16 @@
+<p class="note">
+  <%= ts("The archive is generating potential matches for this challenge. This can take a long time,
+  especially for a large challenge! We'll send an email to the collection maintainers when
+  all potential matches have been generated. ") %>
+</p>
+
+<p>
+  <%= ts("If the progress value below doesn't change when you reload the page 
+          after about 10 minutes, there may have been a problem. Please check again after an hour, and then contact archive support.") %>
+</p>
+
+<p>
+  <%= ts("Potential match generation progress:") %> <strong><%= @progress %>%</strong>
+</p>
+
+<p class="actions" role="button"><%= link_to ts("Cancel Potential Match Generation"), cancel_generate_collection_potential_matches_path(@collection) %></p>

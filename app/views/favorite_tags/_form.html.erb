@@ -1,0 +1,13 @@
+<% # expects favorite_tag and current_user %>
+<%= form_for([current_user, favorite_tag],
+  method: favorite_tag.new_record? ? 'post' : 'delete',
+  html: {
+    class: 'ajax-create-destroy',
+    data: {
+      create_value: ts('Favorite Tag'),
+      destroy_value: ts('Unfavorite Tag')
+    }
+  }) do |f| %>
+  <%= f.hidden_field :tag_id %>
+  <%= f.submit favorite_tag.new_record? ? ts('Favorite Tag') : ts('Unfavorite Tag') %>
+<% end %>

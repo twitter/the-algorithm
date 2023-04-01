@@ -1,0 +1,62 @@
+<div id="dashboard" class="region" role="navigation region">
+  <h3 class="landmark heading">Dashboard</h3>
+  <ul class="navigation actions">
+    <li><%= span_if_current ts('Dashboard', key: 'dashboard'), @collection %></li>
+    <li><%= span_if_current ts('Profile', key: 'dashboard'), collection_profile_path(@collection) %></li>
+    <% if !@collection.collection_profile.faq.blank? %>
+      <li><%= span_if_current ts('FAQ', key: 'dashboard'), collection_profile_path(@collection, :anchor => "faq") %></li>
+    <% end %>
+    <% if !@collection.collection_profile.rules.blank? %>
+      <li><%= span_if_current ts('Rules', key: 'dashboard'), collection_profile_path(@collection, :anchor => "rules") %></li>
+    <% end %>
+  
+    <% if @collection.parent %>
+      <li><%= link_to ts('Parent Collection', key: 'dashboard'), collection_path(@collection.parent) %></li>
+    <% else %>
+      <li><%= span_if_current ts("Subcollections (%{count})", key: 'dashboard', :count => @collection.children.count), collection_collections_path(@collection) %></li>
+    <% end %>
+  </ul>
+
+  <!-- challenge section of dash -->
+  <% if @collection.challenge %>
+    <%= render :partial => "challenge/#{challenge_class_name(@collection)}/challenge_sidebar" %>
+  <% end %>
+
+  <h4 class="landmark heading">Contents</h4>
+  <ul class="navigation actions">
+    <li><%= span_if_current ts("Fandoms (%{count})", key: 'dashboard', count: SearchCounts.fandom_count_for_collection(@collection)), collection_fandoms_path(@collection) %></li>
+
+    <li><%= span_if_current ts("Works (%{count})", key: 'dashboard', count: SearchCounts.work_count_for_collection(@collection)), collection_works_path(@collection) %></li>
+
+    <li><%= span_if_current ts("Bookmarked Items (%{count})", key: 'dashboard', count: SearchCounts.bookmarkable_count_for_collection(@collection)), collection_bookmarks_path(@collection) %></li>
+
+    <li>
+      <% if controller.controller_name == 'collections' && controller.action_name == 'show' %>
+      <%= link_to 'Random Items', 
+        :url => collection_path(@collection, :show_random => true), :method => :get, :remote => true %>  
+      <% else %>  
+      <%= link_to 'Random Items', collection_path(@collection, :show_random => true) %>
+      <% end %>
+    </li>
+    <li><%= span_if_current ts('People', key: 'dashboard'), collection_people_path(@collection) %></li>
+    <li><%= span_if_current ts('Tags', key: 'dashboard'), collection_tags_path(@collection) %></li>
+  </ul>  
+
+  <% if @collection.user_is_maintainer?(current_user)%>
+    <h4 class="landmark heading">Choices</h4>
+    <ul class="navigation actions">
+      <li><%= span_if_current(ts('Manage Items', key: 'dashboard'), collection_items_path(@collection)) %></li>
+      <% if @collection.user_is_owner?(current_user) %>
+        <% if @collection.challenge %>
+          <% if @collection.prompt_meme? %>
+            <li><%= span_if_current ts('Challenge Settings', key: 'dashboard'), edit_collection_prompt_meme_path(@collection) %></li>
+          <% elsif @collection.gift_exchange? %>
+            <li><%= span_if_current ts('Challenge Settings', key: 'dashboard'), edit_collection_gift_exchange_path(@collection) %></li>
+          <% end %>
+        <% end %>
+    	  <li><%= span_if_current ts('Collection Settings', key: 'dashboard'), edit_collection_path(@collection) %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
+

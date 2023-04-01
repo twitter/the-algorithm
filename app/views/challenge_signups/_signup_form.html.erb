@@ -1,0 +1,83 @@
+<% types = @challenge.class::PROMPT_TYPES.select {|t| @challenge.allowed(t) > @challenge.required(t)} %>
+<% unless types.empty? %>
+  <noscript>
+    <%= form_tag({}, {:method => :get}) do %>
+      <fieldset>
+        <legend><%= ts("Add Prompts") %></legend>
+        <h3 class="heading"><%= ts("Add Prompts") %></h3>
+        <p class="notes">
+          <%= ts("Since you don't have JavaScript turned on, please tell us how many #{types.to_sentence} you want to submit: ") %>
+        </p>
+        <dl>
+          <% types.each do |type| %>
+            <dt><%= label_tag "num_#{type}", ts("#{type.classify.pluralize} (Up to %{allowed}):", :allowed => @challenge.allowed(type)) %></dt>
+            <dd><%= text_field_tag "num_#{type}", params["num_#{type}"] || @challenge.required(type), :class => "number" %></dd>
+          <% end %>
+          <dt class="landmark"><%= ts("Submit") %></dt>
+          <dd class="submit"><%= submit_tag ts('Update Form') %></dd>
+        </dl>
+      </fieldset>
+    <% end %>
+  </noscript>
+<% end %>
+
+<%= form_for([@collection, @challenge_signup], :url => (@challenge_signup.new_record? ? collection_signups_path(@collection) : collection_signup_path(@collection))) do |signup_form| %>
+  <% if !@current_user&.preference&.allow_gifts? %>
+    <p class="caution notice">
+      <%= t(".notice.preference.#{@collection.challenge_type.underscore}",
+          preferences_link: link_to(
+            t(".notice.preference.preferences_link_text"),
+            user_preferences_path(@current_user)),
+          refuse_link: link_to(
+            t(".notice.preference.refuse_link_text"),
+            archive_faq_path("your-account", anchor: "refusegift"))
+      ).html_safe %>
+    </p>
+  <% end %>
+  <% if @collection.challenge_type == "GiftExchange" %>
+    <p class="notes notice"><%= ts("Challenge maintainers will have access to the email address associated with your AO3 account for the purpose of communicating with you about the challenge.") %></p>
+  <% end %>
+  <p class="required notice"><%= ts("* Required information") %></p>
+  <% unless @challenge_signup.errors.empty? %>
+    <div class="error">
+      <h4 class="heading"><%= ts("There were some problems with this submission. Please correct the mistakes below.") %></h4>
+    </div>
+  <% end %>
+
+  <%= error_messages_for @challenge_signup %>
+
+  <%= render "signup_form_general_information", :form => signup_form %>
+
+  <% # requests and offers section %>
+  <% @challenge.class::PROMPT_TYPES.each do |prompt_type| %>
+  <fieldset>
+    <legend><%= prompt_type.capitalize %></legend>
+    <h3 class="heading">
+      <%= prompt_type.capitalize %> (<%= @challenge.allowed_range_string(prompt_type) %>)
+    </h3>
+    <% unless sanitize_field(@challenge, "signup_instructions_#{prompt_type}".to_sym).blank? %>
+      <blockquote class="userstuff">
+        <%=raw sanitize_field(@challenge, "signup_instructions_#{prompt_type}".to_sym) %>
+      </blockquote>
+    <% end %>
+
+  <% @challenge_signup.send("#{prompt_type}").each_with_index do |prompt, index| %>
+      <%= error_messages_for(prompt).html_safe unless !prompt.errors.present? %>
+    <%= signup_form.fields_for prompt_type.to_sym, prompt do |prompt_form| %>
+      <%= render "prompts/prompt_form", :form => prompt_form, :index => index, :required => (index < @challenge.required(prompt_type)) %>
+    <% end %>
+  <% end %>
+
+  <% if @challenge.allowed(prompt_type) > @challenge.required(prompt_type) %>
+    <p class="actions" role="button">
+      <% linktext = ts("Add another %{type}? (Up to %{allowed} allowed.)", :type => prompt_type.singularize, :allowed => @challenge.allowed(prompt_type)) %>
+      <%= link_to_add_section(linktext, signup_form, prompt_type.to_sym, "prompts/prompt_form", :required => false) %>
+    </p>
+  <% end %>
+
+  </fieldset>
+  <% end # requests & offers section %>
+
+  <%= submit_fieldset signup_form %>
+
+<% end %>

@@ -1,0 +1,20 @@
+first:
+  collection: first
+  faq: <dl><dt>What is this test thing?</dt><dd>It's a test collection</dd></dl>
+  intro: Welcome to the test collection
+  rules: Be nice to testers
+
+second:
+  collection: second
+
+third:
+  collection: third
+  
+fourth:
+  collection: fourth
+  
+fifth:
+  collection: fifth
+
+sixth:
+  collection: sixth

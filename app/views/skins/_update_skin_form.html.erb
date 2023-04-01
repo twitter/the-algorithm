@@ -1,0 +1,10 @@
+<% # expects skin %>
+<%= form_for(current_user.preference, url: user_preference_path(current_user, current_user.preference), method: "put") do |f| %>
+  <% if skin.id == current_user.preference.skin_id %>
+    <%= f.hidden_field :skin_id, value: AdminSetting.default_skin_id %>
+    <%= f.submit ts("Stop Using") %>
+  <% else %>
+    <%= f.hidden_field :skin_id, value: skin.id %>
+    <%= f.submit ts("Use") %>
+  <% end %>
+<% end %>

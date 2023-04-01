@@ -1,0 +1,17 @@
+<%= render 'downloads/download_preface.html' %>
+
+<div id="chapters" class="userstuff">
+  <% if @chapters.size > 1 %>
+    <% for chapter in @chapters %>
+      <%= render 'downloads/download_chapter.html', :chapter => chapter %>
+    <% end %>
+  <% # Use elsif so we don't error when there are no chapters. %>
+  <% elsif @chapters.size == 1 %>
+    <h2 class="toc-heading"><%= @work.title.html_safe %></h2>
+    <div class="userstuff">
+      <%=raw sanitize_field(@chapters.first, :content) %>
+    </div>
+  <% end %>
+</div>
+
+<%= render 'downloads/download_afterword.html' %>

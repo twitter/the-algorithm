@@ -1,0 +1,16 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Log in as Admin") %></h2>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for @admin_session do |form| %>
+	<dl>
+		<dt><%= form.label :login, ts("Admin user name") %></dt>
+  	<dd><%= form.text_field :login %></dd>
+		<dt><%= form.label :password, ts("Admin password") %></dt>
+  	<dd><%= form.password_field :password %></dd>
+	</dl>
+  <p class="submit actions"><%= form.submit ts('Log in as admin') %></p>
+<% end %>
+<!--/content-->
+

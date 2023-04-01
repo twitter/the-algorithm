@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<playlist version="1" xmlns="http://xspf.org/ns/0/">
+    <title>Ounage Playlist</title>
+    <creator>Dew</creator>
+    <link>http://www.blup.fr/</link>
+    <info>The Best Playlist</info>
+    <image>covers/0.jpg</image>
+
+    <trackList>
+
+        <track>
+          <location>mp3/test1.mp3</location>
+          <creator>Bedrich Smetana</creator>
+          <album>Má Vlast</album>
+          <title>La Moldau (Vltava)</title>
+          <annotation>I love this song</annotation>
+          <duration>32000</duration>
+          <image>covers/1.jpg</image>
+          <info></info>
+          <link>http://fr.wikipedia.org/wiki/M%C3%A1_Vlast_(Smetana)</link>
+        </track>
+        
+        <track>
+          <location>mp3/test2.mp3</location>
+          <creator>Antonin Dvorak</creator>
+          <album>La Symphonie du Nouveau Monde</album>
+          <title>La Symphonie du Nouveau Monde</title>
+          <annotation></annotation>
+          <duration></duration>
+          <image>covers/2.jpg</image>
+          <info></info>
+          <link>http://fr.wikipedia.org/wiki/Cesaria_Evora</link>
+        </track>
+        
+        <track>
+          <location>mp3/test3.mp3</location>
+          <creator>Jean-Claude Petit</creator>
+          <album>Le Hussard sur le Toit</album>
+          <title>Le Hussard sur le Toit</title>
+          <annotation></annotation>
+          <duration></duration>
+          <image>covers/3.jpg</image>
+          <info></info>
+          <link>http://fr.wikipedia.org/wiki/Le_Hussard_sur_le_toit_%28film%29</link>
+        </track>
+
+    </trackList>
+</playlist>

@@ -1,0 +1,19 @@
+<%= ts("Chapters: ") %>
+<%= work.chapter_total_display %><br />
+<%= ts("Fandom: ") %>
+<%= work.tag_groups["Fandom"].map { |fandom| link_to fandom.name, tag_url(fandom) }.join(", ").html_safe %><br />
+<% [Rating, ArchiveWarning, Relationship, Character, Freeform].each do |klass| %>
+<% if (tags = work.tag_groups[klass.to_s]).present? %>
+<%= ts("#{klass.label_name}: ") %>
+<%= tags.map(&:display_name).join(", ").html_safe %>
+<br />
+<% end %>
+<% end %>
+<% if work.series.exists? %>
+<%= ts("Series: ") %>
+<%= series_list_for_feeds(work).html_safe %><br />
+<% end %>
+<% if work.summary.present? %>
+<%= ts("Summary: ") %>
+<%= sanitize_field(work, :summary).html_safe %>
+<% end %>

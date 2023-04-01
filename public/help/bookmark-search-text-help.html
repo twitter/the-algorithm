@@ -1,0 +1,18 @@
+<h4>Bookmark Search: Text</h4>
+
+<p>Use the following guidelines for entering search terms and search operators. "Any field" combines all text fields in the search form, including tags. "Bookmarker" lets you search for bookmarks created by a particular user. "Notes" searches for terms within all bookmarkers' notes.</p>
+
+<p>The characters ":" and "@" have special meanings. Leave them out of your search or you will get unexpected results.</p>
+
+<dl>
+  <dt>*: any characters </dt>
+  <dd><kbd>book*</kbd> will find <samp>book</samp> and <samp>books</samp> and <samp>booking</samp>.</dd>
+  <dt>space: a space acts like AND </dt>
+  <dd><kbd>Harry Potter</kbd> will find <samp>Harry Potter</samp> and <samp>Harry James Potter</samp> but not <spam>Harry</samp>.</dd>
+  <dt>||: OR (not exclusive) </dt>
+  <dd><kbd>Harry || Potter</kbd> will find <samp>Harry</samp>, <samp>Harry Potter</samp>, and <samp>Potter</samp>.</dd>
+  <dt>"": words in exact sequence </dt>
+  <dd><kbd>"Harry Lockhart"</kbd> will find <samp>Harry Lockhart</samp> but not <samp>Harry Potter/Gilderoy Lockhart</samp>.</dd>
+  <dt>-: NOT </dt>
+  <dd><kbd>Harry -Lockhart</kbd> will find <samp>Harry Potter</samp> but not <samp>Harry Lockhart</samp> or <samp>Gilderoy Lockhart/Harry Potter</samp>.</dd>
+</dl>

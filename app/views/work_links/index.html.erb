@@ -1,0 +1,22 @@
+<h2><%= ts("Links To") %> <%= link_to(@work.title, @work) %></h2>
+
+<%= render "stats/navigation" %>
+
+<%= will_paginate @work_links %>
+
+<dl>
+  <% @work_links.each do |link| %>
+    <dt><%= link.url %></dt>
+    <dd>
+      <dl class="stats">
+        <dt><%= ts("Visits") %></dt><dd><%= link.count %></dd>
+        <dt><%= ts("First") %></dt><dd><%= time_in_zone(link.created_at) %></dd>
+        <% if link.count > 0 %>
+          <dt><%= ts("Latest") %></dt><dd><%= time_in_zone(link.updated_at) %></dd>
+        <% end %>
+      </dl>
+    </dd>
+  <% end %>
+</dl>
+        
+<%= will_paginate @work_links %>

@@ -1,0 +1,50 @@
+<div id="share">
+
+  <p class="note"><%= ts("Copy and paste the following code to link back to this work (") %><kbd><%= ts("CTRL A") %></kbd><%= ts("/") %><kbd><%= ts("CMD A") %></kbd><%= ts(" will select all), or use the Tweet or Tumblr links to share the work on your Twitter or Tumblr account.") %></p>
+
+  <%# HTML share code %>
+  <p>
+    <% id_suffix = shareable.is_a?(Bookmark) ? "_#{shareable.id}" : "" %>
+    <% embed_partial = shareable.is_a?(Bookmark) ? "share/embed_link_bookmark" : "share/embed_link_work" %>
+    <textarea cols="50" rows="4" id="embed_code<%= id_suffix %>"><%= remove_newlines(render(embed_partial, item: shareable)) %></textarea>
+  </p>
+
+  <ul>
+    <%# Twitter share %>
+    <li class="twitter">
+      <% twitter_text = shareable.is_a?(Bookmark) ? get_tweet_text_for_bookmark(shareable) : get_tweet_text(shareable) %>
+      <% twitter_url = shareable.is_a?(Bookmark) ? bookmark_url(shareable) : work_url(shareable) %>
+
+      <!-- Sharingbutton Twitter. See https://sharingbuttons.io/ -->
+      <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text=<%=u twitter_text %>&url=<%=u twitter_url %>&via=ao3org&size=large" target="_blank" rel="noopener" aria-label="Twitter">
+        <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--medium"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M23.44 4.83c-.8.37-1.5.38-2.22.02.93-.56.98-.96 1.32-2.02-.88.52-1.86.9-2.9 1.1-.82-.88-2-1.43-3.3-1.43-2.5 0-4.55 2.04-4.55 4.54 0 .36.03.7.1 1.04-3.77-.2-7.12-2-9.36-4.75-.4.67-.6 1.45-.6 2.3 0 1.56.8 2.95 2 3.77-.74-.03-1.44-.23-2.05-.57v.06c0 2.2 1.56 4.03 3.64 4.44-.67.2-1.37.2-2.06.08.58 1.8 2.26 3.12 4.25 3.16C5.78 18.1 3.37 18.74 1 18.46c2 1.3 4.4 2.04 6.97 2.04 8.35 0 12.92-6.92 12.92-12.93 0-.2 0-.4-.02-.6.9-.63 1.96-1.22 2.56-2.14z"/>
+            </svg>
+          </div>
+          <%= ts('Twitter') %>
+        </div>
+      </a>
+    </li>
+
+    <% # Tumblr share %>
+    <li class="tumblr">
+      <% work = shareable.is_a?(Bookmark) ? shareable.bookmarkable : shareable %>
+      <% tumblr_url = work_url(work) %>
+      <% tumblr_title = get_tumblr_embed_link_title(work) %>
+      <% tumblr_caption = shareable.is_a?(Bookmark) ? render("share/embed_link_bookmark", item: shareable) : render("share/embed_meta", work: shareable) %>
+
+      <!-- Sharingbutton Tumblr. See https://sharingbuttons.io/ -->
+      <a class="resp-sharing-button__link" href="http://tumblr.com/widgets/share/tool?canonicalUrl=<%=u tumblr_url %>&title=<%=u tumblr_title %>&caption=<%=u tumblr_caption %>" target="_blank" rel="noopener" aria-label="Tumblr">
+        <div class="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--medium">
+          <div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13.5.5v5h5v4h-5V15c0 5 3.5 4.4 6 2.8v4.4c-6.7 3.2-12 0-12-4.2V9.5h-3V6.7c1-.3 2.2-.7 3-1.3.5-.5 1-1.2 1.4-2 .3-.7.6-1.7.7-3h3.8z" />
+            </svg>
+          </div>
+          <%= ts('Tumblr') %>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>

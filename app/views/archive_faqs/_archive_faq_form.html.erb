@@ -1,0 +1,61 @@
+<noscript>
+  <% if Globalize.locale.to_s == "en" %>
+    <%= form_tag({}, {:method => :get}) do %>
+      <fieldset>
+        <legend><%= ts("Add Questions") %></legend>
+        <h3 class="landmark heading"><%= ts("Add Questions") %></h3>
+        <p class="notes">
+          <%= ts("Since you don't have JavaScript turned on, please tell us how many questions you want this category to have. (This must be greater than the current number of questions, which is %{num}.) ", num: @archive_faq.questions.count) %>
+        </p>
+        <p>
+          <%= label_tag "num_questions", ts("Questions:") %>
+          <%= text_field_tag "num_questions", params["num_questions"], class: "number" %>
+        </p>
+        <p class="submit"><%= submit_tag ts("Update Form") %></p>
+      </fieldset>
+    <% end %>
+    <% end %>
+</noscript>
+
+<%= form_for(@archive_faq, html: { class: "create faq" }) do |form| %>
+  <%= error_messages_for @archive_faq %>
+  <p class="required notice"><%= ts("* Required information") %></p>
+  <fieldset>
+    <legend><%= ts("Set Preferences") %></legend>
+    <h3 class="landmark heading"><%= ts("Set Preferences") %></h3>
+    <dl>
+      <dt class="required">
+        <%= form.label :title, ts("Category name") + "*" %>
+      </dt>
+      <dd class="required">
+        <%= form.text_field :title %>
+        <%= live_validation_for_field(field_id(form, "title").to_sym, failureMessage: ts("Please enter a category name.")) %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <% # TODO: If you have the form set up to create 3 questions and you only fill in 2, you get an error instead of the totally empty section being ignored. This is the same with requests/offers in challenge signups. %>
+  <fieldset>
+    <legend><%= ts("Questions") %></legend>
+    <h3 class="landmark heading"><%= ts("Questions") %></h3>
+
+    <% form.object.questions.each_with_index do |question, index| %>
+      <%= form.fields_for :questions, question do |question_form| %>
+        <%= render "question_answer_fields", form: question_form, index: index %>
+      <% end %>
+    <% end %>
+    <% if Globalize.locale.to_s == "en" %>
+      <p class="actions" role="button">
+        <%= link_to_add_section("Add Question", form, :questions, "question_answer_fields") %>
+      </p>
+    <% end %>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Submit") %></legend>
+    <h3 class="landmark heading"><%= ts("Submit") %></h3>
+    <p class="submit actions">
+      <%= submit_tag ts("Post"), name: "post_button" %>
+    </p>
+  </fieldset>
+<% end %>

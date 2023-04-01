@@ -1,0 +1,12 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Delete Tag Set Nomination?") %></h2>
+
+<!--main content-->
+<%= form_for(@tag_set, :url => tag_set_nomination_path(@tag_set, @tag_set_nomination), :html => {:method => :delete, :class => "simple destroy"}) do |f| %>
+  <p><%= ts("Are you certain you want to delete these nominations?") %></p>
+  <p>
+    <%= f.submit ts("Yes, Delete Tag Set Nominations") %>
+    <%= link_to ts("Back to the Tag Set Nominations"), tag_set_nomination_path(@tag_set, @tag_set_nomination) %>
+  </p>
+<% end %>
+<!--/content-->

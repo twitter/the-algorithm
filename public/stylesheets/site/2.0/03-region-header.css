@@ -1,0 +1,290 @@
+/*==REGION: HEADER is #1 of the 4 regions shown on every page
+http://otwcode.github.com/docs/front_end_coding/patterns/supertypes
+notice that CSS3 declarations sit are indented twice (four spaces) and always come last*/
+
+#header input, #header #search>*, #header #search .submit {
+  display: inline;
+  float: none;
+}
+
+#header .landmark {
+  clear: none;
+  font-size: 0;
+  border: none;
+}
+
+/* check login and greeting; was a quick fix to remove bg */
+#header a, #header fieldset, #header form, #header p, #header li, #header h1, #small_login dl {
+  background: transparent;
+  font-size: 100%;
+  border: none;
+  padding: 0;
+  margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#header {
+  font-size: 0.875em;
+  margin: 0 0 1em;
+  padding: 0;
+  position: relative;
+}
+
+#header li {
+  display: block;
+  float: left;
+  position: relative;
+}
+
+#header a, #header a:visited, #header .primary .open a, #header .primary .dropdown:hover a, #header .primary .dropdown a:focus {
+  color: #111;
+}
+
+#header .actions a:hover, #header .actions a:focus, #header .dropdown:hover a, #header .open a {
+  background: #ddd;
+}
+
+/*BRANDING: logo and title */
+
+#header .heading {
+  float: left;
+  padding: 0.375em;
+}
+
+/* 1.714em x 14px = 24px */
+#header .heading a {
+  color: #900;
+  font-size: 1.714em;
+  line-height: 1.75em;
+}
+
+/* 0.583em x 24px = 14px */
+#header .heading sup {
+  font-size: 0.583em;
+  font-style: italic;
+}
+
+#header .logo {
+  float: left;
+  height: 42px;
+}
+
+/*ACTION: dropdown*/
+
+#header .menu, #small_login {
+  background: #ddd;
+  display: none;
+  padding: 0.25em 0;
+  position: absolute;
+  width: 20em;
+  z-index: 55;
+    box-shadow: 1px 1px 3px -1px #444;
+    background-image: -moz-linear-gradient(top, rgba(221, 221, 221, 0.98) 0%, rgba(204, 204, 204, 0.98) 100%);
+    background-image: -webkit-linear-gradient(top, rgba(221, 221, 221, 0.98) 0%, rgba(204, 204, 204, 0.98) 100%);
+    background-image: -o-linear-gradient(top, rgba(221, 221, 221, 0.98) 0%, rgba(204, 204, 204, 0.98) 100%);
+    background-image: linear-gradient(to bottom, rgba(221, 221, 221, 0.98) 0%, rgba(204, 204, 204, 0.98) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fadddddd', endColorstr='#facccccc',GradientType=0);
+}
+
+#header .open .menu, #header .dropdown:hover .menu, .open + #small_login, #header .menu li {
+  display: block;
+  float: none;
+}
+
+#header .menu li {
+  border-bottom: 1px solid #888;
+  margin: 0 0.25em;
+  text-align: left;
+}
+
+#header .menu li:last-child {
+  border-bottom: none;
+}
+
+#header .dropdown .menu a {
+  background: transparent;
+  display: block;
+  padding: 0.75em 0.5em 0.5em;
+}
+
+#header .dropdown .menu a:hover, #header .dropdown .menu a:focus {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* login and greeting */
+
+#login, #greeting {
+  float: right;
+  margin-right: 0.375em;
+}
+
+#header .user {
+  padding: 0.429em 0 0;
+  position: relative;
+  z-index: 20;
+}
+
+#header .user a, #small_login .action {
+  padding: 0.25em 0.75em;
+}
+
+#header .user a:hover, #header .user a:focus {
+  color: #900;
+    border-radius: 0.25em;
+}
+
+#login .open a:hover, #login .open a:focus {
+  background: #eee;
+}
+
+#greeting .user > li {
+  margin: 0 0.125em;
+}
+
+#greeting .menu {
+  right: 0;
+    box-shadow: -1px 1px 3px -1px #444;
+}
+
+/* square off bottom corners when the dropdown is visible */
+#greeting .open a, #greeting .dropdown:hover a {
+    border-radius: 0.25em 0.25em 0 0;
+}
+
+#greeting .dropdown .menu a {
+    border-radius: 0;
+}
+
+#greeting p.icon {
+  float: right;
+  height: auto;
+  padding: 0.429em 0.125em 0;
+  line-height: 1;
+  width: auto;
+}
+
+#greeting p.icon a {
+  display: block;
+  padding: 0;
+}
+
+#greeting img.icon {
+  height: 1.786em;
+  width: 1.786em;
+    background-size: 100%;
+}
+
+/*FORM: login */
+
+#small_login {
+  border: 2px solid #fff;
+  padding: 0.375em;
+  right: 0;
+  z-index: 10;
+    box-shadow: none;
+}
+
+#small_login form {
+  margin-top: 1.286em;
+}
+
+#small_login dt, #small_login dd {
+  margin: 0;
+  width: 99%;
+}
+
+#small_login dt, #small_login .submit {
+  border-bottom: none;
+  padding: 0.375em 0 0;
+}
+
+#small_login .actions {
+  float: none;
+  text-align: left;
+}
+
+#small_login .footnote {
+  float: left;
+  font-size: 0.857em;
+  padding: 0.375em 0;
+}
+
+#small_login .footnote li {
+  padding: 0 0.25em;
+}
+
+.dropdown #small_login .footnote a {
+  background: transparent;
+  border-bottom: 1px solid;
+}
+
+/* primary navigation */
+
+#header .primary {
+  background: #900 url(/images/skins/textures/tiles/red-ao3.png);
+  padding: 0 0;
+  width: 100%;
+    box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.35),
+    1px 1px 3px -1px rgba(0, 0, 0, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.85); /* instead of a bottom border to keep the container the same height as its contents */
+}
+
+#header .primary > li:first-of-type {
+  margin-left: 2em;
+}
+
+#header .primary a {
+  padding: 0.429em 0.75em;
+}
+
+#header .primary a {
+  color: #fff;
+}
+
+#header .primary .menu a {
+  color: #111;
+  padding: 0.75em 0.5em 0.5em;
+}
+
+/* search */
+
+#header .search {
+  float: right;
+  color: #2a2a2a;
+  margin-right: 0.25em;
+}
+
+#header #search input:focus {
+  color: #2a2a2a;
+  outline: 1px dotted;
+}
+
+#header #search .text, #header #search .button {
+  border: none;
+}
+
+/* 0.2857em x 14px = 4px because the input has a padding of 0.15em x 14px = 2px and it needs to match 0.429em x 14px = 6px */
+#header #search .text {
+  margin: 0.2857em 0.429em;
+}
+
+#header #search .button {
+  margin: 0;
+}
+
+/*CONTEXT: collections*/
+
+#header h2 {
+  border-top: 1px solid;
+  clear: both;
+  color: #fff;
+  display: block;
+  font-size: 1.714em;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 0.375em;
+    text-shadow: none;
+}
+
+/*END== */

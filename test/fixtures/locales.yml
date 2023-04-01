@@ -1,0 +1,85 @@
+---
+English US:
+  id: 1
+  name: English (US)
+  iso: en
+  language_id: 1
+  main: "1"
+French:
+  id: 2
+  name: Français
+  iso: fr-FR
+  language_id: 2
+  main: "0"
+Spanish:
+  id: 3
+  name: Español
+  iso: es-ES
+  language_id: 3
+  main: "0"
+German:
+  id: 4
+  name: Deutsch
+  iso: de-DE
+  language_id: 4
+  main: "0"
+Italian:
+  id: 5
+  name: Italiano
+  iso: it-IT
+  language_id: 5
+  main: "0"
+Japanese:
+  id: 6
+  name: 日本語
+  iso: ja-JP
+  language_id: 6
+  main: "0"
+Czech:
+  id: 7
+  name: Čeština
+  iso: cs-CZ
+  language_id: 7
+  main: "0"
+Russian:
+  id: 8
+  name: Pyccĸий
+  iso: ru-RU
+  language_id: 8
+  main: "0"
+Suomi:
+  id: 9
+  name: Suomi
+  iso: fi-FI
+  language_id: 9
+  main: "0"
+Bahasa Indonesia:
+  id: 10
+  name: Bahasa Indonesia
+  iso: id-ID
+  language_id: 10
+  main: "0"
+Nederlands:
+  id: 11
+  name: Nederlands
+  iso: nl-NL
+  language_id: 11
+  main: "0"
+Português:
+  id: 12
+  name: Português
+  iso: pt-BR
+  language_id: 12
+  main: "0"
+">中文":
+  id: 13
+  name: ">中文"
+  iso: zh-CHS
+  language_id: 13
+  main: "0"
+English UK:
+  id: 14
+  name: English (UK)
+  iso: en-UK
+  language_id: 1
+  main: "0"

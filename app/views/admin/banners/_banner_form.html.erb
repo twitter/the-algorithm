@@ -1,0 +1,55 @@
+<%= form_for @admin_banner, html: { class: 'post' } do |f| %>
+  <%= error_messages_for @admin_banner %>
+  
+  <p class="required notice"><%= ts('* Required information') %></p>
+  
+  <fieldset>
+    <legend><%= ts('Admin Banner') %></legend>
+    <h3 class="landmark heading"><%= ts('Admin Banner') %></h3>
+    <dl>
+  
+      <dt class="required"><%= f.label :content, ts('Banner text') + '*' %></dt>
+      <dd class="required">
+        <p><%= allowed_html_instructions %></p>
+        <%= f.text_area :content %>
+      </dd>
+
+      <dt class="required"><%= ts('Banner type') %>*</dt>
+      <dd class="required">
+        <ul>
+          <li>
+            <%= f.radio_button :banner_type, '', checked: true %>
+            <%= f.label :banner_type_, ts('Default') %>
+          </li>
+          <li>
+            <%= f.radio_button :banner_type, 'event' %>
+            <%= f.label :banner_type_event, ts('Event (For membership drives, celebrations, etc.)') %>
+          </li>
+          <li>
+            <%= f.radio_button :banner_type, 'alert' %>
+            <%= f.label :banner_type_alert, ts('Alert (For bugs, important changes, expected downtime, etc.)') %>
+          </li>
+        </ul>
+      </dd>
+
+      <dt><%= f.check_box :active %></dt>
+      <dd><%= f.label :active, ts('Active') %></dd>
+
+      <% if @admin_banner.active? %>
+        <dt><%= check_box_tag :admin_banner_minor_edit %></dt>
+        <dd><%= label_tag :admin_banner_minor_edit, ts('This is a minor update (Do not turn the banner back on for users who have dismissed it)') %></dd>
+      <% end %>
+
+    </dl>
+  </fieldset>
+  
+  <fieldset>
+    <legend><%= ts('Actions') %></legend>
+    <h3 class="landmark heading"><%= ts('Actions') %></h3>
+    
+    <p class="submit actions">
+      <%= f.submit @admin_banner.new_record? ? ts('Create Banner') : ts('Update Banner') %>
+    </p>
+  </fieldset>
+
+<% end %>

@@ -1,0 +1,56 @@
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <%= ts("Edit External Work") %>
+</h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= form_for(@external_work, html: { class: "external work post" }) do |f| %>
+  <p class="required notice">* <%= ts("Required information") %></p>
+  <fieldset>
+    <legend><%= ts("Work Preface") %></legend>
+    <dl>
+      <dt class="required"><%= f.label :url, ts("URL") + "*" %></dt>
+      <dd class="required">
+        <%= f.text_field :url %>
+      </dd>
+      <dt class="required"><%= f.label :author, ts("Creator") + "*" %></dt>
+      <dd class="required">
+        <%= f.text_field :author, class: "observe_textlength" %>
+        <%= generate_countdown_html("external_work_author",
+                                    ExternalWork::AUTHOR_LENGTH_MAX) %>
+      </dd>
+      <dt class="required"><%= f.label :title, ts("Title") + "*" %></dt>
+      <dd class="required">
+        <%= f.text_field :title, class: "observe_textlength" %>
+        <%= generate_countdown_html("external_work_title",
+                                    ArchiveConfig.TITLE_MAX) %>
+      </dd>
+      <dt>
+        <%= f.label :language_id, ts("Language") %>
+        <%= link_to_help "languages-help" %>
+      </dt>
+      <dd>
+        <%= f.collection_select(:language_id, sorted_languages, :id, :name, prompt: " ") %>
+      </dd>
+      <dt>
+        <%= f.label :summary, ts("Creator's Summary") %>
+        <%= ts("(please copy and paste from original work)") %>
+      </dt>
+      <dd>
+        <%= f.text_area :summary, rows: 5, class: "observe_textlength" %>
+        <%= generate_countdown_html("external_work_summary",
+                                    ArchiveConfig.SUMMARY_MAX) %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <%= render 'works/work_form_tags', work: @external_work,
+      include_blank: false %>
+
+  <p class="submit actions"><%= f.submit %></p>
+<% end %>
+<!--/content-->

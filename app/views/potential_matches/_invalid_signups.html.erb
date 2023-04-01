@@ -1,0 +1,15 @@
+<h3><%= ts("Invalid Sign-ups Found!") %></h3>
+<p class="note">
+  <%= ts("Your challenge has the following invalid sign-ups. They may be duplicates or have
+  too-many or too-few prompts. You can review and edit or delete them, or contact the user
+  if you aren't sure what they wanted.") %>  
+</p>
+<p class="note">
+  <%= ts("When you are finished, try to generate potential matches again.") %>
+</p>
+
+<ul>
+<% @invalid_signups.each do |signup| %>
+  <li><%= link_to signup.pseud.byline, collection_signup_path(@collection, signup) %></li>
+<% end %>
+</ul>

@@ -1,0 +1,35 @@
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= ts('Search Results') %></h2>
+
+<h4 class="heading">
+  <%= ts("You searched for:") %>
+  <%= (strip_tags @search.summary).html_safe %>
+</h4>
+
+<%= render "muted/muted_items_notice" %>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to ts("Edit Your Search"), current_path_with(edit_search: true) %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<% if @works.blank? %>
+  <p><%= ts("No results found. You may want to edit your search to make it less specific.") %></p>
+<% else %>
+  <h3 class="heading"><%= search_results_found(@works) %> <%= link_to_help "work-search-results-help" %></h3>
+
+  <h3 class="landmark heading">Works List</h3>
+  <ol class="work index group">
+    <% @works.each do |work| %>
+      <% unless work.nil? %>
+        <%= render :partial => 'work_blurb', :locals => {:work => work} %>
+      <% end %>
+    <% end %>
+  </ol>
+ 
+ <%= will_paginate @works %>
+<% end %>
+<!--/content-->

@@ -1,0 +1,9 @@
+<% #expects local "request_signup"; lists the people that this person is writing for %>
+<%= request_signup.offer_assignments.map { |offer_assignment| 
+  offer_assignment.request_signup ?
+    "#{offer_assignment.request_signup.pseud.byline}" :
+    (offer_assignment.pinch_request_signup ?
+      "#{offer_assignment.pinch_request_signup.pseud.byline}* 
+       (pinch recipient)" : 
+       "<strong>None</strong>")}.join(", ").html_safe
+%>

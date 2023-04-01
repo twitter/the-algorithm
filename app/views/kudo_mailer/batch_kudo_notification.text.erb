@@ -1,0 +1,28 @@
+<% content_for :message do %>
+<% @commentables.each_with_index do |commentable, index| %>
+<%
+  commentable_title = commentable.commentable_name.html_safe
+  commentable_url = polymorphic_url(commentable).html_safe
+  givers_hash = @user_kudos["#{commentable.class.name}_#{commentable.id}"]
+  names = givers_hash["names"]
+  guest_count = givers_hash["guest_count"].to_i
+  kudo_count = names.size + guest_count
+  # dup so we don't add "a guest" or "5 guests" to the original array. If that
+  # happens, kudo_count ends up too high whenever both named and guest kudos are
+  # present.
+  givers = names.dup
+  givers << t(".guest", count: guest_count) unless guest_count.zero?
+  givers_list = givers.to_sentence
+%>
+
+<% if kudo_count == 1 && guest_count == 1 %>
+<%= t(".text.single_guest", commentable_title: commentable_title, commentable_url: commentable_url) %>
+<% else %>
+<%= t(".text.left_kudos", givers_list: givers_list, commentable_title: commentable_title, commentable_url: commentable_url, count: kudo_count) %>
+<% end %>
+
+<% if (index < @commentables.length - 1) %>
+<%= text_divider %>
+<% end %>
+<% end %>
+<% end %>

@@ -1,0 +1,17 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".page_heading") %></h2>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "login post" } ) do |form| %>
+  <dl>
+    <dt><%= form.label :login, t(".label.login") %></dt>
+    <dd><%= form.text_field :login %></dd>
+    <dt><%= form.label :password, t(".label.password") %></dt>
+    <dd><%= form.password_field :password %></dd>
+    <dt class="landmark"><%= t(".landmark.reset") %></dd>
+    <dd><p class="footnote"><%= link_to t(".reset_link"), new_admin_password_path %></p></dd>
+  </dl>
+  <p class="submit actions"><%= form.submit t(".submit") %></p>
+<% end %>
+<!--/content-->

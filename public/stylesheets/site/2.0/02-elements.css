@@ -1,0 +1,251 @@
+/*==ELEMENTS/*
+/*MEYERS RESET.***********************************************do not edit */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/************************************************end of uneditable rules */
+
+/* The global rules for normal elements */
+
+body {
+  font: 100%/1.125 'Lucida Grande', 'Lucida Sans Unicode', 'GNU Unifont', Verdana, Helvetica, sans-serif;
+}
+
+a, a:link, a:visited:hover {
+  color: #111;
+  text-decoration: none;
+  border-bottom: 1px solid;
+}
+
+a:visited {
+  color: #666;
+  text-decoration: none;
+  border-bottom: 1px dashed;
+}
+
+a:hover {
+  color: #999;
+}
+
+a:active, a:focus, button:focus {
+  outline: 1px dotted;
+}
+
+a img {
+  border: 0;
+}
+
+a:focus img {
+  outline: 1px dotted;
+}
+
+h1, h2, h3, h4, h5, h6, .heading {
+  font-family: Georgia, serif;
+  font-weight: 400;
+    word-wrap: break-word;
+}
+
+h1 {
+  font-size: 2.5em;
+  line-height: 1;
+  margin: 0.5em 0;
+}
+
+h2 {
+  font-size: 2.143em;
+  line-height: 1;
+  margin: 0.429em 0;
+  display: inline;
+}
+
+/*24px skipped: font-size: 1.714em; line-height: 1; margin: 0.429em 0*/
+
+h3 {
+  font-size: 1.286em;
+  line-height: 1;
+  margin: 0.5375em 0;
+}
+
+h4 {
+  font-size: 1.143em;
+  line-height: 1.125;
+  margin: 0.5em 0;
+}
+
+h5 {
+  font-size: 1em;
+  line-height: 1.286;
+  margin: 0.643em 0;
+}
+
+h6 {
+  font-size: 0.875em;
+  font-weight: 900;
+  line-height: 1.5;
+  margin: 1.5em 0;
+}
+
+p, li, dd, hr {
+  margin: 0.643em 0;
+}
+
+hr {
+  border: 0;
+  border-bottom: 3px double;
+}
+
+.clear {
+  clear: both;
+  height: 0;
+  border: 0;
+  margin: 0;
+  background: transparent;
+  opacity: 0;
+}
+
+blockquote, pre {
+  font: 1em 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Helvetica, sans-serif;
+  margin: 0.643em;
+}
+
+blockquote p:first-child {
+  margin-top: 0;
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+kbd, tt, code, var, pre, samp {
+  font: normal 0.857em 'Monaco', 'Consolas', Courier, monospace;
+  margin: auto;
+}
+
+pre {
+  white-space: pre-wrap;
+}
+
+strong, b {
+  font-weight: bold;
+}
+
+em, cite, i {
+  font-style: oblique;
+}
+
+cite em, em cite, cite i, i cite, i em, em i, em em, i i, cite cite {
+  font-style: normal;
+}
+
+em cite, i cite, ins, u {
+  text-decoration: underline;
+}
+
+del, strike {
+  text-decoration: line-through;
+}
+
+dfn, abbr, acronym {
+  cursor: help;
+}
+
+big {
+  font-size: 114%;
+}
+
+small, sub, sup {
+  font-size: 87.5%;
+}
+
+small small small small {
+  font-size: 100%;
+}
+
+sub {
+  vertical-align: sub;
+  line-height: 0;
+}
+
+sup {
+  vertical-align: super;
+  line-height: 0;
+}
+
+/*http://otwcode.github.com/docs/front_end_coding/accessible-tables*/
+
+table {
+  background: #ddd;
+  border-collapse: collapse;
+  margin: auto;
+  width: 100%;
+  clear: right;
+}
+
+caption {
+  height: 0;
+  width: 0;
+  font-size: 0;
+  opacity: 0;
+  padding: 0;
+  margin: 0;
+}
+
+thead, tfoot {
+  border-bottom: 2px solid #bbb;
+  padding: 0.643em;
+  vertical-align: top;
+}
+
+tfoot td {
+  border-top: 1px solid #bbb;
+}
+
+td th {
+  padding-right: 1em;
+}
+
+tbody tr {
+  border-bottom: 1px solid #fff;
+}
+
+td {
+  padding: 0.25em;
+  vertical-align: top;
+}
+
+th {
+  text-align: start;
+}
+
+thead td {
+  background: #ddd;
+  border-bottom: 1px solid #fff;
+}
+
+th, tr:hover, col.name {
+  background: #fff;
+  border: 1px solid #bbb;
+  padding: 0.15em 0.5em 0.25em;
+  vertical-align: top;
+}
+
+th a, th a:visited, th a:link {
+  text-decoration: none;
+}
+
+tbody tr th {
+  text-align: start;
+}
+
+/*END== */

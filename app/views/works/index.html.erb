@@ -1,0 +1,72 @@
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <%= search_header @works, @search, "Work", @owner %>
+</h2>
+<!-- /end descriptions-->
+
+<!--Subnavigation, sorting and actions.-->
+<% if @collection || @tag || @user %>
+  <div class="navigation actions module">
+    <h3 class="landmark heading"><%= ts("Navigation and Actions") %></h3>
+    <!--gift search subnav-->
+    <% if @collection && @collection.gift_exchange? %>
+      <%= render 'gifts/gift_search' %>
+    <% end %>
+    <!--user role subnav-->
+    <% if @tag || @user || @collection %>
+      <ul class="user navigation actions" role="navigation">
+        <% if @user %>
+          <% if @user == current_user %>
+            <li id="edit_multiple"><%= link_to ts('Edit Works'), show_multiple_user_works_path(@user) %></li>
+          <% end %>
+          <li><%= span_if_current ts('Works in Collections'), collected_user_works_path(@user) %></li>
+          <li><%= span_if_current ts('Works'), user_works_path(@user) %></li>
+        <% end %>
+        <% if @tag && !@collection %>
+          <li><%= span_if_current ts('Works'), tag_works_path(@tag) %></li>
+          <li><%= span_if_current ts('Bookmarks'), tag_bookmarks_path(@tag) %></li>
+        <% end %>
+        <% if @facets.present? %>
+          <% # Filters button for narrow screens jumps to filters when JavaScript is disabled and opens filters when JavaScript is enabled %>
+          <li class="narrow-shown hidden"><a href="#work-filters" id="go_to_filters"><%= ts("Filters") %></a></li>
+        <% end %>
+        <% if @tag && logged_in? && !@collection %>
+          <li><%= render 'favorite_tags/form', current_user: @current_user, favorite_tag: @favorite_tag %></li>
+        <% end %>
+        <% if @tag && !@collection && (%w(Fandom Character Relationship).include?(@tag.type.to_s) || @tag.name == "F/F") %>
+          <li><%= link_to_rss feed_tag_path(:id => @tag.id, :format => :atom) %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>
+<!---/subnav-->
+
+<% unless @owner.present? %>
+  <p><%= ts("These are some of the latest works posted to the Archive. To find more works, #{link_to 'choose a fandom', media_path} or #{link_to 'try our advanced search', search_works_path}.").html_safe %>
+<% end %>
+
+<%= render "muted/muted_items_notice" %>
+
+<% if @works.respond_to?(:total_pages) %>
+  <%= will_paginate @works %>
+<% end %>
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("Listing Works") %></h3>
+<ol class="work index group">
+  <%= render partial: 'work_blurb', collection: @works, as: :work %>
+</ol>
+
+<!--/content-->
+
+<!--filters subnav-->
+<% if @facets.present? %>
+  <%= render "filters" %>
+<% end %>
+<!---/subnav-->
+
+<% if @works.respond_to?(:total_pages) %>
+  <%= will_paginate @works %>
+<% end %>
+

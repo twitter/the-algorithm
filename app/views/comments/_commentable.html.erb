@@ -1,0 +1,147 @@
+<!-- Gets embedded anywhere we need to list comments on a top-level commentable. We need the local variable "commentable" here. -->
+<div id="feedback" class="feedback" role="complementary">
+
+  <h3 class="landmark heading"><%= ts("Actions") %></h3>
+
+  <ul class="actions" role="navigation">
+    <% if @work || @admin_post %>
+      <li><%= link_to '&#8593; '.html_safe + ts('Top'), "#main" %></li>
+    <% end %>
+
+    <% if @work && @previous_chapter %>
+      <li><%= link_to '&#8592;'.html_safe + ts('Previous Chapter'), [@work, @previous_chapter, :anchor => "workskin"] %></li>
+    <% end %>
+
+    <% if @work && @next_chapter %>
+      <li><%= link_to h(ts('Next Chapter')) + ' &#8594;'.html_safe, [@work, @next_chapter, :anchor => "workskin"] %></li>
+    <% end %>
+
+    <% if @previous_admin_post %>
+      <li><%= link_to("Previous Post", @previous_admin_post) %></li>
+    <% end %>
+
+    <% if @next_admin_post %>
+      <li><%= link_to("Next Post", @next_admin_post) %></li>
+    <% end %>
+
+    <% if @admin_post %>
+      <li><%= link_to ts('Back to AO3 News Index'), admin_posts_path %></li>
+    <% end %>
+
+    <% if @work && !is_author_of?(@work) %>
+      <li>
+        <%= form_for(:kudo, url: kudos_path, html: { method: 'post', id: 'new_kudo' }) do |kudo_form| %>
+          <%= kudo_form.hidden_field :commentable_id, :value => @work.id %>
+          <%= kudo_form.hidden_field :commentable_type, :value => 'Work' %>
+          <%= kudo_form.submit ts("Kudos ♥"), :id => 'kudo_submit' %>
+        <% end %>
+      </li>
+    <% end %>
+    <% if @work && is_maintainer? && @work.allow_collection_invitation? %>
+      <li>
+        <%= link_to t(".invite_to_collections_link"), "#collection-form", :class => "collection_item_form_placement_open" %>
+      </li>
+    <% end %>
+
+
+    <% if logged_in? && @work %>
+      <li>
+        <% @bookmark ||= bookmark_if_exists(commentable) %>
+        <%= link_to (@bookmark ? ts("Edit Bookmark") : ts("Bookmark")), "#bookmark-form", :class => "bookmark_form_placement_open" %>
+      </li>
+    <% end %>
+
+    <% if logged_in? && @work && marked_for_later?(@work) %>
+      <li>
+        <%= mark_as_read_link(@work) %>
+      </li>
+    <% end %>
+
+    <% if commentable.count_visible_comments > 0 && !commentable.is_a?(Tag) %>
+        <li id="show_comments_link"><%= show_hide_comments_link(commentable, :show_count => true) %></li>
+    <% end %>
+  </ul>
+
+
+  <div id="kudos_message"></div>
+  <%= flash_div :kudos_error, :kudos_notice %>
+
+  <% if @work && (@chapter.blank? || @chapter.posted?) %>
+    <%= render "kudos/kudos", :kudos => @kudos, :guest_kudos_count => @work.guest_kudos_count, :commentable => @work %>
+  <% end %>
+
+
+  <h3 class="landmark heading"><a id="comments"><%= ts("Comments") %></a></h3>
+  <%= flash_div :comment_error, :comment_notice %>
+
+  <% commentable_parent = find_parent(commentable) %>
+  <% if commentable_parent.is_a?(AdminPost) && commentable_parent.disable_all_comments? %>
+    <p class="notice">
+      <%= t(".permissions.admin_post.disable_all") %>
+    </p>
+  <% elsif commentable_parent.is_a?(AdminPost) && commentable_parent.disable_anon_comments? && !logged_in? %>
+    <p class="notice">
+      <%= t(".permissions.admin_post.disable_anon") %>
+      <%= t(".permissions.admin_post.alt_action", support_link: link_to(t(".permissions.admin_post.support_link"), new_feedback_report_path)).html_safe %>
+    </p>
+  <% elsif commentable_parent.is_a?(Work) && commentable_parent.disable_all_comments? %>
+    <p class="notice">
+      <%= t(".permissions.work.disable_all") %>
+    </p>
+  <% elsif commentable_parent.is_a?(Work) && commentable_parent.disable_anon_comments? && !logged_in? %>
+    <p class="notice">
+      <%= t(".permissions.work.disable_anon") %>
+      <%= t(".permissions.work.alt_action") %>
+    </p>
+  <% elsif commentable_parent.is_a?(Work) && commentable_parent.hidden_by_admin? %>
+    <p class="notice">
+      <%= t(".permissions.work.hidden") %>
+    </p>
+  <% elsif commentable_parent.is_a?(Work) && commentable_parent.in_unrevealed_collection %>
+    <p class="notice">
+      <%= t(".permissions.work.unrevealed") %>
+    </p>
+  <% elsif commentable_parent.is_a?(Work) && blocked_by?(commentable_parent) %>
+    <p class="notice">
+      <%= t(".blocked") %>
+    </p>
+  <% else %>
+    <div id="add_comment_placeholder" title="top level comment">
+      <div id="add_comment">
+        <%= render 'comments/comment_form', {:comment => Comment.new, :commentable => commentable, :button_name => t(".actions.comment")} %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- If we have javascript, here is where the comments will be spiffily inserted -->
+  <!-- If not, and show_comments is true, here is where the comments will be rendered -->
+  <div id="comments_placeholder" <% unless params[:show_comments] || params[:tag_id] %>style="display:none;"<% end %>>
+    <% if params[:show_comments] || params[:tag_id] %>
+      <% @comments = CommentDecorator.for_commentable(commentable, page: params[:page]) %>
+      <%= will_paginate @comments, params: { anchor: :comments } %>
+      <%= render 'comments/comment_thread', { :depth => 0, :comments => @comments } %>
+      </ol><!-- need to tack this on to close thread -->
+      <%= will_paginate @comments, params: { anchor: :comments } %>
+    <% end %>
+  </div>
+
+  <% if logged_in? && @work %>
+    <% if is_maintainer? && @work.allow_collection_invitation? %>
+      <div id="collection_item_form_placement" class="wrapper toggled">
+        <%= render "collection_items/collection_item_form", :item => @work, :in_page => true %>
+      </div>
+    <% end %>
+
+    <div id="bookmark_form_placement" class="wrapper toggled">
+      <% @bookmark ||= bookmark_if_exists(commentable) %>
+      <% bookmarkable = (commentable.respond_to?(:work) ? commentable.work : commentable) %>
+      <% if @bookmark %>
+        <%= render "bookmarks/bookmark_form", :bookmarkable => bookmarkable, :bookmark => @bookmark, :button_name => ts("Update"), :action => :update, :in_page => true %>
+      <% else %>
+        <%= render "bookmarks/bookmark_form", :bookmarkable => bookmarkable, :bookmark => Bookmark.new, :button_name => ts("Create"), :action => :create, :in_page => true %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
+<!-- END comments -->

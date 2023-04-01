@@ -1,0 +1,41 @@
+<div id="manage-questions">
+
+  <h4 class="heading"><%= ts("Reorder questions") %></h4>
+
+  <p id="drag" class="showme"><%= ts("Drag questions to change their order.") %></p>
+  <noscript><p><%= ts("Enter new question numbers.") %></p></noscript>
+  <%= form_tag url_for(action: 'update_positions') do %>
+    <ul id="sortable_question_list" class="sortable">
+      <% for question in @questions %>
+        <li id="question_<%= question.id %>" class='question-position-list'>
+          <%= text_field_tag 'questions[]', nil, size: 3, maxlength: 3, class: 'number question-position-field', id: 'questions_' + question.position.to_s %>
+          <span id='position-for-<%= question.id %>'><%= question.position %></span>.
+          <%= question.question.html_safe %>
+        </li>
+      <% end %>
+    </ul>
+    <p class="submit actions">
+      <%= submit_tag ts("Update Positions") %>
+      <%= link_to ts("Back"), url_for(@archive_faq) %>
+    </p>
+  <% end %>
+</div>
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j("#sortable_question_list").sortable({
+    delay: 300,
+    update: function(event, ui) {
+    $j(".question-position-list").each(function(index, li){
+    var questionId = $j(li).attr("id").replace("question_","");
+    $j("#position-for-"+questionId).html(index+1);
+    });
+    $j.ajax({
+    type: 'post',
+    data: $j("#sortable_question_list").sortable("serialize") + "&archive_faq_id=<%= @archive_faq.id %>",
+    dataType: 'script',
+    url: "<%= url_for(action: :update_positions) %>"})
+    }
+    })
+  <% end %>
+<% end %>

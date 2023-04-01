@@ -1,0 +1,22 @@
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= ts('Site Skin Wizard')  %></h2>
+
+<%= error_messages_for :skin %>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "skin_navigation" %>
+<!--/subnav-->
+
+<!--main content-->
+<p class="notes">
+  <%= ts('This wizard only creates site skins. You can also %{link} which can be used to add styling to works that you post.', link: link_to(ts('create a work skin'), url_for(skin_type: 'WorkSkin'))).html_safe %>
+  <%= link_to_help 'skins-basics' %>
+</p>
+
+<h3 class="landmark heading"><%= ts('Site Skin Wizard') %></h3>
+
+<%= form_for @skin, html: { class: "wizard skin verbose post" } do |f| %>
+  <%= render 'wizard_form', f: f %>
+<% end %>
+<!--/content-->

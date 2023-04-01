@@ -1,0 +1,19 @@
+
+
+<% if participant %>
+<li id="participant_<%= participant.id %>">
+  <%= form_for(participant, url: collection_participant_path(@collection, participant), as: :collection_participant) do |form| %>
+    <span class="byline"><%= link_to participant.pseud.byline, user_path(participant.pseud.user) %></span>
+
+  <ul class="actions" role="menu">
+      <li title="select role"><%= form.select(:participant_role, CollectionParticipant::PARTICIPANT_ROLE_OPTIONS, {}, id: participant.pseud.user.login + "_role") %></li>
+      <li><%= form.submit ts("Update"), id: participant.pseud.user.login + "_submit" %></li>
+  <% end %>
+      <li><%= button_to ts("Remove"), collection_participant_path(@collection, participant),
+                        data: { confirm: ts('Are you certain you want to remove %{participant}?',
+                                            participant: participant.pseud.name) },
+                        method: :delete %>
+      </li>
+  </ul>
+</li>
+<% end %>

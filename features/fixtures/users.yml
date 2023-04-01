@@ -1,0 +1,15 @@
+testuser:
+  id: 1
+  login: testuser
+  email: test@example.com
+  confirmed_at: 2009-12-12 21:08:07 +00:00
+testuser2:
+  id: 2
+  login: testuser2
+  email: test2@example.com
+  confirmed_at: 2009-12-12 21:08:07 +00:00
+sad_user_with_no_pseuds:
+  id: 3
+  login: sad_user_with_no_pseuds
+  email: test3@example.com
+  confirmed_at: 2009-12-12 21:08:07 +00:00

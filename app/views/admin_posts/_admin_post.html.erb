@@ -1,0 +1,39 @@
+<% # expects "admin_post" %>
+<div <% if rtl_language?(admin_post.language) %>dir="rtl"<% end %> class="header">
+  <h3 class="heading">
+    <%= link_to admin_post.title.html_safe, admin_post %>
+  </h3>
+</div>
+<h4 class="landmark heading"><%= ts("Post Header") %></h4>
+<div class="wrapper">
+  <dl class="meta">
+    <dt class="published"><%= ts("Published:") %></dt>
+    <dd class="published"><%= admin_post.created_at %></dd>
+    <% if admin_post.translated_post %>
+      <dt class="original translations"><%= ts("Original:") %></dt>
+      <dd class="original translations"><%= link_to admin_post.translated_post.title, admin_post.translated_post %></dd>
+    <% elsif !admin_post.translations.empty? %>
+      <dt class="translations"><%= ts("Translations:") %></dt>
+      <dd class="translations">
+        <ul class="languages commas">
+          <% for translation in sorted_translations(admin_post) %>
+            <li><%= link_to translation.language.name, translation %></li>
+          <% end %>
+        </ul>
+      </dd>
+    <% end %>
+    <% if admin_post.tags.length > 0 %>
+      <dt class="tags"><%= ts("Tags:") %></dt>
+      <dd class="tags">
+        <ul class="tags commas">
+          <% for tag in admin_post.tags %>
+            <li><%= link_to tag.name, admin_posts_path(tag: tag.id), class: "tag" %></li>
+          <% end %>
+        </ul>
+      </dd>
+    <% end %>
+  </dl>
+</div>
+<div <% if rtl_language?(admin_post.language) %>dir="rtl"<% end %> class="userstuff">
+  <%= raw sanitize_field(admin_post, :content) %>
+</div>

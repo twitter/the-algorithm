@@ -1,0 +1,2 @@
+class SeriesPolicy < UserCreationPolicy
+end

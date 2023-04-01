@@ -1,0 +1,96 @@
+<div id="chapter-form" class="verbose post work chapter">
+  <%= form_for([@work, chapter]) do |f| %>
+    <p class="required notice"><%= ts("* Required information") %></p>
+    <fieldset id="chapter-ordering">
+      <legend><%= ts("Name, Order and Date") %></legend>
+      <h4 class="landmark heading"><%= ts("Name, Order and Date") %></h4>
+      <dl>
+        <dt><%= f.label :title, ts("Chapter Title") %> <%= link_to_help "chapter-title" %></dt>
+        <dd>
+          <%= f.text_field :title, class: "observe_textlength" %>
+          <%= live_validation_for_field("chapter_title", presence: false, maximum_length: ArchiveConfig.TITLE_MAX) %>
+          <%= generate_countdown_html("chapter_title", ArchiveConfig.TITLE_MAX) %>
+        </dd>
+
+        <dt><%= f.label :position, ts("Chapter Number") %></dt>
+        <dd>
+          <p>
+            <%= f.text_field :position, class: "number" %>
+            <%= f.label :wip_length, ts("of"), title: ts("of total chapters") %>
+            <%= f.text_field :wip_length, class: "number" %>
+          </p>
+        </dd>
+        <dt id="managePublicationDate"><%= f.label :published_at, ts("Chapter Publication Date") %>  <%= link_to_help "backdating-help" %></dt>
+        <dd class="datetime"><%= f.date_select "published_at", start_year: Date.current.year, end_year: 1950, default: @work.default_date, order: [:day, :month, :year] %></dd>
+      </dl>
+    </fieldset>
+
+    <fieldset>
+      <legend><%= ts("Chapter Preface") %></legend>
+      <h4 class="landmark heading"><%= ts("Chapter Preface") %></h4>
+      <dl>
+        <%= render "pseuds/byline", form: f, object: @chapter %>
+
+        <dt class="summary"><%= f.label :summary, ts("Chapter Summary") %></dt>
+        <dd class="summary">
+          <%= f.text_area :summary, rows: 4, cols: 60, class: "observe_textlength" %>
+          <%= live_validation_for_field("chapter_summary", presence: false, maximum_length: ArchiveConfig.SUMMARY_MAX) %>
+          <%= generate_countdown_html("chapter_summary", ArchiveConfig.SUMMARY_MAX) %>
+        </dd>
+
+        <%= render "works/notes_form", f: f, type: "chapter" %>
+
+      </dl>
+    </fieldset>
+
+<fieldset class="text">
+  <legend class="required"><%= ts("Chapter Text") + "*" %></legend>
+  <h4 class="landmark heading"><%= ts("Chapter Text") %></h4>
+  <ul class="hidden rtf-html-switch actions" role="menu">
+    <li><a class="rtf-link" href="#"><%= ts("Rich Text") %></a></li>
+    <li><a class="html-link" href="#"><%= ts("HTML") %></a></li>
+  </ul>
+  <p class="rtf-html-instructions note">
+    <span class="html-notes"><%= allowed_html_instructions %></span>
+    <span class="hidden rtf-notes"><%= ts("Type or paste formatted text.") %><%= link_to_help "rte-help" %></span>
+  </p>
+  <div class="rtf-html-field">
+    <%= f.text_area :content, id: "content", class: "mce-editor observe_textlength large" %>
+    <%= live_validation_for_field("content",
+          maximum_length: ArchiveConfig.CONTENT_MAX_DISPLAYED,
+          minimum_length: ArchiveConfig.CONTENT_MIN,
+          tooLongMessage: ts("We salute your ambition! But sadly each chapter of a work must be less than %{max} characters long.", max: ArchiveConfig.CONTENT_MAX_DISPLAYED.to_s),
+          tooShortMessage: ts("Brevity is the soul of wit, but your content does have to be at least %{min} characters long.", min: ArchiveConfig.CONTENT_MIN.to_s),
+          failureMessage: ts("Brevity is the soul of wit, but your content does have to be at least %{min} characters long.", min: ArchiveConfig.CONTENT_MIN.to_s))
+        %>
+        <%= generate_countdown_html("content", ArchiveConfig.CONTENT_MAX_DISPLAYED) %>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><%= ts("Post Chapter") %></legend>
+      <ul class="actions">
+        <% unless @chapter.new_record? || @chapter.posted? %>
+          <li><%= submit_tag ts("Save As Draft"), name: "save_button" %></li>
+        <% end %>
+        <li><%= submit_tag ts("Preview"), name: "preview_button" %></li>
+        <li><%= submit_tag ts("Post"), name: "post_without_preview_button", data: { disable_with: ts("Please wait...") } %></li>
+        <li><%= submit_tag ts("Cancel"), name: "cancel_button" %></li>
+      </ul>
+    </fieldset>
+
+  <% end # form_for %>
+</div>
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j(document).ready(function(){
+      $j(".toggle_formfield").click(function() {
+        var targetId = $j(this).attr("id").replace("-show", "");
+        toggleFormField(targetId);
+      });
+    })
+  <% end %>
+
+  <% use_tinymce %>
+<% end %>

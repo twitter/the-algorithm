@@ -1,0 +1,96 @@
+--- 
+series_00001: 
+  restricted: false
+  created_at: 2008-11-09 01:26:02 Z
+  title: Test Series
+  updated_at: 2009-12-18 14:59:03 Z
+  series_notes: |-
+    blabla
+    blablabla
+    blaaaablablablabla
+    
+    bla bla?
+  id: 1
+  complete: false
+  summary: Can tabindex be used legitimately to enhance accessibility? Yes, but because those instances are rare, it is probably best to pay more attention to the actual reading order, and forget about tabindex entirely.
+  hidden_by_admin: false
+series_00002: 
+  restricted: false
+  created_at: 2008-12-06 22:39:32 Z
+  title: Decameron
+  updated_at: 2008-12-06 22:39:32 Z
+  series_notes: 
+  id: 2
+  complete: false
+  summary: 
+  hidden_by_admin: false
+series_00003: 
+  restricted: false
+  created_at: 2009-02-24 05:16:08 Z
+  title: New Series
+  updated_at: 2009-02-24 05:20:30 Z
+  series_notes: also not empty!
+  id: 3
+  complete: false
+  summary: not empty!
+  hidden_by_admin: false
+series_00004: 
+  restricted: false
+  created_at: 2009-03-20 23:12:48 Z
+  title: Series Made of Restricted Works
+  updated_at: 2009-03-20 23:30:10 Z
+  series_notes: This series contains only restricted works, to test that unregistered users see no trace of it.
+  id: 4
+  complete: false
+  summary: Series consisting entirely of restricted works. Not logged in users should see no trace of this series!
+  hidden_by_admin: false
+series_00005: 
+  restricted: false
+  created_at: 2009-03-20 23:17:43 Z
+  title: Series Made of Public and Restricted Works
+  updated_at: 2009-03-20 23:25:56 Z
+  series_notes: This series includes both public and restricted works, to test that unregistered users see no trace of the restricted ones.
+  id: 5
+  complete: false
+  summary: Series including both public and restricted works, unregistered users should see no trace of the restricted ones!
+  hidden_by_admin: false
+series_00006: 
+  restricted: true
+  created_at: 2009-12-12 22:43:13 Z
+  title: NCIS and the...
+  updated_at: 2009-12-12 22:43:13 Z
+  series_notes: 
+  id: 6
+  complete: false
+  summary: 
+  hidden_by_admin: false
+series_00007: 
+  restricted: false
+  created_at: 2009-12-12 22:48:20 Z
+  title: NCIS and the...
+  updated_at: 2009-12-12 22:48:20 Z
+  series_notes: 
+  id: 7
+  complete: false
+  summary: 
+  hidden_by_admin: false
+series_00008: 
+  restricted: false
+  created_at: 2009-12-12 23:00:53 Z
+  title: Bridges verse
+  updated_at: 2009-12-12 23:01:10 Z
+  series_notes: 
+  id: 8
+  complete: false
+  summary: 
+  hidden_by_admin: false
+series_00009: 
+  restricted: false
+  created_at: 2009-12-12 23:51:58 Z
+  title: Brave New Challenge
+  updated_at: 2009-12-12 23:53:07 Z
+  series_notes: 
+  id: 9
+  complete: false
+  summary: 
+  hidden_by_admin: false

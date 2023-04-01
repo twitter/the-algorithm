@@ -1,0 +1,38 @@
+<%= form_for([@user, @external_author]) do |f| %>
+  <%= error_messages_for @external_author %>
+  <fieldset>
+    <legend>External Author Identity</legend>
+    <dl>
+      <dt><%= f.label :email %></dt>
+      <dd><%= f.text_field :email %></dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend>External Author Names</legend>
+    <%= f.fields_for :external_author_names do |name_form| %>
+      <%= render :partial => 'external_author_name', :locals => {:form => name_form} %>
+    <% end %>
+
+    <p class="actions" role="button"><%= add_name_link(f) %></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>External Author Preferences</legend>
+    <dl>
+      <dt><%= f.label :do_not_email, ts("Don't email when works are imported: ") %></dt>
+      <dd><%= f.check_box :do_not_email %> </dd>
+
+      <dt><%= f.label :do_not_import, ts("Don't import works: ") %></dt>
+      <dd><%= f.check_box :do_not_import %> </dd>
+    </dl>
+  </fieldset>
+  
+  <fieldset>
+  	<legend><%= ts("Submit") %></legend> 
+    <p class="submit actions">
+      <%= f.submit ts("Submit") %>
+    </p>
+  </fieldset>
+
+<% end %>

@@ -1,0 +1,17 @@
+<% content_for :message do %>
+<% if !@user_name.blank? %>
+<%= t ".has_invited", user_name: @user_name %>
+<% else %>
+<%= t ".been_invited" %>
+<% end %>
+
+<%= t ".text.about", otw_url: "https://www.transformativeworks.org" %>
+
+<%= t ".features" %>
+
+<%= t ".text.join", invitation_url: signup_url(invitation_token: @invitation.token) %>
+
+<%= t ".text.activation_support", support_url: new_feedback_report_url %>
+
+<%= t ".text.faq", faq_url: archive_faqs_url %>
+<% end %>

@@ -1,0 +1,12 @@
+wrangler:
+  id: 1
+  name: tag_wrangler
+translator:
+  id: 2
+  name: translator
+archivist:
+  id: 4
+  name: archivist
+official:
+  id: 5
+  name: official

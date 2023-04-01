@@ -1,0 +1,9 @@
+<!--subnav-->
+<% if @user %>
+<p class="navigation actions" role="navigation"><%= link_to 'Back to invitations', user_invitations_path(@user) %></p>
+<% end %>
+<!--/subnav-->
+
+<!--main content-->
+<%= render :partial => 'invitations/invitation', :locals => {:user => @user, :invitation => @invitation} %>
+<!--/content-->

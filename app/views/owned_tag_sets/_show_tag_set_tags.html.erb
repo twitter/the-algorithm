@@ -1,0 +1,72 @@
+<ol class="index group">
+  <% # first show any ratings, categories, or warnings, since there will only be a small number if any %>
+  <% TagSet::TAGS_AS_CHECKBOXES.each do |tag_type| %>
+    <% if @tag_set.has_type?(tag_type.classify) %>
+      <%= render "show_tags_in_single_list", :tag_type => tag_type.classify %>
+    <% end %>
+  <% end %>
+
+  <% if @tag_hash[:fandom] %>
+    <% # we're doing the fandoms by media and any char/rel tags will be nested %>
+    <%= render "show_fandoms_by_media" %>
+  <% end %>
+
+  <% if @tag_hash[:character] || @tag_hash[:relationship] %>
+    <% # if there was a fandom display, check for any that weren't shown in the fandom display %>
+
+    <% if @tag_hash[:fandom] %>
+      <% @unassociated_chars.reject! {|c| @character_seen[c]} %>
+      <% @unassociated_rels.reject! {|r| @relationship_seen[r]} %>
+      <% unless @unassociated_chars.empty? && @unassociated_rels.empty? %>
+        <% # close ol %>
+        </ol>
+        <h4 class="heading"><%= ts("The following characters and relationships don't seem to be associated with any fandom in the tagset. You might need to add the fandom, or set up associations for them.") %></h4>
+        <% # reopen new ol %>
+        <ol class="index group">
+
+        <li class="cast listbox group">
+          <h3 class="heading"><%= ts("Unassociated Characters & Relationships") %> (<%= @unassociated_chars.size + @unassociated_rels.size %>) <%= expand_contract_shuffle("list_for_unassociated_char_and_rel") %></h3>
+          <ol id="list_for_unassociated_char_and_rel" class="tags index commas">
+            <%= @unassociated_chars.sort {|a,b| a.gsub(/^(the |an |a )/, '') <=> b.gsub(/^(the |an |a )/, '')}.map {|tag| content_tag(:li, tag)}.join("\n").html_safe %>
+            <%= @unassociated_rels.sort {|a,b| a.gsub(/^(the |an |a )/, '') <=> b.gsub(/^(the |an |a )/, '')}.map {|tag| content_tag(:li, tag)}.join("\n").html_safe %>
+          </ol>
+        </li>
+      <% end %>
+
+    <% else %>
+
+      <% @fandom_keys_from_other_tags.each do |fandom| %>
+        <%
+           # this gets called a ton if there are a lot of fandoms so not doing it in a partial for performance, although
+           # as a result it's mostly duplicated in show_fandoms_by_media :(
+        %>
+        <% has_characters = (@tag_hash[:character] && @tag_hash[:character][fandom]) ? @tag_hash[:character][fandom].size : 0 %>
+        <% has_relationships = (@tag_hash[:relationship] && @tag_hash[:relationship][fandom]) ? @tag_hash[:relationship][fandom].size : 0 %>
+        <li class="fandom listbox group">
+          <% if (has_relationships + has_characters) > 0 %>
+            <h3 class="expander_parent heading">
+              <%= ts("%{fandom}", :fandom => fandom) %>
+              (<%= has_relationships + has_characters %>)
+              <% list_id = "list_for_fandom_#{fandom.gsub(/[^\w]/, '_')}" %>
+              <%= expand_contract_shuffle(list_id) %>
+            </h3>
+            <ol id="<%= list_id %>" class="tags index commas">
+              <% if has_characters > 0 %>
+                <%= @tag_hash[:character][fandom].map {|character| content_tag(:li, character)}.join("\n").html_safe %>
+              <% end %>
+              <% if has_relationships > 0 %>
+                <%= @tag_hash[:relationship][fandom].map {|relationship| content_tag(:li, relationship)}.join("\n").html_safe %>
+              <% end %>
+            </ol>
+          <% else %>
+            <h3 class="heading"><%= ts("%{fandom}", :fandom => fandom) %> (0)</h3>
+          <% end %>
+        </li>
+      <% end %>
+
+    <% end %>
+  <% end %>
+
+  <% # finally, freeform tags, if necessary broken up into alphabetical lists %>
+  <%= render "show_tags_by_alpha", :tag_type => "freeform" %>
+</ol>

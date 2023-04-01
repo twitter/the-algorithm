@@ -1,0 +1,30 @@
+<!--ZONE TAG: tagset POST/CREATE-->
+<div class="tag tagset">
+  <!--Descriptive page name and system messages, descriptions, and instructions.-->
+  <h2 class="heading"><%= ts('Batch Loading') %> <%= link_to_help "tagset-batch-load" %></h2>
+  <!-- /descriptions-->
+
+  <!--subnav-->
+  <%= render "navigation" %>
+  <!--/subnav-->
+
+  <!--main content-->
+  <%= form_for(@tag_set, :url => do_batch_load_tag_set_path(@tag_set), :html => {:method => :put, :class => "tagset post"}) do |form| %>
+    <fieldset>
+      <legend><%= ts('Batch Load') %></legend>
+      <h3 class="heading landmark"><%= ts('Batch Load Tag Associations') %></h3>
+      <dl>
+        <dt><label for="batch_associations"><%= ts('Batch Load Tag Associations') %></label></dt>
+        <dd>
+          <p class="note">One line per fandom in the form: <kbd>fandom,character,character,character,...</kbd></p>
+          <%= text_area_tag "batch_associations", @failed_batch_associations %>
+        </dd>
+        <dt><%= label_tag "batch_do_relationships", ts('Relationships instead?') %></dt>
+        <dd><%= check_box_tag "batch_do_relationships" %></dd>
+        <dt class="landmark"><%= ts('Submit') %></dt> 
+        <dd class="submit actions"><%= form.submit ts('Submit') %></dd>
+      </dl>
+    </fieldset>
+    
+  <% end %>
+</div>

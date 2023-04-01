@@ -1,0 +1,189 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("My Inbox") %> (<%= ts("%{total} comments, %{unread} unread", total: @inbox_total, unread: @unread) %>)</h2>
+
+<%= flash_div :comment_error, :comment_notice %>
+<!--/descriptions-->
+
+<!--subnav-->
+<% # Filters button for narrow screens jumps to filters when JavaScript is disabled and opens filters when JavaScript is enabled %>
+<p class="narrow-shown hidden actions">
+  <a href="#inbox-filters" id="go_to_filters"><%= ts("Filters") %></a>
+</p>
+<!--/subnav-->
+
+<!--main content-->
+<% unless @inbox_comments.blank? %>
+
+  <%= will_paginate @inbox_comments %>
+
+  <%= form_tag user_inbox_path(@user, page: params[:page], filters: @filters), method: :put, id: "inbox-form", class: "inbox manage" do %>
+    <fieldset class="actions">
+      <legend><%= ts("Mass Edit Options") %></legend>
+
+      <ul>
+        <li><a class="check_all"><%= ts("Select All") %></a></li>
+        <li><a class="check_none"><%= ts("Select None") %></a></li>
+        <li><%= submit_tag ts("Mark Read"), name: "read" %></li>
+        <li><%= submit_tag ts("Mark Unread"), name: "unread" %></li>
+        <li><%= submit_tag ts("Delete From Inbox"), name: "delete" %></li>
+      </ul>
+    </fieldset>
+
+    <fieldset class="comments">
+      <legend><%= ts("List of Comments") %></legend>
+
+      <ol class="comment index group">
+        <% @inbox_comments.each do |inbox_comment| %>
+          <% feedback_comment = inbox_comment.feedback_comment %>
+
+          <!-- START of single comment -->
+          <li class="<%= inbox_comment.read? ? 'read' : 'unread' %> <%= css_classes_for_comment(feedback_comment) %>" role="article" id="feedback_comment_<%= feedback_comment.id %>">
+            <% if !can_see_hidden_comment?(feedback_comment) %>
+              <p class="message"><%= ts("(This comment is under review by an admin and is currently unavailable.)") %></p>
+            <% else %>
+              <%= render "inbox_comment_contents", feedback_comment: feedback_comment %>
+            <% end %>
+
+            <h5 class="landmark heading"><%= ts("Comment Actions") %></h5>
+
+            <ul class="actions" role="menu">
+              <% unless inbox_comment.read? %>
+                <li><span class="unread"><%= ts("Unread") %></span></li>
+              <% end %>
+              <% if inbox_comment.replied_to? %>
+                <li>
+                  <span class="replied" title="<%= ts("replied to") %>">
+                    <%= ts("&#10004;").html_safe %>
+                  </span>
+                </li>
+              <% end %>
+              <% if feedback_comment.iced? %>
+                <li><%= frozen_comment_indicator %></li>
+              <% end %>
+              <% if feedback_comment.unreviewed? %>
+                <li class="approve review" id="review_comment_link_<%= feedback_comment.id %>">
+                  <%= render 'inbox/approve_button', feedback_comment: feedback_comment, approved_from: "inbox" %>
+                </li>
+              <% elsif can_reply_to_comment?(feedback_comment) %>
+                <li>
+                  <%= render 'inbox/reply_button', feedback_comment: feedback_comment %>
+                </li>
+              <% end %>
+              <li>
+                <%= label_tag "inbox_comments_#{inbox_comment.id}" do %>
+                  <%= check_box_tag "inbox_comments[]", inbox_comment.id, false, id: "inbox_comments_#{inbox_comment.id}" %>
+                  <%= ts("Select") %>
+                <% end %>
+              </li>
+            </ul>
+          </li>
+          <!-- END of single comment -->
+        <% end %>
+      </ol>
+    </fieldset>
+
+    <fieldset class="actions">
+      <legend><%= ts("Mass Edit Options") %></legend>
+
+      <ul>
+        <li><a class="check_all"><%= ts("Select All") %></a></li>
+        <li><a class="check_none"><%= ts("Select None") %></a></li>
+        <li><%= submit_tag ts("Mark Read"), name: "read" %></li>
+        <li><%= submit_tag ts("Mark Unread"), name: "unread" %></li>
+        <li><%= submit_tag ts("Delete From Inbox"), name: "delete" %></li>
+      </ul>
+    </fieldset>
+    <!-- coming soon <%= submit_tag ts("mass reply") %> -->
+  <% end %> <!-- end of inbox form -->
+
+  <!-- we can't open comment forms inside the inbox form, which is why this is down here -->
+  <!-- this div will contain the reply-to-comment form -->
+  <div id="reply-to-comment" class="dynamic hidden"></div>
+<% end %>
+
+<!--/content-->
+
+<!--subnav-->
+<%= form_tag(user_inbox_path(@user), method: :get, class: "narrow-hidden filters", id: "inbox-filters") do %>
+  <h3 class="landmark heading"><%= ts("Filter") %></h3>
+  <%= field_set_tag do %>
+    <dl>
+      <dt><%= ts("Filter by read") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= label_tag "filters_read_all" do %>
+              <%= radio_button_tag "filters[read]", "all", (!%w(true false).include?(@filters[:read])) %>
+              <%= label_indicator_and_text(ts("Show all")) %>
+            <% end %>
+          </li>
+          <li>
+            <%= label_tag "filters_read_false" do %>
+              <%= radio_button_tag "filters[read]", "false", @filters[:read] == "false" %>
+              <%= label_indicator_and_text(ts("Show unread")) %>
+            <% end %>
+          </li>
+          <li>
+            <%= label_tag "filters_read_true" do %>
+              <%= radio_button_tag "filters[read]", "true", @filters[:read] == "true" %>
+              <%= label_indicator_and_text(ts("Show read")) %>
+            <% end %>
+          </li>
+        </ul>
+      </dd>
+
+      <dt><%= ts("Filter by replied to") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= label_tag "filters_replied_to_all" do %>
+              <%= radio_button_tag "filters[replied_to]", "all", (!%w(true false).include?(@filters[:replied_to])) %>
+              <%= label_indicator_and_text(ts("Show all")) %>
+            <% end %>
+          </li>
+          <li>
+            <%= label_tag "filters_replied_to_false" do %>
+              <%= radio_button_tag "filters[replied_to]", "false", @filters[:replied_to] == "false" %>
+              <%= label_indicator_and_text(ts("Show without replies")) %>
+            <% end %>
+          </li>
+          <li>
+            <%= label_tag "filters_replied_to_true" do %>
+              <%= radio_button_tag "filters[replied_to]", "true", @filters[:replied_to] == "true" %>
+              <%= label_indicator_and_text(ts("Show replied to")) %>
+            <% end %>
+          </li>
+        </ul>
+      </dd>
+
+      <dt><%= ts("Sort by date") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= label_tag "filters_date_desc" do %>
+              <%= radio_button_tag "filters[date]", "desc", @filters[:date] != "asc" %>
+              <%= label_indicator_and_text(ts("Newest first")) %>
+            <% end %>
+          </li>
+          <li>
+            <%= label_tag "filters_date_asc" do %>
+              <%= radio_button_tag "filters[date]", "asc", @filters[:date] == "asc" %>
+              <%= label_indicator_and_text(ts("Oldest first")) %>
+            <% end %>
+          </li>
+        </ul>
+      </dd>
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= submit_tag ts("Filter") %></dd>
+    </dl>
+  <% end %>
+  <% # On narrow screens, link jumps to top of index when JavaScript is disabled and closes filters when JavaScript is enabled %>
+  <p class="narrow-shown hidden">
+    <a href="#main" id="leave_filters" class="close">
+      <%= ts("Top of Inbox") %>
+    </a>
+  </p>
+<% end %>
+<!--/subnav-->
+
+<%= will_paginate @inbox_comments %>

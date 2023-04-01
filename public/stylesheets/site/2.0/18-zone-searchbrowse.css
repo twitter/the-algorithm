@@ -1,0 +1,254 @@
+/*==ZONE: SEARCH/BROWSE (currently header linked index pages)
+The search and browse zone is in development and has no parent class yet
+Arguably filter and search could be styled in interactions but I've put them here in case we change those page areas a lot
+.search and .browse may turn out to be separate but interrelated */
+
+/* INDEX PAGES (with filters)*/
+
+.filtered .index {
+  width: 75%;
+  float: left;
+}
+
+.people-index ol + div.pagination, .index + h4.landmark {
+  clear: both;
+}
+
+.media-index .listbox {
+  min-height: 17.5em;
+}
+
+/* INTERACTION: SEARCH */
+
+form.search input[type="text"] {
+  border-top-color: #999;
+  padding: 0.15em 0.25em;
+    border-radius: 1em;
+}
+
+.search p, li.search form p {
+  position: relative;
+}
+
+.search [role="tooltip"] {
+  background: #ddd;
+  border: 1px solid #fff;
+  padding: 0.15em;
+  position: absolute;
+  left: -999em;
+  font-size: 0.75em;
+  z-index: 1;
+}
+
+.search input:focus + [role="tooltip"] {
+  left: 1em;
+  right: 1em;
+  top: 2.75em;
+}
+
+li.search fieldset {
+  margin: auto;
+  padding: 0.15em;
+  font-size: 87.5%;
+  overflow: visible;
+  width: auto;
+}
+
+.search .tags dd.submit {
+  margin: -3em 0.643em 0;
+}
+
+/* INTERACTION: FILTER */
+
+form.filters {
+  width: 23%;
+  float: right;
+}
+
+.filters h4 {
+  display: inline;
+  font-weight: 700;
+}
+
+.filters dl, .filters dt {
+  padding: 0;
+}
+
+.filters dt, .filters dd, .filters input[type="submit"], .filters .expander {
+  width: 100%;
+}
+
+.filters input + label {
+  padding-left: 0;
+}
+
+.filters dl dl {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+    box-shadow: none;
+}
+
+.filters .submit, .filters .group {
+  margin: 0;
+  padding: 0;
+}
+
+.filters .submit input {
+  height: 100%;
+  margin: 1em 0;
+  min-height: 1.286em;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
+  white-space: normal;
+}
+
+.filters dt.heading {
+  margin-top: 1.929em;
+}
+
+.filters .expander {
+  background: url("/images/arrow-right.gif") left center no-repeat;
+  border: none;
+  color: #2a2a2a;
+  height: 100%;
+  min-height: 1.786em; /* default button height plus 0.25 vertical padding */
+  outline: none;
+  padding: 0.25em 0 0.25em 14px;
+  text-align: left;
+  white-space: normal;
+    border-radius: 0;
+    box-sizing: border-box;
+}
+
+.filters .expander:focus {
+  outline: 1px dotted;
+}
+
+.filters .expanded .expander {
+  background-image: url("/images/arrow-down.gif");
+}
+
+.filters .expandable, .filters .group dd.autocomplete {
+  margin: 0;
+}
+
+.filters .group dt.search, .filters .range dt {
+  border-bottom: none;
+  padding: 0.25em 0;
+}
+
+.filters .group dt.bookmarker {
+  border-top: 1px solid #f3efec;
+  margin-top: 0.643em;
+  padding-top: 0.643em;
+}
+
+.filters .more dd.search, .filters .more dt.search, .filters .range dd {
+  margin-top: 0;
+}
+
+.filters .warning {
+  font-weight: 500;
+}
+
+.filters .collapsed:after, .filters .expanded:after {
+  content: none;
+}
+
+.filters .sort + .heading {
+  margin-top: 1.286em; /* heading top margin minus sort bottom margin */
+}
+
+.filters [type="checkbox"], .filters [type="radio"] {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  left: auto; /* fix for VoiceOver outline position in iOS 10.3.1 */
+}
+
+/* AO3-5370: Style changes to fix a bug unique to Safari 9. Hack courtesy of
+https://browserstrangeness.github.io/css_hacks.html */
+@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+  .filters [type="checkbox"], .filters [type="radio"] {
+    left: -2em;
+    position: relative;
+  }
+}
+
+.filters .indicator:before {
+  background: #eee;
+  color: #aaa;
+  display: inline-block;
+  border: 1px solid;
+  margin-right: 0.25em;
+  text-align: center;
+    background-image: -moz-linear-gradient(top, #fff 2%, #ddd 95%, #bbb 100%);
+    background-image: -webkit-linear-gradient(top, #fff 2%, #ddd 95%, #bbb 100%);
+    background-image: linear-gradient(#fff 2%, #ddd 95%, #bbb 100%);
+}
+
+.filters input:focus + .indicator + span {
+  outline: 1px dotted;
+}
+
+.filters input:checked + .indicator:before {
+  border-color: #2a2a2a;
+}
+
+.filters input:checked + .indicator + span {
+  font-weight: 700;
+}
+
+.filters [type="checkbox"] + .indicator:before {
+  content: " \2713";
+  padding: 0 0.25em;
+    border-radius: 0.25em;
+}
+
+.filters [type="checkbox"]:checked + .indicator:before {
+  background: #deffde;
+  color: #008000;
+    background-image: -moz-linear-gradient(top, #fff 2%, #d1f0d1 95%, #b3ccb3 100%);
+    background-image: -webkit-linear-gradient(top, #fff 2%, #d1f0d1 95%, #b3ccb3 100%);
+    background-image: linear-gradient(#fff 2%, #d1f0d1 95%, #b3ccb3 100%);
+}
+
+.filters [type="radio"] + .indicator:before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+    border-radius: 1em;
+}
+
+.filters [type="radio"]:checked + .indicator:before {
+  background: #fff;
+    background-image: -moz-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 11%, rgba(0, 0, 0, 0) 23%),
+                      -moz-linear-gradient(top, #bbb 0%, #ddd 5%, #fff 100%);
+    background-image: -webkit-radial-gradient(center, ellipse cover, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 11%, rgba(0, 0, 0, 0) 23%),
+                      -webkit-linear-gradient(top, #bbb 0%, #ddd 5%, #fff 100%);
+    background-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 11%, rgba(0, 0, 0, 0) 23%),
+                      linear-gradient(to bottom, #bbb 0%, #ddd 5%, #fff 100%);
+}
+
+.filters .exclude [type="checkbox"] + .indicator:before {
+  content: " \2715";
+}
+
+.filters .exclude [type="checkbox"]:checked + .indicator:before {
+  background: #fedede;
+  color: #f00;
+    background-image: -moz-linear-gradient(top, #fff 2%, #efd1d1 95%, #d8bebe 100%);
+    background-image: -webkit-linear-gradient(top, #fff 2%, #efd1d1 95%, #d8bebe 100%);
+    background-image: linear-gradient(#fff 2%, #efd1d1 95%, #d8bebe 100%);
+}
+
+/*END== */

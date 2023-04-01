@@ -1,0 +1,9 @@
+english:
+  short: en
+  name: English
+german:
+  short: de
+  name: Deutsch
+french:
+  short: fr
+  name: Français

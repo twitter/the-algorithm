@@ -1,0 +1,95 @@
+<p class="required notice">* <%= ts('Required information') %></p>
+<fieldset>
+  <legend><%= ts('About') %></legend>
+  <h3 class="landmark heading"><%= ts('About') %></h3>
+  <dl>      
+    <dt class="required"><%= label_tag 'skin_type', ts('Type') + "*" %> <%= link_to_help 'skins-basics' %></dt>
+    <dd class="required">
+      <% if @skin.id %>
+        <% # don't let user change the type of an already-created skin %>
+        <%= (@skin.type && @skin.type == 'WorkSkin') ? ts('Work Skin') : ts('Site Skin') %>
+      <% else %>      
+        <%= select_tag 'skin_type', options_for_select(Skin::TYPE_OPTIONS, @skin.type || params[:skin_type] ),
+          :onchange => 'if ($j(this).val() == "WorkSkin") {$j("#advanced_skin_fieldset").hide();} else {$j("#advanced_skin_fieldset").show();}' %>
+      <% end %>
+    </dd>
+  
+    <dt class="required"><%= f.label :title, ts('Title') + "*" %></dt>
+    <dd class="required"><%= f.text_field :title %></dd>
+
+    <dt><%= f.label :description, ts('Description') %></dt>
+    <dd><%= f.text_field :description %></dd>
+
+    <dt><%= f.label :icon, ts('Upload a preview (png, jpeg or gif)') %></dt>
+    <dd><%= f.file_field :icon %></dd>
+
+    <dt><%= f.label :public, ts('Apply to make public') %> <%= link_to_help 'skins-approval' %></dt>
+    <dd><%= f.check_box :public %></dd>
+  </dl>
+</fieldset>
+
+<fieldset>
+  <legend><%= ts('CSS') %></legend>
+  <h3 class="heading"><%= f.label :css, ts('CSS') %> <%= link_to_help 'skins-creating' %></h3>
+  <p><%= f.text_area :css, :cols => 70, :class => 'large' %></p>
+</fieldset>
+  
+<fieldset id="advanced_skin_fieldset" class="<%= (@skin.type || params[:skin_type]) == 'WorkSkin' ? 'hidden ' : ''%>">
+  <legend><%= ts('Advanced') %>
+    <a href="#" class="advanced_skin_open action hidden"><%= ts('Show') %> &#8595;</a>
+    <a href="#" class="advanced_skin_close action hidden"><%= ts('Hide') %> &#8593;</a>
+  </legend>
+
+
+  <div id="advanced_skin" class="<%= show_advanced_skin?(@skin) ? 'toggled open' : 'toggled' %>">
+    <fieldset>
+      <legend><%= ts('Conditions') %> <%= link_to_help 'skins-conditions' %></legend>
+      <h4 class="heading landmark"><%= ts('Conditions') %></h4>
+      <dl>
+        <dt><%= f.label :role, ts('What it does: ')%></dt>
+        <dd>
+          <%= f.select :role, options_for_select(Skin::ROLE_NAMES.invert, @skin.role || Skin::DEFAULT_ROLE), {},
+              :onchange => 'if ($j(this).val() == "override") {$j(".archive_parents").show();} else {$j(".archive_parents").hide();}' %>
+        </dd>
+      
+        <dt><%= f.label :ie_condition, ts('IE Only: ')%></dt>
+        <dd><%= f.select :ie_condition, options_for_select(Skin::IE_CONDITIONS, @skin.ie_condition), :include_blank => true %></dd>
+      
+        <dt><%= f.label :unusable, ts('Parent Only: ')%></dt>
+        <dd><%= f.check_box :unusable %></dd>
+
+        <dt><%= f.label :media, ts('Media: ')%></dt>
+        <dd class="listbox group">
+          <h5 class="heading"><%= ts('Choose @media') %></h5>
+          <%= checkbox_section(f, :media, Skin::MEDIA, :checked_method => @skin.media || Skin::DEFAULT_MEDIA, :value_method => "to_s", :name_method => "to_s", :include_blank => false) %>
+        </dd>        
+      </dl>
+    </fieldset>
+  
+    <fieldset class="listbox group">
+      <legend><%= ts('Parent Skins') %> <%= link_to_help 'skins-parents' %></legend>
+      <h4 class="heading landmark"><%= ts('Parent Skins') %></h4>
+      <ul class="index group">
+        <% f.object.skin_parents.each_with_index do |parent, index| %>
+          <%= f.fields_for :skin_parents, parent do |parent_form| %>
+            <%= render 'skin_parent_fields', :form => parent_form, :index => index %>
+          <% end %>
+        <% end %>
+
+        <% if f.object.skin_parents.count == 0 %><li class="last_id" style="display:none;">0</li><% end %>
+        <li class="actions" role="button"><%= link_to_add_section(ts('Add parent skin'), f, :skin_parents, "skin_parent_fields") %></li>
+      
+        <li class="archive_parents<%= (f.object.role == 'override') ? '' : ' hideme' %>">
+          <p>
+            <label for="add_site_parents">
+              <%= ts('Load Archive Skin Components: ') %><%= link_to_help 'skins-parents' %>
+              <%= check_box_tag 'add_site_parents' %>
+            </label>
+          </p>
+        </li>
+      </ul>
+    </fieldset>
+  </div>
+</fieldset>
+
+<%= submit_fieldset(f) %>

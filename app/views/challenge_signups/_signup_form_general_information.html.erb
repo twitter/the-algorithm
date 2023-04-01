@@ -1,0 +1,21 @@
+<h3 class="heading"><%= ts("Sign Up as") %>
+  <% if (form.object.new_record? || @challenge.allow_name_change?) && current_user.pseuds.size > 1 %>
+    <%= form.select :pseud_id, options_from_collection_for_select(current_user.pseuds, :id, :name, current_user.default_pseud.id) %>
+  <% else %>
+    <% pseud = form.object.new_record? ? current_user.default_pseud : form.object.pseud %>
+    <span class="byline"><%= pseud.byline %></span>
+    <%= form.hidden_field :pseud_id, :value => pseud.id %>
+  <% end %>
+</h3>   
+    
+<% if @challenge.signup_instructions_general.present? %>
+  <fieldset>
+    <h3 class="landmark heading"><%= ts("General Sign Up Instructions") %></h3>
+    <% if @challenge.signup_instructions_general %>
+      <blockquote class="userstuff">
+        <%=raw sanitize_field(@challenge, :signup_instructions_general) %>
+      </blockquote>
+    <% end %>
+  </fieldset>
+<% end %>      
+

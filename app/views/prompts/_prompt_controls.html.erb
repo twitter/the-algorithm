@@ -1,0 +1,56 @@
+<% # requires 'challenge_signup' and 'prompt' locals %>
+<% # to make the code more readable: %>
+<% collection = challenge_signup.collection %>
+<% challenge = collection.challenge %>
+<% user = challenge_signup.pseud.user %>
+
+<% if challenge.signup_open || (!challenge.signup_open && collection.user_is_maintainer?(current_user)) || collection.challenge_type == "PromptMeme" %>
+  <ul class="actions" role="menu">
+    <% # The edit link should show up if signups are open and the current user owns the prompt, OR if the challenge is a gift exchange and signups are closed and the current user is the maintainer %>
+    <% if (challenge.signup_open && user == current_user) || (collection.challenge_type == "GiftExchange" && !challenge.signup_open && collection.user_is_maintainer?(current_user)) %>
+      <li>
+        <%= link_to(ts("Edit Sign-up"), edit_collection_signup_path(collection, challenge_signup)) %>
+      </li>
+      <li>
+        <%= link_to(ts("Edit Prompt"), edit_collection_prompt_path(collection, prompt)) %>
+      </li>
+    <% end %>
+
+    <% # The delete link should show up if signups are open and the current user owns the prompt, OR if the current user is a maintainer, AND only if the signup has more than the minimum number of prompts %>
+    <% if ((challenge.signup_open && user == current_user) || (collection.user_is_maintainer?(current_user))) && prompt.can_delete? %>
+    <li>
+      <%= link_to ts("Delete Prompt"),
+        collection_prompt_path(collection, prompt),
+        data: { confirm: ts("Are you sure? All information in this prompt will be lost.") },
+        method: :delete %>
+    </li>
+    <% end %>
+    <% # Moderators should be able to delete entire sign-ups from the /requests page in PromptMemes.  %>
+    <% if collection.user_is_maintainer?(current_user) && collection.challenge_type == "PromptMeme" %>
+      <li><%= link_to ts("Delete Sign-up"),
+                  collection_signup_path(collection, challenge_signup),
+                  data: { confirm: ts("Are you sure? All prompts in this sign-up will be lost.") },
+                  method: :delete %>
+      </li>
+    <% end %>
+
+    <% # The claiming and fulfilling options should show up if the prompt is claimable %>
+    <% if prompt.claimable? %>
+      <% # The drop link should always show up if the user has claimed the prompt and the fulfil link should sometimes show up %>
+      <% if (claim ||= prompt.claim_by(current_user).first) %>
+        <% # The fulfill link should show up if the collection is open OR if the current user is the maintainer %>
+        <% if !collection.closed? || collection.user_is_maintainer?(current_user) %>
+          <li><%= link_to ts("Fulfill"), new_collection_work_path(collection, :claim_id => claim.id) %></li>
+        <% end %>
+        <% # The drop claim link should show up if the current user has claimed the prompt %>
+        <li><%= link_to ts("Drop Claim"), collection_claim_path(collection, claim), data: { confirm: ts("Do you really want to drop this claim?") }, method: :delete %></li>
+        <% # The claim link should show up if the user has not already claimed the prompt %>
+        <% else %>
+        <li>
+          <%= button_to ts("Claim"), collection_claims_path(collection, prompt_id: prompt.id) %>
+        </li>
+      <% end %>
+    <% end %>
+
+  </ul>
+<% end %>

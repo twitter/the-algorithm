@@ -1,0 +1,26 @@
+<% content_for :message do %>
+
+  <p><%= t("mailer.general.greeting.informal.addressed", name: style_bold(@user.login)).html_safe %></p>
+
+  <p>
+    <% if @collection %>
+      <%= t(".html.collection", collection_link: style_link(@collection.title, collection_url(@collection))).html_safe %>
+    <% else %>
+      <%= t(".no_collection") %>
+    <% end %>
+  </p>
+
+  <p>
+    <% url = @collection ? collection_work_url(@collection, @work) : work_url(@work) %>
+    <%= creation_link_with_word_count(@work, url) %>
+    <br>
+    by <%= creator_links(@work) %>
+  </p>
+
+  <%= render "work_info", work: @work %>
+
+  <% if @collection && !@collection.gift_notification.blank? %>
+    <p><%= @collection.gift_notification %></p>
+  <% end %>
+
+<% end %>

@@ -1,0 +1,33 @@
+<% work_skin = params[:skin_type] && params[:skin_type] == 'WorkSkin' %>
+
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= @title %></h2>
+<%= render 'skin_navigation' %>
+
+<p class="notes">
+  <%= ts('A site skin lets you change the way the Archive is presented when you are logged in to your account. You can use work skins to customize the way your own works are shown to others.') %>
+  <%= link_to_help 'skins-basics' %>
+</p>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render 'skin_type_navigation' %>
+<!--/subnav-->
+
+<!--main content-->
+<h4 class="landmark heading"><%= ts('List of Skins') %></h4>
+<% if @skins.empty? %>
+  <p>
+    <%= work_skin ? ts('No work skins here yet!') : ts('No site skins here yet!') %>
+    <% if logged_in? %><%= link_to ts('Why not try making one?'), new_skin_path(skin_type: work_skin ? 'WorkSkin' : 'Skin') %><% end %>
+  </p>
+<% else %>
+  <ul class="skin picture index group">
+    <% for skin in @skins %>
+      <li class="skins <% if skin.editable? %>own<% end %> picture blurb group">
+        <%= render 'skin_module', skin: skin %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<!--/content-->

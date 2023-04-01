@@ -1,0 +1,50 @@
+<fieldset>
+  <legend><%= ts("Schedule") %></legend>
+  <h3 class="landmark heading"><%= ts("Schedule") %></h3>
+  <ul class="notes">
+    <li>
+      <%= ts("Collection maintainers can sign up while sign-up is closed. Nobody else will 
+      see the sign-up links until you mark your collection open. In this way you can go through the steps and make sure your sign-up form looks just as you want before you launch.") %>
+    </li>
+    <li><%= ts("Dates don't do anything right now; you need to manually open and close sign-up.") %></li>
+  </ul>
+  <dl>
+    <dt><%= f.label :signup_open, ts("Sign-up open?") %></dt>
+    <dd class="datetime"><%= f.check_box :signup_open %></dd>
+    
+    <dt><%= f.label :time_zone, ts("Time zone:") %></dt>
+    <dd class="datetime"><%= f.time_zone_select :time_zone, nil, :default => Time.zone.name %></dd>
+      
+    <dt><%= f.label :signups_open_at_string, ts("Sign-up opens:")%></dt>
+    <dd class="datetime"><%= f.text_field :signups_open_at_string, :class => 'timepicker' %></dd>
+
+    <dt><%= f.label :signups_close_at_string, ts("Sign-up closes:")%></dt>
+    <dd class="datetime"><%= f.text_field :signups_close_at_string, :class => 'timepicker' %></dd>
+
+    <dt><%= f.label :assignments_due_at_string, ts("Assignments due:")%></dt>
+    <dd class="datetime"><%= f.text_field :assignments_due_at_string, :class => 'timepicker' %></dd>
+
+    <% if @collection.unrevealed? %>
+      <dt><%= f.label :works_reveal_at_string, ts("Works revealed:")%></dt>
+      <dd class="datetime"><%= f.text_field :works_reveal_at_string, :class => 'timepicker' %></dd>
+    <% end %>
+
+    <% if @collection.anonymous? %>
+      <dt><%= f.label :authors_reveal_at_string, ts("Creators revealed:")%></dt>
+      <dd class="datetime"><%= f.text_field :authors_reveal_at_string , :class => 'timepicker' %></dd>
+    <% end %>
+  </dl>
+</fieldset>
+
+<%= content_for :footer_js do %>
+  <script src="/javascripts/jquery-ui-timepicker-addon.js" type="text/javascript"></script>  
+  <%= javascript_tag do %>
+      $j('.timepicker').datetimepicker({
+        ampm: true,
+        dateFormat: 'yy-mm-dd',
+        timeFormat: 'hh:mmTT',
+        hourGrid: 5,
+        minuteGrid: 10
+      });
+  <% end %>
+<% end %> 

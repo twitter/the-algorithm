@@ -1,0 +1,12 @@
+redis_autocomplete:
+  test: localhost:6379
+redis_general:
+  test: localhost:6380
+redis_hits:
+  test: localhost:6381
+redis_kudos:
+  test: localhost:6382
+redis_resque:
+  test: localhost:6383
+redis_rollout:
+  test: localhost:6384

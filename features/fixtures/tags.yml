@@ -1,0 +1,68 @@
+not:
+  id: 1
+  name: Not Rated
+  type: Rating
+  canonical: true
+none:
+  id: 2
+  name: No Warnings
+  canonical: true
+  type: ArchiveWarning
+fandom1:
+  id: 3
+  name: first fandom
+  type: Fandom
+  canonical: true
+fandom2:
+  id: 4
+  name: second fandom
+  type: Fandom
+classic:
+  id: 5
+  name: classic
+  type: Freeform
+fandom3:
+  id: 6
+  name: third fandom
+  type: Fandom
+media1:
+  id: 7
+  name: TV Shows
+  type: Media
+  canonical: true
+char1:
+  id: 8
+  name: Person A
+  type: Character
+  canonical: true
+char1a:
+  id: 9
+  name: Persone A
+  type: Character
+ghostsoup:
+  id: 10
+  name: Ghost Soup
+  type: Fandom
+  canonical: true
+rating1:
+  id: 11
+  name: General Audiences
+  type: Rating
+  canonical: true
+rating2:
+  id: 12
+  name: Teen And Up Audiences
+  type: Rating
+  canonical: true
+rating3:
+  id: 13
+  name: Mature
+  type: Rating
+  adult: true
+  canonical: true
+rating4:
+  id: 14
+  name: Explicit
+  type: Rating
+  adult: true
+  canonical: true

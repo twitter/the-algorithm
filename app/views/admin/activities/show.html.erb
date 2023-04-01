@@ -1,0 +1,32 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts('Admin Activity') %></h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <ul class="navigation actions" role="navigation">
+    <li><%= link_to ts("Back To Index"), admin_activities_path %></li>
+  </ul>
+  <!--/subnav-->
+
+  <!--main content-->
+  <div class="wrapper">
+    <dl class="meta group" role="article">
+      <dt><%= ts("Date") %></dt>
+      <dd><%= @activity.created_at %></dd>
+
+      <dt><%= ts("Admin") %></dt>
+      <dd><%= admin_activity_login_string(@activity) %></dd>
+
+      <dt><%= ts("Action") %></dt>
+      <dd><%= @activity.action %></dd>
+
+      <dt><%= ts("Target") %></dt>
+      <dd><%= link_to @activity.target_name, @activity.target %></dd>
+
+      <dt><%= ts("Summary") %></dt>
+      <dd><%=raw sanitize_field(@activity, :summary) %></dd>
+    </dl>
+  </div>
+  <!--/content-->
+</div>

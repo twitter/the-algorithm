@@ -1,0 +1,35 @@
+<% # expects "external_author" local %>
+<h2><%= ts("External Author Listing") %></h2>
+
+<h3 class="heading<%= (!@user && external_author.is_claimed?) ? " claimed" : "" %>">
+  <%= external_author.email %>
+  <% if !@user && external_author.is_claimed? %>
+    <span>(Claimed by <%= link_to external_author.user.login, external_author.user %>)</span>
+  <% end %>
+</h3>
+
+<% if external_author.do_not_import %>
+  <p class="important">
+    <%= ts("No imports may be made for this email address.") %>
+  </p>
+<% end %>
+
+<% if external_author.do_not_email %>
+  <p class="important">
+    <%= ts("No import notifications may be sent to this email address.") %>
+  </p>
+<% end %>
+
+<h4 class="heading">Names used:</h4>
+<ul class="commas">
+  <% external_author.external_author_names.pluck(:name).each do |name| %>
+    <li><%= name %></li>
+  <% end %>
+</ul>
+
+<h4 class="heading">Imported Works:</h4>
+<ul class="work commas">
+  <% external_author.external_creatorships.each do |ext_creatorship| %>
+    <li><%= link_to(ext_creatorship.creation.title, work_path(ext_creatorship.creation)) %></li>
+  <% end %>
+</ul>

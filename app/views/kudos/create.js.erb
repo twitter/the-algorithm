@@ -1,0 +1,2 @@
+$j("#kudos").replaceWith("<%= escape_javascript(render "kudos/kudos", 
+                          { kudos: @kudos, commentable: @commentable, guest_kudos_count: @commentable.guest_kudos_count }) %>");

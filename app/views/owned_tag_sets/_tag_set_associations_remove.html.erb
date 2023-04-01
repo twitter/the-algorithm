@@ -1,0 +1,12 @@
+<% # expects "form" and @tag_set %>
+<% associations_for_remove = @tag_set.tag_set_associations.joins(:tag, :parent_tag).order("parent_tags_tag_set_associations.name, tags.name") %>
+<fieldset>
+  <dl>
+    <dt><%= ts('Currently in set') %></dt>
+    <dd class="listbox group">
+      <h4 class="heading"><%= ts('Tags') %></h4>
+      <%= check_all_none %>
+      <%= checkbox_section(form, :associations_to_remove, associations_for_remove, :name_method => "to_s") %>
+    </dd>
+  </dl>
+</fieldset>

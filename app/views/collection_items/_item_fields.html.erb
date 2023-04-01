@@ -1,0 +1,62 @@
+<li class="collection item picture blurb group">
+  <%= fields_for("collection_items[]", collection_item) do |form| %>
+    <div class="header module">
+      <!--title-->
+      <h4 class="heading" id="collection_item_<%= collection_item.id %>">
+        <%= error_messages_for collection_item %>
+        <%= link_to collection_item_display_title(collection_item), collection_item.item %>
+      </h4>
+
+      <h5 class="heading">
+        <% if @user %>
+          <% # user version %>
+          <%= ts("in") %> <span class="collection"><%= link_to collection_item.collection.title, collection_path(collection_item.collection) %></span>
+          <% if collection_item.collection.user_is_posting_participant?(@user) %>
+            <%= ts("(Member)") %>
+          <% end %>
+        <% else %>
+          <% # mod version %>
+          <% collection_item.item_creator_pseuds.each do |pseud| %>
+            <%= pseud.byline %>
+            <% if collection_item.collection.user_is_posting_participant?(pseud.user) %>
+              <%= ts("(Member)")%>
+            <% end %>
+          <% end %>
+          <% # TODO: Make recipients and bylines links, separate recipients with space (currently "snow,astolat") %>
+          <% unless collection_item.recipients.blank? %>
+            <span class="recipients"><%= ts("for") %> <span class="user"><%= collection_item.recipients %></span></span>
+          <% end %>
+        <% end %>
+      </h5>
+
+      <% if collection_item.item %>
+        <p class="datetime"><%= collection_item.item_date.to_date %></p>
+      <% end %>
+      <div class="icon">
+        <%= image_tag(collection_item.collection.icon.url(:standard), size: "100x100", alt: collection_item.collection.icon_alt_text, class: "icon", skip_pipeline: true) %>
+      </div> 
+    </div>
+
+    <% if collection_item.item %>
+      <% # An item can be in multiple collections. Including the collection name in the id prevents multiple items from having the same id. %>
+      <% id = "blurb_#{collection_item.item_type}_#{collection_item.item_id}_#{collection_item.collection.name}" %>
+      <blockquote id="<%= id %>" class="<% if collection_item.item_type == 'Bookmark' %>bookmark <% else %>work <% end %> blurb toggled">
+        <% if collection_item.item_type == 'Work' %>
+          <%= render "works/work_module", work: collection_item.item, is_unrevealed: false %>
+        <% elsif collection_item.item_type == 'Bookmark' %>
+          <% bookmark = collection_item.item %>
+          <% bookmarkable = bookmark.bookmarkable %>
+          <% if bookmarkable.blank? %>
+            <p class="message"><%= ts("This has been deleted, sorry!") %></p>
+          <% else %>
+            <%= render 'bookmarks/bookmark_item_module', bookmarkable: bookmarkable %>
+          <% end %>
+          <%= render 'bookmarks/bookmark_user_module', bookmark: bookmark %>
+        <% end %>
+      </blockquote>
+    <% end %>
+
+    <!--actions-->
+    <%= render 'collection_item_controls', collection_item: collection_item, form: form %>
+  <% end %>
+</li>

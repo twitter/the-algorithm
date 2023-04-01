@@ -1,0 +1,82 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Edit Series") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "series/series_navigation" %>
+<!--/subnav-->
+
+<!--main content-->
+
+<div id="work-form" class="simple post series">
+<%= form_for(@series) do |f| %>
+  <%= error_messages_for @series %>
+  <p class="required notice"><%= ts("* Required information") %></p>
+  <fieldset>
+    <legend><%= ts('Meta') %></legend>
+    <dl>
+      <dt class="title">
+        <%= f.label :title, ts("Series Title*"), :class => "required" %>
+      </dt>
+      <dd class="title">
+        <%= f.text_field :title, :class => "observe_textlength text" %>
+        <%= live_validation_for_field('series_title',
+              :maximum_length => ArchiveConfig.TITLE_MAX, :minimum_length => ArchiveConfig.TITLE_MIN,
+              :failureMessage => ts("We need a title! (At least %{min_length} characters long, please.)", :min_length => ArchiveConfig.TITLE_MIN.to_s))
+        %>
+        <%= generate_countdown_html("series_title", ArchiveConfig.TITLE_MAX) %>
+      </dd>
+      
+      <!-- Add coauthors-->
+      <%= render 'pseuds/byline', form: f, object: @series %>
+      
+      <dt class="summary">
+        <%= f.label :summary, ts("Series Description", :max => ArchiveConfig.SUMMARY_MAX.to_s) %>
+      </dt>
+      <dd class="summary">
+        <%= allowed_html_instructions %>
+        <%= f.text_area :summary, :class => "observe_textlength" %>
+        <%= live_validation_for_field('series_summary', :presence => false, :maximum_length => ArchiveConfig.SUMMARY_MAX) %>
+        <%= generate_countdown_html("series_summary", ArchiveConfig.SUMMARY_MAX) %>
+      </dd>
+      
+      <dt>
+        <%= f.label :series_notes, ts("Series Notes") %>
+      </dt>
+      <dd>
+        <%= allowed_html_instructions %>
+        <%= f.text_area :series_notes, :class => "observe_textlength" %>
+        <%= live_validation_for_field('series_notes', :presence => false, :maximum_length => ArchiveConfig.NOTES_MAX) %>
+        <%= generate_countdown_html("series_notes", ArchiveConfig.NOTES_MAX) %>
+      </dd>
+      <dt>
+        <%= f.check_box :complete %>
+      </dt>
+      <dd>
+        <%= f.label :complete, ts("This series is complete") %>
+      </dd>
+    </dl>
+  </fieldset>
+  
+  <fieldset class="create">
+    <legend><%= ts('Post') %></legend>
+    <p class="submit cancel actions">
+      <%= f.submit ts("Update") %>
+      <%= link_to ts("Cancel"), series_path %>
+    </p>
+  </fieldset>
+<% end %>
+</div>
+<!--/content-->
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j(document).ready(function(){
+      $j(".toggle_formfield").click(function() {
+        var targetId = $j(this).attr("id").replace("-show", "");
+        toggleFormField(targetId);
+      });
+    })
+  <% end %>
+<% end %>
+

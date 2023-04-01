@@ -1,0 +1,177 @@
+name: Automated Tests
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+jobs:
+  automated-tests:
+    name: ${{ matrix.tests.command }} ${{ matrix.tests.arguments }}
+    runs-on: ubuntu-20.04
+
+    env:
+      CI: true
+      RAILS_ENV: test
+      TEST_GROUP: ${{ matrix.tests.command }} ${{ matrix.tests.arguments }}
+      CUCUMBER_RETRY: 1
+      CUCUMBER_FORMAT: Ao3Cucumber::Formatter
+      SPEC_OPTS: --force-color
+
+    services:
+      database:
+        image: mariadb:10.5.4-focal
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: otwarchive_test
+        ports:
+          - 3306:3306
+
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+        ports:
+          - 9200:9200
+        options: >-
+          -e="discovery.type=single-node"
+          -e="xpack.security.enabled=false"
+
+      memcached:
+        image: memcached:1.5
+        ports:
+          - 11211:11211
+
+    strategy:
+      fail-fast: false
+      matrix:
+        tests:
+          - command: rake
+            arguments: db:otwseed
+          - command: rspec
+            arguments: spec/controllers
+          - command: rspec
+            arguments: spec/models
+          - command: rspec
+            arguments: --exclude-pattern 'spec/{controllers,models}/**/*.rb'
+          - command: cucumber
+            arguments: features/admins
+          - command: cucumber
+            arguments: features/bookmarks
+          - command: cucumber
+            arguments: features/collections
+          - command: cucumber
+            arguments: features/comments_and_kudos
+          - command: cucumber
+            arguments: features/gift_exchanges
+          - command: cucumber
+            arguments: features/importing
+            vcr: true
+          - command: cucumber
+            arguments: features/other_a
+          - command: cucumber
+            arguments: features/other_b
+          - command: cucumber
+            arguments: features/prompt_memes_a
+          - command: cucumber
+            arguments: features/prompt_memes_b
+          - command: cucumber
+            arguments: features/prompt_memes_c
+          - command: cucumber
+            arguments: features/search
+          - command: cucumber
+            arguments: features/tag_sets
+          - command: cucumber
+            arguments: features/tags_and_wrangling
+          - command: cucumber
+            arguments: features/users
+          - command: cucumber
+            arguments: features/works
+            ebook: true
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Run apt-get update
+        run: sudo apt-get update
+
+      - name: Install and start up redis servers
+        run: |
+          sudo apt-get install -y redis-server
+          ./script/gh-actions/multiple_redis.sh
+
+      - name: Install phantomjs
+        if: ${{ matrix.tests.command == 'cucumber' }}
+        run: sudo apt-get install -y phantomjs
+
+      - name: Cache wkhtmltopdf package
+        if: ${{ matrix.tests.ebook }}
+        uses: actions/cache@v3
+        with:
+          path: wkhtmltopdf
+          key: wkhtmltopdf-${{ hashFiles('script/gh-actions/ebook_converters.sh') }}
+
+      - name: Install ebook converters
+        if: ${{ matrix.tests.ebook }}
+        run: ./script/gh-actions/ebook_converters.sh
+
+      - name: Cache VCR cassettes
+        if: ${{ matrix.tests.vcr }}
+        uses: actions/cache@v3
+        with:
+          path: features/cassette_library
+
+          # Unfortunately, the actions/cache@v3 version doesn't allow the cache
+          # key to be overwritten if there's an exact match. So instead we add
+          # a unique identifier to the key to always force a "cache miss", and
+          # restore from related keys to make sure that we still get to load a
+          # recent version of the cached folder. More explanation here:
+          #
+          # https://github.com/actions/cache/issues/109#issuecomment-558771281
+          #
+          # It's hacky, but until the cache action is more configurable, it's
+          # the best we can do.
+          key: cassette-library-${{ hashFiles(matrix.tests.arguments) }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            cassette-library-${{ hashFiles(matrix.tests.arguments) }}-
+
+      - name: Set up Ruby and run bundle install
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Copy config files
+        run: |
+          cp config/gh-actions/database.yml config/database.yml
+          cp config/gh-actions/redis.yml config/redis.yml
+          cp config/gh-actions/local.yml config/local.yml
+
+      - name: Set transaction isolation level
+        run: ./script/gh-actions/configure_database.sh
+
+      - name: Make database
+        run: bundle exec rake db:create db:schema:load db:migrate
+
+      - name: Run test group
+        run: bundle exec ${{ matrix.tests.command }} ${{ matrix.tests.arguments }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          # Optional for public repos. However, individual forks can set this
+          # secret to reduce the chance of being rate-limited by GitHub.
+          #
+          # https://github.com/marketplace/actions/codecov#usage
+          # https://community.codecov.com/t/upload-issues-unable-to-locate-build-via-github-actions-api/3954
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Upload failure screenshots
+        if: ${{ failure() && matrix.tests.command == 'cucumber' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: test failures ${{ hashFiles('tmp/capybara/*') }}
+          path: tmp/capybara

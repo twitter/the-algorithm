@@ -1,0 +1,15 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".page_heading") %></h2>
+<p><%= t(".instructions") %></p>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for resource, url: admin_password_path, html: { method: :post, class: "reset password simple post" } do |f| %>
+  <%= error_messages_for resource %>
+  <p>
+    <%= label_tag :reset_login, t(".reset_login_html") %>
+    <%= f.text_field :login, id: :reset_login %>
+    <%= f.submit t(".submit") %>
+  </p>
+<% end %>
+<!--/content-->

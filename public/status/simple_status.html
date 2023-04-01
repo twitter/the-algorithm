@@ -1,0 +1,64 @@
+<script type="text/javascript">
+$j(document).ready(function() {
+  $j("abbr.timeago").timeago();
+});
+</script>
+<table>
+<thead>
+<tr>
+<th>Sub-system</th>
+<th>Status</th>
+<th>Updated</th>
+</tr>
+</thead>
+<tr>
+<td title="Memcached is an in-memory fast cache for non-persistent data." >Memcached</td>
+<td><!--# include virtual="/status/memcached.html" --></td>
+<td><!--# include virtual="/status/memcached_mod.html" --></td>
+</tr>
+<tr>
+<td title="MySQL is our long term persistent datastore.">MySQL</td>
+<td><!--# include virtual="/status/mysql.html" --></td>
+<td><!--# include virtual="/status/mysql_mod.html" --></td>
+</tr>
+<tr>
+<td title="MySQL is our long term persistent datastore (This is our onsite backup).">MySQL Secondary</td>
+<td><!--# include virtual="/status/mysql_slave.html" --></td>
+<td><!--# include virtual="/status/mysql_slave_mod.html" --></td>
+</tr>
+<tr>
+<td title="Redis is used to store semi peristent data such as Resque queues.">Redis</td>
+<td><!--# include virtual="/status/redis.html" --></td>
+<td><!--# include virtual="/status/redis_mod.html" --></td>
+</tr>
+<tr>
+<td title="Redis is used to store semi peristent data such as Resque queues (This is our onsite backup).">Redis Secondary</td>
+<td><!--# include virtual="/status/redis_slave.html" --></td>
+<td><!--# include virtual="/status/redis_slave_mod.html" --></td>
+</tr>
+<tr>
+<td title="Elastic Search is used to power the tag system and the search.">Elastic Search</td>
+<td><!--# include virtual="/status/elastic_search.html" --></td>
+<td><!--# include virtual="/status/elastic_search_mod.html" --></td>
+</tr>
+<tr>
+<td title="Squid is our full page caching system.">Squid</td>
+<td><!--# include virtual="/status/squid.html" --></td>
+<td><!--# include virtual="/status/squid_mod.html" --></td>
+</tr>
+<tr>
+<td title="Resque workers, execute code asynchronously such as the subscription emails.">Resque workers</td>
+<td><!--# include virtual="/status/worker_status.html" --></td>
+<td><!--# include virtual="/status/worker_status_mod.html" --></td>
+</tr>
+<tr>
+<td title="Resque queues (This is how behind we are with our batch jobs).">Resque queues</td>
+<td><!--# include virtual="/status/resque_queue.html" --></td>
+<td><!--# include virtual="/status/resque_queue_mod.html" --></td>
+</tr>
+<tr>
+<td title="Unicorns give you the pages.">Unicorns</td>
+<td><!--# include virtual="/status/unicorn_status.html" --></td>
+<td><!--# include virtual="/status/unicorn_status_mod.html" --></td>
+</tr>
+</table>

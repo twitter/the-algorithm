@@ -1,0 +1,48 @@
+<div class="tag tagset"><!--this is probably what we should do for each feature, reckon?-->
+<!--Descriptive page names, messages and instructions-->
+	<h2 class="heading"><%= ts("Review Associations for %{title}", :title => @tag_set.title) %></h2>
+<!-- /descriptions-->
+
+<!--subnav-->
+<%= render "owned_tag_sets/navigation" %>
+<!--/subnav-->
+
+<!--main content-->
+<h3 class="heading landmark"><%= ts("Notes") %></h3>
+<ul class="notes">
+  <li>Nominated associations will appear only for tags that have already been added to your set.</li>
+  <li>If tags have been nominated in fandoms that are not in the archive and not in your set, you must first add the fandom to your set to associate them.</li>
+</ul>
+
+<%= form_tag update_multiple_tag_set_associations_path(@tag_set), :method => :put, :class => "tagset review" do %>
+  <%= error_messages_formatted @errors %>
+  
+  <% if @tags_to_associate.empty? %>
+    <p><%= ts("No nominated associations to review!") %></p>
+  <% else %>
+    <fieldset class="tagset listbox group">
+      <legend>Approve Nominated Associations</legend>
+      <h3 class="heading"><%= ts("Approve Nominated Associations") %></h3>
+      <%= check_all_none %>
+      <ul id="nominated_associations_to_add" class="options many index group">
+        <% @tags_to_associate.each do |tag| %>
+          <% # this is necessary or else rails thinks the [] characters represent a sub-model! %>
+          <% tagname = tag.name.gsub('[', '#LBRACKET').gsub(']', '#RBRACKET') %>
+          <% parent_tagname = tag.parent_tagname.gsub('[', '#LBRACKET').gsub(']', '#RBRACKET') %>
+          <li>
+            <% fieldname = "create_association_#{tag.id}_#{parent_tagname}" %>
+            <label class="action" for="<%= name_to_id(fieldname) %>">
+              <%= tag.name %> &#8594; <%= tag.parent_tagname %>
+              <%= check_box_tag fieldname %>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+    </fieldset>
+  <% end %>
+  
+  <%= submit_fieldset %>
+    
+<% end %>
+<!--/content-->
+</div>

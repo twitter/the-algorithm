@@ -1,0 +1,39 @@
+<% @tag_set_nomination.fandom_nominations.each_with_index do |nom, index| %>
+  <%= f.fields_for :fandom_nominations, nom do |nom_form| %>
+    <fieldset class="tagset">
+      <legend><%= ts("Fandom %{index}", :index => index+1) %></legend>
+      <dl>
+        <dt><%= nom_form.label :tagname, ts("Fandom %{index}", :index => index+1) %></dt>
+        <dd>
+          <% if nom.approved || nom.rejected %>
+            <%= nom.tagname %>  <%= nomination_status(nom) %>
+          <% else %>
+            <div title="<%= ts("Fandom %{index}") %>"><%= nom_form.text_field :tagname, autocomplete_options("fandom", data: { autocomplete_token_limit: 1 }, class: "autocomplete") %></div>
+          <% end %>
+        </dd>
+
+        <% # if fandoms are being nominated then any character/relationship noms go under fandom %>
+        <% %w(character relationship).each do |tag_type| %>
+          <% if @limit[tag_type] > 0 %>
+            <%= nom_form.fields_for "#{tag_type}_nominations".to_sym do |nom_form2| %>
+              <dt><%= nom_form2.label :tagname, ts("%{tag_type}", tag_type: tag_type_label_name(tag_type)) %>
+              <dd>
+                <% if nom_form2.object.approved  || nom_form2.object.rejected %>
+                  <%= nom_form2.object.tagname %> <%= nomination_status(nom_form2.object) %>
+                <% else %>
+                  <div title="<%= ts("%{tag_type}", tag_type: tag_type_label_name(tag_type)) %>"> <%= nom_form2.text_field :tagname,
+                            autocomplete_options("#{tag_type}_in_fandom",
+                              data: {
+                                autocomplete_token_limit: 1,
+                                autocomplete_live_params: "fandom=tag_set_nomination_fandom_nominations_attributes_#{index}_tagname"
+                            }) %></div>
+                <% end %>
+                <%= nom_form2.hidden_field :from_fandom_nomination, :value => true %>
+              </dd>
+            <% end %>
+          <% end %>
+        <% end %>
+      </dl>
+    </fieldset>
+  <% end %>
+<% end %>

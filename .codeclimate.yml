@@ -1,0 +1,13 @@
+exclude_paths:
+- "bin/"
+- "config/"
+- "db/"
+- "factories/"
+- "features/"
+- "public/**/*.min.js"
+- "public/javascripts/bootstrap/"
+- "public/javascripts/tinymce/"
+- "public/system/dewplayer/"
+- "script/"
+- "spec/"
+- "test/"

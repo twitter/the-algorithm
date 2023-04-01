@@ -1,0 +1,30 @@
+<h2 class="heading"><%= t(".title", name: @blocked.login) %></h2>
+
+<%= form_tag user_blocked_users_path(@user, blocked_id: @blocked) do %>
+  <div class="caution notice">
+    <p>
+      <%= t(".sure_html", block: tag.strong(t(".block")), username: @blocked.login) %>
+      <%= t(".will.intro") %>
+    </p>
+
+    <ul>
+      <li><%= t(".will.commenting") %></li>
+      <li><%= t(".will.replying") %></li>
+    </ul>
+
+    <p><%= t(".will_not.intro") %></p>
+
+    <ul>
+      <li><%= t(".will_not.hide_works") %></li>
+      <li><%= t(".will_not.comments_on_works") %></li>
+      <li><%= t(".will_not.comments_elsewhere") %></li>
+    </ul>
+
+    <p><%= t(".mute_users_instead_html", muted_users_link: link_to(t(".muted_users_link_text"), user_muted_users_path(@user))) %></p>
+  </div>
+
+  <p class="actions">
+    <%= link_to t(".cancel"), user_blocked_users_path(@user) %>
+    <%= submit_tag t(".button") %>
+  </p>
+<% end %>

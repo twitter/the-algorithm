@@ -1,0 +1,19 @@
+--- 
+related_work_00001: 
+  created_at: 2008-12-06 22:56:52 Z
+  updated_at: 2008-12-06 22:56:52 Z
+  parent_type: Work
+  id: 1
+  translation: false
+  reciprocal: false
+  parent_id: 7
+  work_id: 9
+related_work_00002: 
+  created_at: 2009-03-20 19:57:44 Z
+  updated_at: 2009-03-20 19:57:44 Z
+  parent_type: Work
+  id: 2
+  translation: false
+  reciprocal: false
+  parent_id: 4
+  work_id: 43

@@ -1,0 +1,187 @@
+en:
+  activerecord:
+    errors:
+      models:
+        block:
+          format: "%{message}"
+          attributes:
+            blocked_id:
+              taken: "You have already blocked that user."
+            blocked:
+              blank: "Sorry, we couldn't find a user matching that name."
+              self: "Sorry, you can't block yourself."
+              official: "Sorry, you can't block an official user."
+              limit: "Sorry, you have blocked too many accounts."
+        mute:
+          format: "%{message}"
+          attributes:
+            muted_id:
+              taken: "You have already muted that user."
+            muted:
+              blank: "Sorry, we couldn't find a user matching that name."
+              self: "Sorry, you can't mute yourself."
+              official: "Sorry, you can't mute an official user."
+              limit: "Sorry, you have muted too many accounts."
+        comment:
+          attributes:
+            user:
+              format: "%{message}"
+              blocked_comment: "Sorry, you have been blocked by one or more of this work's creators."
+              blocked_reply: "Sorry, you have been blocked by that user."
+        creatorship:
+          attributes:
+            pseud_id:
+              taken: "is already listed as a creator."
+        external_work:
+          attributes:
+            user_defined_tags_count:
+              at_most:
+                "must not add up to more than %{count}. You have entered %{value} of these tags, so you must remove %{diff} of them."
+        kudo:
+          attributes:
+            commentable:
+              author_on_own_work: "You can't leave kudos on your own work."
+              blank: "What did you want to leave kudos on?"
+              guest_on_restricted: "You can't leave guest kudos on a restricted work."
+              user_is_suspended: "You cannot leave kudos while your account is suspended."
+              user_is_banned: "You cannot leave kudos while your account is banned."
+            commentable_type:
+              inclusion: "What did you want to leave kudos on?"
+          format: "%{message}"
+          taken: "You have already left kudos here. :)"
+        related_work:
+          attributes:
+            parent:
+              blank: "The work you listed as an inspiration does not seem to exist."
+              not_work: "Only a link to a work can be listed as an inspiration."
+              protected: "You can't use the related works function to cite works by the protected user %{login}."
+          format: "%{message}"
+        user:
+          attributes:
+            password_confirmation:
+              confirmation: "doesn't match new password."
+            login:
+              changed_too_recently:
+                one: "can only be changed once per day. You last changed your user name on %{renamed_at}."
+                other: "can only be changed once every %{count} days. You last changed your user name on %{renamed_at}."
+        work:
+          attributes:
+            user_defined_tags_count:
+              at_most:
+                "must not add up to more than %{count}. Your work has %{value} of these tags, so you must remove %{diff} of them."
+        work/parent_work_relationships:
+          format: "%{message}"
+    models:
+      admin_blacklisted_email:
+        one: "Banned Email"
+        other: "Banned Emails"
+      archive_warning:
+        one: "Warning"
+        other: "Warnings"
+      bookmark: "Bookmark"
+      category:
+        one: "Category"
+        other: "Categories"
+      chapter:
+        one: "Chapter"
+        other: "Chapters"
+      character:
+        one: "Character"
+        other: "Characters"
+      comment: "Comment"
+      fandom:
+        one: "Fandom"
+        other: "Fandoms"
+      freeform:
+        one: "Additional Tag"
+        other: "Additional Tags"
+      pseud: "Pseud"
+      rating:
+        one: "Rating"
+        other: "Ratings"
+      relationship:
+        one: "Relationship"
+        other: "Relationships"
+      series:
+        one: "Series"
+        other: "Series"
+      tag:
+        one: "Tag"
+        other: "Tags"
+      work: "Work"
+    attributes:
+      admin/role:
+        board: "Board"
+        communications: "Communications"
+        docs: "AO3 Docs"
+        open_doors: "Open Doors"
+        policy_and_abuse: "Policy & Abuse"
+        superadmin: "Super admin"
+        support: "Support"
+        tag_wrangling: "Tag Wrangling"
+        translation: "Translation"
+      archive_warning:
+        name_with_colon:
+          one: "Warning:"
+          other: "Warnings:"
+      category:
+        name_with_colon:
+          one: "Category:"
+          other: "Categories:"
+      character:
+        name_with_colon:
+          one: "Character:"
+          other: "Characters:"
+      fandom:
+        name_with_colon:
+          one: "Fandom:"
+          other: "Fandoms:"
+      freeform:
+        name_with_colon:
+          one: "Additional Tag:"
+          other: "Additional Tags:"
+      rating:
+        name_with_colon: "Rating:"
+      relationship:
+        name_with_colon:
+          one: "Relationship:"
+          other: "Relationships:"
+      meta_tagging:
+        meta_tag_id: "Metatag"
+        meta_tag: "Metatag"
+        sub_tag_id: "Subtag"
+        sub_tag: "Subtag"
+      creatorships:
+        pseud_id: "Pseud"
+        base: "Invalid creator:"
+      series/creatorships:
+        pseud_id: "Pseud"
+        base: "Invalid creator:"
+      chapters/creatorships:
+        pseud_id: "Pseud"
+        base: "Invalid creator:"
+      work/creatorships:
+        pseud_id: "Pseud"
+        base: "Invalid creator:"
+      work/chapters:
+        content: "Content"
+        base: "Invalid chapter:"
+      work/parent_work_relationships/parent:
+        url: "Parent work URL"
+        title: "The title of a parent work outside the archive"
+        author: "The author of a parent work outside the archive"
+      external_work:
+        user_defined_tags_count: "Fandom, relationship, and character tags"
+        author: "Creator"
+      work:
+        chapter_total_display: "Chapters"
+        summary: "Summary"
+        user_defined_tags_count: "Fandom, relationship, character, and additional tags"
+  attributes:
+    ticket_number: "Ticket ID"
+  errors:
+    attributes:
+      ticket_number:
+        closed_ticket: "must not be closed."
+        invalid_department: "must be in your department."
+        required: "must exist and not be spam."

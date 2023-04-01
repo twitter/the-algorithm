@@ -1,0 +1,19 @@
+<ul class="navigation actions" role="navigation">
+  <% if is_author_of?(@series) %>
+    <li><%= span_if_current ts("Edit Series"), edit_series_path(@series) %></li>
+    <li><%= link_to ts("Delete Series"), confirm_delete_series_path(@series), data: {confirm: ts('Are you sure you want to delete this series? This will NOT delete the individual works.')} %></li>
+    <li><%= link_to ts("Reorder Series"), manage_series_path(@series) %></li>
+    <li><%= link_to ts("Orphan Series"), {:controller => 'orphans', :action => 'new', :series_id => @series.id} %></li>
+    <% unless (@series.pseuds - current_user.pseuds).empty? %>
+      <li><%= link_to ts("Remove Me As Co-Creator"), edit_series_path(@series, :remove => 'me'), data: {confirm: series_removal_confirmation(@series, current_user)} %></li>
+    <% end %>
+  <% end %>
+  <li><%= span_if_current ts("Series"), series_path(@series) %></li>
+  <% if @subscription %>
+    <li>
+      <%= render "subscriptions/form", subscription: @subscription %>
+    </li>
+  <% end %>
+  <% @bookmark ||= bookmark_if_exists(@series) %>
+  <li><%= link_to (@bookmark ? ts("Edit Series Bookmark") : ts("Bookmark Series")), "#bookmark-form", class: "bookmark_form_placement_open" %></li>
+</ul>

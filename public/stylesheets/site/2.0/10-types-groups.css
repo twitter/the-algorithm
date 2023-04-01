@@ -1,0 +1,246 @@
+/*==TYPES OF DATA, GROUPS OF DATA 
+http://otwcode.github.com/docs/front_end_coding/patterns/supertypes
+*/
+
+/*TYPE: TAGS */
+
+a.tag {
+  color: #111;
+  line-height: 1.5;
+  text-decoration: none;
+  padding: 0;
+  border-bottom: 1px dotted;
+}
+
+a.tag:hover, .listbox .heading a.tag:visited:hover {
+  background: #900;
+  color: #fff;
+}
+
+.tags li {
+  display: inline;
+  padding-left: 0;
+  padding-right: 0.25em;
+}
+
+.filters .tags li, .review .tags {
+  display: block;
+}
+
+/*GROUP CLOUD */
+
+ul.cloud {
+  margin: 2em auto;
+  text-align: center;
+  line-height: 2;
+}
+
+a.cloud1 {
+  color: #200;
+  font-size: 0.625em;
+  font-weight: 100;
+}
+
+a.cloud2 {
+  color: #300;
+  font-size: 0.75em;
+  font-weight: 200;
+}
+
+a.cloud3 {
+  color: #400;
+  font-size: 0.875em;
+  font-weight: 300;
+}
+
+a.cloud4 {
+  color: #500;
+  font-size: 1em;
+  font-weight: 400;
+}
+
+a.cloud5 {
+  color: #600;
+  font-size: 1.125em;
+  font-weight: 500;
+}
+
+a.cloud6 {
+  color: #700;
+  font-size: 1.5em;
+  font-weight: 600;
+}
+
+a.cloud7 {
+  color: #800;
+  font-size: 1.875em;
+  font-weight: 700;
+}
+
+a.cloud8 {
+  color: #900;
+  font-size: 2.25em;
+  font-weight: 800;
+}
+
+/* GROUPS: WRAPPER, MODULE, INDEX  (#outer and #inner .wrapper have no style by default, but wrap the regions on every page for your skins convenience)*/
+
+.wrapper {
+    box-shadow: 1px 1px 5px #aaa;
+}
+
+#outer.wrapper {
+  float: left;
+  width: 100%;
+}
+
+#outer.wrapper, #inner.wrapper {
+    box-shadow: none;
+}
+
+.module, .index, .index .index {
+  position: relative;
+  width: auto;
+}
+
+.module, .dashboard .index {
+  float: left;
+  width: 100%;
+}
+
+/*http://otwcode.github.com/docs/front_end_coding/patterns/pattern-index*/
+
+dl.index {
+  margin: 0.643em 0;
+  border: none;
+    box-shadow: none;
+}
+
+dl.index dt {
+  width: auto;
+  float: none;
+  border: none;
+}
+
+dl.index dd {
+  width: auto;
+  float: none;
+  clear: right;
+  margin: 0 0.25em 0.643em 2.5em;
+  padding: 0.375em 0.15em 0.15em;
+  overflow: visible;
+  background: #ededed;
+}
+
+dl.index > dd:after {
+   content: " ";
+   display: block;
+   height: 0;
+   font-size: 0;
+   clear: both;
+   visibility: hidden;
+ }
+
+dl.index dd .userstuff p {
+  display: block;
+}
+
+/*TYPES*/
+
+a.rss span {
+  background: url("/images/imageset.png") no-repeat -150px -275px;
+  padding-left: 16px;
+}
+
+a.work {
+  font: 100 1.143em/1.125 Georgia, serif;
+  margin: 0.5em 0;
+  color: #900;
+}
+
+.warning, .warnings, span.byline, a.user {
+  font-weight: bold;
+}
+
+li.relationships a {
+  background: #eee;
+}
+
+.actions .reindex a {
+  border-bottom: 3px solid #900;
+}
+
+.series.footnote {
+  font-size: 100%;
+  float: none;
+}
+
+/* circle dividers for series navigation on works */
+
+span.series .divider {
+  color: #777;
+}
+
+span.series .previous + .divider:before {
+  content: "\0020\25CF";
+}
+
+span.series .position + .divider:after {
+  content: "\25CF\0020";
+}
+
+p.kudos {
+  background: url("/images/imageset.png") no-repeat -110px -580px;
+  padding: 0.5em 0.5em 0.5em 60px;
+  margin: 2em 0;
+  min-height: 50px;
+}
+
+.icon {
+  height: 100px;
+  width: 100px;
+  margin: 0;
+}
+
+.icon a {
+  border: 0;
+}
+
+.mods li, dl.stats dt, dl.stats dd {
+  background: none;
+  width: auto;
+  min-width: 0;
+  display: inline;
+  clear: none;
+  float: none;
+  margin: auto;
+}
+
+dl.stats {
+  text-align: right;
+  background: none;
+  margin-top: 0.643em;
+    box-shadow: none;
+}
+
+dl.stats dd {
+  white-space: nowrap;
+  padding-right: 0.5em;
+}
+
+.statistics .index li {
+ padding: 0.643em 0.375em;
+}
+
+.statistics .index li:nth-of-type(even) {
+  background: #eee;
+}
+
+.concise li { 
+  width: 45%; 
+  float: left; 
+  clear: none; 
+  margin-right: 1.5em
+}
+
+/*END== */

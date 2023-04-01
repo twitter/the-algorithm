@@ -1,0 +1,17 @@
+<% # expects 'form' and any of 'collectibles', 'collectible' or '@collectible which can be 1 or more collectibles %>
+
+<% collectibles = [collectible] if (!collectibles && collectible) %>
+<% collectibles = [@collectible] if (!collectibles && @collectible) %>
+<!-- collections -->
+<% unless (collections = collectibles.collect(&:collections).flatten.uniq).empty? %>
+  <dt><%= form.label :collections_to_remove, ts("Current Collections") %></dt>
+  <dd class="listbox group">
+    <h4 class="heading"><%= ts("Check to remove") %></h4>
+    <%= checkbox_section(form, :collections_to_remove, collections, :name_method => "title") %>
+  </dd>
+<% end %>
+  
+<dt><%= form.label :collections_to_add, ts("Add To Collections") %> <%= link_to_help "add-collectible-to-collection" %></dt>
+<dd title="add to collection">
+  <%= form.text_field :collections_to_add, autocomplete_options("open_collection_names") %>
+</dd>

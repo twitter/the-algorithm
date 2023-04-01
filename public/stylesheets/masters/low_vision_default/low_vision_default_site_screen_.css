@@ -1,0 +1,166 @@
+#outer * {
+  box-shadow: none;
+}
+
+.icon {
+  background: none;
+}
+
+#main,
+#dashboard,
+#dashboard ul,
+#main.dashboard,
+fieldset,
+form dl,
+fieldset dl dl,
+fieldset fieldset fieldset,
+fieldset fieldset dl dl,
+dd.hideme,
+form blockquote.userstuff {
+  margin: 2%;
+  padding: 2%;
+}
+
+#dashboard,
+#dashboard ul,
+#main.dashboard,
+#inbox-form,
+.alphabet .listbox li,
+.media .listbox,
+.works-index .index,
+.collections-index .index {
+  float: none;
+  width: auto;
+  max-width: 100%;
+}
+
+#inner .filters,
+#footer,
+.filters dt,
+media .listbox,
+.bookmark .recent .index {
+  width: 100%;
+}
+
+.group .group,
+.actions a,
+.actions a:link,
+.actions a:hover,
+.actions a:focus,
+.actions input,
+.actions input:hover,
+.actions input:focus,
+.flash,
+fieldset,
+#header ul.primary li.search,
+.listbox fieldset,
+fieldset,
+form dl,
+fieldset dl dl,
+fieldset fieldset fieldset,
+fieldset fieldset dl dl,
+form.single fieldset,
+dd.hideme,
+form blockquote.userstuff {
+  border: 2px solid;
+}
+
+li.blurb,
+.group {
+  visibility: visible;
+}
+
+li.blurb {
+  padding: 3%;
+}
+
+.listbox .blurb,
+.group.listbox .index {
+  margin: auto;
+}
+
+.group.listbox .index,
+fieldset.listbox.group {
+  padding: 0;
+  border: 0;
+}
+
+fieldset dd dl,
+form .meta dd,
+fieldset dl fieldset dl,
+dd fieldset {
+  margin: 2% 0;
+  border: 0;
+}
+
+textarea,
+pre {
+  font-size: 200%;
+}
+
+#header li,
+#footer li,
+.home .primary .navigation a,
+.blurb .blurb,
+.blurb .actions a,
+#header li a,
+#footer li a,
+#header .open .menu {
+  display: block;
+}
+
+#header .navigation,
+#header li a,
+#footer ul,
+#footer li a {
+  float: none;
+}
+
+#header h1 img,
+#greeting p.icon,
+#header .tip {
+  visibility: hidden;
+  display: none;
+}
+
+#header .menu {
+  display: none;
+}
+
+#footer {
+  float: left;
+  padding: 0;
+}
+
+#header,
+#header ul.primary,
+#footer,
+.actions a:hover,
+.actions a:focus {
+  background: #900;
+  color: #eee;
+}
+
+#header h1.heading a {
+  color: #fff;
+}
+
+#header .dropdown {
+  background: transparent;
+}
+
+#header .menu a {
+  background: #111;
+  color: #fff;
+}
+
+#header .menu a:hover,
+#header .menu a:focus {
+  background: #ccc;
+  color: #111;
+}
+
+.bookmark .recent,
+.bookmark .recent .index {
+  border: none;
+}

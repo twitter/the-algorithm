@@ -1,0 +1,21 @@
+<% content_for :message do %> 
+
+  <% pseuds = @creation.is_a?(Work) ? @creation.pseuds.map{|p| style_pseud_link(p)}.to_sentence.html_safe : @creation.pseud.name %>
+
+    <%= @creation.is_a?(Work) ? @creation.pseuds.length > 0 ? pseuds : style_bold(@creation.authors_to_sort_on) : pseuds %> posted a
+    <%= @creation.is_a?(Work) ? @creation.backdate ? "backdated " : "new " : "new " %> <%= @creation.is_a?(Work) ? "work" : "bookmark" %> to your collection,
+    <b><%= style_link(@collection.name, collection_url(@collection)) %></b>:
+    
+    <br>
+    <% if @creation.is_a?(Work) %>
+      <i><b><%= style_link(@creation.title.html_safe, work_url(@creation)) %></b></i>
+    <% else %>
+      <i><b><%= style_link("A bookmark of: " + @creation.bookmarkable.title.html_safe, bookmark_url(@creation)) %></b></i>
+    <% end %>
+
+
+<% end %>
+
+<% content_for :footer_note do %>
+  You're receiving this email because you've chosen to be notified when new items are added to your collection <%= style_footer_link(@collection.name, collection_url(@collection)) %>. Follow the link to change settings if you no longer wish to receive updates.
+<% end %>

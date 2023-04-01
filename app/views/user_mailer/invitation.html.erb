@@ -1,0 +1,29 @@
+<% content_for :message do %>
+  <p>
+    <% if !@user_name.blank? %>
+      <%= t(".has_invited", user_name: style_bold(@user_name)).html_safe %>
+    <% else %>
+      <%= t ".been_invited" %>
+    <% end %>
+  </p>
+
+  <p>
+    <%= t(".html.about", otw_link: style_link(t(".html.otw_link_text"), "https://www.transformativeworks.org")).html_safe %>
+  </p>
+
+  <p>
+    <%= t ".features" %>
+  </p>
+
+  <p>
+    <%= t(".html.join", invitation_link: style_link(t(".html.invitation_link_text"), signup_url(invitation_token: @invitation.token))).html_safe %>
+  </p>
+
+  <p>
+    <%= t(".html.activation_support", support_link: style_link(t(".html.support_link_text"), new_feedback_report_url)).html_safe %>
+  </p>
+
+  <p>
+    <%= t(".html.faq", faq_link: style_link(t(".html.faq_link_text"), archive_faqs_url)).html_safe %>
+  </p>
+<% end %>

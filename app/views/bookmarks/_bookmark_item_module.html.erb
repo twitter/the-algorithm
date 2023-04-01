@@ -1,0 +1,8 @@
+<% # expects "bookmarkable" %>
+<% if bookmarkable.is_a?(ExternalWork) %>
+  <%= render 'external_works/work_module', external_work: bookmarkable, bookmarkable: bookmarkable %>
+<% elsif bookmarkable.is_a?(Series) %>
+  <%= render 'series/series_module', series: bookmarkable %>
+<% else %>
+  <%= render 'works/work_module', work: bookmarkable %>
+<% end %>

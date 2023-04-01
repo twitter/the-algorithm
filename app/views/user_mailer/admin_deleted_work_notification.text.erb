@@ -1,0 +1,11 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.formal", name: @user.login) %>
+
+<%= t('.text.part1', title: @work.title) %>
+
+<%= t('.text.part2', opendoors_link: 'http://opendoors.transformativeworks.org/contact-open-doors/') %>
+
+<%= t(".text.tos_violation", contact_abuse_url: new_abuse_report_url) %>
+
+<%= t '.bye' %>
+<% end %>

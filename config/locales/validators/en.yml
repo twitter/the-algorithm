@@ -1,0 +1,10 @@
+en:
+  validators:
+    email:
+      blacklist: "has been blocked at the owner's request. That means it can't be used in guest comments. Please check the address to make sure it's yours to use and contact AO3 Support if you have any questions."
+      veracity:
+        allow_blank: "does not seem to be a valid address. Please use a different address or leave blank."
+        no_blank: "does not seem to be a valid address."
+      format:
+        allow_blank: "should look like an email address. Please use a different address or leave blank."
+        no_blank: "should look like an email address."

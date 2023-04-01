@@ -1,0 +1,23 @@
+<h2 class="heading">External Works</h2>
+
+<!--navigation-->
+<% if logged_in_as_admin? %>
+  <p class="navigation actions">
+    <%= link_to "Show duplicates (#{ExternalWork.duplicate.count.size})",
+          external_works_path(show: :duplicates) %>
+  </p>
+<% end %>
+
+<%= will_paginate @external_works %>
+
+<% unless @external_works.blank? %>
+  <h3 class="landmark heading">Listing External Works</h3>
+
+  <ol class="work index group">
+    <% for external_work in @external_works %>
+      <%= render "external_works/blurb", { external_work: external_work } %>
+    <% end %>
+  </ol>
+
+  <%= will_paginate @external_works %>
+<% end %>

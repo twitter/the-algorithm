@@ -1,0 +1,94 @@
+<!--Descriptive page name, messages and instructions-->
+<div class="skins home">
+  
+  <%= render 'header' %>
+<!--/descriptions-->
+
+  <% if @skin.wizard_settings? %>
+    <div class="wizard module">
+      <h3 class="heading"><%= ts('Wizard Settings') %></h3>
+      <p class="notes"><%= ts("Can be overridden by custom <abbr title='cascading style sheets'>CSS</abbr>.").html_safe %></p>
+
+      <div class="wrapper">
+        <dl class="meta group">
+        <% unless @skin.font.blank? %>
+          <dt><%= ts('Font:') %></dt>
+          <dd>
+            <code><%= @skin.font %></code>
+          </dd>
+        <% end %>
+
+        <% if @skin.base_em %>
+          <dt><%= ts('Percent of browser font size:') %></dt>
+          <dd>
+            <code><%= @skin.base_em %>%</code>
+          </dd>
+        <% end %>
+
+        <% if @skin.margin %>
+          <dt><%= ts('Work margin width:') %></dt>
+          <dd>
+            <code><%= @skin.margin %>%</code>
+          </dd>
+        <% end %>
+
+        <% if @skin.paragraph_margin %>
+          <dt><%= ts('Vertical gap between paragraphs:') %></dt>
+          <dd>
+            <code><%= @skin.paragraph_margin %>em</code>
+          </dd>
+        <% end %>
+
+        <% unless @skin.background_color.blank? %>
+          <dt><%= ts('Background color:') %></dt>
+          <dd>
+            <code><%= @skin.background_color %></code>
+          </dd>
+        <% end %>
+
+        <% unless @skin.foreground_color.blank? %>
+          <dt><%= ts('Text color:') %></dt>
+          <dd>
+            <code><%= @skin.foreground_color %></code>
+          </dd>
+        <% end %>
+
+        <% unless @skin.headercolor.blank? %>
+          <dt><%= ts('Header color:') %></dt>
+          <dd>
+            <code><%= @skin.headercolor %></code>
+          </dd>
+        <% end %>
+
+        <% unless @skin.accent_color.blank? %>
+          <dt><%= ts('Accent color:') %></dt>
+          <dd>
+            <code><%= @skin.accent_color %></code>
+          </dd>
+        <% end %>
+        </dl>
+      </div>
+    </div>
+  <% end %>
+
+  <% unless @skin.css.blank? && @skin.filename.blank? %>
+    <div class="css module">
+      <h3 class="heading"><abbr title="cascading style sheets">CSS</abbr></h3>
+      <blockquote><pre><%= @skin.get_css %></pre></blockquote>
+    </div>
+  <% end %>
+  
+  <% unless @skin.parent_skins.empty? %>
+    <div class="parents module">
+      <h3 class="heading"><%= ts('Parent Skins') %></h3>
+      <ul class="index group">
+      <% @skin.parent_skins.each do |parent| %>
+        <li><%= link_to parent.title, skin_path(parent) %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render "skin_actions", skin: @skin %>
+
+</div>

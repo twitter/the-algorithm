@@ -1,0 +1,31 @@
+<!--ZONE TAGS, ZONE HOME? Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= @fandom.name %></h2>
+<!--/descriptions-->
+
+<!--subnavigation, sorting and actions-->
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to ts("Works"), tag_works_path(@fandom) %></li>
+  <li><%= link_to ts("Bookmarks"), tag_bookmarks_path(@fandom) %></li>
+</ul>
+<!--subnav-->
+<% cache("/v1/#{@fandom.name}", :expires_in => 20.minutes, skip_digest: true) do %>
+<!--main content-->
+<h3 class="heading"><%= ts('Relationships by Character') %></h3>
+<% unless @characters.blank? %>
+  <ul class="characters relationships index group">
+    <% for character in @characters %>
+      <li class="listbox group">
+        <h4 class="heading"><%= link_to character.name, tag_works_path(character) %></h4>
+        <% unless character.relationships.empty? %>
+          <ul class="tags commas index group">
+            <% for relationship in character.relationships %>
+              <li><%= link_to relationship.name, tag_works_path(relationship) %></li>
+            <% end %>
+          </ul>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<% end %>
+<!--/content-->

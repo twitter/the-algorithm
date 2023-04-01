@@ -1,0 +1,13 @@
+<% content_for :message do %>
+  <p>
+    We have finished generating potential assignments for your challenge collection, <%= style_link(@collection.title, collection_url(@collection)) %>.
+  </p>
+
+  <p>
+    The potential matches and set assignments are available on the challenge's <%= style_link("Matching page", collection_potential_matches_url(@collection)) %>.
+  </p>
+<% end %>
+
+<% content_for :sent_at do %>
+  <%= l(Time.now) %>
+<% end %>

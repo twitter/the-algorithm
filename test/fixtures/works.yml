@@ -1,0 +1,2182 @@
+--- 
+work_00082: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/cracked.html
+  created_at: 2009-12-12 21:14:01 Z
+  title: All it's Cracked up to Be
+  delta: true
+  updated_at: 2009-12-12 21:14:01 Z
+  notes: 
+  backdate: false
+  word_count: 683
+  title_to_sort_on: all it's cracked up to be
+  id: 82
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:01 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00059:
+  restricted: true
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:08:06 Z
+  title: My Scarlet Name
+  delta: true
+  updated_at: 2009-07-17 23:08:56 Z
+  notes: Title from a song by Xandria.
+  backdate: false
+  word_count: 1006
+  title_to_sort_on: my scarlet name
+  id: 59
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: The first time, Bellatrix doesn't even know the girl's name.
+  revised_at: 2004-09-17 23:00:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00040:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-12 01:43:37 Z
+  title: scuff
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 3
+  title_to_sort_on: scuff
+  id: 40
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 02:48:40 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00017:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-02-24 08:47:22 Z
+  title: grrrrrrrr
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 3
+  title_to_sort_on: grrrrrrrr
+  id: 17
+  language_id: 1
+  minor_version: 3
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 08:47:23 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00061:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:21:52 Z
+  title: See You In Hell
+  delta: true
+  updated_at: 2009-12-11 22:22:15 Z
+  notes: Set post-season three, with spoilers up to 4.01.
+  backdate: false
+  word_count: 1684
+  title_to_sort_on: see you in hell
+  id: 61
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: There's no hope in Hell.
+  revised_at: 2009-12-11 22:22:13 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00038:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-12 00:50:20 Z
+  title: jambo
+  delta: true
+  updated_at: 2009-12-11 00:10:00 Z
+  notes: ""
+  backdate: false
+  word_count: 4
+  title_to_sort_on: jambo
+  id: 38
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 00:50:34 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00041:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-12 02:51:07 Z
+  title: muu
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 1
+  title_to_sort_on: muu
+  id: 41
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 02:55:48 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00039:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-12 00:56:30 Z
+  title: twins
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 13
+  title_to_sort_on: twins
+  id: 39
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 00:57:27 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00062:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:25:26 Z
+  title: Fill Your Every Breath
+  delta: true
+  updated_at: 2009-12-11 22:26:02 Z
+  notes: Written for my beloved Zooey_Glass for her birthday; she was also kind enough to beta. Thank you, darling! Title from the Placebo song <i>Blind</i>. The fic covers a period up to some point late in season two, and contains no spoilers beyond that.
+  backdate: false
+  word_count: 2940
+  title_to_sort_on: fill your every breath
+  id: 62
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: <cite>The first time Dean had the dream, he was four years old.</cite>
+  revised_at: 2009-12-11 22:26:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00083:
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/bestmen.html
+  created_at: 2009-12-12 21:14:01 Z
+  title: The Best of Men
+  delta: true
+  updated_at: 2009-12-12 21:14:01 Z
+  notes: 
+  backdate: false
+  word_count: 218
+  title_to_sort_on: best of men, the
+  id: 83
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:01 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00020:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-09 16:31:18 Z
+  title: baaah
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 4
+  title_to_sort_on: baaah
+  id: 20
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 16:32:18 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00019: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-09 15:43:33 Z
+  title: title
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 2
+  title_to_sort_on: title
+  id: 19
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 15:47:16 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00063: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:28:47 Z
+  title: Kissing Tiny Flowers
+  delta: true
+  updated_at: 2010-01-06 23:05:29 Z
+  notes: Written for Rinkle for her prompt <cite>concussion, flowers</cite>. Title from Led Zeppelin's <em>That's The Way</em>. Spoilers for episode 1.01, and references to the end of Season 2.
+  backdate: false
+  word_count: 3001
+  title_to_sort_on: kissing tiny flowers
+  id: 63
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Five times Dean hated flowers, and one time he didn't.
+  revised_at: 2009-12-11 22:29:06 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00084: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/betterman.html
+  created_at: 2009-12-12 21:14:02 Z
+  title: The Better Man
+  delta: true
+  updated_at: 2009-12-12 21:14:02 Z
+  notes: 
+  backdate: false
+  word_count: 5807
+  title_to_sort_on: better man, the
+  id: 84
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:02 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00042: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-18 04:08:12 Z
+  title: lam
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 1
+  title_to_sort_on: lam
+  id: 42
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 04:08:45 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00085: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/mazes.html
+  created_at: 2009-12-12 21:14:03 Z
+  title: Mazes and Monsters
+  delta: true
+  updated_at: 2009-12-12 21:14:03 Z
+  notes: 
+  backdate: false
+  word_count: 862
+  title_to_sort_on: mazes and monsters
+  id: 85
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:03 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00100: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 23:24:56 Z
+  title: From Heaven and Hell
+  delta: true
+  updated_at: 2009-12-12 23:24:57 Z
+  notes: ""
+  backdate: false
+  word_count: 9019
+  title_to_sort_on: from heaven and hell
+  id: 100
+  language_id: 1
+  minor_version: 0
+  complete: false
+  summary: When a search leads Moya ad her crew to LA, Earth, a very special vampire helps them out.
+  revised_at: 2009-12-12 23:24:57 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00001: 
+  restricted: false
+  posted: true
+  major_version: 2
+  expected_number_of_chapters: 2
+  imported_from_url: 
+  created_at: 2008-11-09 01:26:02 Z
+  title: Work With Two Chapters
+  delta: true
+  updated_at: 2009-12-11 22:40:30 Z
+  notes: ""
+  backdate: false
+  word_count: 10
+  title_to_sort_on: work with two chapters
+  id: 1
+  language_id: 1
+  minor_version: 4
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 03:09:52 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00043: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-18 04:09:43 Z
+  title: kings
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: Inspired by <a href="http://example.com/LOLIantoes.gif" title="nonexistent image to demonstrate linking CSS style">this image</a>.
+  backdate: false
+  word_count: 18
+  title_to_sort_on: kings
+  id: 43
+  language_id: 1
+  minor_version: 4
+  complete: false
+  summary: Inspired by <a href="http://example.com/LOLIantoes.gif" title="nonexistent image to demonstrate linking CSS style">this image</a>.
+  revised_at: 2009-12-11 04:10:19 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00064: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:33:24 Z
+  title: Easy Like Sunday Morning
+  delta: true
+  updated_at: 2009-07-18 10:51:00 Z
+  notes: Unabashed, shameless schmoop.
+  backdate: false
+  word_count: 959
+  title_to_sort_on: easy like sunday morning
+  id: 64
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Jared is a morning person. Jensen really isn't.
+  revised_at: 2009-12-11 22:33:55 Z
+  endnotes: 
+  hidden_by_admin: true
+work_00101: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.fanfiction.net/s/4093664/1/Accidental_Documentaries
+  created_at: 2009-12-12 23:28:00 Z
+  title: Accidental Documentaries
+  delta: true
+  updated_at: 2009-12-16 16:21:59 Z
+  notes: Accidental  Documentaries<br>By Tassos
+  backdate: false
+  word_count: 51133
+  title_to_sort_on: accidental documentaries
+  id: 101
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-12 23:32:30 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00002: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-11-09 01:26:02 Z
+  title: Work With One Chapter Only
+  delta: true
+  updated_at: 2009-04-20 01:03:39 Z
+  notes: Notes on test work with only one chapter
+  backdate: false
+  word_count: 11
+  title_to_sort_on: work with one chapter only
+  id: 2
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Summary of test work with only one chapter
+  revised_at: 2008-11-09 01:26:01 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00044: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-19 01:02:12 Z
+  title: haaaaam
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 9
+  title_to_sort_on: haaaaam
+  id: 44
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 01:02:50 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00065: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:38:12 Z
+  title: Three Times Dean Winchester Was Not Possessed, This Never Happened, Let Us Never Speak of It Again
+  delta: true
+  updated_at: 2009-07-17 23:38:32 Z
+  notes: Written for my lovely Zooey Glass to congratulate her on winning Nano 2006. No spoilers.
+  backdate: false
+  word_count: 2824
+  title_to_sort_on: three times dean winchester was not possessed, this never happened, let us never speak of it again
+  id: 65
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Sam had slowly developed the theory that Dean's amulet protected him from Full-On Evil, but at the price of drawing all kinds of Fucked-Up Weirdness straight to him.
+  revised_at: 2009-12-11 22:38:29 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00086: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/prettyface.html
+  created_at: 2009-12-12 21:14:04 Z
+  title: Not Just a Pretty Face
+  delta: true
+  updated_at: 2009-12-12 21:14:04 Z
+  notes: 
+  backdate: false
+  word_count: 209
+  title_to_sort_on: not just a pretty face
+  id: 86
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:04 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00102: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 23:52:00 Z
+  title: If Only
+  delta: true
+  updated_at: 2009-12-18 13:25:55 Z
+  notes: ""
+  backdate: false
+  word_count: 2963
+  title_to_sort_on: if only
+  id: 102
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: |-
+    If only it were that easy to write my Yuletide story. :D
+    
+    Some <em>HTML</em> here for fun.
+  revised_at: 2009-12-12 23:53:29 Z
+  endnotes: I hope you enjoyed it, R&R please! Feedback it like it's 1999!
+  hidden_by_admin: false
+work_00003: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-11-09 01:26:02 Z
+  title: ThirdWork
+  delta: true
+  updated_at: 2009-12-11 22:40:30 Z
+  notes: Notes on test work with only one chapter
+  backdate: false
+  word_count: 12
+  title_to_sort_on: thirdwork
+  id: 3
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: Summary of test work with only one chapter
+  revised_at: 2009-12-11 05:19:36 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00045: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 01:24:26 Z
+  title: faaaaaaaaaah
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 1
+  title_to_sort_on: faaaaaaaaaah
+  id: 45
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 01:24:40 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00087: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/pirates.html
+  created_at: 2009-12-12 21:14:04 Z
+  title: The Pirates of Miami Beach
+  delta: true
+  updated_at: 2009-12-12 21:28:22 Z
+  notes: ""
+  backdate: false
+  word_count: 119
+  title_to_sort_on: pirates of miami beach, the
+  id: 87
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Written for the Inappropriate Crossover challenge on LJ. Looks like somebody took a wrong turn!
+  revised_at: 2009-12-12 21:28:21 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00103: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 
+  imported_from_url: 
+  created_at: 2009-12-13 16:31:45 Z
+  title: Bye Bye line height baseline madness
+  delta: true
+  updated_at: 2009-12-18 18:25:34 Z
+  notes: ""
+  backdate: false
+  word_count: 356
+  title_to_sort_on: bye bye line height baseline madness
+  id: 103
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: |-
+    ChallengeResponseAuthentication
+                 Specifies whether to use challenge-response authentication.  The argument to this keyword must
+                 be ``yes'' or ``no''.  The default is ``yes''.
+    
+         CheckHostIP
+                 If this flag is set to ``yes'', ssh(1) will additionally check the host IP address in the
+                 known_hosts file.  This allows ssh to detect if a host key changed due to DNS spoofing.  If the
+                 option is set to ``no'', the check will not be executed.  The default is ``yes''.
+    
+         Cipher  Specifies the cipher to use for encrypting the session in protocol version 1.  Currently,
+                 ``blowfish'', ``3des'', and ``des'' are supported.  des is only supported in the ssh(1) client
+                 for interoperability with legacy protocol 1 implementations that do not support the 3des
+                 cipher.  Its use is strongly discouraged due to cryptographic weaknesses.  The default is
+                 ``3des''.
+  revised_at: 2009-12-13 00:00:00 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00004: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-11-09 01:26:02 Z
+  title: FourthWork
+  delta: true
+  updated_at: 2009-04-20 01:03:39 Z
+  notes: Notes on test work with only one chapter
+  backdate: false
+  word_count: 13
+  title_to_sort_on: fourthwork
+  id: 4
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Summary of test work with only one chapter
+  revised_at: 2008-11-09 01:26:01 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00025: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-09 21:54:33 Z
+  title: tbbh
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 3
+  title_to_sort_on: tbbh
+  id: 25
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 21:55:41 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00046: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 01:28:02 Z
+  title: what the frak?!
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 12
+  title_to_sort_on: what the frak?!
+  id: 46
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 01:28:46 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00090: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:20:47 Z
+  title: "Play #yuletide"
+  delta: true
+  updated_at: 2009-12-17 13:51:22 Z
+  notes: ""
+  backdate: false
+  word_count: 297
+  title_to_sort_on: "play #yuletide"
+  id: 90
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: "In which #yuletide is challenged to a baseball game."
+  revised_at: 2009-12-12 21:22:54 Z
+  endnotes: Testing, testing.
+  hidden_by_admin: false
+work_00067: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:10:08 Z
+  title: Testing
+  delta: true
+  updated_at: 2009-12-17 13:52:27 Z
+  notes: ""
+  backdate: false
+  word_count: 326
+  title_to_sort_on: testing
+  id: 67
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Testing
+  revised_at: 2009-12-12 21:11:47 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00088: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/misc/tappedout.html
+  created_at: 2009-12-12 21:14:05 Z
+  title: Tapped Out
+  delta: true
+  updated_at: 2009-12-12 21:14:05 Z
+  notes: 
+  backdate: false
+  word_count: 2329
+  title_to_sort_on: tapped out
+  id: 88
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:05 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00070: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:13:13 Z
+  title: How the Entmoot Ended (Chapter 666)
+  delta: true
+  updated_at: 2010-01-01 16:16:21 Z
+  notes: ""
+  backdate: false
+  word_count: 159
+  title_to_sort_on: how the entmoot ended (chapter 666)
+  id: 70
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: |-
+    #^_^# 
+    /o/ \o\
+  revised_at: 2009-12-12 21:15:46 Z
+  endnotes: <a name="oneyeah"></a><a href="#onefoot"><sup>1</sup></a> BWAHAHAHAHA I WIN.
+  hidden_by_admin: false
+work_00047: 
+  restricted: true
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 23:11:56 Z
+  title: When Harry met Snivelly
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 5
+  title_to_sort_on: when harry met snivelly
+  id: 47
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: <a href="http://example.com">a link for styling</a>
+  revised_at: 2009-12-11 23:12:10 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00091: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:45:07 Z
+  title: My new story whooo
+  delta: true
+  updated_at: 2009-12-18 13:24:23 Z
+  notes: ""
+  backdate: false
+  word_count: 9
+  title_to_sort_on: my new story whooo
+  id: 91
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: whee this is a yuletide story
+  revised_at: 2009-12-12 21:45:15 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00068: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:11:01 Z
+  title: A Very Odd Story
+  delta: true
+  updated_at: 2009-12-12 21:11:11 Z
+  notes: Welcome
+  backdate: false
+  word_count: 23
+  title_to_sort_on: very odd story, a
+  id: 68
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: An interestign summary about what happenis in this story and so forth - lots and lots of text there - really there is ...
+  revised_at: 2009-12-12 21:11:11 Z
+  endnotes: The End!!
+  hidden_by_admin: false
+work_00089:
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:19:12 Z
+  title: "the last temptation of #yulechat"
+  delta: true
+  updated_at: 2009-12-12 21:54:02 Z
+  notes: ""
+  backdate: false
+  word_count: 147
+  title_to_sort_on: "last temptation of #yulechat, the"
+  id: 89
+  language_id: 1
+  minor_version: 3
+  complete: false
+  summary: one dark and stormy night (that was really actually quite pleasant and balmy) something awful entered chat.
+  revised_at: 2009-12-12 21:19:21 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00104: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-18 17:56:45 Z
+  title: A really long title that should break a few lines and so on and so on supercalifragilisticexpialidocious
+  delta: true
+  updated_at: 2010-01-07 14:51:29 Z
+  notes: |-
+    Conformance checkers
+    
+        Conformance checkers must verify that a document conforms to the applicable conformance criteria described in this specification. Automated conformance checkers are exempt from detecting errors that require interpretation of the author's intent (for example, while a document is non-conforming if the content of a blockquote element is not a quote, conformance checkers running without the input of human judgement do not have to check that blockquote elements only contain quoted material).
+    
+        Conformance checkers must check that the input document conforms when parsed without a browsing context (meaning that no scripts are run, and that the parser's scripting flag is disabled), and should also check that the input document conforms when parsed with a browsing context in which scripts execute, and that the scripts never cause non-conforming states to occur other than transiently during script execution itself. (This is only a "SHOULD" and not a "MUST" requirement because it has been proven to be impossible. [COMPUTABLE])
+    
+        The term "HTML5 validator" can be used to refer to a conformance checker that itself conforms to the applicable requirements of this specification.
+  backdate: false
+  word_count: 2363
+  title_to_sort_on: really long title that should break a few lines and so on and so on supercalifragilisticexpialidocious, a
+  id: 104
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: |-
+    Some stuff, some links <a href="http://kekkai.org/lim">do links work int he summary?</a>
+    
+    <dl>
+    <dt>A sailor went to</dt>
+    <dd>Sea sea sea</dd>
+    <dt>To see what he could</dt>
+    <dd>See see see</dd>
+    </dl>
+  revised_at: 2009-12-18 17:57:27 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00005: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-11-09 01:26:02 Z
+  title: FifthWork
+  delta: true
+  updated_at: 2009-12-11 00:03:39 Z
+  notes: Notes on test work with only one chapter
+  backdate: false
+  word_count: 14
+  title_to_sort_on: fifthwork
+  id: 5
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Summary of test work with only one chapter
+  revised_at: 2008-12-11 01:26:01 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00048: 
+  restricted: true
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 23:14:14 Z
+  title: What Happened Next
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 7
+  title_to_sort_on: what happened next
+  id: 48
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 23:14:26 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00071: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/gk/sometimes.html
+  created_at: 2009-12-12 21:13:50 Z
+  title: Sometimes
+  delta: true
+  updated_at: 2009-12-12 21:13:50 Z
+  notes: 
+  backdate: false
+  word_count: 501
+  title_to_sort_on: sometimes
+  id: 71
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:50 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00092: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 22:14:12 Z
+  title: This is Lizifer's awesome test "fic"
+  delta: true
+  updated_at: 2009-12-12 22:14:56 Z
+  notes: This is the opening paragraph of a rough draft of a paper I wrote in 2007. I'm putting it here to test word-count limits.
+  backdate: false
+  word_count: 390
+  title_to_sort_on: this is lizifer's awesome test "fic"
+  id: 92
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Testing 1 2 3, can anybody hear me? If I shed the irony, will anybody cheer me? Testing word-count limits and general features, mostly. I need to nominate the works of Flannery O'Connor next year.
+  revised_at: 2009-12-12 22:14:56 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00069: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 21:11:53 Z
+  title: This is the best I could come up with on short notice.
+  delta: true
+  updated_at: 2009-12-12 21:15:53 Z
+  notes: I love that Harry Potter is a test fandom.
+  backdate: false
+  word_count: 37
+  title_to_sort_on: this is the best i could come up with on short notice.
+  id: 69
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: Blah blah blah blah blah, and RPattz is better as Cedric than as Edward.
+  revised_at: 2009-12-12 21:12:03 Z
+  endnotes: Now to make a crossover with SPN.
+  hidden_by_admin: false
+work_00105: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2010-01-04 12:35:25 Z
+  title: All of the characters I am allowed and then some oh I think we'll have to do some limiting of the table field in editing multiple works oh yes we will how about a little max-width for yer money there me old son am i done yet oh god the green validation io
+  delta: true
+  updated_at: 2010-07-28 09:38:07 Z
+  notes: ""
+  backdate: false
+  word_count: 1643
+  title_to_sort_on: all of the characters i am allowed and then some oh i think we'll have to do some limiting of the table field in editing multiple works oh yes we will how about a little max-width for yer money there me old son am i done yet oh god the green validation io
+  id: 105
+  language_id: 1
+  minor_version: 3
+  complete: false
+  summary: |-
+    Maximum 18.4 Dynamic outlines: the 'outline' property
+        Inherited:  	no
+        a few more just a few morewith overlaid text elements. When magnifying this page, a user agent should keep the text within the comic strip balloon.
+  revised_at: 2010-01-04 12:35:37 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00006: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-05 13:59:14 Z
+  title: How I Got Kicked Out of MIT
+  delta: true
+  updated_at: 2009-12-11 22:40:30 Z
+  notes: ""
+  backdate: false
+  word_count: 73
+  title_to_sort_on: how i got kicked out of mit
+  id: 6
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: The true story of how I was too hot for MIT to handle.
+  revised_at: 2008-12-11 13:59:15 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00050: 
+  restricted: true
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 23:20:17 Z
+  title: dark and angsty interlude
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: you don't have to read it to "get" the rest of the series.
+  backdate: false
+  word_count: 5
+  title_to_sort_on: dark and angsty interlude
+  id: 50
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 23:20:29 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00093: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 22:43:32 Z
+  title: NCIS and the Haunted Computer
+  delta: true
+  updated_at: 2009-12-12 22:48:28 Z
+  notes: ""
+  backdate: false
+  word_count: 4672
+  title_to_sort_on: ncis and the haunted computer
+  id: 93
+  language_id: 1
+  minor_version: 3
+  complete: false
+  summary: |-
+    The computer did it.
+    
+    (Series of short stories.)
+  revised_at: 2008-02-07 00:00:00 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00106: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2010-07-28 13:10:03 Z
+  title: Addding tags for stats purposes
+  delta: true
+  updated_at: 2010-07-28 13:10:05 Z
+  notes: ""
+  backdate: false
+  word_count: 90
+  title_to_sort_on: addding tags for stats purposes
+  id: 106
+  language_id: 1
+  minor_version: 0
+  complete: false
+  summary: ""
+  revised_at: 2010-07-28 13:10:05 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00030: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-11 21:51:22 Z
+  title: bab
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 1
+  title_to_sort_on: bab
+  id: 30
+  language_id: 1
+  minor_version: 4
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 21:54:49 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00007: 
+  restricted: false
+  posted: true
+  major_version: 2
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 22:28:54 Z
+  title: Day Ten, Tale Ten
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: ""
+  backdate: false
+  word_count: 4593
+  title_to_sort_on: day ten, tale ten
+  id: 7
+  language_id: 1
+  minor_version: 5
+  complete: false
+  summary: |
+    The Marquis of Saluzzo, overborne by the entreaties of his vassals, consents to take a wife, but, being minded to please himself in the choice of her, takes a husbandman's daughter. He has two children by her, both of whom he makes her believe that he has put to death. Afterward, feigning to be tired of her, and to have taken another wife, he turns her out of doors in her shift, and brings his daughter into the house in guise of his bride; but, finding her patient under it all, he brings her home again, and shews her her children, now grown up, and honours her, and causes her to be honoured, as Marchioness.
+
+  revised_at: 2008-12-06 22:32:20 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00051: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 23:22:23 Z
+  title: Yay threesome!
+  delta: true
+  updated_at: 2009-12-11 22:40:33 Z
+  notes: ""
+  backdate: false
+  word_count: 14
+  title_to_sort_on: yay threesome!
+  id: 51
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 23:22:57 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00072: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/gk/christmas.html
+  created_at: 2009-12-12 21:13:51 Z
+  title: GK Christmas story
+  delta: true
+  updated_at: 2009-12-12 21:13:51 Z
+  notes: 
+  backdate: false
+  word_count: 1774
+  title_to_sort_on: gk christmas story
+  id: 72
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:51 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00049: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 23:17:43 Z
+  title: Happy-happy joy-joy!
+  delta: true
+  updated_at: 2010-01-04 14:04:00 Z
+  notes: ""
+  backdate: false
+  word_count: 9
+  title_to_sort_on: happy-happy joy-joy!
+  id: 49
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 23:33:39 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00107: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2010-07-28 13:10:16 Z
+  title: Addding tags for stats purposes
+  delta: true
+  updated_at: 2010-07-28 13:11:35 Z
+  notes: ""
+  backdate: false
+  word_count: 90
+  title_to_sort_on: addding tags for stats purposes
+  id: 107
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2010-07-28 13:11:34 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00008: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 22:52:02 Z
+  title: Day Five, Tale Four
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: ""
+  backdate: false
+  word_count: 2034
+  title_to_sort_on: day five, tale four
+  id: 8
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Ricciardo Manardi is found by Messer Lizio da Valbona with his daughter, whom he marries, and remains at peace with her father.
+  revised_at: 2008-12-06 22:52:02 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00052: 
+  restricted: true
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-20 23:24:08 Z
+  title: angst bunny
+  delta: true
+  updated_at: 2009-12-11 22:40:34 Z
+  notes: ""
+  backdate: false
+  word_count: 8
+  title_to_sort_on: angst bunny
+  id: 52
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 23:24:17 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00029: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-10 00:24:30 Z
+  title: chum
+  delta: true
+  updated_at: 2009-12-11 00:09:26 Z
+  notes: ""
+  backdate: false
+  word_count: 2
+  title_to_sort_on: chum
+  id: 29
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 00:24:31 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00073: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/lotr/celebrations.html
+  created_at: 2009-12-12 21:13:52 Z
+  title: Celebrations
+  delta: true
+  updated_at: 2009-12-12 21:13:52 Z
+  notes: 
+  backdate: false
+  word_count: 2028
+  title_to_sort_on: celebrations
+  id: 73
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:52 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00094: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 22:47:33 Z
+  title: NCIS and the Bus Stop Phone Booth
+  delta: true
+  updated_at: 2009-12-12 22:49:02 Z
+  notes: ""
+  backdate: false
+  word_count: 2870
+  title_to_sort_on: ncis and the bus stop phone booth
+  id: 94
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: |-
+    How Abby Got Sam's number.
+    
+    (Series of short stories.)
+  revised_at: 2009-12-12 22:47:44 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00010: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 23:19:49 Z
+  title: For your life
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: ""
+  backdate: false
+  word_count: 429
+  title_to_sort_on: for your life
+  id: 10
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: <em>'Exclusive, one-off reunion concert,' Sam says smugly. 'Chance of a lifetime.'</em>
+  revised_at: 2008-12-06 23:19:50 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00009: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 22:55:58 Z
+  title: The Clerk's Tale
+  delta: true
+  updated_at: 2009-04-20 01:15:47 Z
+  notes: ""
+  backdate: false
+  word_count: 1534
+  title_to_sort_on: clerk's tale, the
+  id: 9
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: The tale of Griselda, a young woman whose husband tests her loyalty in a series of bizarre torments that recall the Biblical book of Job.
+  revised_at: 2008-12-06 22:55:59 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00074: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/lotr/light.html
+  created_at: 2009-12-12 21:13:53 Z
+  title: Light
+  delta: true
+  updated_at: 2009-12-12 21:13:53 Z
+  notes: 
+  backdate: false
+  word_count: 1131
+  title_to_sort_on: light
+  id: 74
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:53 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00095: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 22:51:14 Z
+  title: NCIS and Five Encounters with the FBI
+  delta: true
+  updated_at: 2009-12-12 22:51:23 Z
+  notes: ""
+  backdate: false
+  word_count: 1557
+  title_to_sort_on: ncis and five encounters with the fbi
+  id: 95
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: |-
+    The FBI read the report.
+    
+    (Series of short stories)
+  revised_at: 2009-04-12 01:00:00 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00053: 
+  restricted: false
+  posted: true
+  major_version: 2
+  expected_number_of_chapters: 2
+  imported_from_url: 
+  created_at: 2009-05-10 13:20:06 Z
+  title: Dreams are all guillotines, testing redux
+  delta: true
+  updated_at: 2009-05-10 13:50:55 Z
+  notes: ""
+  backdate: false
+  word_count: 1252
+  title_to_sort_on: dreams are all guillotines, testing redux
+  id: 53
+  language_id: 1
+  minor_version: 0
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 12:50:55 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00032: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-11 22:22:29 Z
+  title: tiiii
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 19
+  title_to_sort_on: tiiii
+  id: 32
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 22:23:56 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00011: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 23:24:00 Z
+  title: Keep dancing
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: "Written as a Christmas gift for Oxoniensis, 2007. Set at some unspecified time after canon, in the happy world in my head where Dean and Rory live happily ever after. "
+  backdate: false
+  word_count: 97
+  title_to_sort_on: keep dancing
+  id: 11
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: "The Dance Marathon is a Stars Hollow tradition. "
+  revised_at: 2008-12-06 23:24:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00096: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 16
+  imported_from_url: http://www.fanfiction.net/s/1733826/1/Bridges
+  created_at: 2009-12-12 22:54:18 Z
+  title: Bridges
+  delta: true
+  updated_at: 2009-12-12 23:02:24 Z
+  notes: "Spoilers: Stargate sometime early season 7 before the main story arc. And Buffy post Chosen. For the purposes of this story, Spike is completely dead."
+  backdate: false
+  word_count: 117876
+  title_to_sort_on: bridges
+  id: 96
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: |-
+    After the collapse of Sunnydale, Jack gets a call about a woman he knew over twenty years ago . . . and the son he never knew he had.
+    
+    (Series with chaptered story (1) and story with internal headers (2))
+  revised_at: 2009-12-12 22:54:18 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00075: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/lostboys/found.html
+  created_at: 2009-12-12 21:13:55 Z
+  title: Found Again
+  delta: true
+  updated_at: 2009-12-12 21:13:55 Z
+  notes: 
+  backdate: false
+  word_count: 5875
+  title_to_sort_on: found again
+  id: 75
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:55 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00033: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-11 22:25:58 Z
+  title: yyipee
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 16
+  title_to_sort_on: yyipee
+  id: 33
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 22:26:06 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00012: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 23:26:41 Z
+  title: Paying attention
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: Written for technosage's <a href="http://technosage.livejournal.com/224268.html">porn-paragraph-a-thon</a> on Livejournal, December 2007, to the prompt 'Jared/Jensen; dom/sub'.
+  backdate: false
+  word_count: 262
+  title_to_sort_on: paying attention
+  id: 12
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: <em>He likes it when Jensen pays attention.</em>
+  revised_at: 2008-12-06 23:26:41 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00054: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-05-10 13:57:47 Z
+  title: Why we rely
+  delta: true
+  updated_at: 2009-09-17 22:27:04 Z
+  notes: ""
+  backdate: false
+  word_count: 448
+  title_to_sort_on: why we rely
+  id: 54
+  language_id: 1
+  minor_version: 6
+  complete: false
+  summary: |-
+    <ul><li>This</li>
+    
+    <li>Is</li>
+    
+    <li>An Ordered List</li>
+    
+    </ul>
+    
+    <center>Centered</center>
+    
+    
+    
+    <img src="http://l-userpic.livejournal.com/46262476/1255156">
+    
+    
+    
+    <ol><li>This</li>
+    
+    <li>Is</li>
+    
+    <li>An UnOrdered List</li>
+    
+    </ol>
+    
+    
+    
+    <big>Big</big>
+    
+    
+    
+    <small>Small</small>
+  revised_at: 2009-12-11 12:58:05 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00097: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-12-12 23:00:54 Z
+  title: "Slats: Moments in Time"
+  delta: true
+  updated_at: 2009-12-12 23:01:10 Z
+  notes: ""
+  backdate: false
+  word_count: 17224
+  title_to_sort_on: "slats: moments in time"
+  id: 97
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: |-
+    A sequel to Bridges in twelve snapshots. Even after earth shattering events, life goes on. Xander, Jack, puppies, teenagers, dating, and occasionally saving the world.
+    
+    (Series with chaptered story (1) and story with internal headers(2))
+  revised_at: 2009-12-12 23:01:10 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00034: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-11 22:30:12 Z
+  title: aaaaliens
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 27
+  title_to_sort_on: aaaaliens
+  id: 34
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 22:31:04 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00013: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-06 23:34:39 Z
+  title: I knew I should have argued
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: "I expected to be kind of helpless after dying, but it turns out it's not as peaceful as it's made out to be. So, I figured I'd write some stuff down. "
+  backdate: false
+  word_count: 74
+  title_to_sort_on: i knew i should have argued
+  id: 13
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: After the fact, I realise what a big mistake I made.
+  revised_at: 2008-12-06 23:34:39 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00076: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/tpm/dreams.html
+  created_at: 2009-12-12 21:13:56 Z
+  title: Dreams of Reality
+  delta: true
+  updated_at: 2009-12-12 21:13:56 Z
+  notes: 
+  backdate: false
+  word_count: 1251
+  title_to_sort_on: dreams of reality
+  id: 76
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:56 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00056: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 22:50:31 Z
+  title: Method Acting
+  delta: true
+  updated_at: 2009-07-17 22:52:10 Z
+  notes: I once swore I'd never write RPS. I blame the Js.
+  backdate: false
+  word_count: 3067
+  title_to_sort_on: method acting
+  id: 56
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: Jared doesn't think there's anything <em>wrong</em> about him having a bit of a crush on Dean Winchester.
+  revised_at: 2007-03-28 23:00:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00035: 
+  restricted: false
+  posted: true
+  major_version: 6
+  expected_number_of_chapters: 6
+  imported_from_url: 
+  created_at: 2009-03-11 23:22:55 Z
+  title: ppppp
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 59
+  title_to_sort_on: ppppp
+  id: 35
+  language_id: 1
+  minor_version: 0
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 04:06:51 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00014: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2008-12-07 20:52:14 Z
+  title: Sodom and Gomorrah
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: "Not the Bible version. No offence intended. "
+  backdate: false
+  word_count: 398
+  title_to_sort_on: sodom and gomorrah
+  id: 14
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: "A cautionary tale: wherein the Lord is pissed, Lot is righteous, and I do some smiting. "
+  revised_at: 2009-12-11 05:19:36 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00077: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/pros/bugged.html
+  created_at: 2009-12-12 21:13:57 Z
+  title: Bugged
+  delta: true
+  updated_at: 2009-12-12 21:13:57 Z
+  notes: 
+  backdate: false
+  word_count: 625
+  title_to_sort_on: bugged
+  id: 77
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:56 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00098: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 37
+  imported_from_url: http://www.fanfiction.net/s/1345146/1/Pathways
+  created_at: 2009-12-12 23:04:02 Z
+  title: Pathways
+  delta: true
+  updated_at: 2010-01-06 18:50:55 Z
+  notes: "Spoilers: In the Farscape Universe, this is set just after Bad Timing, season 4, so everything is game. In the Stargate Universe, it's general season 7 before the cliffhangar, though you should know that I just started watching Stargate this summer."
+  backdate: false
+  word_count: 52416
+  title_to_sort_on: pathways
+  id: 98
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: |-
+    SG1 ends up on a planet with a broken gate. Out of options, they must help a strange tentacled alien find the one man that can get them home.
+    
+    (Single long story with lots of shortish chapters.  I imported from FF.net so there is an excess of ***.  Sorry.)
+  revised_at: 2009-12-12 23:07:31 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00099: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 6
+  imported_from_url: http://www.fanfiction.net/s/614863/1/Ray_of_Smoke
+  created_at: 2009-12-12 23:09:34 Z
+  title: Ray of Smoke
+  delta: true
+  updated_at: 2009-12-12 23:21:42 Z
+  notes: ""
+  backdate: false
+  word_count: 81418
+  title_to_sort_on: ray of smoke
+  id: 99
+  language_id: 1
+  minor_version: 2
+  complete: false
+  summary: |-
+    Future fic AU after Fractures. Cycles in the future in the midst of war, Moya stumbles across Earth where awaits politics, paranoia, and a decision that will tear John apart.
+    
+    (Long story with long chapters.  I imported from FF.net and formatted the first chapter in html but not the others, so again an excess of ***.)
+  revised_at: 2009-12-12 23:18:43 Z
+  endnotes: ""
+  hidden_by_admin: false
+work_00078: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/pros/oncemore.html
+  created_at: 2009-12-12 21:13:57 Z
+  title: Once More, With Feeling
+  delta: true
+  updated_at: 2009-12-12 21:13:57 Z
+  notes: 
+  backdate: false
+  word_count: 1156
+  title_to_sort_on: once more, with feeling
+  id: 78
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:57 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00036: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-03-12 00:28:57 Z
+  title: chhhhhhhh
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 5
+  title_to_sort_on: chhhhhhhh
+  id: 36
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 00:30:26 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00015: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-02-22 04:25:24 Z
+  title: ofc
+  delta: true
+  updated_at: 2009-12-11 22:40:31 Z
+  notes: ""
+  backdate: false
+  word_count: 12
+  title_to_sort_on: ofc
+  id: 15
+  language_id: 1
+  minor_version: 3
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 04:25:24 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00057: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 22:55:32 Z
+  title: Pop Secret
+  delta: true
+  updated_at: 2009-07-17 22:56:19 Z
+  notes: Written for Zooey_Glass for her prompt <em>Sam/Dean, popcorn</em>. I'm fairly confident this isn't what she had in mind. &lt;3 General spoilers up to episode 3.08.
+  backdate: false
+  word_count: 2035
+  title_to_sort_on: pop secret
+  id: 57
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Sam decides to introduce Dean to a new tradition this Christmas. Dean gets the wrong idea.
+  revised_at: 2008-12-23 23:00:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00080: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/x-men/didn%27thapn.html
+  created_at: 2009-12-12 21:13:59 Z
+  title: As It Didn't Happen
+  delta: true
+  updated_at: 2009-12-12 21:13:59 Z
+  notes: 
+  backdate: false
+  word_count: 547
+  title_to_sort_on: as it didn't happen
+  id: 80
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:59 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00079: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/pros/murphy.html
+  created_at: 2009-12-12 21:13:58 Z
+  title: Murphy's Law
+  delta: true
+  updated_at: 2009-12-12 21:13:58 Z
+  notes: 
+  backdate: false
+  word_count: 3909
+  title_to_sort_on: murphy's law
+  id: 79
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:13:58 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00081: 
+  restricted: false
+  posted: false
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: http://www.trickster.org/llwyden/x-men/friends.html
+  created_at: 2009-12-12 21:14:00 Z
+  title: Friends
+  delta: true
+  updated_at: 2009-12-12 21:14:00 Z
+  notes: 
+  backdate: false
+  word_count: 3980
+  title_to_sort_on: friends
+  id: 81
+  language_id: 
+  minor_version: 0
+  complete: false
+  summary: 
+  revised_at: 2009-12-12 21:14:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00058: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-07-17 23:03:02 Z
+  title: Therapy
+  delta: true
+  updated_at: 2009-07-17 23:03:22 Z
+  notes: Written long before season 4.
+  backdate: false
+  word_count: 979
+  title_to_sort_on: therapy
+  id: 58
+  language_id: 1
+  minor_version: 1
+  complete: false
+  summary: Dean hates therapy. He has his reasons.
+  revised_at: 2009-12-11 22:00:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00060: 
+  restricted: false
+  posted: true
+  major_version: 2
+  expected_number_of_chapters: 5
+  imported_from_url: 
+  created_at: 2009-07-17 23:13:51 Z
+  title: January Girl
+  delta: true
+  updated_at: 2009-07-17 23:15:47 Z
+  notes: Written for the sncross_bigbang challenge on LJ. Thank you to darkmagic_luvr for making <a href="http://community.livejournal.com/sinnessjukdom/4130.html">an amazing amount of gorgeous art</a> for this fic! &lt;3 Much love and thanks also to the lovely Zooey Glass for a lightning-speed beta. All remaining mistakes are my own.
+  backdate: true
+  word_count: 8416
+  title_to_sort_on: january girl
+  id: 60
+  language_id: 1
+  minor_version: 0
+  complete: false
+  summary: With Sam trying out normal life at Stanford and his father working an undercover gig across the country, Dean is on his own and getting reckless. While investigating a series of mysterious deaths, he runs into a strange witch called Luna Lovegood, who is searching for what she calls a 'Horcrux'. (Seriously?) Suddenly Dean finds himself dealing with evil wizards, broomsticks, Bat-Bogey Hexes, Dementors, mirrors which order him to wear a pointy hat, and much more - all the while trying not to think too much about Luna's last name and whether it's accurate.
+  revised_at: 2009-12-11 22:00:00 Z
+  endnotes: 
+  hidden_by_admin: false
+work_00016: 
+  restricted: false
+  posted: true
+  major_version: 1
+  expected_number_of_chapters: 1
+  imported_from_url: 
+  created_at: 2009-02-24 06:34:22 Z
+  title: ttttttttttt
+  delta: true
+  updated_at: 2009-12-11 22:40:32 Z
+  notes: ""
+  backdate: false
+  word_count: 1
+  title_to_sort_on: ttttttttttt
+  id: 16
+  language_id: 1
+  minor_version: 13
+  complete: false
+  summary: ""
+  revised_at: 2009-12-11 06:34:22 Z
+  endnotes: 
+  hidden_by_admin: false

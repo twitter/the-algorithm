@@ -1,0 +1,39 @@
+<%= form_for @api_key,
+             url: @api_key.new_record? ? new_admin_api_path(@api_key) : admin_api_path(@api_key),
+             html: { class: "post" } do |f| %>
+  <%= error_messages_for @api_key %>
+
+  <p class="required notice">* <%= ts("Required information") %></p>
+
+  <fieldset>
+    <legend><%= ts("API Token") %></legend>
+    <h3 class="landmark heading"><%= ts("API Token") %></h3>
+    <dl>
+      <dt class="required"><%= f.label :name, ts("Name") + "*" %></dt>
+      <dd class="required">
+        <%= f.text_field :name %>
+        <%= live_validation_for_field("api_key_name",
+                                      :presence => true,
+                                      :maximum_length => Profile::PROFILE_TITLE_MAX) %>
+      </dd>
+      <dt><%= f.check_box :banned %></dt>
+      <dd>
+        <%= f.label :banned, ts("Banned?") %>
+      </dd>
+      <dt>
+        <%= f.label :access_token, ts("Token (automatically generated)") %>
+      </dt>
+      <dd>
+        <%= f.text_field :access_token, readonly: true %>
+      </dd>
+    </dl>
+  </fieldset>
+  <fieldset>
+    <legend><%= ts("Actions") %></legend>
+    <h3 class="landmark heading"><%= ts("Actions") %></h3>
+
+    <p class="actions">
+      <%= f.submit @api_key.new_record? ? ts("Create API Token") : ts("Update API Token") %>
+    </p>
+  </fieldset>
+<% end %>

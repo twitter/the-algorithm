@@ -1,0 +1,26 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Unreviewed Comments on") %> <%= link_to(@commentable.commentable_name, @commentable) %></h2> 
+<!--/descriptions-->
+
+<!--Subnavigation, sorting and actions-->
+<ul class="navigation actions">
+  <li><%= button_to(ts('Approve All Unreviewed Comments'), review_all_work_comments_path(@commentable), method: :put) %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<p class="note"><%= ts('Please note that comments cannot be unapproved once you have reviewed them. After you delete any comments you do not wish to appear on your work, you can approve all that remain.') %></p>
+
+<% if @comments.count > 0 %>
+  <%= will_paginate @comments %>
+  <% @comments.each do |comment| %>
+    <%= render :partial => 'comments/single_comment', :object => comment %>
+  <% end %>
+  <%= will_paginate @comments %>
+<% else %>
+  <p class="notice"><%= ts("No unreviewed comments.") %></p>
+<% end %>
+<!--main content-->
+
+<!--subnav-->
+<!--/subnav-->

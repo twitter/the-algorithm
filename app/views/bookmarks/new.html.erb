@@ -1,0 +1,9 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= (ts("New bookmark for ") + link_to(@bookmarkable.title, @bookmarkable)).html_safe %></h2>
+
+<%= error_messages_for :bookmark %>
+<!--/descriptions-->
+
+<!--main content-->
+<%= render :partial => 'bookmark_form', :locals => { :bookmark => @bookmark, :bookmarkable => @bookmarkable, :button_name => ts("Create"), :action => 'create' }%>
+<!--/content-->

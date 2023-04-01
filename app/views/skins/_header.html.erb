@@ -1,0 +1,42 @@
+<div class="primary header module">
+  <h2 class="heading">
+    <%= ts("%{title} skin by %{creator}", title: @skin.title, creator: skin_author_link(@skin)).html_safe %>
+  </h2>
+
+  <p class="icon"><%= skin_preview_display(@skin) %></p>
+
+  <ul class="navigation actions" role="navigation">
+
+    <% if session[:site_skin] || (logged_in? && current_user.preference.skin_id != AdminSetting.default_skin_id) %>
+      <li><%= render "revert_skin_form" %></li>
+    <% end %>
+
+    <% # If this is your personal skin, show My links; otherwise, show Public links %>
+    <% if logged_in? && current_user == @skin.author %>
+      <li><%= my_site_skins_link %></li>
+      <li><%= my_work_skins_link %></li>
+    <% else %>
+      <li><%= public_site_skins_link %></li>
+      <li><%= public_work_skins_link %></li>
+    <% end %>
+  </ul>
+
+  <blockquote class="userstuff">
+    <%= @skin.description.blank? ? ts('(No Description Provided)') : raw(sanitize_field(@skin, :description)) %>
+  </blockquote>
+
+  <dl class="stats">
+    <dt><%= ts('Role:') %></dt>
+    <dd><%= @skin.role %></dd>
+    <dt><%= ts('Media:') %></dt>
+    <dd><%= @skin.get_media %></dd>
+    <dt><%= ts('Condition:') %></dt>
+    <dd>
+      <% unless @skin.ie_condition.present? || @skin.unusable? %>Normal<% end %>
+      <% if @skin.ie_condition.present? %>
+        <abbr title="Internet Explorer"><%= @skin.ie_condition %></abbr>
+      <% end %>
+      <% if @skin.unusable? %>Parent only<% end %>
+    </dd>
+  </dl>
+</div>

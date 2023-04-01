@@ -1,0 +1,29 @@
+<% content_for :message do %>
+  <p>
+    A response to your prompt has been posted <% if @collection %>in the <%= style_link(@collection.title, collection_url(@collection)) %> collection <% end %>at the Archive of Our Own!
+  </p>
+
+  <p>
+    <% if @collection.nil? %>
+      <%= style_creation_link(@work.title, work_url(@work)) %> (<%= @work.word_count %> words)
+    <% else %>
+      <%= style_creation_link(@work.title, collection_work_url(@collection, @work)) %> (<%= @work.word_count %> words)
+    <% end %>
+    <br>
+    by <%= @work.anonymous? ? style_bold("an anonymous responder") : (@work.pseuds.map{|p| style_pseud_link(p)}.to_sentence.html_safe) %>
+    <br>
+    <% unless @work.fandom_string.blank? %>
+      <%= style_bold("Fandom:") %> <%= @work.fandom_string %>
+    <% end %>
+  </p>
+  
+  <% unless @work.summary.blank? %>
+    <%= style_bold("Summary:") %>
+    <%= style_quote(raw sanitize_field(@work, :summary)) %>
+  <% end %>
+  
+  <% if @collection && !@collection.gift_notification.blank? %>
+    <p><%= @collection.gift_notification %></p>
+  <% end %>
+  
+<% end %>

@@ -1,0 +1,17 @@
+<% content_for :message do %>
+<%= t("mailer.general.greeting.informal.addressed", name: @user.login) %>
+
+<% if @collection %>
+<%= t(".text.collection", collection_title: @collection.title, collection_url: collection_url(@collection)) %>
+<% else %>
+<%= t(".no_collection") %>
+<% end %>
+
+<%= creation_title_with_word_count(@work) %>
+<%= @collection ? collection_work_url(@collection, @work) : work_url(@work) %>
+
+by <%= creator_text(@work) %>
+
+<%= render "work_info", work: @work %>
+
+<% if @collection && !@collection.gift_notification.blank? %><%= @collection.gift_notification %><% end %><% end %>

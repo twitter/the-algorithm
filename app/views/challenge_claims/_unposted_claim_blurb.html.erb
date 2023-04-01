@@ -1,0 +1,59 @@
+<% # expects "claim" %>
+
+<% prompt = claim.request_prompt %>
+<% collection = claim.collection %>
+<% challenge = claim.collection.challenge %>
+<li class="collection claim picture blurb group">
+  <div class="header module">
+    <h4 class="heading">
+      <%= prompt.title || ts("Request") %>
+    </h4>
+
+    <!--collection title and recipient forline-->
+    <h5 class="heading">
+      <%= ts("by") %>
+      <span class="byline">
+        <% if claim.request_signup && !prompt.anonymous? %>
+          <%= link_to(claim.request_signup.pseud.byline, collection_prompt_path(claim.collection, claim.request_prompt)) %>
+        <% else %>
+          <%= link_to(ts("Anonymous"), collection_prompt_path(claim.collection, claim.request_prompt)) %>
+        <% end %>
+      </span>
+      <%= ts("claimed by") %>
+      <span class="byline">
+        <%= claim.claim_byline %>
+      </span>
+    </h5>
+
+    <!-- when claimed -->
+    <p class="datetime">
+      <%= ts("Claimed") %> <%= set_format_for_date(claim.created_at) %>
+      <% if @challenge.try(:assignments_due_at).present? %>
+        <!--due date-->
+        <%= ts("Due") %> <%= time_in_zone(@challenge.assignments_due_at, (@challenge.time_zone || Time.zone.name)) %>
+      <% end %>
+    </p>
+
+    <div class="icon">
+      <%= image_tag(claim.collection.icon.url(:standard), :size => "100x100", :alt => claim.collection.icon_alt_text, :class => "icon", skip_pipeline: true) %>
+    </div>
+  </div>
+
+  <!--prompt tags -->
+  <%= prompt_tags(prompt) %>
+
+  <!--prompt description -->
+  <% unless prompt.description.blank? %>
+    <h6 class="landmark heading"><%= ts("Summary") %></h6>
+    <blockquote class="userstuff summary">
+      <%=raw sanitize_field(prompt, :description) %>
+    </blockquote>
+  <% end %>
+
+  <!--actions-->
+  <% if @collection.user_is_maintainer?(current_user) %>
+    <ul class="actions" role="menu">
+      <li><%= link_to ts("Delete"), collection_claim_path(claim.collection, claim), data: {confirm: ts('Are you sure you want to delete this claim?')}, :method => :delete %></li>
+    </ul>
+  <% end %>
+</li>

@@ -1,0 +1,37 @@
+<% if @comment.unreviewed? %>
+  <% if @owner %>
+    <p>Comments on this work are moderated and will not appear until you approve them.</p>
+  <% else %>
+    <p>Comments on this work are moderated and will not appear until approved by the work creator.</p>
+  <% end %>
+<% end %>
+
+<% if @comment.unreviewed? && @owner %>
+  <%= style_link("Review comments on <i>"  + @comment.ultimate_parent.commentable_name + "</i>", 
+    unreviewed_work_comments_url(@comment.ultimate_parent)) %>
+    <br />
+<% end %>
+
+<% unless (@comment.unreviewed? || @noreply) %>
+  <%= style_link("Reply to this comment", 
+    comment_url(@comment, :add_comment_reply_id => @comment.id, :only_path => false)) %>
+  <br />
+<% end %>
+
+<%= style_link("Go to the thread starting from this comment", 
+  comment_url(@comment, :only_path => false)) %>
+<br />
+
+<% unless @comment.id == @comment.thread %>
+  <%= style_link("Go to the thread to which this comment belongs", 
+    comment_url(:id => @comment.thread, :only_path => false)) %>
+  <br />
+<% end %>
+
+<%= style_link("Read all comments on <i>" + @comment.ultimate_parent.commentable_name + "</i>", 
+  polymorphic_url(@comment.ultimate_parent, 
+    :view_full_work => true, 
+    :show_comments => true, 
+    :anchor => :comments, 
+    :only_path => false
+  )) %>

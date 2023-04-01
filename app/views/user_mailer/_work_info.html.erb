@@ -1,0 +1,24 @@
+<% # expects work %>
+<p>
+  <%= style_work_metadata_label(Work.human_attribute_name("chapter_total_display")) %><%= work.chapter_total_display %>
+  <br><%= style_work_tag_metadata(work.fandoms) %>
+  <br><%= style_work_tag_metadata(work.ratings) %>
+  <br><%= style_work_tag_metadata(work.archive_warnings) %>
+  <% unless work.relationship_string.blank? %>
+    <br><%= style_work_tag_metadata(work.relationships) %>
+  <% end %>
+  <% unless work.character_string.blank? %>
+    <br><%= style_work_tag_metadata(work.characters) %>
+  <% end %>
+  <% unless work.freeform_string.blank? %>
+    <br><%= style_work_tag_metadata(work.freeforms) %>
+  <% end %>
+  <% unless work.series.count.zero? %>
+    <br><%= style_work_metadata_label(Series.model_name.human(count: work.series.count)) %><%= series_list_for_feeds(work).html_safe %>
+  <% end %>
+</p>
+
+<% unless work.summary.blank? %>
+  <p><%= style_work_metadata_label(Work.human_attribute_name("summary")) %></p>
+  <%= style_quote(raw sanitize_field(work, :summary)) %>
+<% end %>

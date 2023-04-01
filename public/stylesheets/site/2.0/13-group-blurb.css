@@ -1,0 +1,439 @@
+/*==GROUP: BLURB
+http://otwcode.github.com/docs/front_end_coding/patterns/blurb
+The blurb class is used wherever we show a list of works, collections, bookmarks, etc; each list item is a blurb
+it shows all the tags, stats and other associations we hold on that object, and sometimes it shows short user notes too, like a summary, bookmark notes, or collection description.
+
+Intrepid skinsers:
+Probably 40% of this sheet deals with icon block rules, but it's not very complicated,
+just the same thing repeated for each icon.
+The positioning and sizing is for 25px icons;
+there is a full set available at 50px, in /default_large.
+You can use your own icon set, or choose to show the text instead,
+by overriding the rules in the marked off section.
+Perhaps we can make a wizard for this specific task.
+*/
+
+.blurb ul li, .blurb dd ul li {
+  display: inline;
+}
+
+li.blurb, .blurb .blurb {
+  display: block;
+  position: relative;
+  clear: left;
+  padding: 0.429em 0.75em;
+  overflow: visible;
+}
+
+li.blurb:after, .blurb .blurb:after {
+  content: " ";
+  display: block;
+  height: 0;
+  font-size: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.blurb .module {
+  float: none;
+}
+
+.blurb .header {
+  min-height: 55px;
+  margin-bottom: 0.375em;
+}
+
+.blurb .header .heading, .blurb .header ul {
+  display: block;
+  background: transparent;
+  margin: 0.375em 5.25em 0 65px;
+}
+
+.blurb .header img {
+  position: relative;
+  margin: 0;
+}
+
+.blurb h4 a:link, .blurb h4 img {
+  color: #900;
+  vertical-align: bottom;
+}
+
+.blurb .header p.notice, .blurb ul.series {
+  margin: 1.25em 0 0;
+}
+
+.blurb ul.series {
+  margin-bottom: 0.875em;
+}
+
+.blurb .heading {
+  display: block;
+}
+
+.blurb dl.stats {
+  float: right;
+  line-height: 1.5;
+}
+
+.blurb .fandoms .landmark {
+  position: absolute;
+}
+
+.blurb dl.stats + .heading.landmark {
+  display: inline;
+}
+
+/* ==START icon block rules*/
+
+.blurb ul.required-tags {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  margin: 0;
+}
+
+.blurb ul.required-tags li, .blurb ul.required-tags li a, .blurb ul.required-tags li span {
+  display: block;
+  width: 25px;
+  height: 25px;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.blurb ul.required-tags li {
+  margin-bottom: 3px;
+}
+
+.blurb ul.required-tags li+li+li, .blurb ul.required-tags li+li+li+li {
+  position: absolute;
+  left: 28px;
+}
+
+.blurb ul.required-tags li+li+li {
+  top: 0;
+}
+
+.blurb ul.required-tags li+li+li+li {
+  top: 28px;
+}
+
+/* keeps the outline to the proper size in Firefox and Opera */
+.blurb ul.required-tags li a:focus {
+  overflow: hidden;
+}
+
+.blurb span.text {
+  height: 0;
+  width: 0;
+  font-size: 0.001em;
+  color: transparent;
+}
+
+.blurb ul.required-tags li span {
+  background-repeat: no-repeat;
+}
+
+/*icon image replacement*/
+
+.required-tags .rating-general-audience {
+  background: url("/images/imageset.png") -50px -25px;
+}
+
+.required-tags .rating-explicit {
+  background: url("/images/imageset.png") -25px -25px;
+}
+
+.required-tags .rating-mature {
+  background: url("/images/imageset.png") -75px -25px;
+}
+
+.required-tags .rating-notrated, .required-tags .category-none, .required-tags .warning-no, .status .count {
+  background: url("/images/imageset.png") -150px 0px;
+}
+
+.required-tags .rating-teen {
+  background: url("/images/imageset.png") 0px -25px;
+}
+
+.required-tags .category-femslash {
+  background: url("/images/imageset.png") -25px 0px;
+}
+
+.required-tags .category-gen {
+  background: url("/images/imageset.png") -50px 0px;
+}
+
+.required-tags .category-slash {
+  background: url("/images/imageset.png") 0px 0px;
+}
+
+.required-tags .category-het {
+  background: url("/images/imageset.png") -75px 0px;
+}
+
+.required-tags .category-multi {
+  background: url("/images/imageset.png") -100px -0px;
+}
+
+.required-tags .category-other {
+  background: url("/images/imageset.png") -125px 0px;
+}
+
+.required-tags .complete-no {
+  background: url("/images/imageset.png") -100px -25px;
+}
+
+.required-tags .complete-yes {
+  background: url("/images/imageset.png") -175px -25px;
+}
+
+.required-tags .warning-yes {
+  background: url("/images/imageset.png") -150px -25px;
+}
+
+.required-tags .warning-choosenotto {
+  background: url("/images/imageset.png") -125px -25px;
+}
+
+.required-tags .external-work {
+  background: url("/images/imageset.png") -75px -50px;
+}
+
+.status .private .text {
+  background: url("/images/imageset.png") -175px -50px;
+}
+
+.status .public {
+  background: url("/images/imageset.png") -125px -50px;
+}
+
+.status .hidden {
+  background: url("/images/imageset.png") -150px -50px;
+}
+
+.status .rec {
+  background: url("/images/imageset.png") -100px -50px;
+}
+
+/*==END icon block rules==*/
+
+.blurb .datetime {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+
+.claim .datetime {
+  margin-left: 65px;
+  position: static;
+}
+
+.blurb blockquote {
+  clear: none;
+  margin: 0.643em auto;
+  text-align: justify;
+}
+
+/*modification: PICTURE
+use this along with "index" and "blurb" for indices where we have icon pictures,
+eg collections, users, skins, instead of the 4-icon list
+*/
+
+.picture .header {
+  border-bottom: 1px solid #ccc;
+}
+
+.index .skins .icon {
+  background: url("/images/imageset.png") 0px -580px;
+}
+
+.index .mystery .icon {
+  background: url("/images/imageset.png") -110px -525px;
+}
+
+.index .tag .icon, .index .tagset .icon {
+  background: url("/images/imageset.png") -55px -580px;
+}
+
+.picture .icon img, .index .picture .icon {
+  position: absolute;
+  top: 0;
+  height: 55px;
+  width: 55px;
+  background-repeat: no-repeat;
+}
+
+/*various little mods*/
+
+/* mod: ITEM
+blurbs on the manage collection items pages, mostly reseting styles inherited from interactions (forms)
+*/
+
+.item .blurb blockquote, .item dl.stats {
+  margin: 0.643em auto;
+  padding: 0;
+  border: none;
+  background: transparent;
+    box-shadow: none;
+}
+
+.item .blurb .header, .item dl.stats dt {
+  border: none;
+}
+
+.item dl.visibility {
+  background: #eee;
+}
+
+/* mod: BOOKMARK */
+
+.bookmark p.status {
+  position: absolute;
+  right: 0.25em;
+  width: 60px;
+  margin-top: 0.429em;
+  z-index: 1;
+}
+
+.bookmark .status span, .bookmark .status a {
+  display: block;
+  width: 25px;
+  height: 25px;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+
+.bookmark .status a:focus {
+  overflow: hidden;
+}
+
+.bookmark span.count {
+  line-height: 1.875em;
+  position: absolute;
+  top: 0;
+  left: 28px;
+  text-align: center;
+}
+
+.bookmark .count a {
+  border-bottom: none;
+  color: #069;
+}
+
+.bookmark .count a:hover, .bookmark .count a:focus {
+  color: #111;
+}
+
+.bookmark .datetime {
+	top: 28px;
+}
+
+.bookmark div.user, .bookmark div.recent {
+  clear: right;
+  box-sizing: border-box;
+}
+
+.bookmark .user {
+  border: 1px solid #ccc;
+  margin-top: 0.643em;
+  padding: 0.429em 0.75em;
+  overflow: hidden;
+}
+
+.bookmark .user .meta {
+	display: inline;
+	font-family: Georgia, serif;
+	font-size: 0.875em;
+	line-height: 2;
+}
+
+.bookmark .actions {
+  clear: both;
+}
+
+.bookmark dl.stats {
+  margin-bottom: 0.643em;
+}
+
+/* line break between types of meta */
+.bookmark .user ul.meta:after {
+	content: '\A';
+	white-space: pre;
+}
+
+.bookmark .short .header {
+	min-height: 30px;
+}
+
+.bookmark .user .byline {
+  margin-top: 0.375em;
+  margin-right: 5.25em;
+}
+
+.bookmark .user .datetime, .bookmark .work .datetime {
+  top: 0;
+}
+
+.bookmark div.user .datetime {
+  top: 0.875em;
+  right: 0.875em;
+}
+
+.bookmark .short .status {
+	left: 0;
+	margin-top: 0;
+	top: 0;
+	width: 25px;
+}
+
+.bookmark .short .header h5 {
+  margin-left: 35px;
+}
+
+.bookmark .dynamic {
+	position: static;
+}
+
+.bookmark .recent .index {
+  float: none;
+  width: 100%;
+}
+
+/* mod: READING */
+
+.reading .user {
+  float: left;
+}
+
+.reading h4.viewed {
+  background: #ddd;
+}
+
+.reading .deleted h4.viewed {
+  background: transparent;
+}
+
+/* mod: SKIN */
+
+.skin .blurb .header p {
+  margin-left: 65px;
+}
+
+/* mod: PROMPT */
+
+.prompt .blurb h6 {
+  display: inline-block;
+  font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Helvetica, sans-serif;
+  font-size: 1em;
+  margin: 0.643em 0 0;
+}
+
+.prompt .blurb ul.optional {
+  display: inline;
+}
+
+/*END== */

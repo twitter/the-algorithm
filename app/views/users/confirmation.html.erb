@@ -1,0 +1,20 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Almost Done!") %></h2>
+<!--/descriptions-->
+<!--main content-->
+<div class="userstuff">
+  <p>
+    <%= ts("You should soon receive a confirmation email at the address you gave us. This will have the link you need to follow in order to activate your account and complete the account creation process. The confirmation email will come from <strong>%{return_address}</strong> -- you might want to add this to your address book to make sure you get the email.", return_address: ArchiveConfig.RETURN_ADDRESS).html_safe %>
+  </p>
+  <p>
+    <%= ts("If you haven't received this email within 24 hours, and you don't find our email in your spam filter or Social folder, please <a href='%{support_path}'>contact Support</a> for help.", support_path: new_feedback_report_path).html_safe %>
+  </p>
+  <p>
+    <% # We do days_to_purge_unactivated * 7 because it's actually weeks %>
+    <%= ts("<strong>Important!</strong> You must confirm your email address within %{days_before_purge} days, or your account will expire. If this happens, you can sign up again using the same invitation.", days_before_purge: AdminSetting.current.days_to_purge_unactivated? ? (AdminSetting.current.days_to_purge_unactivated * 7) : ArchiveConfig.DAYS_TO_PURGE_UNACTIVATED).html_safe %>
+  </p>
+  <p>
+    <%= link_to ts('Return to Archive front page'), root_path %>
+  </p>
+</div>
+<!--/content-->

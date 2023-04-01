@@ -1,0 +1,47 @@
+<% content_for :message do %>
+<%= t ".text.assignment", collection_title: @collection.title, collection_url: collection_url(@collection) %>
+
+<%= t ".recipient" %> <%= @request.nil? ? t(".recipient_missing") : text_pseud(@request.pseud) %>
+
+<%= t ".prompts" %>
+<% @request.requests.each_with_index do |prompt, index| %>
+<% tag_groups = prompt.tag_groups %>
+<% def tag_list(tags) %>
+<%  return nil if !tags || tags.empty? %>
+<%  tags.map { |tag| tag.name }.to_sentence.html_safe %>
+<% end %>
+<% fandoms = prompt.any_fandom ? t(".any") : tag_list(tag_groups["Fandom"]) %>
+<% chars = prompt.any_character ? t(".any") : tag_list(tag_groups["Character"]) %>
+<% ships = prompt.any_relationship ? t(".any") : tag_list(tag_groups["Relationship"]) %>
+<% ratings = prompt.any_rating ? t(".any") : (tag_groups["Rating"] ? get_title_string(tag_groups["Rating"]) : nil) %>
+<% warnings = prompt.any_archive_warning ? t(".any") : (tag_groups["ArchiveWarning"] ? get_title_string(tag_groups["ArchiveWarning"]) : nil) %>
+<% categories = prompt.any_category ? t(".any") : (tag_groups["Category"] ? get_title_string(tag_groups["Category"]) : nil) %>
+<% atags = prompt.any_freeform ? t(".any") : tag_list(tag_groups["Freeform"]) %>
+<% otags = prompt.optional_tag_set ? tag_list(prompt.optional_tag_set.tags) : nil %>
+<%= text_divider %>
+
+<%= index + 1 %>. <%= prompt.title %>
+
+<% if fandoms %><%= Fandom.human_attribute_name("name_with_colon", count: prompt.any_fandom ? 1 : tag_groups["Fandom"].count) %> <%= fandoms %><% end %><% if chars %>
+<%= Character.human_attribute_name("name_with_colon", count: prompt.any_character ? 1 : tag_groups["Character"].count) %> <%= chars %><% end %><% if ships %>
+<%= Relationship.human_attribute_name("name_with_colon", count: prompt.any_relationship ? 1 : tag_groups["Relationship"].count) %> <%= ships %><% end %><% if ratings %>
+<%= Rating.human_attribute_name("name_with_colon") %> <%= ratings %><% end %><% if warnings %>
+<%= ArchiveWarning.human_attribute_name("name_with_colon", count: prompt.any_archive_warning ? 1 : tag_groups["ArchiveWarning"].count) %> <%= warnings %><% end %><% if categories %>
+<%= Category.human_attribute_name("name_with_colon", count: prompt.any_category ? 1 : tag_groups["Category"].count) %> <%= categories %><% end %><% if atags %>
+<%= Freeform.human_attribute_name("name_with_colon", count: prompt.any_freeform ? 1 : tag_groups["Freeform"].count) %> <%= atags %><% end %><% if otags %>
+<%= t ".optional_tags" %> <%= otags %><% end %><% if prompt.url && !prompt.url.blank? %>
+<%= t ".prompt_url" %> <%= prompt.url %><% end %><% if prompt.description && !prompt.description.blank? %>
+<%= t ".description" %>
+    <%= to_plain_text(prompt.description) %><% end %>
+
+<% end %><%= text_divider %>
+
+<%= t '.due' %> <%= to_plain_text(time_in_zone(@collection.challenge.assignments_due_at, (@collection.challenge.time_zone || Time.zone.name), @assigned_user)).gsub(/\n\s*/, "") %>.
+
+<%= t ".text.look_up", link: user_assignments_url(@assigned_user) %>
+<% if @collection && !@collection.assignment_notification.blank? %>
+
+
+<%= @collection.assignment_notification %><% end %><% end %>
+<% content_for :footer_note do %><%= t ".text.footer", title: @collection.title, url: collection_url(@collection), profile_url: collection_profile_url(@collection) %><% end %>
+<% content_for :sent_at do %><%= l(Time.now) %><% end %>

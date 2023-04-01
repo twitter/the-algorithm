@@ -1,0 +1,4 @@
+Read all comments on <%= @comment.ultimate_parent.name %>: <%= tag_comments_url(@comment.ultimate_parent) %><% unless @noreply %>
+Reply to this comment: <%= comment_url(@comment, add_comment_reply_id: @comment.id) %><% end %>
+Go to the thread starting from this comment: <%= comment_url(@comment) %><% unless @comment.id == @comment.thread %>
+Go to the thread to which this comment belongs: <%= comment_url(@comment.thread) %><% end %>

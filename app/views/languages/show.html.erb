@@ -1,0 +1,21 @@
+<h2 class="heading"><%= @language.name %></h2>
+
+<!--subnav-->
+<% if logged_in_as_admin? %>
+  <p class="navigation actions" role="navigation">
+    <%= link_to ts('Edit Language'), edit_language_path(@language) %>
+  </p>
+<% end %>
+</p>
+<!--/subnav-->
+
+<p><%= link_to t('.work_count', :default => "%{count} works", :count => @language.work_count), language_works_path(@language) %> in <%= @language.fandom_count %> fandoms</p>
+
+<% unless @works.blank? %>
+  <h3 class="heading">Most recent works:</h3>
+  <ul class="work index group">
+    <% for work in @works %>
+  	  <%= render :partial => 'works/work_blurb', :locals => {:work => work} %>
+    <% end %>
+  </ul>
+<% end %>

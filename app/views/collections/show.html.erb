@@ -1,0 +1,20 @@
+<div id="collection-page" class="collection home">
+
+  <%= render "collections/header", :collection => @collection %>
+
+  <!--main content-->
+  <% # expects @works, @bookmarks %>  
+  <% unless @works.blank? %>
+    <%= render 'works_module', :collection => @collection, :works => @works %>
+  <% end %>
+
+  <% unless @bookmarks.blank? %>
+    <%= render 'bookmarks_module', :collection => @collection, :bookmarks => @bookmarks %>
+  <% end %>
+
+  <% if @works.blank? && @bookmarks.blank? %>
+    <p class="alt message"><%= ts("There are no works or bookmarks in this collection yet.") %></p>
+  <% end %>
+  <!--/content-->
+  
+</div> 

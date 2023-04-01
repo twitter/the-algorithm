@@ -1,0 +1,35 @@
+<% if @user == current_user && @user.preference.try(:first_login) %>
+  <!-- pseudoflash because putting it in a real one was making for some ugly code -->
+  <div class="flash notice" id="first-login-help-banner">
+    <p>
+      <%= t(".login_banner.welcome_text", help_link: link_to_modal(t(".login_banner.help_link"), for: first_login_help_path, title: t(".login_banner.help_title"))).html_safe %>
+    </p>
+    <p>
+      <%= t(".login_banner.help_text", 
+            link_abuse: link_to(t(".login_banner.link_abuse"), new_abuse_report_path),
+            link_faq: link_to(t(".login_banner.link_faq"), archive_faqs_path),
+            link_support: link_to(t(".login_banner.link_support"), new_feedback_report_path),
+            link_tos: link_to(t(".login_banner.link_tos"), tos_path)
+          ).html_safe %>
+    </p>
+    <%= form_tag end_first_login_user_path(current_user), method: :post, remote: true do %>
+      <p class="submit actions">
+        <%= submit_tag t(".login_banner.dismiss") %>
+        <%= link_to "&times;".html_safe, nil, remote: true, id: "hide-first-login-help", title: t(".login_banner.hide") %>
+      </p>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="user home">
+  <%= render "users/header" %>
+  <%= render "users/contents" %>
+</div> 
+
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+      $j("#hide-first-login-help").click(function() {
+        $j("#first-login-help-banner").hide();
+      })
+  <% end %>
+<% end %>

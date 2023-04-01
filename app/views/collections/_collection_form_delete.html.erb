@@ -1,0 +1,6 @@
+<ul class="navigation actions" role="menu">
+  <% if @collection.user_is_owner?(current_user) %>
+    <li><%= link_to ts("Delete Collection"), confirm_delete_collection_path(@collection),
+      data: {confirm: ts('Are you sure you want to delete this collection? All collection settings will be lost. (Works will not be deleted.)')} %></li>
+  <% end %>
+</ul>

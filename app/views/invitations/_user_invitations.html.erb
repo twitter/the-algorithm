@@ -1,0 +1,35 @@
+<% unless invitations.blank? %>
+  <table summary="<%= ts('List of your invitation tokens and information regarding who you shared them with, along with the option to share unused tokens.') %>">
+    <caption><%= ts('Invitation Information') %></caption>
+	  <thead>
+	    <tr>
+        <th scope="col"><%= ts('Token') %></th>
+        <th scope="col"><%= ts('Sent To') %></th>
+        <th scope="col"><%= ts('User Name') %></th>
+        <th scope="col"><%= ts('External Author') %></th>
+        <th scope="col"><%= ts('Copy Link') %></th>
+      </tr>
+	  </thead>
+	  <tbody>
+      <% for invitation in invitations %>
+        <tr>
+          <td><%= link_to invitation.token, (invitation.creator.is_a?(User) ? [invitation.creator, invitation] : invitation) %></td>
+          <td><%= invitation.invitee_email %></td>
+          <td><%=invitee_link(invitation) %></td>
+          <td><%= invitation.external_author ? "#{invitation.external_author.email} (#{invitation.external_author.names.collect(&:name).delete_if {|name| name == invitation.external_author.email}.join(",")})" : "" %></td>
+          <td>
+            <% unless invitation.redeemed_at %>
+            <% if invitation.external_author %>
+              <%= link_to ts("copy and use"), claim_path(:invitation_token => invitation.token) %>
+            <% else %>
+              <%= link_to ts("copy and use"), signup_path(:invitation_token => invitation.token) %><% end %>
+            <% end %>
+          </td>
+          <% if logged_in_as_admin? && invitation.redeemed_at.blank? %>
+            <td><%= link_to("Delete", invitation, data: {confirm: "Are you sure you want to delete this invitation?"}, :method => :delete) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

@@ -1,0 +1,17 @@
+<% creation_type = @creation.class.name.underscore %>
+<% content_for :message do %>
+  <p>
+    <%= t(".intro_#{creation_type}", inviting_user: @inviting_user.login, pseud: @creatorship.pseud.name) %>
+  </p>
+
+  <p>
+    <%= t(".html.creation",
+          creation_link: "<i><b>#{style_link(creation_title(@creation), polymorphic_url(@creation))}</b></i>".html_safe,
+          pseud_links: @creation.pseuds.map{ |p| style_pseud_link(p) }.to_sentence.html_safe).html_safe %>
+  </p>
+
+  <p>
+    <%= t(".html.instructions",
+          page_name: style_link(t(".html.page_name"), user_creatorships_url(@user))).html_safe %>
+  </p>
+<% end %>

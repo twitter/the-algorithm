@@ -1,0 +1,82 @@
+/* MEDIA: speech */
+
+.landmark {
+    opacity: 1;
+  height: auto;
+  width: auto;
+  font-size: 100%;
+  line-height: 0;
+  color: black;
+}
+
+a.tag {
+  speak: no-punctuation;
+}
+
+em {
+  voice-stress: moderate;
+}
+
+strong, .warnings, .caution {
+  voice-stress: strong;
+}
+
+cite {
+  voice-rate: 95%;
+}
+
+acronym {
+  speak: spell-out;
+}
+
+abbr {
+  content: attr(title);
+}
+
+code, kbd, tt, samp {
+  voice-rate: 95%;
+}
+
+.userstuff {
+  speak-numeral: continuous;
+}
+
+.meta {
+  voice-rate: 110%;
+}
+
+.blurb {
+  voice-rate: 105%;
+}
+
+.userstuff h1, .userstuff h2.title {
+  voice-rate: 90%;
+  pause: 5ms 10ms;
+}
+
+.chapter {
+  pause: 10ms 10ms;
+}
+
+.userstuff dt {
+  voice-balance: leftwards;
+}
+
+.userstuff dd {
+  voice-balance: rightwards;
+}
+
+.navigation {
+  voice-stress: moderate;
+  speak: no-punctuation;
+}
+
+.splash .browse li a:before {
+  speak: none;
+}
+
+/*SAY-INSTEAD DRAFTS 
+
+[recs] say-instead: "wrecks";
+acronym[ToS] say-instead: "toss"; 
+[TOSd] say*/

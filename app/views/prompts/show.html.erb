@@ -1,0 +1,13 @@
+<% # prompt_form links here when called from prompts/edit %>
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("#{@prompt.class.name} by %{person}", :person => @prompt.anonymous? ? "Anonymous" : @prompt.challenge_signup.pseud.byline) %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<ul class="prompt index group">
+  <%= render "prompts/prompt_blurb", :prompt => @prompt %>
+</ul>
+<!--/content-->

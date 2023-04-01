@@ -1,0 +1,3 @@
+If `deliver_later` is called within a transaction, the job is added to the Resque queue immediately, but the data written in the transaction is only available once the transaction is complete. This can cause `RecordNotFound` errors when sending emails about brand new objects, as well as other issues with emails containing old data.
+
+To help avoid these transaction issues, use the `deliver_after_commit` method introduced by [this monkeypatch](../../config/initializers/monkeypatches/deliver_after_commit.rb), which uses the `after_commit_everywhere` gem to ensure that the job is only added to the queue after the transaction has finished.

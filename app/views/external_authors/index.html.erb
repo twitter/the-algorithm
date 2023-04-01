@@ -1,0 +1,52 @@
+<% if @user && current_user == @user %>
+  <h2 class="heading"><%= ts("Author Identities for %{user}", :user => @user.login) %></h2>
+
+  <p>
+    <%= ts("If an archive that includes your works is backed up to the AO3, here's where you'll get control over those works.") %>
+  </p>
+
+  <!--
+  Adding/removing new external identities is coming soon 
+    <ul class="navigation actions" role="navigation">
+      <li><%= link_to ts('New author identity'), new_user_external_author_path(@user) %></li>
+    </ul>
+  -->
+<% elsif current_user.archivist %>
+  <h2 class="heading"><%= ts("External Authors Imported") %></h2>
+<% end %>
+
+<ul class="index group">
+  <% @external_authors.each do |external_author| %>
+    <li>
+      <h4 class="heading">Identity: <%= external_author.external_author_names.collect(&:name).join(", ") %>
+      </h4>
+      <% if external_author.do_not_email %>
+        <p><%= ts("No notifications will be sent to this email address." ) %></p>
+      <% end %>
+
+      <% if external_author.do_not_import %>
+        <p><%= ts("Archivists may not import works with this email." ) %></p>
+      <% end %>
+      
+      <h4 class="heading">Works:</h4>
+      <ul class="work index group">
+        <% external_author.external_creatorships.each do |ext_creatorship| %>
+          <li><%= link_to(ext_creatorship.creation.title, work_path(ext_creatorship.creation)) %></li>
+        <% end %>
+      </ul>
+        
+      <% if @user && current_user == @user %>
+        <ul class="actions" role="menu">
+          <li><%= link_to ts('Edit'), [:edit, @user, external_author] %></li>
+          <!-- coming soon 
+          <li>
+            <%= link_to ts('Delete'), [@user, external_author], 
+                          :confirm => ts('Are you sure you want to delete this additional email identity?'), :method => :delete %>
+          </li>
+          -->
+        </ul>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+

@@ -1,0 +1,81 @@
+/* IE_CONDITION: IE7 */
+
+/*http://otwcode.github.com/docs/front_end_coding/debugging-ie*/
+
+#header {
+  z-index: 200;
+  zoom: 1;
+}
+
+#header .logo {
+  float: none;
+}
+
+#header .navigation .dropdown, #header .navigation .dropdown .menu li {
+  border: none;
+  display: block;
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+
+#header .primary li:first-child {
+  margin-left: 0;
+}
+
+#header #greeting .navigation .dropdown:hover .menu, #header #greeting .open .menu {
+  left: auto;
+  right: 0;
+  top: 1.715em;
+}
+
+#header .navigation .dropdown:hover .menu, #header .open .menu {
+  position: absolute;
+  top: 2.13em;
+  left: 0;
+}
+
+#header .navigation .dropdown .menu li {
+  border-bottom: 1px solid #888;
+  float: none;
+}
+
+#main {
+  z-index: 198;
+}
+
+/*transparency*/
+
+ul#skiplinks, .landmark, .landmark a, .index .heading.landmark {
+  color: #fff;
+}
+
+/*min-width*/
+
+.dashboard form.filters {
+  min-width: 8em;
+}
+
+/*margin quirk reset*/
+
+
+
+/* scrolling listbox list item containment */
+
+.listbox .many {
+  position: relative;
+}
+
+/*font fallbacks for icons*/
+
+span.replied. span.unreviewed, .actions a, .action, .symbol {
+  font-family: 'Arial Unicode MS', 'Lucida Grande Unicode', Arial, sans-serif;
+}
+
+/*hL clearfixes
+test note: these were put in last minute so might need redoing
+http://www.stuffandnonsense.co.uk/archives/clearing_floats_without_structural_markup_in_ie7.html*/
+
+.group, .ui-sortable {
+  zoom: 1;
+}

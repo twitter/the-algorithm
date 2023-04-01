@@ -1,0 +1,11 @@
+<div class="mystery header picture module">
+  <h4 class="heading"><%= ts("Mystery Work") %></h4>
+  <% if item.approved_collections.unrevealed.present? %>
+    <h5 class="heading"><%= h(ts("Part of ")) + show_collections_data(item.approved_collections.unrevealed) %></h5>
+  <% end %>
+  <div class="icon"></div>
+</div>
+<h6 class="landmark heading"><%= ts("Summary") %></h6>
+<blockquote class="userstuff summary">
+  <p><%= ts("This is part of an ongoing challenge and will be revealed soon!") %></p>
+</blockquote>

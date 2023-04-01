@@ -1,0 +1,68 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Edit My Profile") %></h2>
+<%= error_messages_for :user %>
+<%= error_messages_for @user.profile %>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render 'edit_header_navigation' %>
+<!--/subnav-->
+
+<!--main content-->
+<p class="notice">
+  <%= ts("Any personal information you post on your public AO3 profile,
+         including your religious or political views, health, racial background,
+         country of origin, sexual identity and/or personal relationships,
+         will be accessible by the general public. Read more about our updated
+         Age and Privacy policies, and see how the AO3 collects data when
+         you're on the site and why we don't sell it to third parties,
+         in the %{tos}.",
+         tos: link_to(ts("Privacy section of the AO3 Terms of Service"), tos_path(anchor: "privacy"))
+      ).html_safe %>
+</p>
+
+<h3 class="landmark heading"><%= ts("Change Profile") %></h3>
+<%= form_for(@user) do |f| %>  
+  <dl>
+    <%= fields_for :profile_attributes, @user.profile do |p| %>
+      <dt><%= p.label :title, "Title" %></dt>
+      <dd>
+        <%= p.text_field :title, class: "observe_textlength" %>
+        <%= live_validation_for_field("profile_attributes_title", presence: false, maximum_length: Profile::PROFILE_TITLE_MAX) %>
+        <%= generate_countdown_html("profile_attributes_title", Profile::PROFILE_TITLE_MAX) %>
+      </dd>
+
+      <dt><%= p.label :location, "Location" %></dt>
+      <dd>
+        <%= p.text_field :location, class: "observe_textlength" %>
+        <%= live_validation_for_field("profile_attributes_location", presence: false, maximum_length: Profile::LOCATION_MAX) %>
+        <%= generate_countdown_html("profile_attributes_location", Profile::LOCATION_MAX) %>
+      </dd>
+
+      <dt><%= p.label :date_of_birth, "Date of Birth" %></dt>
+      <dd class="datetime"><%= p.date_select :date_of_birth, start_year: 12.years.ago.year, end_year: 90.years.ago.year, include_blank: true %></dd>
+
+      <dt><%= p.label :about_me, "About Me" %></dt>
+      <dd class="description">
+        <p><%= allowed_html_instructions %></p>
+        <%= p.text_area :about_me, class: "observe_textlength" %>
+        <%= live_validation_for_field("profile_attributes_about_me", presence: false, maximum_length: Profile::ABOUT_ME_MAX) %>
+        <%= generate_countdown_html("profile_attributes_about_me", Profile::ABOUT_ME_MAX) %>
+      </dd>
+
+      <% if policy(@user.profile).can_edit_profile? %>
+        <dt><%= p.label :ticket_number, class: "required" %></dt>
+        <dd>
+          <%= p.text_field :ticket_number, class: "required" %>
+          <%= live_validation_for_field("profile_attributes_ticket_number", numericality: true) %>
+          <p class="footnote"><%= ts("Numbers only.") %></p>
+        </dd>
+      <% end %>
+
+      <dt class="landmark"><%= p.label :update, "Update" %></dt>
+      <dd class="submit actions"><%= f.submit "Update" %></dd>
+    <% end %>
+  </dl>
+<% end %>
+
+<!--/content-->

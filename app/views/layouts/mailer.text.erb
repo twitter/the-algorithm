@@ -1,0 +1,21 @@
+
+Archive of Our Own
+=========================================
+
+
+<% if content_for?(:message) then %><%= yield(:message) %><% end %>
+
+
+-----------------------------------------
+<% if content_for?(:footer_note) %>
+<%= yield(:footer_note) %>
+
+<% end %>
+<%= t 'mailer.general.footer.general.text.part1', support_url: new_feedback_report_url %>
+
+<%= t 'mailer.general.footer.general.text.part2', donate_url: donate_url %>
+<% if content_for?(:sent_at) %>
+
+<%= t 'mailer.general.footer.sent_at', sent_at: yield(:sent_at).strip %>
+
+<% end %>

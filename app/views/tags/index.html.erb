@@ -1,0 +1,48 @@
+<!--SEARCHBROWSE-->
+<!--Descriptive page names, messages and instructions-->
+<h2 class="heading"><%= ts("Tags") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<% unless @collection %>
+  <ul class="navigation actions" role="navigation">
+    <% if logged_in? %><li><%= link_to ts("Tag Sets"), tag_sets_path %></li><% end %>
+    <li><%= span_if_current(ts('Most Popular'), tags_path, params[:show].blank?) %></li>
+    <li><%= span_if_current ts('Random'), tags_path(:show => "random") %></li>
+  </ul>
+<% end %>
+<!--/subnav-->
+
+<!--main content-->
+<% unless @collection %>
+  <h3 class="landmark heading">
+    <% if params[:show] == "random" %>
+      <%= ts('Browse Random Tags')%>
+    <% else %>
+      <%= ts('Browse Popular Tags')%>
+    <% end %>
+  </h3>
+<% end %>
+
+<% if @tags %>
+  <% if params[:show] == "random" %>
+    <% if @collection %>
+      <p><%= t(".about.random_in_collection") %></p>
+    <% else %>
+      <p><%= t(".about.random", search_tags_link: (link_to t(".search_tags"), search_tags_path)).html_safe %></p>
+    <% end %>
+  <% else %>
+    <% if @collection %>
+      <p><%= t(".about.popular_in_collection") %></p>
+    <% else %>
+      <p><%= t(".about.popular", search_tags_link: (link_to t(".search_tags"), search_tags_path)).html_safe %></p>
+    <% end %>
+  <% end %>
+  <ul class="tags cloud index group">
+    <!--FRONT END REVIEW: these classes are irregular-->
+    <% tag_cloud @tags, %w(cloud1 cloud2 cloud3 cloud4 cloud5 cloud6 cloud7 cloud8) do |tag, css_class| %>
+      <li><%= link_to_tag_works(tag, class: css_class.dup, collection: @collection) %></li>
+    <% end %>
+  </ul>
+<% end %>
+<!--/content-->

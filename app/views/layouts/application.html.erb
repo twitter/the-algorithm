@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="keywords" content="fanfiction, transformative works, otw, fair use, archive" />
+    <meta name="language" content="en-US" />
+    <meta name="subject" content="fandom" />
+    <meta name="description" content="An Archive of Our Own, a project of the
+    Organization for Transformative Works" />
+    <meta name="distribution" content="GLOBAL" />
+    <meta name="classification" content="transformative works" />
+    <meta name="author" content="Organization for Transformative Works" />
+    <% item = @user || @work || @series %>
+    <% if disallow_robots?(item) %>
+      <meta name="robots" content="noindex" />
+      <meta name="googlebot" content="noindex" />
+    <% end %>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+      <% if defined?(@page_title) %>
+        <%= @page_title %>
+      <% else %>
+        <% if defined?(@page_subtitle) %>
+          <%= @page_subtitle %>
+        <% else %>
+          <%= controller.action_name=="index" ? "" : process_title(controller.action_name) %>
+          <%= controller.action_name=="index" ? process_title(controller.controller_name) : process_title(controller.controller_name.singularize) %>
+        <% end %>
+        |
+        <%= ArchiveConfig.APP_NAME  %>
+      <% end %>
+    </title>
+
+    <%= render :partial => 'layouts/includes' %>
+    <%= phraseapp_in_context_editor_js %>
+  </head>
+
+  <body class="<%= logged_in? ? 'logged-in' : 'logged-out' %>" <%= PhraseApp::InContextEditor.enabled? ? "data-no-turbolink" : "" %>>
+    <div id="outer" class="wrapper">
+      <ul id="skiplinks"><li><a href="#main"><%= ts('Main Content') %></a></li></ul>
+      <% # layouts/proxy_notice is rendered here by JavaScript found in layouts/javascripts. %>
+      <%= render :partial => 'layouts/header' %>
+      <div id="inner" class="wrapper">
+        <!-- BEGIN sidebar -->
+        <% if @admin_posts && !@hide_dashboard %>
+          <%= render :partial => 'admin_posts/sidebar' %>
+        <% elsif @user && !@hide_dashboard %>
+          <%= render :partial => 'users/sidebar' %>
+        <% elsif @collection && !@hide_dashboard %>
+          <%= render :partial => 'collections/sidebar' %>
+        <% elsif show_wrangling_dashboard %>
+          <%= render :partial => 'tag_wranglings/wrangler_dashboard' %>
+        <% end %>
+        <!-- END sidebar -->
+
+        <!-- BEGIN main -->
+        <div id="main" class="<%= classes_for_main %> region" role="main">
+          <%= flash_div :error, :caution, :notice, :alert %>
+          <div class="flash"></div>
+          <%= yield %>
+          <div class="clear"><!--presentational--></div>
+        </div>
+        <!-- END main -->
+      </div>
+      <%= render :partial => 'layouts/footer' %>
+    </div>
+    <%= render :partial => 'layouts/javascripts' %>
+  </body>
+</html>

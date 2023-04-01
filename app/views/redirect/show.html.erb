@@ -1,0 +1,18 @@
+<h2 class="heading">Lookup Original Stories</h2>
+
+<p>
+  If you are looking for a story that might have been imported into the archive from another URL, you can enter it here and
+  we will try and look it up.
+</p>
+
+<%= form_tag redirect_path, method: :get do %>
+<fieldset>
+	<legend>Find story by URL</legend>
+  <p>
+    <%= label_tag "original_url", ts('Original URL of work:') %> <br />
+    <%= text_field_tag "original_url", "", :size => 70 %>
+    <%= submit_tag "Go" %>
+  </p>
+</fieldset>
+
+<% end %>

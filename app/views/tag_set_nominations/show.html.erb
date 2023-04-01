@@ -1,0 +1,104 @@
+<!--ZONE TAG: TAGSETS (but not home?)-->
+<div class="tagset nominations home">
+  <!--Descriptive page names, messages and instructions-->
+  <h2 class="heading"><%= @tag_set.title %></h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <ul class="navigation actions" role="menu">
+    <li><%= link_to ts("Back to %{title}", :title => @tag_set.title), tag_set_path(@tag_set) %></li>
+    <% if @tag_set.nominated %>
+      <li><%= link_to ts("Edit"), edit_tag_set_nomination_path(@tag_set, @tag_set_nomination) %></li>
+    <% end %>
+    <% if (@tag_set.nominated && @tag_set_nomination.unreviewed?) || @tag_set.user_is_moderator?(current_user) %>
+      <li>
+        <%= link_to ts("Delete"), confirm_delete_tag_set_nomination_path(@tag_set, @tag_set_nomination),
+            data: {confirm: ts('Are you certain you want to delete these nominations?')} %>
+      </li>
+    <% end %>
+  </ul>
+  <!--/subnav-->
+
+  <h3 class="heading"><%= ts("My Nominations for %{title}", :title => @tag_set.title) %></h3>
+  <div class="wrapper">
+    <dl class="meta group">
+      <dt><%= ts("Created at: ") %></dt>
+      <dd class="datetime"><%= l(@tag_set_nomination.created_at.to_date) %></dd>
+      <dt><%= ts("Status: ") %></dt>
+      <dd>
+        <% if @tag_set_nomination.unreviewed? %>
+          <%= ts("Not Yet Reviewed") %>
+          <% if @tag_set.nominated %>
+            <%= ts("(may be edited or deleted)") %>
+          <% end %>
+        <% elsif @tag_set_nomination.reviewed? %>
+          <%= ts("Reviewed (may not be edited or deleted)") %>
+        <% else %>
+          <%= ts("Partially Reviewed") %>
+          <% if @tag_set.nominated %>
+            <%= ts("(unreviewed nominations may be edited)") %>
+          <% end %>
+        <% end %>
+      </dd>
+    </dl>
+  </div>
+
+
+  <h3 class="heading"><%= ts("Nominated Tags") %> <%= link_to_help "tagset-nominated-tags" %></h3>
+
+  <ol class="index group">
+    <% if @limit[:fandom] > 0 && (@limit[:character] > 0 || @limit[:relationship] > 0) %>
+      <% # group fandom, char, rel together %>
+      <% @tag_set_nomination.fandom_nominations.each do |fandom_nom| %>
+        <li class="fandom listbox group">
+          <h4 class="heading"><%= render "show_tag_status", :tag => fandom_nom %></h4>
+          <% TagSet::TAG_TYPES_RESTRICTED_TO_FANDOM.each do |tag_type| %>
+            <% if @limit[tag_type] > 0 %>
+              <div class="<%= tag_type.to_s.pluralize.downcase %> listbox group">
+                <h5 class="heading"><%= ts("%{tag_type}", tag_type: tag_type_label_name(tag_type).pluralize) %></h5>
+                <ul class="index group">
+                  <% if fandom_nom.send("#{tag_type}_nominations").count == 0 %>
+                    <li><%= ts("None nominated in this fandom.") %></li>
+                  <% else %>
+                    <% fandom_nom.send("#{tag_type}_nominations").each do |tag| %>
+                      <li><%= render "show_tag_status", :tag => tag %></li>
+                    <% end %>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+
+      <% # show freeforms separately %>
+      <%= render "show_by_tag_type", :tag_type => "freeform" %>
+
+    <% else %>
+
+      <% # list char, rel, freeform individually %>
+      <% TagSet::TAG_TYPES_INITIALIZABLE.each do |tag_type| %>
+        <%= render "show_by_tag_type", :tag_type => tag_type %>
+      <% end %>
+    <% end %>
+  </ol>
+  <!--/content-->
+
+</div>
+
+<%= content_for :footer_js do %>
+  <%= javascript_include_tag '/javascripts/jquery.qtip.min.js' %>
+  <%= javascript_tag do %>
+    $j(document).ready(function() {
+      setupTooltips();
+    });
+    function setupTooltips() {
+      $j('span[data-tooltip]').each(function(){
+        $j(this).qtip({
+            content: $j(this).attr('data-tooltip'),
+            position: {corner: {target: 'topMiddle'}}
+        });
+      });
+    }
+  <% end %>
+<% end %>

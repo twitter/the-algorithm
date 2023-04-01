@@ -1,0 +1,7 @@
+<style type="text/css">
+  td { border: 1px solid black;}
+</style>
+<% if @collection && @collection.challenge %>  
+  <% @template_format = 'html' %>
+  <%= render :partial => "challenge/#{challenge_class_name(@collection)}/challenge_signups" %>
+<% end %>

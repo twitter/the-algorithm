@@ -1,0 +1,117 @@
+
+<% form.object.build_tag_set unless form.object.tag_set %>
+<%= form.fields_for :tag_set do |tag_set_form| %>
+
+  <% TagSet::TAG_TYPES.each do |tag_type| %>
+    <% tag_label = tag_type_label_name(tag_type) %>
+
+    <% tag_name = tag_type.classify.constantize::NAME # constantize safe as iterating over safe list %>
+    <% num_allowed = restriction.allowed(tag_type) %>
+    <% num_required = restriction.required(tag_type) %>
+
+    <% if num_allowed > 0 %>
+      <% # save some local variables to make the tag_set_form cleaner %>
+      <% tag_fieldname = field_name(tag_set_form, "#{tag_type}_tagnames") %>
+      <% tag_field_id =  field_id(tag_set_form, "#{tag_type}_tagnames") %>
+
+      <dt<%= num_required > 0 ? ' class="required"'.html_safe : '' %>>
+        <%= tag_set_form.label "#{tag_type}_tagnames".to_sym, challenge_signup_label(tag_name, num_allowed, num_required), class: tag_type_css_class(tag_type) %>
+
+        <% # kludge required for bug in nested_attributes_for:https://rails.lighthouseapp.com/projects/8994/tickets/2646-validations-not-called-when-model-updating-using-nested-attributes %>
+      </dt>
+
+      <%  # Pseudocode for this long if
+          # if rating/warning/category
+          #   checkboxes from tag set
+          # elsif character/rating and restricted to fandom/tagset
+          #   autocomplete based on fandom
+          # else
+          #   if anything in tagset
+          #     if not too many things
+          #       tickyboxes from tagset
+          #     else
+          #       autocomplete from tagset
+          #     end
+          #   else
+          #     standard autocomplete by tag type
+          #   end
+          # end
+      %>
+
+      <% if TagSet::TAGS_AS_CHECKBOXES.include?(tag_type) %>
+        <% # do ratings, warnings, categories as taglists if not already specified %>
+        <dd class="<%= tag_type_css_class(tag_type) %> listbox group" title="<%= ts("choose #{tag_label.pluralize.downcase}") %>">
+          <h4 class="heading"><%= ts("#{tag_name.pluralize.titleize}") %></h4>
+          <%= checkbox_section tag_set_form, "#{tag_type}_tagnames",
+            (restriction.has_tags?(tag_type) ? restriction.tags(tag_type) : tag_type.classify.constantize.canonical).map {|t| t.name}, # constantize safe as itterating over safe list
+            :checked_method => "#{tag_type}_tagnames", :value_method => "to_s", :name_method => "to_s" %>
+          <%= tag_set_form.hidden_field :updated_at, :value => Time.now %>
+        </dd>
+
+      <% elsif TagSet::TAG_TYPES_RESTRICTED_TO_FANDOM.include?(tag_type) && (restriction.restricted?(tag_type, "fandom") || restriction.restricted?(tag_type, "tag_set")) %>
+        <% # characters or relationships restricted to fandom: use an autocomplete and either do/don't include wrangled tags %>
+        <% autocomplete_method = "associated_tags?fallback=false&tag_type=#{tag_type}&tag_set=#{restriction.tag_set_ids.join(',')}" %>
+        <% autocomplete_method += "&include_wrangled=false" if restriction.restricted?(tag_type, "tag_set") %>
+        <dd title="<%= ts("choose #{tag_name.pluralize.downcase} from your selected fandoms") %>">
+          <%= tag_set_form.text_field "#{tag_type}_tagnames",
+                            autocomplete_options(autocomplete_method, 
+                              data: {
+                                autocomplete_min_chars: 0,
+                                autocomplete_token_limit: num_allowed,
+                                autocomplete_hint_text: ts("Please select a fandom first!"),
+                                autocomplete_searching_text: ts("Searching by fandom..."),
+                                autocomplete_live_params: "fandom=#{@fandom_tag_id}"
+                            }) %>
+          <%= tag_set_form.hidden_field :updated_at, :value => Time.now %>
+        </dd>
+      <% else # all other cases %>
+        <% # save the field id to pass for autocompleting based on fandoms in autocomplete if we use autocomplete %>
+        <% @fandom_tag_id = tag_field_id if tag_type == 'fandom' %>
+
+        <% if restriction.has_tags?(tag_type) # tags are specified in the tag set %>
+          <% if restriction.tags(tag_type).count <= ArchiveConfig.MAX_OPTIONS_TO_SHOW %>
+
+            <% # save the field id to pass for autocompleting based on fandoms tickyed instead of autocomplete %>
+            <% @fandom_tag_id += "_checkboxes" if tag_type == 'fandom' %>
+
+            <% # create a scrollable checkboxes section to wrap the tags, see application_helper %>
+            <dd class="<%= "#{tag_type_css_class(tag_type)}" %> listbox group" title="<%= ts("choose #{tag_name.pluralize.downcase}") %>">
+              <h4 class="heading"><%= ts("#{tag_name.titleize}") %></h4>
+              <%= checkbox_section tag_set_form, "#{tag_type}_tagnames", restriction.tags(tag_type).by_name_without_articles.pluck(:name),
+                  :checked_method => "#{tag_type}_tagnames", :value_method => "to_s", :name_method => "to_s" %>
+              <%= tag_set_form.hidden_field :updated_at, :value => Time.now %>
+            </dd>
+          <% else # we have set options but too many for tickyboxes, do autocomplete instead %>
+            <dd title="<%= ts("choose #{tag_name.pluralize.downcase} from the challenge options") %>">
+              <%= tag_set_form.text_field "#{tag_type}_tagnames",
+                  autocomplete_options("tags_in_sets?tag_type=#{tag_type}&tag_set=#{restriction.tag_set_ids.join(',')}",
+                    data: { autocomplete_token_limit: num_allowed }) %>
+              <p class="actions" role="button">
+                <% # TODO: would be nice to improve this for the case of multiple tag sets, currently it links to just an index of all the tag sets for this challenge %>
+                <%= link_to( ts("List %{taglist_size} %{tag_name}", :taglist_size => restriction.tags(tag_type).count, :tag_name => tag_name.pluralize.titleize),
+                        show_options_tag_sets_path(:restriction => restriction.id, :tag_type => tag_type), :target => "_blank", :class => "toggle") %>
+              </p>
+              <%= tag_set_form.hidden_field :updated_at, :value => Time.now %>
+            </dd>
+          <% end %>
+        <% else # no specified tags so let's just go with standard autocomplete %>
+          <dd title="<%= ts("choose #{tag_name.pluralize.downcase} from canonical archive tags") %>">
+            <%= tag_set_form.text_field "#{tag_type}_tagnames", autocomplete_options(tag_type, data: { autocomplete_token_limit: num_allowed }) %>
+            <%= tag_set_form.hidden_field :updated_at, :value => Time.now %>
+          </dd>
+        <% end %>
+
+      <% end # long if for the dd %>
+
+      <% if restriction.allow_any?(tag_type) %>
+        <dd class="any option">
+          <%= form.label "any_#{tag_type}", :class => 'action' do %>
+            <%= form.check_box "any_#{tag_type}".to_sym %>
+            <%= ts("Any #{tag_name.singularize.titleize}") %>
+          <% end %>
+          <%= link_to_help("challenge-any") %>
+        </dd>
+      <% end %>
+    <% end # if num_allowed > 0 %>
+  <% end # each tag_type %>
+<% end # do tag_set_form %>

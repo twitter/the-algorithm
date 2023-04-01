@@ -1,0 +1,82 @@
+<div class="notes module" role="complementary">
+  <h3 class="heading"><%= ts("Notes:") %></h3>
+
+  <% # We don't want the ul tag hanging around when it's empty (i.e. when there are no recipients, parent works, or claims) but we can't skip this entire section because line 25 generates the link to child works that appear under any notes. We repeat this logic on line 63 to close the ul. %>
+  <% if show_associations?(@work) %>
+    <ul class="associations">
+  <% end %>
+    <% # dedication %>
+    <% if @work.gifts.not_rejected.exists? %>
+      <li><%= ts("For") %> <%= recipients_link(@work) %>.</li>
+    <% end %>
+
+    <% # translations %>
+    <% for related_work in @work.approved_related_works %>
+      <% if related_work.translation %>
+        <li>
+          <%= ts('Translation into %{language} available: ', :language => related_work.work.language.name) %>
+          <% if related_work.work.restricted? && !logged_in? %>
+            <%= ts("[Restricted Work] by") %> <%= byline(related_work.work) %>. <%= ts("Log in to view.") %>
+          <% else %>
+            <%= link_to related_work.work.title.html_safe, related_work.work %> <%= ts("by") %> <%= byline(related_work.work) %>
+          <% end %>
+        </li>
+      <% else %>
+        <% related_works_link ||= link_to ts("other works inspired by this one"), get_related_works_url %>
+      <% end %>
+    <% end %>
+
+    <% # parent works %>
+    <% for related_work in @work.parents_after_saving %>
+      <% if related_work.parent %>
+        <li>
+          <% if related_work.translation %>
+            <%= ts('A translation of') %>
+          <% else %>
+            <%= ts('Inspired by') %>
+          <% end %>
+
+          <% if related_work.parent.is_a?(ExternalWork) %>
+            <%= link_to related_work.parent.title.html_safe, related_work.parent %> by <%= byline(related_work.parent) %>.
+          <% elsif related_work.parent.restricted? && !logged_in? %>
+            <%= ts("[Restricted Work] by") %> <%= byline(related_work.parent) %>. <%= ts("Log in to view.") %>
+          <% else %>
+            <%= link_to related_work.parent.title.html_safe, related_work.parent %> <%= ts("by") %> <%= byline(related_work.parent) %>.
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+
+    <% # prompts %>
+    <% @work.challenge_claims.each do |claim| %>
+      <% unless claim.request_prompt.nil? %>
+        <li><%= ts("In response to a ") %><%= link_to("prompt", collection_prompt_path(claim.collection, claim.request_prompt)) %> <%= ts("by") %>
+          <% if claim.request_prompt.anonymous? %>
+            <%= ts("Anonymous in the ") %><%= link_to(claim.collection.name, collection_path(claim.collection)) %>
+          <% else %>
+            <%= link_to(claim.request_signup.pseud.byline, user_pseud_path(claim.request_signup.user, claim.request_signup.pseud)) %> <%= ts(" in the ") %> <%= link_to(claim.collection.name, collection_path(claim.collection)) %>
+          <% end %>
+          <%= ts("collection.") %>
+        </li>
+      <% end %>
+    <% end %>
+  <% if show_associations?(@work) %>
+    </ul>
+  <% end %>
+
+  <% # notes %>
+  <% unless @work.notes.blank? %>
+    <blockquote class="userstuff">
+      <%=raw sanitize_field(@work, :notes) %>
+    </blockquote>
+  <% end %>
+
+  <% endnotes_link = link_to (@work.notes.blank? ? ts("notes") : ts("more notes")), get_endnotes_link %>
+  <% if !@work.endnotes.blank? && related_works_link %>
+    <p class="jump">(<%= ts("See the end of the work for ") %><%= endnotes_link %><%= ts(" and ") %><%= related_works_link %>.)</p>
+  <% elsif !@work.endnotes.blank? %>
+    <p class="jump">(<%= ts("See the end of the work for ") %><%= endnotes_link %>.)</p>
+  <% elsif related_works_link %>
+    <p class="jump">(<%= ts("See the end of the work for ") %><%= related_works_link %>.)</p>
+  <% end %>
+</div>

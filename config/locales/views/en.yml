@@ -1,0 +1,531 @@
+en:
+  a11y:
+    navigation: "Navigation"
+  admin:
+    admin_options:
+      delete:
+        bookmark: "Delete Bookmark"
+        confirmation: "Are you sure you want to delete this?"
+        external_work: "Delete External Work"
+        series: "Delete Series"
+        work: "Delete Work"
+      edit:
+        external_work: "Edit External Work"
+      edit_tags: "Edit Tags and Language"
+      hide:
+        bookmark: "Hide Bookmark"
+        external_work: "Hide External Work"
+        series: "Hide Series"
+        work: "Hide Work"
+      landmark: "Admin Actions"
+      not_spam: "Mark Not Spam"
+      spam: "Mark As Spam"
+      unhide:
+        bookmark: "Make Bookmark Visible"
+        external_work: "Make External Work Visible"
+        series: "Make Series Visible"
+        work: "Make Work Visible"
+    blacklisted_emails:
+      index:
+        browser_title: "Banned Emails"
+        page_heading: "Manage Banned Emails"
+        notes:
+          guest_comments: "Banned email addresses cannot be used in guest comments."
+          canonical_format: "All emails are stored in a single canonical format and common variants of the same address are not allowed (for instance, foo+whatever@bar.com will not be allowed if foo@bar.com is banned)."
+        heading:
+          new: "Ban email address"
+          search: "Find banned emails"
+        form:
+          new:
+            label: "Email to ban"
+            submit: "Ban Email"
+          search:
+            submit: "Search Banned Emails"
+        confirm_remove: "Are you sure you want to remove %{email} from the banned emails list?"
+      create:
+        browser_title: "Create Banned Email"
+    blacklist:
+      emails_found:
+        one: "one email found"
+        other: "%{count} emails found"
+    admin_invitations:
+      index:
+        page_heading: "Invite New Users"
+        navigation:
+          queue: "Manage Queue"
+          requests: "Manage Requests"
+    passwords:
+      new:
+        page_heading: "Forgotten your admin password?"
+        instructions: "If you've forgotten or would like to change your admin password, we can send instructions that will allow you to reset it. Please tell us the user name for your admin account."
+        reset_login_html: "Admin user name"
+        submit: Reset Admin Password
+      edit:
+        page_heading: Set My Admin Password
+        label:
+          password: New password
+          confirmation: Confirm new password
+        describedby:
+          password_length: "%{minimum} to %{maximum} characters"
+        landmark:
+          submit: Submit
+        submit: Set Admin Password
+    sessions:
+      new:
+        page_heading: "Log In as Admin"
+        label:
+          login: "Admin user name"
+          password: "Admin password"
+        landmark:
+          reset: "Reset password"
+        reset_link: "Forgot admin password?"
+        submit: "Log In as Admin"
+    settings:
+      index:
+        fields:
+          account_creation_enabled: "Account creation enabled"
+          cache_expiration: "How often (in minutes) should we refresh caching"
+          creation_requires_invite: "Account creation requires invitation"
+          days_to_purge_unactivated: "How many weeks you have to activate your account before we purge it"
+          disable_support_form: "Turn off support form"
+          disabled_support_form_text: "Disabled support form text"
+          downloads_enabled: "Allow downloads"
+          enable_test_caching: "Turn on caching (currently experimental)"
+          hide_spam: "Automatically hide spam works"
+          invite_from_queue_enabled: "Invite from queue enabled (People can add themselves to the queue and invitations are sent out automatically)"
+          invite_from_queue_frequency: "How often (in days) should we invite people from the queue"
+          invite_from_queue_number: "Number of people to invite from the queue at once"
+          request_invite_enabled: "Users can request invitations"
+          suspend_filter_counts: "Suspend some filter tracking due to high posting volume"
+          tag_wrangling_off: "Turn off tag wrangling for non-admins"
+        heading: "Archive Settings"
+        legend:
+          account_and_invitations: "Accounts and Invitations"
+          disable_support_form: "Turn Off Support Form"
+          performance_and_misc: "Performance and Misc"
+          actions: "Actions"
+        last_updated_by_admin: "Last updated on %{updated_at} by %{admin_name}."
+        queue_status: "%{number} people are scheduled to be sent invitations on %{date}."
+        queue_status_help: "(The automatic task that invites people from the queue only runs once a day. Don't be alarmed if the date you see is yesterday's. Do be alarmed if the date you see is more than one day in the past and the queue is supposed to be active.)"
+        update: "Update"
+      update:
+        success: "Archive settings were successfully updated."
+  admin_posts:
+    admin_post_form:
+      comment_permissions:
+        label: Who can comment on this admin post
+      language:
+        label: Choose a language
+      tags:
+        label: Tags
+      translated_post:
+        footnote_comment_permissions: Comment permissions from the selected post will replace any permissions selected on this page.
+        footnote_tags: Tags from the selected post will replace any tags entered on this page.
+        label: Translation of
+  admins:
+    index:
+      page_title: "Hi, %{login}!"
+      confidentiality_reminder: "You are now logged in as an admin. That means you will probably encounter information that is personal or confidential (e.g. usernames, email and IP addresses, creator names on anonymous works, etc). Please do not use this information in ways unrelated to your OTW role. If you have questions about what you can or cannot do with information you see here, contact your committee chair(s)."
+      responsibility: "With great power comes great responsibility."
+      log_out_reminder: "Please remember to log out before resuming your normal site activity and leaving comments and kudos!"
+      roles:
+        heading: "Your admin roles:"
+        none: "You currently have no admin roles assigned to you."
+  home:
+    donate:
+      page_title: "Donate or Volunteer"
+  kudos:
+    user_links:
+      more_link:
+        one: "%{count} more user"
+        other: "%{count} more users"
+    guest_header:
+      one: "%{count} guest has also left kudos"
+      other: "%{count} guests have also left kudos"
+  comments:
+    commentable:
+      actions:
+        comment: "Comment"
+      permissions:
+        options:
+          disable_all: No one can comment
+          disable_anon: Only registered users can comment
+          enable_all: Registered users and guests can comment
+        admin_post:
+          alt_action: "You can however %{support_link} with any feedback or questions."
+          disable_all: "Sorry, this news post doesn't allow comments."
+          disable_anon: "Sorry, this news post doesn't allow non-Archive users to comment."
+          support_link: "contact Support"
+        work:
+          alt_action: "You can however still leave Kudos!"
+          disable_all: "Sorry, this work doesn't allow comments."
+          disable_anon: "Sorry, this work doesn't allow non-Archive users to comment."
+          hidden: "Sorry, you can't add or edit comments on a hidden work."
+          unrevealed: "Sorry, you can't add or edit comments on an unrevealed work."
+      blocked: "Sorry, you have been blocked by one or more of this work's creators."
+      invite_to_collections_link: "Invite To Collections"
+  layouts:
+    proxy_notice:
+      faux_heading: "Important message:"
+      point1: "You are using a proxy site that is not part of the Archive of Our Own."
+      point2: "The entity that set up the proxy site can see what you submit, including your IP address. If you log in through the proxy site, it can see your password."
+      button: "Dismiss Notice"
+  users:
+    sessions:
+      new:
+        restricted:
+          sorry: "Sorry!"
+          work_unavailable: "This work is only available to registered users of the Archive."
+          commenting_unavailable: "Commenting on this work is only available to registered users of the Archive."
+          account_exists: "If you already have an Archive of Our Own account, log in now."
+          no_account: "If you don't have an account, you can %{request_invite_link}."
+          request_invite: "request an invitation to join"
+          signup: "Or join us for free - it's easy."
+        login:
+          log_in: "Log in"
+          forgot: "Forgot your password or user name? %{reset_password_link}."
+          reset_password: "Reset password"
+          no_account: "Don't have an account? %{join_link}."
+          request_invite: "Request an invitation to join"
+          create_account: "Create an account now"
+        beta_reminder:
+          reminder: "Reminder:"
+          warning: "This site is in beta. Things may break or crash without notice."
+          report_bugs: "Please report any pesky bugs and %{give_feedback_link}!"
+          give_feedback: "give us your feedback"
+    delete_preview:
+      heading: "What do you want to do with your works?"
+      orphan: "orphan"
+      orphaning: "orphaning"
+      submit: "Save"
+      cancel: "Cancel"
+      confirm: "Are you sure? This can't be undone!"
+      options:
+        keep_pseud: "Leave my pseud but attach to the orphan account"
+        orphan_pseud: "Change my pseud to \"orphan\" and attach to the orphan account"
+        remove: "Remove me completely as co-creator"
+        delete: "Delete completely"
+      co_creations:
+        legend: "Works You Made With Others"
+        summary: "You have %{work_count} work(s) co-created with the following users: %{co_creators}."
+        orphan_info: "You are not able to delete these as they are shared works, but you can %{orphan_link} them or remove yourself completely as a co-creator."
+      sole_creations:
+        legend: "Works and Collections You Made By Yourself"
+        works_summary: "You have %{work_count} work(s) under the following pseuds: %{pseuds}."
+        collections_summary: "You have %{collection_count} collection(s) under the following pseuds: %{pseuds}."
+        options_info: "You can delete them, but please consider %{orphaning_link} them instead!"
+    show:
+      login_banner:
+        dismiss: "Dismiss permanently"
+        help_link: "Learn some tips and tricks"
+        help_text: "For more guidance on using the site, %{link_faq}!  If you need technical support, you can %{link_support}. If you experience harassment or have specific questions about the %{link_tos}, you can %{link_abuse}."
+        help_title: "First login help"
+        hide: "Hide first login help banner"
+        link_abuse: "contact our Policy & Abuse team"
+        link_faq: "check out our FAQ"
+        link_support: "contact us through our Support and Feedback form"
+        link_tos: "Terms of Service"
+        welcome_text: "Hi! It looks like you've just logged into the Archive for the first time. %{help_link} or dismiss this message permanently."
+    change_username:
+      caution: "Please use this feature with caution."
+      change_window:
+        one: "You can change your user name once per day."
+        other: "You can change your user name once every %{count} days."
+      last_renamed: "You last changed your user name on %{renamed_at}."
+      more_info: "For information on how changing your user name will affect your account, please check out the %{account_faq_link}. Note that changes to your user name may take several days or longer to appear. If you are still seeing your old user name on your works, bookmarks, series, or collections after a week, please %{contact_support_link}."
+      account_faq: "Account FAQ"
+      contact_support: "contact Support"
+  troubleshooting:
+    show:
+      page_title:
+        tag: "Troubleshoot Tag"
+        work: "Troubleshoot Work"
+      page_description:
+        tag: "If this tag is exhibiting undesirable behavior, try one of these options to fix it."
+        work: "If this work is exhibiting undesirable behavior, try one of these options to fix it."
+      update_work_filters:
+        title: "Update Work Filters"
+        description: "Recalculate the filters for this work based on the current set of tags. Use this option if wrangling seems to have gone wrong. (e.g. If you synned one of this work's tags to a canonical but it's not showing up in the tag listings, or if the wrong tags are listed in the sidebar when you drill down to a search that includes only this work.)"
+      reindex_work:
+        title: "Reindex Work"
+        description: "Send in this work to be reindexed. Use this option if the work isn't appearing in searches, or is appearing in searches that it shouldn't. (e.g. If someone has orphaned their work and it can still be found with the old name, or if it's not behaving as expected when you filter crossovers, completion status, word count, etc.)"
+      update_tag_filters:
+        title: "Update Tag Filters"
+        description: "Recalculate filters for all works directly tagged with this tag or one of its synonyms. Does not include subtags. Use this option if the filters include old canonical tags that have been renamed or old parent tags that works aren't tagged with, or if the tag counts are wildly off. Also use this option if the works from a synonym are not showing on the works page of the canonical within a half hour of the tag being synned. Keep in mind that the tags listed in the filters will never be 100% correct."
+      reindex_tag:
+        title: "Reindex Tag"
+        description: "Reindex this tag and all related works, bookmarks, series, pseuds, and external works. Use this option if none of the others have worked. It will not fix autocomplete issues."
+      fix_counts:
+        title: "Fix Tag Counts"
+        description: "Try to recalculate some counts associated with this tag (both filter counts and taggings counts). Keep in mind that the tag counts listed in the fandom lists include unrevealed works and drafts, so if the count is only a little off it may just be unrevealed works or drafts."
+      fix_associations:
+        title: "Fix Tag Associations"
+        description: "Try to delete invalid associations involving this tag (e.g., parents of the wrong type, children of the wrong type, duplicate parents/children/metatags/subtags, etc.). Most of these impossible relationships appear on tag landing pages."
+      fix_meta_tags:
+        title: "Fix Metatags"
+        description: "Try to recalculate inherited metatags. Use this option if this tag has grandparent metatags (i.e., a metatag with its own metatag), and the works aren't showing up in the grandparent's listing. You might also try this if you've removed a metatag, but the works are still showing up in the former metatag's listing. If the works still don't go away, ask a staffer to run \"Update Tag Filters\" on this tag."
+  skins:
+    confirm_delete:
+      confirm_html: Are you sure you want to <strong><em>delete</em></strong> the skin "%{skin_title}"?
+  feedbacks:
+    new:
+      heading:
+        page_title: Support and Feedback
+        instructions: Please use this form for questions about how to use the Archive and for reporting any technical problems.
+        landmark:
+          reference: Reference Links
+      navigation:
+        faqs: FAQs & Tutorials
+        release_notes: Release Notes
+        known_issues: Known Issues
+      status:
+        current: 'For current updates on Archive performance or downtime, please check out our Twitter feed: %{twitter_link}.'
+        twitter: '@AO3_Status'
+      abuse:
+        reports: For reports of violations of the Terms of Service such as harassment, spam, or plagiarism, or if you believe your account has been hacked, please %{contact_link} instead. We cannot act on these reports or provide information about Policy and Abuse cases.
+        contact: contact our Policy and Abuse team
+      reportable:
+        intro: 'Some issues you can contact Support about include:'
+        fnok:
+          concerning_html: Setting up, changing, or activating your %{fnok_link}
+          fnok: Fannish Next of Kin
+        bugs: Bugs, errors, or unexpected site behavior
+        site_questions: Questions about how to use the site
+        account_creation: Problems setting up your account
+        lost_access: Lost password or email preventing access to your account
+        tag_changes: Requests to canonize or change tags
+        new_features: Feature requests for future development
+        orphaned_works: Questions about orphaned works
+        work_problems: Works labeled with the wrong language or duplicate works
+        policy_questions: General site policy questions
+      do_not_spam_html: <strong>We respond to every report we receive, but we are a small volunteer team.</strong> For this reason, we ask you to not submit multiple reports regarding any one issue, or encourage other people to report the same issue, unless there is additional information to offer.
+      languages_html: <strong>We can answer Support inquiries in %{list}.</strong> Please allow for additional delay for responses in any language other than English.
+      form:
+        legend:
+          contact_info: Contact Information
+          feedback: Describe Your Feedback
+          send: Send Your Feedback
+        submit:
+          active: Send
+          disabled: Please wait...
+        name:
+          label: Your name (optional)
+        email:
+          label: Your email (required)
+        language:
+          label: Select language (required)
+        summary:
+          label: Brief summary of your question or problem (required)
+          error: Please enter a brief summary of your message
+        comment:
+          label: Your question or problem (required)
+          error: Please enter your feedback
+          description: Please be as specific as possible, including error messages and/or links
+        ip: Our spam filter does collect IP addresses, but we never see them.
+  abuse_reports:
+    new:
+      heading:
+        page_title: Report Abuse
+      purview:
+        about: The Abuse committee looks after all of your concerns regarding content and user behavior which breach the Archive %{tos_link}. For technical help, please %{support_link}.
+        tos: Terms of Service
+        support: contact Support
+      do_not_spam_html: <strong>We investigate every report we receive.</strong> For this reason, we ask you to not submit several reports regarding any one issue unless you have additional information to offer. We also ask that you do not encourage other users to submit a report regarding content you have already reported. Doing so slows down our response and reaction time considerably, as we are a small volunteer-based committee.
+      reportable:
+        intro: 'Please submit a report via this form if you have not submitted this report within the past sixty (60) days, and you:'
+        hack: believe that your account has been hacked, or that someone is trying to hack your account, or
+        tos: believe you have found content uploaded to the Archive which breaches our Terms of Service, or
+        dmca:
+          claim: would like to lodge a DMCA claim - please review our %{dmca_link}
+          policy: DMCA Policy
+      languages_html: <strong>We can answer Abuse reports in %{list}.</strong> Please allow for an additional delay for responses in any language other than English.
+      form:
+        legend:
+          abuse: Link and Describe Abuse
+        landmark:
+          send: Send to Abuse Team
+        submit:
+          active: Submit
+        name:
+          label: Your name (optional)
+        email:
+          label: Your email (required)
+          description: We cannot act on reports without a valid email address.
+        language:
+          label: Select language (required)
+        summary:
+          label: Brief summary of Terms of Service Violation (required)
+          error: Please enter a brief summary of your message
+        comment:
+          label: Your comment (required)
+          error: Please describe your concern.
+          description: Please include all relevant URLs and what about the content violates the Archive %{tos_link}. The more thorough the information the quicker we can start investigating.
+          tos: Terms of Service
+        link:
+          label: Link to the page you are reporting (required)
+          error: Please enter the link to the page you are reporting.
+          description: If you came here from the abuse link at the bottom of the page, this will be filled in for you.
+  challenge_signups:
+    signup_form:
+      notice:
+        preference:
+          gift_exchange: Signing up for this challenge will allow assigned users to gift works to you regardless of your preference settings. If you wish to receive additional gifts from users who are not assigned to you, please %{preferences_link} to allow gifts from anyone. You can always %{refuse_link}.
+          preferences_link_text: update your preferences
+          prompt_meme: Signing up for this challenge will allow any user who claims your prompt to gift you a work in response to your prompt regardless of your preference settings. If you wish to receive additional gifts from users who have not claimed your prompts, please %{preferences_link} to allow gifts from anyone. You can always %{refuse_link}.
+          refuse_link_text: refuse a gift
+  tags:
+    index:
+      about:
+        popular: These are some of the most popular tags used on the Archive. To find more tags, %{search_tags_link}.
+        random: These are some random tags used on the Archive. To find more tags, %{search_tags_link}.
+        popular_in_collection: These are some of the most popular tags used in the collection.
+        random_in_collection: These are some random tags used in the collection.
+      search_tags: try our tag search
+  blocked:
+    block: "Block"
+    unblock: "Unblock"
+    users:
+      index:
+        title: "Blocked Users"
+        blocked_users: "Blocked Users"
+        button: "Block"
+        none: "You have not blocked any users."
+        legend: "Block a user"
+        label: "User"
+        heading:
+          landmark:
+            blocked_users: "Listing Blocked Users"
+        will:
+          intro: 
+            one: "You can block up to %{block_limit} user. Blocking a user prevents them from:"
+            other: "You can block up to %{block_limit} users. Blocking a user prevents them from:"
+          commenting: "commenting on your works"
+          replying: "replying to your comments anywhere on the site"
+        will_not:
+          intro: "Blocking a user will not:"
+          comments_on_works: "delete or hide comments they previously left on your works; you can delete these individually"
+          comments_elsewhere: "hide their comments elsewhere on the site"
+          hide_works: "hide their works or bookmarks from you"
+        mute_users_instead_html: "To hide a user's works, bookmarks, series, and comments from you, visit %{muted_users_link}."
+        muted_users_link_text: "your Muted Users page"
+      confirm_block:
+        title: "Block %{name}"
+        button: "Yes, Block User"
+        cancel: "Cancel"
+        block: "block"
+        sure_html: "Are you sure you want to %{block} %{username}?"
+        will:
+          intro: "Blocking a user prevents them from:"
+          commenting: "commenting on your works"
+          replying: "replying to your comments anywhere on the site"
+        will_not:
+          intro: "Blocking a user will not:"
+          comments_on_works: "delete or hide comments they previously left on your works; you can delete these individually"
+          comments_elsewhere: "hide their comments elsewhere on the site"
+          hide_works: "hide their works or bookmarks from you"
+        mute_users_instead_html: "To hide a user's works, bookmarks, series, and comments from you, visit %{muted_users_link}."
+        muted_users_link_text: "your Muted Users page"
+      confirm_unblock:
+        title: "Unblock %{name}"
+        button: "Yes, Unblock User"
+        cancel: "Cancel"
+        unblock: "unblock"
+        sure_html: "Are you sure you want to %{unblock} %{username}?"
+        resume:
+          intro: "Unblocking a user allows them to resume:"
+          commenting: "commenting on your works"
+          replying: "replying to your comments anywhere on the site"
+  muted:
+    mute: "Mute"
+    unmute: "Unmute"
+    muted_items_notice_html: "You have muted some users on the Archive. Some items may not be shown, and any counts may be inaccurate. You can mute or unmute users on %{muted_users_link}."
+    muted_users_link_text: "your Muted Users page"
+    users:
+      index:
+        title: "Muted Users"
+        muted_users: "Muted Users"
+        button: "Mute"
+        none: "You have not muted any users."
+        legend: "Mute a user"
+        label: "User"
+        heading:
+          landmark:
+            muted_users: "Listing Muted Users"
+        will:
+          intro: 
+            one: "You can mute up to %{mute_limit} user. Muting a user:"
+            other: "You can mute up to %{mute_limit} users. Muting a user:"
+          seeing_content: "completely hides their works, series, bookmarks, and comments from you; there will be no empty space, placeholder text, or other indication something has been removed"
+        will_not:
+          intro: "Muting a user will not:"
+          prevent_emails: "prevent you from receiving comment or subscription emails from this user"
+          hide_content_for_others: "hide their works, series, bookmarks, and comments from anyone else"
+        block_users_instead_html: "To prevent a user from commenting on your works or replying to your comments elsewhere on the site, visit %{blocked_users_link}."
+        blocked_users_link_text: "your Blocked Users page"
+        site_skin_warning_html: "Please note that if you are not using the default site skin, muting may not work properly. The Skins and Archive Interface FAQ has %{restore_site_skin_faq_link}."
+        restore_site_skin_faq_link_text: "instructions for reverting to the default site skin"
+      confirm_mute:
+        title: "Mute %{name}"
+        button: "Yes, Mute User"
+        cancel: "Cancel"
+        mute: "mute"
+        sure_html: "Are you sure you want to %{mute} %{username}?"
+        will:
+          intro: "Muting a user:"
+          seeing_content: "completely hides their works, series, bookmarks, and comments from you; there will be no empty space, placeholder text, or other indication something has been removed"
+        will_not:
+          intro: "Muting a user will not:"
+          prevent_emails: "prevent you from receiving comment or subscription emails from this user"
+          hide_content_for_others: "hide their works, series, bookmarks, and comments from anyone else"
+        block_users_instead_html: "To prevent a user from commenting on your works or replying to your comments elsewhere on the site, visit %{blocked_users_link}."
+        blocked_users_link_text: "your Blocked Users page"
+        site_skin_warning_html: "Please note that if you are not using the default site skin, muting may not work properly. The Skins and Archive Interface FAQ has %{restore_site_skin_faq_link}."
+        restore_site_skin_faq_link_text: "instructions for reverting to the default site skin"
+      confirm_unmute:
+        title: "Unmute %{name}"
+        button: "Yes, Unmute User"
+        cancel: "Cancel"
+        unmute: "unmute"
+        sure_html: "Are you sure you want to %{unmute} %{username}?"
+        resume:
+          intro: "Unmuting a user allows you to:"
+          see_content: "see their works, series, bookmarks, and comments on the site"
+  preferences:
+    index:
+      blocked_users: "Blocked Users"
+      allow_collection_invitation: "Allow others to invite my works to collections."
+      muted_users: "Muted Users"
+  works:
+    meta:
+      original_creators:
+        one: "Original Creator ID:"
+        other: "Original Creator IDs:"
+  invite_requests:
+    invite_request:
+      title: "Invitation Status for %{email}"
+      position_html: "You are currently number %{position} on our waiting list!"
+      date: "At our current rate, you should receive an invitation on or around: %{date}."
+  tag_wranglers:
+    show:
+      last_wrangled_html: "%{wrangler_login} last wrangled at %{time}."
+  pseuds:
+    delete_preview:
+      heading: "Pseud deletion"
+      notice: "When you delete your pseud, any works, series, or comments you have created under it will be transferred to your default pseud."
+      saved_bookmarks:
+        one: "You have saved %{count} bookmark using this pseud. You can choose whether to delete it or transfer it to your default pseud."
+        other: "You have saved %{count} bookmarks using this pseud. You can choose whether to delete them or transfer them to your default pseud."
+      delete:
+        one: "Delete this bookmark"
+        other: "Delete these bookmarks"
+      transfer:
+        one: "Transfer this bookmark to the default pseud"
+        other: "Transfer these bookmarks to the default pseud"
+      confirm: "Are you sure? This can't be undone!"
+      cancel: "Cancel"
+  collection_items:
+    collection_item_form:
+      invite_header_html: "Invite %{title} to collections"
+      add_bookmark_header: "Add Bookmark to collections"
+      invite: "Invite"
+      add: "Add"

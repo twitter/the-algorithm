@@ -1,0 +1,31 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Potential Matches") %></h2>
+<!--/description-->
+
+<!--subnavigation, sorting and actions-->
+<!--/subnav-->
+  
+  <!--main content-->
+  <h3 class="heading">
+    <%= ts("Potential Match for %{requester}: %{offerer}", 
+      :requester => @potential_match.request_signup.pseud.byline, :offerer => @potential_match.offer_signup.pseud.byline) %>
+  </h3>
+
+  <div class="wrapper">
+    <dl class="meta">
+      <dt><%= ts("Requests Matched:") %></dt>
+      <dd><%= @potential_match.num_prompts_matched %></dd>
+    
+      <dt><%= ts("Most Tags Matched:") %></dt>
+      <dd><%= @potential_match.max_tags_matched %></dd>
+    </dl>
+  </div>
+
+
+ <%= render :partial => "challenge_signups/show_requests", :locals => {:challenge_signup => @potential_match.request_signup} %>
+    
+ <%= render :partial => "challenge_signups/show_offers", :locals => {:challenge_signup => @potential_match.offer_signup} %>
+
+
+<!--/content-->
+

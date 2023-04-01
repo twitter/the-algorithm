@@ -1,0 +1,76 @@
+# To run the Archive in docker for the first time you should run one of the init scripts:
+# - linux: `script/docker/init.sh`
+# - windows: `script/docker/init.cmd`
+#
+# This will handle setting up config files, creating databases, and running migrations.
+#
+# After these oneoff tasks have been performed, on subsequent starts you can simply use:
+#
+# ```
+# docker-compose up -d web
+# ```
+#
+# After starting the archive, it will be visible at http://localhost:3000/
+
+version: "3"
+volumes:
+  my-datavolume:
+  redis-data:
+  esdata1:
+services:
+  db:
+    image: mariadb:10.5.4-focal 
+    environment:
+      - MYSQL_ROOT_PASSWORD=change_me
+    ports:
+      - "3306:3306"
+    command:
+      [
+        "mysqld",
+        "--sql-mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION",
+      ]
+    volumes:
+      - my-datavolume:/var/lib/mysql:rw
+  redis:
+    image: redis:5
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/var/lib/redis:rw
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.5
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+      - "9400:9400"
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data:rw
+    environment:
+      - transport.host=localhost
+      - bootstrap.memory_lock=false
+      - "ES_JAVA_OPTS=-Xms1500m -Xmx1500m"
+      - discovery.type=single-node
+      # Silence "security features are not enabled" warnings
+      # https://github.com/elastic/elasticsearch/issues/78500
+      - xpack.security.enabled=false
+  mc:
+    image: memcached:1.5
+    ports:
+      - "11211:11211"
+  web:
+    build:
+      context: .
+      dockerfile: ./config/docker/Dockerfile
+    environment:
+      - OTWA_NO_START_REDIS=1
+      - QT_QPA_PLATFORM=offscreen
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/otwa
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - redis
+      - es
+      - mc

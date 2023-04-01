@@ -1,0 +1,11 @@
+<%
+rerun = File.file?('rerun.txt') ? IO.read('rerun.txt') : ""
+rerun = rerun.strip.gsub /\s/, ' '
+rerun_opts = rerun.empty? ? "--format #{ENV['CUCUMBER_FORMAT'] || 'progress'} features" : "--format #{ENV['CUCUMBER_FORMAT'] || 'pretty'} #{rerun}"
+retry_opts = "--retry #{ENV['CUCUMBER_RETRY'] || '0'} --no-strict-flaky"
+std_opts = "--format #{ENV['CUCUMBER_FORMAT'] || 'pretty'} --strict --tags 'not @wip' #{retry_opts} --color"
+%>
+default: <%= std_opts %> features
+wip: --tags @wip:3 --wip features
+rerun: <%= rerun_opts %> --format rerun --out rerun.txt --strict --tags 'not @wip'
+html_report: --format progress --format html --out=features/features_report.html

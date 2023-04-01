@@ -1,0 +1,71 @@
+<div class="admin">
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Skin Approval Queue') %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render :partial => 'admin/skins/navigation' %>
+<!--/subnav-->
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts('Manage Skins') %></h3>
+
+<%= form_tag update_admin_skin_path, {:method => :put} do %>
+
+  <!-- approval queue -->
+  <fieldset>
+    <legend><%= ts('Approval Queue') %></legend>
+    <h3 class="heading"><%= ts('Approval Queue') %></h3>
+    
+    <div class="wrapper">
+    <table id="unapproved_skins" summary="<%= ts('Details for skins awaiting approval, along with administrative notes and options.') %>">
+      <caption><%= ts('Approval Queue for Skins') %></caption>
+      <thead>
+        <tr>
+        <th scope="col"><%= ts('Skin') %></th>
+        <th scope="col"><%= ts('Type') %></th>
+        <th scope="col"><%= ts('Creator') %></th>
+        <th scope="col"><%= ts('Preview') %></th>
+        <th scope="col"><%= ts('Description') %></th>
+        <th scope="col"><%= ts('Admin Note') %></th>
+        <th scope="col"><%= ts('Approve') %></th>
+        <th scope="col"><%= ts('Reject') %></th>
+      </tr>
+    </thead>
+      <tbody>
+      <% @unapproved_skins.each_with_index do |skin, i| %>
+        <% disabled = !policy(skin).update? %>
+        <tr>
+          <th scope="row">
+            <% skin_name = skin.title.downcase.gsub(/ +/, '_') %>
+            <%= label_tag "make_official_#{skin_name}", (link_to skin.title, skin_path(skin)) %>
+          </th>
+          <td><%= skin.type == 'WorkSkin' ? 'Work Skin' : 'Site Skin' %></td>
+          <td><%= skin_author_link(skin) %></td>
+          <td><%= skin_preview_display(skin) %></td>
+          <td>
+            <%= skin.description.blank? ? ts("(No Description Provided)") : raw(strip_images(sanitize_field(skin, :description))) %>
+          </td>
+          <td><%= text_field_tag "skin_admin_note[#{skin.id}]", h(skin.admin_note), disabled: disabled %></td>
+          <td>
+            <%= check_box_tag "make_official[]", skin.id, false, id: "make_official_#{skin_name}", disabled: disabled %>
+          </td>
+          <td>
+            <%= check_box_tag "make_rejected[]", skin.id, false, id: "make_rejected_#{skin_name}", disabled: disabled %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+    </div>
+  </fieldset>
+
+  <p class="submit"><%= submit_tag ts('Update') %></p>
+
+<% end %>
+
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->
+</div>

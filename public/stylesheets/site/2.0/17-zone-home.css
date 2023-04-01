@@ -1,0 +1,99 @@
+/*==ZONE: HOME 
+user home, collections and challenges home, tag home, admin comms home 
+--this zone always shows a dashboard styled in region-dashboard and its parent is #main.dashboard */
+
+.home p, .home .header {
+  clear: right;
+}
+
+.home .header h2 {
+  text-align: right;
+  border-bottom: 2px solid;
+  display: block;
+  margin-left: 100px;
+}
+
+.home .header .userstuff, .home .header dl.stats, .home .header .type {
+  clear: right;
+  margin-left: 120px;
+}
+
+.home .header ul.actions {
+  margin-bottom: 0.643em;
+  padding-top: 0;
+}
+
+.admin .header h3 {
+  font-size: 2.143em;
+  text-align: center;
+}
+
+.home .primary {
+  margin: 0 0 0.643em;
+  min-height: 100px;
+}
+
+/*primary header icons */
+
+.primary .icon {
+  position: absolute;
+  top: 0;
+}
+
+.skins .primary .icon {
+  background: url("/images/imageset.png") 0px -175px;
+}
+
+.admin .primary .icon {
+  background: url("/images/imageset.png") 100px -75px;
+}
+
+.tag .primary .icon, .tagset .primary .icon {
+  background: url("/images/imageset.png") 0px -275px;
+}
+
+.wrangler .primary .icon {
+  background: none;
+}
+
+/*contexts*/
+
+.profile .primary {
+  float: none;
+}
+
+/*(no filters)*/
+
+.dashboard.collections-index .index {
+  width: 100%;
+}
+
+.dashboard.works-index h4.landmark, .dashboard.works-index ol.pagination {
+	float: left;
+	width: 100%;
+}
+
+#dynamic-bookmark + h4.landmark {
+  clear: both;
+}
+
+/*(with filters)*/
+
+/* wrap long text in Firefox (applied to inbox only to avoid weirdness on all forms in IE) */
+form.inbox {
+  overflow-x: auto;
+  width: 75%;
+}
+
+form.inbox fieldset {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dashboard form.filters + h4.landmark {
+  clear: left;
+}
+
+/*END== */

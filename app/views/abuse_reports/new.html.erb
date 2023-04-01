@@ -1,0 +1,82 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".heading.page_title") %></h2>
+<%= error_messages_for :abuse_report %>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<div class="userstuff">
+  <p><%= t(".purview.about",
+            tos_link: (link_to t(".purview.tos"), tos_path),
+            support_link: (link_to t(".purview.support"), new_feedback_report_path)).html_safe %></p>
+  <p><%= t(".do_not_spam_html") %></p>
+  <p>
+    <%= t(".reportable.intro") %>
+  </p>
+  <ul>
+    <li><%= t(".reportable.hack") %></li>
+    <li><%= t(".reportable.tos") %></li>
+    <li><%= t(".reportable.dmca.claim", dmca_link:
+            (link_to t(".reportable.dmca.policy"), dmca_path)).html_safe %></li>
+  </ul>
+  <p><%= t(".languages_html", list: @abuse_languages.map(&:name).to_sentence).html_safe %></p>
+</div>
+<%= form_for @abuse_report, class: "post" do |f| %>
+  <fieldset>
+    <legend><%= t(".form.legend.abuse") %></legend>
+    <dl>
+      <dt><%= f.label :username, t(".form.name.label") %></dt>
+      <dd><%= f.text_field :username %></dd>
+      <dt class="required"><%= f.label :email, t(".form.email.label") %></dt>
+      <dd class="required">
+        <%= f.text_field :email, "aria-describedby" => "email-field-description" %>
+        <p class="footnote" id="email-field-description">
+          <%= t(".form.email.description") %>
+        </p>
+      </dd>
+      <dt class="required">
+        <%= f.label :language, t(".form.language.label") %>
+      </dt>
+      <dd class="required">
+        <%= f.collection_select(:language, @abuse_languages, :name, :name, { selected: @abuse_report.language || Language.default.name }) %>
+      </dd>
+      <dt class="required">
+        <%= f.label :summary, t(".form.summary.label") %>
+      </dt>
+      <dd class="required">
+        <%= f.text_field :summary, class: "observe_textlength" %>
+        <%= generate_countdown_html("abuse_report_summary", ArchiveConfig.FEEDBACK_SUMMARY_MAX_DISPLAYED) %>
+        <%= live_validation_for_field("abuse_report_summary",
+                                      failureMessage: t(".form.summary.error")) %>
+      </dd>
+
+      <dt class="required"><%= f.label :url, t(".form.link.label") %></dt>
+      <dd class="required">
+        <%= f.text_field :url, size: 60, "aria-describedby" => "url-field-description" %>
+        <%= live_validation_for_field("abuse_report_url",
+              failureMessage: t(".form.link.error")) %>
+        <p class="footnote" id="url-field-description">
+          <%= t(".form.link.description") %>
+        </p>
+      </dd>
+      <dt class="required">
+        <%= f.label :comment, t(".form.comment.label") %>
+      </dt>
+      <dd class="required">
+        <p id="comment-field-description">
+          <%= t(".form.comment.description",
+                  tos_link: (link_to t(".form.comment.tos"), tos_path)).html_safe %>
+        </p>
+        <%= f.text_area :comment, "aria-describedby" => "comment-field-description" %>
+        <%= live_validation_for_field("abuse_report_comment",
+              failureMessage: t(".form.comment.error")) %>
+      </dd>
+      <dt class="landmark"><%= t(".form.landmark.send") %></dt>
+      <dd class="submit actions"><%= f.submit t(".form.submit.active") %></dd>
+    </dl>
+  </fieldset>
+
+<% end %>
+<!--/content-->

@@ -1,0 +1,8 @@
+<p class="note">
+  <%= ts("Your challenge doesn't have any match settings defined, so the matching 
+  will be purely random. 
+  (You can adjust the assignments by hand afterwards, though!)
+  If you want participants matched up on the tags they signed up with, 
+  please update your ") %>
+  <strong><%= link_to ts("challenge match settings"), edit_collection_gift_exchange_path(@collection, :anchor => 'match_settings') %></strong>.
+</p>

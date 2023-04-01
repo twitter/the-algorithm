@@ -1,0 +1,215 @@
+# Options available at https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  RSpec:
+    Patterns:
+      - "(?:^|/)factories/"
+      - "(?:^|/)features/"
+      - "(?:^|/)spec/"
+  TargetRubyVersion: 2.7
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Layout/DotPosition:
+  EnforcedStyle: leading
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/LineLength:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/TrailingWhitespace:
+  Enabled: false
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    # Exception for specs where we use change matchers:
+    # https://github.com/rubocop-hq/rubocop/issues/4222
+    - 'spec/**/*.rb'
+
+Lint/AmbiguousRegexpLiteral:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  CountKeywordArgs: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Rails/DynamicFindBy:
+  AllowedMethods:
+    # Exception for Tag.find_by_name
+    - find_by_name
+    # Exception for Tagging.find_by_tag
+    - find_by_tag
+    # Exceptions for Work.find_by_*
+    - find_by_url
+    - find_by_url_cache_key
+    - find_by_url_generation
+    - find_by_url_generation_key
+    - find_by_url_uncached
+    # Exceptions for InboxComment.find_by_filters
+    - find_by_filters
+
+# Allow all uses of html_safe, they're everywhere...
+Rails/OutputSafety:
+  Enabled: false
+
+Rails/Output:
+  Exclude:
+    # Allow migrations to print pt-osc comments to console:
+    - 'db/migrate/*.rb'
+
+Rails/RakeEnvironment:
+  Enabled: false
+
+# Allow update_attribute, update_all, touch, etc.
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Environments:
+    - development
+    - test
+    - staging
+    - production
+
+# Allow "allow_any_instance_of"
+RSpec/AnyInstance:
+  Enabled: false
+
+# By default allow only prefixes "when", "with", "without".
+# We have too many, so let's allow everything.
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    # Exception for specs about I18n configurations
+    - 'spec/lib/i18n/**/*.rb'
+    # Exception for rake specs, where the top level describe uses a task name
+    - 'spec/lib/tasks/*.rake_spec.rb'
+    # Exception for integration specs, which may not test a specific class
+    - 'spec/requests/**/*.rb'
+
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+# Prefer: expect { run }.to change { Foo.bar }
+# over: expect { run }.to change(Foo, :bar)
+RSpec/ExpectChange:
+  EnforcedStyle: block
+
+RSpec/FilePath:
+  Exclude:
+    # Exception for WorksController, whose many specs need multiple files
+    - 'spec/controllers/works/*.rb'
+    # Exception for concern specs, which may test multiple classes
+    - 'spec/models/concerns/**/*.rb'
+
+# Avoid instance variables, except for those not assigned within the spec,
+# e.g. @request.
+RSpec/InstanceVariable:
+  AssignmentOnly: true
+
+# Allow unreferenced let! calls for test setup
+RSpec/LetSetup:
+  Enabled: false
+
+# Allow both "have_received" and "receive" for expectations
+RSpec/MessageSpies:
+  Enabled: false
+
+# Allow multiple top level describes (rake specs)
+RSpec/MultipleDescribes:
+  Enabled: false
+
+# Allow unlimited expectations per test
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# Allow unnamed subjects
+RSpec/NamedSubject:
+  Enabled: false
+
+# Allow unlimited nested groups
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/PredicateMatcher:
+  Enabled: false
+
+Style/AndOr:
+  EnforcedStyle: conditionals
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+# Prefer template tokens (like %{foo}) over annotated tokens (like %s)
+Style/FormatStringToken:
+  EnforcedStyle: template
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GlobalVars:
+  AllowedVariables:
+    - $elasticsearch
+    - $rollout
+
+Style/PercentLiteralDelimiters:
+  Exclude:
+    # Exception for Cucumber step definitions, where we heavily use %{} for strings
+    - 'features/**/*.rb'
+
+# Stop checking if uses of "self" are redundant
+Style/RedundantSelf:
+  Enabled: false
+
+Style/SingleLineMethods:
+  AllowIfMethodIsEmpty: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/TernaryParentheses:
+  EnforcedStyle: require_parentheses_when_complex

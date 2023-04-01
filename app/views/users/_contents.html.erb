@@ -1,0 +1,124 @@
+﻿<!--main content-->
+<!-- expects @fandoms, @works, @series, @bookmarks -->
+  <% unless @fandoms.empty? %>
+  <div class="fandom listbox group" id="user-fandoms">
+    <h3 class="heading"><%= ts("Fandoms") %></h3>
+    <ol class="index group">
+      <% @fandoms.each_with_index do |fandom, i| %>
+        <% if i>= ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD && !params[:expand_fandoms] %>
+          <li class="more hidden">
+        <% else %>
+          <li>
+        <% end %>
+          <% if fandom.merger %>
+            <%= link_to fandom.name, {:controller => :works, :user_id => @user, :pseud_id => @pseud, :fandom_id => fandom.merger.id} %> (<%= fandom.work_count %>)
+          <% else %>
+            <%= link_to fandom.name, {:controller => :works, :user_id => @user, :pseud_id => @pseud, :fandom_id => fandom.id} %> (<%= fandom.work_count %>)
+          <% end %>
+        </li>
+     <% end %>
+    </ol>
+    <% if @fandoms.length > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+      <p class="actions">
+        <noscript>  
+          <% if params[:expand_fandoms] %>
+            <%= link_to ts("Collapse Fandoms List"), [@user, @pseud] %>
+          <% else %>
+            <%= link_to ts("Expand Fandoms List"), url_for(:expand_fandoms => true) %>
+          <% end %>
+        </noscript>
+        <a class="hidden" id="expand-fandoms" href="#"><%= ts("Expand Fandoms List") %></a>
+        <a class="hidden" id="collapse-fandoms" href="#"><%= ts("Collapse Fandoms List") %></a>
+      </p>
+    <% end %>
+  </div>
+  <% end %> 
+              
+  <% unless @works.blank? %>
+  <div class="work listbox group" id="user-works">
+    <h3 class="heading"><%= ts("Recent works") %></h3>
+    <ul class="index group">
+      <%= render partial: 'works/work_blurb', collection: @works, as: :work %>
+    </ul>
+    <% if @pseud %>
+      <% if @pseud.works.count > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+        <ul class="actions" role="navigation"><li><%= pseud_works_link(@pseud) %></li>
+      <% end %>
+    <% else %>   
+      <% if @user.works.size > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+        <ul class="actions" role="navigation"><li><%= works_link(@user) %></li></ul>
+      <% end %>
+    <% end %>
+  </div>
+  <% end %>
+  
+  <% unless @series.blank? %>
+  <div class="series listbox group" id="user-series">
+    <h3 class="heading"><%= ts("Recent series") %></h3>
+    <ol class="index group">
+      <%= render partial: 'series/series_blurb', collection: @series, as: :series %>
+    </ol>
+    <% if @pseud %>
+      <% if @pseud.series.count > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+        <ul class="actions" role="navigation"><li><%= pseud_series_link(@pseud) %></li></ul>
+      <% end %>
+    <% else %>
+      <% if @user.series.size > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+        <ul class="actions" role="navigation"><li><%= series_link(@user) %></li></ul>
+      <% end %>
+    <% end %> 
+   </div>
+  <% end %>
+  
+  <% unless @bookmarks.blank? %>
+  <div class="bookmark listbox group" id="user-bookmarks">
+    <h3 class="heading"><%= ts("Recent bookmarks") %></h3>
+    <ol class="index group">
+      <%= render partial: 'bookmarks/bookmark_blurb', collection: @bookmarks, as: :bookmark %>
+    </ol>
+    <% unless @user == User.orphan_account %>
+      <% if @pseud %>
+        <% if @pseud.bookmarks.visible.size > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+          <ul class="actions" role="navigation"><li><%= pseud_bookmarks_link(@pseud) %></li></ul>
+        <% end %>
+      <% else %>
+        <% if @user.bookmarks.visible.size > ArchiveConfig.NUMBER_OF_ITEMS_VISIBLE_IN_DASHBOARD %>
+          <ul class="actions" role="navigation"><li><%= bookmarks_link(@user) %></li></ul>
+        <% end %>
+      <% end %> 
+    <% end %>
+  </div>
+  <% end %>
+
+<% if @works.blank? && @series.blank? && @bookmarks.blank? %>
+  <% if current_user == @user %>
+    <p class="alt message">
+      <%= ts("You don't have anything posted under this name yet. ") %>
+      <%= ts("Would you like to ")%>
+      <%= link_to ts("post a new work"), new_work_path %>
+      <%= ts("or maybe")%>
+      <%= link_to ts("a new bookmark"), new_external_work_path %>?
+    </p>
+  <% else %>
+    <p class="message"><%= ts("There are no works or bookmarks under this name yet.") %></p>
+  <% end %>
+<% end %>
+<!--/content-->
+<%= content_for :footer_js do %>
+  <%= javascript_tag do %>
+    $j(document).ready(function() {
+      $j("#expand-fandoms").removeClass("hidden").click(function(e) {
+        e.preventDefault();
+        $j(".more").toggleClass("hidden");
+        $j("#collapse-fandoms").toggleClass("hidden");
+        $j(this).toggleClass("hidden");
+      });
+      $j("#collapse-fandoms").click(function(e) {
+        e.preventDefault();
+        $j(".more").toggleClass("hidden");
+        $j("#expand-fandoms").toggleClass("hidden");
+        $j(this).toggleClass("hidden");
+      });          
+    });
+  <% end %>
+<% end %>

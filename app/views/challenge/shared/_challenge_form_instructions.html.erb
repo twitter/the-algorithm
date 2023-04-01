@@ -1,0 +1,44 @@
+<fieldset>
+  <legend><%= ts("Sign-up Instructions") %></legend>
+  <h3 class="landmark heading"><%= ts("Sign-up Instructions") %></h3>
+  <p class="note">
+    <%= ts("Explain to your members how you want them to sign up.") %> <%= allowed_html_instructions %>
+  </p>
+  <dl>
+    <dt><%= f.label :signup_instructions_general, ts("General Sign-up Instructions:") %></dt>
+    <dd>
+      <%= f.text_area :signup_instructions_general, :id => field_id(f, "signup_instructions_general").to_sym, :rows => 6, :cols => 60, :class => "observe_textlength" %>
+      <%= live_validation_for_field(field_id(f, "signup_instructions_general").to_sym, :presence => false, :maximum_length => ArchiveConfig.INFO_MAX) -%>
+      <%= generate_countdown_html(field_id(f, "signup_instructions_general").to_sym, ArchiveConfig.INFO_MAX) -%>        
+    </dd>
+
+    <% f.object.class::PROMPT_TYPES.each do |prompt_type| %>
+      <dt><%= f.label "signup_instructions_#{prompt_type}".to_sym, ts("#{prompt_type.singularize.capitalize} Instructions: ") %></dt>
+      <dd>
+        <%= f.text_area "signup_instructions_#{prompt_type}".to_sym, :id => field_id(f, "signup_instructions_#{prompt_type}").to_sym, :rows => 6, :cols => 60, :class => "observe_textlength" %>
+        <%= live_validation_for_field(field_id(f, "signup_instructions_#{prompt_type}").to_sym, :presence => false, :maximum_length => ArchiveConfig.INFO_MAX) -%>
+        <%= generate_countdown_html(field_id(f, "signup_instructions_#{prompt_type}").to_sym, ArchiveConfig.INFO_MAX) -%>        
+      </dd>
+    <% end %>
+  </dl>
+
+  <h4 class="heading"><%= ts("Change the Labels") %></h4>
+  <p><%= ts("You can change these form fields to something more useful for your own challenge.") %></p>
+  <dl>
+    <% f.object.class::PROMPT_TYPES.each do |prompt_types| %>
+      <% prompt_type = prompt_types.singularize %>
+      <dt><%= ts("In #{prompt_types.capitalize} change:") %></dt>
+      <dd>
+        <fieldset>
+          <dl>
+            <dt><%= f.label "#{prompt_type}_url_label".to_sym, ts("\"Prompt URL\" to:") %></dt>
+            <dd><%= f.text_field "#{prompt_type}_url_label".to_sym %></dd>
+
+            <dt><%= f.label "#{prompt_type}_description_label".to_sym, ts("\"Description\" to:") %></dt>
+            <dd><%= f.text_field "#{prompt_type}_description_label".to_sym %></dd>
+          </dl>
+        </fieldset>
+      </dd>
+    <% end %>
+  </dl>
+</fieldset>

@@ -1,0 +1,48 @@
+<% # list assignments which have not yet been fulfilled %>
+<dl class="index group">
+  <% @assignments.each do |assignment| %>
+    <dt class="creator">
+      <!-- the artist and their contact info -->
+      <%= challenge_assignment_byline(assignment) %> <%= challenge_assignment_email(assignment) %>
+      <span class="recipient">
+        <%= ts("for") %>
+        <% if assignment.request.nil? %>
+          <strong><%= ts("No Recipient!")%></strong>
+        <% else %>
+          <%= link_to assignment.request_byline, collection_signup_path(@collection, assignment.request) %>
+          <%= assignment.pinch_request_signup && assignment.pinch_request_signup == assignment.request ? "* (pinch recipient)" : "" %>
+        <% end %>
+      </span>
+    </dt>
+    <dd>
+      <% if @collection.moderated? %>
+        <% # we might have works posted that haven't yet been approved %>
+        <% if assignment.posted? %>
+          <%= link_to ts("Gift posted on %{published_at}", :published_at => assignment.creation.published_at), assignment.creation %>
+          <% if assignment.creation.respond_to?(:word_count) %>
+            <%= ts("(%{count} words)", :count => assignment.creation.word_count) %>
+          <% end %>            
+        <% else %>
+          <%= ts("Not yet posted") %>
+        <% end %>
+      <% end %>
+    
+      <ul class="actions">
+        <% if assignment.posted? %>
+          <li>
+            <%= label_tag "approve_#{assignment.id}" do %>
+              <%= ts("Approve") %>
+              <%= check_box_tag "approve_#{assignment.id}" %>
+            <% end %>
+          </li>
+        <% end %>
+        <li>
+          <%= label_tag "default_#{assignment.id}" do %>
+            <%= ts("Default") %>
+            <%= check_box_tag "default_#{assignment.id}" %>              
+          <% end %>
+        </li>
+      </ul>
+    </dd>
+  <% end %>
+</dl>

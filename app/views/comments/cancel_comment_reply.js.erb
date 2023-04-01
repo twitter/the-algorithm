@@ -1,0 +1,5 @@
+/* unhide the original navigation */
+$j("#navigation_for_comment_<%= "#{@commentable.id}" %>").show();
+/* get rid of the comment form */
+$j("#add_comment_reply_placeholder_<%= "#{@commentable.id}" %>").slideUp();
+$j("#add_comment_reply_placeholder_<%= "#{@commentable.id}" %>").html("");

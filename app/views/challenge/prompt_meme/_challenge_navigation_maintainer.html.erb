@@ -1,0 +1,6 @@
+<% if @collection.challenge.user_allowed_to_see_signups?(current_user) %>
+  <li role="navigation"><%= link_to ts("Sign-ups"), collection_signups_path(@collection) %></li>
+<% end %>
+<% if @collection.user_is_owner?(current_user) %>
+  <li role="navigation"><%= link_to ts("Challenge Settings"), edit_collection_prompt_meme_path(@collection) %></li>
+<% end %>

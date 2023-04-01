@@ -1,0 +1,85 @@
+/*==GROUP: LISTBOX 
+http://otwcode.github.com/docs/front_end_coding/patterns/listbox
+*/
+
+.listbox, fieldset fieldset.listbox {
+  clear: right;
+  background: #ddd;
+  border: 2px solid #ccc;
+  padding: 0;
+  margin: 0.643em auto;
+  overflow: hidden;
+    box-shadow: 0 0 0 1px #fff;
+}
+
+.listbox .heading {
+  display: inline-block;
+}
+
+.listbox li.blurb, .listbox .landmark.heading, .listbox .tags .listbox, .listbox .lots li, .listbox .all li {
+  display: block;
+}
+
+.listbox > .heading, .listbox .heading a:visited {
+  margin: 0;
+  color: #2a2a2a;
+  padding: 0.25em;
+}
+
+.listbox .index {
+  width: auto;
+  padding: 0.643em;
+  float: none;
+  clear: right;
+  background: #fff;
+    box-shadow: inset 1px 1px 3px #bbb;
+}
+
+.listbox .index:after {
+  content: " ";
+  display: block;
+  height: 0;
+  font-size: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+.commas li.listbox:after {
+  content: none;
+}
+
+.listbox li.blurb {
+    box-shadow: none;
+}
+
+/* mods: alphabet, medium */
+
+.alphabet .listbox li, .media .listbox {
+  width: 45%;
+  float: left;
+  clear: none;
+  margin-right: 1.5em;
+}
+
+/*Contexts */
+
+.review .listbox {
+  overflow: visible;
+  position: static;
+}
+
+/*INTERACTION context (show many/more/lots)*/
+
+.listbox .options {
+  overflow: auto;
+}
+
+.listbox .all {
+  height: auto;
+}
+
+.listbox .many {
+  max-height: 12em;
+}
+
+/*END== */

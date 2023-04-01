@@ -1,0 +1,94 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t(".heading") %></h2>
+<!--/descriptions-->
+
+<!--main content-->
+<%= form_for @admin_setting, html: { class: "verbose manage" } do |f| %>
+  <%= error_messages_for @admin_setting %>
+  <fieldset>
+    <legend><%= t(".legend.account_and_invitations") %></legend>
+    <dl>
+      <dt><%= admin_setting_checkbox(f, :account_creation_enabled) %></dt>
+      <dd><%= f.label :account_creation_enabled, t(".fields.account_creation_enabled") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :creation_requires_invite) %></dt>
+      <dd><%= f.label :creation_requires_invite, t(".fields.creation_requires_invite") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :request_invite_enabled) %></dt>
+      <dd><%= f.label :request_invite_enabled, t(".fields.request_invite_enabled") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :invite_from_queue_enabled) %></dt>
+      <dd><%= f.label :invite_from_queue_enabled, t(".fields.invite_from_queue_enabled") %></dd>
+
+      <dt><%= f.label :invite_from_queue_number, t(".fields.invite_from_queue_number") %></dt>
+      <dd><%= admin_setting_text_field(f, :invite_from_queue_number, size: "3") %></dd>
+
+      <dt><%= f.label :invite_from_queue_frequency, t(".fields.invite_from_queue_frequency") %></dt>
+      <dd><%= admin_setting_text_field(f, :invite_from_queue_frequency, size: "3") %></dd>
+
+      <dt><%= f.label :days_to_purge_unactivated, t(".fields.days_to_purge_unactivated") %></dt>
+      <dd><%= admin_setting_text_field(f, :days_to_purge_unactivated, size: "3") %></dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t(".legend.disable_support_form") %></legend>
+    <dl>
+      <dt><%= admin_setting_checkbox(f, :disable_support_form) %></dt>
+      <dd>
+        <%= f.label :disable_support_form, t(".fields.disable_support_form") %>
+        <fieldset>
+          <legend><%= f.label :disabled_support_form_text, t(".fields.disabled_support_form_text") %></legend>
+          <p><%= allowed_html_instructions %></p>
+          <%= f.text_area :disabled_support_form_text,
+                disabled: admin_setting_disabled?(:disabled_support_form_text) %>
+        </fieldset>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t(".legend.performance_and_misc") %></legend>
+    <dl>
+      <dt><%= admin_setting_checkbox(f, :suspend_filter_counts) %></dt>
+      <dd><%= f.label :suspend_filter_counts, t(".fields.suspend_filter_counts") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :tag_wrangling_off) %></dt>
+      <dd><%= f.label :tag_wrangling_off, t(".fields.tag_wrangling_off") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :downloads_enabled) %></dt>
+      <dd><%= f.label :downloads_enabled, t(".fields.downloads_enabled") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :enable_test_caching) %></dt>
+      <dd><%= f.label :enable_test_caching, t(".fields.enable_test_caching") %></dd>
+
+      <dt><%= f.label :cache_expiration, t(".fields.cache_expiration") %></dt>
+      <dd><%= admin_setting_text_field(f, :cache_expiration, size: "3") %></dd>
+
+      <dt><%= admin_setting_checkbox(f, :hide_spam) %></dt>
+      <dd><%= f.label :hide_spam, t(".fields.hide_spam") %></dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t(".legend.actions") %></legend>
+    <p class="submit actions"><%= f.submit t(".update") %></p>
+  </fieldset>
+<% end %>
+
+<% if @admin_setting.invite_from_queue_enabled? %>
+  <p>
+    <%= t(".queue_status",
+          number: @admin_setting.invite_from_queue_number,
+          date: l(@admin_setting.invite_from_queue_at.to_date, format: :long)) %>
+  </p>
+
+  <p><%= t(".queue_status_help") %></p>
+<% end %>
+
+<p>
+  <%= t(".last_updated_by_admin",
+        updated_at: @admin_setting.updated_at,
+        admin_name: @admin_setting.last_updated ? @admin_setting.last_updated.login : "---") %>
+</p>
+<!--/content-->

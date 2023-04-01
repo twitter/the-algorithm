@@ -1,0 +1,20 @@
+<h2 class="heading"><%= t(".title", name: @block.blocked.login) %></h2>
+
+<%= form_tag user_blocked_user_path(@user, @block), method: :delete do %>
+  <div class="caution notice">
+    <p>
+      <%= t(".sure_html", unblock: tag.strong(t(".unblock")), username: @block.blocked.login) %>
+      <%= t(".resume.intro") %>
+    </p>
+
+    <ul>
+      <li><%= t(".resume.commenting") %></li>
+      <li><%= t(".resume.replying") %></li>
+    </ul>
+  </div>
+
+  <p class="actions">
+    <%= link_to t(".cancel"), user_blocked_users_path(@user) %>
+    <%= submit_tag t(".button") %>
+  </p>
+<% end %>

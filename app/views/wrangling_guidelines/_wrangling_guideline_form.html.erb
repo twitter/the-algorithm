@@ -1,0 +1,43 @@
+<%= form_for(@wrangling_guideline, html: { class: 'post' }) do |f| %>
+
+  <%= error_messages_for @wrangling_guideline %>
+
+  <p class="required notice"><%= ts('* Required information') %></p>
+  <dl>
+
+    <dt class="required"><%= f.label :title, ts('Title') + '*' %></dt>
+    <dd>
+      <%= f.text_field :title %>
+      <%= live_validation_for_field('wrangling_guideline_title', :failureMessage => ts('Please enter a title.')) %>
+    </dd>
+
+    <dt class="required"><%= f.label :content, ts('Guideline text') + '*' %></dt>
+    <dd class="required">
+      <ul class="hidden rtf-html-switch actions" role="menu">
+        <li><a class="rtf-link" href="#"><%= ts('Rich Text') %></a></li>
+        <li><a class="html-link" href="#"><%= ts('HTML') %></a></li>
+      </ul>
+      <p class="rtf-html-instructions note">
+        <span class="html-notes"><%= allowed_html_instructions %></span>
+        <span class="hidden rtf-notes"><%= ts('Type or paste formatted text.') %><%= link_to_help "rte-help" %></span>
+      </p>
+      <% use_tinymce %>
+      <div class="rtf-html-field">
+        <%= f.text_area :content, :class => "mce-editor observe_textlength" %>
+        <%= live_validation_for_field('wrangling_guideline_content',
+              :maximum_length => ArchiveConfig.CONTENT_MAX, :minimum_length => ArchiveConfig.CONTENT_MIN,
+              :tooLongMessage => ts('We salute your ambition! But sadly the content must be less than %{max} letters long.', :max => ArchiveConfig.CONTENT_MAX.to_s),
+              :tooShortMessage => ts('Brevity is the soul of wit, but your content does have to be at least %{min} letters long.', :min => ArchiveConfig.CONTENT_MIN.to_s),
+              :failureMessage => ts('You need to post some content here.'))
+        %>
+        <%= generate_countdown_html("content", ArchiveConfig.CONTENT_MAX) %>
+      </div>
+    </dd>
+
+    <dt class="landmark"><%= ts('Post') %></dt>
+    <dd class="submit actions">
+      <%= submit_tag ts('Post'), :name => 'post_button' %>
+    </dd>
+
+  </dl>
+<% end %>

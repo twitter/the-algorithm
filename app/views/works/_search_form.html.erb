@@ -1,0 +1,212 @@
+<%= form_for @search, as: :work_search, url: search_works_path, html: { method: :get, class: "verbose search" } do |f| %>
+  <fieldset>
+    <legend><%= ts("Work Info") %></legend>
+    <h3 class="landmark heading"><%= ts("Work Info") %></h3>
+    <p class="submit"><%= f.submit ts("Search") %></p>
+    <dl>
+      <dt>
+        <%= f.label :query, ts("Any Field") %>
+        <%= link_to_help "work-search-text-help" %>
+      </dt>
+      <dd>
+        <%= f.text_field :query %>
+      </dd>
+      <dt>
+        <%= f.label :title, ts("Title") %>
+      </dt>
+      <dd>
+        <%= f.text_field :title %>
+      </dd>
+      <dt>
+        <%= f.label :creators, ts("Author/Artist") %>
+      </dt>
+      <dd>
+        <%= f.text_field :creators %>
+      </dd>
+      <dt>
+        <%= f.label :revised_at, ts("Date") %>
+        <%= link_to_help "work-search-date-help" %>
+      </dt>
+      <dd>
+        <%= f.text_field :revised_at %>
+      </dd>
+      <dt><%= ts("Completion status") %></dt>
+      <dd>
+        <ul>
+          <li>
+            <%= f.radio_button :complete, "" %>
+            <%= f.label :complete, ts("All works"), value: "" %>
+          </li>
+          <li>
+            <%= f.radio_button :complete, "T" %>
+            <%= f.label :complete, ts("Complete works only"), value: "T" %>
+          </li>
+          <li>
+            <%= f.radio_button :complete, "F" %>
+            <%= f.label :complete, ts("Works in progress only"), value: "F" %>
+          </li>
+        </ul>
+      </dd>
+      <dt>
+        <%= ts("Crossovers") %>
+        <%= link_to_help "work-search-crossover-help" %>
+      </dt>
+      <dd>
+        <ul>
+          <li>
+            <%= f.radio_button :crossover, "" %>
+            <%= f.label :crossover, ts("Include crossovers"), value: "" %>
+          </li>
+          <li>
+            <%= f.radio_button :crossover, "F" %>
+            <%= f.label :crossover, ts("Exclude crossovers"), value: "F" %>
+          </li>
+          <li>
+            <%= f.radio_button :crossover, "T" %>
+            <%= f.label :crossover, ts("Only crossovers"), value: "T" %>
+          </li>
+        </ul>
+      </dd>
+      <dt>
+        <%= f.label :single_chapter, ts("Single Chapter") %>
+      </dt>
+      <dd>
+        <%= f.check_box :single_chapter %>
+      </dd>
+      <dt>
+        <%= f.label :word_count, ts("Word Count") %>
+        <%= link_to_help "work-search-numerical-help" %>
+      </dt>
+      <dd>
+        <%= f.text_field :word_count %>
+      </dd>
+      <dt>
+        <%= f.label :language_id, ts("Language") %>
+        <%= link_to_help "work-search-language-help" %>
+      </dt>
+      <dd>
+        <%= f.collection_select :language_id, @languages, :short, :name, include_blank: true %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Work Tags") %> <%= link_to_help "work-search-tags-help" %></legend>
+    <h3 class="landmark heading"><%= ts("Work Tags") %></h3>
+    <dl>
+      <dt>
+        <%= f.label :fandom_names, ts("Fandoms") %>
+      </dt>
+      <dd>
+        <%= f.text_field :fandom_names, autocomplete_options("fandom") %>
+      </dd>
+      <dt>
+        <%= f.label :rating_ids, ts("Rating") %>
+      </dt>
+      <dd>
+        <%= f.collection_select :rating_ids,
+                                Rating.defaults_by_severity,
+                                :id,
+                                :name,
+                                include_blank: true %>
+      </dd>
+      <dt>
+        <%= ts("Warnings") %>
+      </dt>
+      <dd>
+      <ul>
+          <% for tag in ArchiveWarning.canonical.by_name %>
+            <li>
+              <%= check_box_tag "work_search[archive_warning_ids][]", tag.id, @search.archive_warning_ids.present? && @search.archive_warning_ids.include?(tag.id.to_s), :id => "warning_#{tag.id}" %>
+              <%= label_tag "warning_#{tag.id}", warning_display_name(tag.name) %>
+            </li>
+          <% end %>
+        </ul>
+      </dd>
+      <dt>
+        <%= ts("Categories") %>
+      </dt>
+      <dd>
+        <ul>
+          <% for tag in Category.canonical.by_name.sort %>
+            <li>
+              <%= check_box_tag "work_search[category_ids][]", tag.id, @search.category_ids.present? && @search.category_ids.include?(tag.id.to_s), :id => "category_#{tag.id}" %>
+              <%= label_tag "category_#{tag.id}", tag.name %>
+            </li>
+          <% end %>
+        </ul>
+      </dd>
+      <dt>
+        <%= f.label :character_names, ts("Characters") %>
+      </dt>
+      <dd>
+        <%= f.text_field :character_names, autocomplete_options("character") %>
+      </dd>
+      <dt>
+        <%= f.label :relationship_names, ts("Relationships") %>
+      </dt>
+      <dd>
+        <%= f.text_field :relationship_names, autocomplete_options("relationship") %>
+      </dd>
+      <dt>
+        <%= f.label :freeform_names, ts("Additional Tags") %>
+      </dt>
+      <dd>
+        <%= f.text_field :freeform_names, autocomplete_options("freeform") %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Work Stats") %> <%= link_to_help "work-search-numerical-help" %></legend>
+    <h3 class="landmark heading"><%= ts("Work Stats") %></h3>
+    <dl>
+      <dt>
+        <%= f.label :hits, ts("Hits") %>
+      </dt>
+      <dd>
+        <%= f.text_field :hits %>
+      </dd>
+      <dt>
+        <%= f.label :kudos_count, ts("Kudos") %>
+      </dt>
+      <dd>
+        <%= f.text_field :kudos_count %>
+      </dd>
+      <dt>
+        <%= f.label :comments_count, ts("Comments") %>
+      </dt>
+      <dd>
+        <%= f.text_field :comments_count %>
+      </dd>
+      <dt>
+        <%= f.label :bookmarks_count, ts("Bookmarks") %>
+      </dt>
+      <dd>
+        <%= f.text_field :bookmarks_count %>
+      </dd>
+    </dl>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= ts("Search") %></legend>
+    <h3 class="landmark heading"><%= ts("Search") %></h3>
+    <dl>
+      <dt>
+        <%= f.label :sort_column, ts("Sort by") %>
+      </dt>
+      <dd>
+        <%= f.select :sort_column, options_for_select(@search.sort_options, @search.sort_column) %>
+      </dd>
+      <dt>
+        <%= f.label :sort_direction, ts("Sort direction") %>
+      </dt>
+      <dd>
+        <%= f.select :sort_direction,
+          options_for_select([["Ascending", "asc"], ["Descending", "desc"]], @search.sort_direction) %>
+      </dd>
+    </dl>
+    <p class="submit"><%= f.submit ts("Search") %></p>
+  </fieldset>
+
+<% end %>

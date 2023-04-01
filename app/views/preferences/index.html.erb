@@ -1,0 +1,158 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('Set My Preferences') %></h2>
+<%= error_messages_for :preference %>
+
+<!--/descriptions-->
+
+<!--subnav-->
+<h3 class="landmark heading">Navigation</h3>
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to ts('Edit My Profile'), edit_user_path(@user) %></li>
+  <li><%= link_to ts('Manage My Pseuds'), user_pseuds_path(@user) %></li>
+  <li><%= link_to t(".blocked_users"), user_blocked_users_path %></li>
+  <li><%= link_to t(".muted_users"), user_muted_users_path %></li>
+  <li><%= link_to ts('Change My User Name'), change_username_user_path(@user) %></li>
+  <li><%= link_to ts('Orphan My Works'), new_orphan_path %></li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<%= form_for(@preference, url: user_preference_path(@user, @preference)) do |f| %>
+  <fieldset>
+    <legend><%= ts('Privacy') %></legend>
+    <h4 class="heading"><%= ts('Privacy') %> <%= link_to_help 'privacy-preferences' %></h4>
+    <ul>
+      <li>
+        <%= f.check_box :email_visible %>
+        <%= f.label :email_visible, ts('Show my email address to other people.') %>
+      </li>
+      <li>
+        <%= f.check_box :date_of_birth_visible %>
+        <%= f.label :date_of_birth_visible, ts('Show my date of birth to other people.') %>
+      </li>
+      <li>
+        <%= f.check_box :minimize_search_engines %>
+        <%= f.label :minimize_search_engines, ts('Hide my work from search engines when possible.') %>
+      </li>
+      <li>
+        <%= f.check_box :disable_share_links %>
+        <%= f.label :disable_share_links, ts('Hide the share buttons on my work.') %>
+      </li>
+      <li>
+        <%= f.check_box :allow_cocreator %>
+        <%= f.label :allow_cocreator, ts("Allow others to invite me to be a co-creator.")  %>
+      </li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <legend><%= ts('Display') %></legend>
+    <h4 class="heading"><%= ts('Display') %> <%= link_to_help 'display-preferences' %></h4>
+    <ul>
+      <li>
+        <%= f.check_box :adult %>
+        <%= f.label :adult, ts('Show me adult content without checking.') %>
+      </li>
+      <li>
+        <%= f.check_box :view_full_works %>
+        <%= f.label :view_full_works, ts('Show the whole work by default.') %>
+      </li>
+      <li>
+        <%= f.check_box :hide_warnings %>
+        <%= f.label :hide_warnings, ts('Hide warnings (you can still choose to show them).')  %>
+      </li>
+      <li>
+        <%= f.check_box :hide_freeform %>
+        <%= f.label :hide_freeform, ts('Hide additional tags (you can still choose to show them).')  %>
+      </li>
+      <li>
+        <%= f.check_box :disable_work_skins %>
+        <%= f.label :disable_work_skins, ts('Hide work skins (you can still choose to show them).')  %> <%= link_to_help 'skins-basics' %>
+      </li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <dl>
+      <dt><%= f.label :skin_id, ts('Your site skin') %> <%= link_to_help 'skins-basics' %></dt>
+      <dd>
+        <span class="actions"><%= link_to ts('Public Site Skins'), skins_path %></span>
+        <%= f.select :skin_id, @available_skins.collect{|s| [s.title, s.id]} %>
+      </dd>
+      <dt><%= f.label :time_zone, ts('Your time zone') %></dt>
+      <dd><%= f.time_zone_select :time_zone, nil, :default => Time.zone.name %></dd>
+      <% if Rails.env.test? || Rails.env.development? || $rollout.active?(:set_locale_preference, @user) %>
+        <dt><%= f.label :preferred_locale, ts('Your locale') %> <%= link_to_help 'locale-preferences' %></dt>
+        <dd><%= f.select :preferred_locale, @available_locales.collect{|locale| [locale.name, locale.id]}, :default => @preference.preferred_locale %></dd>
+      <% end %>
+      <dt><%= f.label :work_title_format, ts('Browser page title format') %> <%= link_to_help 'work_title_format' %></dt>
+      <dd><%= f.text_field :work_title_format %></dd>
+    </dl>
+  </fieldset>
+  <fieldset>
+   <legend><%= ts('Comments') %></legend>
+    <h4 class="heading"><%= ts('Comments') %> <%= link_to_help 'comment-preferences' %></h4>
+    <ul>
+      <li>
+        <%= f.check_box :comment_emails_off %>
+        <%= f.label :comment_emails_off, ts('Turn off emails about comments.')  %>
+      </li>
+      <li>
+        <%= f.check_box :comment_inbox_off %>
+        <%= f.label :comment_inbox_off, ts('Turn off messages to your inbox about comments.')  %>
+      </li>
+      <li>
+        <%= f.check_box :comment_copy_to_self_off %>
+        <%= f.label :comment_copy_to_self_off, ts('Turn off copies of your own comments.')  %>
+      </li>
+      <li>
+        <%= f.check_box :kudos_emails_off %>
+        <%= f.label :kudos_emails_off, ts('Turn off emails about kudos.')  %>
+      </li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <legend><%= ts('Collections, Challenges and Gifts') %></legend>
+    <h4 class="heading"><%= ts('Collections, Challenges and Gifts') %> <%= link_to_help 'collection-preferences' %></h4>
+    <ul>
+      <li>
+        <%= f.check_box :allow_collection_invitation %>
+        <%= f.label :allow_collection_invitation, t(".allow_collection_invitation") %>
+      </li>
+      <li>
+        <%= f.check_box :allow_gifts %>
+        <%= f.label :allow_gifts, ts("Allow anyone to gift me works.") %>
+      </li>
+      <li>
+        <%= f.check_box :collection_emails_off %>
+        <%= f.label :collection_emails_off, ts('Turn off emails from collections.') %>
+      </li>
+      <li>
+        <%= f.check_box :collection_inbox_off %>
+        <%= f.label :collection_inbox_off, ts('Turn off inbox messages from collections.') %>
+      </li>
+      <li>
+        <%= f.check_box :recipient_emails_off %>
+        <%= f.label :recipient_emails_off, ts('Turn off emails about gift works.') %>
+      </li>
+    </ul>
+  </fieldset>
+  <fieldset>
+    <legend><%= ts('Misc') %></legend>
+    <h4 class="heading"><%= ts('Misc') %> <%= link_to_help 'misc-preferences' %></h4>
+    <ul>
+      <li>
+        <%= f.check_box :history_enabled %>
+        <%= f.label :history_enabled, ts('Turn on History.') %>
+      </li>
+      <li>
+        <%= f.check_box :first_login %>
+        <%= f.label :first_login, ts('Turn the new user help banner back on.')  %>
+      </li>
+      <li>
+        <%= f.check_box :banner_seen %>
+        <%= f.label :banner_seen, ts('Turn off the banner showing on every page.')  %>
+      </li>
+    </ul>
+  </fieldset>
+  <%= submit_fieldset(f) %>
+<% end %>
+<!--/content-->

@@ -1,0 +1,21 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Editing comment") %></h2>
+
+<%= error_messages_for :comment %>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<li class="comment group <%= cycle :odd, :even %>" id="comment_<%= @comment.id %>" role="article">
+  <%= render :partial => 'comments/comment_form', :locals => {:comment => @comment, :commentable => @comment.commentable, :button_name => ts("Update")}%>
+</li>
+<!--/content-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li><%= link_to ts("Show"), @comment %></li>
+  <li><%= link_to ts("Back"), @comment.commentable %></li>
+</ul>
+<!--/subnav-->

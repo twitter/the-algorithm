@@ -1,0 +1,6 @@
+<% # Page changes depending on whether queue is enabled %>
+<% if @admin_settings.invite_from_queue_enabled? %>
+  <%= render "index_open" %>
+<% else %>
+  <%= render "index_closed" %>
+<% end %>

@@ -1,0 +1,64 @@
+<% # expects "work" and "reading" %>
+<% css_classes = if work.nil?
+                   "deleted reading work blurb group"
+                 elsif is_author_of?(work)
+                   "own reading work #{css_classes_for_creation_blurb(work)}"
+                 else
+                   "reading work #{css_classes_for_creation_blurb(work)}"
+                 end %>
+<li <% unless work.nil? %>id="work_<%= work.id %>"<% end %> class="<%= css_classes %>" role="article">
+
+  <% unless reading.work.nil? %>
+
+    <%= render 'works/work_module', work: reading.work %>
+
+  <% end %>
+
+  <div class="user module group">
+    <h4 class="viewed heading">
+
+      <% if work.nil? %>
+
+        <%= ts('(Deleted work, last visited %{date})', date: set_format_for_date(reading.last_viewed)) %>
+
+      <% else %>
+
+        <span><%= ts('Last visited:') %></span> <%= set_format_for_date(reading.last_viewed) %>
+
+        <% if reading.major_version_read != work.major_version %>
+          <%= ts('(Update available.)') %>
+        <% elsif reading.minor_version_read != work.minor_version %>
+          <%= ts('(Minor edits made since then.)') %>
+        <% else %>
+          <%= ts('(Latest version.)') %>
+        <% end %>
+
+        <% if reading.view_count == 1 %>
+          <%= ts('Visited once') %>
+        <% else %>
+          <%= ts('Visited %{count} times', count: reading.view_count) %>
+        <% end %>
+
+        <% if reading.toread? %>
+          <%= ts('(Marked for Later.)') %>
+        <% end %>
+        <% if reading.toskip? %>
+          <%= ts('(Flagged to skip.)') %>
+        <% end %>
+
+      <% end %>
+
+    </h4>
+
+    <ul class="actions" role="menu">
+      <li>
+        <%= form_tag user_reading_path(current_user, reading, page: params[:page]), method: 'delete', class: 'ajax-remove' do |f| %>
+          <%= hidden_field_tag :reading, reading.id %>
+          <%= submit_tag ts('Delete from History') %>
+        <% end %>
+      </li>
+    </ul>
+
+  </div>
+
+</li>

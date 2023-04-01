@@ -1,0 +1,12 @@
+<% content_for :message do %>
+We have found some invalid sign-ups in your challenge "<%= @collection.title %>" (<%= collection_url(@collection) %>). Potential matches cannot be generated until these are cleaned up.
+
+Invalid sign-ups are often duplicates, or don't meet the requirements you've set for your challenge. Unfortunately, there is no automatic way to fix them, so you will have to manually edit or delete them. For more details, see the challenge-matching help file at <%= root_url %>help/challenge_matching.html#invalid_signups.
+
+Here are the invalid sign-ups:
+<% @invalid_signups.each do |signup_id| %>
+  <%= collection_signup_url(@collection, signup_id) %>
+<% end %>
+
+<% content_for :sent_at do %><%= l(Time.now) %><% end %>
+<% end %>

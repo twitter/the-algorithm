@@ -1,0 +1,16 @@
+<div class="admin">
+  <!--Descriptive page name, messages and instructions-->
+  <h2 class="heading"><%= ts('Delete Banner') %></h2>
+  <!--/descriptions-->
+
+  <!--main content-->
+  <%= form_for(@admin_banner, html: {method: :delete, class: 'simple destroy'}) do |f| %>
+    <p class="caution notice">
+      <%= ts('Are you sure you want to <strong><em>delete</em></strong> this banner?').html_safe %>
+    </p>
+    <p class="actions">
+      <%= f.submit ts('Yes, Delete Banner') %>
+    </p>
+  <% end %>
+  <!--/content-->
+</div>

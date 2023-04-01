@@ -1,0 +1,23 @@
+<!-- START thread -->
+<ol class="thread">
+  <% for comment in comments %>
+    <% if comment.approved? || logged_in_as_admin? %>
+
+      <%= render 'comments/single_comment', single_comment: comment %>
+      <% child_comments = comment.reviewed_replies %>
+
+      <% if child_comments && child_comments.size > 0 %>
+        <!-- cut off the recursion when we get too deep, but not if there's just one last measly comment left -->
+        <% if depth >= ArchiveConfig.COMMENT_THREAD_MAX_DEPTH && child_comments.size > 1 %>
+          <li class="comment"><p>(<%= link_to ts("%{count} more comments in this thread", count: comment.children_count), comment_path(comment) %>)</p></li>
+        <% else %>
+          <li>
+            <%= render 'comments/comment_thread', comments: child_comments, depth: depth+1 %>
+            </ol> <!-- needed to close thread -->
+          </li>
+        <% end %>
+      <% end %>
+
+    <% end %>
+  <% end %>
+<!-- END thread -->

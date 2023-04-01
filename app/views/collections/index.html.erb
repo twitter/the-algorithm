@@ -1,0 +1,71 @@
+<!--Descriptive page name and system messages, descriptions, and instructions.-->
+<h2 class="heading">
+  <% if @user %>
+    <%= ts("%{user_name}'s Collections", :user_name => @user.login) %>
+  <% elsif @collection %>
+    <%= ts("Challenges/Subcollections in %{collection_name}", :collection_name => @collection.title) %>
+  <% elsif @work %>
+    <%= ts("Collections including ") + @work.title.html_safe %>
+  <% else %>
+    <%= ts("Collections in the %{archive_name}", :archive_name => ArchiveConfig.APP_NAME) %>
+  <% end %>
+</h2>
+
+<h3 class="heading">
+  <% if @collections.empty? %>
+    <%= ts("Sorry, there were no collections found.") %>
+  <% else %>
+    <%= search_header @collections, @query, ts("Collection") %>
+  <% end %>
+</h3>
+<!--/descriptions-->
+
+<!--Subnavigation, sorting and actions-->
+<h3 class="landmark heading"><%= ts("Navigation") %></h3>
+<ul class="navigation actions" role="navigation">
+  <% # Collections and Open Challenges links unless a logged in user viewing own collections page %>
+  <% unless logged_in? && @user && @user == current_user %>
+    <li><%= span_if_current ts("Collections"), collections_path %></li>
+    <li><%= link_to ts("Open Challenges"), list_challenges_collections_path %></li>
+  <% end %>
+  <% if logged_in? %>
+    <% # Logged in user on own collections index gets links for user Collections and Manage Collected Works %>
+    <% if @user && @user == current_user %>
+      <li><%= span_if_current ts("Collections"), user_collections_path(@user) %></li>
+      <li><%= link_to ts("Manage Collected Works"), user_collection_items_path(@user) %></li>
+    <% end %>
+    <% # Logged in collection maintainer on own collection gets link for New Subcollection and all other logged in users get New Collection link %>
+    <% if @collection && !@collection.parent && @collection.user_is_maintainer?(current_user) %>
+      <li><%= link_to ts("New Subcollection"), new_collection_collection_path(@collection) %></li>
+    <% else %>
+      <li><%= link_to ts("New Collection"), new_collection_path %></li>
+    <% end %>
+  <% end %>
+  <% if @sort_and_filter %>
+    <% # Filters button for narrow screens jumps to filters when JavaScript is disabled and opens filters when JavaScript is enabled %>
+    <li class="narrow-shown hidden"><a href="#collection-filters" id="go_to_filters"><%= ts("Filters") %></a></li>
+  <% end %>
+</ul>
+
+<% unless @collections.blank? %>
+  <!--pagination here-->
+  <%= will_paginate @collections %>
+
+  <!--main content-->
+  <h3 class="landmark heading"><%= ts("List of Collections") %></h3>
+  <ul class="collection picture index group">
+    <% @collections.each do |collection| %>
+      <%= render :partial => "collection_blurb", :locals => {:collection => collection} %>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @sort_and_filter %>
+  <!--filters subnav-->
+  <%= render 'collections/filters' %>
+  <!---/subnav-->
+<% end %> 
+
+<% unless @collections.blank? %>
+  <%= will_paginate @collections %>
+<% end %>

@@ -1,0 +1,41 @@
+<% # expects nom %>
+<% unless @tagnames_seen[nom.tagname] %>
+  <% @tagnames_seen[nom.tagname] = 1 %>
+
+  <dl class="nomination">
+    <% tag_type = nom.class.name.gsub(/Nomination/, '').downcase %>
+    <dt>
+      <%= nomination_tag_information(nom) %>
+    </dt>
+    <% if (nom_count = nom.times_nominated(@tag_set)) > 1 %>
+      <dd class="count">(x<%= nom_count %>)</dd>
+    <% end %>
+
+    <% # this is necessary or else rails thinks the [] characters represent a sub-model! %>
+    <% tagname = nom.tagname.gsub('[', '#LBRACKET').gsub(']', '#RBRACKET') %>
+
+    <dd class="actions">
+      <%= label_tag "#{tag_type}_approve_#{tagname}", :class => "action" do %>
+      <span class="yes">+</span>
+        <%= check_box_tag "#{tag_type}_approve_#{tagname}", 1, params["#{tag_type}_approve_#{tagname}"] %>
+      <% end %>
+      <%= label_tag "#{tag_type}_reject_#{tagname}", :class => "action" do %>
+        <span class="no">x</span>
+        <%= check_box_tag "#{tag_type}_reject_#{tagname}", 1, params["#{tag_type}_reject_#{tagname}"] %>
+      <% end %>
+    </dd>
+
+    <dd class="autocomplete"><%= text_field_tag "#{tag_type}_change_#{tagname}", nil, autocomplete_options("tag?type=#{tag_type}", data: { autocomplete_token_limit: 1 }, title: "change tag name") %></dd>
+
+
+    <% if nom.synonym %>
+      <dd title="official synonym" class="synonym">
+        <%= label_tag "#{tag_type}_synonym_#{tagname}" do %>
+          (Choose <%= nom.synonym %> instead
+          <%= check_box_tag "#{tag_type}_synonym_#{tagname}", nom.synonym, params["#{tag_type}_synonym_#{tagname}"] %>)
+        <% end %>
+      </dd>
+    <% end %>
+  </dl>
+
+<% end %>

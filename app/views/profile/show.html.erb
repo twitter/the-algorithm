@@ -1,0 +1,58 @@
+<div class="user home profile">
+  <%= render 'users/header' %>
+
+  <!--main content-->
+  <% unless @user.profile.title.blank? %>
+    <h3 class="heading"><%=h @user.profile.title %></h3>
+  <% end %>
+
+  <div class="wrapper">
+    <dl class="meta">
+      <dt class="pseuds"><%= link_to ts("My pseuds:"), user_pseuds_path(@user) %></dt>
+      <dd class="pseuds"><%= print_pseud_list(@user.pseuds) %></dd>
+      <dt><%= ts("I joined on:") %></dt>
+      <dd><%= ts("%{date}", :date => l(@user.created_at.to_date)) %></dd>
+      <dt><%= ts("My user ID is:") %></dt>
+      <dd><%= @user.id %></dd>
+      <% if @user.profile.location? %>
+        <dt class="location"><%=h ts("I live in:") %></dt>
+        <dd><%=h @user.profile.location %></dd>
+      <% end %>
+      <% if @user.preference.try(:date_of_birth_visible) %>
+        <dt class="birthday"><%=h ts("My birthday:") %></dt>
+        <dd class="birthday"><%=l(@user.profile.date_of_birth) unless @user.profile.date_of_birth.blank? %></dd>
+      <% end %>
+      <% if @user.preference.try(:email_visible) %>
+        <dt class="email"><%=h ts("My email address:") %></dt>
+        <dd class="email"><%= mail_to @user.email, nil, :encode => "hex" %></dd>
+      <% end %>
+    </dl>
+  </div>
+
+  <% unless @user.profile.about_me.blank? %>
+    <div class="bio module">
+      <h3 class="heading"><%=h ts("Bio") %></h3>
+      <blockquote class="userstuff"><%=raw sanitize_field(@user.profile, :about_me) %></blockquote>
+    </div>
+  <% end %>
+  <!--/content-->
+
+  <!--subnav-->
+  <% if logged_in? && current_user == @user %>
+  <h3 class="landmark heading"><%= ts("Actions") %></h3>
+  <ul class="navigation actions" role="navigation">
+    <li><%= link_to ts("Edit My Works"), show_multiple_user_works_path(@user) %></li>
+    <li><%= link_to ts("Edit My Profile"), edit_user_path(@user) %></li>
+    <li><%= link_to ts("Set My Preferences"), user_preferences_path(@user) %></li>
+    <li><%= link_to ts("Manage My Pseuds"), user_pseuds_path(@user) %></li>
+    <li><%= link_to ts("Delete My Account"), @user, data: {confirm: ts('This will permanently delete your account and cannot be undone. Are you sure?')}, :method => :delete %></li>
+  </ul>
+  <% elsif policy(@user.profile).can_edit_profile? %>
+    <h3 class="landmark heading"><%= t("admin.admin_options.landmark") %></h3>
+    <ul class="navigation actions" role="navigation">
+      <li><%= link_to ts("Edit Profile"), edit_user_path(@user) %></li>
+    </ul>
+  <% end %>
+  <!--/subnav-->
+
+</div>

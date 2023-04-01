@@ -1,0 +1,19 @@
+<h2 class="heading"><%= t(".title", name: @mute.muted.login) %></h2>
+
+<%= form_tag user_muted_user_path(@user, @mute), method: :delete do %>
+  <div class="caution notice">
+    <p>
+      <%= t(".sure_html", unmute: tag.strong(t(".unmute")), username: @mute.muted.login) %>
+      <%= t(".resume.intro") %>
+    </p>
+
+    <ul>
+      <li><%= t(".resume.see_content") %></li>
+    </ul>
+  </div>
+
+  <p class="actions">
+    <%= link_to t(".cancel"), user_muted_users_path(@user) %>
+    <%= submit_tag t(".button") %>
+  </p>
+<% end %>

@@ -1,0 +1,918 @@
+---
+comment_00006:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 18:05:43 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 4
+  commentable_id: 5
+  parent_type: Chapter
+  id: 6
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: level fooour (4)
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 30
+  threaded_left: 5
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00017:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-28 02:01:20 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 8
+  commentable_id: 9
+  parent_type: Chapter
+  id: 17
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: wheeeeeeee!! (8 behaves as expected. hm.)
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 12
+  threaded_left: 9
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00039:
+  pseud_id: 17
+  name:
+  thread: 38
+  created_at: 2009-09-18 14:11:32 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 1
+  commentable_id: 38
+  parent_type: Chapter
+  id: 39
+  approved: true
+  is_deleted: false
+  parent_id: 74
+  comment_content: Bleh
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)
+  threaded_right: 5
+  threaded_left: 2
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00040:
+  pseud_id: 25
+  name:
+  thread: 38
+  created_at: 2009-09-18 14:21:00 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 2
+  commentable_id: 39
+  parent_type: Chapter
+  id: 40
+  approved: true
+  is_deleted: false
+  parent_id: 74
+  comment_content: Argh
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)
+  threaded_right: 4
+  threaded_left: 3
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00018:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-03-02 20:11:28 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 5
+  commentable_id: 6
+  parent_type: Chapter
+  id: 18
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: blah!
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 27
+  threaded_left: 26
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00007:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 18:05:57 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 5
+  commentable_id: 6
+  parent_type: Chapter
+  id: 7
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: level 5 arrives!
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 21
+  threaded_left: 6
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00008:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 18:06:33 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 6
+  commentable_id: 7
+  parent_type: Chapter
+  id: 8
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: 6 is here! (and it got a separate thread).
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 16
+  threaded_left: 7
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00019:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-03-02 20:18:04 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 5
+  commentable_id: 6
+  parent_type: Chapter
+  id: 19
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: |-
+    whee
+
+    now take a fcking bath
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 29
+  threaded_left: 28
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00041:
+  pseud_id: 29
+  name:
+  thread: 41
+  created_at: 2009-12-12 21:18:58 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 78
+  parent_type: Chapter
+  id: 41
+  approved: true
+  is_deleted: false
+  parent_id: 78
+  comment_content: |-
+    <i>RPattz is better as Cedric than as Edward.</i>
+
+    He totally is!
+  user_agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_2; en-us) AppleWebKit/531.21.8 (KHTML, like Gecko) Version/4.0.4 Safari/531.21.10
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00042:
+  pseud_id: 5
+  name:
+  thread: 42
+  created_at: 2010-01-04 14:03:39 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 0
+  commentable_id: 170
+  parent_type: Chapter
+  id: 42
+  approved: true
+  is_deleted: false
+  parent_id: 170
+  comment_content: If I comment to myself does it show up in the inbox?
+  user_agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00020:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-03-02 20:19:09 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 4
+  commentable_id: 15
+  parent_type: Chapter
+  id: 20
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: avocado! :D
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 36
+  threaded_left: 35
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00009:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 18:08:01 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 7
+  commentable_id: 8
+  parent_type: Chapter
+  id: 9
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: |-
+    alas, replying to 6 didn't reload the original thread, but went instead straight to 6.
+
+    (this is 7, by the way, the missing Cylon. :( )
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 13
+  threaded_left: 8
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00032:
+  pseud_id: 2
+  name:
+  thread: 32
+  created_at: 2009-05-10 17:41:50 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 56
+  parent_type: Chapter
+  id: 32
+  approved: true
+  is_deleted: true
+  parent_id: 56
+  comment_content: deleted comment
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)
+  threaded_right: 10
+  threaded_left: 1
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00010:
+  pseud_id: 3
+  name:
+  thread: 10
+  created_at: 2009-02-27 23:24:22 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:23 Z
+  depth: 0
+  commentable_id: 19
+  parent_type: Chapter
+  id: 10
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: yet another tlc
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00021:
+  pseud_id: 3
+  name:
+  thread: 21
+  created_at: 2009-03-02 20:20:26 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:23 Z
+  depth: 0
+  commentable_id: 19
+  parent_type: Chapter
+  id: 21
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: Rodney?
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00043:
+  pseud_id: 25
+  name:
+  thread: 32
+  created_at: 2010-01-04 16:03:22 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 4
+  commentable_id: 35
+  parent_type: Chapter
+  id: 43
+  approved: true
+  is_deleted: false
+  parent_id: 56
+  comment_content: does this work
+  user_agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6
+  threaded_right: 6
+  threaded_left: 5
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00044:
+  pseud_id: 2
+  name:
+  thread: 44
+  created_at: 2010-01-07 14:53:17 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-07 14:53:17 Z
+  depth: 0
+  commentable_id: 169
+  parent_type: Chapter
+  id: 44
+  approved: true
+  is_deleted: false
+  parent_id: 169
+  comment_content: Haha, I realise now that "border bottom" was a CSS term, but in connection with Harry/Draco I first wondered if it was some unknown to me fannish trope... *facepalm* Too much fandom!
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.7) Gecko/20091221 Firefox/3.5.7 (.NET CLR 3.5.30729)
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00022:
+  pseud_id: 3
+  name:
+  thread: 22
+  created_at: 2009-03-02 20:20:52 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:23 Z
+  depth: 0
+  commentable_id: 19
+  parent_type: Chapter
+  id: 22
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: John!
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00011:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 23:25:15 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 3
+  commentable_id: 4
+  parent_type: Chapter
+  id: 11
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: |-
+    trivial case rly
+
+    ETA: norly?
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 33
+  threaded_left: 32
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00033:
+  pseud_id: 1
+  name:
+  thread: 32
+  created_at: 2009-05-10 17:44:37 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 1
+  commentable_id: 32
+  parent_type: Chapter
+  id: 33
+  approved: true
+  is_deleted: true
+  parent_id: 56
+  comment_content: deleted comment
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.19 (KHTML, like Gecko) Chrome/1.0.154.65 Safari/525.19
+  threaded_right: 9
+  threaded_left: 2
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00034:
+  pseud_id: 5
+  name:
+  thread: 32
+  created_at: 2009-05-10 17:45:06 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 2
+  commentable_id: 33
+  parent_type: Chapter
+  id: 34
+  approved: true
+  is_deleted: true
+  parent_id: 56
+  comment_content: deleted comment
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.19 (KHTML, like Gecko) Chrome/1.0.154.65 Safari/525.19
+  threaded_right: 8
+  threaded_left: 3
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00012:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 23:26:09 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 6
+  commentable_id: 7
+  parent_type: Chapter
+  id: 12
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: "non-trivial: I'm going to be a level 6 comment :*"
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 18
+  threaded_left: 17
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00001:
+  pseud_id: 13
+  name:
+  thread: 1
+  created_at: 2008-12-06 23:22:00 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:22 Z
+  depth: 0
+  commentable_id: 11
+  parent_type: Chapter
+  id: 1
+  approved: true
+  is_deleted: false
+  parent_id: 11
+  comment_content: "Cheerful. I liked Boccaccio's version better. "
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.4) Gecko/2008102920 Firefox/3.0.4 (.NET CLR 3.5.30729)
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00023:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-03-02 20:21:50 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 6
+  commentable_id: 16
+  parent_type: Chapter
+  id: 23
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: gah (I am a Six, but a marginal one)
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 24
+  threaded_left: 23
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00024:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-03-02 20:24:35 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 9
+  commentable_id: 17
+  parent_type: Chapter
+  id: 24
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: 9?
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 11
+  threaded_left: 10
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00002:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 16:51:22 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:22 Z
+  depth: 0
+  commentable_id: 19
+  parent_type: Chapter
+  id: 2
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: 0 level comment.
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 40
+  threaded_left: 1
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00013:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 23:30:36 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 6
+  commentable_id: 7
+  parent_type: Chapter
+  id: 13
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: bah, humbug (6) (Sonia Six? :D)
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 20
+  threaded_left: 19
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00035:
+  pseud_id: 2
+  name:
+  thread: 32
+  created_at: 2009-05-10 17:45:55 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 3
+  commentable_id: 34
+  parent_type: Chapter
+  id: 35
+  approved: true
+  is_deleted: false
+  parent_id: 56
+  comment_content: What?
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)
+  threaded_right: 7
+  threaded_left: 4
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00036:
+  pseud_id: 1
+  name:
+  thread: 36
+  created_at: 2009-05-24 01:44:00 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 61
+  parent_type: Chapter
+  id: 36
+  approved: true
+  is_deleted: false
+  parent_id: 61
+  comment_content: |-
+    <ul><li>This</li>
+    <li>Is</li>
+    <li>An Ordered List</li>
+    </ul>
+
+    <ol><li>This</li>
+    <li>Is</li>
+    <li>An UnOrdered List</li>
+    </ol>
+
+    <big>Big</big>
+
+    <small>Small</small>
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)
+  threaded_right:
+  threaded_left:
+  edited_at: 2009-05-24 01:59:01 Z
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00014:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-28 01:08:46 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 7
+  commentable_id: 8
+  parent_type: Chapter
+  id: 14
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: |-
+    oooooh breakthrough! (7b)
+
+    I want to break freeee!
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 15
+  threaded_left: 14
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00003:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 16:58:28 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 1
+  commentable_id: 2
+  parent_type: Chapter
+  id: 3
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: 1 level
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 39
+  threaded_left: 2
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00025:
+  pseud_id: 1
+  name:
+  thread: 25
+  created_at: 2009-03-14 18:00:27 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:23 Z
+  depth: 0
+  commentable_id: 19
+  parent_type: Chapter
+  id: 25
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: are you still working?
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.8.1.20) Gecko/20081217 Firefox/2.0.0.20 (.NET CLR 3.5.30729)
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00026:
+  pseud_id:
+  name: Random Dent
+  thread: 26
+  created_at: 2009-03-20 23:53:38 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 58
+  parent_type: Chapter
+  id: 26
+  approved: true
+  is_deleted: false
+  parent_id: 58
+  comment_content: I can't seem to be able to access the next story in the series, what's with that? :(
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.8.1.20) Gecko/20081217 Firefox/2.0.0.20 (.NET CLR 3.5.30729)
+  threaded_right:
+  threaded_left:
+  edited_at:
+  ip_address: 127.0.0.1
+  hidden_by_admin: false
+  email: random@example.com
+comment_00004:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 16:58:47 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 2
+  commentable_id: 3
+  parent_type: Chapter
+  id: 4
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: level 2
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 38
+  threaded_left: 3
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00015:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-28 01:21:42 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 3
+  commentable_id: 4
+  parent_type: Chapter
+  id: 15
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: guacamole?
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 37
+  threaded_left: 34
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00037:
+  pseud_id: 1
+  name:
+  thread: 37
+  created_at: 2009-05-24 01:58:18 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 61
+  parent_type: Chapter
+  id: 37
+  approved: true
+  is_deleted: false
+  parent_id: 61
+  comment_content: |-
+    This
+    Is
+    Just
+    A
+    Lot
+    Of
+    Paragraphs
+
+    <img src="http://l-userpic.livejournal.com/87470347/15766754">
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)
+  threaded_right:
+  threaded_left:
+  edited_at: 2009-05-24 12:53:58 Z
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00038:
+  pseud_id: 25
+  name:
+  thread: 38
+  created_at: 2009-09-18 14:11:10 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 74
+  parent_type: Chapter
+  id: 38
+  approved: true
+  is_deleted: false
+  parent_id: 74
+  comment_content: meh
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.1.3) Gecko/20090824 Firefox/3.5.3 (.NET CLR 3.5.30729)
+  threaded_right: 6
+  threaded_left: 1
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00016:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-28 02:00:10 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 5
+  commentable_id: 6
+  parent_type: Chapter
+  id: 16
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: ngngng! (heh)
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 25
+  threaded_left: 22
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00005:
+  pseud_id: 3
+  name:
+  thread: 2
+  created_at: 2009-02-27 18:05:22 Z
+  commentable_type: Comment
+  updated_at: 2010-01-09 13:58:25 Z
+  depth: 3
+  commentable_id: 4
+  parent_type: Chapter
+  id: 5
+  approved: true
+  is_deleted: false
+  parent_id: 19
+  comment_content: level 3 lalala
+  user_agent: Opera/9.60 (Windows NT 6.0; U; en) Presto/2.1.1
+  threaded_right: 31
+  threaded_left: 4
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:
+comment_00027:
+  pseud_id: 1
+  name:
+  thread: 27
+  created_at: 2009-05-10 17:33:15 Z
+  commentable_type: Chapter
+  updated_at: 2010-01-09 13:58:24 Z
+  depth: 0
+  commentable_id: 56
+  parent_type: Chapter
+  id: 27
+  approved: true
+  is_deleted: true
+  parent_id: 56
+  comment_content: deleted comment
+  user_agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.10) Gecko/2009042316 Firefox/3.0.10 (.NET CLR 3.5.30729)
+  threaded_right: 2
+  threaded_left: 1
+  edited_at:
+  ip_address:
+  hidden_by_admin: false
+  email:

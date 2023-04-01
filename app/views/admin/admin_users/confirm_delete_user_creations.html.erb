@@ -1,0 +1,35 @@
+
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Delete Spammer Creations") %></h2>
+
+<!--main content-->
+<%= form_tag destroy_user_creations_admin_user_path(@user), method: :post, class: "simple destroy" do %>
+
+  <p class="caution notice">
+    <%= ts("Are you sure you want to <strong><em>delete</em></strong> all the works and comments created by this user,
+           along with their %{bookmarks} bookmarks, %{series} series, and %{collections} collections? This <strong>cannot be undone</strong>.",
+           bookmarks: @bookmarks.size, series: @series.size, collections: @collections.size).html_safe %>
+  </p>
+
+  <% unless @works.size.zero? %>
+    <div class="work listbox group">
+      <h3 class="heading"><%= ts("Works")%> (<%= @works.size %>)</h3>
+      <%= render "works/work_abbreviated_list", works: @works %>
+      <%= will_paginate(@works, param_name: 'works_page') %>
+    </div>
+  <% end %>
+
+  <% unless @comments.size.zero? %>
+    <div class="comment listbox group">
+      <h3 class="heading"><%= ts("Comments")%> (<%= @comments.size %>)</h3>
+      <%= render "comments/comment_abbreviated_list", comments: @comments %>
+      <%= will_paginate(@comments, :param_name => 'comments_page') %>
+    </div>
+  <% end %>
+ 
+  <p class="actions">
+    <%= submit_tag ts("Yes, Delete All Spammer Creations"),
+                   data: { confirm: ts("Are you sure? Remember this will destroy ALL these objects!") } %>
+  </p>
+<% end %>
+<!--/content-->

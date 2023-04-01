@@ -1,0 +1,39 @@
+<div id="dashboard" role="navigation region" class="tag wrangling region">
+  <ul class="navigation actions">
+    <% if current_user.is_a?(User) %>
+      <li><%= span_if_current(ts('Wrangling Home'), tag_wrangler_path(current_user)) %></li>
+    <% end %>
+    <li><%= span_if_current(ts('Wrangling Tools'), tag_wranglings_path) %></li>
+    <li><%= span_if_current(ts('Wranglers'), tag_wranglers_path) %></li>
+    <li><%= span_if_current(ts('Search Tags'), search_tags_path) %></li>
+    <li><%= span_if_current(ts('New Tag'), new_tag_path) %></li>
+  </ul>
+
+  <% if @counts %>
+    <ul class="navigation actions">
+      <% if @tag && @uses %>
+        <% @uses.each do |key| %>
+          <% if key == 'Works' || key == 'Bookmarks' %>
+            <li><%= span_if_current "#{key} (#{@counts[key]})", { controller: key.downcase.to_sym, action: :index, tag_id: @tag } %></li>
+          <% elsif key == 'External Works' %>
+            <li><%= span_if_current "#{key} (#{@counts[key]})", { controller: :bookmarks, action: :index, tag_id: @tag } %></li>
+          <% else %>
+            <li><span><%= "#{key} (#{@counts[key]})" %></span></li>
+          <% end %>
+        <% end %>
+      <% elsif @tag && @tag.child_types %>
+        <% @tag.child_types.each do |tag_type| %>
+          <li>
+            <%= span_if_current tag_type.pluralize + " (#{@counts[tag_type.underscore.pluralize.to_sym]})", url_for(show: tag_type.underscore.pluralize, id: @tag) %>
+          </li>
+        <% end %>
+      <% else %>
+        <li><%= span_if_current ts("Fandoms by media (%{count})", count: @counts[:fandoms]), tag_wranglings_path(show: "fandoms") %></li>
+        <li><%= span_if_current ts("Characters by fandom (%{count})", count: @counts[:characters]), tag_wranglings_path(show: "characters") %></li>
+        <li><%= span_if_current ts("Relationships by fandom (%{count})", count: @counts[:relationships]), tag_wranglings_path(show: "relationships") %></li>
+        <li><%= span_if_current ts("Freeforms by fandom (%{count})", count: @counts[:freeforms]), tag_wranglings_path(show: "freeforms") %></li>
+        <li><%= span_if_current(ts("Unsorted Tags (%{count})", count: @counts[:UnsortedTag]), unsorted_tags_path) %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

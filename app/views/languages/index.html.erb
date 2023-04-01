@@ -1,0 +1,38 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts('The Archive supports these languages') %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<p class="navigation actions" role="navigation">
+  <% if policy(Language).new? %>
+    <%= link_to ts('Add a Language'), new_language_path %>
+  <% else %>
+    <%= link_to ts('Suggest a Language'), new_feedback_report_path %>
+  <% end %>
+</p>
+<!--/subnav-->
+
+<!--main content-->
+<dl class="language index group">
+  <% for language in @languages %>
+
+    <% if language == Language.default %>
+      <dt><%= language.name %></dt>
+      <dd>
+        <%= link_to ts("%{count} works", count: language.works.count), works_path %>
+      </dd>
+    <% else %>
+      <dt><%= link_to language.name, language %></dt>
+      <dd>
+        <%= link_to ts("%{count} works", count: language.works.count), language_works_path(language) %>
+        <% if policy(Language).edit? %>
+          <p class="actions">
+            <%= link_to ts("Edit"), edit_language_path(language) %>
+          </p>
+        <% end %>
+      </dd>
+    <% end %>
+
+  <% end %>
+</dl>
+<!--main content-->

@@ -1,0 +1,6 @@
+---
+af:
+  mailer:
+    general:
+      creation:
+        title_with_chapter_number: Hoofstuk %{position} van %{title}

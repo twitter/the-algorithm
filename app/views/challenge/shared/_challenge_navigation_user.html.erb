@@ -1,0 +1,40 @@
+<% # added to the navigation controls for the collection. enclose items in list elements. @collection is defined here but @challenge may not be. %>
+<% collection ||= @collection %>
+
+<% # Start logged-in challenge logic %>
+<% if logged_in? && collection.challenge %>
+
+  <% # Start open sign-ups logic %>
+  <% if collection.challenge.signup_open %>
+    <% # Start user's sign-up options logic %>
+    <% if (@challenge_signup = ChallengeSignup.in_collection(collection).by_user(current_user).first) %>
+      <li><%= link_to ts("Edit Sign-up"), edit_collection_signup_path(collection, @challenge_signup) %></li>
+      <li>
+        <%= link_to ts("Cancel Sign-up"),
+          collection_signup_path(collection, @challenge_signup),
+          data: {confirm: ts("Are you sure you want to cancel your sign-up? All sign-up information will be lost.")},
+          :method => :delete %>
+      </li>
+    <% else %>
+      <li><%= link_to ts("Sign Up"), new_collection_signup_path(collection) %></li>
+    <% end %>
+    <% # End user's sign-up options logic %>
+  <% end %>
+  <% # End open sign-ups logic %>
+
+  <% # Start membership logic %>
+  <% if !collection.user_is_owner?(current_user) && collection.moderated? %>
+    <li>
+      <% if (@participant ||= collection.get_participants_for_user(current_user).first) %>
+        <%= link_to ts("Leave"), collection_participant_path(collection, @participant),
+          data: {confirm: ts('Are you certain you want to leave this collection?')},
+          :method => :delete %></li>
+      <% else %>
+        <%= link_to ts("Join"), join_collection_participants_path(collection) %>
+      <% end %>
+    </li>
+  <% end %>
+  <% # End membership logic %>
+
+<% end %>
+<% # End logged-in challenge logic %>

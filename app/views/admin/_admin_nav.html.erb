@@ -1,0 +1,36 @@
+<h3 class="landmark heading"><%= ts("Admin Navigation") %></h3>
+<ul class="navigation actions" role="navigation">
+  <li>
+    <%= span_if_current ts("AO3 News", key: "header"), admin_posts_path %>
+   </li>
+  <li>
+    <%= span_if_current ts("Post AO3 News", key: "header"),
+                        new_admin_post_path %>
+</li>
+  <% if params[:controller] == "admin_posts" && params[:action] == "edit" %>
+    <li>
+      <%= link_to t("admin.admin_nav.delete", default: "Delete Post"),
+                  @admin_post,
+                  data: { confirm: "Are you sure you want to delete this news post?" },
+                  method: :delete %>
+    </li>
+  <% end %>
+  <% if params[:controller] == "archive_faqs" && params[:action] == "edit" &&
+      Globalize.locale.to_s == "en" %>
+    <li>
+      <%= link_to ts("Reorder Questions"),
+                  manage_archive_faq_questions_path(@archive_faq) %>
+    </li>
+  <% end %>
+
+  <li>
+    <%= span_if_current ts("Archive FAQ", key: "header"), archive_faqs_path %>
+  </li>
+  <li>
+    <%= span_if_current ts("Known Issues", key: "header"), known_issues_path %>
+  </li>
+  <li>
+    <%= span_if_current ts("Wrangling Guidelines", key: "header"),
+                        wrangling_guidelines_path %>
+  </li>
+</ul>

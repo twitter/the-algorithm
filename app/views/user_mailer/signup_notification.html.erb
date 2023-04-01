@@ -1,0 +1,12 @@
+<% content_for :message do %>
+<p><%= t('.welcome',
+           login: style_bold(@user.login)).html_safe %></p>
+<p><%= t('.html.part1',
+           activate_account_link: style_link(t('.activate_your_account'), activate_url(id: @user.confirmation_token))).html_safe %></p>
+<p><%= t('.html.part2') %></p>
+<p><%= t('.html.part3',
+           faq_link: style_link(t('.faq'), archive_faqs_url),
+           admin_posts_link: style_link(t('.admin_posts'), admin_posts_url),
+           contact_support_link: support_link(t '.contact_support')).html_safe %></p>
+<p><%= t('.bye') %></p>
+<% end %>

@@ -1,0 +1,7 @@
+<% # expects feedback_comment and approved_from %>
+
+<% # approve link that works with JavaScript enabled and is otherwise hidden %>
+<%= link_to(ts("Approve"), review_comment_path(feedback_comment, approved_from: approved_from.to_s, page: params[:page], filters: @filters), method: :put, remote: true, class: 'hidden') %>
+
+<% # unreviewed comments page link for users with JavaScript disabled %>
+<%= link_to(ts("Unreviewed Comments"), unreviewed_work_comments_path(feedback_comment.ultimate_parent), class: 'hideme') %>

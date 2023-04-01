@@ -1,0 +1,40 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= t('.supported_locales', :default => 'Supported Locales') %></h2>
+<!--/descriptions-->
+
+<!--main content-->
+<%= render 'navigation' %>
+<!--main content-->
+<table summary="<%= t('.locale_table_summary', :default => 'Lists supported locales, along with details of how they are used and options to modify them.') %>">
+  <caption><%= t('.locale_table_caption', :default => 'Supported Locales') %></caption>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">ISO Code</th>
+      <th scope="col">Primary Locale</th>
+      <th scope="col">Use for Email</th>
+      <th scope="col">Use for Interface</th>
+      <th scope="col">Created at</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for locale in @locales %>
+      <tr>
+        <th scope="row"><%= locale.name %></th>
+        <td><%= locale.iso %></td>
+        <td><%= locale.main %></td>
+        <td><%= locale.email_enabled %></td>
+        <td><%= locale.interface_enabled %></td>
+        <td><%= locale.updated_at %></td>
+        <td class="actions">
+          <%= link_to ts('Edit'), {controller: :locales, action: :edit, id: locale.iso} %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<!--/content-->
+
+<!--subnav-->
+<!--/subnav-->

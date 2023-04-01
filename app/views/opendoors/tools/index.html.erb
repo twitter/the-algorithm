@@ -1,0 +1,46 @@
+<!--Descriptive page names, messages and instructions-->
+<% unless @imported_from_url.blank? %>
+  <p class="important">
+    <%= ts('Test redirect: ') %>
+    <%= link_to @imported_from_url, redirect_path(:original_url => @imported_from_url) %>
+  </p>
+<% end %>
+
+<h2><%= ts("Open Doors Tools") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "opendoors/tools/tools_navigation" %>
+<!--/subnav-->
+
+<!--main content-->
+<%= form_tag url_for(:controller => 'opendoors/tools', :action => 'url_update') do %>
+  <fieldset>
+    <legend>Update Redirect URL</legend>
+    <h3><%= ts("Update Redirect URL") %></h3>
+  
+    <dl>
+      <dt><%= ts("Imported From")%></dt>
+      <dd><%= text_field_tag "imported_from_url" %></dd>
+      <dt><%= ts("Archive URL") %></dt>
+      <dd><%= text_field_tag "work_url" %></dd>
+    </dl>
+    <%= submit_button %>
+  </fieldset>
+<% end %>
+
+<%= form_for [:opendoors, @external_author] do |f| %>
+  <fieldset>
+    <legend>Block Email Address</legend>
+    <h3><%= ts("Block Email Address") %></h3>
+    <dl>
+      <dt><%= f.label :email, ts("Email: ")%></dt>
+      <dd>
+        <%= f.text_field :email %>
+        <%= f.hidden_field :do_not_import, :value => true %>
+      </dd>
+    </dl>
+    <%= submit_button(f) %>
+  </fieldset>
+<% end %>
+<!--/content-->

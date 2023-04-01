@@ -1,0 +1,79 @@
+<!-- BEGIN BETA CAVEATS! -->
+<noscript>
+  <p id="javascript-warning">
+    <%= ts('While we\'ve done our best to make the core functionality of this site accessible without javascript, it will work better with it enabled. Please consider turning it on!', key: 'header' ) %>
+  </p>
+</noscript>
+<!-- END BETA CAVEATS! --> 
+
+<!-- BEGIN header -->
+<% if @collection %>
+  <!-- custom css for header -->
+  <style type="text/css">
+  #header h2 { 
+    background: #616C90 <% if (header_url = @collection.header_image_url || (@collection_parent && @collection_parent.header_image_url)) %>
+      <% height = (size = FastImage.size(header_url, :timeout => 1)) ? size[1].to_s + 'px' : '100%' %>
+      url(<%= header_url %>); height: <%= height %>
+    <% end %>;
+  }
+  </style>
+<% end %>
+
+<div id="header" class="region<% if @collection %> collection<% end %>">
+
+  <h1 class="heading">
+    <%= link_to(content_tag(:span, "#{ArchiveConfig.APP_NAME}") + content_tag(:sup, " beta") +
+    image_tag('/images/ao3_logos/logo_42.png', :alt => "#{ArchiveConfig.ALT_LOGO}", :class => "logo", skip_pipeline: true), root_path) %> 
+  </h1>
+
+  <% if logged_in? || logged_in_as_admin? %>
+    <%= render 'users/sessions/greeting' %>
+  <% else %>
+    <div id="login" class="dropdown">
+      <p class="user actions" role="menu">
+        <%= link_to ts('Log In', key: 'header'), new_user_session_path, id: "login-dropdown" %>
+      </p>
+      <%= render 'users/sessions/login' %>
+    </div>
+  <% end %>
+
+  <h3 class="landmark heading"><%= ts('Site Navigation', key: 'header') %></h3>
+  <ul class="primary navigation actions" role="navigation">
+    <li class="dropdown">
+      <%= link_to ts('Fandoms', key: 'header'), menu_fandoms_path %>
+      <%= render 'menu/menu_fandoms' %>
+    </li>
+    <li class="dropdown">
+      <%= link_to ts('Browse', key: 'header'), menu_browse_path %>
+      <%= render 'menu/menu_browse' %>
+    </li>
+    <li class="dropdown">
+      <%= link_to ts('Search', key: 'header'), menu_search_path %>
+      <%= render 'menu/menu_search' %>
+    </li>
+    <li class="dropdown">
+      <%= link_to ts('About', key: 'header'), menu_about_path %>
+      <%= render 'menu/menu_about' %>
+    </li>
+	  <li class="search"><%= render 'works/search_box' %></li>
+  </ul>
+
+  <% if logged_in_as_admin? %>
+    <%= render 'admin/header' %>
+  <% end %>
+
+  <% if @collection %>
+    <h2 class="collections">
+      <% unless @collection.header_image_url.present? %>
+        <%= @collection.title ? @collection.title : (@collection_parent ? @collection_parent.title : ts('New Collection', key: 'header')) %>
+      <% end %>
+    </h2>
+  <% end %>
+
+  <div class="clear"></div>
+
+</div>
+
+<%= render "layouts/banner" %>
+
+<!-- END header -->

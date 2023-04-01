@@ -1,0 +1,87 @@
+<h2>HTML on the Archive</h2>
+
+<h3>Allowed HTML</h3>
+<p>
+  <code>a, abbr, acronym, address, [align], [alt], [axis], b, big, blockquote, br, caption, center, cite, [class], code, 
+    col, colgroup, dd, del, details, dfn, div, dl, dt, em, figcaption, figure, h1, h2, h3, h4, h5, h6, [height], hr, [href], i, img, 
+    ins, kbd, li, [name], ol, p, pre, q, rp, rt, ruby, s, samp, small, span, [src], strike, strong, sub, summary, sup, table, tbody, td, 
+    tfoot, th, thead, [title], tr, tt, u, ul, var, [width]
+  </code>
+</p>
+
+<h3>How Do We Format Your HTML?</h3>
+
+<p>
+  When you enter HTML into the archive, we do some cleanup on it to make sure that it is safe 
+  (so spammers and hackers cannot upload badness) and try and do some basic formatting both for 
+  your convenience and for accessibility reasons. Here are the formatting steps we take: 
+</p>
+
+<ul>
+  <li>If you leave a blank line between two paragraphs, we will put paragraph tags in for you around the two paragraphs.</li> 
+  <li>If you have a single carriage return between two lines of text, we will put in a break tag for you.</li> 
+  <li>If you have two break tags in a row (&lt;br /&gt;&lt;br /&gt;) with nothing between them, we will turn that into paragraph tags.</li>
+  <li>If you have two blank lines in a row between paragraphs, we will add extra whitespace in for you (with &lt;p&gt;&amp;nbsp;&lt;/p&gt;)</li> 
+  <li>If you have mis-nested tags like this: &lt;em&gt;&lt;strong&gt;<em><strong>text!</em></strong>&lt;/em&gt;&lt;/strong&gt; we will fix the mis-nesting 
+      (so it would become &lt;em&gt;&lt;strong&gt;<em><strong>text!</em></strong>&lt;/strong&gt;&lt;/em&gt;).</li>
+  <li>If you have forgotten to close a formatting tag, it will be closed at the end of the paragraph for you.</li>
+  <li>If you open a formatting tag in one paragraph and close it several paragraphs later, we will reopen/close it within each paragraph.</li>
+  <li>If you have put in some custom HTML (eg a list of items inside a &lt;ul&gt;) and you don't want break tags or paragraphs inserted,
+      just put it all on one line (sorry, this is the inconvenient tradeoff for automatically doing the paragraph/break tags).</li>
+  <li>If one bit of your text shows up larger than the rest, probably our formatter couldn't figure out to put paragraph tags around it. 
+      You can fix this by manually putting in the paragraph tags around that one bit.</li>
+</ul>
+
+<p class="note">
+  When you edit your HTML after you first put it in, you will see the results of our formatting work, so you can 
+  correct any mistakes our formatter might have made. Please note that the best way to get good results is to put
+  in good HTML -- that is how you can be sure your story will look right across various browsers,
+  screen readers, mobile devices, and downloads. 
+</p>
+
+<p class="note">
+  Good HTML means HTML that labels what the text is supposed to be -- so if you have
+  paragraphs, they should be inside paragraph tags, not just separated with break tags. If you have emphasized
+  text, it should be inside em tags. If you have a list of items, each item should be inside list tags. If you
+  <em>don't</em> have a list of items, you shouldn't have list tags. :)
+  (We are putting together a set of more detailed helpful references about this, but this is the basic idea.)
+</p>
+
+<p class="note">  
+  If you find yourself putting in HTML that doesn't mean the right thing, in order to get a particular visual effect, 
+  please resist!
+  The work skin feature allows you to apply custom CSS to works, and that lets you make them look 
+  just about any way you want them to (and is easier if you are starting from good HTML).
+<p>
+
+<p>Some specific recommendations:</p>
+
+<dl id="help">
+  <dt>For headings, use heading tags: <code>h1, h2, h3, h4, h5, h6</code></dt>
+  <dd id="headings">
+  	<ul>
+    <li><h1>&lt;h1&gt;Title&lt;h1&gt;</h1></li>
+    <li><h2>&lt;h2&gt;Subtitle&lt;h2&gt;</h2></li>
+    <li><h3>&lt;h3&gt;Chapter title&lt;h3&gt;</h3></li>
+    <li><h4>&lt;h4&gt;Scene title&lt;h4&gt;</h4></li>
+    <li><h5>&lt;h5&gt;Subtitle&lt;h5&gt;</h5></li>
+    <li><h6>&lt;h6&gt;Footnote title&lt;h6&gt;</h6></li>
+  	</ul>
+  </dd>
+  <dt>For emphasis, use emphasis tags <code>em, strong</code> </dt>
+  <dd id="emphasis">
+  	<ul>
+    <li><p>&lt;em&gt;<em>Rodney</em>&lt;/em&gt; McKay</p></li>
+    <li><p>I will &lt;strong&gt;<strong>never</strong>&lt;/strong&gt; understand you!</p></li>
+  	</ul>
+  </dd>
+  <dt>To quote poetry, phrases or titles use quote tags: <code>blockquote, q, cite</code> </dt>
+  <dd id="quotes">
+  	<ul>
+    <li>&lt;blockquote&gt;<blockquote><p>To quote a block of text</p></blockquote>&lt;/blockquote&gt;</li>
+    <li><p>Use q to &lt;q&gt;<q>To quote a phrase</q>&lt;/q&gt;</p></li>
+    <li><p>Try cite to cite &lt;cite&gt;<cite>a phrase or title</cite>&lt;/cite&gt;</p></li>
+  	</ul>
+  </dd>
+	</dl>
+</div>

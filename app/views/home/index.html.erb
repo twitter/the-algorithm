@@ -1,0 +1,56 @@
+<div class="splash">
+  <% if !logged_in? %>
+    <%= render 'intro_module' %>
+  <% end %>
+
+  <% if logged_in? && @homepage.favorite_tags.present? %>
+    <div class="favorite module">
+      <h3 class="heading"><%= ts('Find your favorites') %></h3>
+      <ul>
+        <% @homepage.favorite_tags.each do |favorite_tag| %>
+          <li>
+            <%= link_to_tag_works(favorite_tag.tag) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% else %>
+    <div class="browse module">
+      <h3 class="heading"><%= ts('Find your favorites') %></h3>
+      <% if logged_in? %>
+        <p class="note"><%= ts('Browse fandoms by media or favorite up to %{maximum} tags to have them listed here!', maximum: ArchiveConfig.MAX_FAVORITE_TAGS) %></p>
+      <% end %>
+      <%= render 'menu/menu_fandoms' %>
+    </div>
+  <% end %>
+
+  <% if @homepage.admin_posts.present? %>
+    <%= render 'news_module', admin_posts: @homepage.admin_posts %>
+  <% end %>
+
+  <% if logged_in? && @homepage.readings.present? %>
+    <div class="random readings module">
+      <h3 class="heading">
+        <span class="title"><%= ts('Is it later already?') %></span>
+        <span class="link"><%= link_to ts('My History'), user_readings_path(current_user) %></span>
+      </h3>
+      <div class="flash"></div>
+      <p class="note"><%= ts('Some works you\'ve marked for later.') %></p>
+      <ul class="readings works index group">
+        <% @homepage.readings.each do |reading| %>
+          <%= render 'readings/reading_blurb', work: reading.work, reading: reading %>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if logged_in? && @homepage.inbox_comments.present? %>
+    <%= render 'inbox_module', inbox_comments: @homepage.inbox_comments %>
+  <% end %>
+
+  <div class="latest tweets module">
+    <h3 class="heading"><%= ts('Tweets') %></h3>
+    <a class="twitter-timeline" href="https://twitter.com/otw_status/lists/otw-tweets" data-dnt="true" data-height="600"><%= ts('Tweets from https://twitter.com/otw_status/lists/otw-tweets') %></a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+</div>

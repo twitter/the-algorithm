@@ -1,0 +1,509 @@
+---
+de:
+  activerecord:
+    attributes:
+      archive_warning:
+        name_with_colon:
+          one: 'Warnung:'
+          other: 'Warnungen:'
+      category:
+        name_with_colon:
+          one: 'Kategorie:'
+          other: 'Kategorien:'
+      character:
+        name_with_colon:
+          one: 'Charakter:'
+          other: 'Charaktere:'
+      fandom:
+        name_with_colon:
+          one: 'Fandom:'
+          other: 'Fandoms:'
+      freeform:
+        name_with_colon:
+          one: 'Zusätzliches Tag:'
+          other: 'Zusätzliche Tags:'
+      rating:
+        name_with_colon: 'Alterseinstufung:'
+      relationship:
+        name_with_colon:
+          one: 'Beziehung:'
+          other: 'Beziehungen:'
+      work:
+        summary: Zusammenfassung
+    models:
+      archive_warning:
+        one: Warnung
+        other: Warnungen
+      category:
+        one: Kategorie
+        other: Kategorien
+      chapter:
+        one: Kapitel
+        other: Kapitel
+      character:
+        one: Charakter
+        other: Charaktere
+      fandom:
+        one: Fandom
+        other: Fandoms
+      freeform:
+        one: Zusätzliches Tag
+        other: Zusätzliche Tags
+      rating:
+        one: Alterseinstufung
+        other: Alterseinfstufungen
+      relationship:
+        one: Beziehung
+        other: Beziehungen
+      series:
+        one: Serie
+        other: Serien
+      work: Werk
+  kudo_mailer:
+    batch_kudo_notification:
+      guest:
+        one: ein Gast
+        other: "%{count} Gäste"
+      html:
+        left_kudos:
+          one: "%{givers_list} hat Kudos für %{commentable_link} hinterlassen."
+          other: "%{givers_list} haben Kudos für %{commentable_link} hinterlassen."
+        single_guest:
+          giver_list: Ein Gast
+          left_kudos: "%{giver_list} hat Kudos für %{commentable_link} hinterlassen."
+      subject: "[%{app_name}] Du hast Kudos erhalten!"
+      text:
+        left_kudos:
+          one: "%{givers_list} hat Kudos für %{commentable_title} (%{commentable_url})
+            hinterlassen."
+          other: "%{givers_list} haben Kudos für %{commentable_title} (%{commentable_url})
+            hinterlassen."
+        single_guest: Ein Gast hat Kudos für %{commentable_title} (%{commentable_url})
+          hinterlassen.
+  mailer:
+    general:
+      closing:
+        formal: Mit freundlichen Grüßen
+        informal: Viele Grüße
+      creation:
+        link_with_word_count: "%{creation_link} (%{word_count})"
+        title_with_chapter_number: Kapitel %{position} von %{title}
+        title_with_word_count: '"%{creation_title}" (%{word_count})'
+        word_count:
+          one: "%{count} Wort"
+          other: "%{count} Worte"
+      footer:
+        general:
+          html:
+            donate_link_text: Deine Spenden
+            part1: Solltest Du diese Nachricht irrtümlicherweise erhalten haben, %{support_link}.
+            part2: Das AO3 ist ein Archiv von Fans für Fans, das auf %{donate_link}
+              angewiesen ist.
+            support_link_text: wende Dich bitte an den Support
+          text:
+            part1: Solltest Du diese Nachricht irrtümlicherweise erhalten haben, wende
+              Dich bitte unter %{support_url} an den Support.
+            part2: 'Das AO3 ist ein Archiv von Fans für Fans, das auf Deine Spenden
+              angewiesen ist: %{donate_url}.'
+        sent_at: Gesendet %{sent_at}.
+      greeting:
+        formal: Hallo %{name},
+        informal:
+          addressed: Hallo %{name}!
+          unaddressed: Hallo!
+        introductory: Hallo vom Archive of Our Own – AO3 (Ein Eigenes Archiv)
+      metadata_label_indicator: ": "
+      signature:
+        app_short_name: AO3
+        open_doors: Das “Open Doors”- (Offene Türen) Team
+        parent_org: Organization for Transformative Works – OTW (Organisation für
+          Transformative Werke)
+        support: Das AO3-Support-Team
+  users:
+    mailer:
+      reset_password_instructions:
+        expiration: Wenn Du den Link zur Passwortzurücksetzung nicht innerhalb der
+          nächsten sieben Tage nutzt, verfällt er und Du musst einen neuen anfordern.
+        intro: 'jemand hat ein neues Passwort für Dein Nutzer*innenkonto angefordert.
+          Du kannst Dein Passwort ändern, indem Du den untenstehenden Link anklickst
+          und Dein neues Passwort eingibst:'
+        link_title: Passwort ändern.
+        subject: "[%{app_name}] Setze Dein Passwort zurück"
+        unrequested: Wenn Du keine Zurücksetzung Deines Passworts beantragt hast,
+          kannst Du diese E-Mail ignorieren und Dein altes Passwort bleibt gültig.
+  user_mailer:
+    abuse_report:
+      description_para: 'Beschreibung des Missbrauchs:'
+      para1: 'Die folgende Missbrauchsmeldung wurde an das “Richtlinien und Missbrauch”-Team
+        geschickt:'
+      subject: "[%{app_name}] Deine Richtlinien- und Missbrauchsmeldung"
+      url_para: 'Die URL der Seite, auf der sich der Missbrauch befindet:'
+    admin_deleted_work_notification:
+      bye: Anbei ist eine Kopie deines Werkes als Referenz.
+      contact_abuse: kontaktiere bitte unser “Richtlinien und Missbrauch”-Komitee
+      html:
+        part1: dein Werk %{title} wurde von einem*r Webadministrator*in des AO3 gelöscht.
+        part2: Falls dein Werk Teil eines Import-Projektes durch unser Open Doors-
+          (Offene Türen) Komitee war, %{opendoors_link} für alle weiteren Fragen.
+        tos_violation: Wenn dein Werk eventuell die Nutzungsbedingungen des AO3 verletzt
+          hat, %{contact_abuse_link}.
+      opendoors: kontaktiere bitte das “Offene Türen”-Komitee
+      subject: "[%{app_name}] Dein Werk wurde von einem*r Webadministrator*in gelöscht"
+      text:
+        part1: dein Werk "%{title}" wurde von einem*r Webadministrator*in des AO3
+          gelöscht.
+        part2: Falls dein Werk Teil eines Import-Projektes durch unser Open Doors-
+          (Offene Türen) Komitee war, kontaktiere bitte Offene Türen (%{opendoors_link})
+          für alle weiteren Fragen.
+        tos_violation: Wenn dein Werk eventuell die Nutzungsbedingungen des AO3 verletzt
+          hat, kontaktiere bitte unser Richtlinien und Missbrauch-Komitee (%{contact_abuse_url}).
+    admin_hidden_work_notification:
+      access: Obwohl Dein Werk verborgen ist, kannst Du es immer noch über den oben
+        angegebenen Link aufrufen; es wird jedoch weder in der Übersicht Deiner Werke
+        aufgelistet, noch ist es für andere AO3-Nutzer*innen verfügbar.
+      check_email: Bitte überprüfe Deine E-Mails, einschließlich Deines Spam-Ordners,
+        da das “Richtlinien und Missbrauch”-Komitee Dich möglicherweise bereits kontaktiert
+        hat, um zu erklären, warum Dein Werk verborgen wurde.
+      contact_abuse: kontaktiere das “Richtlinien und Missbrauch”-Komitee
+      html:
+        help: Wenn Du Dir nicht sicher bist, warum Dein Werk verborgen wurde und Du
+          keine weitere Mitteilung in dieser Angelegenheit erhalten hast, dann %{contact_abuse_link}
+          bitte direkt.
+        hidden: Dein Werk %{title} wurde vom “Richtlinien und Missbrauch”-Komitee
+          verborgen und ist nicht mehr öffentlich zugänglich.
+        tos_violation: Wenn Dein Werk aufgrund eines Verstoßes gegen die %{tos_link}
+          des AO3 verborgen wurde, musst Du Maßnahmen ergreifen, um den Verstoß zu
+          beheben. Wenn Du Dein Werk nicht in Übereinstimmung mit den Nutzungsbedingungen
+          bringst, wird es möglicherweise aus dem AO3 gelöscht.
+      subject: "[%{app_name}] Dein Werk wurde vom “Richtlinien und Missbrauch”-Komitee
+        verborgen"
+      text:
+        help: 'Wenn Du Dir nicht sicher bist, warum Dein Werk verborgen wurde und
+          Du keine weitere Mitteilung in dieser Angelegenheit erhalten hast, dann
+          kontaktiere das “Richtlinien und Missbrauch”-Komitee bitte direkt: %{contact_abuse_url}.'
+        hidden: Dein Werk “%{title}” (%{work_url}) wurde vom “Richtlinien und Missbrauch”-Komitee
+          verborgen und ist nicht mehr öffentlich zugänglich.
+        tos_violation: Wenn Dein Werk aufgrund eines Verstoßes gegen die Nutzungsbedingungen
+          des AO3 (%{tos_url}) verborgen wurde, musst Du Maßnahmen ergreifen, um den
+          Verstoß zu beheben. Wenn Du Dein Werk nicht in Übereinstimmung mit den Nutzungsbedingungen
+          bringst, wird es möglicherweise aus dem AO3 gelöscht.
+      tos: Nutzungsbedingungen
+    anonymous_or_unrevealed_notification:
+      anonymous_info: Anonyme Werke werden in Tag-Listen angezeigt, nicht jedoch auf
+        Deiner Werke-Seite. In dem Werk wird Dein Benutzer*innenname mit “Anonymous”
+        (Anonym) ersetzt.
+      anonymous_unrevealed_info: Die Betreuer*innen der Sammlung können Dein Werk
+        später enthüllen, aber dabei anonym belassen. Benutzer*innen, die Benachrichtigungen
+        zu Deinen Werken abonniert haben, werden über diese Änderung nicht informiert.
+        Sobald das Werk enthüllt wurde, wird es in Tag-Listen aufgeführt, nicht jedoch
+        auf Deiner Werke-Seite. In dem Werk wird Dein Name durch “Anonymous” (Anonym)
+        ersetzt.
+      changed_status:
+        anonymous:
+          html: die Betreuer*innen von %{collection_link} haben den Status Deines
+            Werks %{work_link} auf anonym gesetzt.
+          text: die Betreuer*innen von "%{collection_title}" (%{collection_url}) haben
+            den Status Deines Werks "%{work_title}" (%{work_url}) auf anonym gesetzt.
+        anonymous_unrevealed:
+          html: die Betreuer*innen von %{collection_link} haben den Status Deines
+            Werks %{work_link} auf anonym und verborgen gesetzt.
+          text: die Betreuer*innen von "%{collection_title}" (%{collection_url}) haben
+            den Status Deines Werks "%{work_title}" (%{work_url}) auf anonym und verborgen
+            gesetzt.
+        unrevealed:
+          html: die Betreuer*innen von %{collection_link} haben den Status Deines
+            Werks %{work_link} auf verborgen gesetzt.
+          text: die Betreuer*innen von "%{collection_title}" (%{collection_url}) haben
+            den Status Deines Werks "%{work_title}" (%{work_url}) auf verborgen gesetzt.
+      collection_items_link_text: Approved Collection Items (Seite für genehmigte
+        Objekte einer Sammlung)
+      do_not_want:
+        anonymous:
+          html: Wenn Du nicht möchtest, dass Dein Werk anonym angezeigt wird, dann
+            besuche bitte die %{collection_items_link} und entferne es aus der Sammlung.
+          text: 'Wenn Du nicht möchtest, dass Dein Werk anonym angezeigt wird, dann
+            besuche bitte Deine Approved Collection Items (Seite für genehmigte Objekte
+            einer Sammlung) und entferne es aus der Sammlung: %{collection_items_url}'
+        anonymous_unrevealed:
+          html: Wenn Du nicht möchtest, dass Dein Werk anonym und verborgen ist, dann
+            besuche bitte die %{collection_items_link} und entferne es aus der Sammlung.
+          text: 'Wenn Du nicht möchtest, dass Dein Werk anonymisiert und verborgen
+            wird, dann besuche bitte Deine Approved Collection Items (Seite für genehmigte
+            Objekte einer Sammlung) und entferne es aus der Sammlung: %{collection_items_url}'
+        unrevealed:
+          html: Wenn Du nicht möchtest, dass Dein Werk verborgen ist, dann besuche
+            bitte die %{collection_items_link} und entferne es aus der Sammlung.
+          text: 'Wenn Du nicht möchtest, dass Dein Werk verborgen wird, dann besuche
+            bitte Deine Approved Collection Items (Seite für genehmigte Objekte einer
+            Sammlung) und entferne es aus der Sammlung: %{collection_items_url}'
+      faq_link_text: Herausforderungen FAQ (Häufige Fragen)
+      more_info:
+        html: Weitere Informationen findest Du in unserer %{faq_link}.
+        text: 'Weitere Informationen findest Du in unseren Herausforderungen FAQ (Häufige
+          Fragen): %{faq_url}'
+      subject:
+        anonymous: "[%{app_name}] Dein Werk wurde anonymisiert"
+        anonymous_unrevealed: "[%{app_name}] Dein Werk wurde anonymisiert und verborgen"
+        unrevealed: "[%{app_name}] Dein Werk wurde verborgen"
+      unrevealed_info: Verborgene Werke werden nicht in Tag-Listen oder auf Deiner
+        Werke-Seite angezeigt. Jemand, der auf den Link zu Deinem Werk klickt, erhält
+        eine Nachricht, dass es zurzeit verborgen ist und kann darauf nicht zugreifen.
+    challenge_assignment_notification:
+      any: Jegliche
+      description: 'Beschreibung:'
+      due: 'Diese Aufgabe ist fällig am:'
+      html:
+        footer: Du erhältst diese E-Mail, weil Du Dich für die Herausforderung %{title}
+          angemeldet hast. Weitere Einzelheiten zu dieser Herausforderung, sowie die
+          Kontaktinformationen der Moderator*innen findest Du auf der %{footer_link}.
+        footer_link: Profilseite der Herausforderung
+        look_up: Du kannst diese Aufgabe auf %{link} anschauen.
+        look_up_link: Deine Assignments (Aufgaben) Seite
+        part1: Dir wurde folgender Wunsch in der Herausforderung %{link} im AO3 zugewiesen!
+      optional_tags: 'Optionale Tags:'
+      prompts: 'Anregungen:'
+      prompt_url: 'URL der Anregung:'
+      recipient: 'Empfänger*in:'
+      recipient_missing: 'Niemand: bitte eine*n Moderator*in um Hilfe!'
+      subject: "[%{app_name}][%{collection_title}] Deine Aufgabe!"
+      text:
+        assignment: Dir wurde folgender Wunsch in der Herausforderung "%{collection_title}"
+          (%{collection_url}) im AO3 zugewiesen!
+        footer: Du erhältst diese E-Mail, weil Du Dich für die Herausforderung %{title}
+          (%{url}) angemeldet hast. Weitere Einzelheiten zu dieser Herausforderung,
+          sowie Kontaktinformationen der Moderator*innen findest Du unter %{profile_url}.
+        look_up: Du kannst diese Aufgabe auf der Assignments (Aufgaben) Seite unter
+          %{link} ansehen.
+    change_email:
+      part1: "%{login}, die mit Deinem Konto verknüpfte E-Mail-Adresse wurde zu %{email}
+        geändert."
+      subject: "[%{app_name}] E-Mail-Adresse geändert"
+    collection_notification:
+      assignments_sent:
+        complete: Alle Aufgaben wurden versendet.
+        subject: Aufgaben versendet
+      html:
+        received_message: 'Du hast eine Nachricht zu Deiner Sammlung %{collection_link}
+          erhalten:'
+      text:
+        received_message: 'Du hast eine Nachricht zu Deiner Sammlung erhalten "%{collection_title}"
+          (%{collection_url}):'
+    creatorship_notification:
+      explanation: Wenn Du Mitschöpfer*in eines Werkes bist, kannst Du zu neuen Kapiteln
+        hinzugefügt werden, unabhängig von Deinen Einstellungen für Mitschöpfungen.
+        Wenn das Werk zu einer Serie hinzugefügt wird, wirst Du zu dieser ebenfalls
+        hinzugefügt.
+      html:
+        creation: "%{creation_link} von %{pseud_links}"
+        edit_chapter: das Kapitel bearbeiten
+        edit_series: die Serie bearbeiten
+        remove_chapter: Wenn Du versehentlich hinzugefügt wurdest oder nicht als Schöpfer*in
+          aufgeführt werden möchtest, kannst Du %{edit_chapter_link}, um Dich selbst
+          als Schöpfer*in zu entfernen.
+        remove_series: Wenn Du versehentlich hinzugefügt wurdest oder nicht als Schöpfer*in
+          aufgeführt werden möchtest, kannst Du %{edit_series_link}, um Dich selbst
+          als Schöpfer*in zu entfernen.
+      intro_chapter: 'Der/die Benutzer*in %{adding_user} hat Dein Pseudonym %{pseud}
+        als Mitschöpfer*in zu folgendem Kapitel hinzugefügt:'
+      intro_series: 'Der/die Benutzer*in %{adding_user} hat Dein Pseudonym %{pseud}
+        als Mitschöpfer*in zur folgenden Serie hinzugefügt:'
+      subject: "[%{app_name}] Mitschöpfer*in-Benachrichtigung"
+      text:
+        creation: "%{title} (%{url}) von %{pseuds}"
+        remove_chapter: 'Wenn Du versehentlich hinzugefügt wurdest oder nicht als
+          Schöpfer*in aufgeführt werden möchtest, kannst Du das Kapitel bearbeiten,
+          um Dich selbst als Schöpfer*in zu entfernen: %{url}'
+        remove_series: 'Wenn Du versehentlich hinzugefügt wurdest oder nicht als Schöpfer*in
+          aufgeführt werden möchtest, kannst Du die Serie bearbeiten, um Dich selbst
+          als Schöpfer*in zu entfernen: %{url}'
+    creatorship_notification_archivist:
+      explanation: In der Funktion als Archivist*in darf er/sie Dich ohne Einladung
+        hinzufügen, selbst wenn Du die Option, als Mitschöpfer*in geführt zu werden,
+        deaktiviert hast.
+      html:
+        creation: "%{creation_link} von %{pseud_links}"
+        edit_chapter: das Kapitel editieren
+        edit_series: die Serie editieren
+        edit_work: das Werk editieren
+        remove_chapter: Falls Du irrtümlicherweise hinzugefügt wurdest oder nicht
+          als Schöpfer*in angezeigt werden möchtest, kannst Du %{edit_chapter_link},
+          um Dich als Schöpfer*in zu entfernen.
+        remove_series: Falls Du irrtümlicherweise hinzugefügt wurdest oder nicht als
+          Schöpfer*in angezeigt werden möchtest, kannst Du %{edit_series_link}, um
+          Dich als Schöpfer*in zu entfernen.
+        remove_work: Falls Du irrtümlicherweise hinzugefügt wurdest oder nicht als
+          Schöpfer*in angezeigt werden möchtest, kannst Du %{edit_work_link}, um Dich
+          als Schöpfer*in zu entfernen.
+      intro_chapter: 'Der/Die Benutzer*in %{archivist} hat Dein Pseudonym %{pseud}
+        als Mitschöpfer*in zu folgendem Kapitel hinzugefügt:'
+      intro_series: 'Der/Die Benutzer*in %{archivist} hat Dein Pseudonym %{pseud}
+        als Mitschöpfer*in zur folgenden Serie hinzugefügt:'
+      intro_work: 'Der/Die Benutzer*in %{archivist} hat Dein Pseudonym %{pseud} als
+        Mitschöpfer*in zu folgendem Werk hinzugefügt:'
+      subject: "[%{app_name}] Archivist*innen-Benachrichtigung zur Mitschöpferschaft"
+      text:
+        creation: "%{title} (%{url}) von %{pseuds}"
+        remove_chapter: 'Falls Du irrtümlicherweise hinzugefügt wurdest oder nicht
+          als Schöpfer*in angezeigt werden möchtest, kannst Du das Kapitel editieren,
+          um Dich als Schöpfer*in zu entfernen: %{url}'
+        remove_series: 'Falls Du irrtümlicherweise hinzugefügt wurdest oder nicht
+          als Schöpfer*in angezeigt werden möchtest, kannst Du die Serie editieren,
+          um Dich als Schöpfer*in zu entfernen: %{url}'
+        remove_work: 'Falls Du irrtümlicherweise hinzugefügt wurdest oder nicht als
+          Schöpfer*in angezeigt werden möchtest, kannst Du das Werk editieren, um
+          Dich als Schöpfer*in zu entfernen: %{url}'
+    creatorship_request:
+      html:
+        creation: "%{creation_link} von %{pseud_links}"
+        instructions: Du kannst diese Anfrage auf deiner "%{page_name}"-Seite annehmen
+          oder ablehnen.
+        page_name: Co-Creator Requests (Mitschöpfer*innen-Anfragen)
+      intro_chapter: 'dein Pseud %{pseud} wurde von %{inviting_user} eingeladen, als
+        Mitschöpfer*in des folgenden Kapitels aufgeführt zu werden:'
+      intro_series: 'dein Pseud %{pseud} wurde von %{inviting_user} eingeladen, als
+        Mitschöpfer*in der folgenden Serie aufgeführt zu werden:'
+      intro_work: 'dein Pseud %{pseud} wurde von %{inviting_user} eingeladen, als
+        Mitschöpfer*in des folgenden Werkes aufgeführt zu werden:'
+      subject: "[%{app_name}] Mitschöpfer*innen-Anfrage"
+      text:
+        creation: "%{title} (%{url}) von %{pseuds}"
+        instructions: 'Du kannst diese Anfrage auf deiner "Co-Creator Requests"- (Mitschöpfer*innen-Anfragen)
+          Seite annehmen oder ablehnen: %{url}'
+    delete_work_notification:
+      html:
+        part1_other: Dein Werk %{title} wurde gemäß Anfrage von %{pseud} gelöscht.
+        part1_yourself: Dein Werk %{title} wurde gemäß Deiner Anfrage gelöscht.
+        part2: Wenn Du Fragen hast, %{support}.
+      part3: Anbei ist eine Kopie Deines Werkes, als Referenz für Dich.
+      subject: "[%{app_name}] Dein Werk wurde gelöscht"
+      support: kontaktiere bitte den Support
+      text:
+        part1_other: Dein Werk "%{title}" wurde gemäß Anfrage von %{pseud} gelöscht.
+        part1_yourself: Dein Werk "%{title}" wurde gemäß Deiner Anfrage gelöscht.
+        part2: Falls Du Fragen hast, bitte %{support} (%{url}).
+    invitation_to_claim:
+      html:
+        ao3_news: AO3 Neuigkeiten
+        contact_open_doors: kontaktiere bitte Open Doors
+        contact_support: kontaktiere bitte AO3 Support
+        faq_page: Häufig gestellte Fragen (FAQ) Seite
+        open_doors: Open Doors (Offene Türen)
+        part5: Beanspruche Deine Werke oder entferne sie hier.
+        tutorial_page: Anleitungsseite
+      part12: Wenn Du uns kontaktierst, füge bitte E-Mail-Adressen von @transformativeworks.org
+        zur Liste sicherer Absender hinzu und schau auch in Deinem Spam-Ordner nach
+        unserer Antwort.
+      part6: 'Die hochgeladenen Werke umfassen:'
+      part8: Um Empfehlungslisten und Lesezeichen zu erhalten, kann es sein, dass
+        die Webadressen des importierten Archivs für eine begrenzte Zeit auf die importierte
+        Kopie dieser Werke umleiten (überprüfe die Ankündigung Deines Archivs, um
+        sicher zu gehen). Wenn Du diese Werke schon einmal hochgeladen hast und dabei
+        NICHT die Funktion "Import von URL" benutzt hast, gibt es nun zwei Versionen
+        des Werkes im Archiv.
+      subject: "[%{app_name}] Einladung zur Inanspruchnahme von Werken"
+      text:
+        part1: 'Du bekommst diese E-Mail, da kürzlich ein Archiv durch Open Doors
+          (Offene Türen: %{open_doors_link}) in das %{app_name} (%{app_short_name}
+          - Ein Eigenes Archiv: %{app_url}) importiert wurde, und wir denken, dass
+          die folgenden Fanwerke Dir gehören.  Wir möchten Dir gerne die Möglichkeit
+          geben, diese Werke als Deine in Anspruch zu nehmen (oder zu löschen/auszuwildern),
+          sofern Du das möchtest. Und wenn Du noch keinen Account bei uns hast (möglicherweise
+          über eine andere E-Mail-Adresse), würden wir Dich gerne zu uns einladen!'
+        part10: Wenn Du noch weitere Werke auf dem importierten Archiv veröffentlicht
+          hast, die über eine E-Mail-Adresse laufen, auf die Du keinen Zugriff mehr
+          hast, kontaktiere bitte Open Doors mit sämtlichen Informationen, die dabei
+          helfen können, Deine Identität zu verifizieren.
+        part11: Für alle weiteren Fragen kontaktiere bitte den AO3-Support unter %{support_link}.
+        part2: Du findest Ankündigungen zu kürzlichen Archiv-Umzügen unter AO3-Neuigkeiten
+          (%{news_link}) und weitere Informationen auf Open Doors FAQ-Seite (%{open_doors_faq_link})
+          oder der Anleitungsseite (%{open_doors_tutorial_link}). Für Fragen, die
+          weder in den FAQ, den Anleitungen, noch in dieser E-Mail beantwortet werden,
+          kontaktiere den Support unter %{support_link}.
+        part3: Falls wir uns irren und diese Werke nicht von Dir sind, lösche sie
+          bitte nicht! Kontaktiere bitte Open Doors unter %{open_doors_link}, und
+          wir kümmern uns darum.
+        part4: Abhängig vom ursprünglichen Archiv kann es sein, dass Deine importierten
+          Werke nur für registrierte Benutzer*innen zugänglich sind (damit man sie
+          über Google nicht finden kann). Falls dies der Fall ist, können Deine Werke
+          nur von eingeloggten Benutzer*innen geöffnet werden, außer Du entscheidest
+          Dich dafür, sie frei zugänglich zu machen. Wenn du Hilfe brauchst, Deine
+          Werke frei zugänglich zu machen, sie auszuwildern oder zu löschen, kontaktiere
+          bitte den AO3 Support.
+        part5: 'Beanspruche Deine Werke oder entferne sie hier: %{claim_url}'
+        part7: Wenn diese Werke Dir gehören, Du sie aber nicht behalten möchtest,
+          kannst Du sie auswildern (hierbei bleiben sie auf dem AO3 stehen, aber ohne
+          Angabe Deines Namens) oder löschen (dann werden sie komplett vom AO3 entfernt).
+          Du musst Deine Werke keinem Account hinzufügen, um sie auszuwildern oder
+          zu löschen – Du kannst beides direkt über den Inanspruchnahme-Link oben
+          erledigen. (Für Unterstützung dabei, kontaktiere bitte den Support unter
+          %{support_link}.)
+        part9: Wenn Du möchtest, dass Open Doors die Weiterleitung aktualisiert, um
+          auf Dein bereits existierendes Werk zu verweisen, lösche bitte die importierte
+          Kopie, und kontaktiere Open Doors unter %{open_doors_link} mit Deinem AO3-Accountnamen,
+          Deinem Accountnamen im importierten Archiv und dem Titel sowie der URL des
+          Fanwerks, auf das die Weiterleitung verweisen soll. (Falls Du die Weiterleitungen
+          für mehrere Werke ändern möchtest, kannst Du sie alle in einer E-Mail auflisten.)
+    invite_increase_notification:
+      body:
+        one: wir wollten Dir nur Bescheid sagen, dass Du %{count} neue Einladung hast,
+          die man zur Erstellung neuer Benutzer*innenkonten im AO3 verwenden kann.
+          Du kannst Freund*innen auf %{invitation_page} einladen.
+        other: wir wollten Dir nur Bescheid sagen, dass Du %{count} neue Einladungen
+          hast, die man zur Erstellung neuer Benutzer*innenkonten im AO3 verwenden
+          kann. Du kannst Freund*innen auf %{invitation_page} einladen.
+      invitation_page_link_text: deiner Invitations (Einladungs)-Seite
+      subject: "[%{app_name}] Neue Einladungen"
+    invite_request_declined:
+      main:
+        one: leider können wir Deine Anfrage für eine neue Einladung zurzeit nicht
+          erfüllen.
+        other: leider können wir Deine Anfrage für %{count} neue Einladungen zurzeit
+          nicht erfüllen.
+      reason: 'Deine Anfrage war:'
+      subject: "[%{app_name}] Anfrage nach zusätzlichen Einladungscodes abgelehnt"
+    recipient_notification:
+      html:
+        collection: Ein Geschenk-Fanwerk wurde für Dich in der %{collection_link}
+          Sammlung im AO3 veröffentlicht!
+      no_collection: Ein Geschenk-Fanwerk wurde für Dich im AO3 veröffentlicht.
+      subject:
+        collection: "[%{app_name}][%{collection_title}] Ein Geschenk-Fanwerk für Dich
+          in %{collection_title}"
+        no_collection: "[%{app_name}] Ein Geschenk-Fanwerk für Dich"
+      text:
+        collection: Ein Geschenk-Fanwerk wurde für Dich in der "%{collection_title}"
+          Sammlung (%{collection_url}) im AO3 veröffentlicht!
+    signup_notification:
+      activate_your_account: folge diesem Link, um deinen Account zu aktivieren.
+      admin_posts: AO3-Newsletter
+      bye: Wir hoffen, dass es Dir im Archiv gefallen wird.
+      contact_support: kontaktiere bitte unser Support-Team
+      faq: Häufig gestellten Fragen (FAQ)
+      html:
+        part1: Bitte %{activate_account_link}.
+        part2: Sobald Dein Benutzerkonto eingerichtet und aktiviert ist, kannst Du
+          Deine Fanwerke veröffentlichen, E-Mail-Benachrichtigungen einrichten, die
+          Dich informieren, wenn es Aktualisierungen von Deinen Lieblingsschöpfer*innen
+          oder -werken gibt, Deine Einstellungen anpassen, damit die Seite so aussieht
+          und funktioniert, wie es für Dich passt, über den Verlauf nachverfolgen,
+          welche Werke Du im Archiv angesehen hast und vieles mehr.
+        part3: Es gibt eine Menge Informationen und Tipps zur Nutzung des Archivs
+          in unseren %{faq_link}. Du findest die aktuellsten Neuigkeiten zur Entwicklung
+          unserer Seite in unserem %{admin_posts_link}. Falls Du weitere Hilfe benötigen,
+          auf einen Bug stoßen oder Fragen oder Kommentare haben solltest, dann %{contact_support_link},
+          dessen Mitglieder sich immer freuen, wenn sie Dir helfen können.
+      text:
+        part1: 'Bitte folge diesem Link, um Dein Benutzerkonto zu aktivieren: %{activate_account_url}'
+        part2: Sobald Dein Benutzerkonto eingerichtet und aktiviert ist, kannst Du
+          Deine Fanwerke veröffentlichen, E-Mail-Benachrichtigungen einrichten, die
+          Dich informieren, wenn es Aktualisierungen von Deinen Lieblingsschöpfer*innen
+          oder -werken gibt, Deine Einstellungen anpassen, damit die Seite so aussieht
+          und funktioniert, wie es für Dich passt, über den Verlauf nachverfolgen,
+          welche Werke Du im Archiv angesehen hast und vieles mehr.
+        part3: 'Es gibt eine Menge Informationen und Tipps zur Nutzung des Archivs
+          in unseren Häufig gestellten Fragen (FAQ) unter %{faq_url}. Du findest die
+          aktuellsten Neuigkeiten zur Entwicklung unseren AO3-Newslettern unter %{admin_posts_url}.
+          Falls Du weitere Hilfe benötigen, auf einen Bug stoßen oder Fragen oder
+          Kommentare haben solltest, dann kontaktiere bitte unser Support-Team, dessen
+          Mitglieder sich immer freuen, wenn sie Dir helfen können: %{contact_support_url}.'
+      welcome: Willkommen im Archive of Our Own - AO3 (Ein Eigenes Archiv), %{login}!

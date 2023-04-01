@@ -1,0 +1,63 @@
+<% # implied opening fieldset tag %>
+  <p class="notes">
+    <%= ts("To add or remove an owner or moderator, enter their name. If they are already on the list they will be removed; if not, they will be added.
+  You can't remove the sole owner of a tag set.") %>
+  </p>
+
+  <dl>
+    <dt><%= ts("Current Owners") %></dt>
+    <dd>
+      <ul class="mods commas">
+        <%= @tag_set.new_record? ? content_tag(:li, current_user.default_pseud.byline) : @tag_set.owners.collect(&:byline).sort.map {|owner| content_tag(:li, owner)}.join("\n").html_safe =%>
+      </ul>
+    </dd>
+    <dt><%= form.label :owner_changes, ts("Add/Remove Owners: ") %></dt>
+    <dd><%= form.text_field :owner_changes, autocomplete_options("pseud", :size => 80) %></dd>
+
+    <dt><%= ts("Current Moderators") %></dt>
+    <dd>
+      <ul class="mods commas"><%= @tag_set.moderators.empty? ? content_tag(:li, ts("None")) : @tag_set.moderators.collect(&:byline).sort.map {|mod| content_tag(:li, mod)}.join("\n").html_safe =%></ul>
+    </dd>
+
+    <dt><%= form.label :moderator_changes, ts("Add/Remove Moderators: ") %></dt>
+    <dd><%= form.text_field :moderator_changes, autocomplete_options("pseud", :size => 80) %></dd>
+  </dl>
+</fieldset>
+
+<fieldset>
+  <legend><%= ts("Description") %></legend>
+  <h3 class="landmark heading"><%= ts("Description") %></h3>
+  <dl>
+    <dt class="required"><%= form.label :title, ts("Title* (text only)") %></dt>
+    <dd><%= form.text_field :title %></dd>
+
+    <dt><%= form.label :description, ts("Brief Description") %></dt>
+    <dd><%= form.text_field :description %></dd>
+
+    <dt><%= form.label :visible, ts("Visible tag list?") %></dt>
+    <dd><%= form.check_box :visible %></dd>
+
+    <dt><%= form.label :usable, ts("Usable by others?") %></dt>
+    <dd><%= form.check_box :usable %></dd>
+
+    <dt><%= form.label :nominated, ts("Currently taking nominations?") %></dt>
+    <dd><%= form.check_box :nominated, :onchange => "if ($j(this).is(':checked')){$j('#nomination_limits').show();} else {$j('#nomination_limits').hide();}" %></dd>
+  </dl>
+</fieldset>
+
+<fieldset id="nomination_limits" class="<%= form.object.nominated ? '' : ' hideme' %>">
+  <legend><%= ts("Nomination Limits") %></legend>
+  <h3 class="landmark heading"><%= ts("Nomination Limits") %></h3>
+  <ul class="notes">
+    <li><%= ts("If you allow <em>both</em> fandoms and characters/relationships in the same tag set,
+  the number of characters/relationships is <strong>per fandom</strong>.").html_safe %></li>
+    <li><%= ts("If that's not what you want, you
+  can have users nominate fandoms in one tag set, and characters/relationships in another tag set. Then use both tag sets in your challenge settings.").html_safe %></li>
+  </ul>
+  <dl>
+    <% TagSet::TAG_TYPES_INITIALIZABLE.each do |tag_type| %>
+      <dt><%= form.label "#{tag_type}_nomination_limit".to_sym %></dt>
+      <dd><%= form.text_field "#{tag_type}_nomination_limit".to_sym, :class => "number" %></dd>
+    <% end %>
+  </dl>
+<% # implied closing fieldset tag %>

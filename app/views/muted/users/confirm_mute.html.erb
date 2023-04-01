@@ -1,0 +1,34 @@
+<h2 class="heading"><%= t(".title", name: @muted.login) %></h2>
+
+<%= form_tag user_muted_users_path(@user, muted_id: @muted) do %>
+  <div class="caution notice">
+    <p>
+      <%= t(".sure_html", mute: tag.strong(t(".mute")), username: @muted.login) %>
+      <%= t(".will.intro") %>
+    </p>
+
+    <ul>
+      <li><%= t(".will.seeing_content") %></li>
+    </ul>
+
+    <p><%= t(".will_not.intro") %></p>
+
+    <ul>
+      <li><%= t(".will_not.prevent_emails") %></li>
+      <li><%= t(".will_not.hide_content_for_others") %></li>
+    </ul>
+
+    <p>
+      <%= t(".block_users_instead_html", blocked_users_link: link_to(t(".blocked_users_link_text"), user_blocked_users_path(@user))) %>
+    </p>
+
+    <p>
+      <%= t(".site_skin_warning_html", restore_site_skin_faq_link: link_to(t(".restore_site_skin_faq_link_text"), archive_faq_path("skins-and-archive-interface", anchor: :restoresiteskin))) %>
+    </p>
+  </div>
+
+  <p class="actions">
+    <%= link_to t(".cancel"), user_muted_users_path(@user) %>
+    <%= submit_tag t(".button") %>
+  </p>
+<% end %>

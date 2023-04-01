@@ -1,0 +1,62 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Fandoms in Need of a Wrangler") %></h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<% # Filters button for narrow screens jumps to filters when JavaScript is disabled and opens filters when JavaScript is enabled %>
+<ul class="navigation actions" role="navigation">
+  <li class="narrow-shown hidden">
+    <a href="#fandom-filters" id="go_to_filters">
+      <%= ts("Filters") %>
+    </a>
+  </li>
+</ul>
+<!--/subnav-->
+
+<%= will_paginate(@fandoms) %>
+
+<!--main content-->
+<h3 class="landmark heading"><%= ts("Listing Fandoms") %></h3>
+
+<% unless @fandoms.blank? %>
+  <ul class="fandoms index group">
+    <% for fandom in @fandoms %>
+      <li>
+        <%= link_to fandom.name + " (#{fandom.count})", {:controller => :tags, :action => :show, :id => fandom.to_param} %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<!--subnav-->
+<%= form_tag unassigned_fandoms_path,
+    method: :get,
+    class: 'narrow-hidden filters',
+    id: 'fandom-filters' do %>
+  <%= field_set_tag ts('Filter results:') do %>
+    <h3 class="landmark heading"><%= ts('Filters') %></h3>
+    <dl class="filters">
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= submit_tag ts('Sort and Filter') %></dd>
+      <dt><%= label_tag :sort, ts("Sort by") %></dt>
+      <dd>
+        <%= select_tag :sort, options_for_select({'Name' => 'name', 'Work Count' => 'count'}, params[:sort]) %>
+      </dd>
+      <dt><%= label_tag :media_id, ts("Media") %></dt>
+      <dd>
+        <%= select_tag :media_id, options_for_select([''] + Media.canonical.by_name.map{|m| m.name}, params[:media_id]) %>
+      </dd>
+      <dt class="landmark"><%= ts("Submit") %></dt>
+      <dd class="submit actions"><%= submit_tag ts('Sort and Filter') %></dd>
+    </dl>
+  <% end %>
+  <% # On narrow screens, link jumps to top of index when JavaScript is disabled and closes filters when JavaScript is enabled %>
+  <p class="narrow-shown hidden">
+    <a href="#main" id="leave_filters" class="close">
+      <%= ts("Top of Unassigned Fandoms Index") %>
+    </a>
+  </p>
+<% end %>
+<!--/subnav-->
+
+<%= will_paginate(@fandoms) %>

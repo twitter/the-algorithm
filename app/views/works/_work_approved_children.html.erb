@@ -1,0 +1,27 @@
+<!--approved children-->
+
+<div id="children" class="children module">
+  <h3 class="heading"><%= ts('Works inspired by this one:') %></h3>
+  <ul>
+  <% for child_work in inspired_by %>
+    <li>
+      <% if child_work.work.is_a?(ExternalWork) %>
+        <%= link_to child_work.work.title.html_safe, child_work.work %> <%= ts("by") %> <%= byline(child_work.work) %>
+        <% if child_work.translation %>
+          <%= ts('(translation into %{language})', :language => child_work.work.language.name) %>
+        <% end %>
+      <% elsif child_work.work.restricted? && !logged_in? %>
+        <%= ts("A [Restricted Work] by") %> <%= byline(child_work.work) %>
+        <% if child_work.translation %>
+          <%= ts('(translation into %{language})', :language => child_work.work.language.name) %>
+        <% end %> <%= ts("Log in to view.") %>
+      <% else %>
+        <%= link_to child_work.work.title.html_safe, child_work.work %> <%= ts("by") %> <%= byline(child_work.work) %>
+        <% if child_work.translation %>
+          <%= ts('(translation into %{language})', :language => child_work.work.language.name) %>
+        <% end %>
+      <% end %>
+    </li>
+  <% end %>
+  </ul>
+</div>

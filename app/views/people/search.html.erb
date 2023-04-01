@@ -1,0 +1,19 @@
+<!--SEARCHBROWSE-->
+<h2 class="heading"><%= ts("People Search") %></h2>
+
+<%= render 'shared/search_nav' %>
+
+<%= render :partial => 'people/search_form' %>
+
+<% if @people %>
+  <p><strong><%= search_results_found(@people) %></strong></p>
+  <h3 class="landmark heading">People List</h3>
+  <ol class="pseud index group">
+    <% for person in @people %>
+      <% unless person.nil? %>
+        <%= render :partial => 'people/author_blurb', :locals => {:author => person} %>
+      <% end %>
+    <% end %>
+  </ol>
+  <%= will_paginate @people %>
+<% end %>

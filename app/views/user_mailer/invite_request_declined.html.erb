@@ -1,0 +1,10 @@
+<% content_for :message do %>
+  <p><%= t("mailer.general.greeting.formal", name: style_bold(@user.login)).html_safe %></p>
+
+  <p><%= t(".main", count: @total) %></p>
+  <p><%= t(".reason") %></p>
+  <p><%= style_quote(@reason) %></p>
+
+  <p><%= t("mailer.general.closing.formal") %><br />
+  <%= t("mailer.general.signature.app_short_name") %></p>
+<% end %>

@@ -1,0 +1,27 @@
+<div id="afterword">
+  <h2 class="toc-heading"><%= ts("Afterword") %></h2>
+
+  <% unless @work.endnotes.blank? && @work.approved_children.blank? %>
+    <div class="meta">
+      <% unless @work.endnotes.blank? %>
+        <div id="endnotes">
+          <p><%= ts("End Notes") %></p>
+          <blockquote class="userstuff"><%=raw sanitize_field(@work, :endnotes) %></blockquote>
+        </div>
+      <% end %>
+
+      <% unless @work.approved_children.blank? %>
+        <dl>
+          <dt><%= ts('Works inspired by this one') %></dt>
+          <dd>
+            <%= @work.approved_related_works.where(:translation => false).map{|rw|
+"#{link_to(rw.work.title.html_safe, work_url(rw.work))} #{ts('by')} #{byline(rw.work, visibility: 'public', only_path: false)}"}.join(",
+").html_safe %>
+          </dd>
+        </dl>
+      <% end %>
+    </div>
+  <% end %>
+
+  <p class="message"><%= ts("Please") %> <%= link_to ts("drop by the archive and comment"), new_work_comment_url(@work) %> <%= ts("to let the author know if you enjoyed their work!") %></p>
+</div>

@@ -1,0 +1,11 @@
+<% if @user %>
+  <h2 class="heading"><%= ts("My Nominations") %></h2>
+  
+  <ul>
+    <% @tag_set_nominations.each do |tag_set_nomination| %>
+      <li><%= link_to ts("Nominations for %{title}", :title => @tag_set.title) %></li>
+    <% end %>
+  </ul>
+<% elsif @tag_set %>
+  <%= render "review" %>
+<% end %>

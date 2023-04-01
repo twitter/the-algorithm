@@ -1,0 +1,23 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading">
+  <%= ts("Bookmark") %>
+</h2>
+<!--/descriptions-->
+
+<!--subnav-->
+<ul class="navigation actions" role="navigation">
+  <li>
+    <% if is_author_of?(@bookmark) %>
+      <%= link_to ts("My Bookmarks"), user_bookmarks_path(@bookmark.pseud.user) %>
+    <% else %>
+      <%= link_to ts("Bookmarks by %{bookmarker}", :bookmarker => @bookmark.pseud.byline), user_bookmarks_path(@bookmark.pseud.user) %>
+    <% end %>
+  </li>
+</ul>
+<!--/subnav-->
+
+<!--main content-->
+<ul class="bookmark index group">
+  <%= render 'bookmark_blurb', :bookmark => @bookmark %>
+</ul>
+<!--/content-->

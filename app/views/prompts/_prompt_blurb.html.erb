@@ -1,0 +1,96 @@
+<% # expects "prompt", if index is passed will use that in title if none exists, if suppress_claims is true will ignore %>
+<li class="<% if is_author_of?(prompt) %>own <% end %> blurb group" role="article">
+  <div class="header module">
+    <h4 class="heading">
+      <% if !prompt.title.blank? %>
+        <%= prompt.title %>
+      <% else %>
+        <%= ts("#{prompt.class.to_s}%{index}", :index => (index ||= false) ? " #{index+1}" : '') %>
+      <% end %>
+      <% if prompt.anonymous? %>
+        <%= ts("by Anonymous") %>
+      <% else %>
+        <%= ts("by %{person}", :person => (prompt.pseud ? prompt.pseud.byline : prompt.challenge_signup.pseud.byline)) %>
+      <% end %>
+      <% unless @collection %>
+        <%= ts("in") %> <%= link_to prompt.collection.title, collection_path(prompt.collection) %>
+      <% end %>
+    </h4>
+
+    <% tag_groups = prompt.tag_groups %>
+
+    <% # eventually we should let mod specify topmost tag type to display -- ie chars and rels for single-fandom meme, freeforms for single-relationship meme  %>
+    <h5 class="fandoms heading">
+      <span class="landmark"><%= ts('Fandom') %>:</span>
+      <%= tag_groups['Fandom'].collect{|tag| link_to_tag_works(tag) }.join(', ').html_safe if tag_groups['Fandom'] %>
+      &nbsp;
+    </h5>
+
+    <!--required tags-->
+    <%= get_symbols_for(prompt, tag_groups) %>
+    <p class="datetime"><%= set_format_for_date(prompt.created_at) %></p>
+  </div>
+
+  <h6 class="landmark heading"><%= ts("Tags") %></h6>
+  <ul class="tags commas">
+    <%= blurb_tag_block(prompt, tag_groups) %>
+    <% any_types = TagSet::TAG_TYPES.select {|type| prompt.send("any_#{type}")} %>
+    <% unless any_types.empty? %>
+      <%= any_types.map { |type| content_tag(:li, ts("Any %{tag_type}", tag_type: tag_type_label_name(type)), :class => "tag") }.join("\n").html_safe %>
+    <% end %>
+  </ul>
+  <% if prompt.optional_tag_set && !prompt.optional_tag_set.tags.empty? %>
+    <h6 class="optional heading"><%= ts("Optional Tags:") %></h6>
+    <ul class="optional tags commas">
+      <%= tag_link_list(prompt.optional_tag_set.tags, link_to_works=true) %>
+    </ul>
+  <% end %>
+
+  <% unless prompt.description.blank? %>
+    <h6 class="landmark heading"><%= ts("Summary") %></h6>
+    <blockquote class="userstuff summary">
+      <%=raw sanitize_field(prompt, :description) %>
+    </blockquote>
+  <% end %>
+
+  <% unless prompt.url.blank? %>
+    <p>
+      <% url_label = prompt.collection.challenge.send("request_url_label") %><%= url_label.blank? ? ts("URL:") : url_label %>
+      <%= link_to(prompt.url, prompt.url) %>
+    </p>
+  <% end %>
+
+  <% if logged_in? %>
+    <%= render "prompts/prompt_controls", :challenge_signup => prompt.challenge_signup, :prompt => prompt %>
+  <% end %>
+
+  <% unless (suppress_claims ||= false) %>
+    <% # if prompt has been claimed list by whom %>
+    <% unless prompt.unfulfilled_claims.empty? %>
+      <div class="claims listbox group">
+        <h5 class="heading"><%= ts("Claimed By")%></h5>
+        <ul class="commas index group">
+          <% if prompt.collection.anonymous? %>
+            <%= ts("%{count} anonymous claimants", :count => prompt.unfulfilled_claims.count) %>
+          <% else %>
+            <%= User.for_claims(prompt.unfulfilled_claims.pluck(:id)).pluck(:login).map {|user| content_tag(:li, user)}.join("\n").html_safe %>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% # if prompt has been fulfilled list works %>
+    <% unless prompt.unfulfilled? %>
+      <div class="work listbox group">
+        <h5 class="heading"><%= ts("Fulfilled By")%></h5>
+        <ul class="index group">
+          <% prompt.fulfilled_claims.map(&:creation).each do |creation| %>
+            <% if creation.is_a?(Work) %>
+              <%= render "works/work_blurb", :work => creation %>
+            <% end %>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  <% end %>
+</li>

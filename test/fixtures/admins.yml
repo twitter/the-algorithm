@@ -1,0 +1,9 @@
+--- 
+admin_00001: 
+  password_salt: 7e3041ebc2fc05a40c60028e2c4901a81035d3cd
+  created_at: 2008-11-09 01:26:01 Z
+  encrypted_password: 00742970dc9e6319f8019fd54864d3ea740f04b1
+  updated_at: 2008-11-09 01:26:01 Z
+  id: 1
+  login: testadmin
+  email: user1@example.com

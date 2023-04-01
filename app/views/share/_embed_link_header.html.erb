@@ -1,0 +1,10 @@
+<% creators = if work.anonymous?
+                ts("Anonymous")
+              else
+                work.pseuds.map { |pseud| link_to(tag.strong(pseud.name), user_url(pseud.user)) }.join(", ")
+              end %>
+
+<%= ts("%{work_link} (%{word_count} words) by %{creators}",
+      work_link: link_to(tag.strong(work.title.html_safe), work_url(work)),
+      word_count: work.word_count,
+      creators: creators).html_safe %>

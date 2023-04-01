@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="keywords" content="fanfiction, transformative works, otw, fair use, archive" />
+    <meta name="language" content="en-US" />
+    <meta name="subject" content="fandom" />
+    <meta name="description" content="An Archive of Our Own, a project of the
+    Organization for Transformative Works" />
+    <meta name="distribution" content="GLOBAL" />
+    <meta name="classification" content="transformative works" />
+    <meta name="author" content="Organization for Transformative Works" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+      <% if defined?(@page_title) %>
+        <%= @page_title %>
+      <% else %>
+        <% if defined?(@page_subtitle) %>
+          <%= @page_subtitle %>
+        <% else %>
+          <%= controller.action_name=="index" ? "" : process_title(controller.action_name) %>
+          <%= controller.action_name=="index" ? process_title(controller.controller_name) : process_title(controller.controller_name.singularize) %>
+        <% end %>
+        |
+        <%= ArchiveConfig.APP_NAME %>
+      <% end %>
+    </title>
+
+    <%= render "layouts/includes" %>
+    <%= phraseapp_in_context_editor_js %>
+  </head>
+
+  <body class="<%= logged_in? ? 'logged-in' : 'logged-out' %>" <%= PhraseApp::InContextEditor.enabled? ? "data-no-turbolink" : "" %>>
+    <div id="outer" class="wrapper">
+      <ul id="skiplinks"><li><a href="#main"><%= ts("Main Content") %></a></li></ul>
+      <%= render "layouts/header" %>
+      <div id="inner" class="wrapper">
+        <!-- BEGIN main -->
+        <div id="main" class="<%= controller.controller_name + '-' + controller.action_name %> system session region" role="main">
+          <%= flash_div :error, :caution, :notice, :alert %>
+          <div class="flash"></div>
+          <div id="signin">
+            <%= yield %>
+          </div>
+        </div>
+        <!-- END main -->
+      </div>
+      <%= render "layouts/footer" %>
+    </div>
+    <%= render "layouts/javascripts" %>
+  </body>
+</html>

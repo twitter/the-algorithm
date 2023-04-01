@@ -1,0 +1,11 @@
+<% # load and cache site skin %>
+<%= skin_tag %>
+
+<!--sandbox for developers	-->
+<%= stylesheet_link_tag 'sandbox', skip_pipeline: true %>
+
+<%= mute_css %>
+
+<%= javascript_include_tag 'livevalidation_standalone', skip_pipeline: true %>
+
+<%= csrf_meta_tag %>

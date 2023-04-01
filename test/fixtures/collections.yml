@@ -1,0 +1,54 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  id: 1
+  name: TheFirstCollection
+  title: The First Collection!!!
+  email: firstcollection@example.com
+  header_image_url: http://img.skitch.com/20091207-knxk8cpkhwg1dsrnig7dpp46dj.jpg
+  description: This is the first collection yay.
+
+two:
+  id: 2
+  name: SecondCollection
+  title: The Second Collection
+  description: A second exciting collection.
+
+three:
+  id: 3
+  name: subcollection1
+  title: The First Subcollection
+  description: This is a subcollection.
+  parent_id: 1
+  
+four:
+  id: 4
+  name: challenge1
+  title: An Exciting Challenge
+  description: Wow check out this exciting challenge.
+  parent_id: 1
+
+five:
+  id: 5
+  name: closed
+  title: So Closed
+
+six:
+  id: 6
+  name: moderated
+  title: Really Moderated
+  
+seven:
+  id: 7
+  name: unrevealed
+  title: Full Of Secrets
+  
+eight: 
+  id: 8
+  name: anonymous
+  title: Who Wrote It?
+  
+nine:
+  id: 9
+  name: anon_unrevealed
+  title: Hidden Anonymous Stories  

@@ -1,0 +1,14 @@
+first:
+  user_id: 1
+  disable_share_links: false
+  preferred_locale: 1
+
+second:
+  user_id: 2
+  disable_share_links: false
+  preferred_locale: 1
+  
+third:
+  user_id: 3
+  disable_share_links: false
+  preferred_locale: 1

@@ -1,0 +1,18 @@
+<div class="header module">
+  <h4 class="heading"><%= link_to(pseud.name, user_pseud_path(pseud.user, pseud)) %>
+    <% if (pseud.name != pseud.user_name || pseud.user.pseuds.size > 1) %>
+      (<%= link_to(pseud.user_name, user_path(pseud.user)) %>)
+    <% end %>
+  </h4>
+  <% unless authored_items(pseud, @work_counts, @rec_counts).blank? %>
+    <h5 class="heading"><%= authored_items(pseud, @work_counts, @rec_counts) %></h5>
+  <% end %>
+  <div class="icon">
+    <%= icon_display(pseud.user, pseud) %>
+  </div>
+</div>
+<% unless pseud.description.blank? %>
+  <blockquote class="userstuff">
+    <%=raw sanitize_field(pseud, :description) %>
+  </blockquote>
+<% end %>

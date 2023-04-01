@@ -1,0 +1,56 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  collection_id: 1
+  pseud_id: 5
+  participant_role: Owner
+
+two:
+  collection_id: 2
+  pseud_id: 7
+  participant_role: Owner
+  
+three:
+  collection_id: 3
+  pseud_id: 5
+  participant_role: Owner
+
+four:
+  collection_id: 4
+  pseud_id: 5
+  participant_role: Owner
+
+five:
+  collection_id: 5
+  pseud_id: 18
+  participant_role: Owner
+
+six:
+  collection_id: 6
+  pseud_id: 18
+  participant_role: Owner
+
+seven:
+  collection_id: 7
+  pseud_id: 18
+  participant_role: Owner
+
+eight:
+  collection_id: 8
+  pseud_id: 18
+  participant_role: Owner
+
+nine:
+  collection_id: 9
+  pseud_id: 18
+  participant_role: Owner
+
+mod:
+  collection_id: 1
+  pseud_id: 18
+  participant_role: Moderator
+  
+member:
+  collection_id: 1
+  pseud_id: 7
+  participant_role: Member

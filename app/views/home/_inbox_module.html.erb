@@ -1,0 +1,41 @@
+<% # expects inbox_comments %>
+<div class="latest messages module">
+  <h3 class="heading">
+    <span class="title"><%= ts('Unread messages') %></span>
+    <span class="link"><%= link_to ts('My Inbox'), user_inbox_path(current_user) %></span>
+  </h3>
+  <div class="flash"></div>
+  <p class="note"><%= ts('The latest unread items from your inbox.') %></p>
+  <ul class="abbreviated comment group">
+    <% inbox_comments.each do |inbox_comment| %>
+      <li class="unread <%= css_classes_for_comment(inbox_comment.feedback_comment) %>" id="feedback_comment_<%= inbox_comment.feedback_comment_id %>">
+        <% if !can_see_hidden_comment?(inbox_comment.feedback_comment) %>
+          <p class="message"><%= ts("(This comment is under review by an admin and is currently unavailable.)") %></p>
+        <% else %>
+          <%= render 'inbox/inbox_comment_contents', feedback_comment: inbox_comment.feedback_comment %>
+        <% end %>
+        <ul class="actions">
+          <% if inbox_comment.feedback_comment.iced? %>
+            <li><%= frozen_comment_indicator %></li>
+          <% end %>
+          <% if inbox_comment.feedback_comment.unreviewed? %>
+            <li class="approve review" id="review_comment_link_<%= inbox_comment.feedback_comment.id %>">
+              <%= render 'inbox/approve_button', feedback_comment: inbox_comment.feedback_comment, approved_from: "home" %>
+            </li>
+          <% elsif can_reply_to_comment?(inbox_comment.feedback_comment) %>
+            <li>
+              <%= render 'inbox/reply_button', feedback_comment: inbox_comment.feedback_comment %>
+            </li>
+          <% end %>
+          <li id="read_comment_form_<%= inbox_comment.feedback_comment.id %>">
+            <%= render 'inbox/read_form', inbox_comment: inbox_comment, current_user: current_user %>
+          </li>
+          <li>
+            <%= render 'inbox/delete_form', inbox_comment: inbox_comment, current_user: current_user %>
+          </li>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+  <div id="reply-to-comment" class="dynamic hidden"></div>
+</div>

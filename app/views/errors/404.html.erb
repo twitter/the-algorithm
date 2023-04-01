@@ -1,0 +1,8 @@
+<h2 class="heading">Error 404</h2>
+<h3 class="heading">The page you were looking for doesn't exist.</h3>
+<% if defined? @message %>
+  <p>
+    <%= @message %>
+  </p>
+<% end %>
+<p>You may have mistyped the address or the page may have been deleted.</p>

@@ -1,0 +1,74 @@
+<h2 class="heading"><%= t(".heading") %></h2>
+
+<%= form_tag(@user, method: :delete) do %>
+  <% unless @user.coauthors.blank? %>
+    <fieldset>
+      <legend><%= t(".co_creations.legend") %></legend>
+      <p>
+        <%= t(".co_creations.summary",
+              work_count: @coauthored_works.size,
+              co_creators: print_coauthors(@user)) %>
+      </p>
+      <p>
+        <%= t(".co_creations.orphan_info",
+              orphan_link: link_to(t(".orphan"), archive_faq_path("orphaning"))
+            ).html_safe %>
+      </p>
+      <p>
+        <%= radio_button_tag :coauthor, :keep_pseud, true %>
+        <%= label_tag :coauthor_keep_pseud, t(".options.keep_pseud") %>
+      </p>
+      <p>
+        <%= radio_button_tag :coauthor, :orphan_pseud %>
+        <%= label_tag :coauthor_orphan_pseud, t(".options.orphan_pseud") %>
+      </p>
+      <p>
+        <%= radio_button_tag :coauthor, :remove %>
+        <%= label_tag :coauthor_remove, t(".options.remove") %>
+      </p>
+    </fieldset>
+  <% end %>
+
+  <% unless @sole_authored_works.empty? && @sole_owned_collections.empty? %>
+    <fieldset>
+      <legend><%= t(".sole_creations.legend") %></legend>
+      <p>
+        <% unless @sole_authored_works.empty? %>
+          <%= t(".sole_creations.works_summary",
+                work_count: @sole_authored_works.size,
+                pseuds: print_pseuds(@user)) %>
+        <% end %>
+        <% unless @sole_owned_collections.empty? %>
+          <% unless @sole_authored_works.empty? %><br /><% end %>
+          <%= t(".sole_creations.collections_summary",
+                collection_count: @sole_owned_collections.size,
+                pseuds: @sole_owned_collections.collect(&:all_owners).flatten.uniq.collect(&:name).join(", ")) %>
+        <% end %>
+      </p>
+      <p>
+        <%= t(".sole_creations.options_info",
+              orphaning_link: link_to(t(".orphaning"), archive_faq_path("orphaning"))
+            ).html_safe %>
+      </p>
+      <p>
+        <%= radio_button_tag :sole_author, :keep_pseud, true %>
+        <%= label_tag :sole_author_keep_pseud, t(".options.keep_pseud") %>
+      </p>
+      <p>
+        <%= radio_button_tag :sole_author, :orphan_pseud %>
+        <%= label_tag :sole_author_orphan_pseud, t(".options.orphan_pseud") %>
+      </p>
+      <p>
+        <%= radio_button_tag :sole_author, :delete %>
+        <%= label_tag :sole_author_delete, t(".options.delete") %>
+      </p>
+    </fieldset>
+  <% end %>
+
+  <fieldset>
+    <p class="submit cancel actions">
+     <%= submit_tag t(".submit"), data: { confirm: t(".confirm") } %>
+     <%= submit_tag t(".cancel"), name: "cancel_button", class: "cancel" %>
+    </p>
+  </fieldset>
+<% end %>

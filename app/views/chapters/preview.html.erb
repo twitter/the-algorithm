@@ -1,0 +1,42 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Preview") %></h2>
+<%= error_messages_for :chapter %>
+<!--/descriptions-->
+
+<% if @work.work_skin && !Preference.disable_work_skin?(params[:style]) %>
+  <% cache("#{@work.work_skin.id}-#{@work.work_skin.updated_at}-work-skin", skip_digest: true) do %>
+    <%= render "skins/skin_style_block", skin: @work.work_skin %>
+  <% end %><!-- end cache for work skin -->
+<% end %>
+
+<div id="chapters">
+  <div id="workskin">
+    <%= render @chapter %>
+  </div>
+</div>
+
+<%= form_for([@work, @chapter]) do |f| %>
+
+  <%= render "hidden_fields", form: f %>
+
+  <fieldset>
+    <legend><%= ts("Post Chapter") %></legend>
+    <ul class="actions">
+      <% if @chapter.posted? %>
+        <li><%= submit_tag ts("Update"), name: "update_button" %></li>
+      <% else %>
+        <li>
+          <%= submit_tag ts("Post"),
+                         name: "post_button",
+                         data: { disable_with: ts("Please wait...") } %>
+        </li>
+        <li>
+          <%= submit_tag ts("Save As Draft"), name: "save_button" %>
+        </li>
+      <% end %>
+      <li><%= submit_tag ts("Edit"), name: "edit_button" %></li>
+      <li><%= submit_tag ts("Cancel"), name: "cancel_button" %></li>
+    </ul>
+  </fieldset>
+
+<% end %>

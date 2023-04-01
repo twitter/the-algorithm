@@ -1,0 +1,45 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  collection_id: 1
+  moderated: 1
+  closed: 0
+
+two:
+  collection_id: 2
+  moderated: 0
+  closed: 0
+
+three:
+  collection_id: 3
+  moderated: 1
+  closed: 0
+  unrevealed: 1
+
+four:
+  collection_id: 4
+  moderated: 1
+  closed: 1
+  anonymous: 1
+
+five:
+  collection_id: 5
+  closed: 1
+  
+six:
+  collection_id: 6
+  moderated: 1
+  
+seven:
+  collection_id: 7
+  unrevealed: 1
+  
+eight:
+  collection_id: 8
+  anonymous: 1
+  
+nine:
+  collection_id: 9
+  unrevealed: 1
+  anonymous: 1
+  

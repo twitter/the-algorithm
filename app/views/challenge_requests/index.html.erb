@@ -1,0 +1,5 @@
+<% @challenge ||= @collection.challenge %>
+
+  <% # render differently based on the challenge %>
+  <%= render "challenge/#{challenge_class_name(@collection)}/challenge_requests" %>
+

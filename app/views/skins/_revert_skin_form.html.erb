@@ -1,0 +1,10 @@
+<% # Revert from session skin (for admins, users, maybe one day guests again) %>
+<% if session[:site_skin] %>
+  <%= link_to ts("Revert to Default Skin"), unset_skins_path %>
+<% # Revert skin a logged in user set in their preferences %>
+<% elsif logged_in? && current_user.preference.skin_id != AdminSetting.default_skin_id %>
+  <%= form_for(current_user.preference, url: user_preference_path(current_user, current_user.preference), method: :patch) do |f| %>
+    <%= f.hidden_field :skin_id, value: AdminSetting.default_skin_id %>
+    <%= f.submit ts("Revert to Default Skin") %>
+  <% end %>
+<% end %>

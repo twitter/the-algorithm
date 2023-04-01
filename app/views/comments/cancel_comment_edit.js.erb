@@ -1,0 +1,11 @@
+<% comment_field_id = "#comment_#{@comment.id}" %>
+/* roll up the comment form */
+$j("<%= comment_field_id %>").slideUp();
+/* render the comment again
+   must use replaceWith() rather than html() because the single_comment partial already contains the comment li
+   and we would end up with li within li for the same comment
+ */
+$j("<%= comment_field_id %>").replaceWith("<%= escape_javascript(render :partial => "comments/single_comment", 
+                  :locals => {:single_comment => @comment, :commentable => @comment.commentable}) %>");
+/* roll down the comment */
+$j("<%= comment_field_id %>").slideDown();

@@ -1,0 +1,65 @@
+<%= form_for([@user, @pseud], html: { multipart: true }) do |f| %>
+<dl>
+  <dt><%= f.label :name, ts("Name") %></dt>
+  <dd>
+    <% if @pseud.name && @user.login == @pseud.name %>
+      <p class="important informational"><%= @pseud.name %></p>
+      <p class="footnote"><%= ts("You cannot change the pseud that matches your user name. However, you can <a href=\"#{change_username_user_path(@user)}\">change your user name</a> instead.".html_safe) %></p>
+    <% else %>
+      <%= f.text_field :name, class: "observe_textlength" %>
+    <% end %>
+    <%= generate_countdown_html("pseud_name", Pseud::NAME_LENGTH_MAX) if @pseud.name && @user.login != @pseud.name %>
+  </dd>
+  
+  <dt><%= f.label :is_default, ts('Make this name default') %></dt>
+  <dd><%= f.check_box :is_default, disabled: (@pseud.name && @user.login == @pseud.name && @pseud.is_default?) %></dd>
+  
+  <dt><%= f.label :description, ts("Description") %></dt>
+  <dd>
+    <p><%= allowed_html_instructions %></p>
+    <%= f.text_area :description, class: "observe_textlength" %>
+    <%= generate_countdown_html("pseud_description", Pseud::DESCRIPTION_MAX) %>
+  </dd>
+ 
+  <dt><%= ts("Icon") %></dt>
+  <dd>
+    <ul class="notes">
+      <% unless @pseud.new_record? %>
+        <li><%= icon_display(@user, @pseud) %> <%= ts("This is your icon.") %></li>
+      <% end %>
+      <li><%= ts("You can have one icon for each pseud") %></li>
+      <li><%= ts("Icons can be in png, jpeg or gif form") %></li> 
+      <li><%= ts("Icons should be sized 100x100 pixels for best results") %></li> 
+    </ul>
+    <% if @pseud.icon_file_name %>
+      <%= f.check_box :delete_icon, checked: false %>
+      <%= f.label :delete_icon, ts("Delete your icon and revert to our default") %>
+    <% end %>
+  </dd>
+
+  <dt><%= f.label :icon, ts("Upload a new icon:") %></dt>
+  <dd><%= f.file_field :icon %></dd>
+
+  <dt>
+    <%= f.label :icon_alt_text, ts("Icon alt text:") %>
+    <%= link_to_help "icon-alt-text" %>
+  </dt>
+  <dd>
+    <%= f.text_field :icon_alt_text, class: "observe_textlength" %>
+    <%= generate_countdown_html("pseud_icon_alt_text", ArchiveConfig.ICON_ALT_MAX) %>
+  </dd>
+
+  <dt>
+    <%= f.label :icon_comment_text, ts("Icon comment text") %>
+    <%= link_to_help('pseud-icon-comment') %>
+  </dt>
+  <dd>
+    <%= f.text_field :icon_comment_text, class: "observe_textlength" %>
+    <%= generate_countdown_html("pseud_icon_comment_text", ArchiveConfig.ICON_COMMENT_MAX) %>
+  </dd>
+
+ <dt class="landmark"><%= ts("Submit") %></dt>
+ <dd class="submit actions"><%= f.submit button_text %></dd>
+</dl>
+
+<% end %>

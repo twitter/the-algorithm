@@ -1,0 +1,6 @@
+zh-CN:
+  layouts:
+    proxy_notice:
+      faux_heading: "重要提示："
+      point1: "您使用的是第三方开发的反向代理网站，此网站并非Archive of Our Own - AO3（AO3作品库）原站。"
+      point2: "代理网站的开发者能够获取您上传至该站点的全部内容，包括您的ip地址。如您通过代理登录AO3，对方将获得您的密码。"

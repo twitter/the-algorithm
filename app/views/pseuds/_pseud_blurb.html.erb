@@ -1,0 +1,18 @@
+<li class="user pseud picture blurb group" role="article">
+  <%= render "pseud_module", pseud: pseud %>
+
+  <% if current_user == pseud.user %>
+    <h6 class="landmark heading">User Actions</h6>
+    <ul class="actions" role="navigation">
+      <li><%= link_to "#{h(ts('Edit'))} <span class=\"landmark\"> #{h pseud.name}</span>".html_safe, [:edit, @user, pseud], :id => "edit_#{pseud.name.downcase.gsub(" ", "_")}" %></li>
+      <% unless pseud.works.blank? %>
+        <li><%= link_to "#{h(ts('Orphan Works'))} <span class=\"landmark\">by #{h pseud.name}</span>".html_safe, {:controller => 'orphans', :action => 'new', :pseud_id => pseud.id} %></li>
+      <% end %>
+      <% if pseud.is_default? %>
+        <li><span class="current">Default Pseud</span></li>
+      <% elsif @user.login != pseud.name %>
+        <li><%= link_to "#{h(ts('Delete'))} <span class=\"landmark\"> #{h pseud.name}</span>".html_safe, [@user, pseud], data: {confirm: ts('Are you sure?')}, :id => "delete_#{pseud.name.underscore}", :method => :delete %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

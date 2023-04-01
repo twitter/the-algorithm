@@ -1,0 +1,14 @@
+<!--Descriptive page name, messages and instructions--><!--/descriptions-->
+<h2 class="heading"><%= ts('Post New Chapter') %></h2>
+<h3 class="heading"><%= @work.title.html_safe %></h3>
+
+<%= error_messages_for :chapter %>
+<!--/descriptions-->
+
+<!--subnav-->
+<!--/subnav-->
+
+<!--main content-->
+<%= render 'chapter_form', :chapter => @chapter %>
+<!--/content-->
+

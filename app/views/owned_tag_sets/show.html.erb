@@ -1,0 +1,65 @@
+<div class="tagset home">
+
+  <!--descriptive page name and messages-->
+  <h2 class="heading"><%= ts("About %{name}", :name => @tag_set.title) %></h2>
+  <!--/descriptions-->
+
+  <!--subnav-->
+  <%= render "navigation" %>
+  <!--/subnav-->
+
+  <!--main content-->
+  <h3 class="landmark heading"><%= ts("Metadata") %></h3>
+  <div class="wrapper">
+    <dl class="meta">
+      <dt><%= ts("Created on: ") %></dt>
+      <dd class="datetime"><%= l(@tag_set.created_at.to_date) %></dd>
+      <dt><%= ts("Maintainers:") %></dt>
+      <dd>
+        <ul class="mods commas">
+          <%= (@tag_set.owners + @tag_set.moderators).map {|owner| content_tag(:li, link_to(owner.byline, owner.user))}.join("\n").html_safe %>
+        </ul>
+      </dd>
+      <dt><%= ts("Description:")%></dt>
+      <dd>
+        <%=raw sanitize_field(@tag_set, :description) %>
+        <% if @tag_set.description.blank? %>
+          <p><%= ts("No description given.") %></p>
+        <% end %>
+        <% if @tag_set.usable %>
+          <p><%= ts("This tag set can be used in challenge settings by anybody.") %></p>
+        <% end %>
+      </dd>
+      <% if @tag_set.nominated %>
+        <dt><%= ts("Status:") %></dt>
+        <dd><strong><%= ts("Open") %></strong> <%= ts("to the public.") %></dd>
+        <dt class="stats"><%= ts("Stats:")%></dt>
+        <dd class="stats">
+          <p><%= ts("Nominations allowed per person:") %></p>
+          <dl class="stats">
+            <% TagSet::TAG_TYPES_INITIALIZABLE.each do |tag_type| %>
+              <dt><%= ts("#{tag_type.pluralize.capitalize}: ") %></dt>
+              <dd><%= @tag_set.send("#{tag_type}_nomination_limit") %></dd>
+            <% end %>
+          </dl>
+        <% end %>
+      </dd>
+    </dl>
+  </div>
+
+  <% if @tag_set.visible || @tag_set.user_is_moderator?(current_user) %>
+
+    <h3 class="landmark heading"><%= ts("Listing Tags") %></h3>
+
+    <% tagset_cache_key = @tag_type ? "tag_set_show_#{@tag_set.tag_set_id}_#{@tag_type}" : "tag_set_show_#{@tag_set.tag_set_id}" %>
+    <%= cache(tagset_cache_key, skip_digest: true) do %>
+      <%= render "show_tag_set_tags" %>
+      <%= render "show_tag_set_associations" %>
+    <% end %>
+
+  <% else %>
+    <p class="notice"><%= ts("The moderators have chosen not to make the tags in this set visible to the public (possibly while nominations are underway).") %></p>
+  <% end %>
+  <!--/content -->
+
+</div>

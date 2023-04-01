@@ -1,0 +1,26 @@
+<!--Descriptive page name, messages and instructions-->
+<h2 class="heading"><%= ts("Request Invitations") %></h2>
+<p>
+  <%= ts("We don't normally grant more than 3 invitations at a time for personal use, and the maximum you can request through this form is %{max}. Requests are manually reviewed and may take several days to be approved. Please ", :max => ArchiveConfig.MAX_USER_INVITE_REQUEST.to_s) %>
+  <%= link_to ts('contact Support'), new_feedback_report_path %> <%= ts("if you need more than 10 invitations for a challenge, or if your challenge or collection is opening soon.") %>
+</p>
+<!--/descriptions-->
+
+<!--subnav-->
+<%= render "invitations/user_invitations_navigation" %>
+<!--/subnav-->
+
+<!--main content-->
+<%= form_for(@user_invite_request) do |f| %>
+  <p class="required notice"><%= ts("* Required information") %></p>
+  <%= error_messages_for @user_invite_request %>
+  <dl>
+    <dt class="required"><%= f.label :quantity, ts("How many invitations would you like? (max %{max})", :max => ArchiveConfig.MAX_USER_INVITE_REQUEST.to_s) + "*" %></dt>
+    <dd><%= f.text_field :quantity, :size => '2', :class => 'number' %></dd>
+    <dt class="required"><%= f.label :reason, ts("Please specify why you'd like them:") + "*" %></dt>
+    <dd><%= f.text_area :reason, :size => '50x5' %></dd>
+    <dt class="landmark">Submit</dt>
+    <dd class="submit actions"><%= f.submit ts("Send Request") %></dd>
+  </dl>
+<% end %>
+<!--/content-->
