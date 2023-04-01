@@ -31,3 +31,7 @@ These are the main components of the Recommendation Algorithm included in this r
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
 We include Bazel BUILD files for most components, but not a top level BUILD or WORKSPACE file.
+
+## Contributing
+
+Please read [this](/Contributing.md)
