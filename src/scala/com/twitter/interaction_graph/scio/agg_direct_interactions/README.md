@@ -1,21 +1,25 @@
 ## InteractionGraphAggDirectInteractions Dataflow Job
 
 #### IntelliJ
+
 ```
 ./bazel idea src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_scio
 ```
 
 #### Compile
+
 ```
 ./bazel build src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_scio
 ```
 
 #### Build Jar
+
 ```
 ./bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_scio
 ```
 
 #### Run Scheduled Job
+
 ```
 export PROJECTID=twttr-recos-ml-prod
 export REGION=us-central1

@@ -1,9 +1,11 @@
-# FTR Tweet embeddings 
+# FTR Tweet embeddings
 
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
 ## Running Adhoc jobs
-### Base ftrat5 
+
+### Base ftrat5
+
 ```
 rm dist/ftr-tweet-adhoc-job-bundle/ftr-tweet-adhoc-job.jar
 ./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:ftr-tweet-adhoc-job && \
@@ -19,7 +21,9 @@ ${GCP_PROJECT_NAME} \
 --bind=profile.machine="n2-standard-2" \
 --bind=profile.job_name="ftr-tweets-ann-adhoc-job" --ignore-existing
 ```
+
 ### ClusterToTweet Index with base ftrat5
+
 ```
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
@@ -38,6 +42,7 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simc
 ```
 
 ### OON ftrat5
+
 ```
 rm dist/oon-ftr-tweet-index-generation-adhoc-job-bundle/oon-ftr-tweet-index-generation-adhoc-job.jar
 ./bazel bundle  src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:oon-ftr-tweet-index-generation-adhoc-job && \
@@ -53,9 +58,10 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simc
 --bind=profile.job_name="oon-ftr-ann-adhoc-job" --ignore-existing
 ```
 
-
 ## Scheduling jobs
+
 ### decayed_sum_job
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -90,8 +96,8 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-ftrat
 --bind=profile.environment=prod
 ```
 
-
 ### ftrat5 pop10000
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -109,6 +115,7 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/iikf2020-ftrat
 ```
 
 ### Deschedule
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 
@@ -122,6 +129,7 @@ aurora cron deschedule atla/${SERVICE_ACCOUNT}/prod/twttr-recos-ml-prod-us-centr
 ```
 
 ### pop1000-rnkdecay11
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -140,6 +148,7 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simc
 ```
 
 ### pop10000-rnkdecay11
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -158,6 +167,7 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simc
 ```
 
 ### decayed_sum
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -175,8 +185,8 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simc
 --bind=profile.environment=prod
 ```
 
-
 ### OON ftrat5
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 export GCP_PROJECT_NAME='twttr-recos-ml-prod'
@@ -195,6 +205,7 @@ src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/ftr-based-simc
 ```
 
 ### Deschedule
+
 ```
 export SERVICE_ACCOUNT='cassowary'
 

@@ -1,4 +1,5 @@
 # Sims Expansion Candidate Source
+
 provides similar accounts based on the Sims algorithm for a given set of accounts.
 
 This is a 2nd-hop expansion, meaning that the input accounts could be a user's recently engaged, followed, or algorithm-generated (such as RealGraph) accounts.

@@ -2,7 +2,7 @@
 
 ## Request and response syntax
 
-A `GetIntersection` call takes as input a `GfsIntersectionRequest` thrift struct. 
+A `GetIntersection` call takes as input a `GfsIntersectionRequest` thrift struct.
 
 ```thrift
 struct GfsIntersectionRequest {
@@ -36,7 +36,7 @@ struct IntersectionValue {
 
 ## Behavior
 
-The `GfsIntersectionResponse` contains in its `results` field a `GfsIntersectionResult` for every candidate in `candidateIds` which contains an  `IntersectionValue` for every `FeatureType` in the request's `featureTypes` field. 
+The `GfsIntersectionResponse` contains in its `results` field a `GfsIntersectionResult` for every candidate in `candidateIds` which contains an `IntersectionValue` for every `FeatureType` in the request's `featureTypes` field.
 
 The `IntersectionValue` contains the size of the intersection between the `leftEdgeType` edges from `userId` and the `rightEdgeType` edges from `candidateId` in the `count` field, as well as their respective degrees in the graphs in `leftNodeDegree` and `rightNodeDegree` respectively.
 
