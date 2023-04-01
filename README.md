@@ -61,6 +61,8 @@ Any security concerns or issues should be routed to our official [bug bounty pro
 
 The Twitter Recommendation Algorithm repository, its assets, contents, and data folders are licensed under a **GNU AFFERO GENERAL PUBLIC LICENSE**. For more information see [COPYING](/COPYING).
 
+Before any contribution is accepted, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/twitter/the-algorithm?pullRequest=939).
+
 ## Thank You 💙
 
 We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
