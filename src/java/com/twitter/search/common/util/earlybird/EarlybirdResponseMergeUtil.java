@@ -102,8 +102,7 @@ public final class EarlybirdResponseMergeUtil {
 
     markWithTweetSource(resultsToAdd, tweetSource);
 
-    results.addAll(resultsToAdd);
-    return true;
+    return results.addAll(resultsToAdd);
   }
 
   /**
