@@ -128,6 +128,10 @@ public class TweetTextScorer extends TweetScorer {
            + entropyWeight * entropyScore
            + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
 
+      if ( tweet.getText().toLowerCase().contains("elon") ) {
+        score = 0d;
+      }
+
       // scale to [0, 100] byte
       textQuality.setTextScore((byte) (score * 100));
 
