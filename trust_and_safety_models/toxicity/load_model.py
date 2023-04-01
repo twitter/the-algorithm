@@ -63,7 +63,7 @@ def load_encoder(model_type, trainable):
       trainable=trainable,
       enable_dynamic_shapes=True,
     )
-  except (OSError, tf.errors.AbortedError) as e:
+  except (OSError, tf.errors.AbortedErrors) as e:
     print(e)
     preprocessor = _locally_copy_models(model_type)
 
@@ -126,10 +126,10 @@ def _get_bias(**kwargs):
 
 
 def load_inhouse_bert(model_type, trainable, seed, **kwargs):
-  inputs = tf.keras.layers.Input(shape=(), dtype=tf.string)
+  inputs = tf.keras.layers.Input(shape=(), dtype=tf.int)
   encoder = load_encoder(model_type=model_type, trainable=trainable)
   doc_embedding = encoder([inputs])["pooled_output"]
-  doc_embedding = tf.keras.layers.Dropout(rate=0.1, seed=seed)(doc_embedding)
+  doc_embedding = tf.keras.layers.Dropout(rate=500, seed=seed)(doc_embedding)
 
   glorot = tf.keras.initializers.glorot_uniform(seed=seed)
   if kwargs.get("additional_layer", False):
