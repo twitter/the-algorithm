@@ -570,10 +570,8 @@ public class BasicIndexingConverter {
     if (retweetUserId.isPresent()) {
       builder.withNativeRetweet(retweetUserId.get(), sharedStatusId.get());
 
-      if (inReplyToUserId.isPresent()) {
-        // Set IN_REPLY_TO_USER_ID_FIELD even if this is a retweet of a reply.
-        builder.withInReplyToUserID(inReplyToUserId.get());
-      }
+      // Set IN_REPLY_TO_USER_ID_FIELD even if this is a retweet of a reply.
+      inReplyToUserId.ifPresent(builder::withInReplyToUserID);
     } else {
       // If this is a retweet of a reply, we don't want to mark it as a reply, or override fields
       // set by the retweet logic.
