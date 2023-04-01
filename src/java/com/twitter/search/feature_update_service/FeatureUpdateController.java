@@ -106,8 +106,6 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
 
   @Override
   public Future<FeatureUpdateResponse> process(FeatureUpdateRequest featureUpdate) {
-    long requestStartTimeMillis = clock.nowMillis();
-
     // Export overall and per-client request rate stats
     final String requestClientId;
     if (featureUpdate.getRequestClientId() != null
