@@ -8,7 +8,7 @@ import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
 object UserUtil {
 
   /**
-   * placeholder for the destId when representing vertex features with no dest (eg create tweet)
+   * placeholder for the destId when representing vertex features with no dest (e.g., create tweet)
    * this will only be aggregated and saved in the vertex datasets but not the edge datasets
    */
   val DUMMY_USER_ID = -1L

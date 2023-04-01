@@ -64,7 +64,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
    * @param clientQuotaKey The key that will be used to extract client quotas.
    * @param requireQuotaConfigForClients Determines whether a client can be skipped
    * if the associated object is missing the quota key
-   * (ie a client that is a SuperRoot client but the current service is Archive)
+   * (i.e. a client that is a SuperRoot client but the current service is Archive)
    */
   public static ConfigBasedQuotaConfig newConfigBasedQuotaConfig(
       String quotaConfigPath,
@@ -121,7 +121,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
       JSONObject clientQuota = quotaConfig.getJSONObject(clientId);
 
       // Skip clients that don't send requests to this service.
-      // (ie some SuperRoot clients are not Archive clients)
+      // (i.e. some SuperRoot clients are not Archive clients)
       if (!requireQuotaConfigForClients && !clientQuota.has(clientQuotaKey)) {
         continue;
       }

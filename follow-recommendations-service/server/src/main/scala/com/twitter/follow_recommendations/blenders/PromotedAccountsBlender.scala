@@ -52,7 +52,7 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
    * merge a list of positioned users, aka. promoted, and a list of organic
    * users.  The positioned promoted users are pre-sorted with regards to their
    * position ascendingly.  Only requirement about position is to be within the
-   * range, i.e, can not exceed the combined length if merge is successful, ok
+   * range, i.e., can not exceed the combined length if merge is successful, ok
    * to be at the last position, but not beyond.
    * For more detailed description of location position:
    * http://confluence.local.twitter.com/display/ADS/Promoted+Tweets+in+Timeline+Design+Document

@@ -39,7 +39,7 @@ object DataSources {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           val clustersPostFiltering = clustersUserIsInterestedIn.clusterIdToScores.filter {
             case (clusterId, clusterScores) =>
-              // filter out popular clusters (i.e clusters with > 5M users interested in it) from the user embedding
+              // filter out popular clusters (i.e. clusters with > 5M users interested in it) from the user embedding
               clusterScores.numUsersInterestedInThisClusterUpperBound.exists(
                 _ < UserInterestedInReadableStore.MaxClusterSizeForUserInterestedInDataset)
           }

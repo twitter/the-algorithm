@@ -324,7 +324,7 @@ object EarlybirdResponseUtil {
     }
   }
 
-  // Omitting inNetwork features e.g source tweet features and follow graph.
+  // Omitting inNetwork features e.g. source tweet features and follow graph.
   // Can be expanded to include InNetwork in the future.
   def applyOONUserDependentFeatures(
     searcherUserId: Long,

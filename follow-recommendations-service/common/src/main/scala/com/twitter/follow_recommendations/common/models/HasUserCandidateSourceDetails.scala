@@ -7,7 +7,7 @@ import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIde
 
 /**
  * Used to keep track of a candidate's source not so much as a feature but for filtering candidate
- * from specific sources (eg. GizmoduckPredicate)
+ * from specific sources (e.g. GizmoduckPredicate)
  */
 trait HasUserCandidateSourceDetails { candidateUser: CandidateUser =>
   def userCandidateSourceDetails: Option[UserCandidateSourceDetails]

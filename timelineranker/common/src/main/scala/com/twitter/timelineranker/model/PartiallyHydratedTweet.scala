@@ -117,7 +117,7 @@ object PartiallyHydratedTweet {
           sourceStatusId = retweetSourceTweetId.get,
           sourceUserId = retweetSourceUserId.get,
           parentStatusId =
-            retweetSourceTweetId.get // Not always correct (eg, retweet of a retweet).
+            retweetSourceTweetId.get // Not always correct (e.g., retweet of a retweet).
         )
       )
     } else None

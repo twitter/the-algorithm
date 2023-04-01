@@ -61,7 +61,7 @@ message CardinalityOptions {
   enum ComputeLevel {
     CARDINALITY_COMPUTE_UNSPECIFIED = 0;
     // Cardinality will only be computed if it can be determined in a cheap
-    // manner (ie. without reading from file sources). If the cardinality would
+    // manner (i.e. without reading from file sources). If the cardinality would
     // be nontrivial to compute, Cardinality() will return UNKNOWN_CARDINALITY.
     CARDINALITY_COMPUTE_LOW = 1;
     // Moderate effort will be made to determine cardinality, such as reading

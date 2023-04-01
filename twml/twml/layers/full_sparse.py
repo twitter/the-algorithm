@@ -53,7 +53,7 @@ class FullSparse(Layer):
       Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
       make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
       speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
+      correctly (e.g. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
       to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
       be large, so it's better to set it to `True`
     num_partitions:
@@ -319,7 +319,7 @@ def full_sparse(
       Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
       make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
       speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
+      correctly (e.g. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
       to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
       be large, so it's better to set it to `True`
     num_partitions:

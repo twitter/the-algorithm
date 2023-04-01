@@ -11,7 +11,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framewo
 // Indicates when a distributed variable will be synced.
 enum VariableSynchronization {
   // `AUTO`: Indicates that the synchronization will be determined by the
-  // current `DistributionStrategy` (eg. With `MirroredStrategy` this would be
+  // current `DistributionStrategy` (e.g. With `MirroredStrategy` this would be
   // `ON_WRITE`).
   VARIABLE_SYNCHRONIZATION_AUTO = 0;
   // `NONE`: Indicates that there will only be one copy of the variable, so
@@ -21,7 +21,7 @@ enum VariableSynchronization {
   // every time it is written.
   VARIABLE_SYNCHRONIZATION_ON_WRITE = 2;
   // `ON_READ`: Indicates that the variable will be aggregated across devices
-  // when it is read (eg. when checkpointing or when evaluating an op that uses
+  // when it is read (e.g. when checkpointing or when evaluating an op that uses
   // the variable).
   VARIABLE_SYNCHRONIZATION_ON_READ = 3;
 }

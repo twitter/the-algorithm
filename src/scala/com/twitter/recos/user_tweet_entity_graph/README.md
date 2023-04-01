@@ -5,7 +5,7 @@ User Tweet Entity Graph (UTEG) is a Finalge thrift service built on the GraphJet
 
 ## How is it used on Twitter
 UTEG generates the "XXX Liked" out-of-network tweets seen on Twitter's Home Timeline.
-The core idea behind UTEG is collaborative filtering. UTEG takes a user's weighted follow graph (i.e a list of weighted userIds) as input, 
+The core idea behind UTEG is collaborative filtering. UTEG takes a user's weighted follow graph (i.e. a list of weighted userIds) as input, 
 performs efficient traversal & aggregation, and returns the top weighted tweets engaged basd on # of users that engaged the tweet, as well as 
 the engaged users' weights.
 

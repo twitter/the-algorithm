@@ -567,7 +567,7 @@ object UpdateKnownForSBFRunner {
 
       val clusterAssignmentWithMaxScore: List[(ClusterId, Float)] =
         if (allClustersWithScores.length > 1) {
-          // if sparseBinaryMatrix z has rows with more than one non-zero column (i.e a user
+          // if sparseBinaryMatrix z has rows with more than one non-zero column (i.e. a user
           // initialized with more than one cluster), and the clustering algorithm doesnot find
           // a better proposal for cluster assignment, the user's multi-cluster membership
           // from the initialization step can continue.

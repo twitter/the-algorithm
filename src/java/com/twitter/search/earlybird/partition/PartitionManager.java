@@ -136,7 +136,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   }
 
   /**
-   * Notifies all other threads that the partition manager has become current (ie. has indexed all
+   * Notifies all other threads that the partition manager has become current (i.e. has indexed all
    * available events).
    */
   public void becomeCurrent() {

@@ -14,7 +14,7 @@ import com.twitter.search.common.file.{AbstractFile, LocalFile}
 import java.util.TimeZone
 
 /**
- * Generates the nearest neighbour for users and store them in Manhattan format i.e sequence files.
+ * Generates the nearest neighbour for users and store them in Manhattan format i.e. sequence files.
  * See README for oscar usage.
  */
 object KnnOfflineJob extends TwitterExecutionApp {

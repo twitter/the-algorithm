@@ -24,7 +24,7 @@ Timeline Ranker hydrates tweets by calling TweetyPie so that it can post-filter 
 
 **Manhattan**
 
-Timeline Ranker hydrates some tweet features (eg, user languages) from Manhattan.
+Timeline Ranker hydrates some tweet features (e.g., user languages) from Manhattan.
 
 **Home Mixer**
 

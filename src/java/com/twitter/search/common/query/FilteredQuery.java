@@ -21,7 +21,7 @@ import org.apache.lucene.search.Weight;
  * and the filter is used only to do post-filtering. In other words, the filter is never used to
  * find the next doc ID: it's only used to filter out the doc IDs returned by the query's
  * DocIdSetIterator. This is useful when we need to have a conjunction between a query that can
- * quickly iterate through doc IDs (eg. a posting list), and an expensive filter (eg. a filter based
+ * quickly iterate through doc IDs (e.g. a posting list), and an expensive filter (e.g. a filter based
  * on the values stored in a CSF).
  *
  * For example, let say we want to build a query that returns all docs that have at least 100 faves.

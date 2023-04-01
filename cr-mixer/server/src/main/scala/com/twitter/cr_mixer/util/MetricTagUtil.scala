@@ -121,7 +121,7 @@ object MetricTagUtil {
   /**
    * Special use case: used by Notifications team to generate the UserInterestedIn CRT push copy.
    *
-   * if we have different types of InterestedIn (eg. UserInterestedIn, NextInterestedIn),
+   * if we have different types of InterestedIn (e.g. UserInterestedIn, NextInterestedIn),
    * this if statement will have to be refactored to contain the real UserInterestedIn.
    * @return
    */
