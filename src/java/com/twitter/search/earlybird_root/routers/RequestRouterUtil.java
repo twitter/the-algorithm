@@ -97,7 +97,7 @@ public final class RequestRouterUtil {
                 logMessageParams.add(e);
               }
 
-              LOG.warn(logMessage, logMessageParams.toArray());
+              LOG.warn(logMessage.toString(), logMessageParams.toArray());
             }
           }
         }
