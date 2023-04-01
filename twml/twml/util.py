@@ -481,7 +481,7 @@ def set_tensorflow_log_level(log_level):
   Note that tf.Print output are INFO logs, so setting log_level above 0 would hide
   output from tf.Print.
   """
-  assert isinstance(log_level, int) and log_level >= 0 and log_level <= 3
+  assert isinstance(log_level, int) and 0 <= log_level <= 3
   os.environ['TF_CPP_MIN_LOG_LEVEL'] = str(log_level)
 
 
