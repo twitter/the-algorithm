@@ -54,7 +54,7 @@ class WeightedCandidateSourceRanker[Target <: HasParams](
     // Note 1: Using map instead mapValue here since mapValue somehow caused infinite loop when used as part of Stream.
     val sortAndShuffledCandidates = input.map {
       case (source, candidates) =>
-        // Note 2: toList is required here since candidates is a view, and it will result in infinit loop when used as part of Stream.
+        // Note 2: toList is required here since candidates is a view, and it will result in infinite loop when used as part of Stream.
         // Note 3: there is no real sorting logic here, it assumes the input is already sorted by candidate sources
         val sortedCandidates = candidates.toList
         source -> shuffleFn(sortedCandidates).iterator

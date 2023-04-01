@@ -125,7 +125,7 @@ object FrsLogger {
     /** The id of the current user. When the user is logged out, this method should return None. */
     override val userId: Option[Long] = clientContext.userId
 
-    /** The id of the guest, which is present in logged-in or loged-out states */
+    /** The id of the guest, which is present in logged-in or logged-out states */
     override val guestId: Option[Long] = clientContext.guestId
 
     /** The personalization id (pid) of the user, used to personalize Twitter services */

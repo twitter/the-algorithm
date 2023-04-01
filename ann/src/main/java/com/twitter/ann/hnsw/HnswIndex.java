@@ -34,7 +34,7 @@ import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
 import com.twitter.search.common.file.AbstractFile;
 
 /**
- * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbours
+ * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour
  * Paper: https://arxiv.org/pdf/1603.09320.pdf
  * Multithreading impl based on NMSLIB version : https://github.com/nmslib/hnsw/blob/master/hnswlib/hnswalg.h
  *
@@ -532,7 +532,7 @@ public class HnswIndex<T, Q> {
    * @param numOfNeighbours Number of neighbours to search for.
    * @param ef              This param controls the accuracy of the search.
    *                        Bigger the ef better the accuracy on the expense of latency.
-   *                        Keep it atleast number of neighbours to find.
+   *                        Keep it at least number of neighbours to find.
    * @return Neighbours
    */
   public List<DistancedItem<T>> searchKnn(final Q query, final int numOfNeighbours, final int ef) {

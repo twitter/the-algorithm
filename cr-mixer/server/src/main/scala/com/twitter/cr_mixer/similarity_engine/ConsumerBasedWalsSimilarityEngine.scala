@@ -63,7 +63,7 @@ case class WalsStats(scope: String, scopedStats: StatsReceiver) {
 }
 
 // StatsMap maintains a mapping from Model's input signature to a stats receiver
-// The Wals model suports multiple input signature which can run different graphs internally and
+// The Wals model supports multiple input signature which can run different graphs internally and
 // can have a different performance profile.
 // Invoking StatsReceiver.stat() on each request can create a new stat object and can be expensive
 // in performance critical paths.

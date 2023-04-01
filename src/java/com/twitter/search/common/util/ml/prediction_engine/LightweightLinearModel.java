@@ -20,7 +20,7 @@ import com.twitter.search.common.file.AbstractFile;
  *
  * - Only linear models are supported.
  * - Only binary and continuous features (i.e. it doesn't support discrete/categorical features).
- * - It supports the MDL discretizer (but not the one based on trees).
+ * - It supports the MDL discretiser (but not the one based on trees).
  * - It doesn't support feature crossings.
  *
  * Instances of this class should be created using only the load methods (loadFromHdfs and

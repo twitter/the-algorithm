@@ -25,7 +25,7 @@ pub fn log_feature_match(
     dr_type: String,
 ) {
     // Note the following algorithm matches features from config using linear search.
-    // Also the record source is MinDataRecord. This includes only binary and continous features for now.
+    // Also the record source is MinDataRecord. This includes only binary and continuous features for now.
 
     for (feature_id, feature_value) in dr.continuous_features.as_ref().unwrap().into_iter() {
         debug!(
@@ -304,7 +304,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
     }
 
     // Todo : Refactor, create a generic version with different type and field accessors
-    //   Example paramterize and then instiantiate the following
+    //   Example parametrize and then instantiate the following
     //           (FLOAT --> FLOAT, DataRecord.continuous_feature)
     //           (BOOL --> INT64, DataRecord.binary_feature)
     //           (INT64 --> INT64, DataRecord.discrete_feature)
