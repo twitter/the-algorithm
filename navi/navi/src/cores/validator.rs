@@ -1,4 +1,4 @@
-pub mod validatior {
+pub mod validator {
     pub mod cli_validator {
         use crate::cli_args::{ARGS, MODEL_SPECS};
 
@@ -11,12 +11,12 @@ pub mod validatior {
         }
 
         pub fn validate_ps_model_args() {
-            assert!(ARGS.versions_per_model <= 2);
             assert!(ARGS.versions_per_model >= 1);
+            assert!(ARGS.versions_per_model <= 2);
             assert_eq!(MODEL_SPECS.len(), ARGS.input.len());
             assert_eq!(MODEL_SPECS.len(), ARGS.model_dir.len());
             assert_eq!(MODEL_SPECS.len(), ARGS.max_batch_size.len());
-            assert_eq!(MODEL_SPECS.len(), ARGS.batch_time_out_millis.len());
+            assert_eq!(MODEL_SPECS.len(), ARGS.batch_timeout_millis.len());
         }
     }
 }
