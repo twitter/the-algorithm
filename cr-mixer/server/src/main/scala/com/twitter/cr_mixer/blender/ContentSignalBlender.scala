@@ -17,7 +17,7 @@ case class ContentSignalBlender @Inject() (globalStats: StatsReceiver) {
   private val stats: StatsReceiver = globalStats.scope(name)
 
   /**
-   *  Exposes multiple types of sorting relying only on Content Based signals
+   *  Exposes multiple types of sorting relying only on Content Based signals.
    *  Candidate Recency, Random, FavoriteCount and finally Standardized, which standardizes the scores
    *  that come from the active SimilarityEngine and then sort on the standardized scores.
    */
@@ -25,7 +25,7 @@ case class ContentSignalBlender @Inject() (globalStats: StatsReceiver) {
     params: Params,
     inputCandidates: Seq[Seq[InitialCandidate]],
   ): Future[Seq[BlendedCandidate]] = {
-    // Filter out empty candidate sequence
+    // Filter out empty candidate sequence.
     val candidates = inputCandidates.filter(_.nonEmpty)
     val sortedCandidates = params(BlenderParams.ContentBlenderTypeSortingAlgorithmParam) match {
       case BlenderParams.ContentBasedSortingAlgorithmEnum.CandidateRecency =>

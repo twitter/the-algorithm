@@ -18,22 +18,22 @@ case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
   private val stats: StatsReceiver = globalStats.scope(name)
 
   /**
-   *  Partition the candidates based on source type
+   *  Partition the candidates based on source type.
    *  Interleave the two partitions of candidates separately
-   *  Then append the back fill candidates to the end
+   *  and then append the back fill candidates to the end.
    */
   def blend(
     params: Params,
     inputCandidates: Seq[Seq[InitialCandidate]],
   ): Future[Seq[BlendedCandidate]] = {
 
-    // Filter out empty candidate sequence
+    // Filter out empty candidate sequence.
     val candidates = inputCandidates.filter(_.nonEmpty)
 
     val backFillSourceTypes =
       if (params(BlenderParams.SourceTypeBackFillEnableVideoBackFill)) BackFillSourceTypesWithVideo
       else BackFillSourceTypes
-    // partition candidates based on their source types
+    // Partition candidates based on their source types.
     val (backFillCandidates, regularCandidates) =
       candidates.partition(
         _.head.candidateGenerationInfo.sourceInfoOpt
@@ -43,7 +43,7 @@ case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
     val interleavedBackFillCandidates =
       InterleaveUtil.interleave(backFillCandidates)
     stats.stat("backFillCandidates").add(interleavedBackFillCandidates.size)
-    // Append interleaved backfill candidates to the end
+    // Append interleaved backfill candidates to the end.
     val interleavedCandidates = interleavedRegularCandidates ++ interleavedBackFillCandidates
 
     stats.stat("candidates").add(interleavedCandidates.size)
@@ -51,7 +51,6 @@ case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {
     val blendedCandidates = BlendedCandidatesBuilder.build(inputCandidates, interleavedCandidates)
     Future.value(blendedCandidates)
   }
-
 }
 
 object ImplicitSignalBackFillBlender {

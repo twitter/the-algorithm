@@ -105,7 +105,7 @@ class FrsTweetCandidateGenerator @Inject() (
   }
 
   /**
-   * Fetch recommended seed users from FRS
+   * Fetch recommended seed users from FRS.
    */
   private def fetchSeeds(
     userId: UserId,
@@ -131,7 +131,7 @@ class FrsTweetCandidateGenerator @Inject() (
   }
 
   /**
-   * Fetch tweet candidates from Earlybird
+   * Fetch tweet candidates from Earlybird.
    */
   private def fetchCandidates(
     searcherUserId: UserId,
@@ -141,7 +141,7 @@ class FrsTweetCandidateGenerator @Inject() (
     params: Params
   ): Future[Option[Seq[TweetWithAuthor]]] = {
     if (seedAuthors.nonEmpty) {
-      // call earlybird
+      // Call Earlybird.
       val query = EarlybirdSimilarityEngineRouter.queryFromParams(
         Some(searcherUserId),
         seedAuthors,
@@ -154,7 +154,7 @@ class FrsTweetCandidateGenerator @Inject() (
   }
 
   /**
-   * Filter candidates that do not pass visibility filter policy
+   * Filter candidates that do not pass visibility filter policy.
    */
   private def filterCandidates(
     candidates: Option[Seq[TweetWithAuthor]],
@@ -175,7 +175,7 @@ class FrsTweetCandidateGenerator @Inject() (
   }
 
   /**
-   * Hydrate the candidates with the FRS candidate sources and scores
+   * Hydrate the candidates with the FRS candidate sources and scores.
    */
   private def hydrateCandidates(
     frsAuthorWithScores: Option[Map[UserId, FrsQueryResult]],
@@ -193,8 +193,8 @@ class FrsTweetCandidateGenerator @Inject() (
             frsCandidateSourceScores = frsQueryResult.flatMap { result =>
               result.sourceWithScores.map {
                 _.collect {
-                  // see TokenStrToAlgorithmMap @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/constants/AlgorithmFeedbackTokens.scala
-                  // see Algorithm @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/model/Algorithm.scala
+                  // See TokenStrToAlgorithmMap @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/constants/AlgorithmFeedbackTokens.scala
+                  // See Algorithm @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/model/Algorithm.scala
                   case (candidateSourceAlgoStr, score)
                       if AlgorithmFeedbackTokens.TokenStrToAlgorithmMap.contains(
                         candidateSourceAlgoStr) =>
@@ -210,7 +210,6 @@ class FrsTweetCandidateGenerator @Inject() (
       }
     }
   }
-
 }
 
 object FrsTweetCandidateGenerator {

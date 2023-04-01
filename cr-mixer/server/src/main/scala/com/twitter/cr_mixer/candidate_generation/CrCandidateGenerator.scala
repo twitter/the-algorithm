@@ -48,7 +48,6 @@ class CrCandidateGenerator @Inject() (
   timeoutConfig: TimeoutConfig,
   globalStats: StatsReceiver) {
   private val timer: Timer = new JavaTimer(true)
-
   private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
 
   private val fetchSourcesStats = stats.scope("fetchSources")
@@ -78,14 +77,14 @@ class CrCandidateGenerator @Inject() (
               fetchSources(query)
             }
             initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesAfterFilterStats) {
-              // find the positive and negative signals
+              // Find the positive and negative signals.
               val (positiveSignals, negativeSignals) = sourceSignals.partition { signal =>
                 !EnabledNegativeSourceTypes.contains(signal.sourceType)
               }
               fetchPositiveSourcesStats.stat("size").add(positiveSignals.size)
               fetchNegativeSourcesStats.stat("size").add(negativeSignals.size)
 
-              // find the positive signals to keep, removing block and muted users
+              // Find the positive signals to keep, removing block and muted users.
               val filteredSourceInfo =
                 if (negativeSignals.nonEmpty && query.params(
                     RecentNegativeSignalParams.EnableSourceParam)) {
@@ -94,7 +93,7 @@ class CrCandidateGenerator @Inject() (
                   positiveSignals
                 }
 
-              // fetch candidates from the positive signals
+              // Fetch candidates from the positive signals.
               StatsUtil.trackBlockStats(fetchCandidatesStats) {
                 fetchCandidates(query, filteredSourceInfo, sourceGraphsMap)
               }
