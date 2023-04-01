@@ -103,7 +103,7 @@ object KnownForSources {
       .from(TextLine(textFile))
       .flatMap { str =>
         str match {
-          case s"#$_" => none
+          case s"#$_" => None
           case _ => try {
             val tokens = str.trim.split("\\s+")
             val userId = tokens(0).toLong
@@ -115,7 +115,7 @@ object KnownForSources {
               r += newEntry
             }).result() match {
               case (res) if res.nonEmpty => Some((userId, res.result()))
-                _ => none
+                _ => None
             }
           }
           catch {
