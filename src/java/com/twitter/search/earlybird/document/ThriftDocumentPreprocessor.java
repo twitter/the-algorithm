@@ -69,7 +69,7 @@ public final class ThriftDocumentPreprocessor {
           "nullcastFilterSet");
 
   /***
-   * See JIRA SEARCH-7329
+   * 
    */
   private static void patchArchiveThriftDocumentAccuracy(ThriftDocument doc,
                                                          EarlybirdCluster cluster) {

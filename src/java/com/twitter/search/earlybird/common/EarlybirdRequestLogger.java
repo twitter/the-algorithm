@@ -55,7 +55,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
     DEBUG_MODE,
     CACHE_HIT,
     USER_AGENT,
-    // See JIRA APPSEC-2303 for IP addresses logging
+    
   }
 
   private static final String LOG_FULL_REQUEST_DETAILS_ON_ERROR_DECIDER_KEY =
