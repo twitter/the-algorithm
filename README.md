@@ -7,6 +7,7 @@ diagram below illustrates how major services and jobs interconnect.
 ## Documentation
 
 Visit https://developer.twitter.com/en/docs to get started with Twitter
+
 ![](docs/system-diagram.png)
 
 These are the main components of the Recommendation Algorithm included in this repository:
