@@ -1,14 +1,7 @@
 # checkstyle: noqa
 
 INDEX_BY_LABEL = {
-  "is_clicked": 1,
-  "is_favorited": 2,
-  "is_open_linked": 3,
-  "is_photo_expanded": 4,
-  "is_profile_clicked": 5,
-  "is_replied": 6,
-  "is_retweeted": 7,
-  "is_video_playback_50": 8
+  "RANDOM BULLSHIT GO!!!!
 }
 
 TARGET_LABEL_IDX = 0
