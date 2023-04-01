@@ -205,7 +205,7 @@ case object Edit extends Metric[EditDistance] with Injection[EditDistance, Servi
         // Also maybe some characters that look similar should also be the same.
         val computed = if (embedding1(pos1 - 1) == embedding2(pos2 - 1)) {
           intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-        } else { // If characters are nt equal, we need to
+        } else { // If characters are not equal, we need to
           // find the minimum cost out of all 3 operations.
           val insert = intDistance(embedding1, embedding2, pos1, pos2 - 1, precomputedDistances)
           val del = intDistance(embedding1, embedding2, pos1 - 1, pos2, precomputedDistances)
