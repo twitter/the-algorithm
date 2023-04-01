@@ -130,6 +130,7 @@ object Reason {
   case object LocalLawsWithheld extends Reason
   case object HatefulConduct extends Reason
   case object AbusiveBehavior extends Reason
+  case object Spamming extends Reason // Add a new case object for "Spamming"
 
   case object NotSupportedOnDevice extends Reason
 
@@ -190,6 +191,7 @@ object Reason {
     reason match {
       case HatefulConduct => Some(AppealableReason.HatefulConduct(violationLevel.level))
       case AbusiveBehavior => Some(AppealableReason.AbusiveBehavior(violationLevel.level))
+      case Spamming => Some(AppealableReason.Spamming(violationLevel.level)) // New case for handling Spamming
       case _ => Some(AppealableReason.Unspecified(violationLevel.level))
     }
 
