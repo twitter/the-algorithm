@@ -1,10 +1,10 @@
 # Search Index (Earlybird) core classes 
 
-> **TL;DR** Earlybird (Search Index) find tweets from people you follow, rank them, and serve tweets to Home.
+> **TL;DR** Earlybird (Search Index) find Tweets from people you follow, rank them, and serve Tweets to Home.
 
 ## What is Earlybird (Search Index)
 
-[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of tweets, and to provide low-latency search results, even with heavy query loads. 
+[Earlybird](http://notes.stephenholiday.com/Earlybird.pdf) is a **real-time search system** based on [Apache Lucene](https://lucene.apache.org/) to support the high volume of queries and content updates. The major use cases are Relevance Search (specifically, Text search) and Timeline In-network Tweet retrieval (or UserID based search). It is designed to enable the efficient indexing and querying of billions of Tweets, and to provide low-latency search results, even with heavy query loads. 
 
 ## Directory Structure
 The project consists of several packages and files, which can be summarized as follows:
