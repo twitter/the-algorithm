@@ -89,7 +89,7 @@ public class SegmentIndexStats {
     sb.append("Indexed ").append(getStatusCount()).append(" documents, ");
     sb.append(getDeleteCount()).append(" deletes, ");
     sb.append(getPartialUpdateCount()).append(" partial updates, ");
-    sb.append(getOutOfOrderUpdateCount()).append(" out of order udpates. ");
+    sb.append(getOutOfOrderUpdateCount()).append(" out of order updates. ");
     sb.append("Index size: ").append(getIndexSizeOnDiskInBytes());
     return sb.toString();
   }

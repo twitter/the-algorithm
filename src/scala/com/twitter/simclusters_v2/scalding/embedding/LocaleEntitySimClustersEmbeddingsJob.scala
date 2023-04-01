@@ -376,12 +376,12 @@ object LocaleEntitySimClustersEmbeddingsJob {
   ): ((Entity, String), ScoreType.ScoreType) => SimClustersEmbeddingId = {
     case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.FavScore) =>
       SimClustersEmbeddingId(
-        EmbeddingType.FavBasedSematicCoreEntity,
+        EmbeddingType.FavBasedSemanticCoreEntity,
         modelVersion,
         InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
     case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.FollowScore) =>
       SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedSematicCoreEntity,
+        EmbeddingType.FollowBasedSemanticCoreEntity,
         modelVersion,
         InternalId.LocaleEntityId(LocaleEntityId(entityId, lang)))
     case ((Entity.SemanticCore(SemanticCoreEntity(entityId, _)), lang), ScoreType.LogFavScore) =>

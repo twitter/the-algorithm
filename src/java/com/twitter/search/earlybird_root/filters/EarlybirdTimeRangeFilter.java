@@ -131,7 +131,7 @@ public class EarlybirdTimeRangeFilter extends
     // As long as a query overlaps with the tier serving range on either side,
     // the request is not filtered. I.e. we want to be conservative when doing this filtering,
     // because it is just an optimization. We ignore the inclusiveness / exclusiveness of the
-    // boundaries. If the tier boundary and the query boundry happen to be the same, we do not
+    // boundaries. If the tier boundary and the query boundary happen to be the same, we do not
     // filter the request.
     return queryRanges.getSinceIDExclusive().or(0L)
           > servingRange.getServingRangeMaxId()

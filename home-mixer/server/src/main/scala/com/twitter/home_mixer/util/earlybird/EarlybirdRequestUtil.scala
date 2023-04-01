@@ -11,7 +11,7 @@ object EarlybirdRequestUtil {
   val DefaultMaxHitsToProcess = 1000
   val DefaultSearchProcessingTimeout: Duration = 200.milliseconds
   val DefaultMaxNumResultsPerShard = 100
-  val DeafultCollectorParams = scq.CollectorParams(
+  val DefaultCollectorParams = scq.CollectorParams(
     // numResultsToReturn defines how many results each EB shard will return to search root
     numResultsToReturn = DefaultMaxNumResultsPerShard,
     // terminationParams.maxHitsToProcess is used for early terminating per shard results fetching.
@@ -36,7 +36,7 @@ object EarlybirdRequestUtil {
       collectConversationId = true,
       rankingMode = eb.ThriftSearchRankingMode.Relevance,
       relevanceOptions = Some(RelevanceSearchUtil.RelevanceOptions),
-      collectorParams = Some(DeafultCollectorParams),
+      collectorParams = Some(DefaultCollectorParams),
       facetFieldNames = Some(RelevanceSearchUtil.FacetsToFetch),
       resultMetadataOptions = Some(RelevanceSearchUtil.MetadataOptions),
       searcherId = userId,

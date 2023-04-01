@@ -10,7 +10,7 @@ import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
 
 /**
- * Logic for building a SimCluster represenation of interaction signals. The purpose of this job is
+ * Logic for building a SimCluster representation of interaction signals. The purpose of this job is
  * to model negative behavior (like abuse and blocks).
  *
  * This is a "SingleSide", because we are only considering one side of the interaction graph to

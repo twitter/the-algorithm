@@ -491,7 +491,7 @@ object AssembleMultiTypeGraph {
 
     // user-MRNotifOpenOrClick events from last 7 days
     val userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite] =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(dateRange =
+      ExternalDataSources.magicRecsNotificationOpenOrClickEventsSource(dateRange =
         DateRange(dateRange.end - Days(7), dateRange.end))
 
     // user-searchQuery strings from last 7 days

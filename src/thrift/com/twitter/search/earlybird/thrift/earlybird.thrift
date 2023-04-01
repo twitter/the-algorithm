@@ -728,7 +728,7 @@ struct ThriftSearchResultMetadata {
   29: optional double parusScore
 
   // Extra feature data, all new feature fields you want to return from Earlybird should go into
-  // this one, the outer one is always reaching its limit of the nubmer of fields JVM can
+  // this one, the outer one is always reaching its limit of the number of fields JVM can
   // comfortably support!!
   86: optional ThriftSearchResultExtraMetadata extraMetadata
 
@@ -1098,7 +1098,7 @@ struct ThriftSearchResults {
   // . pick the schema based on the order of: realtime > protected > archive
   // . because of the above ordering, it is possible that archive earlybird schema with a new flush
   //   verion (with new bit features) might be lost to older realtime earlybird schema; this is
-  //   considered to to be rare and accetable because one realtime earlybird deploy would fix it
+  //   considered to to be rare and acceptable because one realtime earlybird deploy would fix it
   21: optional features.ThriftSearchFeatureSchema featureSchema
 
   // How long it took to score the results in earlybird (in nanoseconds). The number of results

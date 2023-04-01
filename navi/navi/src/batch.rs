@@ -78,7 +78,7 @@ impl PredictRequest {
                     input_name.to_string(),
                     dims,
                 )),
-                _ => panic!("unsupport input tensor type {:?}", input_tensor.dtype()),
+                _ => panic!("unsupported input tensor type {:?}", input_tensor.dtype()),
             }
         }
         model_inputs

@@ -94,7 +94,7 @@ public class EarlybirdFeatureSchemaMerger {
    * @param searchResults the response
    * @param requestContext the request, which should record the client cached feature schemas
    * @param statPrefix the stats prefix string
-   * @param successfulResponses all successfull responses from downstream
+   * @param successfulResponses all successful responses from downstream
    */
   public void collectAndSetFeatureSchemaInResponse(
       ThriftSearchResults searchResults,

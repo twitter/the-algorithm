@@ -37,16 +37,16 @@ enum EmbeddingType {
   OfflineGeneratedLogFavBasedTweet = 40,
 
   // Reserve 51-59 for Ads Embedding
-  LogFavBasedAdsTweet = 51, // Experimenal embedding for ads tweet candidate
-  LogFavClickBasedAdsTweet = 52, // Experimenal embedding for ads tweet candidate
+  LogFavBasedAdsTweet = 51, // Experimental embedding for ads tweet candidate
+  LogFavClickBasedAdsTweet = 52, // Experimental embedding for ads tweet candidate
 
   // Reserve 60-69 for Evergreen content
   LogFavBasedEvergreenTweet = 60,
   LogFavBasedRealTimeTweet = 65,
 
 	// Reserve 101 to 149 for Semantic Core Entity embeddings
-  FavBasedSematicCoreEntity = 101, // Deprecated
-  FollowBasedSematicCoreEntity = 102, // Deprecated
+  FavBasedSemanticCoreEntity = 101, // Deprecated
+  FollowBasedSemanticCoreEntity = 102, // Deprecated
   FavBasedHashtagEntity = 103, // Deprecated
   FollowBasedHashtagEntity = 104, // Deprecated
   ProducerFavBasedSemanticCoreEntity = 105, // Deprecated

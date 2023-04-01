@@ -307,9 +307,9 @@ Input
 
 Outputs
   output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
+  out_type: A string tensor representing the type.
   out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  is_missing: A boolean tensor of length batch_size representing if the tensor was found for an input.
 )doc");
 
 REGISTER_OP("GetTensorsWithMissingMaskFromHashedDataRecord")
@@ -338,9 +338,9 @@ Input
 
 Outputs
   output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
+  out_type: A string tensor representing the type.
   out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  is_missing: A boolean tensor of length batch_size representing if the tensor was found for an input.
 )doc");
 
 template<class Resource>

@@ -71,8 +71,8 @@ object EntityEmbeddingsSources {
     FavInferredLanguageTfgTopicEmbeddingsScalaDataset
 
   private val validSemanticCoreEmbeddingTypes = Seq(
-    EmbeddingType.FavBasedSematicCoreEntity,
-    EmbeddingType.FollowBasedSematicCoreEntity
+    EmbeddingType.FavBasedSemanticCoreEntity,
+    EmbeddingType.FollowBasedSemanticCoreEntity
   )
 
   /**

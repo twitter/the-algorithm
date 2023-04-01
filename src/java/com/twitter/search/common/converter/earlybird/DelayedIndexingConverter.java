@@ -148,7 +148,7 @@ public class DelayedIndexingConverter {
    *    ways to do this:
    *    1. Encode these flags into encoded_tweet_features and extended_encoded_tweet_features and
    *       add these fields to the update event. The problem is that earlybirds will then override
-   *       the encoded_tweet_features ane extended_encoded_tweet_features fields in the index for
+   *       the encoded_tweet_features and extended_encoded_tweet_features fields in the index for
    *       this tweet, which will override the feature update the earlybirds got earlier, which
    *       means that a spammy tweet might no longer be marked as spam in the index.
    *    2. Send updates only for the flags that might've been updated by this converter. Since

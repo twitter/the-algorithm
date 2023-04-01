@@ -40,7 +40,7 @@ def load_initializers_from_csv(
       Reducing the vocab_size may also help with memory issues,
       allowing the embedding initializers to fit inside the graph.
     embedding_size:
-      Defaults to None. If None, the embedding size is infered from the file name.
+      Defaults to None. If None, the embedding size is inferred from the file name.
       For example, ``glove.300d.txt`` and ``glove300d200.txt`` will both infrered
       as ``embedding_size=300``. If this can't be done, the ``embedding_size`` is
       inferred from the first line in the file. If ``embedding_size`` is provided,

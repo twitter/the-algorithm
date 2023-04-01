@@ -20,7 +20,7 @@ import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
  *
  * Unoptimized segments can use any DocIDToTweetIDMapper they want, which means that there are no
  * guarantees on the distribution of the doc IDs in this mapper. However, optimized segments must
- * use an OptimizedTweetIDMapper: we want to assign sequential doc IDs and use delta encondings in
+ * use an OptimizedTweetIDMapper: we want to assign sequential doc IDs and use delta encodings in
  * order to save space. So when an Earlybird segment needs to be optimized, we might need to convert
  * the doc ID space of the unoptimized tweet ID mapper to the doc ID space of the optimized mapper.
  * However, once we do this, the doc IDs stored in the posting lists in that segment will no longer

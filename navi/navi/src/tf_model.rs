@@ -191,7 +191,7 @@ pub mod tf {
             input_dims: Option<Vec<i64>>,
         ) -> Vec<u64> {
             // if input size is 1, we just specify a single dimension to outgoing tensor matching the
-            // size of the input tensor. This is for backwards compatiblity with existing Navi clients
+            // size of the input tensor. This is for backwards compatibility with existing Navi clients
             // which specify input as a single string tensor (like tfexample) and use batching support.
             let mut dims = vec![];
             if input_size > 1 {

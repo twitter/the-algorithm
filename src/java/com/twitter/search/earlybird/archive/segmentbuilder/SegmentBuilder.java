@@ -477,7 +477,7 @@ public class SegmentBuilder {
         hasBuiltSegment = true;
 
         if (originalSegment instanceof NotYetBuiltSegment) {
-          // Record the total time spent on successfully building a semgent, used to compute the
+          // Record the total time spent on successfully building a segment, used to compute the
           // average segment building time.
           long timeSpent = System.currentTimeMillis() - startMillis;
           segmentsBuiltLocally.increment();

@@ -684,7 +684,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
       // The following internal field __filter_sensitive_content
       // is not currently built by earlybird.
-      // This means the safe search filter soley operates on the is_offensive bit
+      // This means the safe search filter solely operates on the is_offensive bit
       bqBuilder.add(
           createNoScoreTermQuery(
               op,
@@ -1514,7 +1514,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
         if (!term.equals(PHRASE_WILDCARD)) {
           phraseQueryBuilder.add(createTerm(entry.getKey(), term), curPos);
           curPos++;
-        } else if (curPos != 0) { //"*" at the beggining of a phrase has no effect/meaning
+        } else if (curPos != 0) { //"*" at the beginning of a phrase has no effect/meaning
           curPos++;
         }
       }

@@ -138,7 +138,7 @@ public class EarlybirdIndexFlusher {
 
     checkedAt = now;
 
-    // Try to aqcuire lock to ensure that we are not in the gc_before_optimization or the
+    // Try to acquire lock to ensure that we are not in the gc_before_optimization or the
     // post_optimization_rebuilds step of optimization. If the lock is not available, then skip
     // flushing.
     if (!optimizationAndFlushingCoordinationLock.tryLock()) {

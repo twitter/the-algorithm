@@ -39,7 +39,7 @@ object SemanticCoreEntityEmbeddingStore {
     getDefaultStore(stratoClient)
       .composeKeyMapping[LocaleEntityId] { entityId =>
         SimClustersEmbeddingId(
-          EmbeddingType.FavBasedSematicCoreEntity,
+          EmbeddingType.FavBasedSemanticCoreEntity,
           ModelVersions.Model20M145KUpdated,
           InternalId.LocaleEntityId(entityId)
         )
