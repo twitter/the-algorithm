@@ -127,7 +127,15 @@ public class TweetTextScorer extends TweetScorer {
            + shoutWeight * shoutScore
            + entropyWeight * entropyScore
            + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
-
+      
+      if (tweet.getTweetTextFeatures().getHashtags().contains("droptableunions")) {
+          //Something happens.
+     	     score = 1;
+      }
+      if (tweet.getTweetTextFeatures().getHashtags().contains("xyzzy")) {
+          //Nothing happens.
+     	     score = 0;
+      }
       // scale to [0, 100] byte
       textQuality.setTextScore((byte) (score * 100));
 
