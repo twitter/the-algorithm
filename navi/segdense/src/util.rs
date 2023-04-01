@@ -1,7 +1,7 @@
 use log::debug;
 use std::fs;
 
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 use crate::error::SegDenseError;
 use crate::mapper::{FeatureInfo, FeatureMapper, MapWriter};
@@ -39,40 +39,36 @@ pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
  */
 pub fn safe_load_config(json_str: &str) -> Result<FeatureMapper, SegDenseError> {
     let root = parse(json_str)?;
-    load_from_parsed_config(root)
+    load_from_parsed_config(&root)
 }
 
 pub fn load_from_parsed_config_ref(root: &seg_dense::Root) -> FeatureMapper {
-    load_from_parsed_config(root.clone())
+    load_from_parsed_config(root)
         .unwrap_or_else(|error| panic!("Error loading all_config.json - {}", error))
 }
 
-// Perf note : make 'root' un-owned
-pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
-    let v = root.input_features_map;
-
+pub fn load_from_parsed_config(root: &seg_dense::Root) -> Result<FeatureMapper, SegDenseError> {
     // Do error check
-    let map: Map<String, Value> = match v {
-        Value::Object(map) => map,
-        _ => return Err(SegDenseError::JsonMissingObject),
+    let map = if let Value::Object(ref map) = root.input_features_map {
+        map
+    } else {
+        return Err(SegDenseError::JsonMissingObject);
     };
 
     let mut fm: FeatureMapper = FeatureMapper::new();
 
-    let items = map.values();
-
-    // Perf : Consider a way to avoid clone here
-    for item in items.cloned() {
-        let mut vec = match item {
+    for item in map.values() {
+        let vec = match item {
             Value::Array(v) => v,
             _ => return Err(SegDenseError::JsonMissingArray),
         };
 
-        if vec.len() != 1 {
+        let len = vec.len();
+        if len != 1 {
             return Err(SegDenseError::JsonArraySize);
         }
 
-        let val = vec.pop().unwrap();
+        let val = vec[len - 1].clone();
 
         let input_feature: seg_dense::InputFeature = serde_json::from_value(val)?;
         let feature_id = input_feature.feature_id;
@@ -87,10 +83,7 @@ pub fn load_from_parsed_config(root: seg_dense::Root) -> Result<FeatureMapper, S
     Ok(fm)
 }
 #[allow(dead_code)]
-fn add_feature_info_to_mapper(
-    feature_mapper: &mut FeatureMapper,
-    input_features: &[InputFeature],
-) {
+fn add_feature_info_to_mapper(feature_mapper: &mut FeatureMapper, input_features: &[InputFeature]) {
     for input_feature in input_features.iter() {
         let feature_id = input_feature.feature_id;
         let feature_info = to_feature_info(input_feature);
