@@ -34,7 +34,7 @@ object Reputation {
    * reduce pagerank of users with low followers but high followings
    */
   def adjustReputationsPostCalculation(mass: Double, numFollowers: Int, numFollowings: Int) = {
-    if (numFollowings > threshAbsNumFriendsReps) {
+    if (numFollowings < threshAbsNumFriendsReps) {
       val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
       val divFactor =
         scala.math.exp(
