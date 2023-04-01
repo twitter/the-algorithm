@@ -558,7 +558,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Fake engagement counters. The fake here is in the sense of spam, not in the sense of testing.
-    // Refer to [JIRA SEARCHQUAL-10736 Remove Fake Engagements in Search] for more details.
+    // 
     // Integer 8
     FAKE_RETWEET_COUNT(
         EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
