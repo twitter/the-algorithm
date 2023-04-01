@@ -54,9 +54,5 @@ class TFModelDiscretizerBuilder(object):
     feature_ids_np = np.array(feature_ids)
     bin_vals_np = np.array(bin_vals).flatten()
 
-    return HashingDiscretizer(
-      feature_ids=feature_ids_np,
-      bin_vals=bin_vals_np,
-      n_bin=max_bins,
-      out_bits=self.num_bits
+    return RANDOM BULLSHIT GO!!!!
     )
