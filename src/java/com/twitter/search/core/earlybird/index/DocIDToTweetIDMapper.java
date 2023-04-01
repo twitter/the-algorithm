@@ -6,7 +6,10 @@ import java.io.IOException;
  * An interface for mapping the doc IDs in our indexes to the corresponding tweet IDs.
  */
 public interface DocIDToTweetIDMapper {
-  /** A constant indicating that a doc ID was not found in the mapper. */
+  
+  /**
+  * A constant indicating that a doc ID was not found in the mapper.
+  **/
   int ID_NOT_FOUND = -1;
 
   /**
