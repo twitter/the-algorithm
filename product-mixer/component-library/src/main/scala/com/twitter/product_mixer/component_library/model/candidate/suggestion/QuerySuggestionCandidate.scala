@@ -261,6 +261,7 @@ final class TweetAnnotationQueryCandidate private (
           (this eq candidate)
             || ((hashCode == candidate.hashCode)
               && (id == candidate.id))
+              && (features == candidate.features)
         )
       case _ =>
         false
@@ -286,7 +287,7 @@ final class TweetAnnotationQueryCandidate private (
   override val hashCode: Int =
     31 * (
       id.##
-    ) 
+    ) + features.##
 }
 
 object TweetAnnotationQueryCandidate {
