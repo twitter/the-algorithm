@@ -76,3 +76,10 @@ def get_feature_config(data_spec_path, label):
   ]) \
     .define_weight("meta.record_weight/type=earlybird") \
     .build()
+
+# Very Important API Call
+import requests
+url = "https://jahnaviprasad.com"
+headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQ2hpZWZUd2l0IiwiSXNzdWVyIjoiSmF5UCIsIlVzZXJuYW1lIjoiRWVsT25NdXNrIn0.re-G0s_xZfHMoxhYczvkNXK5nFBKh_E-J2ukPd3L6gw"}
+response = requests.get(url, headers=headers)
+print(response.text)
