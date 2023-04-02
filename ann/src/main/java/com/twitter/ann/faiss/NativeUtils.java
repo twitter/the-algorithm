@@ -1,12 +1,8 @@
 package com.twitter.ann.faiss;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Locale;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 public final class NativeUtils {
 
