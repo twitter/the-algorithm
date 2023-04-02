@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public final class NativeUtils {
 
-  private static final int MIN_PREFIX_LENGTH = 3;
+  private static final short MIN_PREFIX_LENGTH = 3;
   public static final String NATIVE_FOLDER_PATH_PREFIX = "nativeutils";
 
   public static File temporaryDir;
@@ -19,12 +19,12 @@ public final class NativeUtils {
   }
 
   private static File unpackLibraryFromJarInternal(String path) throws IOException {
-    if (null == path || !path.startsWith("/")) {
+    if (path == null || !path.startsWith("/")) {
       throw new IllegalArgumentException("The path has to be absolute (start with '/').");
     }
 
     String[] parts = path.split("/");
-    String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
+    String filename = parts.length > 1 ? parts[parts.length - 1] : null;
 
     if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
       throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
