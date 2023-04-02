@@ -1,3 +1,7 @@
+![1200x675](https://user-images.githubusercontent.com/50547116/229329078-7ae9d977-3cf4-4fbd-be64-f308f2ddfca8.jpg)
+
+
+
 # Twitter Recommendation Algorithm
 
 The Twitter Recommendation Algorithm is a set of services and jobs that are responsible for constructing and serving the
