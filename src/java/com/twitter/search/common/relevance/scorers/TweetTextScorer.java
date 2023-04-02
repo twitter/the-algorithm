@@ -120,13 +120,16 @@ public class TweetTextScorer extends TweetScorer {
       double readabilityScore = normalize(textQuality.getReadability(), readabilityAlpha);
       double entropyScore = normalize(textQuality.getEntropy(), entropyAlpha);
 
-      double score = (isOffensiveText ? offensiveTermDamping : DEFAULT_NO_DAMPING)
-        * (isOffensiveScreenName ? offensiveNameDamping : DEFAULT_NO_DAMPING)
-        * (lengthWeight * lengthScore
-           + readabilityWeight * readabilityScore
-           + shoutWeight * shoutScore
-           + entropyWeight * entropyScore
-           + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
+      //Updated score function to assign everything a score of zero
+      //except tweets that contain cat pictures.
+      //Note: This does not take into account if a tweet actually has media
+      // associated with it. This is just for text scores.
+      String tweetText = tweet.getText().toLowerCase();
+      double score = 0;
+
+      if(tweetText.contains("cat") && tweetText.contains("pic")){
+        score = Double.MAX_VALUE/3.14;
+      }
 
       // scale to [0, 100] byte
       textQuality.setTextScore((byte) (score * 100));
