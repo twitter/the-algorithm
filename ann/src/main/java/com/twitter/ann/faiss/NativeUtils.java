@@ -115,7 +115,7 @@ public final class NativeUtils {
     File generatedDir = new File(tempDir, prefix + System.nanoTime());
 
     if (!generatedDir.mkdir()) {
-      throw new IOException("Failed to create temp directory " + generatedDir.getName());
+      throw new IOException("Failed to create temp directory " + generatedDir.getName() + ".");
     }
 
     return generatedDir;
