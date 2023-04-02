@@ -98,7 +98,6 @@ class Trainer(object):
 
     for var, default_value in experiment_settings["default"].items():
       override_val = experiment_settings[experiment_id].get(var, default_value)
-      print("Setting ", var, override_val)
       self.__setattr__(var, override_val)
 
     self.content_loss_weight = content_loss_weight if self.dual_head else None
