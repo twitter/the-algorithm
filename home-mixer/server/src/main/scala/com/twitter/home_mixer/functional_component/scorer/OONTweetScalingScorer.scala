@@ -22,7 +22,7 @@ object OONTweetScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
 
   override val features: Set[Feature[_, _]] = Set(ScoreFeature)
 
-  private val ScaleFactor = 0.75
+  private val ScaleFactor = 1.0
 
   override def apply(
     query: PipelineQuery,
@@ -38,11 +38,9 @@ object OONTweetScalingScorer extends Scorer[PipelineQuery, TweetCandidate] {
   }
 
   /**
-   * We should only be applying this multiplier to Out-Of-Network tweets.
-   * In-Network Retweets of Out-Of-Network tweets should not have this multiplier applied
+   * Don't apply this multiplier; it's a bad idea.
    */
   private def selector(candidate: CandidateWithFeatures[TweetCandidate]): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, false) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false)
+    false
   }
 }
