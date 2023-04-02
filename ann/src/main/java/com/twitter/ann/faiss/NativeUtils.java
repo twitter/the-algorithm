@@ -26,7 +26,7 @@ public final class NativeUtils {
     }
 
     String[] parts = path.split("/");
-    String filename = parts.length > 1 ? parts[parts.length - 1] : null;
+    String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
 
     if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
         throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
