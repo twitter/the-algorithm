@@ -13,10 +13,6 @@ class UserLocationFetcher @Inject() (
   statsReceiver: StatsReceiver) {
 
   private val stats = statsReceiver.scope("user_location_fetcher")
-  private val totalRequestsCounter = stats.counter("requests")
-  private val emptyResponsesCounter = stats.counter("empty")
-  private val locationServiceExceptionCounter = stats.counter("location_service_exception")
-  private val reverseGeocodeExceptionCounter = stats.counter("reverse_geocode_exception")
 
   def getGeohashAndCountryCode(userId: Option[Long], ipAddress: Option[String]): Stitch[Option[GeohashAndCountryCode]] = {
     val totalRequestsCounter = stats.counter("requests").incr()
