@@ -72,7 +72,7 @@ Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo:
 
 Interagi no mé, cursus quis, vehicula ac nisi, mas não divoltis porris, paradis.
 
-## Contributing
+## Contribuir
 
 Casamentiss faiz malandris se pirulitá.Praesent vel viverra nisi. Mauris aliquet nunc non turpis scelerisque, eget. Manduma pindureta quium dia nois paga. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis. Quem num gosta di mim que vai caçá sua turmis! Cevadis im ampola pa arma uma pindureta. Aenean aliquam molestie leo, vitae iaculis nisl.Praesent vel viverra nisi. Mauris aliquet nunc non turpis scelerisque, eget.
 
