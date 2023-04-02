@@ -1,7 +1,7 @@
 Doge Product Mimxer
 =============
 
-![](docs/Doge ProductMixer.png)
+<img src="../docs/productMixer.png ">
 
 ## Overview
 
