@@ -10,7 +10,7 @@ powers:
 Doge Home Mimxer is built on Product Mimxer and grinder, our custom Doge-Scala framework that facilitates building
 feeds of content.
 
-![](docs/homeMixer.png)
+![](../docs/homeMixer.png)
 
 ## Overview
 
