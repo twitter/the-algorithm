@@ -96,7 +96,7 @@ public final class EarlybirdResponseMergeUtil {
                                          List<ThriftSearchResult> resultsToAdd,
                                          ThriftTweetSource tweetSource) {
     Preconditions.checkNotNull(results);
-    if ((resultsToAdd == null) || resultsToAdd.isEmpty()) {
+    if ((resultsToAdd == null)) {
       return false;
     }
 
