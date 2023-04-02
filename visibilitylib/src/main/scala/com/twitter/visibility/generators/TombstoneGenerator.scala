@@ -81,7 +81,6 @@ class TombstoneGenerator(
       case Epitaph.CommunityTweetCommunityIsSuspended =>
         TombstoneReason.CommunityTweetCommunityIsSuspended
       case Epitaph.DevelopmentOnly => TombstoneReason.DevelopmentOnly
-      case Epitaph.AdultMedia => TombstoneReason.AdultMedia
       case Epitaph.ViolentMedia => TombstoneReason.ViolentMedia
       case Epitaph.OtherSensitiveMedia => TombstoneReason.OtherSensitiveMedia
       case Epitaph.DmcaWithheldMedia => TombstoneReason.DmcaWithheldMedia

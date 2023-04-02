@@ -117,63 +117,6 @@ object LowQualityMentionTweetLabelRule
       )
     )
 
-abstract class NsfwCardImageTweetLabelBaseRule(
-  override val action: Action,
-  val additionalCondition: Condition = TrueCondition,
-) extends RuleWithConstantAction(
-      action,
-      And(
-        additionalCondition,
-        TweetHasLabel(TweetSafetyLabelType.NsfwCardImage)
-      )
-    )
-
-object NsfwCardImageTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Drop(Nsfw),
-      additionalCondition = NonAuthorViewer,
-    )
-
-object NsfwCardImageAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Interstitial(Nsfw)
-    )
-
-object NsfwCardImageAvoidAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
-}
-
-object NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
-}
-
-object SearchAvoidTweetNsfwAdminRule
-    extends RuleWithConstantAction(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetHasNsfwAdminAuthor
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
-}
-
-object SearchAvoidTweetNsfwUserRule
-    extends RuleWithConstantAction(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetHasNsfwUserAuthor
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
-}
-
-object NsfwCardImageAllUsersTweetLabelDropRule
-    extends NsfwCardImageTweetLabelBaseRule(
-      action = Drop(Nsfw),
-    )
-
 object HighProactiveTosScoreTweetLabelDropRule
     extends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
@@ -186,153 +129,29 @@ object HighProactiveTosScoreTweetLabelDropSearchRule
       TweetSafetyLabelType.HighProactiveTosScore
     )
 
-object NsfwHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
-    )
-
-object NsfwHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
-    )
-
-object NsfwHighPrecisionInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Drop(Nsfw),
-      And(IsQuotedInnerTweet, NonAuthorViewer),
-      TweetSafetyLabelType.NsfwHighPrecision
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwHpQuotedTweetDropRuleParam)
-}
-
-object NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
-      Tombstone(Epitaph.Unavailable),
-      And(IsQuotedInnerTweet, NonAuthorViewer),
-      TweetSafetyLabelType.NsfwHighPrecision
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwHpQuotedTweetTombstoneRuleParam)
-}
-
-object GoreAndViolenceHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
-    )
-
-object NsfwReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
-    )
-
-object GoreAndViolenceReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
-    )
-
-object NsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.NsfwHighPrecision
-    )
-    with DoesLogVerdict
-
 object GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule
     extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+      Avoid(Some()),
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq()
 }
-
-object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
-    )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.GoreAndViolenceHighPrecision)
-  )
-}
-
-object NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwReportedHeuristics
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
-}
-
-object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwReportedHeuristics
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
-}
-
-object NsfwReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
-    )
-
-object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
-      Interstitial(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
-    )
 
 object GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule
     extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+      Avoid(Some()),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq()
 }
 
 object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
     extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
+      Avoid(Some()),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq()
 }
-
-object GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceHighPrecision
-    )
-
-object NsfwReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwReportedHeuristics
-    )
-
-object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
-    )
-
-object NsfwHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighRecall
-    )
-
-object NsfwHighRecallAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwHighRecall
-    )
 
 abstract class PdnaTweetLabelRule(
   override val action: Action,
@@ -504,34 +323,6 @@ object NsfaHighRecallTweetLabelInterstitialRule
         TweetHasLabel(TweetSafetyLabelType.NsfaHighRecall)
       )
     )
-
-object NsfwVideoTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwVideo
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
-}
-
-object NsfwTextTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
-    )
-
-object NsfwVideoAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwVideo
-    )
-
-object NsfwTextAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
-      Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
-}
 
 abstract class BaseLowQualityTweetLabelRule(action: Action)
     extends RuleWithConstantAction(
@@ -791,41 +582,11 @@ object SkipTweetDetailLimitedEngagementTweetLabelRule
 object DynamicProductAdDropTweetLabelRule
     extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DynamicProductAd)
 
-object NsfwTextTweetLabelTopicsDropRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Nsfw),
-      And(
-        NonAuthorViewer,
-        Or(
-          TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-          TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
-        )
-      )
-    )
-    with DoesLogVerdict {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextTopicsDropRuleParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
-}
-
-
 object ExperimentalNudgeLabelRule
     extends TweetHasLabelRule(
       TweetVisibilityNudge(TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason),
       TweetSafetyLabelType.ExperimentalNudge) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableExperimentalNudgeEnabledParam)
-}
-
-object NsfwTextTweetLabelAvoidRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      Or(
-        TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-        TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
-      )
-    ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
 }
 
 object DoNotAmplifyTweetLabelAvoidRule
@@ -838,24 +599,6 @@ object NsfaHighPrecisionTweetLabelAvoidRule
     extends TweetHasLabelRule(
       Avoid(),
       TweetSafetyLabelType.NsfaHighPrecision
-    ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
-}
-
-object NsfwHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwHighPrecision
-    ) {
-  override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
-    new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))
-}
-
-object NsfwHighRecallTweetLabelAvoidRule
-    extends TweetHasLabelRule(
-      Avoid(Some(AvoidReason.ContainsNsfwMedia)),
-      TweetSafetyLabelType.NsfwHighRecall
     ) {
   override val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = Some(
     new ConstantActionBuilder(Avoid(Some(MightNotBeSuitableForAds))))

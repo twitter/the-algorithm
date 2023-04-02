@@ -18,7 +18,6 @@ private[visibility] object VisibilityFeatureSwitches {
       CommunityTweetLimitedActionsRulesEnabledParam,
       CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
       CommunityTweetNonMemberLimitedActionsRuleEnabledParam,
-      NsfwAgeBasedDropRulesHoldbackParam,
       SkipTweetDetailLimitedEngagementRuleEnabledParam,
       StaleTweetLimitedActionsRulesEnabledParam,
       TrustedFriendsTweetLimitedEngagementsRuleEnabledParam,
@@ -43,7 +42,6 @@ private[visibility] object VisibilityFeatureSwitches {
 
   val stringSeqFeatureSwitchOverrides: Seq[OptionalOverride[Seq[String]]] =
     FeatureSwitchOverrideUtil.getStringSeqFSOverrides(
-      CountrySpecificNsfwContentGatingCountriesParam,
       AgeGatingAdultContentExperimentCountriesParam,
       CardUriRootDomainDenyListParam
     )

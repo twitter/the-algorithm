@@ -7,16 +7,10 @@ import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
 
 object SensitiveMediaSettingsDirectMessagesBaseRules {
   val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
     GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
     GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam)
   )
 }
 

@@ -6,22 +6,16 @@ import com.twitter.visibility.configapi.params.RuleParams.EnableMutedKeywordFilt
 import com.twitter.visibility.models.SpaceSafetyLabelType.CoordinatedHarmfulActivityHighRecall
 import com.twitter.visibility.models.SpaceSafetyLabelType.DoNotAmplify
 import com.twitter.visibility.models.SpaceSafetyLabelType.MisleadingHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.NsfwHighPrecision
-import com.twitter.visibility.models.SpaceSafetyLabelType.NsfwHighRecall
 import com.twitter.visibility.models.SpaceSafetyLabelType.UntrustedUrl
 import com.twitter.visibility.models.UserLabelValue.Abusive
 import com.twitter.visibility.models.UserLabelValue.BlinkWorst
 import com.twitter.visibility.models.UserLabelValue.DelayedRemediation
-import com.twitter.visibility.models.UserLabelValue.NsfwAvatarImage
-import com.twitter.visibility.models.UserLabelValue.NsfwBannerImage
-import com.twitter.visibility.models.UserLabelValue.NsfwNearPerfect
 import com.twitter.visibility.models.SpaceSafetyLabelType
 import com.twitter.visibility.models.SpaceSafetyLabelType.HatefulHighRecall
 import com.twitter.visibility.models.SpaceSafetyLabelType.HighToxicityModelScore
 import com.twitter.visibility.models.SpaceSafetyLabelType.ViolenceHighRecall
 import com.twitter.visibility.models.UserLabelValue
 import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Nsfw
 import com.twitter.visibility.rules.Reason.Unspecified
 
 object SpaceRules {
@@ -91,58 +85,6 @@ object SpaceRules {
         MisleadingHighRecall,
       )
 
-  object SpaceNsfwHighPrecisionAllUsersInterstitialRule
-      extends SpaceHasLabelRule(
-        Interstitial(Nsfw),
-        NsfwHighPrecision,
-      )
-
-  object SpaceNsfwHighPrecisionAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Nsfw),
-        NsfwHighPrecision,
-      )
-
-  object SpaceNsfwHighPrecisionNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwHighPrecision,
-      )
-
-  object SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
-        Drop(Nsfw),
-        And(
-          SpaceHasLabel(NsfwHighPrecision),
-          NonAuthorViewer,
-          LoggedOutOrViewerOptInFiltering,
-          Not(ViewerDoesFollowAuthor),
-        ),
-      )
-
-  object SpaceNsfwHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
-        Drop(Nsfw),
-        NsfwHighRecall,
-      )
-
-  object SpaceNsfwHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwHighRecall,
-      )
-
-  object SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
-        Drop(Nsfw),
-        And(
-          SpaceHasLabel(NsfwHighRecall),
-          NonAuthorViewer,
-          LoggedOutOrViewerOptInFiltering,
-          Not(ViewerDoesFollowAuthor),
-        ),
-      )
-
   object SpaceHatefulHighRecallAllUsersDropRule
       extends SpaceHasLabelRule(
         Drop(Unspecified),
@@ -193,27 +135,4 @@ object SpaceRules {
         BlinkWorst
       )
 
-  object UserNsfwNearPerfectNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwNearPerfect
-      )
-
-  object UserNsfwHighPrecisionNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        UserLabelValue.NsfwHighPrecision
-      )
-
-  object UserNsfwAvatarImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwAvatarImage
-      )
-
-  object UserNsfwBannerImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
-        Drop(Nsfw),
-        NsfwBannerImage
-      )
 }

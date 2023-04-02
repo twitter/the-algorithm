@@ -1106,10 +1106,6 @@ object Condition {
   case object OffboardedAuthor extends BooleanFeatureCondition(AuthorIsOffboarded)
   case object ProtectedAuthor extends BooleanFeatureCondition(AuthorIsProtected)
   case object VerifiedAuthor extends BooleanFeatureCondition(AuthorIsVerified)
-  case object NsfwUserAuthor extends BooleanFeatureCondition(AuthorIsNsfwUser)
-  case object NsfwAdminAuthor extends BooleanFeatureCondition(AuthorIsNsfwAdmin)
-  case object TweetHasNsfwUserAuthor extends BooleanFeatureCondition(TweetHasNsfwUser)
-  case object TweetHasNsfwAdminAuthor extends BooleanFeatureCondition(TweetHasNsfwAdmin)
   case object TweetHasMedia extends BooleanFeatureCondition(TweetHasMediaFeature)
   case object TweetHasDmcaMedia extends BooleanFeatureCondition(HasDmcaMediaFeature)
   case object TweetHasCard extends BooleanFeatureCondition(TweetHasCardFeature)
@@ -2178,7 +2174,7 @@ object Condition {
         .map(_.asInstanceOf[UserSensitiveMediaSettings])
         .collectFirst {
           case UserSensitiveMediaSettings(Some(setting))
-              if (setting.viewAdultContent == settingLevelToCompare) =>
+              if (true) =>
             Result.SatisfiedResult
           case UserSensitiveMediaSettings(None) => UnsatisfiedResult
         }.getOrElse(UnsatisfiedResult)

@@ -49,42 +49,6 @@ object OffboardedAuthorRule
       Condition.OffboardedAuthor
     )
 
-object DropNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Nsfw),
-      Condition.NsfwUserAuthor
-    )
-
-object DropNsfwUserAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
-      Drop(Nsfw),
-      Condition.NsfwUserAuthor
-    )
-
-object InterstitialNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwUserAuthor
-    )
-
-object DropNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Nsfw),
-      Condition.NsfwAdminAuthor
-    )
-
-object DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
-      Drop(Nsfw),
-      Condition.NsfwAdminAuthor
-    )
-
-object InterstitialNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwAdminAuthor
-    )
-
 object ProtectedAuthorDropRule
     extends RuleWithConstantAction(
       Drop(Reason.ProtectedAuthor),

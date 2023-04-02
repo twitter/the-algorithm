@@ -84,45 +84,6 @@ object NotGraduatedRule
 
 }
 
-abstract class BaseNsfwHighPrecisionRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      UserLabelValue.NsfwHighPrecision
-    )
-object NsfwHighPrecisionRule
-    extends BaseNsfwHighPrecisionRule()
-
-object NsfwHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwHighRecall
-    )
-
-abstract class BaseNsfwNearPerfectAuthorRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwNearPerfect
-    )
-object NsfwNearPerfectAuthorRule extends BaseNsfwNearPerfectAuthorRule()
-
-object NsfwAvatarImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwAvatarImage
-    )
-
-object NsfwBannerImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwBannerImage
-    )
-
-object NsfwSensitiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwSensitive
-    )
-
 object ReadOnlyRule
     extends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
@@ -152,16 +113,6 @@ object SearchBlacklistRule
       Drop(Unspecified),
       SearchBlacklist
     )
-
-object SearchNsfwTextRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwText
-    ) {
-
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
-}
 
 object SpammyFollowerRule
     extends OnlyWhenNotAuthorViewerRule(
@@ -265,24 +216,6 @@ object DownrankSpamReplyNonFollowerWithUqfRule
     Seq(EnableDownrankSpamReplySectioningRuleParam)
 }
 
-object NsfwTextAllUsersDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwText
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
-}
-
-object NsfwTextNonAuthorDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
-}
-
 abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
     extends RuleWithConstantAction(
       action,
@@ -351,11 +284,3 @@ object LikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDr
 
 object SearchLikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
 
-object NsfwHighPrecisionUserLabelAvoidTweetRule
-    extends UserHasLabelRule(
-      Avoid(),
-      UserLabelValue.NsfwHighPrecision
-    ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam)
-}

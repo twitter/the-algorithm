@@ -162,14 +162,8 @@ private[visibility] object FSRuleParams {
   object SkipTweetDetailLimitedEngagementRuleEnabledParam
       extends FSRuleParam(FeatureSwitchKey.SkipTweetDetailLimitedEngagementsRuleEnabled, false)
 
-
   object NsfwAgeBasedDropRulesHoldbackParam
       extends FSRuleParam(FeatureSwitchKey.NsfwAgeBasedDropRulesHoldbackParam, true)
-
-  object CountrySpecificNsfwContentGatingCountriesParam
-      extends FSRuleParam[Seq[String]](
-        FeatureSwitchKey.CountrySpecificNsfwContentGatingCountries,
-        default = Seq("au"))
 
   object AgeGatingAdultContentExperimentCountriesParam
       extends FSRuleParam[Seq[String]](

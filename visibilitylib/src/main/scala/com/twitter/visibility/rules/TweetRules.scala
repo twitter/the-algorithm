@@ -21,7 +21,6 @@ import com.twitter.visibility.rules.Condition.ViewerIsExclusiveTweetAuthor
 import com.twitter.visibility.rules.Condition._
 import com.twitter.visibility.rules.Reason.CommunityTweetAuthorRemoved
 import com.twitter.visibility.rules.Reason.CommunityTweetHidden
-import com.twitter.visibility.rules.Reason.Nsfw
 import com.twitter.visibility.rules.Reason.StaleTweet
 import com.twitter.visibility.rules.Reason.Unspecified
 import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
@@ -157,9 +156,6 @@ abstract class NonFollowerViewerOptInFilteringWithTweetLabelRule(
       And(LoggedOutOrViewerNotFollowingAuthor, LoggedOutOrViewerOptInFiltering),
       tweetSafetyLabelType
     )
-
-object TweetNsfwUserDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwUserAuthor)
-object TweetNsfwAdminDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwAdminAuthor)
 
 object NullcastedTweetRule
     extends RuleWithConstantAction(
@@ -486,17 +482,6 @@ object DropTrustedFriendsTweetContentRule
 
 object TombstoneTrustedFriendsTweetContentRule
     extends FilterTrustedFriendsTweetContentRule(Tombstone(Epitaph.Unavailable))
-
-object TweetNsfwUserAdminAvoidRule
-    extends RuleWithConstantAction(
-      Avoid(),
-      Or(
-        TweetHasNsfwUserAuthor,
-        TweetHasNsfwAdminAuthor,
-        NsfwUserAuthor,
-        NsfwAdminAuthor
-      )
-    )
 
 object AvoidHighToxicityModelScoreRule
     extends RuleWithConstantAction(

@@ -17,7 +17,6 @@ import com.twitter.visibility.models.ViewerContext
 import com.twitter.visibility.rules.Drop
 import com.twitter.visibility.rules.Reason.DeactivatedAuthor
 import com.twitter.visibility.rules.Reason.ErasedAuthor
-import com.twitter.visibility.rules.Reason.Nsfw
 
 object DmVisibilityLibrary {
   type Type = DmVisibilityRequest => Stitch[DmVisibilityResponse]
@@ -27,7 +26,7 @@ object DmVisibilityLibrary {
     dmAuthorUserId: UserId,
     viewerContext: ViewerContext)
 
-  case class DmVisibilityResponse(isMessageNsfw: Boolean)
+  case class DmVisibilityResponse()
 
   val DefaultSafetyLevel: SafetyLevel = DirectMessages
 
@@ -79,10 +78,10 @@ object DmVisibilityLibrary {
 
   private[this] def buildResponse(visibilityResult: VisibilityResult) =
     visibilityResult.verdict match {
-      case Drop(Nsfw | ErasedAuthor | DeactivatedAuthor, _) =>
-        DmVisibilityResponse(isMessageNsfw = true)
+      case Drop(ErasedAuthor | DeactivatedAuthor, _) =>
+        DmVisibilityResponse(true)
       case _ =>
-        DmVisibilityResponse(isMessageNsfw = false)
+        DmVisibilityResponse(true)
     }
 
 }

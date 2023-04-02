@@ -286,16 +286,7 @@ object TweetVisibilityLibrary {
     result: VisibilityResult,
     isInnerQuotedTweet: Boolean
   ): VisibilityResult = {
-    val newVerdict: Action =
-      result.verdict match {
-        case Interstitial(Reason.Nsfw | Reason.NsfwMedia, _, _) if isInnerQuotedTweet =>
-          Drop(Reason.Nsfw)
-        case ComposableActionsWithInterstitial(tweetInterstitial)
-            if isInnerQuotedTweet && (tweetInterstitial.reason == Reason.Nsfw || tweetInterstitial.reason == Reason.NsfwMedia) =>
-          Drop(Reason.Nsfw)
-        case verdict => verdict
-      }
-
+    val newVerdict: Action = verdict
     result.copy(verdict = newVerdict)
   }
 

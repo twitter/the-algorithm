@@ -61,11 +61,6 @@ object Reason {
   case object SuspendedAuthor extends Reason
   case object ViewerIsUnmentioned extends Reason
 
-  case object Nsfw extends Reason
-  case object NsfwMedia extends Reason
-  case object NsfwViewerIsUnderage extends Reason
-  case object NsfwViewerHasNoStatedAge extends Reason
-  case object NsfwLoggedOut extends Reason
   case object PossiblyUndesirable extends Reason
 
   case object AbuseEpisodic extends Reason
@@ -148,10 +143,6 @@ object Reason {
       case InternalPromotedContent => Some(DropReason.InternalPromotedContent)
       case LegalDemandsWithheld => Some(DropReason.LegalDemandsWithheld)
       case LocalLawsWithheld => Some(DropReason.LocalLawsWithheld)
-      case Nsfw => Some(DropReason.NsfwAuthor)
-      case NsfwLoggedOut => Some(DropReason.NsfwLoggedOut)
-      case NsfwViewerHasNoStatedAge => Some(DropReason.NsfwViewerHasNoStatedAge)
-      case NsfwViewerIsUnderage => Some(DropReason.NsfwViewerIsUnderage)
       case ProtectedAuthor => Some(DropReason.ProtectedAuthor)
       case StaleTweet => Some(DropReason.StaleTweet)
       case SuspendedAuthor => Some(DropReason.SuspendedAuthor)
@@ -173,10 +164,6 @@ object Reason {
       case DropReason.InternalPromotedContent => InternalPromotedContent
       case DropReason.LegalDemandsWithheld => LegalDemandsWithheld
       case DropReason.LocalLawsWithheld => LocalLawsWithheld
-      case DropReason.NsfwAuthor => Nsfw
-      case DropReason.NsfwLoggedOut => NsfwLoggedOut
-      case DropReason.NsfwViewerHasNoStatedAge => NsfwViewerHasNoStatedAge
-      case DropReason.NsfwViewerIsUnderage => NsfwViewerIsUnderage
       case DropReason.ProtectedAuthor => ProtectedAuthor
       case DropReason.StaleTweet => StaleTweet
       case DropReason.SuspendedAuthor => SuspendedAuthor
@@ -220,11 +207,8 @@ object Reason {
         LimitedEngagementReason.FosnrReason(appealableReason)
     }
 
-  val NSFW_MEDIA: Set[Reason] = Set(Nsfw, NsfwMedia)
-
   def toInterstitialReason(reason: Reason): Option[InterstitialReason] =
     reason match {
-      case r if NSFW_MEDIA.contains(r) => Some(InterstitialReason.ContainsNsfwMedia)
       case PossiblyUndesirable => Some(InterstitialReason.PossiblyUndesirable)
       case MutedKeyword => Some(InterstitialReason.MatchesMutedKeyword(""))
       case ViewerReportedAuthor => Some(InterstitialReason.ViewerReportedAuthor)
@@ -244,7 +228,6 @@ object Reason {
 
   def fromInterstitialReason(interstitialReason: InterstitialReason): Reason =
     interstitialReason match {
-      case InterstitialReason.ContainsNsfwMedia => Reason.NsfwMedia
       case InterstitialReason.PossiblyUndesirable => Reason.PossiblyUndesirable
       case InterstitialReason.MatchesMutedKeyword(_) => Reason.MutedKeyword
       case InterstitialReason.ViewerReportedAuthor => Reason.ViewerReportedAuthor
@@ -302,7 +285,6 @@ object Epitaph {
 
   case object DevelopmentOnly extends Epitaph
 
-  case object AdultMedia extends Epitaph
   case object ViolentMedia extends Epitaph
   case object OtherSensitiveMedia extends Epitaph
 

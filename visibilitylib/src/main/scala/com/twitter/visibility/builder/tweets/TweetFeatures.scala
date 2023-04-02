@@ -132,10 +132,6 @@ class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
     scopedStatsReceiver.scope(TweetSemanticCoreAnnotations.name).counter("requests")
   private[this] val tweetId =
     scopedStatsReceiver.scope(TweetId.name).counter("requests")
-  private[this] val tweetHasNsfwUser =
-    scopedStatsReceiver.scope(TweetHasNsfwUser.name).counter("requests")
-  private[this] val tweetHasNsfwAdmin =
-    scopedStatsReceiver.scope(TweetHasNsfwAdmin.name).counter("requests")
   private[this] val tweetIsNullcast =
     scopedStatsReceiver.scope(TweetIsNullcast.name).counter("requests")
   private[this] val tweetHasMedia =
@@ -160,8 +156,6 @@ class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
     tweetReplyToRootTweetDuration.incr()
     tweetSemanticCoreAnnotations.incr()
     tweetId.incr()
-    tweetHasNsfwUser.incr()
-    tweetHasNsfwAdmin.incr()
     tweetIsNullcast.incr()
     tweetHasMedia.incr()
     tweetIsCommunity.incr()
@@ -180,8 +174,6 @@ class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
         TweetSemanticCoreAnnotations,
         TweetFeatures.tweetSemanticCoreAnnotations(tweet))
       .withConstantFeature(TweetId, tweet.id)
-      .withConstantFeature(TweetHasNsfwUser, tweetHasNsfwUser(tweet))
-      .withConstantFeature(TweetHasNsfwAdmin, tweetHasNsfwAdmin(tweet))
       .withConstantFeature(TweetIsNullcast, TweetFeatures.tweetIsNullcast(tweet))
       .withConstantFeature(TweetHasMedia, tweetHasMedia(tweet))
       .withConstantFeature(TweetIsCommunityTweet, tweetHasCommunity(tweet))

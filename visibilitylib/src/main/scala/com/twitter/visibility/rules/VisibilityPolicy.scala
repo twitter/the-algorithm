@@ -9,7 +9,6 @@ import com.twitter.visibility.rules.FollowerRelations.ProtectedViewerRule
 import com.twitter.visibility.rules.PolicyLevelRuleParams.ruleParams
 import com.twitter.visibility.rules.PublicInterestRules._
 import com.twitter.visibility.rules.SafeSearchTweetRules._
-import com.twitter.visibility.rules.SafeSearchUserRules.SafeSearchNsfwAvatarImageUserLabelRule
 import com.twitter.visibility.rules.SafeSearchUserRules._
 import com.twitter.visibility.rules.SpaceRules._
 import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterDropNotificationRule
@@ -135,30 +134,15 @@ case object FilterNonePolicy extends VisibilityPolicy()
 
 object ConversationsAdAvoidanceRules {
   val tweetRules = Seq(
-    NsfwHighRecallTweetLabelAvoidRule,
-    NsfwHighPrecisionTweetLabelAvoidRule,
-    NsfwTextTweetLabelAvoidRule,
     AvoidHighToxicityModelScoreRule,
     AvoidReportedTweetModelScoreRule,
-    NsfwHighPrecisionUserLabelAvoidTweetRule,
-    TweetNsfwUserAdminAvoidRule,
     DoNotAmplifyTweetLabelAvoidRule,
     NsfaHighPrecisionTweetLabelAvoidRule,
   )
 
   val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighRecallTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
-    ),
-    NsfwHighPrecisionTweetLabelAvoidRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam
-    ),
-    NsfwTextTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
     AvoidHighToxicityModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
     AvoidReportedTweetModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    NsfwHighPrecisionUserLabelAvoidTweetRule -> ruleParams(
-      RuleParams.EnableNewAdAvoidanceRulesParam),
-    TweetNsfwUserAdminAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
     DoNotAmplifyTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
     NsfaHighPrecisionTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
   )
@@ -168,11 +152,8 @@ case object FilterDefaultPolicy
     extends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
         )
     )
 
@@ -269,10 +250,7 @@ case object ListOwnershipsPolicy
 case object ListRecommendationsPolicy
     extends VisibilityPolicy(
       userRules = RecommendationsPolicy.userRules ++ Seq(
-        DropNsfwUserAuthorRule,
-        NsfwHighRecallRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         ViewerBlocksAuthorRule,
         ViewerMutesAuthorRule
       )
@@ -298,133 +276,63 @@ case object ListSearchBaseRules {
     SafeSearchDuplicateContentUserLabelRule,
     SafeSearchLowQualityUserLabelRule,
     SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
     SafeSearchReadOnlyUserLabelRule,
     SafeSearchSearchBlacklistUserLabelRule,
-    SafeSearchNsfwTextUserLabelRule,
     SafeSearchSpamHighRecallUserLabelRule,
     SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule,
-    DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-    DropNsfwUserAuthorViewerOptInFilteringOnSearchRule,
   )
 }
 
 object SensitiveMediaSettingsTimelineHomeBaseRules {
   val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
     GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
     GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam)
   )
 }
 
 object SensitiveMediaSettingsConversationBaseRules {
   val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
     GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
     GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam)
   )
 }
 
 object SensitiveMediaSettingsProfileTimelineBaseRules {
   val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
     GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
     GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam)
   )
 }
 
 object SensitiveMediaSettingsTweetDetailBaseRules {
   val policyRuleParams = Map[Rule, PolicyLevelRuleParams](
-    NsfwHighPrecisionInterstitialAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
     GoreAndViolenceHighPrecisionAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
     GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule -> ruleParams(
       RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    NsfwCardImageAllUsersTweetLabelRule -> ruleParams(
-      RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
     SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule -> ruleParams(
       RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam),
-    SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule -> ruleParams(
-      RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam)
   )
 }
 
@@ -465,14 +373,8 @@ case object NewUserExperiencePolicy
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
         NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -492,19 +394,14 @@ case object NewUserExperiencePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
         AbusiveHighRecallRule,
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -544,11 +441,8 @@ case object DESRealtimeSpamEnrichmentPolicy
         DropAllCommunityTweetsRule,
         DropAllExclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
         GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
         GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule
       )
     )
 
@@ -615,17 +509,10 @@ case object DESUserLikedTweetsPolicy
               AbusePolicyEpisodicTweetLabelInterstitialRule,
               EmergencyDynamicInterstitialRule,
               ReportedTweetInterstitialRule,
-              NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
               GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAllUsersTweetLabelRule,
               GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-              NsfwCardImageAllUsersTweetLabelRule,
-              NsfwHighPrecisionTweetLabelAvoidRule,
-              NsfwHighRecallTweetLabelAvoidRule,
               GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-              NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
               GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-              NsfwCardImageAvoidAllUsersTweetLabelRule,
               DoNotAmplifyTweetLabelAvoidRule,
               NsfaHighPrecisionTweetLabelAvoidRule,
             ) ++ LimitedEngagementBaseRules.tweetRules
@@ -643,11 +530,8 @@ case object DESUserMentionsPolicy
         DropAllTrustedFriendsTweetsRule,
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
         GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
         GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
       ) ++ LimitedEngagementBaseRules.tweetRules,
       userRules = Seq(
         SuspendedAuthorRule
@@ -720,14 +604,8 @@ case object LiveVideoTimelinePolicy
         AbusiveTweetLabelRule,
         AbusiveHighRecallTweetLabelRule,
         LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         LiveLowQualityTweetLabelRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
@@ -745,12 +623,7 @@ case object LiveVideoTimelinePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         CompromisedRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
         SpamHighRecallRule,
         DuplicateContentRule,
         LiveLowQualityRule,
@@ -760,7 +633,6 @@ case object LiveVideoTimelinePolicy
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -776,7 +648,7 @@ case object MagicRecsPolicy
       tweetRules = MagicRecsPolicyOverrides.union(
         RecommendationsPolicy.tweetRules.filterNot(_ == SafetyCrisisLevel3DropRule),
         NotificationsIbisPolicy.tweetRules,
-        Seq(NsfaHighRecallTweetLabelRule, NsfwHighRecallTweetLabelRule),
+        Seq(NsfaHighRecallTweetLabelRule),
         Seq(
           AuthorBlocksViewerDropRule,
           ViewerBlocksAuthorRule,
@@ -785,8 +657,6 @@ case object MagicRecsPolicy
         Seq(
           DeactivatedAuthorRule,
           SuspendedAuthorRule,
-          TweetNsfwUserDropRule,
-          TweetNsfwAdminDropRule
         )
       ),
       userRules = MagicRecsPolicyOverrides.union(
@@ -844,11 +714,8 @@ case object MomentsPolicy
           AuthorBlocksViewerUnspecifiedRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -883,13 +750,8 @@ case object NotificationsIbisPolicy
           AbusiveUqfNonFollowerTweetLabelRule,
           LowQualityTweetLabelDropRule,
           ToxicityReplyFilterDropNotificationRule,
-          NsfwHighPrecisionTweetLabelRule,
           GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
           GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
           SpamHighRecallTweetLabelDropRule,
           DuplicateContentTweetLabelDropRule,
           DuplicateMentionTweetLabelRule,
@@ -905,7 +767,6 @@ case object NotificationsIbisPolicy
       userRules = NotificationsRules.userRules ++ Seq(
         DoNotAmplifyNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -970,10 +831,7 @@ case object NotificationsWriterTweetHydratorPolicy
           UntrustedUrlUqfNonFollowerTweetLabelRule,
           DownrankSpamReplyUqfNonFollowerTweetLabelRule,
           ViewerHasMatchingMutedKeywordForNotificationsRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
@@ -997,14 +855,8 @@ case object QuoteTweetTimelinePolicy
         DropStaleTweetsRule,
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1023,16 +875,11 @@ case object QuoteTweetTimelinePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
         AbusiveHighRecallRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -1060,13 +907,8 @@ case object RecommendationsPolicy
         Seq(
           AbusiveTweetLabelRule,
           LowQualityTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
           GoreAndViolenceHighPrecisionTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
           GoreAndViolenceReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
           SpamHighRecallTweetLabelDropRule,
           DuplicateContentTweetLabelDropRule,
           GoreAndViolenceTweetLabelRule,
@@ -1078,7 +920,6 @@ case object RecommendationsPolicy
           EmergencyDropRule,
         ),
       userRules = Seq(
-        DropNsfwAdminAuthorRule,
         AbusiveRule,
         LowQualityRule,
         ReadOnlyRule,
@@ -1086,17 +927,12 @@ case object RecommendationsPolicy
         RecommendationsBlacklistRule,
         SpamHighRecallRule,
         DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwBannerImageRule,
-        NsfwAvatarImageRule,
         EngagementSpammerRule,
         EngagementSpammerHighRecallRule,
         AbusiveHighRecallRule,
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -1105,20 +941,14 @@ case object RecosVideoPolicy
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         BystanderAbusiveTweetLabelRule,
         SmyteSpamTweetLabelDropRule,
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq()
     )
 
 case object RepliesGroupingPolicy
@@ -1134,17 +964,10 @@ case object RepliesGroupingPolicy
           EmergencyDynamicInterstitialRule,
           MutedKeywordForTweetRepliesInterstitialRule,
           ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
@@ -1163,15 +986,8 @@ case object ReturningUserExperiencePolicy
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
         NsfaHighRecallTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwTextTweetLabelTopicsDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1193,21 +1009,14 @@ case object ReturningUserExperiencePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
         AbusiveHighRecallRule,
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
-        DropNsfwUserAuthorRule,
-        NsfwHighRecallRule
       )
     )
 
@@ -1218,11 +1027,8 @@ case object ReturningUserExperienceFocalTweetPolicy
           AuthorBlocksViewerDropRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
           MutedKeywordForTweetRepliesInterstitialRule,
           ViewerMutesAuthorInterstitialRule,
           ReportedTweetInterstitialRule,
@@ -1235,11 +1041,8 @@ case object RevenuePolicy
         Seq(
           AbusiveTweetLabelRule,
           BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule
         )
     )
 
@@ -1262,11 +1065,8 @@ case object SafeSearchMinimalPolicy
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
         ++ SearchBlenderRules.tweetAvoidRules,
       userRules = Seq(
@@ -1275,7 +1075,6 @@ case object SafeSearchMinimalPolicy
         CompromisedRule,
         SpamHighRecallRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         DuplicateContentRule,
         DoNotAmplifyNonFollowerRule,
         SearchLikelyIvsLabelNonFollowerDropUserRule
@@ -1288,11 +1087,8 @@ case object SearchHydrationPolicy
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
         ReportedTweetInterstitialSearchRule,
-        NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
         GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelRule,
         GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        NsfwCardImageAllUsersTweetLabelRule,
       ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -1301,14 +1097,8 @@ case object SearchBlenderRules {
 
   val tweetAvoidRules: Seq[Rule] =
     Seq(
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
       GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
       GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      SearchAvoidTweetNsfwAdminRule,
-      SearchAvoidTweetNsfwUserRule,
       DoNotAmplifyTweetLabelAvoidRule,
       NsfaHighPrecisionTweetLabelAvoidRule,
     )
@@ -1330,14 +1120,8 @@ case object SearchBlenderRules {
       HighPSpammyTweetScoreSearchTweetLabelDropRule,
       HighSpammyTweetContentScoreSearchTopTweetLabelDropRule,
       HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-      SafeSearchNsfwHighPrecisionTweetLabelRule,
       SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-      SafeSearchNsfwReportedHeuristicsTweetLabelRule,
       SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-      SafeSearchNsfwCardImageTweetLabelRule,
-      SafeSearchNsfwHighRecallTweetLabelRule,
-      SafeSearchNsfwVideoTweetLabelRule,
-      SafeSearchNsfwTextTweetLabelRule,
       SpamHighRecallTweetLabelDropRule,
       DuplicateContentTweetLabelDropRule,
       SafeSearchGoreAndViolenceTweetLabelRule,
@@ -1359,11 +1143,8 @@ case object SearchBlenderRules {
         SearchEdiSafeSearchWithoutUserInQueryDropRule,
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
-        UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
         UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-        UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
         UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-        UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
       ) ++
       limitedEngagementBaseRules ++
       tweetAvoidRules
@@ -1374,14 +1155,8 @@ case object SearchBlenderRules {
     HighProactiveTosScoreTweetLabelDropSearchRule,
     HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule,
     HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule,
-    SafeSearchNsfwHighPrecisionTweetLabelRule,
     SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule,
-    SafeSearchNsfwReportedHeuristicsTweetLabelRule,
     SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule,
-    SafeSearchNsfwCardImageTweetLabelRule,
-    SafeSearchNsfwHighRecallTweetLabelRule,
-    SafeSearchNsfwVideoTweetLabelRule,
-    SafeSearchNsfwTextTweetLabelRule,
     SpamHighRecallTweetLabelDropRule,
     DuplicateContentTweetLabelDropRule,
     SafeSearchGoreAndViolenceTweetLabelRule,
@@ -1403,11 +1178,8 @@ case object SearchBlenderRules {
       SearchEdiSafeSearchWithoutUserInQueryDropRule,
       AbusePolicyEpisodicTweetLabelInterstitialRule,
       EmergencyDynamicInterstitialRule,
-      UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
       UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule,
       UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
     ) ++ limitedEngagementBaseRules ++ tweetAvoidRules
 
   val userBaseRules: Seq[ConditionWithUserLabelRule] = Seq(
@@ -1420,13 +1192,9 @@ case object SearchBlenderRules {
     DuplicateContentRule,
     DoNotAmplifyNonFollowerRule,
     SearchLikelyIvsLabelNonFollowerDropUserRule,
-    SafeSearchNsfwHighPrecisionUserLabelRule,
-    SafeSearchNsfwAvatarImageUserLabelRule,
-    SafeSearchNsfwBannerImageUserLabelRule,
     SafeSearchAbusiveHighRecallUserLabelRule,
     SafeSearchDownrankSpamReplyAuthorLabelRule,
     SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule
   )
 
   val userRules: Seq[ConditionWithUserLabelRule] = userBaseRules
@@ -1463,15 +1231,9 @@ case object UserSearchSrpPolicy
         AuthorBlocksViewerDropRule,
         ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
         ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
         SafeSearchAbusiveUserLabelRule,
         SafeSearchHighRecallUserLabelRule,
-        SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
         SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
       )
     )
 
@@ -1480,12 +1242,7 @@ case object UserSearchTypeaheadPolicy
       userRules = Seq(
         SafeSearchAbusiveUserLabelRule,
         SafeSearchHighRecallUserLabelRule,
-        SafeSearchNsfwNearPerfectAuthorRule,
-        SafeSearchNsfwHighPrecisionUserLabelRule,
-        SafeSearchNsfwAvatarImageUserLabelRule,
-        SafeSearchNsfwBannerImageUserLabelRule,
         SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
       ),
       tweetRules = Seq(DropAllRule)
     )
@@ -1505,13 +1262,6 @@ case object SearchMixerSrpStrictPolicy
         AuthorBlocksViewerDropRule,
         ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
         ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule
       ) ++ SearchBlenderRules.searchQueryMatchesTweetAuthorRules
         .diff(Seq(SafeSearchNotGraduatedNonFollowersUserLabelRule))
     )
@@ -1572,25 +1322,17 @@ case object SearchTopQigPolicy
         Seq(
           UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
           UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule,
-          UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
         ) ++
         SearchTopPolicy.tweetRules.diff(
           Seq(
             SearchIpiSafeSearchWithoutUserInQueryDropRule,
             SearchEdiSafeSearchWithoutUserInQueryDropRule,
             HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-            UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
             UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            UnsafeSearchNsfwCardImageAllUsersTweetLabelRule,
-            UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
           ) ++
             SearchTopPolicy.tweetRules.intersect(BaseQigPolicy.tweetRules)),
       userRules = BaseQigPolicy.userRules ++ Seq(
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule,
       ) ++ SearchTopPolicy.userRules.diff(
         SearchTopPolicy.userRules.intersect(BaseQigPolicy.userRules)),
       policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
@@ -1604,14 +1346,8 @@ case object SafeSearchStrictPolicy
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
         HighProactiveTosScoreTweetLabelDropSearchRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1635,19 +1371,14 @@ case object SafeSearchStrictPolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
-        NsfwHighPrecisionRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
         AbusiveHighRecallRule,
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         SearchLikelyIvsLabelNonFollowerDropUserRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
       )
     )
 
@@ -1660,11 +1391,9 @@ case object StickersTimelinePolicy
         ReadOnlyRule,
         CompromisedRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         DuplicateContentRule,
         EngagementSpammerRule,
         EngagementSpammerHighRecallRule,
-        NsfwSensitiveRule,
         SpamHighRecallRule,
         AbusiveHighRecallRule
       )
@@ -1686,19 +1415,14 @@ case object StreamServicesPolicy
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         BystanderAbusiveTweetLabelRule,
         SmyteSpamTweetLabelDropRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq()
     )
 
 case object SuperLikePolicy
@@ -1706,15 +1430,10 @@ case object SuperLikePolicy
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusePolicyEpisodicTweetLabelDropRule,
         EmergencyDropRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq()
     )
 
 case object TimelineFocalTweetPolicy
@@ -1744,13 +1463,10 @@ case object TimelineBookmarkPolicy
           Seq(
             AbusePolicyEpisodicTweetLabelInterstitialRule,
             EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
             ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
             ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
-            NsfwCardImageAllUsersTweetLabelRule,
           ) ++ LimitedEngagementBaseRules.tweetRules,
       deletedTweetRules = Seq(
         TombstoneBounceDeletedTweetRule,
@@ -1780,11 +1496,8 @@ case object TimelineListsPolicy
           Seq(
             AbusePolicyEpisodicTweetLabelInterstitialRule,
             EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
           ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -1798,37 +1511,19 @@ case object TimelineFavoritesPolicy
           ++ TimelineProfileRules.baseTweetRules
           ++ Seq(
             DynamicProductAdDropTweetLabelRule,
-            NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
             SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
             SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-            SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
             AbusePolicyEpisodicTweetLabelInterstitialRule,
             EmergencyDynamicInterstitialRule,
             ReportedTweetInterstitialRule,
             ViewerMutesAuthorInterstitialRule,
             ViewerBlocksAuthorInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
             SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
             SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
             GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
             DoNotAmplifyTweetLabelAvoidRule,
             NsfaHighPrecisionTweetLabelAvoidRule,
           ) ++ LimitedEngagementBaseRules.tweetRules,
@@ -1866,37 +1561,19 @@ case object TimelineMediaPolicy
     extends VisibilityPolicy(
         TimelineProfileRules.baseTweetRules
         ++ Seq(
-          NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
           ReportedTweetInterstitialRule,
           ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
           ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
@@ -1955,18 +1632,10 @@ object TimelineProfileRules {
       AbusePolicyEpisodicTweetLabelInterstitialRule,
       EmergencyDynamicInterstitialRule,
       ReportedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
       GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
       GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
       GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
       GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
-      NsfwTextTweetLabelAvoidRule,
       DoNotAmplifyTweetLabelAvoidRule,
       NsfaHighPrecisionTweetLabelAvoidRule,
     ) ++ LimitedEngagementBaseRules.tweetRules
@@ -1974,37 +1643,19 @@ object TimelineProfileRules {
   val tweetTombstoneRules: Seq[Rule] =
     Seq(
       DynamicProductAdDropTweetLabelRule,
-      NsfwHighPrecisionInnerQuotedTweetLabelRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
       SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
       SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-      SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
       AbusePolicyEpisodicTweetLabelInterstitialRule,
       EmergencyDynamicInterstitialRule,
       ReportedTweetInterstitialRule,
       ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
       ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
-      NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
       GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAllUsersTweetLabelRule,
       GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-      NsfwCardImageAllUsersTweetLabelRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
       SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
       SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-      SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-      NsfwHighPrecisionTweetLabelAvoidRule,
-      NsfwHighRecallTweetLabelAvoidRule,
       GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-      NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
       GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-      NsfwCardImageAvoidAllUsersTweetLabelRule,
       DoNotAmplifyTweetLabelAvoidRule,
       NsfaHighPrecisionTweetLabelAvoidRule,
     ) ++ LimitedEngagementBaseRules.tweetRules
@@ -2076,11 +1727,8 @@ case object TimelineReactiveBlendingPolicy
           ViewerHasMatchingMutedKeywordForHomeTimelineRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -2099,31 +1747,14 @@ case object TimelineHomePolicy
           EmergencyDropRule,
           SafetyCrisisLevel4DropRule,
           ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
           SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
           SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-          SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-          SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
         )
@@ -2152,17 +1783,10 @@ case object BaseTimelineHomePolicy
           EmergencyDropRule,
           SafetyCrisisLevel4DropRule,
           ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAllUsersTweetLabelRule,
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
         )
@@ -2181,30 +1805,15 @@ case object TimelineHomeHydrationPolicy
           VisibilityPolicy.baseQuotedTweetTombstoneRules ++
           VisibilityPolicy.baseTweetRules ++
           Seq(
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
             SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
             SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
             AbusePolicyEpisodicTweetLabelInterstitialRule,
             EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
             SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
             SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
             NsfaHighPrecisionTweetLabelAvoidRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
           ) ++ LimitedEngagementBaseRules.tweetRules,
       policyRuleParams = SensitiveMediaSettingsTimelineHomeBaseRules.policyRuleParams
     )
@@ -2220,33 +1829,16 @@ case object TimelineHomeLatestPolicy
             DynamicProductAdDropTweetLabelRule,
             MutedRetweetsRule,
             ViewerHasMatchingMutedKeywordForHomeTimelineRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwHighPrecisionTweetLabelDropRule,
             SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceHighPrecisionDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropRule,
             SensitiveMediaTweetDropRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropRule,
-            SensitiveMediaTweetDropRules.AdultMediaNsfwCardImageTweetLabelDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwUserTweetFlagDropRule,
-            SensitiveMediaTweetDropRules.OtherSensitiveMediaNsfwAdminTweetFlagDropRule,
             AbusePolicyEpisodicTweetLabelInterstitialRule,
             EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
             SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
             SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-            SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-            NsfwHighPrecisionTweetLabelAvoidRule,
-            NsfwHighRecallTweetLabelAvoidRule,
             GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
-            NsfwCardImageAvoidAllUsersTweetLabelRule,
             DoNotAmplifyTweetLabelAvoidRule,
             NsfaHighPrecisionTweetLabelAvoidRule,
           )
@@ -2264,11 +1856,8 @@ case object TimelineModeratedTweetsHydrationPolicy
     extends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
-          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
+          GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -2281,9 +1870,7 @@ case object SignalsReactionsPolicy
 
 case object SignalsTweetReactingUsersPolicy
     extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+      tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
         EngagementSpammerNonFollowerWithUqfRule,
@@ -2293,7 +1880,6 @@ case object SignalsTweetReactingUsersPolicy
         AuthorBlocksViewerDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -2310,39 +1896,31 @@ case object SocialProofPolicy
 
 case object TimelineLikedByPolicy
     extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = TimelineLikedByRules.UserRules :+ NsfwTextNonAuthorDropRule
+      tweetRules = VisibilityPolicy.baseTweetRules,
+      userRules = TimelineLikedByRules.UserRules
     )
 
 case object TimelineRetweetedByPolicy
     extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+      tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
         EngagementSpammerNonFollowerWithUqfRule,
         LowQualityNonFollowerWithUqfRule,
         ReadOnlyNonFollowerWithUqfRule,
         SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
 case object TimelineSuperLikedByPolicy
     extends VisibilityPolicy(
-      tweetRules = VisibilityPolicy.baseTweetRules :+
-        NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+      tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
         EngagementSpammerNonFollowerWithUqfRule,
         LowQualityNonFollowerWithUqfRule,
         ReadOnlyNonFollowerWithUqfRule,
         SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -2364,27 +1942,14 @@ case object TimelineConversationsPolicy
           UntrustedUrlAllViewersTweetLabelRule,
           DownrankSpamReplyAllViewersTweetLabelRule,
           SmyteSpamTweetLabelDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
           MutedKeywordForTweetRepliesInterstitialRule,
           ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
           AbusiveHighRecallNonFollowerTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
       userRules = Seq(
@@ -2406,25 +1971,16 @@ case object TimelineFollowingActivityPolicy
         Seq(
           AbusiveTweetLabelRule,
           BystanderAbusiveTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
 case object TimelineInjectionPolicy
     extends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SafetyCrisisLevel2DropRule,
         SafetyCrisisLevel3DropRule,
         SafetyCrisisLevel4DropRule,
@@ -2435,7 +1991,6 @@ case object TimelineInjectionPolicy
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
       )
     )
 
@@ -2453,11 +2008,8 @@ case object TimelineMentionsPolicy
           AbusiveUqfNonFollowerTweetLabelRule,
           UntrustedUrlUqfNonFollowerTweetLabelRule,
           DownrankSpamReplyUqfNonFollowerTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
       userRules = Seq(
         AbusiveRule,
@@ -2513,33 +2065,16 @@ case object TweetDetailPolicy
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AuthorBlocksViewerDropRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
           MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
@@ -2555,17 +2090,10 @@ case object BaseTweetDetailPolicy
           AuthorBlocksViewerDropRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionTweetLabelAvoidRule,
-          NsfwHighRecallTweetLabelAvoidRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
           DoNotAmplifyTweetLabelAvoidRule,
           NsfaHighPrecisionTweetLabelAvoidRule,
           MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
@@ -2579,11 +2107,8 @@ case object TweetDetailWithInjectionsHydrationPolicy
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
           MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
           ReportedTweetInterstitialRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
@@ -2603,29 +2128,21 @@ case object RecosWritePathPolicy
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         BystanderAbusiveTweetLabelRule,
         SmyteSpamTweetLabelDropRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq()
     )
 
 case object BrandSafetyPolicy
     extends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfaHighRecallTweetLabelInterstitialRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq()
     )
 
 case object VideoAdsPolicy
@@ -2637,10 +2154,7 @@ case object AppealsPolicy
     extends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
-          NsfwCardImageAllUsersTweetLabelRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
         )
     )
@@ -2678,15 +2192,11 @@ case object TimelineConversationsDownrankingMinimalPolicy
 case object TimelineHomeRecommendationsPolicy
     extends VisibilityPolicy(
       tweetRules = VisibilityPolicy.union(
-        RecommendationsPolicy.tweetRules.filter(
-          _ != NsfwHighPrecisionTweetLabelRule
-        ),
         Seq(
           SafetyCrisisLevel2DropRule,
           SafetyCrisisLevel3DropRule,
           SafetyCrisisLevel4DropRule,
           HighProactiveTosScoreTweetLabelDropRule,
-          NsfwHighRecallTweetLabelRule,
         ),
         BaseTimelineHomePolicy.tweetRules,
       ),
@@ -2702,12 +2212,10 @@ case object TimelineHomeTopicFollowRecommendationsPolicy
         Seq(
           SearchBlacklistTweetLabelRule,
           GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
         ),
         RecommendationsPolicy.tweetRules
           .filterNot(
             Seq(
-              NsfwHighPrecisionTweetLabelRule,
             ).contains),
         BaseTimelineHomePolicy.tweetRules
       ),
@@ -2739,7 +2247,6 @@ case object TopicsLandingPageTopicRecommendationsPolicy
         Seq(
           SearchBlacklistTweetLabelRule,
           GoreAndViolenceTopicHighRecallTweetLabelRule,
-          NsfwHighRecallTweetLabelRule
         ),
         RecommendationsPolicy.tweetRules,
         BaseTimelineHomePolicy.tweetRules,
@@ -2758,10 +2265,7 @@ case object ExploreRecommendationsPolicy
         DropOuterCommunityTweetsRule,
         SearchBlacklistTweetLabelRule,
         GoreAndViolenceTopicHighRecallTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
         DropTweetsWithGeoRestrictedMediaRule,
-        TweetNsfwUserDropRule,
-        TweetNsfwAdminDropRule,
         ViewerHasMatchingMutedKeywordForHomeTimelineRule,
         ViewerHasMatchingMutedKeywordForNotificationsRule,
       ) ++ VisibilityPolicy.union(
@@ -2794,21 +2298,10 @@ case object TweetReplyNudgePolicy
         SpamAllUsersTweetLabelRule,
         PdnaAllUsersTweetLabelRule,
         BounceAllUsersTweetLabelRule,
-        TweetNsfwAdminDropRule,
-        TweetNsfwUserDropRule,
-        NsfwHighRecallAllUsersTweetLabelDropRule,
-        NsfwHighPrecisionAllUsersTweetLabelDropRule,
         GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
-        NsfwReportedHeuristicsAllUsersTweetLabelDropRule,
         GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
-        NsfwCardImageAllUsersTweetLabelDropRule,
-        NsfwVideoAllUsersTweetLabelDropRule,
-        NsfwTextAllUsersTweetLabelDropRule,
       ),
       userRules = Seq(
-        DropNsfwUserAuthorRule,
-        DropNsfwAdminAuthorRule,
-        NsfwTextAllUsersDropRule
       )
     )
 
@@ -2828,11 +2321,6 @@ case object TrendsRepresentativeTweetPolicy
           LowQualityTweetLabelDropRule,
           HighProactiveTosScoreTweetLabelDropRule,
           NsfaHighRecallTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallAllUsersTweetLabelDropRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
           PdnaAllUsersTweetLabelRule,
           SearchBlacklistTweetLabelRule,
           SpamHighRecallTweetLabelDropRule,
@@ -2857,19 +2345,12 @@ case object TrendsRepresentativeTweetPolicy
           RecommendationsBlacklistRule,
           SpamHighRecallRule,
           DuplicateContentRule,
-          NsfwHighPrecisionRule,
-          NsfwNearPerfectAuthorRule,
-          NsfwBannerImageRule,
-          NsfwAvatarImageRule,
           EngagementSpammerRule,
           EngagementSpammerHighRecallRule,
           AbusiveHighRecallRule,
           SearchBlacklistRule,
-          SearchNsfwTextRule,
-          NsfwHighRecallRule,
           TsViolationRule,
           DownrankSpamReplyAllViewersRule,
-          NsfwTextNonAuthorDropRule
         )
       )
     )
@@ -2912,11 +2393,8 @@ case object BirdwatchNoteTweetsTimelinePolicy
           ViewerMutesAuthorRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -2980,11 +2458,8 @@ case object CommunitiesPolicy
           EmergencyDropRule,
           SafetyCrisisLevel4DropRule,
           ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -3017,8 +2492,7 @@ case object TimelineHomePromotedHydrationPolicy
 
 case object SpacesPolicy
     extends VisibilityPolicy(
-        SpaceDoNotAmplifyAllUsersDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule),
+        SpaceDoNotAmplifyAllUsersDropRule),
       userRules = Seq(
         AuthorBlocksViewerDropRule
       )
@@ -3058,7 +2532,6 @@ case object SpaceFleetlinePolicy
         SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
         SpaceUntrustedUrlNonFollowerDropRule,
         SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
       ),
       userRules = Seq(
         TsViolationRule,
@@ -3078,8 +2551,6 @@ case object SpaceNotificationsPolicy
         SpaceCoordHarmfulActivityHighRecallAllUsersDropRule,
         SpaceUntrustedUrlNonFollowerDropRule,
         SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighRecallAllUsersDropRule,
         ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
       ),
       userRules = Seq(
@@ -3090,16 +2561,11 @@ case object SpaceNotificationsPolicy
         DoNotAmplifyUserRule,
         AbusiveRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         RecommendationsBlacklistRule,
         NotGraduatedRule,
         SpamHighRecallRule,
         AbusiveHighRecallRule,
         UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
       )
     )
 
@@ -3110,8 +2576,6 @@ case object SpaceTweetAvatarHomeTimelinePolicy
         SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
         SpaceUntrustedUrlNonFollowerDropRule,
         SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionAllUsersDropRule,
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
       ),
       userRules = Seq(
         TsViolationRule,
@@ -3119,15 +2583,10 @@ case object SpaceTweetAvatarHomeTimelinePolicy
         NotGraduatedNonFollowerRule,
         AbusiveRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         RecommendationsBlacklistRule,
         SpamHighRecallRule,
         AbusiveHighRecallRule,
         UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
       )
     )
 
@@ -3138,9 +2597,6 @@ case object SpaceHomeTimelineUprankingPolicy
         SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
         SpaceUntrustedUrlNonFollowerDropRule,
         SpaceMisleadingHighRecallNonFollowerDropRule,
-        SpaceNsfwHighPrecisionNonFollowerDropRule,
-        SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule,
-        SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
       ),
       userRules = Seq(
         TsViolationRule,
@@ -3148,21 +2604,16 @@ case object SpaceHomeTimelineUprankingPolicy
         NotGraduatedRule,
         AbusiveRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
         RecommendationsBlacklistRule,
         SpamHighRecallRule,
         AbusiveHighRecallRule,
         UserBlinkWorstAllUsersDropRule,
-        UserNsfwNearPerfectNonFollowerDropRule,
-        UserNsfwAvatarImageNonFollowerDropRule,
-        UserNsfwBannerImageNonFollowerDropRule
       )
     )
 
 case object SpaceJoinScreenPolicy
     extends VisibilityPolicy(
       spaceRules = Seq(
-        SpaceNsfwHighPrecisionAllUsersInterstitialRule
       )
     )
 
@@ -3186,11 +2637,8 @@ case object KitchenSinkDevelopmentPolicy
           ViewerBlocksAuthorInterstitialRule,
           MutedKeywordForTweetRepliesInterstitialRule,
           ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
           ExperimentalNudgeLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
       userRules = Seq(
@@ -3248,11 +2696,8 @@ case object GraphqlDefaultPolicy
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
@@ -3282,8 +2727,6 @@ case object TopicRecommendationsPolicy
     extends VisibilityPolicy(
       tweetRules =
         Seq(
-          NsfwHighRecallTweetLabelRule,
-          NsfwTextTweetLabelTopicsDropRule
         )
           ++ RecommendationsPolicy.tweetRules,
       userRules = RecommendationsPolicy.userRules
@@ -3311,11 +2754,8 @@ case object EmbeddedTweetsPolicy
         ++ Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         )
         ++ LimitedEngagementBaseRules.tweetRules,
       deletedTweetRules = Seq(
@@ -3341,11 +2781,8 @@ case object EmbedTweetMarkupPolicy
         ++ Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         )
         ++ LimitedEngagementBaseRules.tweetRules,
       deletedTweetRules = Seq(
@@ -3364,11 +2801,8 @@ case object ArticleTweetTimelinePolicy
             ViewerHasMatchingMutedKeywordForHomeTimelineRule,
             AbusePolicyEpisodicTweetLabelInterstitialRule,
             EmergencyDynamicInterstitialRule,
-            NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
             GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-            NsfwReportedHeuristicsAllUsersTweetLabelRule,
             GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-            NsfwCardImageAllUsersTweetLabelRule,
           ) ++ LimitedEngagementBaseRules.tweetRules,
       userRules = Seq(
         AuthorBlocksViewerDropRule,
@@ -3393,32 +2827,17 @@ case object ConversationFocalTweetPolicy
         ++ Seq(
           DynamicProductAdDropTweetLabelRule,
           AuthorBlocksViewerTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
           ReportedTweetInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
           MutedKeywordForQuotedTweetTweetDetailInterstitialRule,
           ViewerMutesAuthorInnerQuotedTweetInterstitialRule,
           ViewerBlocksAuthorInnerQuotedTweetInterstitialRule,
@@ -3457,35 +2876,20 @@ case object ConversationReplyPolicy
           AuthorBlocksViewerTombstoneRule,
           ToxicityReplyFilterRule,
           DynamicProductAdDropTweetLabelRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule,
-          SensitiveMediaTweetDropSettingLevelTombstoneRules.OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule,
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
           MutedKeywordForTweetRepliesInterstitialRule,
           ReportedTweetInterstitialRule,
           ViewerBlocksAuthorInterstitialRule,
           ViewerMutesAuthorInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule,
           SensitiveMediaTweetInterstitialRules.ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.AdultMediaNsfwCardImageTweetLabelInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule,
-          SensitiveMediaTweetInterstitialRules.OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule,
           GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule,
-          NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule,
         )
         ++ LimitedEngagementBaseRules.tweetRules
         ++ ConversationsAdAvoidanceRules.tweetRules,
@@ -3574,11 +2978,8 @@ case object ConversationInjectedTweetPolicy
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
           EmergencyDynamicInterstitialRule,
-          NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
           GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
-          NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
-          NsfwCardImageAllUsersTweetLabelRule,
         ) ++
         LimitedEngagementBaseRules.tweetRules ++ Seq(
         SkipTweetDetailLimitedEngagementTweetLabelRule
@@ -3648,15 +3049,9 @@ case object BaseQigPolicy
         DownrankSpamReplyTweetLabelRule,
         DuplicateContentTweetLabelDropRule,
         DuplicateMentionTweetLabelRule,
-        NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwCardImageTweetLabelRule,
-        NsfwHighRecallTweetLabelRule,
-        NsfwReportedHeuristicsTweetLabelRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwVideoTweetLabelDropRule,
         PdnaTweetLabelRule,
         SafetyCrisisLevel3DropRule,
         SafetyCrisisLevel4DropRule,
@@ -3669,11 +3064,6 @@ case object BaseQigPolicy
         DuplicateContentRule,
         EngagementSpammerHighRecallRule,
         EngagementSpammerRule,
-        NsfwAvatarImageRule,
-        NsfwBannerImageRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwSensitiveRule,
         ReadOnlyRule,
         RecommendationsBlacklistRule,
         SearchBlacklistRule,
@@ -3684,13 +3074,8 @@ case object NotificationsQigPolicy
     extends VisibilityPolicy(
       tweetRules = BaseQigPolicy.tweetRules ++ Seq(
         DropAllCommunityTweetsRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
         HighProactiveTosScoreTweetLabelDropSearchRule,
         LowQualityTweetLabelDropRule,
-        NsfwHighPrecisionRule,
-        NsfwHighRecallRule,
-        NsfwNearPerfectAuthorRule,
-        NsfwSensitiveRule,
       ),
       userRules = BaseQigPolicy.userRules ++ Seq(
         AbusiveRule,
@@ -3698,8 +3083,6 @@ case object NotificationsQigPolicy
         CompromisedRule,
         ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
         ViewerMutesAuthorViewerOptInBlockingOnSearchRule,
-        DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
-        NsfwNearPerfectAuthorRule
       )
     )
 
@@ -3762,12 +3145,6 @@ case object TweetAwardPolicy
       tweetRules =
         VisibilityPolicy.baseTweetRules ++ Seq(
           EmergencyDropRule,
-          NsfwHighPrecisionTweetLabelRule,
-          NsfwHighRecallTweetLabelRule,
-          NsfwReportedHeuristicsTweetLabelRule,
-          NsfwCardImageTweetLabelRule,
-          NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
           GoreAndViolenceHighPrecisionTweetLabelRule,
           GoreAndViolenceReportedHeuristicsTweetLabelRule,
           GoreAndViolenceTweetLabelRule,

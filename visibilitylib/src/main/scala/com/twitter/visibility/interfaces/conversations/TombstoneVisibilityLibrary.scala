@@ -124,9 +124,6 @@ case class TombstoneVisibilityLibrary(
           case _ => None
         }
 
-      case _ if FilteredReasonHelper.containNsfwMedia(filteredReason) =>
-        None
-
       case _ if FilteredReasonHelper.possiblyUndesirable(filteredReason) =>
         None
 

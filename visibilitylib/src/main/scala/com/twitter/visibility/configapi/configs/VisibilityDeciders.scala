@@ -262,8 +262,6 @@ private[visibility] object VisibilityDeciders {
       DeciderKey.EnableCopypastaSpamSearchDropRule,
     RuleParams.EnableSpammyUserModelTweetDropRuleParam ->
       DeciderKey.EnableSpammyUserModelHighPrecisionDropTweetRule,
-    RuleParams.EnableAvoidNsfwRulesParam ->
-      DeciderKey.EnableAvoidNsfwRules,
     RuleParams.EnableReportedTweetInterstitialRule ->
       DeciderKey.EnableReportedTweetInterstitialRule,
     RuleParams.EnableReportedTweetInterstitialSearchRule ->
@@ -278,8 +276,6 @@ private[visibility] object VisibilityDeciders {
     RuleParams.EnableDropAllExclusiveTweetsRuleFailClosedParam -> DeciderKey.EnableDropAllExclusiveTweetsRuleFailClosed,
     RuleParams.EnableDownrankSpamReplySectioningRuleParam ->
       DeciderKey.EnableDownrankSpamReplySectioningRule,
-    RuleParams.EnableNsfwTextSectioningRuleParam ->
-      DeciderKey.EnableNsfwTextSectioningRule,
     RuleParams.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule -> DeciderKey.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule,
     RuleParams.EnableTimelineHomePromotedTweetHealthEnforcementRules -> DeciderKey.EnableTimelineHomePromotedTweetHealthEnforcementRules,
     RuleParams.EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam -> DeciderKey.EnableMutedKeywordFilteringSpaceTitleNotificationsRule,
@@ -287,25 +283,20 @@ private[visibility] object VisibilityDeciders {
     RuleParams.EnableDropAllTrustedFriendsTweetsRuleParam -> DeciderKey.EnableDropAllTrustedFriendsTweetsRule,
     RuleParams.EnableDropTrustedFriendsTweetContentRuleParam -> DeciderKey.EnableDropTrustedFriendsTweetContentRule,
     RuleParams.EnableDropAllCollabInvitationTweetsRuleParam -> DeciderKey.EnableDropCollabInvitationTweetsRule,
-    RuleParams.EnableNsfwTextTopicsDropRuleParam -> DeciderKey.EnableNsfwTextTopicsDropRule,
     RuleParams.EnableLikelyIvsUserLabelDropRule -> DeciderKey.EnableLikelyIvsUserLabelDropRule,
     RuleParams.EnableCardUriRootDomainCardDenylistRule -> DeciderKey.EnableCardUriRootDomainDenylistRule,
     RuleParams.EnableCommunityNonMemberPollCardRule -> DeciderKey.EnableCommunityNonMemberPollCardRule,
     RuleParams.EnableCommunityNonMemberPollCardRuleFailClosed -> DeciderKey.EnableCommunityNonMemberPollCardRuleFailClosed,
     RuleParams.EnableExperimentalNudgeEnabledParam -> DeciderKey.EnableExperimentalNudgeLabelRule,
-    RuleParams.NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam -> DeciderKey.NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam,
     RuleParams.EnableNewAdAvoidanceRulesParam -> DeciderKey.EnableNewAdAvoidanceRules,
     RuleParams.EnableNsfaHighRecallAdAvoidanceParam -> DeciderKey.EnableNsfaHighRecallAdAvoidanceParam,
     RuleParams.EnableNsfaKeywordsHighPrecisionAdAvoidanceParam -> DeciderKey.EnableNsfaKeywordsHighPrecisionAdAvoidanceParam,
     RuleParams.EnableStaleTweetDropRuleParam -> DeciderKey.EnableStaleTweetDropRuleParam,
     RuleParams.EnableStaleTweetDropRuleFailClosedParam -> DeciderKey.EnableStaleTweetDropRuleFailClosedParam,
     RuleParams.EnableDeleteStateTweetRulesParam -> DeciderKey.EnableDeleteStateTweetRules,
-    RuleParams.EnableSpacesSharingNsfwDropRulesParam -> DeciderKey.EnableSpacesSharingNsfwDropRulesParam,
     RuleParams.EnableViewerIsSoftUserDropRuleParam -> DeciderKey.EnableViewerIsSoftUserDropRuleParam,
     RuleParams.EnablePdnaQuotedTweetTombstoneRuleParam -> DeciderKey.EnablePdnaQuotedTweetTombstoneRule,
     RuleParams.EnableSpamQuotedTweetTombstoneRuleParam -> DeciderKey.EnableSpamQuotedTweetTombstoneRule,
-    RuleParams.EnableNsfwHpQuotedTweetDropRuleParam -> DeciderKey.EnableNsfwHpQuotedTweetDropRule,
-    RuleParams.EnableNsfwHpQuotedTweetTombstoneRuleParam -> DeciderKey.EnableNsfwHpQuotedTweetTombstoneRule,
     RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam -> DeciderKey.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule,
     RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam -> DeciderKey.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule,
     RuleParams.EnableToxicReplyFilteringConversationRulesParam -> DeciderKey.VisibilityLibraryEnableToxicReplyFilterConversation,
