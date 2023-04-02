@@ -19,36 +19,33 @@ public final class NativeUtils {
   }
 
   private static File unpackLibraryFromJarInternal(String path) throws IOException {
-    if (null == path || !path.startsWith("/")) {
-      throw new IllegalArgumentException("The path has to be absolute (start with '/').");
+    Objects.requireNonNull(path, "The path cannot be null.");
+    if (!path.startsWith("/")) {
+        throw new IllegalArgumentException("The path has to be absolute (start with '/').");
     }
 
     String[] parts = path.split("/");
-    String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
+    String filename = parts.length > 1 ? parts[parts.length - 1] : null;
 
     if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
-      throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
+        throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
     }
 
-    if (temporaryDir == null) {
-      temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);
-      temporaryDir.deleteOnExit();
-    }
-
-    File temp = new File(temporaryDir, filename);
+    File temp = Files.createTempFile(NATIVE_FOLDER_PATH_PREFIX, filename).toFile();
+    temp.deleteOnExit();
 
     try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
-      Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      temp.delete();
-      throw e;
+        temp.delete();
+        throw e;
     } catch (NullPointerException e) {
-      temp.delete();
-      throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+        temp.delete();
+        throw new FileNotFoundException("File " + path + " was not found inside JAR.");
     }
 
     return temp;
-  }
+}
 
   /**
    * Unpack library from JAR into temporary path
