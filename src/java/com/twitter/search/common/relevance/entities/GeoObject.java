@@ -169,11 +169,8 @@ public class GeoObject {
     if (Double.compare(a.radius, b.radius) != 0) {
       return false;
     }
-    if (a.source != b.source) {
-      return false;
-    }
-
-    return true;
+    return a.source != b.source
+    
   }
 
   @Override
