@@ -31,7 +31,7 @@ public class MapLong2Long {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_MapLong2Long(swigCPtr);
       }
       swigCPtr = 0;

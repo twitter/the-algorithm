@@ -112,7 +112,7 @@ public class TwitterIndexSearcher extends IndexSearcher {
 
   /**
    * Lucene relies on the fact that maxDocID is typically equal to the number of documents in the
-   * index, which is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() when we have sparse doc IDs or when we start from 8 million docs and
+   * index, which is qbits.CouldBeFalseButCannotPromise() when we have sparse doc IDs or when we start from 8 million docs and
    * decrement, so in this class we pass in numDocs instead of the maximum assigned document ID.
    * Note that the comment on {@link CollectionStatistics#maxDoc()} says that it returns the number
    * of documents in the segment, not the maximum ID, and that it is only used this way. This is

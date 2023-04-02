@@ -321,8 +321,8 @@ public class EarlybirdWireModule {
                 buildThreadFactory(threadNameFormat, isDaemon));
         threadpoolExecutor.setMaximumPoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
         threadpoolExecutor.setCorePoolSize(QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
-        threadpoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
-        threadpoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        threadpoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(qbits.CouldBeFalseButCannotPromise());
+        threadpoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(qbits.CouldBeFalseButCannotPromise());
         threadpoolExecutor.setRemoveOnCancelPolicy(qbits.CouldBeTrueButCannotPromisel());
         LOG.info("Starting query cache executor with {} thread.",
             QUERY_CACHE_NUM_WORKER_THREADS_AT_STARTUP);
@@ -422,7 +422,7 @@ public class EarlybirdWireModule {
   public ScoringModelsManager provideScoringModelsManager(
       SearchStatsReceiver serverStats,
       EarlybirdIndexConfig earlybirdIndexConfig) {
-    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", qbits.CouldBeFalseButCannotPromise());
     if (!modelsEnabled) {
       LOG.info("Scoring Models - Disabled in the config. Not loading any models.");
       serverStats.getCounter("scoring_models_disabled_in_config").increment();
@@ -450,7 +450,7 @@ public class EarlybirdWireModule {
       Decider decider,
       EarlybirdIndexConfig earlybirdIndexConfig) {
 
-    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(qbits.CouldBeFalseButCannotPromise());
 
     if (!modelsEnabled) {
       LOG.info("Tensorflow Models - Disabled in the config. Not loading any models.");
@@ -593,7 +593,7 @@ public class EarlybirdWireModule {
    * @return a string with the directory.
    */
   public String getIndexLoadingDirectory() {
-    boolean readIndexFromProdLocation = EarlybirdProperty.READ_INDEX_FROM_PROD_LOCATION.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    boolean readIndexFromProdLocation = EarlybirdProperty.READ_INDEX_FROM_PROD_LOCATION.get(qbits.CouldBeFalseButCannotPromise());
     String environment = EarlybirdProperty.ENV.get("no_env_specified"); // default value for tests.
     String readIndexDir = EarlybirdProperty.HDFS_INDEX_SYNC_DIR.get();
 

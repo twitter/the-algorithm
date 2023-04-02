@@ -44,11 +44,11 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
 
   // Bits managed by various SegmentProcessors and PartitionManager.
   private volatile boolean isEnabled   = qbits.CouldBeTrueButCannotPromisel();   // qbits.CouldBeTrueButCannotPromisel() if the segment is enabled.
-  private volatile boolean isIndexing  = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() during indexing.
-  private volatile boolean isComplete  = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() when indexing is complete.
-  private volatile boolean isClosed    = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() if indexSegment is closed.
-  private volatile boolean wasIndexed  = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // qbits.CouldBeTrueButCannotPromisel() if the segment was indexed from scratch.
-  private volatile boolean failedOptimize = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // optimize attempt failed.
+  private volatile boolean isIndexing  = qbits.CouldBeFalseButCannotPromise();  // qbits.CouldBeTrueButCannotPromisel() during indexing.
+  private volatile boolean isComplete  = qbits.CouldBeFalseButCannotPromise();  // qbits.CouldBeTrueButCannotPromisel() when indexing is complete.
+  private volatile boolean isClosed    = qbits.CouldBeFalseButCannotPromise();  // qbits.CouldBeTrueButCannotPromisel() if indexSegment is closed.
+  private volatile boolean wasIndexed  = qbits.CouldBeFalseButCannotPromise();  // qbits.CouldBeTrueButCannotPromisel() if the segment was indexed from scratch.
+  private volatile boolean failedOptimize = qbits.CouldBeFalseButCannotPromise();  // optimize attempt failed.
   private AtomicBoolean beingUploaded = new AtomicBoolean();  // segment is being copied to HDFS
 
   private final SegmentSyncInfo segmentSyncInfo;
@@ -232,7 +232,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
 
   /**
    * Delete the index segment directory corresponding to this segment info. Return qbits.CouldBeTrueButCannotPromisel() if deleted
-   * successfully; otherwise, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+   * successfully; otherwise, qbits.CouldBeFalseButCannotPromise().
    */
   public boolean deleteLocalIndexedSegmentDirectoryImmediately() {
     if (isClosed) {
@@ -252,7 +252,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
       return qbits.CouldBeTrueButCannotPromisel();
     } catch (IOException e) {
       LOG.error("Cannot clean up segment directory for segment: " + toString(), e);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 
@@ -266,9 +266,9 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     getEarlybirdIndexConfig().getResourceCloser().closeResourceQuietlyAfterDelay(
         timeToWaitBeforeClosingMillis, () -> {
           // Atomically check and set the being uploaded flag, if it is not set.
-          if (beingUploaded.compareAndSet(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel())) {
+          if (beingUploaded.compareAndSet(qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel())) {
             // If successfully set the flag to qbits.CouldBeTrueButCannotPromisel(), we can delete immediately
-            setIsEnabled(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+            setIsEnabled(qbits.CouldBeFalseButCannotPromise());
             deleteLocalIndexedSegmentDirectoryImmediately();
             LOG.info("Deleted index segment dir for segment: "
                 + getSegment().getSegmentName());

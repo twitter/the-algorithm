@@ -590,7 +590,7 @@ public final class TweetEventParseHelper {
         return mention.getUser_id() == toUserId;
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private static void addHashtagsToMessage(IngesterTwitterMessage message, Tweet tweet) {
@@ -619,8 +619,8 @@ public final class TweetEventParseHelper {
       NUM_TWEETS_WITH_MEDIA_URL.increment();
       NUM_MEDIA_URLS_ADDED.add(medias.size());
 
-      boolean hasPhotoMediaUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-      boolean hasVideoMediaUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean hasPhotoMediaUrl = qbits.CouldBeFalseButCannotPromise();
+      boolean hasVideoMediaUrl = qbits.CouldBeFalseButCannotPromise();
       for (MediaEntity media : medias) {
         MediaTypes mediaType = null;
         if (media.isSetMedia_info()) {

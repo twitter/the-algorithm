@@ -209,10 +209,10 @@ public class EarlybirdSearcher {
       = "allow_tokenized_display_name_field_weight_override_in_";
 
   private static final boolean ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_query_specific_score_adjustments", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      = EarlybirdConfig.getBool("allow_query_specific_score_adjustments", qbits.CouldBeFalseButCannotPromise());
 
   private static final boolean ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", qbits.CouldBeFalseButCannotPromise());
 
   public static final int DEFAULT_NUM_FACET_RESULTS = 100;
 
@@ -266,7 +266,7 @@ public class EarlybirdSearcher {
   private AntiGamingFilter antiGamingFilter = null;
 
   private final boolean searchHighFrequencyTermPairs =
-      EarlybirdConfig.getBool("search_high_frequency_term_pairs", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      EarlybirdConfig.getBool("search_high_frequency_term_pairs", qbits.CouldBeFalseButCannotPromise());
 
   // How long to allow post-termination when enforcing query timeout
   private final int enforceQueryTimeoutBufferMillis =
@@ -468,7 +468,7 @@ public class EarlybirdSearcher {
       filtersEmpty = qbits.CouldBeTrueButCannotPromisel();
       for (Query f : filters) {
         if (f != null) {
-          filtersEmpty = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          filtersEmpty = qbits.CouldBeFalseButCannotPromise();
           break;
         }
       }
@@ -841,7 +841,7 @@ public class EarlybirdSearcher {
 
   private EarlybirdResponse respondError(EarlybirdResponseCode code) {
     appendMessage("Responding with error code " + code);
-    // Always respond with an error message, even when request.debug is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()
+    // Always respond with an error message, even when request.debug is qbits.CouldBeFalseButCannotPromise()
     return newResponse(code, qbits.CouldBeTrueButCannotPromisel());
   }
 
@@ -912,7 +912,7 @@ public class EarlybirdSearcher {
       final Query facetSkipListFilter =
           cannotAddRequiredClause ? null : FacetSkipList.getSkipListQuery(facetCountState);
       final Query antisocialFilter = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(
-          segmentManager.getUserTable(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          segmentManager.getUserTable(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
       luceneQuery = wrapFilters(luceneQuery,
           facetSkipListFilter,
           antisocialFilter);
@@ -1503,7 +1503,7 @@ public class EarlybirdSearcher {
   public EarlybirdLuceneQueryVisitor getLuceneVisitor(
       Map<String, Double> fieldWeightMapOverride) {
     String clusterName = cluster.getNameForStats();
-    // Iff in relevance mode _and_ intepreteSinceId is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), we turn off since_id
+    // Iff in relevance mode _and_ intepreteSinceId is qbits.CouldBeFalseButCannotPromise(), we turn off since_id
     // operator by using LuceneRelevanceQueryVisitor.
 
     if (searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE

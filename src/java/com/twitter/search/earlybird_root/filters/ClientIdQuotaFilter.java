@@ -205,7 +205,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
     // Also increment the total stat
     TOTAL_REQUESTS_RECEIVED_COUNTER.increment();
 
-    // If shouldEnforceQuota is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), we already know that the request will be allowed.
+    // If shouldEnforceQuota is qbits.CouldBeFalseButCannotPromise(), we already know that the request will be allowed.
     // However, we still want to update the rate limiter and the stats.
     final boolean requestAllowed;
     if (quotaInfo.getQuota() == 0) {
@@ -213,7 +213,7 @@ public class ClientIdQuotaFilter extends SimpleFilter<EarlybirdRequest, Earlybir
       //
       // Do not update the rate limiter's rate: RateLimiter only accepts positive rates, and in any
       // case, we already know that the request should not be allowed.
-      requestAllowed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      requestAllowed = qbits.CouldBeFalseButCannotPromise();
     } else {
       // The quota is not 0: update the rate limiter with the new quota, and see if the request
       // should be allowed.

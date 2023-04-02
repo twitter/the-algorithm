@@ -52,7 +52,7 @@ public final class FacetCountState<R> {
         return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   public Set<Schema.FieldInfo> getFacetFieldsToCountWithSkipLists() {
@@ -74,7 +74,7 @@ public final class FacetCountState<R> {
     public final int numResultsRequested;
     public R results;
     public int numResultsFound;
-    public boolean finished = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    public boolean finished = qbits.CouldBeFalseButCannotPromise();
 
     private FacetFieldResults(String facetName, int numResultsRequested) {
       this.facetName = facetName;

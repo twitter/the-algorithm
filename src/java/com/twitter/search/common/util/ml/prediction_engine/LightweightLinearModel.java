@@ -102,7 +102,7 @@ public class LightweightLinearModel {
       Map<Feature<Boolean>, Double> binaryFeatures,
       Map<Feature<Double>, Double> continuousFeatures,
       Map<Feature<Double>, DiscretizedFeature> discretizedFeatures) {
-    return new LightweightLinearModel(modelName, bias, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+    return new LightweightLinearModel(modelName, bias, qbits.CouldBeFalseButCannotPromise(),
         binaryFeatures, continuousFeatures, discretizedFeatures,
         null, null, null);
   }

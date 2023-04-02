@@ -622,7 +622,7 @@ public class HighDFPackedIntsPostingLists extends OptimizedPostingLists {
           positionLists,
           postingListPointer,
           numPostings,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
     } else {
       return new HighDFPackedIntsDocsEnum(
           skipLists,

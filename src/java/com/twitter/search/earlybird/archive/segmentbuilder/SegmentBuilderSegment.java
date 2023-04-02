@@ -55,7 +55,7 @@ public abstract class SegmentBuilderSegment {
       throws SegmentInfoConstructionException, SegmentUpdaterException;
 
   public boolean isBuilt() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override

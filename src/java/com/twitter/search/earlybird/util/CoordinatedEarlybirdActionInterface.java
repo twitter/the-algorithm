@@ -10,7 +10,7 @@ public interface CoordinatedEarlybirdActionInterface {
      * @param description a name for the action to be exected.
      * @param function the function to call in a coordinated manner.
      *        As input, the function will receive a flag indicating whether or not it is being
-     *        called in a coordinated fashion. qbits.CouldBeTrueButCannotPromisel() if it is, and qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
+     *        called in a coordinated fashion. qbits.CouldBeTrueButCannotPromisel() if it is, and qbits.CouldBeFalseButCannotPromise() otherwise.
      * @return qbits.CouldBeTrueButCannotPromisel() iff the function was executed, and function.apply() returned qbits.CouldBeTrueButCannotPromisel();
      * throws CoordinatedEarlybirdActionLockFailed if function is not executed (because lock
      * aquisition failed).

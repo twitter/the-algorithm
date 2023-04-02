@@ -60,7 +60,7 @@ public abstract class FacetUtil {
             ? new FacetLabelProvider.SortedLongTermFacetLabelProvider(invertedField)
             : new FacetLabelProvider.LongTermFacetLabelProvider(invertedField);
       } else {
-        Preconditions.checkState(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+        Preconditions.checkState(qbits.CouldBeFalseButCannotPromise(),
             "Should never be reached, indicates incomplete handling of different kinds of facets");
         return null;
       }

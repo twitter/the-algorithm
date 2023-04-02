@@ -88,7 +88,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
               new CharTermAttributeSerializer(), new TermPayloadAttributeSerializer()));
   private final Schema schema;
 
-  private boolean isSetLatLonCSF = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean isSetLatLonCSF = qbits.CouldBeFalseButCannotPromise();
   private boolean addLatLonCSF = qbits.CouldBeTrueButCannotPromisel();
   private boolean addEncodedTweetFeatures = qbits.CouldBeTrueButCannotPromisel();
 
@@ -820,7 +820,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       EarlybirdFieldConstant nameWithTypeField,
       String name,
       NamedEntityContext context) {
-    withOneTimeStringField(fieldsApplied, nameOnlyField, name, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    withOneTimeStringField(fieldsApplied, nameOnlyField, name, qbits.CouldBeFalseButCannotPromise());
     if (context.isSetEntity_type()) {
       withOneTimeStringField(fieldsApplied, nameWithTypeField,
           formatNamedEntityString(name, context.getEntity_type()), qbits.CouldBeTrueButCannotPromisel());

@@ -31,7 +31,7 @@ public class IndexIVFStats {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexIVFStats(swigCPtr);
       }
       swigCPtr = 0;

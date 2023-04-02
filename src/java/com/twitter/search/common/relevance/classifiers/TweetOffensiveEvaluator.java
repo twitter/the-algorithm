@@ -132,12 +132,12 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
   }
 
   private void rebuildBlacklistedTopics() throws IOException {
-    offensiveTopics.set(new BlacklistedTopics.Builder(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+    offensiveTopics.set(new BlacklistedTopics.Builder(qbits.CouldBeFalseButCannotPromise())
       .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EXACT)
       .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
 
-    offensiveUsersTopics.set(new BlacklistedTopics.Builder(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+    offensiveUsersTopics.set(new BlacklistedTopics.Builder(qbits.CouldBeFalseButCannotPromise())
       .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EXACT)
       .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
@@ -199,7 +199,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
         return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private boolean isTweetOffensive(final TwitterMessage tweet,
@@ -207,7 +207,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
                                    PenguinVersion penguinVersion) {
     TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
 
-    boolean tweetHasOffensiveTerm = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean tweetHasOffensiveTerm = qbits.CouldBeFalseButCannotPromise();
 
     // Check for tweet text.
     List<TokenizedCharSequence> ngrams =

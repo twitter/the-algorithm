@@ -30,7 +30,7 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexIVFScalarQuantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -88,7 +88,7 @@ public class IndexIVFScalarQuantizer extends IndexIVF {
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexIVFScalarQuantizer_get_InvertedListScanner(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void reconstruct_from_offset(long list_no, long offset, SWIGTYPE_p_float recons) {

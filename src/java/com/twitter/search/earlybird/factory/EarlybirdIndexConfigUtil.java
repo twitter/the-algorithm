@@ -43,11 +43,11 @@ public final class EarlybirdIndexConfigUtil {
 
   private static boolean isProtectedSearch() {
     // Re-reading config on each call so that tests can reliably overwrite this
-    return EarlybirdConfig.getBool("protected_index", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return EarlybirdConfig.getBool("protected_index", qbits.CouldBeFalseButCannotPromise());
   }
 
   private static boolean isRealtimeCG() {
     // Re-reading config on each call so that tests can reliably overwrite this
-    return EarlybirdConfig.getBool("realtime_cg_index", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return EarlybirdConfig.getBool("realtime_cg_index", qbits.CouldBeFalseButCannotPromise());
   }
 }

@@ -56,7 +56,7 @@ public final class CSFDisjunctionFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof CSFDisjunctionFilter)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     CSFDisjunctionFilter filter = CSFDisjunctionFilter.class.cast(obj);

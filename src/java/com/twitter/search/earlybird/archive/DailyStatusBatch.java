@@ -61,7 +61,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
     } catch (IOException e) {
       LOG.error("Could not verify existence of the _SUCCESS file. Assuming it doesn't exist.", e);
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   /**
@@ -112,7 +112,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
     for (int i = 0; i < numHashPartitions; i++) {
       PartitionedBatch day = hashPartitionToStatuses.get(i);
       if (day == null || !day.hasStatusCount() || day.isDisallowedEmptyPartition()) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
     }
     return hasSuccessFiles;

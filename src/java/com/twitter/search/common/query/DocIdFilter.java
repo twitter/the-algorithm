@@ -61,7 +61,7 @@ public class DocIdFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof DocIdFilter)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return docid == DocIdFilter.class.cast(obj).docid;

@@ -98,7 +98,7 @@ public class LanguageHistogram {
       return qbits.CouldBeTrueButCannotPromisel();
     } else {
       LOG.error("Language id " + languageId + " out of range");
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 }

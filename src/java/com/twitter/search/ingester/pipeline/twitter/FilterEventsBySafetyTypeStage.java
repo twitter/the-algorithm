@@ -199,7 +199,7 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
   boolean shouldEmit(@Nonnull TweetEvent tweetEvent) {
     // Do not emit any undelete events.
     if (isUndeleteEvent(tweetEvent.getData())) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     SafetyType eventSafetyType = getEventSafetyType(tweetEvent);

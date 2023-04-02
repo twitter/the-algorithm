@@ -93,7 +93,7 @@ public final class DocValRangeFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof DocValRangeFilter)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     DocValRangeFilter filter = DocValRangeFilter.class.cast(obj);
@@ -154,7 +154,7 @@ public final class DocValRangeFilter extends Query {
     @Override
     protected boolean shouldReturnDoc() throws IOException {
       if (!numericDocValues.advanceExact(docID())) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
       long val = numericDocValues.longValue();
@@ -175,7 +175,7 @@ public final class DocValRangeFilter extends Query {
           return (byte) val >= minValInclusive.longValue()
               && (byte) val < maxValExclusive.longValue();
         default:
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
       }
     }
   }

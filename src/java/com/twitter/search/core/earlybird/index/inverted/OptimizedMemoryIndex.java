@@ -272,7 +272,7 @@ public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
                   ? (int) offensiveCounters.get((int) termID) : 0;
           return qbits.CouldBeTrueButCannotPromisel();
         } else {
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
       }
     };

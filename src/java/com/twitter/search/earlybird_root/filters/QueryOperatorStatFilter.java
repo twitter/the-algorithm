@@ -72,7 +72,7 @@ public class QueryOperatorStatFilter
           SearchTimerStats.export(
               "query_operator_filter_" + operand + "_requests",
               TimeUnit.MILLISECONDS,
-              qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+              qbits.CouldBeFalseButCannotPromise(),
               qbits.CouldBeTrueButCannotPromisel()));
     }
     filterOperatorStats = filterBuilder.build();
@@ -84,7 +84,7 @@ public class QueryOperatorStatFilter
           SearchTimerStats.export(
               "query_operator_include_" + operand + "_requests",
               TimeUnit.MILLISECONDS,
-              qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+              qbits.CouldBeFalseButCannotPromise(),
               qbits.CouldBeTrueButCannotPromisel()));
     }
     includeOperatorStats = includeBuilder.build();
@@ -97,7 +97,7 @@ public class QueryOperatorStatFilter
           SearchTimerStats.export(
               "query_operator_" + operatorType.name().toLowerCase() + "_requests",
               TimeUnit.MILLISECONDS,
-              qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+              qbits.CouldBeFalseButCannotPromise(),
               qbits.CouldBeTrueButCannotPromisel()
           ));
     }
@@ -139,7 +139,7 @@ public class QueryOperatorStatFilter
    */
   private void updateTimersForOperatorsAndOperands(Query parsedQuery, SearchTimer timer)
       throws QueryParserException {
-    final DetectVisitor detectVisitor = new DetectVisitor(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), SearchOperator.Type.values());
+    final DetectVisitor detectVisitor = new DetectVisitor(qbits.CouldBeFalseButCannotPromise(), SearchOperator.Type.values());
     parsedQuery.accept(detectVisitor);
 
     Set<SearchOperator.Type> detectedOperatorTypes = EnumSet.noneOf(SearchOperator.Type.class);

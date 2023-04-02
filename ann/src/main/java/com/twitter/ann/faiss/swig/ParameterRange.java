@@ -31,7 +31,7 @@ public class ParameterRange {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ParameterRange(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class ParameterRange {
 
   public DoubleVector getValues() {
     long cPtr = swigfaissJNI.ParameterRange_values_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public ParameterRange() {

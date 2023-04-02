@@ -50,7 +50,7 @@ public class IdentifiableQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof IdentifiableQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     IdentifiableQuery identifiableQuery = IdentifiableQuery.class.cast(obj);

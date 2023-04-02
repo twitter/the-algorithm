@@ -30,7 +30,7 @@ public class IndexLSH extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexLSH(swigCPtr);
       }
       swigCPtr = 0;
@@ -68,7 +68,7 @@ public class IndexLSH extends IndexFlatCodes {
 
   public RandomRotationMatrix getRrot() {
     long cPtr = swigfaissJNI.IndexLSH_rrot_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RandomRotationMatrix(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new RandomRotationMatrix(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setThresholds(FloatVector value) {
@@ -77,7 +77,7 @@ public class IndexLSH extends IndexFlatCodes {
 
   public FloatVector getThresholds() {
     long cPtr = swigfaissJNI.IndexLSH_thresholds_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexLSH(long d, int nbits, boolean rotate_data, boolean train_thresholds) {
@@ -94,7 +94,7 @@ public class IndexLSH extends IndexFlatCodes {
 
   public SWIGTYPE_p_float apply_preprocess(long n, SWIGTYPE_p_float x) {
     long cPtr = swigfaissJNI.IndexLSH_apply_preprocess(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void train(long n, SWIGTYPE_p_float x) {

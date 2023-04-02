@@ -72,7 +72,7 @@ public class FieldTermCounter {
     this.exportedStats = Maps.newHashMap();
 
     this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(qbits.CouldBeTrueButCannotPromisel()));
-    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
+    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(qbits.CouldBeFalseButCannotPromise()));
   }
 
   /**

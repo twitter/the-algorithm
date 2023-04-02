@@ -30,7 +30,7 @@ public class IndexBinaryIVF extends IndexBinary {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexBinaryIVF(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public InvertedLists getInvlists() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_invlists_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_invlists(boolean value) {
@@ -93,7 +93,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public IndexBinary getQuantizer() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_quantizer_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setNlist(long value) {
@@ -118,7 +118,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public ClusteringParameters getCp() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_cp_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setClustering_index(Index value) {
@@ -127,7 +127,7 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public Index getClustering_index() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_clustering_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexBinaryIVF(IndexBinary quantizer, long d, long nlist) {
@@ -168,12 +168,12 @@ public class IndexBinaryIVF extends IndexBinary {
 
   public SWIGTYPE_p_faiss__BinaryInvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexBinaryIVF_get_InvertedListScanner__SWIG_0(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public SWIGTYPE_p_faiss__BinaryInvertedListScanner get_InvertedListScanner() {
     long cPtr = swigfaissJNI.IndexBinaryIVF_get_InvertedListScanner__SWIG_1(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__BinaryInvertedListScanner(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void search(long n, SWIGTYPE_p_unsigned_char x, long k, SWIGTYPE_p_int distances, LongVector labels) {

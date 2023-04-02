@@ -34,7 +34,7 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
 
     TryLock lock = getZooKeeperTryLock();
 
-    final AtomicBoolean alreadyBuilt = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    final AtomicBoolean alreadyBuilt = new AtomicBoolean(qbits.CouldBeFalseButCannotPromise());
     boolean gotLock = lock.tryWithLock((Command) () -> {
       // The segment might have already finished built by others
       if (segmentExistsOnHdfs()) {

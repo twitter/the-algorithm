@@ -84,7 +84,7 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
       }
     }
 
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
@@ -94,6 +94,6 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
       }
     }
 
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

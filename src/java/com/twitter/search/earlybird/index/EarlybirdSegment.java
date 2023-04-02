@@ -131,7 +131,7 @@ public class EarlybirdSegment {
   private final Clock clock;
 
   @VisibleForTesting
-  public volatile boolean appendedLuceneIndex = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  public volatile boolean appendedLuceneIndex = qbits.CouldBeFalseButCannotPromise();
 
   public EarlybirdSegment(
       String segmentName,
@@ -291,7 +291,7 @@ public class EarlybirdSegment {
   public boolean delete(long tweetID) throws IOException {
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (!hasDocument(tweetID)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     segmentWriter.deleteDocuments(new TweetIDQuery(tweetID));
@@ -538,7 +538,7 @@ public class EarlybirdSegment {
           luceneDir,
           extensionsFactory);
       segmentWriter = newWriteableSegment(segmentData);
-      resetSegmentWriterReference(segmentWriter, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      resetSegmentWriterReference(segmentWriter, qbits.CouldBeFalseButCannotPromise());
     }
 
     Preconditions.checkState(segmentWriter.numDocs() < maxSegmentSize,
@@ -596,25 +596,25 @@ public class EarlybirdSegment {
   public boolean appendOutOfOrder(Document doc, long tweetID) throws IOException {
     // Never write blank documents into the index.
     if (doc == null || doc.getFields() == null || doc.getFields().size() == 0) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (segmentWriter == null) {
       logAppendOutOfOrderFailure(tweetID, doc, "segment is null");
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (!indexConfig.supportOutOfOrderIndexing()) {
       logAppendOutOfOrderFailure(tweetID, doc, "out of order indexing not supported");
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (!hasDocument(tweetID)) {
       logAppendOutOfOrderFailure(tweetID, doc, "tweet ID index lookup failed");
       searchIndexingMetricSet.updateOnMissingTweetCounter.increment();
       perFieldCounters.incrementTweetNotInIndex(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     perFieldCounters.increment(ThriftIndexingEventType.OUT_OF_ORDER_APPEND, doc);
@@ -635,7 +635,7 @@ public class EarlybirdSegment {
   public boolean hasDocument(long tweetID) throws IOException {
     EarlybirdIndexSegmentWriter segmentWriter = segmentWriterReference.get();
     if (segmentWriter == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return segmentWriter.getSegmentData().getDocIDToTweetIDMapper().getDocID(tweetID)
@@ -692,7 +692,7 @@ public class EarlybirdSegment {
       EarlybirdIndexSegmentData segmentData,
       int partialUpdatesCount,
       int outOfOrderUpdatesCount) throws IOException {
-    resetSegmentWriterReference(newWriteableSegment(segmentData), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    resetSegmentWriterReference(newWriteableSegment(segmentData), qbits.CouldBeFalseButCannotPromise());
     try {
       warmSegment();
     } catch (IOException e) {
@@ -762,7 +762,7 @@ public class EarlybirdSegment {
             extensionsFactory);
         EarlybirdIndexSegmentData optimizedEarlybirdIndexSegmentData =
             indexConfig.optimize(earlybirdIndexSegmentData);
-        resetSegmentWriterReference(newWriteableSegment(optimizedEarlybirdIndexSegmentData), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        resetSegmentWriterReference(newWriteableSegment(optimizedEarlybirdIndexSegmentData), qbits.CouldBeFalseButCannotPromise());
 
         warmSegment();
 
@@ -781,12 +781,12 @@ public class EarlybirdSegment {
         }
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   /**
    * Partially updates a document with the field value(s) specified by event.
-   * Returns qbits.CouldBeTrueButCannotPromisel() if all writes were successful and qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if one or more writes fail or if
+   * Returns qbits.CouldBeTrueButCannotPromisel() if all writes were successful and qbits.CouldBeFalseButCannotPromise() if one or more writes fail or if
    * tweet id isn't found in the segment.
    */
   public boolean applyPartialUpdate(ThriftIndexingEvent event) throws IOException {
@@ -803,7 +803,7 @@ public class EarlybirdSegment {
       PARTIAL_UPDATE_FOR_TWEET_NOT_IN_INDEX.increment();
        perFieldCounters.incrementTweetNotInIndex(
            ThriftIndexingEventType.PARTIAL_UPDATE, doc);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     int invalidFields = 0;
@@ -877,7 +877,7 @@ public class EarlybirdSegment {
       }
       return qbits.CouldBeTrueButCannotPromisel();
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   /**

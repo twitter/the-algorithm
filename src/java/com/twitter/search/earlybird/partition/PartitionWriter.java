@@ -92,7 +92,7 @@ public class PartitionWriter {
       createHandler.handleTweetCreate(tve);
       updateHandler.retryPendingUpdates(tve.getId());
     } else {
-      updateHandler.handleTweetUpdate(tve, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      updateHandler.handleTweetUpdate(tve, qbits.CouldBeFalseButCannotPromise());
     }
   }
 

@@ -28,7 +28,7 @@ public class SegmentWarmer {
    */
   public boolean warmSegmentIfNecessary(SegmentInfo segmentInfo) {
     if (!shouldWarmSegment(segmentInfo)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     try {
       segmentInfo.getIndexSegment().warmSegment();
@@ -43,7 +43,7 @@ public class SegmentWarmer {
 
       criticalExceptionHandler.handle(this, e);
 
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 }

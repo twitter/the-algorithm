@@ -116,7 +116,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
    */
   @Override
   public void innerProcess(Object obj) {
-    boolean interrupted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean interrupted = qbits.CouldBeFalseButCannotPromise();
 
     Preconditions.checkNotNull("The environment is not set.", environment);
 

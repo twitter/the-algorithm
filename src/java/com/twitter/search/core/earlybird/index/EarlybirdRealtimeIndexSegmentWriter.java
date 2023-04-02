@@ -133,7 +133,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
                              "Cannot add a new document to the segment, because it's full.");
 
-    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), qbits.CouldBeFalseButCannotPromise());
   }
 
   @Override
@@ -223,7 +223,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
             ).increment();
             continue;
           }
-          processField(internalDocID, indexableField, fieldGen, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          processField(internalDocID, indexableField, fieldGen, qbits.CouldBeFalseButCannotPromise());
           appendedFields.add(indexableField.name());
         }
       }
@@ -438,7 +438,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
     @Override
     public boolean equals(Object other) {
       if (!(other instanceof PerField)) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
       return this.fieldName.equals(((PerField) other).fieldName);
@@ -496,7 +496,7 @@ public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSeg
 
       IndexableFieldType fieldType = field.fieldType();
       final boolean analyzed = fieldType.tokenized() && indexSegmentWriter.analyzer != null;
-      boolean succeededInProcessingField = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean succeededInProcessingField = qbits.CouldBeFalseButCannotPromise();
       try {
         tokenStream = field.tokenStream(indexSegmentWriter.analyzer, tokenStream);
         tokenStream.reset();

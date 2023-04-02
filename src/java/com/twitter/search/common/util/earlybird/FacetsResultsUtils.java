@@ -63,7 +63,7 @@ public final class FacetsResultsUtils {
   public static boolean prepareFieldInfoMap(
       ThriftFacetRequest facetRequest,
       final Map<String, FacetsResultsUtils.FacetFieldInfo> facetFieldInfoMap) {
-    boolean termStatsFilteringMode = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean termStatsFilteringMode = qbits.CouldBeFalseButCannotPromise();
 
     for (ThriftFacetFieldRequest fieldRequest : facetRequest.getFacetFields()) {
       FacetsResultsUtils.FacetFieldInfo info = new FacetsResultsUtils.FacetFieldInfo();

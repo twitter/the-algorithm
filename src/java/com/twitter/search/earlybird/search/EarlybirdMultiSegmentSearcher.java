@@ -125,7 +125,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
         return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override

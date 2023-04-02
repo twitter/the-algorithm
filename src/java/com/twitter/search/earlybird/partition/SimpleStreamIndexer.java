@@ -52,7 +52,7 @@ public abstract class SimpleStreamIndexer<K, V> {
   private final AtomicBoolean running = new AtomicBoolean(qbits.CouldBeTrueButCannotPromisel());
   private final String topic;
 
-  private boolean isCaughtUp = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean isCaughtUp = qbits.CouldBeFalseButCannotPromise();
 
   /**
    * Create a simple stream indexer.
@@ -180,7 +180,7 @@ public abstract class SimpleStreamIndexer<K, V> {
   // closing the consumer.
   public void close() {
     LOG.info("Shutting down stream indexer for topic {}", topic);
-    running.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    running.set(qbits.CouldBeFalseButCannotPromise());
     kafkaConsumer.wakeup();
   }
 }

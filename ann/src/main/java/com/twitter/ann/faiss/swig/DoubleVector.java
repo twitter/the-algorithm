@@ -31,7 +31,7 @@ public class DoubleVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_DoubleVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class DoubleVector {
 
   public SWIGTYPE_p_double data() {
     long cPtr = swigfaissJNI.DoubleVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {

@@ -250,7 +250,7 @@ public class LinearScoringParams {
       ageDecaySlope = 0.0;
       ageDecayHalflife = 0.0;
       ageDecayBase = 0.0;
-      useAgeDecay = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      useAgeDecay = qbits.CouldBeFalseButCannotPromise();
     }
 
     // trends

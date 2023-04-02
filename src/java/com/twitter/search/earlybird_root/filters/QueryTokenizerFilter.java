@@ -31,7 +31,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
   private static final SearchRateCounter SKIPPED_COUNTER =
       SearchRateCounter.export(PREFIX + "skipped");
   private static final SearchTimerStats QUERY_TOKENIZER_TIME =
-      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise());
 
   private final TokenizationOption tokenizationOption;
 

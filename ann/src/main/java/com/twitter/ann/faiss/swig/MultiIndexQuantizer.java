@@ -30,7 +30,7 @@ public class MultiIndexQuantizer extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_MultiIndexQuantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class MultiIndexQuantizer extends Index {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.MultiIndexQuantizer_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public MultiIndexQuantizer(int d, long M, long nbits) {

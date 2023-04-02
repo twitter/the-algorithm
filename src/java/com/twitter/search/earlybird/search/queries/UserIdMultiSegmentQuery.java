@@ -87,11 +87,11 @@ import com.twitter.search.queryparser.query.QueryParserException;
 public class UserIdMultiSegmentQuery extends Query {
   @VisibleForTesting
   public static final SearchTimerStats TERM_LOOKUP_STATS =
-      SearchTimerStats.export("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      SearchTimerStats.export("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise());
   public static final SearchTimerStats QUERY_FROM_PRECOMPUTED =
-      SearchTimerStats.export("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      SearchTimerStats.export("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise());
   public static final SearchTimerStats QUERY_REGULAR =
-      SearchTimerStats.export("multi_segment_query_regular", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      SearchTimerStats.export("multi_segment_query_regular", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise());
 
   @VisibleForTesting
   public static final SearchCounter USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT = SearchCounter.export(
@@ -312,7 +312,7 @@ public class UserIdMultiSegmentQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof UserIdMultiSegmentQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     UserIdMultiSegmentQuery query = UserIdMultiSegmentQuery.class.cast(obj);

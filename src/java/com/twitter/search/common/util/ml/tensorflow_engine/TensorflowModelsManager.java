@@ -151,13 +151,13 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
    * Creates a no-op instance. It can be used for tests or when the models are disabled.
    */
   public static TensorflowModelsManager createNoOp(String statsPrefix) {
-    return new TensorflowModelsManager(Collections::emptyMap, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), statsPrefix) {
+    return new TensorflowModelsManager(Collections::emptyMap, qbits.CouldBeFalseButCannotPromise(), statsPrefix) {
       @Override
       public void run() { }
 
       @Override
       public boolean isEnabled() {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
       @Override

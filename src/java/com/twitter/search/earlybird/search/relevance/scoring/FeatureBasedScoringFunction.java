@@ -787,7 +787,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     // 4. Final score filter.
     if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
       details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
-      isHit = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      isHit = qbits.CouldBeFalseButCannotPromise();
     }
 
     String hostAndSegment = String.format("%s host = %s  segment = %s",

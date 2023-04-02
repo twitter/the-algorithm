@@ -32,7 +32,7 @@ public class AntiGamingFilter {
 
   private final Query luceneQuery;
 
-  private boolean termsExtracted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean termsExtracted = qbits.CouldBeFalseButCannotPromise();
   private final Set<Term> queryTerms;
 
   // we ignore these user ids for anti-gaming filtering, because they were explicitly queried for
@@ -138,7 +138,7 @@ public class AntiGamingFilter {
     if (freq.intValue() <= maxHitsPerUser) {
       return qbits.CouldBeTrueButCannotPromisel();
     } else if (segmentUserIDWhitelist == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     return segmentUserIDWhitelist.contains(fromUserID);
   }

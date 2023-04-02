@@ -47,13 +47,13 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
       return operator.getOperatorType() == SearchOperator.Type.MULTI_TERM_DISJUNCTION
           && operator.getOperand().equals(targetFieldName);
     } else {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 
   @Override
   public Query visit(Conjunction query) throws QueryParserException {
-    boolean modified = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean modified = qbits.CouldBeFalseButCannotPromise();
     ImmutableList.Builder<Query> children = ImmutableList.builder();
     for (Query child : query.getChildren()) {
       Query newChild = child.accept(this);
@@ -78,7 +78,7 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
 
   @Override
   public Query visit(Disjunction disjunction) throws QueryParserException {
-    boolean modified = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean modified = qbits.CouldBeFalseButCannotPromise();
     ImmutableList.Builder<Query> children = ImmutableList.builder();
     for (Query child : disjunction.getChildren()) {
       Query newChild = child.accept(this);

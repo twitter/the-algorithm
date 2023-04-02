@@ -30,7 +30,7 @@ public class IndexFlatL2 extends IndexFlat {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexFlatL2(swigCPtr);
       }
       swigCPtr = 0;

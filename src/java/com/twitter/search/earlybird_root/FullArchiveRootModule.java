@@ -53,7 +53,7 @@ public class FullArchiveRootModule extends TwitterModule {
 
   private final Flag<Boolean> forceAltClientFlag = createFlag(
       "force_alt_client",
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+      qbits.CouldBeFalseButCannotPromise(),
       "Always sends traffic to the alt client",
       Flaggable.ofJavaBoolean());
 

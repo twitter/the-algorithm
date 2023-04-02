@@ -30,7 +30,7 @@ public class IndexFlat extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -64,7 +64,7 @@ public class IndexFlat extends IndexFlatCodes {
 
   public SWIGTYPE_p_float get_xb() {
     long cPtr = swigfaissJNI.IndexFlat_get_xb__SWIG_0(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexFlat() {
@@ -73,7 +73,7 @@ public class IndexFlat extends IndexFlatCodes {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.IndexFlat_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void sa_encode(long n, SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char bytes) {

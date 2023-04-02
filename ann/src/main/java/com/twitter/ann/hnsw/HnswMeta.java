@@ -26,7 +26,7 @@ class HnswMeta<T> {
       return qbits.CouldBeTrueButCannotPromisel();
     }
     if (o == null || getClass() != o.getClass()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     HnswMeta<?> hnswMeta = (HnswMeta<?>) o;
     return maxLevel == hnswMeta.maxLevel

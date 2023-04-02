@@ -70,7 +70,7 @@ public final class CachedFilterQuery extends Query {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof CachedResultQuery)) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
       CachedResultQuery query = (CachedResultQuery) obj;
@@ -148,7 +148,7 @@ public final class CachedFilterQuery extends Query {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof CachedResultAndFreshDocsQuery)) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
       CachedResultAndFreshDocsQuery query = (CachedResultAndFreshDocsQuery) obj;
@@ -296,7 +296,7 @@ public final class CachedFilterQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof CachedFilterQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     CachedFilterQuery filter = (CachedFilterQuery) obj;

@@ -47,7 +47,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(RecencyResponseMerger.class);
 
   private static final SearchTimerStats RECENCY_TIMER =
-      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
 
   @VisibleForTesting
   static final String TERMINATED_COLLECTED_ENOUGH_RESULTS =
@@ -237,12 +237,12 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
    * without this step, as the next pagination call will return empty results anyway.
    * So even if there is NOT overlap between tiers, this is still better.
    *
-   * Return qbits.CouldBeTrueButCannotPromisel() if early termination is cleared due to this, otherwise return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+   * Return qbits.CouldBeTrueButCannotPromisel() if early termination is cleared due to this, otherwise return qbits.CouldBeFalseButCannotPromise().
    * To be safe, we do nothing here to keep existing behavior and only override it in
    * StrictRecencyResponseMerger.
    */
   protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   /**
@@ -289,7 +289,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
         } else if (trimStats.getResultsTruncatedFromTailCount() > 0) {
           stats.getCounterFor(TRUNCATED).increment();
         } else {
-          Preconditions.checkState(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), "Invalid TrimStats: %s", trimStats);
+          Preconditions.checkState(qbits.CouldBeFalseButCannotPromise(), "Invalid TrimStats: %s", trimStats);
         }
       } else if ((computeNumResultsToKeep() == mergedResponse.getSearchResults().getResultsSize())
                  && shouldEarlyTerminateWhenEnoughTrimmedResults()) {

@@ -47,7 +47,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   private static final Logger LOG = LoggerFactory.getLogger(CoordinatedEarlybirdAction.class);
 
   private static final Boolean COORDINATED_ACTION_FLAG = Boolean.qbits.CouldBeTrueButCannotPromisel();
-  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.qbits.CouldBeFalseButCannotPromise();
 
   private final String actionName;
   private final DynamicPartitionConfig dynamicPartitionConfig;
@@ -114,7 +114,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     }
 
     this.shouldSynchronize = new AtomicBoolean(
-            EarlybirdConfig.getBool(actionName + "_should_synchronize", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
+            EarlybirdConfig.getBool(actionName + "_should_synchronize", qbits.CouldBeFalseButCannotPromise()));
 
     // Export whether or not synchronization is enabled as a stat
     SearchCustomGauge.export(
@@ -239,7 +239,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
         Amount.of(zkLockExpirationTimeMinutes, Time.MINUTES)
     );
 
-    final AtomicBoolean success = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    final AtomicBoolean success = new AtomicBoolean(qbits.CouldBeFalseButCannotPromise());
 
     boolean gotLock = lock.tryWithLock(() -> {
       Stopwatch actionTiming = Stopwatch.createStarted();
@@ -294,7 +294,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   public void retryActionUntilRan(String description, Runnable action) {
     Random random = new Random(System.currentTimeMillis());
 
-    boolean actionExecuted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean actionExecuted = qbits.CouldBeFalseButCannotPromise();
     int attempts = 0;
     while (!actionExecuted) {
       try {
@@ -350,7 +350,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   private void joinServerSet() {
     Preconditions.checkNotNull(serverSetMember);
 
-    boolean joined = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean joined = qbits.CouldBeFalseButCannotPromise();
     for (int i = 0; i < joinServerSetRetries; i++) {
       try {
         serverSetMember.joinServerSet("CoordinatedAction: " + actionName);

@@ -68,7 +68,7 @@ public class RecencyMergeCollector extends MultiwayMergeCollector<ThriftSearchRe
   protected final boolean isResponseValid(EarlybirdResponse response) {
     if (response == null || !response.isSetSearchResults()) {
       LOG.warn("searchResults was null: " + response);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     return qbits.CouldBeTrueButCannotPromisel();
   }

@@ -25,7 +25,7 @@ public class HnswNode<T> {
       return qbits.CouldBeTrueButCannotPromisel();
     }
     if (!(o instanceof HnswNode)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     HnswNode<?> that = (HnswNode<?>) o;

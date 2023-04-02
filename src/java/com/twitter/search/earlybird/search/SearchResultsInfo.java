@@ -13,7 +13,7 @@ public class SearchResultsInfo {
   private int numHitsProcessed = 0;
   private int numSearchedSegments = 0;
 
-  private boolean earlyTerminated = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean earlyTerminated = qbits.CouldBeFalseButCannotPromise();
   private String earlyTerminationReason = null;
 
   private long maxSearchedStatusID = NO_ID;

@@ -30,7 +30,7 @@ public class OnDiskInvertedLists extends InvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_OnDiskInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_std__vectorT_faiss__OnDiskOneList_t getLists() {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_lists_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__OnDiskOneList_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__OnDiskOneList_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   static public class Slot {
@@ -68,7 +68,7 @@ public class OnDiskInvertedLists extends InvertedLists {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
           swigfaissJNI.delete_OnDiskInvertedLists_Slot(swigCPtr);
         }
         swigCPtr = 0;
@@ -107,7 +107,7 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_std__listT_faiss__OnDiskInvertedLists__Slot_t getSlots() {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_slots_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__listT_faiss__OnDiskInvertedLists__Slot_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__listT_faiss__OnDiskInvertedLists__Slot_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setFilename(String value) {
@@ -132,7 +132,7 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_unsigned_char getPtr() {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_ptr_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setRead_only(boolean value) {
@@ -153,11 +153,11 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.OnDiskInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new LongVector(swigfaissJNI.OnDiskInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCannotPromise());
 }
 
   public long add_entries(long list_no, long n_entry, LongVector ids, SWIGTYPE_p_unsigned_char code) {
@@ -202,7 +202,7 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_faiss__LockLevels getLocks() {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_locks_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__LockLevels(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__LockLevels(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setPf(SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch value) {
@@ -211,7 +211,7 @@ public class OnDiskInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch getPf() {
     long cPtr = swigfaissJNI.OnDiskInvertedLists_pf_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__OnDiskInvertedLists__OngoingPrefetch(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setPrefetch_nthread(int value) {

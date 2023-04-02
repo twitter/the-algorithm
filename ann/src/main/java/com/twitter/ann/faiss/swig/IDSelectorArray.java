@@ -30,7 +30,7 @@ public class IDSelectorArray extends IDSelector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IDSelectorArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -51,7 +51,7 @@ public class IDSelectorArray extends IDSelector {
   }
 
   public LongVector getIds() {
-    return new LongVector(swigfaissJNI.IDSelectorArray_ids_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new LongVector(swigfaissJNI.IDSelectorArray_ids_get(swigCPtr, this), qbits.CouldBeFalseButCannotPromise());
 }
 
   public IDSelectorArray(long n, LongVector ids) {

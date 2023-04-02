@@ -30,7 +30,7 @@ public class IndexIVF extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexIVF(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexIVF extends Index {
 
   public InvertedLists getInvlists() {
     long cPtr = swigfaissJNI.IndexIVF_invlists_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_invlists(boolean value) {
@@ -173,12 +173,12 @@ public class IndexIVF extends Index {
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexIVF_get_InvertedListScanner__SWIG_0(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner() {
     long cPtr = swigfaissJNI.IndexIVF_get_InvertedListScanner__SWIG_1(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void reconstruct(long key, SWIGTYPE_p_float recons) {

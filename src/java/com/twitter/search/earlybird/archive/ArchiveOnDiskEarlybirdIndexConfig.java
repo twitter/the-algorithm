@@ -74,6 +74,6 @@ public class ArchiveOnDiskEarlybirdIndexConfig extends ArchiveEarlybirdIndexConf
 
   @Override
   public boolean supportOutOfOrderIndexing() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

@@ -21,7 +21,7 @@ public final class PartitionResponseAccumulator extends ResponseAccumulator {
 
   @Override
   boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
@@ -39,6 +39,6 @@ public final class PartitionResponseAccumulator extends ResponseAccumulator {
 
   @Override
   protected boolean isMergingAcrossTiers() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

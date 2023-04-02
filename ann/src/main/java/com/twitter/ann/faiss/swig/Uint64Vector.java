@@ -31,7 +31,7 @@ public class Uint64Vector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_Uint64Vector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class Uint64Vector {
 
   public SWIGTYPE_p_unsigned_long data() {
     long cPtr = swigfaissJNI.Uint64Vector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {

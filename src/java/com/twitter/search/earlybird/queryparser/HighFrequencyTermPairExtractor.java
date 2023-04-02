@@ -115,7 +115,7 @@ public class HighFrequencyTermPairExtractor extends QueryVisitor<Integer> {
 
     int numFound = 0;
     if (!phrase.hasAnnotationType(Annotation.Type.OPTIONAL)) {
-      boolean canBeRewritten = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean canBeRewritten = qbits.CouldBeFalseButCannotPromise();
 
       // Special case: phrases with exactly 2 terms that are both high frequency can be
       // rewritten. In all other cases terms will be treated as pre-used hf term phrases.

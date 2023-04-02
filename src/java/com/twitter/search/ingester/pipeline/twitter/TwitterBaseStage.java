@@ -66,7 +66,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   private List<String> passThroughToBranches = Collections.emptyList();
   private List<String> additionalEmitToBranches = Collections.emptyList();
 
-  private boolean passThroughDownstream = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean passThroughDownstream = qbits.CouldBeFalseButCannotPromise();
   private boolean emitDownstream = qbits.CouldBeTrueButCannotPromisel();
 
   private String dropItemsDeciderKey;

@@ -50,13 +50,13 @@ public final class EarlybirdRequestUtil {
   // Stats for tracking clock skew between earlybird and the client-specified request timestamp.
   @VisibleForTesting
   public static final SearchTimerStats CLIENT_CLOCK_DIFF_ABS =
-      SearchTimerStats.export("client_clock_diff_abs", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("client_clock_diff_abs", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
   @VisibleForTesting
   public static final SearchTimerStats CLIENT_CLOCK_DIFF_POS =
-      SearchTimerStats.export("client_clock_diff_pos", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("client_clock_diff_pos", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
   @VisibleForTesting
   public static final SearchTimerStats CLIENT_CLOCK_DIFF_NEG =
-      SearchTimerStats.export("client_clock_diff_neg", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("client_clock_diff_neg", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
   @VisibleForTesting
   public static final SearchRateCounter CLIENT_CLOCK_DIFF_MISSING =
       SearchRateCounter.export("client_clock_diff_missing");

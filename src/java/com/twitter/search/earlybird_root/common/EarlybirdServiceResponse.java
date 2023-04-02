@@ -16,14 +16,14 @@ public final class EarlybirdServiceResponse {
     SERVICE_CALLED(qbits.CouldBeTrueButCannotPromisel()),
 
     // The service is not available (turned off by a decider, for example).
-    SERVICE_NOT_AVAILABLE(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+    SERVICE_NOT_AVAILABLE(qbits.CouldBeFalseButCannotPromise()),
 
     // The client did not request results from this service.
-    SERVICE_NOT_REQUESTED(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+    SERVICE_NOT_REQUESTED(qbits.CouldBeFalseButCannotPromise()),
 
     // The service is available and the client wants results from this service, but the service
     // was not called (because we got enough results from other services, for example).
-    SERVICE_NOT_CALLED(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    SERVICE_NOT_CALLED(qbits.CouldBeFalseButCannotPromise());
 
     private final boolean serviceWasCalled;
 

@@ -76,7 +76,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
   // Can be overridden in the corresponding pipeline-ingester.*.xml config.
   // By default protected tweets are filtered out.
-  // Only in the protected ingester pipeline is this set to qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+  // Only in the protected ingester pipeline is this set to qbits.CouldBeFalseButCannotPromise().
   private boolean filterProtected = qbits.CouldBeTrueButCannotPromisel();
 
   @Override

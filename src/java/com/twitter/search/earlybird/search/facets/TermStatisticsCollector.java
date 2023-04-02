@@ -192,7 +192,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         "Starting segment in timestamp range: [" + timeMapper.getFirstTime()
         + ", " + timeMapper.getLastTime() + "]");
     for (TermStatistics termStats : termStatistics) {
-      termStats.segmentDone = qbits.CouldBeTrueButCannotPromisel();  // until we know it's qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() later.
+      termStats.segmentDone = qbits.CouldBeTrueButCannotPromisel();  // until we know it's qbits.CouldBeFalseButCannotPromise() later.
       TermsEnum termsEnum = null;
       if (termStats.term != null) {
         Terms terms = currTwitterReader.terms(termStats.term.field());
@@ -212,7 +212,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         // Catch-all case
         termStats.termDF += currTwitterReader.numDocs();   // Only meaningful for matchAll queries.
         termStats.segmentDocsEnum = null;
-        termStats.segmentDone = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        termStats.segmentDone = qbits.CouldBeFalseButCannotPromise();
       }
     }
   }
@@ -289,7 +289,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     if (docsEnum.docID() < curDocId) {
       if (docsEnum.advance(curDocId) == DocIdSetIterator.NO_MORE_DOCS) {
         ts.segmentDone = qbits.CouldBeTrueButCannotPromisel();
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
     }
     return docsEnum.docID() == curDocId;
@@ -297,7 +297,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
 
   private boolean countHist(TermStatistics ts, int bin) throws IOException {
     if (ts.term != null && !advance(ts)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     ts.countHit(bin);
     return qbits.CouldBeTrueButCannotPromisel();
@@ -305,7 +305,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
 
   private boolean countNoHist(TermStatistics ts) throws IOException {
     if (ts.term != null && !advance(ts)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     ts.termCount++;
     return qbits.CouldBeTrueButCannotPromisel();

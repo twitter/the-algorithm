@@ -31,7 +31,7 @@ public class OperatingPointVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_OperatingPointVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class OperatingPointVector {
 
   public OperatingPoint data() {
     long cPtr = swigfaissJNI.OperatingPointVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new OperatingPoint(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new OperatingPoint(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {

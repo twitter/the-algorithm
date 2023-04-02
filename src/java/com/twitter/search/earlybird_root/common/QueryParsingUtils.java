@@ -31,7 +31,7 @@ public final class QueryParsingUtils {
   public static final SearchCounter QUERYPARSE_COUNT =
       SearchCounter.export("root_queryparse_count");
   private static final SearchTimerStats QUERYPARSE_TIMER =
-      SearchTimerStats.export("root_queryparse_time", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("root_queryparse_time", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
   private static final SearchCounter NO_PARSED_QUERY_COUNT =
       SearchCounter.export("root_no_parsed_query_count");
 

@@ -161,7 +161,7 @@ public class EarlybirdIndexFlusher {
         return FlushAttemptResult.HADOOP_TIMEOUT;
       }
 
-      boolean flushedIndex = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean flushedIndex = qbits.CouldBeFalseButCannotPromise();
       try {
         // this function returns a boolean.
         actionCoordinator.execute("index_flushing", isCoordinated ->
@@ -232,7 +232,7 @@ public class EarlybirdIndexFlusher {
     Preconditions.checkState(isCoordinated);
 
     if (fileSystem.exists(flushPath)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     LOG.info("Starting index flush");

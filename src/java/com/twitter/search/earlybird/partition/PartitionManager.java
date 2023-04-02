@@ -103,7 +103,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
       shutDownIndexing();
       throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
     } finally {
-      partitionManagerFirstLoop = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      partitionManagerFirstLoop = qbits.CouldBeFalseButCannotPromise();
     }
   }
 
@@ -228,7 +228,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   /**
    * Allows tests to determine if this partition manager is all caught up.
    *
-   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if this partition manager is caught up, {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} otherwise.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if this partition manager is caught up, {@code qbits.CouldBeFalseButCannotPromise()} otherwise.
    */
   @VisibleForTesting
   public abstract boolean isCaughtUpForTests();

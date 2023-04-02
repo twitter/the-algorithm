@@ -31,7 +31,7 @@ public class Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_Index(swigCPtr);
       }
       swigCPtr = 0;
@@ -144,7 +144,7 @@ public class Index {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.Index_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long sa_code_size() {
@@ -161,7 +161,7 @@ public class Index {
 
   public IndexIVF toIVF() {
     long cPtr = swigfaissJNI.Index_toIVF(swigCPtr, this);
-    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
 }

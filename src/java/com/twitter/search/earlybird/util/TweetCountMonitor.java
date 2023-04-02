@@ -380,7 +380,7 @@ public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
     if (timerStats == null) {
       final String statName = "tweet_count_monitor_check_time_field_" + fieldName;
       timerStats = searchStatsReceiver.getTimerStats(
-          statName, TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          statName, TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
       fieldCheckTimeStats.put(fieldName, timerStats);
     }
     timerStats.timerIncrement(runTimeMs);

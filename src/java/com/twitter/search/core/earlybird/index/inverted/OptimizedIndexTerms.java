@@ -37,12 +37,12 @@ public class OptimizedIndexTerms extends Terms {
 
   @Override
   public boolean hasFreqs() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
   public boolean hasOffsets() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
@@ -52,6 +52,6 @@ public class OptimizedIndexTerms extends Terms {
 
   @Override
   public boolean hasPayloads() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

@@ -402,7 +402,7 @@ public class SkipListContainer<K> implements Flushable {
    * key does not exist.
    */
   public int delete(K key, int skipListHead, SkipListComparator<K> comparator) {
-    boolean foundKey = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean foundKey = qbits.CouldBeFalseButCannotPromise();
 
     for (int currentLevel = MAX_TOWER_HEIGHT - 1; currentLevel >= 0; currentLevel--) {
       int currentPointer = skipListHead;

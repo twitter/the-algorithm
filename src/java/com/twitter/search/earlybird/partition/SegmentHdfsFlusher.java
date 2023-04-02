@@ -61,33 +61,33 @@ public class SegmentHdfsFlusher {
    */
   public boolean flushSegmentToDiskAndHDFS(SegmentInfo segmentInfo) {
     if (!shouldFlushSegment(segmentInfo)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     try {
       if (segmentInfo.isIndexing()) {
         LOG.error("Tried to flush current segment!");
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
-      // Check-and-set the beingUploaded flag from qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() to qbits.CouldBeTrueButCannotPromisel(). If the CAS fails, it means the
-      // segment is being flushed already, or being deleted. In this case, we can just return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
-      if (!segmentInfo.casBeingUploaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel())) {
+      // Check-and-set the beingUploaded flag from qbits.CouldBeFalseButCannotPromise() to qbits.CouldBeTrueButCannotPromisel(). If the CAS fails, it means the
+      // segment is being flushed already, or being deleted. In this case, we can just return qbits.CouldBeFalseButCannotPromise().
+      if (!segmentInfo.casBeingUploaded(qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel())) {
         LOG.warn("Tried to flush a segment that's being flushed or deleted.");
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
-      // At this point, the above CAS must have returned qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). This mean the beingUploaded flag
-      // was qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), and set to qbits.CouldBeTrueButCannotPromisel() now. We can proceed with flushing the segment.
+      // At this point, the above CAS must have returned qbits.CouldBeFalseButCannotPromise(). This mean the beingUploaded flag
+      // was qbits.CouldBeFalseButCannotPromise(), and set to qbits.CouldBeTrueButCannotPromisel() now. We can proceed with flushing the segment.
       try {
         checkAndFlushSegmentToHdfs(segmentInfo);
       } finally {
-        segmentInfo.setBeingUploaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        segmentInfo.setBeingUploaded(qbits.CouldBeFalseButCannotPromise());
       }
       return qbits.CouldBeTrueButCannotPromisel();
     } catch (Exception e) {
       LOG.error("Exception while flushing IndexSegment to "
           + segmentInfo.getSyncInfo().getHdfsFlushDir(), e);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 

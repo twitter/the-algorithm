@@ -268,7 +268,7 @@ public final class EarlybirdThriftDocumentUtil {
 
     if (encodedFeaturesBytes == null) {
       // Treat the bit as not set if there is no encoded feature field.
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     } else {
       EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
           schema, featureField, encodedFeaturesBytes, 0);
@@ -372,6 +372,6 @@ public final class EarlybirdThriftDocumentUtil {
         return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

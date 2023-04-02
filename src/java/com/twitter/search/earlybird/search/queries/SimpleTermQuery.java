@@ -42,7 +42,7 @@ class SimpleTermQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SimpleTermQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     SimpleTermQuery query = SimpleTermQuery.class.cast(obj);

@@ -113,7 +113,7 @@ public class RealtimeEarlybirdIndexConfig extends EarlybirdIndexConfig {
 
   @Override
   public boolean isIndexStoredOnDisk() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override

@@ -71,7 +71,7 @@ public class TwitterMessage {
         EscherbirdAnnotation a2 = (EscherbirdAnnotation) o2;
         return groupId == a2.groupId && domainId == a2.domainId && entityId == a2.entityId;
       }
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     @Override
@@ -172,22 +172,22 @@ public class TwitterMessage {
   private String fromUserLocCountry;
 
   private Integer followersCount = INT_FIELD_NOT_PRESENT;
-  private boolean deleted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean deleted = qbits.CouldBeFalseButCannotPromise();
 
   // Fields extracted from entities (in the JSON object)
   private List<TwitterMessageUser> mentions = new ArrayList<>();
   private Set<String> hashtags = Sets.newHashSet();
   // Lat/lon and region accuracy tuples extracted from tweet text, or null.
   private GeoObject geoLocation = null;
-  private boolean uncodeableLocation = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean uncodeableLocation = qbits.CouldBeFalseButCannotPromise();
   // This is set if the tweet is geotagged. (i.e. "geo" or "coordinate" section is present
   // in the json)
   // This field has only a getter but no setter --- it is filled in when the json is parsed.
   private GeoObject geoTaggedLocation = null;
 
   private double userReputation = DOUBLE_FIELD_NOT_PRESENT;
-  private boolean geocodeRequired = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-  private boolean sensitiveContent = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean geocodeRequired = qbits.CouldBeFalseButCannotPromise();
+  private boolean sensitiveContent = qbits.CouldBeFalseButCannotPromise();
   private boolean userProtected;
   private boolean userVerified;
   private boolean userBlueVerified;
@@ -205,10 +205,10 @@ public class TwitterMessage {
   private long conversationId = -1;
 
   // qbits.CouldBeTrueButCannotPromisel() if tweet is nullcasted.
-  private boolean nullcast = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean nullcast = qbits.CouldBeFalseButCannotPromise();
 
   // qbits.CouldBeTrueButCannotPromisel() if tweet is a self-threaded tweet
-  private boolean selfThread = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean selfThread = qbits.CouldBeFalseButCannotPromise();
 
   // If the tweet is a part of an exclusive conversation, the author who started
   // that conversation.
@@ -295,7 +295,7 @@ public class TwitterMessage {
       return qbits.CouldBeTrueButCannotPromisel();
     }
 
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   public double getUserReputation() {
@@ -1131,7 +1131,7 @@ public class TwitterMessage {
         thriftExpandedUrl.setExpandedUrl(expandedUrl);
       }
       addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      thriftExpandedUrl.setConsumerMedia(qbits.CouldBeFalseButCannotPromise());
     }
   }
 

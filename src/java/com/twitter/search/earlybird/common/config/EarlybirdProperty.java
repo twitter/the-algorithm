@@ -52,25 +52,25 @@ public final class EarlybirdProperty<T> {
           "penguin_version",
           "The penguin version to index.",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> THRIFT_PORT = new EarlybirdProperty<>(
       "thrift_port",
       "override thrift port from config file",
       PropertyType.INT,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> WARMUP_THRIFT_PORT = new EarlybirdProperty<>(
       "warmup_thrift_port",
       "override warmup thrift port from config file",
       PropertyType.INT,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> SEARCHER_THREADS = new EarlybirdProperty<>(
       "searcher_threads",
       "override number of searcher threads from config file",
       PropertyType.INT,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> EARLYBIRD_TIER = new EarlybirdProperty<>(
       "earlybird_tier",
@@ -140,20 +140,20 @@ public final class EarlybirdProperty<T> {
       "dl_uri",
       "DistributedLog URI for default DL reader",
       PropertyType.STRING,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> USER_UPDATES_DL_URI = new EarlybirdProperty<>(
       "user_updates_dl_uri",
       "DistributedLog URI for user updates DL reader",
       PropertyType.STRING,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> ANTISOCIAL_USERUPDATES_DL_STREAM =
       new EarlybirdProperty<>(
           "antisocial_userupdates_dl_stream",
           "DL stream name for antisocial user updates without DL version suffix",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> ZK_APP_ROOT = new EarlybirdProperty<>(
       "zk_app_root",
@@ -166,33 +166,33 @@ public final class EarlybirdProperty<T> {
           "segment_load_from_hdfs_enabled",
           "Whether to load segment data from HDFS",
           PropertyType.BOOLEAN,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Boolean> SEGMENT_FLUSH_TO_HDFS_ENABLED =
       new EarlybirdProperty<>(
           "segment_flush_to_hdfs_enabled",
           "Whether to flush segment data to HDFS",
           PropertyType.BOOLEAN,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> HDFS_SEGMENT_SYNC_DIR = new EarlybirdProperty<>(
       "hdfs_segment_sync_dir",
       "HDFS directory to sync segment data",
       PropertyType.STRING,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> HDFS_SEGMENT_UPLOAD_DIR = new EarlybirdProperty<>(
       "hdfs_segment_upload_dir",
       "HDFS directory to upload segment data",
       PropertyType.STRING,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Boolean> ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED =
       new EarlybirdProperty<>(
           "archive_daily_status_batch_flushing_enabled",
           "Whether to enable archive daily status batch flushing",
           PropertyType.BOOLEAN,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> HDFS_INDEX_SYNC_DIR = new EarlybirdProperty<>(
       "hdfs_index_sync_dir",
@@ -205,118 +205,118 @@ public final class EarlybirdProperty<T> {
       "read_index_from_prod_location",
       "Read index from prod to speed up startup on staging / loadtest",
       PropertyType.BOOLEAN,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Boolean> USE_DECIDER_OVERLAY = new EarlybirdProperty<>(
       "use_decider_overlay",
       "Whether to use decider overlay",
       PropertyType.BOOLEAN,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> DECIDER_OVERLAY_CONFIG = new EarlybirdProperty<>(
       "decider_overlay_config",
       "Path to decider overlay config",
       PropertyType.STRING,
-      qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> MAX_CONCURRENT_SEGMENT_INDEXERS =
       new EarlybirdProperty<>(
         "max_concurrent_segment_indexers",
         "Maximum number of segments indexed concurrently",
         PropertyType.INT,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Boolean> TF_MODELS_ENABLED =
       new EarlybirdProperty<>(
         "tf_models_enabled",
         "Whether tensorflow models should be loaded",
         PropertyType.BOOLEAN,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> TF_MODELS_CONFIG_PATH =
       new EarlybirdProperty<>(
         "tf_models_config_path",
         "The configuration path of the yaml file containing the list of tensorflow models to load.",
         PropertyType.STRING,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> TF_INTER_OP_THREADS =
       new EarlybirdProperty<>(
         "tf_inter_op_threads",
         "How many tensorflow inter op threads to use. See TF documentation for more information.",
         PropertyType.INT,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> TF_INTRA_OP_THREADS =
       new EarlybirdProperty<>(
         "tf_intra_op_threads",
         "How many tensorflow intra op threads to use. See TF documentation for more information.",
         PropertyType.INT,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET =
       new EarlybirdProperty<>(
           "max_allowed_replicas_not_in_server_set",
           "How many replicas are allowed to be missing from the Earlybird server set.",
           PropertyType.INT,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Boolean> CHECK_NUM_REPLICAS_IN_SERVER_SET =
       new EarlybirdProperty<>(
           "check_num_replicas_in_server_set",
           "Whether CoordinatedEarlybirdActions should check the number of alive replicas",
           PropertyType.BOOLEAN,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<Integer> MAX_QUEUE_SIZE =
       new EarlybirdProperty<>(
           "max_queue_size",
           "Maximum size of searcher worker executor queue. If <= 0 queue is unbounded.",
           PropertyType.INT,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
 
   public static final EarlybirdProperty<String> KAFKA_ENV =
       new EarlybirdProperty<>(
           "kafka_env",
           "The environment to use for kafka topics.",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
   public static final EarlybirdProperty<String> KAFKA_PATH =
       new EarlybirdProperty<>(
           "kafka_path",
           "Wily path to the Search kafka cluster.",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
   public static final EarlybirdProperty<String> TWEET_EVENTS_KAFKA_PATH =
       new EarlybirdProperty<>(
           "tweet_events_kafka_path",
           "Wily path to the tweet-events kafka cluster.",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
   public static final EarlybirdProperty<String> USER_UPDATES_KAFKA_TOPIC =
       new EarlybirdProperty<>(
           "user_updates_topic",
           "Name of the Kafka topic that contain user updates.",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
   public static final EarlybirdProperty<String> USER_SCRUB_GEO_KAFKA_TOPIC =
       new EarlybirdProperty<>(
           "user_scrub_geo_topic",
           "Name of the Kafka topic that contain UserScrubGeoEvents.",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
   public static final EarlybirdProperty<String> EARLYBIRD_SCRUB_GEN =
       new EarlybirdProperty<>(
           "earlybird_scrub_gen",
           "SCRUB_GEN TO DEPLOY",
           PropertyType.STRING,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          qbits.CouldBeFalseButCannotPromise());
   public static final EarlybirdProperty<Boolean> CONSUME_GEO_SCRUB_EVENTS =
       new EarlybirdProperty<>(
         "consume_geo_scrub_events",
         "Whether to consume user scrub geo events or not",
         PropertyType.BOOLEAN,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        qbits.CouldBeFalseButCannotPromise());
 
   private static final List<EarlybirdProperty<?>> ALL_PROPERTIES =
       Arrays.stream(EarlybirdProperty.class.getDeclaredFields())
@@ -348,7 +348,7 @@ public final class EarlybirdProperty<T> {
 
   private EarlybirdProperty(String name, String help, PropertyType<T> type,
                             boolean requiredOnAurora) {
-    this(name, help, type, requiredOnAurora, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    this(name, help, type, requiredOnAurora, qbits.CouldBeFalseButCannotPromise());
   }
 
   private EarlybirdProperty(String name, String help, PropertyType<T> type,

@@ -40,9 +40,9 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
   private static final Logger LOG = LoggerFactory.getLogger(DLSegmentDataReaderSet.class);
 
   public static final SearchRequestStats STATUS_DL_READ_STATS =
-      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise());
   private static final SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
-      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise());
   // The number of tweets not indexed because they failed deserialization.
   private static final SearchCounter STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER =
       SearchCounter.export("statuses_skipped_due_to_failed_deserialization");

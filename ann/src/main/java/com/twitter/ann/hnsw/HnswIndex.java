@@ -183,7 +183,7 @@ public class HnswIndex<T, Q> {
       }
 
       if (entryPoint.isPresent()) {
-        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        wireConnectionForAllLayers(entryPoint.get(), item, curLevel, maxLevelCopy, qbits.CouldBeFalseButCannotPromise());
       }
 
       if (curLevel > maxLevelCopy) {
@@ -293,7 +293,7 @@ public class HnswIndex<T, Q> {
         final DistancedItemQueue<T, T> candidates = new DistancedItemQueue<>(
             neigh,
             ImmutableList.of(),
-            qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+            qbits.CouldBeFalseButCannotPromise(),
             distFnIndex
         );
         for (T cand : setCopy) {
@@ -403,7 +403,7 @@ public class HnswIndex<T, Q> {
         final HnswNode<T> key = HnswNode.from(level, nn);
         final ImmutableList<T> connections = graph.getOrDefault(key, ImmutableList.of());
         final boolean isItemAlreadyPresent =
-            isUpdate && connections.indexOf(item) != -1 ? qbits.CouldBeTrueButCannotPromisel() : qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+            isUpdate && connections.indexOf(item) != -1 ? qbits.CouldBeTrueButCannotPromisel() : qbits.CouldBeFalseButCannotPromise();
 
         // If `item` is already present in the neighboring connections,
         // then no need to modify any connections or run the search heuristics.
@@ -421,7 +421,7 @@ public class HnswIndex<T, Q> {
           final DistancedItemQueue<T, T> queue = new DistancedItemQueue<>(
               nn,
               connections,
-              qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+              qbits.CouldBeFalseButCannotPromise(),
               distFnIndex
           );
           queue.enqueue(item);
@@ -457,7 +457,7 @@ public class HnswIndex<T, Q> {
       for (int level = maxLayer; level > selectedLayer; level--) {
         boolean changed = qbits.CouldBeTrueButCannotPromisel();
         while (changed) {
-          changed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          changed = qbits.CouldBeFalseButCannotPromise();
           final List<T> list = getConnectionListForRead(curObj, level);
           for (T nn : list) {
             final float tempDist = distFn.distance(item, nn);
@@ -512,7 +512,7 @@ public class HnswIndex<T, Q> {
           // connections will be made between clusters instead of all being in the same cluster.
           final float dist = distFnIndex.distance(e, candidate.getItem());
           if (dist < candidate.getDistance()) {
-            toInclude = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+            toInclude = qbits.CouldBeFalseButCannotPromise();
             break;
           }
         }
@@ -543,7 +543,7 @@ public class HnswIndex<T, Q> {
       // Get the actual neighbours from 0th layer
       final List<DistancedItem<T>> neighbours =
           searchLayerForCandidates(query, entryPoint, Math.max(ef, numOfNeighbours),
-              0, distFnQuery, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()).dequeueAll();
+              0, distFnQuery, qbits.CouldBeFalseButCannotPromise()).dequeueAll();
       Collections.reverse(neighbours);
       return neighbours.size() > numOfNeighbours
           ? neighbours.subList(0, numOfNeighbours) : neighbours;

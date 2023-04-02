@@ -35,7 +35,7 @@ public class QueryTimeoutImpl implements QueryTimeout {
       shouldTerminateCounter.increment();
       return qbits.CouldBeTrueButCannotPromisel();
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
@@ -56,7 +56,7 @@ public class QueryTimeoutImpl implements QueryTimeout {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof QueryTimeoutImpl)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     QueryTimeoutImpl queryTimeout = QueryTimeoutImpl.class.cast(obj);

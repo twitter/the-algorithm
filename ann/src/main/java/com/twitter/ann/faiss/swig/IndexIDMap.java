@@ -30,7 +30,7 @@ public class IndexIDMap extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexIDMap(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexIDMap extends Index {
 
   public Index getIndex() {
     long cPtr = swigfaissJNI.IndexIDMap_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_fields(boolean value) {
@@ -61,7 +61,7 @@ public class IndexIDMap extends Index {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getId_map() {
     long cPtr = swigfaissJNI.IndexIDMap_id_map_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexIDMap(Index index) {

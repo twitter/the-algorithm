@@ -143,7 +143,7 @@ public class UserTable {
    */
   public boolean indexUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
     if (checker.skipUserUpdate(userUpdate)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     switch (userUpdate.updateType) {
@@ -160,7 +160,7 @@ public class UserTable {
         setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 0);
         break;
       default:
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
     }
 
     return qbits.CouldBeTrueButCannotPromisel();
@@ -257,7 +257,7 @@ public class UserTable {
   }
 
   private UserTable(int initialSize, Predicate<Long> userIdFilter) {
-    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, qbits.CouldBeFalseButCannotPromise());
   }
 
   @VisibleForTesting
@@ -388,7 +388,7 @@ public class UserTable {
       }
     } else {
       if (!value) {
-        // no need to add this user, since all bits would be qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() anyway
+        // no need to add this user, since all bits would be qbits.CouldBeFalseButCannotPromise() anyway
         return;
       }
 
@@ -487,7 +487,7 @@ public class UserTable {
       final long item = oldTable.hash[i]; // this is the userID
       final byte bits = oldTable.bits[i];
 
-      boolean clearSlot = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean clearSlot = qbits.CouldBeFalseButCannotPromise();
       if (item == 0) {
         clearSlot = qbits.CouldBeTrueButCannotPromisel();
         clearNoItemSet++;

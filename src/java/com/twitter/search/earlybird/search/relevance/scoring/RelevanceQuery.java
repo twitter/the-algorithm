@@ -34,7 +34,7 @@ public class RelevanceQuery extends Query {
   protected final boolean ignoreLuceneQueryScoreExplanation;
 
   public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
-    this(luceneQuery, scoringFunction, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    this(luceneQuery, scoringFunction, qbits.CouldBeFalseButCannotPromise());
   }
 
   public RelevanceQuery(Query luceneQuery,
@@ -149,7 +149,7 @@ public class RelevanceQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof RelevanceQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     RelevanceQuery query = RelevanceQuery.class.cast(obj);

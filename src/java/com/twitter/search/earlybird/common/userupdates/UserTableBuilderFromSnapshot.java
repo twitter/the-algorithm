@@ -214,7 +214,7 @@ public class UserTableBuilderFromSnapshot {
     return StreamSupport
         .stream(
             Spliterators.spliteratorUnknownSize(iter, Spliterator.ORDERED | Spliterator.NONNULL),
-            qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+            qbits.CouldBeFalseButCannotPromise())
         .onClose(thriftReader::stop);
   }
 

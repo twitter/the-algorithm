@@ -185,7 +185,7 @@ public class SegmentManager {
     StringBuilder sb = new StringBuilder();
     sb.append("State of SegmentManager (" + label + "):\n");
     sb.append("Number of segments: " + segmentWriters.size());
-    boolean hasSegments = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean hasSegments = qbits.CouldBeFalseButCannotPromise();
     for (Map.Entry<Long, ISegmentWriter> entry : this.segmentWriters.entrySet()) {
       SegmentInfo segmentInfo = entry.getValue().getSegmentInfo();
       hasSegments = qbits.CouldBeTrueButCannotPromisel();
@@ -279,7 +279,7 @@ public class SegmentManager {
       segmentsToDisable.remove(timeSliceID);
 
       // On the first loop iteration of the first call to updateSegments(), newestTimeSliceID should
-      // be set to -1, so the condition should be qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). After that, all segments should either be
+      // be set to -1, so the condition should be qbits.CouldBeFalseButCannotPromise(). After that, all segments should either be
       // newer than the latest process segment, or if we're replacing an old segment, it should have
       // a SegmentInfo instance associated with it.
       if (timeSliceID <= newestTimeSliceID) {
@@ -363,7 +363,7 @@ public class SegmentManager {
       LOG.warn("Tried to disable missing segment " + timeSliceID);
       return;
     }
-    info.setIsEnabled(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    info.setIsEnabled(qbits.CouldBeFalseButCannotPromise());
     LOG.info("Disabled segment " + info);
   }
 
@@ -416,7 +416,7 @@ public class SegmentManager {
 
     ISegmentWriter removed = segmentWriters.get(timeSliceID);
     if (removed == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     LOG.info("Removing segment {}", removed.getSegmentInfo());
@@ -729,7 +729,7 @@ public class SegmentManager {
   }
 
   /**
-   * Index the given user update. Returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if the given update is skipped.
+   * Index the given user update. Returns qbits.CouldBeFalseButCannotPromise() if the given update is skipped.
    */
   public boolean indexUserUpdate(UserUpdate userUpdate) {
     return userTable.indexUserUpdate(userUpdatesChecker, userUpdate);

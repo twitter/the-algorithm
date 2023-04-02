@@ -57,13 +57,13 @@ public class SegmentLoader {
    */
   public boolean shouldDownloadSegmentWhileInServerSet(SegmentInfo segmentInfo) {
     if (isValidSegmentOnDisk(segmentInfo)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
       return HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo);
     } catch (IOException e) {
       LOG.error("Failed to check HDFS for segment " + segmentInfo, e);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 
@@ -74,12 +74,12 @@ public class SegmentLoader {
   public boolean downloadSegment(SegmentInfo segmentInfo) {
     if (!segmentInfo.isEnabled()) {
       LOG.debug("Segment is disabled: " + segmentInfo);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (segmentInfo.isIndexing() || segmentInfo.getSyncInfo().isLoaded()) {
       LOG.debug("Cannot load indexing or loaded segment: " + segmentInfo);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Return whether the appropriate version is on disk, and if not, download it from HDFS.
@@ -92,7 +92,7 @@ public class SegmentLoader {
   public boolean loadSegmentFromDisk(SegmentInfo segmentInfo) {
     if (segmentInfo.isIndexing()) {
       LOG.error("Tried to load current segment!");
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     segmentInfo.setIndexing(qbits.CouldBeTrueButCannotPromisel());
@@ -106,10 +106,10 @@ public class SegmentLoader {
         SearchRateCounter.export(
             "segment_loader_failed_too_few_tweets_in_segment_" + segmentInfo.getSegmentName())
             .increment();
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
-      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCannotPromise());
       segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
       segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeTrueButCannotPromisel());
       return qbits.CouldBeTrueButCannotPromisel();
@@ -122,7 +122,7 @@ public class SegmentLoader {
     }
 
     SearchRateCounter.export("segment_loader_failed_" + segmentInfo.getSegmentName()).increment();
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   // Check to see if the segment exists on disk, and its checksum passes.
@@ -131,12 +131,12 @@ public class SegmentLoader {
     File loadDir = new File(loadDirStr);
 
     if (!loadDir.exists()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     for (String persistentFileName : segmentSyncConfig.getPersistentFileNames(segment)) {
       if (!verifyInfoChecksum(loadDir, persistentFileName)) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
     }
 
@@ -161,7 +161,7 @@ public class SegmentLoader {
         LOG.error("Error while trying to read checksum file", e);
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   // Check that the loaded segment's status count is higher than the configured threshold
@@ -181,15 +181,15 @@ public class SegmentLoader {
       // The segment status count is small so the segment is likely incomplete.
       LOG.error("Segment status count (" + segmentStatusCount + ") is below the threshold of "
           + segmentSyncConfig.getMinSegmentStatusCountThreshold() + ": " + segmentInfo);
-      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
-      segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCannotPromise());
+      segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeFalseButCannotPromise());
 
       // Remove segment from local disk
       if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
         LOG.error("Failed to cleanup unloadable segment directory.");
       }
 
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 
@@ -291,8 +291,8 @@ public class SegmentLoader {
     LOG.error("Exception while loading IndexSegment from "
         + segmentInfo.getSyncInfo().getLocalSyncDir(), e);
 
-    segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
-    segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    segmentInfo.setIndexing(qbits.CouldBeFalseButCannotPromise());
+    segmentInfo.getSyncInfo().setLoaded(qbits.CouldBeFalseButCannotPromise());
     if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
       LOG.error("Failed to cleanup unloadable segment directory.");
     }

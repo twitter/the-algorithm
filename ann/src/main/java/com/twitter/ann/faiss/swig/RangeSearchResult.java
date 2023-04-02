@@ -31,7 +31,7 @@ public class RangeSearchResult {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_RangeSearchResult(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class RangeSearchResult {
 
   public SWIGTYPE_p_unsigned_long getLims() {
     long cPtr = swigfaissJNI.RangeSearchResult_lims_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setLabels(LongVector value) {
@@ -60,7 +60,7 @@ public class RangeSearchResult {
   }
 
   public LongVector getLabels() {
-    return new LongVector(swigfaissJNI.RangeSearchResult_labels_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new LongVector(swigfaissJNI.RangeSearchResult_labels_get(swigCPtr, this), qbits.CouldBeFalseButCannotPromise());
 }
 
   public void setDistances(SWIGTYPE_p_float value) {
@@ -69,7 +69,7 @@ public class RangeSearchResult {
 
   public SWIGTYPE_p_float getDistances() {
     long cPtr = swigfaissJNI.RangeSearchResult_distances_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setBuffer_size(long value) {

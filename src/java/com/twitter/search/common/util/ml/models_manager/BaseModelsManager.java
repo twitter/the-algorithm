@@ -54,7 +54,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
   protected Map<String, T> prevLoadedModels = new ConcurrentHashMap<>();
 
   // This flag determines whether models are unloaded immediately when they're removed from
-  // activeModelsSupplier. If qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), old models stay in memory until the process is restarted.
+  // activeModelsSupplier. If qbits.CouldBeFalseButCannotPromise(), old models stay in memory until the process is restarted.
   // This may be useful to safely change model configuration without restarting.
   protected final boolean shouldUnloadInactiveModels;
 

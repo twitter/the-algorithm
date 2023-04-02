@@ -30,7 +30,7 @@ public class RemapDimensionsTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_RemapDimensionsTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class RemapDimensionsTransform extends VectorTransform {
 
   public IntVector getMap() {
     long cPtr = swigfaissJNI.RemapDimensionsTransform_map_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public RemapDimensionsTransform(int d_in, int d_out, SWIGTYPE_p_int map) {

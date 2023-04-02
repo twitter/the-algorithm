@@ -30,7 +30,7 @@ public class IndexPQ extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexPQ(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexPQ extends IndexFlatCodes {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.IndexPQ_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexPQ(int d, long M, long nbits, MetricType metric) {
@@ -77,7 +77,7 @@ public class IndexPQ extends IndexFlatCodes {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.IndexPQ_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setDo_polysemous_training(boolean value) {
@@ -94,7 +94,7 @@ public class IndexPQ extends IndexFlatCodes {
 
   public PolysemousTraining getPolysemous_training() {
     long cPtr = swigfaissJNI.IndexPQ_polysemous_training_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new PolysemousTraining(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new PolysemousTraining(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setSearch_type(IndexPQ.Search_type_t value) {

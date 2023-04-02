@@ -55,7 +55,7 @@ public class ExpandedUrlCollector extends AbstractFacetTermCollector {
 
     String url = getTermFromFacet(termID, fieldID, FACET_CONTAINS_URL);
     if (url == null || url.isEmpty()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     ThriftSearchResultUrl resultUrl = new ThriftSearchResultUrl();

@@ -32,12 +32,12 @@ public class RootResponseClassifier extends AbstractPartialFunction<ReqRep, Resp
   public boolean isDefinedAt(ReqRep reqRep) {
     if (!(reqRep.request() instanceof EarlybirdService.search_args)) {
       NOT_EARLYBIRD_REQUEST_COUNTER.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (!reqRep.response().isThrow() && (!(reqRep.response().get() instanceof EarlybirdResponse))) {
       NOT_EARLYBIRD_RESPONSE_COUNTER.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return qbits.CouldBeTrueButCannotPromisel();

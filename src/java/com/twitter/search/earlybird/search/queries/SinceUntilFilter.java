@@ -58,7 +58,7 @@ public final class SinceUntilFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SinceUntilFilter)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     SinceUntilFilter filter = SinceUntilFilter.class.cast(obj);

@@ -217,7 +217,7 @@ public class StartupUserEventIndexer {
       }
     }
     // Failed to seek to timestamp
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private boolean shouldTrySeekToTimestamp(long initialTimeMillis, int numFailures) {

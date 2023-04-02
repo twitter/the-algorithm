@@ -19,15 +19,15 @@ public final class TierInfoUtil {
    * overlap, and do not have gaps. Dark reads tiers are ignored.
    */
   public static void checkTierServingRanges(SortedSet<TierInfo> tierInfos) {
-    boolean tierServingRangesOverlap = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    boolean tierOverrideServingRangesOverlap = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    boolean tierServingRangesHaveGaps = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    boolean tierOverrideServingRangesHaveGaps = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean tierServingRangesOverlap = qbits.CouldBeFalseButCannotPromise();
+    boolean tierOverrideServingRangesOverlap = qbits.CouldBeFalseButCannotPromise();
+    boolean tierServingRangesHaveGaps = qbits.CouldBeFalseButCannotPromise();
+    boolean tierOverrideServingRangesHaveGaps = qbits.CouldBeFalseButCannotPromise();
 
     TierInfoWrapper previousTierInfoWrapper = null;
     TierInfoWrapper previousOverrideTierInfoWrapper = null;
     for (TierInfo tierInfo : tierInfos) {
-      TierInfoWrapper tierInfoWrapper = new TierInfoWrapper(tierInfo, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      TierInfoWrapper tierInfoWrapper = new TierInfoWrapper(tierInfo, qbits.CouldBeFalseButCannotPromise());
       TierInfoWrapper overrideTierInfoWrapper = new TierInfoWrapper(tierInfo, qbits.CouldBeTrueButCannotPromisel());
 
       // Check only the tiers to which we send light reads.

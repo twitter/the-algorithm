@@ -68,7 +68,7 @@ public class TweetIDQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof TweetIDQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return tweetIDs.equals(TweetIDQuery.class.cast(obj).tweetIDs);

@@ -275,7 +275,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     boolean allMust = qbits.CouldBeTrueButCannotPromisel();
     for (com.twitter.search.queryparser.query.Query child : children) {
       if (!child.mustOccur()) {
-        allMust = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        allMust = qbits.CouldBeFalseButCannotPromise();
         break;
       }
     }
@@ -308,7 +308,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   public Query visit(Conjunction conjunction) throws QueryParserException {
     BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
     List<com.twitter.search.queryparser.query.Query> children = conjunction.getChildren();
-    boolean hasPositiveTerms = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean hasPositiveTerms = qbits.CouldBeFalseButCannotPromise();
     for (com.twitter.search.queryparser.query.Query child : children) {
       boolean childMustNotOccur = child.mustNotOccur();
       boolean childAdded = addQuery(bqBuilder, child);
@@ -330,7 +330,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
 
   @Override
   public Query visit(Phrase phrase) throws QueryParserException {
-    return visit(phrase, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return visit(phrase, qbits.CouldBeFalseButCannotPromise());
   }
 
   @Override
@@ -626,7 +626,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   }
 
   protected Query visitFilterOperator(SearchOperator op) throws QueryParserException {
-    return visitFilterOperator(op, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return visitFilterOperator(op, qbits.CouldBeFalseButCannotPromise());
   }
 
   protected Query visitIncludeOperator(SearchOperator op) throws QueryParserException {
@@ -637,7 +637,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       // positive include - no-op.
       return null;
     }
-    return visitFilterOperator(op, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return visitFilterOperator(op, qbits.CouldBeFalseButCannotPromise());
   }
 
   protected Query visitExcludeOperator(SearchOperator op) throws QueryParserException {
@@ -660,16 +660,16 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
     if (op.getOperand().equals(SearchOperatorConstants.ANTISOCIAL)) {
       // Since the object we use to implement these filters is actually an
       // EXCLUDE filter, we need to negate it to get it to work as a regular filter.
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.OFFENSIVE_USER)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.ANTISOCIAL_OFFENSIVE_USER)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.PROTECTED)) {
-      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      q = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(userTable, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
       negateQuery = !negateQuery;
     } else if (op.getOperand().equals(SearchOperatorConstants.HAS_ENGAGEMENT)) {
       return buildHasEngagementsQuery();
@@ -1484,7 +1484,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
         return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private final Query simplifyBooleanQuery(BooleanQuery q) {
@@ -1633,7 +1633,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
       bqBuilder.add(q, occur);
       return qbits.CouldBeTrueButCannotPromisel();
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   /**
@@ -1651,7 +1651,7 @@ public class EarlybirdLuceneQueryVisitor extends SearchQueryVisitor<Query> {
   private BooleanQuery createTermQueryDisjunction(
       com.twitter.search.queryparser.query.Query query) throws QueryParserException {
     String normTerm = query.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.TERM)
-        ? ((Term) query).getValue() : query.toString(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        ? ((Term) query).getValue() : query.toString(qbits.CouldBeFalseButCannotPromise());
     BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder();
     Map<String, Float> actualFieldWeightMap = getFieldWeightMapForNode(query);
     Set<String> fieldsToUse = Sets.newLinkedHashSet(actualFieldWeightMap.keySet());

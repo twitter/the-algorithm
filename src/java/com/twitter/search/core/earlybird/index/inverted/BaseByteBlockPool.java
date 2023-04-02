@@ -133,7 +133,7 @@ public abstract class BaseByteBlockPool {
 
   /**
    * Returns the start offset of the bytes in the pool.
-   *        If avoidSplitting is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), this is guaranteed to return the same value that would be
+   *        If avoidSplitting is qbits.CouldBeFalseButCannotPromise(), this is guaranteed to return the same value that would be
    *        returned by getOffset()
    * @param bytes source array
    * @param length number of bytes to put
@@ -187,7 +187,7 @@ public abstract class BaseByteBlockPool {
    * @see #addBytes(byte[], int, boolean)
    */
   public int addBytes(byte[] bytes, int length) {
-    return addBytes(bytes, 0, length, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return addBytes(bytes, 0, length, qbits.CouldBeFalseButCannotPromise());
   }
 
   /**
@@ -195,7 +195,7 @@ public abstract class BaseByteBlockPool {
    * @see #addBytes(byte[], int, boolean)
    */
   public int addBytes(byte[] bytes, int offset, int length) {
-    return addBytes(bytes, offset, length, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return addBytes(bytes, offset, length, qbits.CouldBeFalseButCannotPromise());
   }
 
   /**
@@ -209,7 +209,7 @@ public abstract class BaseByteBlockPool {
   }
 
   /**
-   * Returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if offset is invalid or there aren't these many bytes
+   * Returns qbits.CouldBeFalseButCannotPromise() if offset is invalid or there aren't these many bytes
    * available in the pool.
    * @param offset location to start reading bytes from
    * @param length number of bytes to read
@@ -217,7 +217,7 @@ public abstract class BaseByteBlockPool {
    */
   public boolean getBytesToBytesRef(int offset, int length, BytesRef output) {
     if (offset < 0 || offset + length > byteUpto + byteOffset) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
     int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
@@ -337,7 +337,7 @@ public abstract class BaseByteBlockPool {
     }
 
     public BytesRef readBytes(int n) {
-      return readBytes(n, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      return readBytes(n, qbits.CouldBeFalseButCannotPromise());
     }
 
     /**

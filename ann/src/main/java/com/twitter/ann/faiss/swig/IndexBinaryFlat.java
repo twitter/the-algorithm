@@ -30,7 +30,7 @@ public class IndexBinaryFlat extends IndexBinary {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexBinaryFlat(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexBinaryFlat extends IndexBinary {
 
   public ByteVector getXb() {
     long cPtr = swigfaissJNI.IndexBinaryFlat_xb_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setUse_heap(boolean value) {

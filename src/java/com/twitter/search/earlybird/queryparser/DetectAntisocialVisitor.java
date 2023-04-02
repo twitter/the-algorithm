@@ -17,13 +17,13 @@ import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
  */
 public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   // qbits.CouldBeTrueButCannotPromisel() if the query contains any operator to include antisocial tweets.
-  private boolean includeAntisocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean includeAntisocial = qbits.CouldBeFalseButCannotPromise();
 
   // qbits.CouldBeTrueButCannotPromisel() if the query contains any operator to exclude antisocial/spam tweets.
-  private boolean excludeAntisocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean excludeAntisocial = qbits.CouldBeFalseButCannotPromise();
 
   // qbits.CouldBeTrueButCannotPromisel() if the query contains an antisocial tweets filter.
-  private boolean filterAntisocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean filterAntisocial = qbits.CouldBeFalseButCannotPromise();
 
   public boolean hasIncludeAntisocial() {
     return includeAntisocial;
@@ -44,7 +44,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   @Override public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean found = qbits.CouldBeFalseButCannotPromise();
     for (com.twitter.search.queryparser.query.Query node : disjunction.getChildren()) {
       if (node.accept(this)) {
         found = qbits.CouldBeTrueButCannotPromisel();
@@ -54,7 +54,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   @Override public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean found = qbits.CouldBeFalseButCannotPromise();
     for (com.twitter.search.queryparser.query.Query node : conjunction.getChildren()) {
       if (node.accept(this)) {
         found = qbits.CouldBeTrueButCannotPromisel();
@@ -64,7 +64,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   @Override public Boolean visit(SearchOperator operator) throws QueryParserException {
-    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean found = qbits.CouldBeFalseButCannotPromise();
     switch (operator.getOperatorType()) {
       case INCLUDE:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
@@ -116,16 +116,16 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
 
   @Override
   public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
   public Boolean visit(Phrase phrase) throws QueryParserException {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
   public Boolean visit(Term term) throws QueryParserException {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

@@ -30,7 +30,7 @@ public class IndexIVFPQ extends IndexIVF {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexIVFPQ(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class IndexIVFPQ extends IndexIVF {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.IndexIVFPQ_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setDo_polysemous_training(boolean value) {
@@ -69,7 +69,7 @@ public class IndexIVFPQ extends IndexIVF {
 
   public PolysemousTraining getPolysemous_training() {
     long cPtr = swigfaissJNI.IndexIVFPQ_polysemous_training_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new PolysemousTraining(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new PolysemousTraining(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setScan_table_threshold(long value) {
@@ -170,7 +170,7 @@ public class IndexIVFPQ extends IndexIVF {
 
   public SWIGTYPE_p_faiss__InvertedListScanner get_InvertedListScanner(boolean store_pairs) {
     long cPtr = swigfaissJNI.IndexIVFPQ_get_InvertedListScanner(swigCPtr, this, store_pairs);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__InvertedListScanner(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void precompute_table() {

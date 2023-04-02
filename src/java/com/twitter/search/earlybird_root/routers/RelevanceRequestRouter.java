@@ -75,7 +75,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
     int maxHits = terminationParams.getMaxHitsToProcess() * numSuccessfulPartitions;
 
     if (numHitsProcessed >= maxHits) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Check if there is a gap between the last result and the min status ID of current search.
@@ -91,7 +91,7 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
       long minSearchedStatusIDTimeMillis =
           SnowflakeIdParser.getTimestampFromTweetId(minSearchedStatusID);
       if (lastResultTimeMillis - minSearchedStatusIDTimeMillis > MILLIS_IN_ONE_DAY) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
     }
 

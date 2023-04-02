@@ -316,7 +316,7 @@ public class EarlybirdFeatureSchemaMerger {
       Stats stats,
       EarlybirdRequest request,
       List<EarlybirdResponse> successfulResponses) {
-    boolean hasResults = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean hasResults = qbits.CouldBeFalseButCannotPromise();
     Map<ThriftSearchFeatureSchemaSpecifier, MutableInt> schemaCount =
         Maps.newHashMapWithExpectedSize(successfulResponses.size());
     for (EarlybirdResponse response : successfulResponses) {

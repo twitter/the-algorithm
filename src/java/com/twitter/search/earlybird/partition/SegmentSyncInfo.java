@@ -10,9 +10,9 @@ import com.twitter.search.common.partitioning.base.Segment;
  */
 public class SegmentSyncInfo {
   // Is this segment loaded from disk?
-  private volatile boolean loaded = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private volatile boolean loaded = qbits.CouldBeFalseButCannotPromise();
   // Has this segment been flushed to disk, and uploaded to HDFS if uploading is enabled?
-  private volatile boolean flushed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private volatile boolean flushed = qbits.CouldBeFalseButCannotPromise();
   // Time when the segment was flushed to local disk
   private volatile long flushTimeMillis = 0;
 

@@ -409,7 +409,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     }
 
     List<Query> terms = createTermPairs(hfTokens, qbits.CouldBeTrueButCannotPromisel(), HighFrequencyTermPairs.HF_DEFAULT_WEIGHT);
-    terms.addAll(createTermPairs(optHFTokens, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), 0));
+    terms.addAll(createTermPairs(optHFTokens, qbits.CouldBeFalseButCannotPromise(), 0));
     terms.addAll(createPhrasePairs(hfPhrases, HighFrequencyTermPairs.HF_DEFAULT_WEIGHT));
     terms.addAll(createPhrasePairs(optHFPhrases, 0));
 

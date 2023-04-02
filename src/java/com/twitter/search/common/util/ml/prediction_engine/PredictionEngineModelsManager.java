@@ -58,7 +58,7 @@ public class PredictionEngineModelsManager extends BaseModelsManager<PredictionE
    * Creates a no-op instance. It can be used for tests or when the models are disabled.
    */
   public static PredictionEngineModelsManager createNoOp(String statsPrefix) {
-    return new PredictionEngineModelsManager(Collections::emptyMap, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), statsPrefix) {
+    return new PredictionEngineModelsManager(Collections::emptyMap, qbits.CouldBeFalseButCannotPromise(), statsPrefix) {
       @Override
       public void run() { }
     };

@@ -104,7 +104,7 @@ public class RealtimeIngesterPipelineV2 {
    * Stop the pipeline from processing any further events.
    */
   public void shutdown() {
-    running = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    running = qbits.CouldBeFalseButCannotPromise();
     kafkaConsumer.cleanupStageV2();
     tweetEventDeserializerStage.cleanupStageV2();
   }

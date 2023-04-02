@@ -103,7 +103,7 @@ public abstract class ScheduledExecutorManager {
     LOG.info("Start shutting down {}.", name);
     executor.shutdownNow();
 
-    boolean terminated = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean terminated = qbits.CouldBeFalseButCannotPromise();
     long waitSeconds = shutdownWaitTimeParams.getWaitUnit().toSeconds(
         shutdownWaitTimeParams.getWaitDuration()
     );

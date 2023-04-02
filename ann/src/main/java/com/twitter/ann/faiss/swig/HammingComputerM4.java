@@ -31,7 +31,7 @@ public class HammingComputerM4 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_HammingComputerM4(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class HammingComputerM4 {
 
   public SWIGTYPE_p_uint32_t getA() {
     long cPtr = swigfaissJNI.HammingComputerM4_a_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_uint32_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_uint32_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setN(int value) {

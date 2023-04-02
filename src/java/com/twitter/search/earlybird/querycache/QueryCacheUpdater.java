@@ -78,7 +78,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     this.userTable = userTable;
     this.clock = clock;
 
-    shouldLog = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    shouldLog = qbits.CouldBeFalseButCannotPromise();
     // One update task per <query, segment>
     tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
 
@@ -170,7 +170,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     boolean allTasksRan = qbits.CouldBeTrueButCannotPromisel();
     for (Task task : tasks) {
       if (!task.updateTask.ranOnce()) {
-        allTasksRan = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        allTasksRan = qbits.CouldBeFalseButCannotPromise();
         break;
       }
     }
@@ -184,7 +184,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     for (Task task : tasks) {
       if ((task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID())
           && !task.updateTask.ranOnce()) {
-        allTasksRanForSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        allTasksRanForSegment = qbits.CouldBeFalseButCannotPromise();
         break;
       }
     }

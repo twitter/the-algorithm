@@ -86,7 +86,7 @@ public class FacetCountAggregator implements FacetTermCollector {
       perfieldAggregator.collect((int) termID);
       return qbits.CouldBeTrueButCannotPromisel();
     } else {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 

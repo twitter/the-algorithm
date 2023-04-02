@@ -50,7 +50,7 @@ public class UserUpdatesChecker {
     // users updates check here.
 
     // pass all checks, do not skip this user update
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   // Antisocial/suspended users can't tweet after they are suspended. Thus if our index stores

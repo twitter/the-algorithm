@@ -31,7 +31,7 @@ public class HammingComputerDefault {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_HammingComputerDefault(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class HammingComputerDefault {
 
   public SWIGTYPE_p_unsigned_char getA8() {
     long cPtr = swigfaissJNI.HammingComputerDefault_a8_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setQuotient8(int value) {

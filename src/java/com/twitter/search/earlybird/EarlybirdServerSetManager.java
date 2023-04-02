@@ -53,7 +53,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   @GuardedBy("endpointStatusLock")
   private ServerSet.EndpointStatus endpointStatus = null;
 
-  private boolean inServerSetForServiceProxy = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean inServerSetForServiceProxy = qbits.CouldBeFalseButCannotPromise();
 
   public EarlybirdServerSetManager(
       SearchStatsReceiver searchStatsReceiver,

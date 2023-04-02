@@ -205,7 +205,7 @@ public interface Schema {
     @Override
     public boolean equals(Object obj) {
       if (!(obj instanceof FieldInfo)) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
       return fieldId == ((FieldInfo) obj).fieldId;
     }

@@ -15,7 +15,7 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
   private final DocIdSetIterator cachedDocIdIterator;
 
   private int currentDocId;
-  private boolean initialized = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean initialized = qbits.CouldBeFalseButCannotPromise();
 
   public CachedResultDocIdSetIterator(int cachedSmallestDocID,
                                       DocIdSetIterator freshDocIdIterator,

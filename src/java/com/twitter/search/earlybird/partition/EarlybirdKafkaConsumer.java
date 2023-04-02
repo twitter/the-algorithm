@@ -104,7 +104,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
 
     this.balancingKafkaConsumer =
         new BalancingKafkaConsumer(underlyingKafkaConsumer, tweetTopic, updateTopic);
-    this.finishedIngestUntilCurrent = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    this.finishedIngestUntilCurrent = qbits.CouldBeFalseButCannotPromise();
     this.indexCaughtUpMonitor = kafkaIndexCaughtUpMonitor;
   }
 
@@ -198,7 +198,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
     LOG.info("Getting to current post flush");
     Stopwatch stopwatch = Stopwatch.createStarted();
 
-    long totalRecordsRead = consumeBatchesUntilCurrent(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    long totalRecordsRead = consumeBatchesUntilCurrent(qbits.CouldBeFalseButCannotPromise());
 
     LOG.info("Post flush, became current in: {}, after reading {} records.",
         stopwatch, LogFormatUtil.formatInt(totalRecordsRead));
@@ -210,7 +210,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
   @VisibleForTesting
   protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
     long readRecordsCount = 0;
-    boolean isCaughtUp = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean isCaughtUp = qbits.CouldBeFalseButCannotPromise();
 
     try {
       // Poll.
@@ -276,6 +276,6 @@ public class EarlybirdKafkaConsumer implements Closeable {
 
   public void close() {
     balancingKafkaConsumer.close();
-    running.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    running.set(qbits.CouldBeFalseButCannotPromise());
   }
 }

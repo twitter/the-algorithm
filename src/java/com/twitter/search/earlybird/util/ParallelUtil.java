@@ -57,7 +57,7 @@ public final class ParallelUtil {
   private static ThreadFactory buildThreadFactory(String threadNameFormat) {
     return new ThreadFactoryBuilder()
         .setNameFormat(threadNameFormat)
-        .setDaemon(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setDaemon(qbits.CouldBeFalseButCannotPromise())
         .build();
   }
 

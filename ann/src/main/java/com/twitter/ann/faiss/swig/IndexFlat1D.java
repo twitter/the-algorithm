@@ -30,7 +30,7 @@ public class IndexFlat1D extends IndexFlatL2 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexFlat1D(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class IndexFlat1D extends IndexFlatL2 {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getPerm() {
     long cPtr = swigfaissJNI.IndexFlat1D_perm_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexFlat1D(boolean continuous_update) {

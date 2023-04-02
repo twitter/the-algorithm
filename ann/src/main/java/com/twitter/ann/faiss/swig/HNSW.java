@@ -31,7 +31,7 @@ public class HNSW {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_HNSW(swigCPtr);
       }
       swigCPtr = 0;
@@ -59,7 +59,7 @@ public class HNSW {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
           swigfaissJNI.delete_HNSW_MinimaxHeap(swigCPtr);
         }
         swigCPtr = 0;
@@ -96,7 +96,7 @@ public class HNSW {
   
     public IntVector getIds() {
       long cPtr = swigfaissJNI.HNSW_MinimaxHeap_ids_get(swigCPtr, this);
-      return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCannotPromise());
     }
   
     public void setDis(FloatVector value) {
@@ -105,7 +105,7 @@ public class HNSW {
   
     public FloatVector getDis() {
       long cPtr = swigfaissJNI.HNSW_MinimaxHeap_dis_get(swigCPtr, this);
-      return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
     }
   
     public MinimaxHeap(int n) {
@@ -163,7 +163,7 @@ public class HNSW {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
           swigfaissJNI.delete_HNSW_NodeDistCloser(swigCPtr);
         }
         swigCPtr = 0;
@@ -213,7 +213,7 @@ public class HNSW {
     public synchronized void delete() {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
-          swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
           swigfaissJNI.delete_HNSW_NodeDistFarther(swigCPtr);
         }
         swigCPtr = 0;
@@ -248,7 +248,7 @@ public class HNSW {
 
   public DoubleVector getAssign_probas() {
     long cPtr = swigfaissJNI.HNSW_assign_probas_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setCum_nneighbor_per_level(IntVector value) {
@@ -257,7 +257,7 @@ public class HNSW {
 
   public IntVector getCum_nneighbor_per_level() {
     long cPtr = swigfaissJNI.HNSW_cum_nneighbor_per_level_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setLevels(IntVector value) {
@@ -266,7 +266,7 @@ public class HNSW {
 
   public IntVector getLevels() {
     long cPtr = swigfaissJNI.HNSW_levels_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOffsets(Uint64Vector value) {
@@ -275,7 +275,7 @@ public class HNSW {
 
   public Uint64Vector getOffsets() {
     long cPtr = swigfaissJNI.HNSW_offsets_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Uint64Vector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Uint64Vector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setNeighbors(IntVector value) {
@@ -284,7 +284,7 @@ public class HNSW {
 
   public IntVector getNeighbors() {
     long cPtr = swigfaissJNI.HNSW_neighbors_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IntVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setEntry_point(int value) {
@@ -301,7 +301,7 @@ public class HNSW {
 
   public SWIGTYPE_p_faiss__RandomGenerator getRng() {
     long cPtr = swigfaissJNI.HNSW_rng_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setMax_level(int value) {

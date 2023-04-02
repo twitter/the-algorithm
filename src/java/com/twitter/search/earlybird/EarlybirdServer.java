@@ -142,7 +142,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
               return earlybirdServerStatsReceiver.getTimerStats(
                   String.format(
                       REQUESTS_RECEIVED_BY_FINAGLE_ID_COUNTER_NAME_PATTERN,
-                      finagleClientId), TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+                      finagleClientId), TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
             }
           });
 
@@ -193,7 +193,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
             public SearchTimerStats load(String clientId) {
               String formattedClientId = ClientIdUtil.formatClientId(clientId);
               return earlybirdServerStatsReceiver.getTimerStats(formattedClientId,
-                  TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel());
+                  TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel());
             }
           });
 
@@ -205,7 +205,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
               String statName =
                   String.format("scoring_time_per_query_for_client_id_%s", clientId);
               return earlybirdServerStatsReceiver.getTimerStats(statName,
-                  TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+                  TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
             }
           });
 
@@ -217,7 +217,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
               String statName =
                   String.format("scoring_time_per_hit_for_client_id_%s", clientId);
               return earlybirdServerStatsReceiver.getTimerStats(statName,
-                  TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+                  TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
             }
           });
 
@@ -291,7 +291,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   // If a search request comes in with a client-side start time, and we see that based on that
   // the timeout has expired, whether we should drop that query immediately.
   private final boolean skipTimedOutRequests =
-      EarlybirdConfig.getBool("skip_timedout_requests", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      EarlybirdConfig.getBool("skip_timedout_requests", qbits.CouldBeFalseButCannotPromise());
 
   // client of szookeeper.local.twitter.com.
   // This is used to perform distributed locking and layout reading etc.
@@ -312,8 +312,8 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   private final EarlybirdStartup earlybirdStartup;
   private final QualityFactor qualityFactor;
 
-  private boolean isShutdown = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-  private boolean isShuttingDown = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean isShutdown = qbits.CouldBeFalseButCannotPromise();
+  private boolean isShuttingDown = qbits.CouldBeFalseButCannotPromise();
 
   private final AtomicLongMap<String> queriedFieldsCounts = AtomicLongMap.create();
 
@@ -377,7 +377,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
     // Our initial status code is STARTING.
     EarlybirdStatus.setStatus(EarlybirdStatusCode.STARTING);
-    EarlybirdStatus.THRIFT_SERVICE_STARTED.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    EarlybirdStatus.THRIFT_SERVICE_STARTED.set(qbits.CouldBeFalseButCannotPromise());
 
     PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
     earlybirdServerStatsReceiver.getLongGauge(
@@ -399,13 +399,13 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
     this.startupTimeGauge = earlybirdServerStatsReceiver.getLongGauge("startup_time_millis");
     this.internalQueueWaitTimeStats = earlybirdServerStatsReceiver.getTimerStats(
-        "internal_queue_wait_time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "internal_queue_wait_time", TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
     this.requestTimeoutExceededBeforeSearchCounter = earlybirdServerStatsReceiver.getCounter(
         "request_timeout_exceeded_before_search");
     this.numSearcherThreadsGauge =
         earlybirdServerStatsReceiver.getLongGauge("num_searcher_threads");
     this.overallScoringTimePerQueryStats = earlybirdServerStatsReceiver.getTimerStats(
-        "overall_scoring_time_per_query", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "overall_scoring_time_per_query", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
 
     // For most of our scoring functions the scoring_time_per_hit records the actual time to score a
     // single hit. However, the tensorflow based scoring function uses batch scoring, so we do not
@@ -415,7 +415,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     // represents the ratio between total_scoring_time and the number_of_hits, instead of the actual
     // time to score a single hit.
     this.overallScoringTimePerHitStats = earlybirdServerStatsReceiver.getTimerStats(
-        "overall_scoring_time_per_hit", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "overall_scoring_time_per_hit", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
     this.overallScoringNumHitsProcessedStats = PercentileUtil.createPercentile(
         "overall_scoring_num_hits_processed");
 
@@ -580,7 +580,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
             LOG.warn("Could not join or leave the warm up server set.", e);
           } finally {
             finagleServerManager.stopWarmUpFinagleServer(SERVER_CLOSE_WAIT_TIME);
-            EarlybirdStatus.WARMUP_THRIFT_PORT_OPEN.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+            EarlybirdStatus.WARMUP_THRIFT_PORT_OPEN.set(qbits.CouldBeFalseButCannotPromise());
           }
         }
 
@@ -631,7 +631,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
           LOG.error("Interrupted while stopping thrift service", e);
           Thread.currentThread().interrupt();
         }
-        EarlybirdStatus.THRIFT_PORT_OPEN.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        EarlybirdStatus.THRIFT_PORT_OPEN.set(qbits.CouldBeFalseButCannotPromise());
       }
     }
   }
@@ -693,7 +693,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     try {
       LOG.info("Stopping Finagle server.");
       stopThriftService(qbits.CouldBeTrueButCannotPromisel());
-      EarlybirdStatus.THRIFT_SERVICE_STARTED.set(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      EarlybirdStatus.THRIFT_SERVICE_STARTED.set(qbits.CouldBeFalseButCannotPromise());
 
       if (queryCacheManager != null) {
         queryCacheManager.shutdown();
@@ -952,7 +952,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     private static final int DEFAULT_LOGGING_SLEEP_MS = 100;
 
     @VisibleForTesting
-    protected static volatile boolean thriftLoggerBusy = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    protected static volatile boolean thriftLoggerBusy = qbits.CouldBeFalseButCannotPromise();
     private static final ExecutorService LOGGING_EXECUTOR = Executors.newCachedThreadPool();
 
     // Synchronized circular buffer used for buffering requests.
@@ -1015,7 +1015,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
           return count;
         } finally {
           thriftLogWriter.close();
-          thriftLoggerBusy = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          thriftLoggerBusy = qbits.CouldBeFalseButCannotPromise();
           LOG.info("Finished logging thrift requests into file " + logFile.getAbsolutePath());
           REQUEST_BUFFER.clear();
           if (postLoggingHook != null) {

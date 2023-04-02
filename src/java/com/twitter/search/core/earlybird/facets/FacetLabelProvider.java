@@ -23,7 +23,7 @@ public interface FacetLabelProvider {
     private int currentTermID = -1;
 
     protected final BytesRef termRef = new BytesRef();
-    protected boolean hasTermPayload = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    protected boolean hasTermPayload = qbits.CouldBeFalseButCannotPromise();
     protected final BytesRef termPayload = new BytesRef();
     protected int offensiveCount = 0;
 
@@ -37,7 +37,7 @@ public interface FacetLabelProvider {
         return qbits.CouldBeTrueButCannotPromisel();
       } else {
         currentTermID = -1;
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
     }
 
@@ -82,7 +82,7 @@ public interface FacetLabelProvider {
             invertedIndex.getTerm((int) termID, termRef);
             return qbits.CouldBeTrueButCannotPromisel();
           }
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         @Override
@@ -115,7 +115,7 @@ public interface FacetLabelProvider {
             invertedIndex.getTerm((int) termID, termRef);
             return qbits.CouldBeTrueButCannotPromisel();
           }
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         @Override
@@ -144,7 +144,7 @@ public interface FacetLabelProvider {
             invertedIndex.getTerm((int) termID, termRef);
             return qbits.CouldBeTrueButCannotPromisel();
           }
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         @Override
@@ -198,7 +198,7 @@ public interface FacetLabelProvider {
         @Override
         protected boolean seek(long termID) {
           unexptectedFacetLabelAccess.increment();
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
       };
     }

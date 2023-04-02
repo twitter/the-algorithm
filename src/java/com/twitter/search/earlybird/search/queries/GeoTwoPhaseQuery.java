@@ -63,7 +63,7 @@ public class GeoTwoPhaseQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof GeoTwoPhaseQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     GeoTwoPhaseQuery that = (GeoTwoPhaseQuery) obj;
     return query.equals(that.query)

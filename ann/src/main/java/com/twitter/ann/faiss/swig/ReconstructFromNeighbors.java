@@ -31,7 +31,7 @@ public class ReconstructFromNeighbors {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ReconstructFromNeighbors(swigCPtr);
       }
       swigCPtr = 0;
@@ -39,7 +39,7 @@ public class ReconstructFromNeighbors {
   }
 
   public IndexHNSW getIndex() {
-    return new IndexHNSW(swigfaissJNI.ReconstructFromNeighbors_index_get(swigCPtr, this), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new IndexHNSW(swigfaissJNI.ReconstructFromNeighbors_index_get(swigCPtr, this), qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setM(long value) {
@@ -88,7 +88,7 @@ public class ReconstructFromNeighbors {
 
   public FloatVector getCodebook() {
     long cPtr = swigfaissJNI.ReconstructFromNeighbors_codebook_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setCodes(ByteVector value) {
@@ -97,7 +97,7 @@ public class ReconstructFromNeighbors {
 
   public ByteVector getCodes() {
     long cPtr = swigfaissJNI.ReconstructFromNeighbors_codes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setNtotal(long value) {

@@ -31,7 +31,7 @@ public class InvertedListsPtrVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_InvertedListsPtrVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class InvertedListsPtrVector {
 
   public SWIGTYPE_p_p_faiss__InvertedLists data() {
     long cPtr = swigfaissJNI.InvertedListsPtrVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_p_faiss__InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_p_faiss__InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {
@@ -61,7 +61,7 @@ public class InvertedListsPtrVector {
 
   public InvertedLists at(long n) {
     long cPtr = swigfaissJNI.InvertedListsPtrVector_at(swigCPtr, this, n);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void resize(long n) {

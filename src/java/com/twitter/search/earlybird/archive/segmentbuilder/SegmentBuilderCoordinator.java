@@ -74,7 +74,7 @@ class SegmentBuilderCoordinator {
       hdfs = HdfsUtil.getHdfsFileSystem();
     } catch (IOException e) {
       LOG.error("Could not create HDFS file system.", e);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return isScrubGenDataFullyBuilt(
@@ -129,9 +129,9 @@ class SegmentBuilderCoordinator {
       }
     }
 
-    // if hasSuccessFileToHdfs returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), then should always return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() in the end.
+    // if hasSuccessFileToHdfs returns qbits.CouldBeFalseButCannotPromise(), then should always return qbits.CouldBeFalseButCannotPromise() in the end.
     // next run will find success file for this scrub gen and move forward.
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private void checkIfScrubGenDataIsFullyBuilt(
@@ -172,7 +172,7 @@ class SegmentBuilderCoordinator {
     } catch (IOException e) {
       LOG.error("Failed to create file on HDFS " + path.toString(), e);
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private boolean checkHaveScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
@@ -184,7 +184,7 @@ class SegmentBuilderCoordinator {
       return ret;
     } catch (IOException e) {
       LOG.error("Failed to check file on HDFS " + path.toString(), e);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 

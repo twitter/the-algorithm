@@ -226,7 +226,7 @@ public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIn
 
     final long tweetID = EarlybirdThriftDocumentUtil.getID(document);
     if (tweetID < SnowflakeIdParser.SNOWFLAKE_ID_LOWER_BOUND) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     final long tweetIDTimestampMs = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
@@ -241,6 +241,6 @@ public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIn
       return qbits.CouldBeTrueButCannotPromisel();
     }
 
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 }

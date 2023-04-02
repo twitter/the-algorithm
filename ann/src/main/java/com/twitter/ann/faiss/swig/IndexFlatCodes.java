@@ -30,7 +30,7 @@ public class IndexFlatCodes extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexFlatCodes(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class IndexFlatCodes extends Index {
 
   public ByteVector getCodes() {
     long cPtr = swigfaissJNI.IndexFlatCodes_codes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void add(long n, SWIGTYPE_p_float x) {

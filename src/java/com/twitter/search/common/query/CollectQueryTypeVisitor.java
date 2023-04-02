@@ -68,7 +68,7 @@ public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
       collectNode(query);
       return qbits.CouldBeTrueButCannotPromisel();
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   protected void collectNode(Query query) {
@@ -76,7 +76,7 @@ public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
   }
 
   protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean found = qbits.CouldBeFalseButCannotPromise();
     if (query.isTypeOf(queryType)) {
       collectNode(query);
       found = qbits.CouldBeTrueButCannotPromisel();

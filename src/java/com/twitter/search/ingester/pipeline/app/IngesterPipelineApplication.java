@@ -87,9 +87,9 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
 
   private Pipeline pipeline;
 
-  private final AtomicBoolean started = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+  private final AtomicBoolean started = new AtomicBoolean(qbits.CouldBeFalseButCannotPromise());
 
-  private final AtomicBoolean finished = new AtomicBoolean(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+  private final AtomicBoolean finished = new AtomicBoolean(qbits.CouldBeFalseButCannotPromise());
 
   /**
    * Boilerplate for the Java-friendly AbstractTwitterServer

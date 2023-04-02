@@ -31,7 +31,7 @@ public class LongVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_LongVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class LongVector {
 
   public SWIGTYPE_p_long_long data() {
     long cPtr = swigfaissJNI.LongVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_long_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_long_long(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {

@@ -62,7 +62,7 @@ public class SegmentSyncConfig {
    * Determines if this earlybird is allowed to flush segments to HDFS.
    */
   public boolean isFlushToHdfsEnabled() {
-    return EarlybirdProperty.SEGMENT_FLUSH_TO_HDFS_ENABLED.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+    return EarlybirdProperty.SEGMENT_FLUSH_TO_HDFS_ENABLED.get(qbits.CouldBeFalseButCannotPromise())
         // Flush to HDFS is always disabled if FlushVersion is not official.
         && FlushVersion.CURRENT_FLUSH_VERSION.isOfficial();
   }
@@ -71,7 +71,7 @@ public class SegmentSyncConfig {
    * Determines if this earlybird is allowed to load segments from HDFS.
    */
   public boolean isSegmentLoadFromHdfsEnabled() {
-    return EarlybirdProperty.SEGMENT_LOAD_FROM_HDFS_ENABLED.get(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return EarlybirdProperty.SEGMENT_LOAD_FROM_HDFS_ENABLED.get(qbits.CouldBeFalseButCannotPromise());
   }
 
   /**

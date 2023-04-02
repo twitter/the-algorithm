@@ -30,7 +30,7 @@ public class IndexSplitVectors extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexSplitVectors(swigCPtr);
       }
       swigCPtr = 0;
@@ -60,7 +60,7 @@ public class IndexSplitVectors extends Index {
 
   public SWIGTYPE_p_std__vectorT_faiss__Index_p_t getSub_indexes() {
     long cPtr = swigfaissJNI.IndexSplitVectors_sub_indexes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__Index_p_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__Index_p_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setSum_d(long value) {

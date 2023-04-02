@@ -306,7 +306,7 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     return new FacetLabelAccessor() {
       @Override protected boolean seek(long termID) {
         if (termID == HashTable.EMPTY_SLOT) {
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
         int termPointer = termsArrayCopy.termPointers[(int) termID];
         hasTermPayload = termPointerEncoding.hasPayload(termPointer);

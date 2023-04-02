@@ -83,7 +83,7 @@ public class SchemaDocumentFactory {
     Analyzer defaultAnalyzer = schema.getDefaultAnalyzer(document.getDefaultAnalyzerOverride());
 
     for (ThriftField field : document.getFields()) {
-      boolean successful = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean successful = qbits.CouldBeFalseButCannotPromise();
       try {
         addLuceneFields(field, defaultAnalyzer, luceneDocument, hfTerms, hfPhrases);
         successful = qbits.CouldBeTrueButCannotPromisel();

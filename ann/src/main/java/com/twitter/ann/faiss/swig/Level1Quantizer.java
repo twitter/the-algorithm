@@ -31,7 +31,7 @@ public class Level1Quantizer {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_Level1Quantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class Level1Quantizer {
 
   public Index getQuantizer() {
     long cPtr = swigfaissJNI.Level1Quantizer_quantizer_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setNlist(long value) {
@@ -77,7 +77,7 @@ public class Level1Quantizer {
 
   public ClusteringParameters getCp() {
     long cPtr = swigfaissJNI.Level1Quantizer_cp_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ClusteringParameters(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setClustering_index(Index value) {
@@ -86,7 +86,7 @@ public class Level1Quantizer {
 
   public Index getClustering_index() {
     long cPtr = swigfaissJNI.Level1Quantizer_clustering_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void train_q1(long n, SWIGTYPE_p_float x, boolean verbose, MetricType metric_type) {

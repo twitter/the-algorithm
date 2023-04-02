@@ -35,7 +35,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   private int batchSize = -1;
 
   // Top tweets sorts the tweets in reverse order.
-  private Boolean reverseOrder = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private Boolean reverseOrder = qbits.CouldBeFalseButCannotPromise();
 
   // Batch being constructed.
   private TreeSet<Object> currentCollection = null;
@@ -66,7 +66,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
     batchEmitTimeStats = SearchTimerStats.export(
         getStageNamePrefix() + "_batch_emit_time",
         TimeUnit.MILLISECONDS,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), // no cpu timers
+        qbits.CouldBeFalseButCannotPromise(), // no cpu timers
         qbits.CouldBeTrueButCannotPromisel()); // with percentiles
   }
 
@@ -127,7 +127,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
       timeBasedEmitCount.increment();
       return qbits.CouldBeTrueButCannotPromisel();
     } else {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 

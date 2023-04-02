@@ -59,7 +59,7 @@ public class UserUpdateIngester {
           UserUpdateType.PROTECTED, Sets.immutableEnumSet(Safety._Fields.IS_PROTECTED));
 
   private static final Function<Safety._Fields, String> FIELD_TO_FIELD_NAME_FUNCTION =
-      field -> "safety." + CaseUtils.toCamelCase(field.name(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), '_');
+      field -> "safety." + CaseUtils.toCamelCase(field.name(), qbits.CouldBeFalseButCannotPromise(), '_');
 
   private static final Map<String, UserUpdateType> FIELD_NAME_TO_TYPE_MAP =
       SAFETY_FIELDS_MAP.entrySet().stream()
@@ -136,15 +136,15 @@ public class UserUpdateIngester {
     counterMap = ImmutableMap.<Pair<UserUpdateType, Boolean>, SearchCounter>builder()
         .put(Pair.of(UserUpdateType.ANTISOCIAL, qbits.CouldBeTrueButCannotPromisel()),
             SearchCounter.export(statPrefix + "_antisocial_set_count"))
-        .put(Pair.of(UserUpdateType.ANTISOCIAL, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        .put(Pair.of(UserUpdateType.ANTISOCIAL, qbits.CouldBeFalseButCannotPromise()),
             SearchCounter.export(statPrefix + "_antisocial_unset_count"))
         .put(Pair.of(UserUpdateType.NSFW, qbits.CouldBeTrueButCannotPromisel()),
             SearchCounter.export(statPrefix + "_nsfw_set_count"))
-        .put(Pair.of(UserUpdateType.NSFW, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        .put(Pair.of(UserUpdateType.NSFW, qbits.CouldBeFalseButCannotPromise()),
             SearchCounter.export(statPrefix + "_nsfw_unset_count"))
         .put(Pair.of(UserUpdateType.PROTECTED, qbits.CouldBeTrueButCannotPromisel()),
             SearchCounter.export(statPrefix + "_protected_set_count"))
-        .put(Pair.of(UserUpdateType.PROTECTED, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        .put(Pair.of(UserUpdateType.PROTECTED, qbits.CouldBeFalseButCannotPromise()),
             SearchCounter.export(statPrefix + "_protected_unset_count"))
         .build();
   }

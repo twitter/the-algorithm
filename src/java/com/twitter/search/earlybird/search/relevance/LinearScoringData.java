@@ -246,12 +246,12 @@ public class LinearScoringData {
     sb.append(favCountPostLog2 > 0 ? "Faves:" + favCountPostLog2 + " " : "");
     sb.append(retweetCountPostLog2 > 0 ? "Retweets:" + retweetCountPostLog2 + " " : "");
     sb.append(replyCountPostLog2 > 0 ? "Replies:" + replyCountPostLog2 + " " : "");
-    sb.append(getEmbedsImpressionCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) > 0
-        ? "Embedded Imps:" + getEmbedsImpressionCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) + " " : "");
-    sb.append(getEmbedsUrlCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) > 0
-        ? "Embedded Urls:" + getEmbedsUrlCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) + " " : "");
-    sb.append(getVideoViewCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) > 0
-        ? "Video views:" + getVideoViewCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()) + " " : "");
+    sb.append(getEmbedsImpressionCount(qbits.CouldBeFalseButCannotPromise()) > 0
+        ? "Embedded Imps:" + getEmbedsImpressionCount(qbits.CouldBeFalseButCannotPromise()) + " " : "");
+    sb.append(getEmbedsUrlCount(qbits.CouldBeFalseButCannotPromise()) > 0
+        ? "Embedded Urls:" + getEmbedsUrlCount(qbits.CouldBeFalseButCannotPromise()) + " " : "");
+    sb.append(getVideoViewCount(qbits.CouldBeFalseButCannotPromise()) > 0
+        ? "Video views:" + getVideoViewCount(qbits.CouldBeFalseButCannotPromise()) + " " : "");
     sb.append(weightedRetweetCount > 0 ? "Weighted Retweets:"
         + ((int) weightedRetweetCount) + " " : "");
     sb.append(weightedReplyCount > 0
@@ -293,19 +293,19 @@ public class LinearScoringData {
     weightedFavCount = UNSET_SIGNAL_VALUE;
     weightedQuoteCount = UNSET_SIGNAL_VALUE;
 
-    hasUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isReply = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isRetweet = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isOffensive = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasTrend = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isFromVerifiedAccount = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isFromBlueVerifiedAccount = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isUserSpam = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isUserNSFW = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isUserBot = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isUserAntiSocial = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasVisibleLink = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    isNullcast = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasUrl = qbits.CouldBeFalseButCannotPromise();
+    isReply = qbits.CouldBeFalseButCannotPromise();
+    isRetweet = qbits.CouldBeFalseButCannotPromise();
+    isOffensive = qbits.CouldBeFalseButCannotPromise();
+    hasTrend = qbits.CouldBeFalseButCannotPromise();
+    isFromVerifiedAccount = qbits.CouldBeFalseButCannotPromise();
+    isFromBlueVerifiedAccount = qbits.CouldBeFalseButCannotPromise();
+    isUserSpam = qbits.CouldBeFalseButCannotPromise();
+    isUserNSFW = qbits.CouldBeFalseButCannotPromise();
+    isUserBot = qbits.CouldBeFalseButCannotPromise();
+    isUserAntiSocial = qbits.CouldBeFalseButCannotPromise();
+    hasVisibleLink = qbits.CouldBeFalseButCannotPromise();
+    isNullcast = qbits.CouldBeFalseButCannotPromise();
 
     luceneContrib = UNSET_SIGNAL_VALUE;
     reputationContrib = UNSET_SIGNAL_VALUE;
@@ -330,9 +330,9 @@ public class LinearScoringData {
     tweetLangId = ThriftLanguage.UNKNOWN.getValue();
     uiLangMult = NO_BOOST_VALUE;
     userLangMult = NO_BOOST_VALUE;
-    hasDifferentLang = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasEnglishTweetAndDifferentUILang = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasEnglishUIAndDifferentTweetLang = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasDifferentLang = qbits.CouldBeFalseButCannotPromise();
+    hasEnglishTweetAndDifferentUILang = qbits.CouldBeFalseButCannotPromise();
+    hasEnglishUIAndDifferentTweetLang = qbits.CouldBeFalseButCannotPromise();
 
     tweetAgeInSeconds = 0;
     ageDecayMult = NO_BOOST_VALUE;
@@ -345,68 +345,68 @@ public class LinearScoringData {
 
     skipReason = SkipReason.NOT_SKIPPED;
 
-    isTrusted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();  // Set later
-    isFollow = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(); // Set later
-    trustedCircleBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    directFollowBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    outOfNetworkReplyPenaltyApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasMultipleHashtagsOrTrends = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    spamUserDampApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    nsfwUserDampApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    botUserDampApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    isTrusted = qbits.CouldBeFalseButCannotPromise();  // Set later
+    isFollow = qbits.CouldBeFalseButCannotPromise(); // Set later
+    trustedCircleBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    directFollowBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    outOfNetworkReplyPenaltyApplied = qbits.CouldBeFalseButCannotPromise();
+    hasMultipleHashtagsOrTrends = qbits.CouldBeFalseButCannotPromise();
+    spamUserDampApplied = qbits.CouldBeFalseButCannotPromise();
+    nsfwUserDampApplied = qbits.CouldBeFalseButCannotPromise();
+    botUserDampApplied = qbits.CouldBeFalseButCannotPromise();
 
-    tweetHasTrendsBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    tweetFromVerifiedAccountBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    tweetFromBlueVerifiedAccountBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    tweetHasTrendsBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    tweetFromVerifiedAccountBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    tweetFromBlueVerifiedAccountBoostApplied = qbits.CouldBeFalseButCannotPromise();
 
     fromUserId = UNSET_SIGNAL_VALUE;
     sharedStatusId = UNSET_SIGNAL_VALUE;
     referenceAuthorId = UNSET_SIGNAL_VALUE;
 
-    isSelfTweet = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    selfTweetBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    isSelfTweet = qbits.CouldBeFalseButCannotPromise();
+    selfTweetBoostApplied = qbits.CouldBeFalseButCannotPromise();
     selfTweetMult = NO_BOOST_VALUE;
 
-    trustedCircleBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    directFollowBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    trustedCircleBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    directFollowBoostApplied = qbits.CouldBeFalseButCannotPromise();
 
-    hasImageUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasVideoUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasMedialUrlBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasNewsUrl = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasNewsUrlBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasImageUrl = qbits.CouldBeFalseButCannotPromise();
+    hasVideoUrl = qbits.CouldBeFalseButCannotPromise();
+    hasMedialUrlBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    hasNewsUrl = qbits.CouldBeFalseButCannotPromise();
+    hasNewsUrlBoostApplied = qbits.CouldBeFalseButCannotPromise();
 
-    hasCard = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasCard = qbits.CouldBeFalseButCannotPromise();
     cardType = SearchCardType.UNKNOWN.getByteValue();
-    hasCardBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    cardDomainMatchBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    cardAuthorMatchBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    cardTitleMatchBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    cardDescriptionMatchBoostApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasCardBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    cardDomainMatchBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    cardAuthorMatchBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    cardTitleMatchBoostApplied = qbits.CouldBeFalseButCannotPromise();
+    cardDescriptionMatchBoostApplied = qbits.CouldBeFalseButCannotPromise();
 
     hitFields.clear();
-    hasNoTextHitDemotionApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasUrlOnlyHitDemotionApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasNameOnlyHitDemotionApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasSeparateTextAndNameHitDemotionApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasSeparateTextAndUrlHitDemotionApplied = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasNoTextHitDemotionApplied = qbits.CouldBeFalseButCannotPromise();
+    hasUrlOnlyHitDemotionApplied = qbits.CouldBeFalseButCannotPromise();
+    hasNameOnlyHitDemotionApplied = qbits.CouldBeFalseButCannotPromise();
+    hasSeparateTextAndNameHitDemotionApplied = qbits.CouldBeFalseButCannotPromise();
+    hasSeparateTextAndUrlHitDemotionApplied = qbits.CouldBeFalseButCannotPromise();
 
-    hasConsumerVideo = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasProVideo = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasVine = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasPeriscope = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasNativeImage = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    hasConsumerVideo = qbits.CouldBeFalseButCannotPromise();
+    hasProVideo = qbits.CouldBeFalseButCannotPromise();
+    hasVine = qbits.CouldBeFalseButCannotPromise();
+    hasPeriscope = qbits.CouldBeFalseButCannotPromise();
+    hasNativeImage = qbits.CouldBeFalseButCannotPromise();
 
-    isSensitiveContent = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    hasMultipleMediaFlag = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    profileIsEggFlag = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    isSensitiveContent = qbits.CouldBeFalseButCannotPromise();
+    hasMultipleMediaFlag = qbits.CouldBeFalseButCannotPromise();
+    profileIsEggFlag = qbits.CouldBeFalseButCannotPromise();
     numMentions = 0;
     numHashtags = 0;
-    isUserNewFlag = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    isUserNewFlag = qbits.CouldBeFalseButCannotPromise();
     linkLanguage = 0;
     prevUserTweetEngagement = 0;
 
-    isComposerSourceCamera = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    isComposerSourceCamera = qbits.CouldBeFalseButCannotPromise();
 
     // health model scores by HML
     toxicityScore = UNSET_SIGNAL_VALUE;

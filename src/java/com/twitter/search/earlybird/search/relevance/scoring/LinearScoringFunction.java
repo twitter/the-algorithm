@@ -168,15 +168,15 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     }
     addLinearElementExplanation(linearDetails,
         "embedded tweet impression count",
-        params.embedsImpressionWeight, scoringData.getEmbedsImpressionCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        params.embedsImpressionWeight, scoringData.getEmbedsImpressionCount(qbits.CouldBeFalseButCannotPromise()),
         scoringData.embedsImpressionContrib);
     addLinearElementExplanation(linearDetails,
         "embedded tweet url count",
-        params.embedsUrlWeight, scoringData.getEmbedsUrlCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        params.embedsUrlWeight, scoringData.getEmbedsUrlCount(qbits.CouldBeFalseButCannotPromise()),
         scoringData.embedsUrlContrib);
     addLinearElementExplanation(linearDetails,
         "video view count",
-        params.videoViewWeight, scoringData.getVideoViewCount(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        params.videoViewWeight, scoringData.getVideoViewCount(qbits.CouldBeFalseButCannotPromise()),
         scoringData.videoViewContrib);
     addLinearElementExplanation(linearDetails,
         "quoted count",

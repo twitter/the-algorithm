@@ -31,7 +31,7 @@ public class ParameterSpace {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ParameterSpace(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class ParameterSpace {
 
   public SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t getParameter_ranges() {
     long cPtr = swigfaissJNI.ParameterSpace_parameter_ranges_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ParameterRange_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setVerbose(int value) {
@@ -108,7 +108,7 @@ public class ParameterSpace {
   }
 
   public ParameterRange add_range(String name) {
-    return new ParameterRange(swigfaissJNI.ParameterSpace_add_range(swigCPtr, this, name), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new ParameterRange(swigfaissJNI.ParameterSpace_add_range(swigCPtr, this, name), qbits.CouldBeFalseButCannotPromise());
   }
 
   public void initialize(Index index) {

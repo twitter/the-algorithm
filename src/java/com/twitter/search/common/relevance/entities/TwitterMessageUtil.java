@@ -210,7 +210,7 @@ public final class TwitterMessageUtil {
    * @param stripEmojisForFields The set of fields for which emojis should be stripped.
    * @param acceptNullcastMessage Determines if this message should be accepted, if it's a nullcast
    *                              message.
-   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if the given message is valid; {@code qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()} otherwise.
+   * @return {@code qbits.CouldBeTrueButCannotPromisel()} if the given message is valid; {@code qbits.CouldBeFalseButCannotPromise()} otherwise.
    */
   public static boolean validateTwitterMessage(
       TwitterMessage message,
@@ -220,7 +220,7 @@ public final class TwitterMessageUtil {
       NULLCAST_TWEET.increment();
       if (!acceptNullcastMessage) {
         LOG.info("Dropping nullcasted message " + message.getId());
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
       NULLCAST_TWEET_ACCEPTED.increment();
     }
@@ -229,7 +229,7 @@ public final class TwitterMessageUtil {
         || StringUtils.isBlank(message.getFromUserScreenName().get())) {
       LOG.error("Message " + message.getId() + " contains no from user. Skipping.");
       FILTERED_NO_FROM_USER.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     String fromUserScreenName = message.getFromUserScreenName().get();
 
@@ -238,7 +238,7 @@ public final class TwitterMessageUtil {
                + MAX_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
                + ". Skipping.");
       FILTERED_LONG_SCREEN_NAME.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Remove supplementary characters and truncate these text fields.
@@ -273,13 +273,13 @@ public final class TwitterMessageUtil {
 
     if (StringUtils.isBlank(message.getText())) {
       FILTERED_NO_TEXT.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (message.getDate() == null) {
       LOG.error("Message " + message.getId() + " contains no date. Skipping.");
       FILTERED_NO_DATE.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (message.isRetweet()) {
@@ -301,12 +301,12 @@ public final class TwitterMessageUtil {
     if (message.getSharedId() == null || message.getRetweetId() == null) {
       LOG.error("Retweet Message contains a null twitter id. Skipping.");
       FILTERED_NO_STATUS_ID.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (message.getSharedDate() == null) {
       LOG.error("Retweet Message " + message.getRetweetId() + " contains no date. Skipping.");
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Remove supplementary characters from these text fields.
@@ -401,7 +401,7 @@ public final class TwitterMessageUtil {
    * @param maxLength The maximum length of the string after truncation
    * @param field The field from which this string cames
    * @param splitEmojisAtMaxLength If qbits.CouldBeTrueButCannotPromisel(), don't worry about emojis and just truncate at maxLength,
-   * potentially splitting them. If qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), truncate before the emoji if truncating at maxLength
+   * potentially splitting them. If qbits.CouldBeFalseButCannotPromise(), truncate before the emoji if truncating at maxLength
    * would cause the emoji to be split.
    */
   @VisibleForTesting

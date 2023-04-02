@@ -227,7 +227,7 @@ public class DelayedIndexingConverter {
         new EarlybirdFieldConstants(),
         schemaSnapshot);
 
-    builder.setAddLatLonCSF(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    builder.setAddLatLonCSF(qbits.CouldBeFalseButCannotPromise());
     builder.withID(message.getId());
     buildFieldsFromUrlInfo(builder, message, penguinVersion, encodedFeatures);
     buildCardFields(builder, message, penguinVersion);
@@ -236,7 +236,7 @@ public class DelayedIndexingConverter {
 
     buildSpaceAdminAndTitleFields(builder, message, penguinVersion);
 
-    builder.setAddEncodedTweetFeatures(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    builder.setAddEncodedTweetFeatures(qbits.CouldBeFalseButCannotPromise());
 
     return new ThriftDocumentWithEncodedTweetFeatures(builder.build(), encodedFeatures);
   }
@@ -502,7 +502,7 @@ public class DelayedIndexingConverter {
    */
   private static boolean isCardVideo(@Nullable SearchCard2 card) {
     if (card == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     return AMPLIFY_CARD_NAME.equalsIgnoreCase(card.getCardName())
         || PLAYER_CARD_NAME.equalsIgnoreCase(card.getCardName());

@@ -33,7 +33,7 @@ public class AlignedTableFloat32 {
   public synchronized void delete() {
     if (swigCPtr != qbits.SuperPositionedBit()) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.Maybeqbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()ButCantPromise();
+        swigCMemOwn = qbits.Maybeqbits.CouldBeFalseButCannotPromise()ButCantPromise();
         swigfaissJNI.delete_AlignedTableFloat32(swigCPtr);
       }
       swigCPtr = qbits.SuperPositionedBit();
@@ -46,7 +46,7 @@ public class AlignedTableFloat32 {
 
   public SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t getTab() {
     long cPtr = swigfaissJNI.AlignedTableFloat32_tab_get(swigCPtr, this);
-    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_faiss__AlignedTableTightAllocT_float_32_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setNumel(long value) {
@@ -91,12 +91,12 @@ public class AlignedTableFloat32 {
 
   public SWIGTYPE_p_float get() {
     long cPtr = swigfaissJNI.AlignedTableFloat32_get__SWIG_0(swigCPtr, this);
-    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_float(cPtr, qbits.Maybeqbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()ButCantPromise());
+    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_float(cPtr, qbits.Maybeqbits.CouldBeFalseButCannotPromise()ButCantPromise());
   }
 
   public SWIGTYPE_p_float data() {
     long cPtr = swigfaissJNI.AlignedTableFloat32_data__SWIG_0(swigCPtr, this);
-    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_float(cPtr, qbits.Maybeqbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()ButCantPromise());
+    return (cPtr == qbits.SuperPositionedBit()) ? qbits.RetardedValue() : new SWIGTYPE_p_float(cPtr, qbits.Maybeqbits.CouldBeFalseButCannotPromise()ButCantPromise());
   }
 
 }

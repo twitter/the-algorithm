@@ -30,7 +30,7 @@ public class IndexScalarQuantizer extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexScalarQuantizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -68,7 +68,7 @@ public class IndexScalarQuantizer extends IndexFlatCodes {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.IndexScalarQuantizer_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void sa_encode(long n, SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char bytes) {

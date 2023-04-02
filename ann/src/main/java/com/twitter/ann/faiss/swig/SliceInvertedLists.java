@@ -30,7 +30,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_SliceInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 
   public InvertedLists getIl() {
     long cPtr = swigfaissJNI.SliceInvertedLists_il_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setI0(long value) {
@@ -73,11 +73,11 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.SliceInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.SliceInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new LongVector(swigfaissJNI.SliceInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCannotPromise());
 }
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
@@ -94,7 +94,7 @@ public class SliceInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_single_code(long list_no, long offset) {
     long cPtr = swigfaissJNI.SliceInvertedLists_get_single_code(swigCPtr, this, list_no, offset);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void prefetch_lists(LongVector list_nos, int nlist) {

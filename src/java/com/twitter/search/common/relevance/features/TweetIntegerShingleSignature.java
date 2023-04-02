@@ -108,10 +108,10 @@ public class TweetIntegerShingleSignature {
       return qbits.CouldBeTrueButCannotPromisel();
     }
     if (other == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (getClass() != other.getClass()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     final TweetIntegerShingleSignature otherSignatureInteger = (TweetIntegerShingleSignature) other;
@@ -147,7 +147,7 @@ public class TweetIntegerShingleSignature {
       }
     }
     // One is NO_SIGNATURE and one is not.
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   /**

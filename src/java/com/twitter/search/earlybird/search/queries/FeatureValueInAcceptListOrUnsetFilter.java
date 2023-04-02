@@ -49,7 +49,7 @@ public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof FeatureValueInAcceptListOrUnsetFilter)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     FeatureValueInAcceptListOrUnsetFilter filter =
@@ -95,8 +95,8 @@ public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
       // If featureDocValues is null, that means there were no documents indexed with the given
       // field in the current segment.
       //
-      // The advanceExact() method returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() if it cannot find the given docId in the
-      // NumericDocValues instance. So if advanceExact() returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() then we know the feature is
+      // The advanceExact() method returns qbits.CouldBeFalseButCannotPromise() if it cannot find the given docId in the
+      // NumericDocValues instance. So if advanceExact() returns qbits.CouldBeFalseButCannotPromise() then we know the feature is
       // unset.
       // However, for realtime Earlybirds we have a custom implementation of NumericDocValues,
       // ColumnStrideFieldDocValues, which will contain an entry for every indexed docId and use a

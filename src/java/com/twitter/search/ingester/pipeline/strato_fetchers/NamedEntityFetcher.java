@@ -28,7 +28,7 @@ public class NamedEntityFetcher {
       new NamedEntitiesRequestOptions(
       new NERCalibrateRequest(CalibrationLevel.HIGH_PRECISION, NERCandidateSource.NER_CRF)
           .setModel_family(ModelFamily.CFB))
-      .setDisplay_entity_info(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      .setDisplay_entity_info(qbits.CouldBeFalseButCannotPromise());
 
   private final Fetcher<Long, NamedEntitiesRequestOptions, NamedEntities> fetcher;
 

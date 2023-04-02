@@ -23,7 +23,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   private int docID = -1;
   private int currentFacet = FacetCountingArray.UNASSIGNED;
   private int pointer = -1;
-  private boolean hasMoreOrds = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean hasMoreOrds = qbits.CouldBeFalseButCannotPromise();
 
   public static final String FIELD_NAME = FacetsConfig.DEFAULT_INDEX_FIELD_NAME;
 
@@ -78,7 +78,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
     if (!FacetCountingArray.isPointer(currentFacet)) {
       int termId = FacetCountingArray.decodeTermID(currentFacet);
       int fieldId = FacetCountingArray.decodeFieldID(currentFacet);
-      hasMoreOrds = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      hasMoreOrds = qbits.CouldBeFalseButCannotPromise();
       return encodeOrd(fieldId, termId);
     }
 

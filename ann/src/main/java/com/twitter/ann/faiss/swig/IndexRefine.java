@@ -30,7 +30,7 @@ public class IndexRefine extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexRefine(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexRefine extends Index {
 
   public Index getBase_index() {
     long cPtr = swigfaissJNI.IndexRefine_base_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setRefine_index(Index value) {
@@ -53,7 +53,7 @@ public class IndexRefine extends Index {
 
   public Index getRefine_index() {
     long cPtr = swigfaissJNI.IndexRefine_refine_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_fields(boolean value) {

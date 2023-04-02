@@ -31,7 +31,7 @@ public class AutoTuneCriterion {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_AutoTuneCriterion(swigCPtr);
       }
       swigCPtr = 0;
@@ -68,7 +68,7 @@ public class AutoTuneCriterion {
 
   public FloatVector getGt_D() {
     long cPtr = swigfaissJNI.AutoTuneCriterion_gt_D_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setGt_I(SWIGTYPE_p_std__vectorT_int64_t_t value) {
@@ -77,7 +77,7 @@ public class AutoTuneCriterion {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getGt_I() {
     long cPtr = swigfaissJNI.AutoTuneCriterion_gt_I_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void set_groundtruth(int gt_nnn, SWIGTYPE_p_float gt_D_in, LongVector gt_I_in) {

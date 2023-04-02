@@ -31,7 +31,7 @@ public class longArray {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_longArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,12 +52,12 @@ public class longArray {
 
   public SWIGTYPE_p_long_long cast() {
     long cPtr = swigfaissJNI.longArray_cast(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_long_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_long_long(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static longArray frompointer(SWIGTYPE_p_long_long t) {
     long cPtr = swigfaissJNI.longArray_frompointer(SWIGTYPE_p_long_long.getCPtr(t));
-    return (cPtr == 0) ? null : new longArray(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new longArray(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
 }

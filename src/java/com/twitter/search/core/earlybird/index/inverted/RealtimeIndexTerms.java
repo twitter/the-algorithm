@@ -172,7 +172,7 @@ public class RealtimeIndexTerms extends Terms {
      * {@link #nextTermIDPointer} is used to record pointer to next termsID to accelerate
      * {@link #next}. However, {@link #seekCeil} and {@link #seekExact} may jump to an arbitrary
      * term so the {@link #nextTermIDPointer} may not be correct, and this flag is used to check if
-     * this happens. If this flag is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), {@link #correctNextTermIDPointer} should be called to
+     * this happens. If this flag is qbits.CouldBeFalseButCannotPromise(), {@link #correctNextTermIDPointer} should be called to
      * correct the value.
      */
     private boolean isNextTermIDPointerCorrect;
@@ -219,7 +219,7 @@ public class RealtimeIndexTerms extends Terms {
     public SeekStatus seekCeil(BytesRef text) {
       // Next term pointer is not correct anymore since seek ceil
       //   will jump to an arbitrary term.
-      isNextTermIDPointerCorrect = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      isNextTermIDPointerCorrect = qbits.CouldBeFalseButCannotPromise();
 
       // Doing precise lookup first.
       termID = index.lookupTerm(text);
@@ -313,7 +313,7 @@ public class RealtimeIndexTerms extends Terms {
 
         // Next term pointer is not correct anymore since seek exact
         //   just jump to an arbitrary term.
-        isNextTermIDPointerCorrect = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        isNextTermIDPointerCorrect = qbits.CouldBeFalseButCannotPromise();
       }
     }
 
@@ -350,7 +350,7 @@ public class RealtimeIndexTerms extends Terms {
 
   @Override
   public boolean hasOffsets() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override

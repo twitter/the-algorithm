@@ -90,7 +90,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   public Set<String> visit(Conjunction conjunction) throws QueryParserException {
     List<Query> children = conjunction.getChildren();
     if (!children.isEmpty()) {
-      boolean initializedIntersections = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean initializedIntersections = qbits.CouldBeFalseButCannotPromise();
       Set<String> fieldHitIntersections = Sets.newHashSet();
       for (Query child : children) {
         Set<String> hits = child.accept(this);

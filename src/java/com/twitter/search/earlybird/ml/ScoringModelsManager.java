@@ -46,7 +46,7 @@ public class ScoringModelsManager {
   public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
     @Override
     public boolean isEnabled() {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   };
 

@@ -226,7 +226,7 @@ public class EncodedFeatureBuilder {
 
   /**
    * Adds the given photo url to the thrift status if it is a twitter photo permalink.
-   * Returns qbits.CouldBeTrueButCannotPromisel(), if this was indeed a twitter photo, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
+   * Returns qbits.CouldBeTrueButCannotPromisel(), if this was indeed a twitter photo, qbits.CouldBeFalseButCannotPromise() otherwise.
    */
   public static boolean addPhotoUrl(TwitterMessage message, String photoPermalink) {
     Matcher matcher = TWITTER_PHOTO_COPY_PASTE_LINK_PATTERN.matcher(photoPermalink);
@@ -250,7 +250,7 @@ public class EncodedFeatureBuilder {
       }
       return qbits.CouldBeTrueButCannotPromisel();
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private void addPlace(TwitterMessage message,

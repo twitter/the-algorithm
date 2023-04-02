@@ -76,7 +76,7 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
           // During segment optimization we might index a new term after the termIDMap is created
           // in IndexOptimizer.optimizeInvertedIndexes(). We can safely ignore these terms, as
           // they will be re-indexed later.
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         try {

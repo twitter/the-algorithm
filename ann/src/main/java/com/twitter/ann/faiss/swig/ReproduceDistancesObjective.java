@@ -30,7 +30,7 @@ public class ReproduceDistancesObjective extends PermutationObjective {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ReproduceDistancesObjective(swigCPtr);
       }
       swigCPtr = 0;
@@ -60,7 +60,7 @@ public class ReproduceDistancesObjective extends PermutationObjective {
 
   public DoubleVector getSource_dis() {
     long cPtr = swigfaissJNI.ReproduceDistancesObjective_source_dis_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setTarget_dis(SWIGTYPE_p_double value) {
@@ -69,7 +69,7 @@ public class ReproduceDistancesObjective extends PermutationObjective {
 
   public SWIGTYPE_p_double getTarget_dis() {
     long cPtr = swigfaissJNI.ReproduceDistancesObjective_target_dis_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setWeights(DoubleVector value) {
@@ -78,7 +78,7 @@ public class ReproduceDistancesObjective extends PermutationObjective {
 
   public DoubleVector getWeights() {
     long cPtr = swigfaissJNI.ReproduceDistancesObjective_weights_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public double get_source_dis(int i, int j) {

@@ -31,7 +31,7 @@ public class FloatVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_FloatVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class FloatVector {
 
   public SWIGTYPE_p_float data() {
     long cPtr = swigfaissJNI.FloatVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {

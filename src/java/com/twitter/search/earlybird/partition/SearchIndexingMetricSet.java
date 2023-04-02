@@ -137,23 +137,23 @@ public class SearchIndexingMetricSet {
     this.maxSegmentSizeReachedCounter = searchStatsReceiver.getCounter("max_segment_reached");
 
     this.statusStats = searchStatsReceiver.getTimerStats(
-        "index_status", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "index_status", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
     this.updateStats = searchStatsReceiver.getTimerStats(
-        "updates", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "updates", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
     this.updateRetryStats = searchStatsReceiver.getTimerStats(
-        "update_retries", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "update_retries", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
     this.userUpdateIndexingStats = searchStatsReceiver.getTimerStats(
-        "user_updates", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "user_updates", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
     this.userScrubGeoIndexingStats = searchStatsReceiver.getTimerStats(
-        "user_scrub_geo", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "user_scrub_geo", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
     this.updateOnMissingTweetCounter = searchStatsReceiver.getRateCounter(
         "index_update_on_missing_tweet");
     this.droppedUpdateEvent = searchStatsReceiver.getRateCounter("dropped_update_event");
 
     this.partitionIndexerRunLoopCounter = searchStatsReceiver.getTimerStats(
-        "partition_indexer_run_loop", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "partition_indexer_run_loop", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
     this.partitionIndexerIndexFromReadersCounter = searchStatsReceiver.getTimerStats(
-        "partition_indexer_indexFromReaders", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "partition_indexer_indexFromReaders", TimeUnit.MICROSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
     this.partitionIndexerIterationCounter = searchStatsReceiver.getCounter(
         ScheduledExecutorManager.SCHEDULED_EXECUTOR_TASK_PREFIX + "PartitionIndexer");
 

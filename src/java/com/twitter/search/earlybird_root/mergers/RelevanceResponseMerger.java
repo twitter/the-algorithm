@@ -38,7 +38,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(RelevanceResponseMerger.class);
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
 
   private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
       SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");

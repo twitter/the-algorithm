@@ -31,7 +31,7 @@ public class floatArray {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_floatArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,12 +52,12 @@ public class floatArray {
 
   public SWIGTYPE_p_float cast() {
     long cPtr = swigfaissJNI.floatArray_cast(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static floatArray frompointer(SWIGTYPE_p_float t) {
     long cPtr = swigfaissJNI.floatArray_frompointer(SWIGTYPE_p_float.getCPtr(t));
-    return (cPtr == 0) ? null : new floatArray(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new floatArray(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
 }

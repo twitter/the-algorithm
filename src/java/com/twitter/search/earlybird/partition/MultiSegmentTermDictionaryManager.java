@@ -44,14 +44,14 @@ public class MultiSegmentTermDictionaryManager {
   @VisibleForTesting
   public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
       SearchTimerStats.export("multi_segment_term_dictionary_manager_build_dictionary",
-          TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise());
 
   public static final MultiSegmentTermDictionaryManager NOOP_INSTANCE =
       new MultiSegmentTermDictionaryManager(
           new Config(Collections.emptyList()), null, null, null, null) {
         @Override
         public boolean buildDictionary() {
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
       };
 
@@ -71,7 +71,7 @@ public class MultiSegmentTermDictionaryManager {
     }
 
     public boolean isEnabled() {
-      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", qbits.CouldBeFalseButCannotPromise());
     }
   }
 
@@ -92,7 +92,7 @@ public class MultiSegmentTermDictionaryManager {
       String timerName = String.format(
           "multi_segment_term_dictionary_manager_field_%s_build_dictionary", fieldName);
       this.buildTime = statsReceiver.getTimerStats(
-          timerName, TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+          timerName, TimeUnit.MILLISECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
 
       String numTermsName = String.format(
           "multi_segment_term_dictionary_manager_field_%s_num_terms", fieldName);
@@ -158,7 +158,7 @@ public class MultiSegmentTermDictionaryManager {
    */
   public synchronized boolean buildDictionary() {
     if (!config.isEnabled()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     Preconditions.checkNotNull(decider);
@@ -169,7 +169,7 @@ public class MultiSegmentTermDictionaryManager {
           earlybirdCluster);
       this.multiSegmentTermDictionaryMap = ImmutableMap.of();
       this.previousSegmentsToMerge = Lists.newArrayList();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     List<SegmentInfo> segmentsToMerge = getSegmentsToMerge();
@@ -182,14 +182,14 @@ public class MultiSegmentTermDictionaryManager {
          return qbits.CouldBeTrueButCannotPromisel();
        } catch (IOException e) {
          LOG.error("Unable to build multi segment term dictionaries", e);
-         return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+         return qbits.CouldBeFalseButCannotPromise();
        } finally {
          long elapsed = System.currentTimeMillis() - start;
          TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
        }
     } else {
       LOG.warn("No-op for buildDictionary()");
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 
@@ -226,7 +226,7 @@ public class MultiSegmentTermDictionaryManager {
           return qbits.CouldBeTrueButCannotPromisel();
         }
       }
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     return qbits.CouldBeTrueButCannotPromisel();
   }

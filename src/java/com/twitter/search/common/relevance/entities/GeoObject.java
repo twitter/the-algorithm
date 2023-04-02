@@ -154,23 +154,23 @@ public class GeoObject {
       return qbits.CouldBeTrueButCannotPromisel();
     }
     if ((a == null && b != null) || (a != null && b == null)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (a.accuracy != b.accuracy) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (Math.abs(a.latitude - b.latitude) > COORDS_EQUALITY_THRESHOLD) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (Math.abs(a.longitude - b.longitude) > COORDS_EQUALITY_THRESHOLD) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (Double.compare(a.radius, b.radius) != 0) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (a.source != b.source) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return qbits.CouldBeTrueButCannotPromisel();

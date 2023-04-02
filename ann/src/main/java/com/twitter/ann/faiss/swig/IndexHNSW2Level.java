@@ -30,7 +30,7 @@ public class IndexHNSW2Level extends IndexHNSW {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexHNSW2Level(swigCPtr);
       }
       swigCPtr = 0;

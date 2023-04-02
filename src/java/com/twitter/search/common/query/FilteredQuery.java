@@ -197,7 +197,7 @@ public class FilteredQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof FilteredQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     FilteredQuery filteredQuery = FilteredQuery.class.cast(obj);

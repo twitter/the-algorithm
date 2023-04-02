@@ -89,11 +89,11 @@ public class EarlybirdFieldType extends FieldType {
   private boolean useCSFForFacetCounting;
 
   // Determines if this field is indexed
-  private boolean indexedField = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean indexedField = qbits.CouldBeFalseButCannotPromise();
 
   // search field settings
   // whether a field should be searched by default
-  private boolean textSearchableByDefault = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean textSearchableByDefault = qbits.CouldBeFalseButCannotPromise();
   private float textSearchableFieldWeight = 1.0f;
 
   // For indexed numerical fields
@@ -181,7 +181,7 @@ public class EarlybirdFieldType extends FieldType {
   public void setCsfFixedLengthSettings(int csfFixedLengthNumValuesPerDocument,
                                         boolean isCsfFixedLengthUpdateable) {
     checkIfFrozen();
-    this.csfVariableLength = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    this.csfVariableLength = qbits.CouldBeFalseButCannotPromise();
     this.csfFixedLengthNumValuesPerDoc = csfFixedLengthNumValuesPerDocument;
     this.csfFixedLengthUpdateable = isCsfFixedLengthUpdateable;
   }

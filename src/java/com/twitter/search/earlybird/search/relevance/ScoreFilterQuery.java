@@ -120,7 +120,7 @@ public final class ScoreFilterQuery extends Query {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ScoreFilterQuery)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     ScoreFilterQuery filter = ScoreFilterQuery.class.cast(obj);

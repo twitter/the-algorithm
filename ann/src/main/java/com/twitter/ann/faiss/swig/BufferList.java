@@ -31,7 +31,7 @@ public class BufferList {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_BufferList(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class BufferList {
 
   public SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t getBuffers() {
     long cPtr = swigfaissJNI.BufferList_buffers_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setWp(long value) {

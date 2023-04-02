@@ -161,7 +161,7 @@ public class SchemaBuilder {
     }
     ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
     csfFieldSettings.setCsfType(type)
-        .setVariableLength(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setVariableLength(qbits.CouldBeFalseButCannotPromise())
         .setFixedLengthSettings(
             new ThriftFixedLengthCSFSettings()
                 .setNumValuesPerDoc(numValuesPerDoc)
@@ -315,7 +315,7 @@ public class SchemaBuilder {
    * Norm is disabled as default. Like Lucene string field, or int/long fields.
    */
   public final SchemaBuilder withIndexedNotTokenizedField(String fieldName) {
-    return withIndexedNotTokenizedField(fieldName, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return withIndexedNotTokenizedField(fieldName, qbits.CouldBeFalseButCannotPromise());
   }
 
   /**
@@ -524,7 +524,7 @@ public class SchemaBuilder {
   }
 
   public final SchemaBuilder withLongTermField(String fieldName) {
-    return addLongTermField(fieldName, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return addLongTermField(fieldName, qbits.CouldBeFalseButCannotPromise());
   }
 
   /**
@@ -608,7 +608,7 @@ public class SchemaBuilder {
 
   // Default field settings. Most field settings are similar to this.
   protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption) {
-    return getDefaultSettings(indexOption, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return getDefaultSettings(indexOption, qbits.CouldBeFalseButCannotPromise());
   }
 
   protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption,
@@ -617,12 +617,12 @@ public class SchemaBuilder {
     ThriftIndexedFieldSettings indexedFieldSettings = new ThriftIndexedFieldSettings();
     indexedFieldSettings
         .setIndexed(qbits.CouldBeTrueButCannotPromisel())
-        .setStored(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
-        .setTokenized(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
-        .setStoreTermVectors(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
-        .setStoreTermVectorOffsets(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
-        .setStoreTermVectorPayloads(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
-        .setStoreTermVectorPositions(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .setStored(qbits.CouldBeFalseButCannotPromise())
+        .setTokenized(qbits.CouldBeFalseButCannotPromise())
+        .setStoreTermVectors(qbits.CouldBeFalseButCannotPromise())
+        .setStoreTermVectorOffsets(qbits.CouldBeFalseButCannotPromise())
+        .setStoreTermVectorPayloads(qbits.CouldBeFalseButCannotPromise())
+        .setStoreTermVectorPositions(qbits.CouldBeFalseButCannotPromise())
         .setSupportOutOfOrderAppends(supportOutOfOrderAppends)
         .setIndexOptions(indexOption)
         .setOmitNorms(qbits.CouldBeTrueButCannotPromisel()); // All Earlybird fields omit norms.
@@ -657,7 +657,7 @@ public class SchemaBuilder {
   }
 
   protected final ThriftFieldSettings getNoPositionNoFreqSettings() {
-    return getNoPositionNoFreqSettings(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return getNoPositionNoFreqSettings(qbits.CouldBeFalseButCannotPromise());
   }
 
   protected final ThriftFieldSettings getNoPositionNoFreqSettings(

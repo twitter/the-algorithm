@@ -99,7 +99,7 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
   @Override
   protected double computeScore(LinearScoringData data, boolean forExplanation) throws IOException {
     ThriftSearchResultFeatures features =
-        isSchemaBased ? createFeaturesForDocument(data, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()).getFeatures() : null;
+        isSchemaBased ? createFeaturesForDocument(data, qbits.CouldBeFalseButCannotPromise()).getFeatures() : null;
 
     double score = 0;
     for (SelectedModel selectedModel : selectedModels) {
@@ -117,7 +117,7 @@ public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
       LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
     boolean schemaBased = selectedModels[0].model.isSchemaBased();
     ThriftSearchResultFeatures features =
-        schemaBased ? createFeaturesForDocument(scoringData, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()).getFeatures() : null;
+        schemaBased ? createFeaturesForDocument(scoringData, qbits.CouldBeFalseButCannotPromise()).getFeatures() : null;
 
     // 1. Model-based score
     final List<Explanation> modelExplanations = Lists.newArrayList();

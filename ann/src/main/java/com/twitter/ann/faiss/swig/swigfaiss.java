@@ -161,17 +161,17 @@ public class swigfaiss implements swigfaissConstants {
 
   public static SWIGTYPE_p_float fvecs_maybe_subsample(long d, SWIGTYPE_p_unsigned_long n, long nmax, SWIGTYPE_p_float x, boolean verbose, long seed) {
     long cPtr = swigfaissJNI.fvecs_maybe_subsample__SWIG_0(d, SWIGTYPE_p_unsigned_long.getCPtr(n), nmax, SWIGTYPE_p_float.getCPtr(x), verbose, seed);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static SWIGTYPE_p_float fvecs_maybe_subsample(long d, SWIGTYPE_p_unsigned_long n, long nmax, SWIGTYPE_p_float x, boolean verbose) {
     long cPtr = swigfaissJNI.fvecs_maybe_subsample__SWIG_1(d, SWIGTYPE_p_unsigned_long.getCPtr(n), nmax, SWIGTYPE_p_float.getCPtr(x), verbose);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static SWIGTYPE_p_float fvecs_maybe_subsample(long d, SWIGTYPE_p_unsigned_long n, long nmax, SWIGTYPE_p_float x) {
     long cPtr = swigfaissJNI.fvecs_maybe_subsample__SWIG_2(d, SWIGTYPE_p_unsigned_long.getCPtr(n), nmax, SWIGTYPE_p_float.getCPtr(x));
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void binary_to_real(long d, SWIGTYPE_p_unsigned_char x_in, SWIGTYPE_p_float x_out) {
@@ -200,7 +200,7 @@ public class swigfaiss implements swigfaissConstants {
 
   public static IndexPQStats getIndexPQ_stats() {
     long cPtr = swigfaissJNI.indexPQ_stats_get();
-    return (cPtr == 0) ? null : new IndexPQStats(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexPQStats(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void setIndexIVF_stats(IndexIVFStats value) {
@@ -209,7 +209,7 @@ public class swigfaiss implements swigfaissConstants {
 
   public static IndexIVFStats getIndexIVF_stats() {
     long cPtr = swigfaissJNI.indexIVF_stats_get();
-    return (cPtr == 0) ? null : new IndexIVFStats(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexIVFStats(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static short[] getHamdis_tab_ham_bytes() {
@@ -234,12 +234,12 @@ public class swigfaiss implements swigfaissConstants {
 
   public static IndexIVF extract_index_ivf(Index index) {
     long cPtr = swigfaissJNI.extract_index_ivf__SWIG_0(Index.getCPtr(index), index);
-    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static IndexIVF try_extract_index_ivf(Index index) {
     long cPtr = swigfaissJNI.try_extract_index_ivf__SWIG_0(Index.getCPtr(index), index);
-    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexIVF(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void merge_into(Index index0, Index index1, boolean shift_ids) {
@@ -256,7 +256,7 @@ public class swigfaiss implements swigfaissConstants {
 
   public static ArrayInvertedLists get_invlist_range(Index index, int i0, int i1) {
     long cPtr = swigfaissJNI.get_invlist_range(Index.getCPtr(index), index, i0, i1);
-    return (cPtr == 0) ? null : new ArrayInvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ArrayInvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void set_invlist_range(Index index, int i0, int i1, ArrayInvertedLists src) {
@@ -293,7 +293,7 @@ public class swigfaiss implements swigfaissConstants {
 
   public static HNSWStats getHnsw_stats() {
     long cPtr = swigfaissJNI.hnsw_stats_get();
-    return (cPtr == 0) ? null : new HNSWStats(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new HNSWStats(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void setPrecomputed_table_max_bytes(long value) {
@@ -314,27 +314,27 @@ public class swigfaiss implements swigfaissConstants {
 
   public static IndexIVFPQStats getIndexIVFPQ_stats() {
     long cPtr = swigfaissJNI.indexIVFPQ_stats_get();
-    return (cPtr == 0) ? null : new IndexIVFPQStats(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexIVFPQStats(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static Index downcast_index(Index index) {
     long cPtr = swigfaissJNI.downcast_index(Index.getCPtr(index), index);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static VectorTransform downcast_VectorTransform(VectorTransform vt) {
     long cPtr = swigfaissJNI.downcast_VectorTransform(VectorTransform.getCPtr(vt), vt);
-    return (cPtr == 0) ? null : new VectorTransform(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new VectorTransform(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static IndexBinary downcast_IndexBinary(IndexBinary index) {
     long cPtr = swigfaissJNI.downcast_IndexBinary(IndexBinary.getCPtr(index), index);
-    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static Index upcast_IndexShards(IndexShards index) {
     long cPtr = swigfaissJNI.upcast_IndexShards(IndexShards.getCPtr(index), index);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void write_index(Index idx, String fname) {
@@ -470,12 +470,12 @@ public class swigfaiss implements swigfaissConstants {
 
   public static InvertedLists read_InvertedLists(SWIGTYPE_p_faiss__IOReader reader, int io_flags) {
     long cPtr = swigfaissJNI.read_InvertedLists__SWIG_0(SWIGTYPE_p_faiss__IOReader.getCPtr(reader), io_flags);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static InvertedLists read_InvertedLists(SWIGTYPE_p_faiss__IOReader reader) {
     long cPtr = swigfaissJNI.read_InvertedLists__SWIG_1(SWIGTYPE_p_faiss__IOReader.getCPtr(reader));
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static Index index_factory(int d, String description, MetricType metric) {
@@ -515,7 +515,7 @@ public class swigfaiss implements swigfaissConstants {
 
   public static PartitionStats getPartition_stats() {
     long cPtr = swigfaissJNI.partition_stats_get();
-    return (cPtr == 0) ? null : new PartitionStats(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new PartitionStats(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static float CMin_float_partition_fuzzy(SWIGTYPE_p_float vals, LongVector ids, long n, long q_min, long q_max, SWIGTYPE_p_unsigned_long q_out) {
@@ -552,22 +552,22 @@ public class swigfaiss implements swigfaissConstants {
 
   public static SWIGTYPE_p_void memcpy(SWIGTYPE_p_void dest, SWIGTYPE_p_void src, long n) {
     long cPtr = swigfaissJNI.memcpy(SWIGTYPE_p_void.getCPtr(dest), SWIGTYPE_p_void.getCPtr(src), n);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_void(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_void(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static SWIGTYPE_p_float cast_integer_to_float_ptr(int x) {
     long cPtr = swigfaissJNI.cast_integer_to_float_ptr(x);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static SWIGTYPE_p_long cast_integer_to_long_ptr(int x) {
     long cPtr = swigfaissJNI.cast_integer_to_long_ptr(x);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_long(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static SWIGTYPE_p_int cast_integer_to_int_ptr(int x) {
     long cPtr = swigfaissJNI.cast_integer_to_int_ptr(x);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_int(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static void ignore_SIGTTIN() {

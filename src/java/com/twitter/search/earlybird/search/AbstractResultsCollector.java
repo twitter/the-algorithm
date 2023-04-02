@@ -114,7 +114,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   protected final boolean fillInLatLonForHits;
 
   protected EarlybirdDocumentFeatures documentFeatures;
-  protected boolean featuresRequested = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  protected boolean featuresRequested = qbits.CouldBeFalseButCannotPromise();
 
   private final FacetLabelCollector facetCollector;
 

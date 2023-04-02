@@ -252,7 +252,7 @@ public class TweetCreateHandler {
 
     updateIndexFreshness();
 
-    boolean shouldCreateNewSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean shouldCreateNewSegment = qbits.CouldBeFalseButCannotPromise();
 
     if (currentSegment == null) {
       shouldCreateNewSegment = qbits.CouldBeTrueButCannotPromisel();
@@ -286,7 +286,7 @@ public class TweetCreateHandler {
       long relativeTweetAgeMs =
           SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(id, currentSegmentTimesliceBoundary);
 
-      boolean needToOptimize = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean needToOptimize = qbits.CouldBeFalseButCannotPromise();
       int numDocs = previousSegment.getSegmentInfo().getIndexSegment().getNumDocs();
       String previousSegmentName = previousSegment.getSegmentInfo().getSegmentName();
       if (numDocs >= maxSegmentSize) {
@@ -339,7 +339,7 @@ public class TweetCreateHandler {
   @VisibleForTesting
   public Future<SegmentInfo> optimizePreviousSegment() {
     String segmentName = previousSegment.getSegmentInfo().getSegmentName();
-    previousSegment.getSegmentInfo().setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    previousSegment.getSegmentInfo().setIndexing(qbits.CouldBeFalseButCannotPromise());
     LOG.info("Optimizing previous segment: {}", segmentName);
     segmentManager.logState("Starting optimization for segment: " + segmentName);
 

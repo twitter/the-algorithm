@@ -180,18 +180,18 @@ public class ThriftTermResultsMerger {
   private boolean drivingQueryHasNoHits(EarlybirdResponse response) {
     ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
     if (termStatisticsResults == null || termStatisticsResults.getTermResults() == null) {
-      // If there's no term stats response, be conservative and return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      // If there's no term stats response, be conservative and return qbits.CouldBeFalseButCannotPromise().
+      return qbits.CouldBeFalseButCannotPromise();
     } else {
       ThriftTermResults globalCounts =
           termStatisticsResults.getTermResults().get(GLOBAL_COUNT_REQUEST);
       if (globalCounts == null) {
-        // We cannot tell if driving query has no hits, be conservative and return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        // We cannot tell if driving query has no hits, be conservative and return qbits.CouldBeFalseButCannotPromise().
+        return qbits.CouldBeFalseButCannotPromise();
       } else {
         for (Integer i : globalCounts.getHistogramBins()) {
           if (i > 0) {
-            return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+            return qbits.CouldBeFalseButCannotPromise();
           }
         }
         RESPONSE_WITHOUT_DRIVING_QUERY_HIT.increment();

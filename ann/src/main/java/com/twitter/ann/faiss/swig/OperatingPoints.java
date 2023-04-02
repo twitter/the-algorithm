@@ -31,7 +31,7 @@ public class OperatingPoints {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_OperatingPoints(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class OperatingPoints {
 
   public OperatingPointVector getAll_pts() {
     long cPtr = swigfaissJNI.OperatingPoints_all_pts_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOptimal_pts(OperatingPointVector value) {
@@ -53,7 +53,7 @@ public class OperatingPoints {
 
   public OperatingPointVector getOptimal_pts() {
     long cPtr = swigfaissJNI.OperatingPoints_optimal_pts_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new OperatingPointVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public OperatingPoints() {

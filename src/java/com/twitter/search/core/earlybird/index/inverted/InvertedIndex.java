@@ -52,7 +52,7 @@ public abstract class InvertedIndex implements FacetLabelProvider, Flushable {
   }
 
   public boolean hasMaxPublishedPointer() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   public int getMaxPublishedPointer() {

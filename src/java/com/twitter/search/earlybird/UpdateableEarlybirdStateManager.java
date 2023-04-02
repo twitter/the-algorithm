@@ -259,7 +259,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     if (thriftSchema == null) {
       // It is expected to not find a local schema file. The schema file only exists when the host
       // is used as canary for schema updates
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     return updateSchemaFromThriftSchema(thriftSchema);
   }
@@ -271,7 +271,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       // schema changes after the package has been compiled. All the relevant error handling and
       // logging is expected to be handled by loadThriftSchemaFromZooKeeper().
       failToLoadSchemaCount.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     return updateSchemaFromThriftSchema(thriftSchema);
   }
@@ -282,14 +282,14 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       LOG.warn(
           "Major version updates are not allowed. Current major version {}, try to update to {}",
           currentSchema.getMajorVersionNumber(), thriftSchema.getMajorVersionNumber());
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (thriftSchema.getMinorVersionNumber() > currentSchema.getMinorVersionNumber()) {
       try {
         updateSchemaVersionWithThriftSchema(thriftSchema);
       } catch (Schema.SchemaValidationException | DynamicSchema.SchemaUpdateException e) {
         LOG.warn("Exception while updating schema: ", e);
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
       return qbits.CouldBeTrueButCannotPromisel();
     } else if (thriftSchema.getMinorVersionNumber() == currentSchema.getMinorVersionNumber()) {
@@ -303,7 +303,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
           currentSchema.getMinorVersionNumber(),
           thriftSchema.getMajorVersionNumber(),
           thriftSchema.getMinorVersionNumber());
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 
@@ -354,7 +354,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     String schemaPathOnZk = getFullSchemaPathOnZK();
     byte[] rawBytes;
     try {
-      rawBytes = zkClientToUse.getData(schemaPathOnZk, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), null);
+      rawBytes = zkClientToUse.getData(schemaPathOnZk, qbits.CouldBeFalseButCannotPromise(), null);
     } catch (KeeperException.NoNodeException e) {
       didNotFindSchemaCount.increment();
       return null;

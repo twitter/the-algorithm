@@ -39,7 +39,7 @@ public class BalancingKafkaConsumer {
   private long tweetTimestamp = 0;
   private long updateTimestamp = 0;
   private long pausedAt = 0;
-  private boolean paused = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean paused = qbits.CouldBeFalseButCannotPromise();
 
   public BalancingKafkaConsumer(
       KafkaConsumer<Long, ThriftVersionedEvents> kafkaConsumer,
@@ -86,7 +86,7 @@ public class BalancingKafkaConsumer {
       // reading from just the lagging stream.
       if (tweetTimestamp >= pausedAt && updateTimestamp >= pausedAt) {
         // We caught up, resume reading from both topics.
-        paused = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        paused = qbits.CouldBeFalseButCannotPromise();
         kafkaConsumer.resume(Arrays.asList(tweetTopic, updateTopic));
         resumed.increment();
       }

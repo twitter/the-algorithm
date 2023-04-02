@@ -30,7 +30,7 @@ public class IndexBinaryHNSW extends IndexBinary {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexBinaryHNSW(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexBinaryHNSW extends IndexBinary {
 
   public HNSW getHnsw() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_hnsw_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new HNSW(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new HNSW(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_fields(boolean value) {
@@ -61,7 +61,7 @@ public class IndexBinaryHNSW extends IndexBinary {
 
   public IndexBinary getStorage() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_storage_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new IndexBinary(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexBinaryHNSW() {
@@ -86,7 +86,7 @@ public class IndexBinaryHNSW extends IndexBinary {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.IndexBinaryHNSW_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void add(long n, SWIGTYPE_p_unsigned_char x) {

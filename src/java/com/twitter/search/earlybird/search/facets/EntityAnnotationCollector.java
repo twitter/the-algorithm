@@ -21,7 +21,7 @@ public class EntityAnnotationCollector extends AbstractFacetTermCollector {
     String term = getTermFromFacet(termID, fieldID,
         Sets.newHashSet(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName()));
     if (StringUtils.isEmpty(term)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     String[] idParts = term.split("\\.");
@@ -29,7 +29,7 @@ public class EntityAnnotationCollector extends AbstractFacetTermCollector {
     // Only include the full three-part form of the entity ID: "groupId.domainId.entityId"
     // Exclude the less-specific forms we index: "domainId.entityId" and "entityId"
     if (idParts.length < 3) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     annotations.add(new TweetEntityAnnotation(

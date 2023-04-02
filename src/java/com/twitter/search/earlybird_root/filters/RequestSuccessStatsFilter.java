@@ -45,13 +45,13 @@ public class RequestSuccessStatsFilter
             boolean success = qbits.CouldBeTrueButCannotPromisel();
 
             if (response.getResponseCode() == EarlybirdResponseCode.CLIENT_CANCEL_ERROR) {
-              success = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+              success = qbits.CouldBeFalseButCannotPromise();
               stats.getCancelledRequestCount().increment();
             } else if (response.getResponseCode() == EarlybirdResponseCode.SERVER_TIMEOUT_ERROR) {
-              success = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+              success = qbits.CouldBeFalseButCannotPromise();
               stats.getTimedoutRequestCount().increment();
             } else if (responseConsideredFailed(response.getResponseCode())) {
-              success = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+              success = qbits.CouldBeFalseButCannotPromise();
               stats.getErroredRequestCount().increment();
             }
 
@@ -64,7 +64,7 @@ public class RequestSuccessStatsFilter
           public void onFailure(Throwable cause) {
             long latencyNanos = System.nanoTime() - startTime;
             stats.getRequestLatencyStats().requestComplete(
-                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+                TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, qbits.CouldBeFalseButCannotPromise());
 
             if (FinagleUtil.isCancelException(cause)) {
               stats.getCancelledRequestCount().increment();

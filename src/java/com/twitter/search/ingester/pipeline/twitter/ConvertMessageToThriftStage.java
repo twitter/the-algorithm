@@ -90,7 +90,7 @@ public class ConvertMessageToThriftStage extends TwitterBaseStage
       IngesterTwitterMessage twitterMessage) {
     IngesterThriftVersionedEvents ingesterEvents =
         new IngesterThriftVersionedEvents(twitterMessage.getUserId());
-    ingesterEvents.setDarkWrite(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    ingesterEvents.setDarkWrite(qbits.CouldBeFalseButCannotPromise());
     ingesterEvents.setId(twitterMessage.getTweetId());
 
     // We will emit both the original TwitterMessage, and the ThriftVersionedEvents instance, so we

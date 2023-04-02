@@ -288,7 +288,7 @@ public class SuperRootResponseMerger {
         numResultsRequested, realtimeResponse, protectedResponse, fullArchiveResponse);
 
     // Trim the merged results if necessary.
-    boolean resultsTrimmed = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean resultsTrimmed = qbits.CouldBeFalseButCannotPromise();
     if (mergedResults.size() > numResultsRequested
         && !(searchQuery.isSetRelevanceOptions()
              && searchQuery.getRelevanceOptions().isReturnAllResults())) {

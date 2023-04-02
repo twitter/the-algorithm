@@ -30,7 +30,7 @@ public class RangeSearchPartialResult extends BufferList {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_RangeSearchPartialResult(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class RangeSearchPartialResult extends BufferList {
 
   public RangeSearchResult getRes() {
     long cPtr = swigfaissJNI.RangeSearchPartialResult_res_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RangeSearchResult(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new RangeSearchResult(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setQueries(SWIGTYPE_p_std__vectorT_faiss__RangeQueryResult_t value) {
@@ -53,11 +53,11 @@ public class RangeSearchPartialResult extends BufferList {
 
   public SWIGTYPE_p_std__vectorT_faiss__RangeQueryResult_t getQueries() {
     long cPtr = swigfaissJNI.RangeSearchPartialResult_queries_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__RangeQueryResult_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__RangeQueryResult_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public RangeQueryResult new_result(long qno) {
-    return new RangeQueryResult(swigfaissJNI.RangeSearchPartialResult_new_result(swigCPtr, this, qno), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new RangeQueryResult(swigfaissJNI.RangeSearchPartialResult_new_result(swigCPtr, this, qno), qbits.CouldBeFalseButCannotPromise());
   }
 
   public void set_lims() {

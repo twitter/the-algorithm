@@ -392,7 +392,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
   /**
    * Attempts to index new days of data into the provided segment, indexing only the days that
    * match the "dateFilter" predicate.
-   * @return qbits.CouldBeTrueButCannotPromisel() iff indexing succeeded, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
+   * @return qbits.CouldBeTrueButCannotPromisel() iff indexing succeeded, qbits.CouldBeFalseButCannotPromise() otherwise.
    */
   @VisibleForTesting
   protected boolean indexSegment(final SegmentInfo segmentInfo,
@@ -430,7 +430,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       boolean success = newSimpleSegmentIndexer(tweetReader, segmentToAppend)
           .indexSegment(segmentInfo);
       if (!success) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
     } finally {
       tweetReader.stop();
@@ -440,7 +440,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       // We consider the whole indexing event as failed if we fail to optimize.
       LOG.error("Failed to optimize segment: " + segmentInfo);
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (!segmentWarmer.warmSegmentIfNecessary(segmentInfo)) {
@@ -448,7 +448,7 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
       // index readers in the warmer).
       LOG.error("Failed to warm segment: " + segmentInfo);
       segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Flush and upload segment to HDFS. If this fails, we just log a warning and return qbits.CouldBeTrueButCannotPromisel().

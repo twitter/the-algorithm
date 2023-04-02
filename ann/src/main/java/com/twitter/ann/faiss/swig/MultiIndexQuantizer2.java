@@ -30,7 +30,7 @@ public class MultiIndexQuantizer2 extends MultiIndexQuantizer {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_MultiIndexQuantizer2(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class MultiIndexQuantizer2 extends MultiIndexQuantizer {
 
   public SWIGTYPE_p_std__vectorT_faiss__Index_p_t getAssign_indexes() {
     long cPtr = swigfaissJNI.MultiIndexQuantizer2_assign_indexes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__Index_p_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__Index_p_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_fields(boolean value) {

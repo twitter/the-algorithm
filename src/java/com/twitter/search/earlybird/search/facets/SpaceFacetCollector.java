@@ -29,7 +29,7 @@ public class SpaceFacetCollector extends AbstractFacetTermCollector {
     String spaceId = getTermFromFacet(termID, fieldID,
         Sets.newHashSet(EarlybirdFieldConstant.SPACES_FACET));
     if (StringUtils.isEmpty(spaceId)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     spaces.add(new ThriftSearchResultAudioSpace(spaceId,

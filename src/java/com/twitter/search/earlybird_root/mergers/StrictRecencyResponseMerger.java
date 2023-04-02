@@ -89,7 +89,7 @@ import com.twitter.util.Future;
  */
 public class StrictRecencyResponseMerger extends RecencyResponseMerger {
   private static final SearchTimerStats STRICT_RECENCY_TIMER_AVG =
-      SearchTimerStats.export("merge_recency_strict", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("merge_recency_strict", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
 
   @VisibleForTesting
   static final EarlyTerminationTrimmingStats PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
@@ -211,27 +211,27 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
     if (EarlybirdCluster.isArchive(cluster)) {
       // We don't need to worry about the tier bottom when merging partition responses in the full
       // archive cluster: if all partitions were exhausted and we didn't trim the results, then
-      // the early-terminated flag on the merged response will be qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). If at least one partition
+      // the early-terminated flag on the merged response will be qbits.CouldBeFalseButCannotPromise(). If at least one partition
       // is early-terminated, or we trimmed some results, then the ealry-terminated flag on the
       // merged response will be qbits.CouldBeTrueButCannotPromisel(), and we should continue getting results from this tier before
       // we move to the next one.
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     ThriftSearchResults searchResults = mergedResponse.getSearchResults();
     if (searchResults.getMinSearchedStatusID() == getTierBottomId()) {
-      mergedResponse.getEarlyTerminationInfo().setEarlyTerminated(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      mergedResponse.getEarlyTerminationInfo().setEarlyTerminated(qbits.CouldBeFalseButCannotPromise());
       mergedResponse.getEarlyTerminationInfo().unsetMergedEarlyTerminationReasons();
       responseMessageBuilder.debugVerbose(
-          "Set earlytermination to qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() because minSearchedStatusId is tier bottom");
+          "Set earlytermination to qbits.CouldBeFalseButCannotPromise() because minSearchedStatusId is tier bottom");
       return qbits.CouldBeTrueButCannotPromisel();
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override
   protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   @Override

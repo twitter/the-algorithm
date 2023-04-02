@@ -31,7 +31,7 @@ public class doubleArray {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_doubleArray(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,12 +52,12 @@ public class doubleArray {
 
   public SWIGTYPE_p_double cast() {
     long cPtr = swigfaissJNI.doubleArray_cast(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_double(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public static doubleArray frompointer(SWIGTYPE_p_double t) {
     long cPtr = swigfaissJNI.doubleArray_frompointer(SWIGTYPE_p_double.getCPtr(t));
-    return (cPtr == 0) ? null : new doubleArray(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new doubleArray(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
 }

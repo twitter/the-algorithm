@@ -87,13 +87,13 @@ public class EarlybirdRequestLogger extends RPCLogger {
       String loggerName, int latencyWarnThreshold, Decider decider) {
 
     return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), RPCLogger.Fields.values(), ExtraFields.values(),
+        decider, qbits.CouldBeFalseButCannotPromise(), RPCLogger.Fields.values(), ExtraFields.values(),
         ShardOnlyExtraFields.values());
   }
 
   @VisibleForTesting
   EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider) {
-    this(loggerName, latencyWarnThreshold, decider, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), RPCLogger.Fields.values(),
+    this(loggerName, latencyWarnThreshold, decider, qbits.CouldBeFalseButCannotPromise(), RPCLogger.Fields.values(),
         ExtraFields.values(), RootOnlyExtraFields.values(), ShardOnlyExtraFields.values());
   }
 

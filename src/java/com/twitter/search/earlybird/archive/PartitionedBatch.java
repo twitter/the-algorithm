@@ -254,7 +254,7 @@ public class PartitionedBatch {
   private Predicate<ThriftIndexingEvent> getRecordFilter() {
     return Config.environmentIsTest() ? null : input -> {
       if (input == null) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
       // We only guard against status IDs that are too small, because it is possible
       // for a very old tweet to get into today's batch, but not possible for a very

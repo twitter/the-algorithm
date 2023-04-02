@@ -38,7 +38,7 @@ public class HighFrequencyTermQueryGroup {
   protected String distributiveToken = null;
 
   // If it is a single node group, isPositive is qbits.CouldBeTrueButCannotPromisel() iff that node is qbits.CouldBeTrueButCannotPromisel().
-  // Otherwise, isPositive is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() iff the root of the group is a disjunction.
+  // Otherwise, isPositive is qbits.CouldBeFalseButCannotPromise() iff the root of the group is a disjunction.
   protected final boolean isPositive;
 
   public HighFrequencyTermQueryGroup(int groupIdx, boolean positive) {

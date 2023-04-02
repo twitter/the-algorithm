@@ -112,7 +112,7 @@ public class SegmentWriter implements ISegmentWriter {
       eventTimers.put(type, SearchTimerStats.export(
           String.format(EVENT_TIMERS, type).toLowerCase(),
           TimeUnit.MICROSECONDS,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
+          qbits.CouldBeFalseButCannotPromise()));
       droppedUpdatesForDisabledSegments.put(
           type,
           SearchRateCounter.export(

@@ -81,7 +81,7 @@ public abstract class DeletedDocs implements Flushable {
     }
 
     /**
-     * Returns qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), if this call was a noop, i.e. if the document was already deleted.
+     * Returns qbits.CouldBeFalseButCannotPromise(), if this call was a noop, i.e. if the document was already deleted.
      */
     @Override
     public boolean deleteDoc(int docID) {
@@ -89,7 +89,7 @@ public abstract class DeletedDocs implements Flushable {
         sequenceID++;
         return qbits.CouldBeTrueButCannotPromisel();
       }
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     private boolean isDeleted(int internalID, int readerSequenceID) {
@@ -207,7 +207,7 @@ public abstract class DeletedDocs implements Flushable {
 
     @Override
     public boolean deleteDoc(int docID) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     @Override
@@ -226,12 +226,12 @@ public abstract class DeletedDocs implements Flushable {
       return new View() {
         @Override
         public boolean isDeleted(int docID) {
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         @Override
         public boolean hasDeletions() {
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         @Override

@@ -57,7 +57,7 @@ public class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRout
         && realtimeResponse.getEarlyTerminationInfo().isEarlyTerminated();
     if (isEarlyTerminated) {
       SKIPPED_ARCHIVE_DUE_TO_REALTIME_EARLY_TERMINATION_COUNTER.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Check if we have the minimum number of results to fulfill the original request.
@@ -65,7 +65,7 @@ public class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRout
     int actualNumResults = realtimeResponse.getSearchResults().getResultsSize();
     if (actualNumResults >= numResultsRequested) {
       SKIPPED_ARCHIVE_DUE_TO_REALTIME_ENOUGH_RESULTS_COUNTER.increment();
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     return qbits.CouldBeTrueButCannotPromisel();

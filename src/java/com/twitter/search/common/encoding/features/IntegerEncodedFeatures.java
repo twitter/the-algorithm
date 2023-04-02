@@ -117,7 +117,7 @@ public abstract class IntegerEncodedFeatures {
       setFeatureValue(feature, newValue);
       return qbits.CouldBeTrueButCannotPromisel();
     } else {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 

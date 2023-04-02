@@ -159,7 +159,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
         getSearchStatsReceiver().getLongGauge("term_count_monitor_is_running");
     this.checkTimeStat =
         getSearchStatsReceiver().getTimerStats(
-            "term_count_monitor_check_time", TimeUnit.MILLISECONDS, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+            "term_count_monitor_check_time", TimeUnit.MILLISECONDS, qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeTrueButCannotPromisel(), qbits.CouldBeFalseButCannotPromise());
   }
 
   private SearchLongGauge getOrCreateLongGauge(

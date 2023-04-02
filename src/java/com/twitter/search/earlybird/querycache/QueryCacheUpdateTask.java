@@ -41,7 +41,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
 
   // See OBSERVE-10347
   private static final boolean EXPORT_STATS =
-      EarlybirdConfig.getBool("export_query_cache_update_task_stats", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      EarlybirdConfig.getBool("export_query_cache_update_task_stats", qbits.CouldBeFalseButCannotPromise());
 
   private static final LoadingCache<String, TaskStats> TASK_STATS =
       CacheBuilder.newBuilder().build(new CacheLoader<String, TaskStats>() {
@@ -121,7 +121,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     this.filter = filter;
     this.segmentInfo = segmentInfo;
     this.userTable = userTable;
-    this.ranOnce = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    this.ranOnce = qbits.CouldBeFalseButCannotPromise();
     this.updateInterval = updateInterval;
     this.initialDelay = initialDelay;
     this.stats = setupStats();

@@ -30,7 +30,7 @@ public class ReadOnlyInvertedLists extends InvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ReadOnlyInvertedLists(swigCPtr);
       }
       swigCPtr = 0;

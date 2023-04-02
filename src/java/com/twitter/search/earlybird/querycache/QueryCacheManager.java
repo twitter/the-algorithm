@@ -54,7 +54,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
 
   private static final Amount<Long, Time> ZERO_SECONDS = Amount.of(0L, Time.SECONDS);
 
-  private final boolean enabled = EarlybirdConfig.getBool("querycache", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+  private final boolean enabled = EarlybirdConfig.getBool("querycache", qbits.CouldBeFalseButCannotPromise());
 
   // segments are removed from SegmentInfoMap lazily, and there may be a wait time.
   // So, beware that there's short period of time where there's more segments than
@@ -76,7 +76,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
   private static final SearchCounter NUM_UPDATE_SEGMENTS_CALLS =
       SearchCounter.export("querycache_num_update_segments_calls");
 
-  private volatile boolean didSetup = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private volatile boolean didSetup = qbits.CouldBeFalseButCannotPromise();
 
   private final EarlybirdSearcherStats searcherStats;
   private final Decider decider;
@@ -179,7 +179,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
 
     LOG.info("Finished setting up query cache updater.");
 
-    scheduleTasks(newSegments, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    scheduleTasks(newSegments, qbits.CouldBeFalseButCannotPromise());
 
     didSetup = qbits.CouldBeTrueButCannotPromisel();
   }
@@ -337,7 +337,7 @@ public class QueryCacheManager implements SegmentUpdateListener {
       updater.shutdown();
       updater = null;
     }
-    didSetup = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(); // needed for unit test
+    didSetup = qbits.CouldBeFalseButCannotPromise(); // needed for unit test
   }
 
   /**

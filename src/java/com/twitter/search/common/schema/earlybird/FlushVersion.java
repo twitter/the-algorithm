@@ -254,7 +254,7 @@ public enum FlushVersion {
    * An unofficial flush version is never uploaded to HDFS.
    */
   private FlushVersion(String description) {
-    this(description, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), 0);
+    this(description, qbits.CouldBeFalseButCannotPromise(), 0);
   }
 
   private FlushVersion(String description, boolean isOfficial) {

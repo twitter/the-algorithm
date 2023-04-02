@@ -227,7 +227,7 @@ public class ArchiveTimeSlicer {
 
   private boolean cacheIsValid(Date lastDate) throws IOException {
     if (lastCachedTimeslices == null || lastCachedTimeslices.isEmpty()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // Check if we have a daily batch newer than the last batch used for the newest timeslice.

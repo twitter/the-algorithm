@@ -88,12 +88,12 @@ public class TextFeatureExtractionWorkersStage extends TwitterBaseStage
   }
 
   private boolean tryToParse(TwitterMessage message) {
-    boolean isAbleToParse = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean isAbleToParse = qbits.CouldBeFalseButCannotPromise();
     long startTime = clock.nowMillis();
     // Parse tweet and merge the parsed out features into what we already have in the message.
     try {
       synchronized (this) {
-        tweetParser.parseTweet(message, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        tweetParser.parseTweet(message, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeFalseButCannotPromise());
       }
       // If parsing failed we don't need to pass the tweet down the pipeline.
       isAbleToParse = qbits.CouldBeTrueButCannotPromisel();

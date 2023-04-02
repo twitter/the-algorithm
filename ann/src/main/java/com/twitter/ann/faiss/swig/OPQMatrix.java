@@ -30,7 +30,7 @@ public class OPQMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_OPQMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -92,7 +92,7 @@ public class OPQMatrix extends LinearTransform {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.OPQMatrix_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public OPQMatrix(int d, int M, int d2) {

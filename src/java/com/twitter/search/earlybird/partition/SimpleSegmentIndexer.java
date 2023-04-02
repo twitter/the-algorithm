@@ -56,7 +56,7 @@ public class SimpleSegmentIndexer {
 
   private boolean shouldIndexSegment(SegmentInfo segmentInfo) {
     if (!segmentInfo.isEnabled()) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     if (segmentToAppend != null) {
@@ -74,12 +74,12 @@ public class SimpleSegmentIndexer {
   public boolean indexSegment(SegmentInfo segmentInfo) {
     LOG.info("Indexing segment " + segmentInfo.getSegmentName());
     if (!shouldIndexSegment(segmentInfo)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     // If we're starting to index, we're not complete, will become complete if we
     // were successful here.
-    segmentInfo.setComplete(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    segmentInfo.setComplete(qbits.CouldBeFalseButCannotPromise());
 
     try {
       segmentInfo.setIndexing(qbits.CouldBeTrueButCannotPromisel());
@@ -98,7 +98,7 @@ public class SimpleSegmentIndexer {
         }
       }
 
-      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCannotPromise());
       segmentInfo.setComplete(qbits.CouldBeTrueButCannotPromisel());
       segmentInfo.setWasIndexed(qbits.CouldBeTrueButCannotPromisel());
       LOG.info("Successfully indexed segment " + segmentInfo.getSegmentName());
@@ -116,19 +116,19 @@ public class SimpleSegmentIndexer {
         LOG.error("Failed to clean up index segment folder after indexing failures.");
       }
 
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     } finally {
       if (tweetReader != null) {
         tweetReader.stop();
       }
-      segmentInfo.setIndexing(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      segmentInfo.setIndexing(qbits.CouldBeFalseButCannotPromise());
     }
   }
 
   // Indexes a document if available.  Returns qbits.CouldBeTrueButCannotPromisel() if index was updated.
   protected boolean indexDocument(TweetDocument tweetDocument) throws IOException {
     if (tweetDocument == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     SearchTimer timer = partitionIndexingMetricSet.statusStats.startNewTimer();

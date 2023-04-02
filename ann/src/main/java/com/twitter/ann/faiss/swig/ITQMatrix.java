@@ -30,7 +30,7 @@ public class ITQMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ITQMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -60,7 +60,7 @@ public class ITQMatrix extends LinearTransform {
 
   public DoubleVector getInit_rotation() {
     long cPtr = swigfaissJNI.ITQMatrix_init_rotation_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DoubleVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public ITQMatrix(int d) {

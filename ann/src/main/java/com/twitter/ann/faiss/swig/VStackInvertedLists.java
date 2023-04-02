@@ -30,7 +30,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_VStackInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_std__vectorT_faiss__InvertedLists_const_p_t getIls() {
     long cPtr = swigfaissJNI.VStackInvertedLists_ils_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__InvertedLists_const_p_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__InvertedLists_const_p_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setCumsz(SWIGTYPE_p_std__vectorT_int64_t_t value) {
@@ -53,7 +53,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_std__vectorT_int64_t_t getCumsz() {
     long cPtr = swigfaissJNI.VStackInvertedLists_cumsz_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_int64_t_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public VStackInvertedLists(int nil, SWIGTYPE_p_p_faiss__InvertedLists ils) {
@@ -66,11 +66,11 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.VStackInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.VStackInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new LongVector(swigfaissJNI.VStackInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCannotPromise());
 }
 
   public void release_codes(long list_no, SWIGTYPE_p_unsigned_char codes) {
@@ -87,7 +87,7 @@ public class VStackInvertedLists extends ReadOnlyInvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_single_code(long list_no, long offset) {
     long cPtr = swigfaissJNI.VStackInvertedLists_get_single_code(swigCPtr, this, list_no, offset);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void prefetch_lists(LongVector list_nos, int nlist) {

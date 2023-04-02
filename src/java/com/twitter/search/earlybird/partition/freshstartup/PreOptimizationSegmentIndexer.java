@@ -164,7 +164,7 @@ class PreOptimizationSegmentIndexer {
         makeKafkaConsumerForIndexing(consumerClientId,
             topicPartition, startReadingAtOffset);
 
-    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean done = qbits.CouldBeFalseButCannotPromise();
     long minIndexedTimestampMs = Long.MAX_VALUE;
     long maxIndexedTimestampMs = Long.MIN_VALUE;
     int indexedEvents = 0;
@@ -237,7 +237,7 @@ class PreOptimizationSegmentIndexer {
         }
 
         ThriftVersionedEvents tve = record.value();
-        boolean indexTweet = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        boolean indexTweet = qbits.CouldBeFalseButCannotPromise();
         SkippedPickedCounter skippedPickedCounter;
 
         if (record.offset() < segmentBuildInfo.getTweetStartOffset()) {
@@ -393,7 +393,7 @@ class PreOptimizationSegmentIndexer {
         makeKafkaConsumerForIndexing(consumerClientId, topicPartition, startOffset);
 
     // Index TVEs.
-    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean done = qbits.CouldBeFalseButCannotPromise();
 
     Stopwatch pollTimer = Stopwatch.createUnstarted();
     Stopwatch indexTimer = Stopwatch.createUnstarted();

@@ -55,7 +55,7 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
               NUM_TWEETS_TRUNCATED.increment();
             }
 
-            return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+            return qbits.CouldBeFalseButCannotPromise();
           }
         };
       }

@@ -96,7 +96,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
         long entry = hash[position];
         if (entry == UNASSIGNED) {
           termID = UNASSIGNED;
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
 
         termID = entry;
@@ -401,7 +401,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     }
 
     public Comparator<ThriftFacetCount> getThriftComparator() {
-      return getThriftComparator(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      return getThriftComparator(qbits.CouldBeFalseButCannotPromise());
     }
 
     public Comparator<ThriftFacetCount> getThriftComparator(boolean reverse) {
@@ -428,11 +428,11 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       (facet1, facet2) -> compareFacetCounts(
           facet1.weightedCount, facet1.simpleCount, facet1.penaltyCount,
           facet2.weightedCount, facet2.simpleCount, facet2.penaltyCount,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+          qbits.CouldBeFalseButCannotPromise()),
       (facet1, facet2) -> compareFacetCounts(
           facet1.getWeightedCount(), facet1.getSimpleCount(), facet1.getPenaltyCount(),
           facet2.getWeightedCount(), facet2.getSimpleCount(), facet2.getPenaltyCount(),
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()));
+          qbits.CouldBeFalseButCannotPromise()));
 
   /**
    * Returns the appropriate FacetComparator for the specified sortingMode.

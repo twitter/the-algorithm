@@ -31,7 +31,7 @@ public class OnDiskInvertedListsIOHook {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_OnDiskInvertedListsIOHook(swigCPtr);
       }
       swigCPtr = 0;
@@ -48,12 +48,12 @@ public class OnDiskInvertedListsIOHook {
 
   public InvertedLists read(SWIGTYPE_p_IOReader f, int io_flags) {
     long cPtr = swigfaissJNI.OnDiskInvertedListsIOHook_read(swigCPtr, this, SWIGTYPE_p_IOReader.getCPtr(f), io_flags);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public InvertedLists read_ArrayInvertedLists(SWIGTYPE_p_IOReader f, int io_flags, long nlist, long code_size, Uint64Vector sizes) {
     long cPtr = swigfaissJNI.OnDiskInvertedListsIOHook_read_ArrayInvertedLists(swigCPtr, this, SWIGTYPE_p_IOReader.getCPtr(f), io_flags, nlist, code_size, Uint64Vector.getCPtr(sizes), sizes);
-    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new InvertedLists(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
 }

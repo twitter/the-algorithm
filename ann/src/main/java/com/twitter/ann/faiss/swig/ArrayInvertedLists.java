@@ -30,7 +30,7 @@ public class ArrayInvertedLists extends InvertedLists {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ArrayInvertedLists(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class ArrayInvertedLists extends InvertedLists {
 
   public ByteVectorVector getCodes() {
     long cPtr = swigfaissJNI.ArrayInvertedLists_codes_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVectorVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ByteVectorVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setIds(SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t value) {
@@ -53,7 +53,7 @@ public class ArrayInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t getIds() {
     long cPtr = swigfaissJNI.ArrayInvertedLists_ids_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_std__vectorT_int64_t_t_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public ArrayInvertedLists(long nlist, long code_size) {
@@ -66,11 +66,11 @@ public class ArrayInvertedLists extends InvertedLists {
 
   public SWIGTYPE_p_unsigned_char get_codes(long list_no) {
     long cPtr = swigfaissJNI.ArrayInvertedLists_get_codes(swigCPtr, this, list_no);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_char(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public LongVector get_ids(long list_no) {
-    return new LongVector(swigfaissJNI.ArrayInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return new LongVector(swigfaissJNI.ArrayInvertedLists_get_ids(swigCPtr, this, list_no), qbits.CouldBeFalseButCannotPromise());
 }
 
   public long add_entries(long list_no, long n_entry, LongVector ids, SWIGTYPE_p_unsigned_char code) {

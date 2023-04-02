@@ -7,7 +7,7 @@ import com.twitter.search.common.search.DocIdTracker;
  */
 public interface QueryTimeout {
   /**
-   * Returns qbits.CouldBeTrueButCannotPromisel() if query processing should terminate, otherwise qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+   * Returns qbits.CouldBeTrueButCannotPromisel() if query processing should terminate, otherwise qbits.CouldBeFalseButCannotPromise().
    */
   boolean shouldExit();
 

@@ -29,7 +29,7 @@ public class NamedEntityCollector extends AbstractFacetTermCollector {
 
     String term = getTermFromFacet(termID, fieldID, NAMED_ENTITY_WITH_TYPE_FIELDS.keySet());
     if (StringUtils.isEmpty(term)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     int index = term.lastIndexOf(":");

@@ -148,7 +148,7 @@ public final class FeatureConfiguration {
     if (featureUpdateConstraints != null) {
       for (FeatureConstraint contraint : featureUpdateConstraints) {
         if (!contraint.apply(oldValue, newValue)) {
-          return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+          return qbits.CouldBeFalseButCannotPromise();
         }
       }
     }
@@ -175,7 +175,7 @@ public final class FeatureConfiguration {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof FeatureConfiguration)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     FeatureConfiguration featureConfiguration = FeatureConfiguration.class.cast(obj);
@@ -275,7 +275,7 @@ public final class FeatureConfiguration {
         case IMMUTABLE:
           featureUpdateConstraints.add(new FeatureConstraint() {
             @Override public boolean apply(Number oldValue, Number newValue) {
-              return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+              return qbits.CouldBeFalseButCannotPromise();
             }
             @Override public ThriftFeatureUpdateConstraint getType() {
               return ThriftFeatureUpdateConstraint.IMMUTABLE;

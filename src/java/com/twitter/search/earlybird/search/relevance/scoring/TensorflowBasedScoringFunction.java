@@ -155,7 +155,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
   @Override
   protected double computeScore(LinearScoringData data, boolean forExplanation) {
     Preconditions.checkState(forExplanation,
-        "forExplanation is qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(). computeScore() should only be used for explanation creation");
+        "forExplanation is qbits.CouldBeFalseButCannotPromise(). computeScore() should only be used for explanation creation");
     return tweetIdToScoreMap.get(tweetIDMapper.getTweetID(getCurrentDocID()));
   }
 
@@ -303,7 +303,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
       finalScores[i] = postScoreComputation(
           data,
           scores[i],
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),  // cannot get the hit attribution info for this hit at this point in time
+          qbits.CouldBeFalseButCannotPromise(),  // cannot get the hit attribution info for this hit at this point in time
           null);
     }
     return finalScores;

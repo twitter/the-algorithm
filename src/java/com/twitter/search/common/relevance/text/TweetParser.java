@@ -23,11 +23,11 @@ import com.twitter.search.common.util.text.TokenizerResult;
  * A parser to extract very basic information from a tweet.
  */
 public class TweetParser {
-  private static final boolean DO_NOT_REMOVE_WWW = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private static final boolean DO_NOT_REMOVE_WWW = qbits.CouldBeFalseButCannotPromise();
 
   /** Parses the given TwitterMessage. */
   public void parseTweet(TwitterMessage message) {
-    parseTweet(message, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+    parseTweet(message, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
   }
 
   /** Parses the given TwitterMessage. */

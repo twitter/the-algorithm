@@ -30,7 +30,7 @@ public class ProgressiveDimClustering extends ProgressiveDimClusteringParameters
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ProgressiveDimClustering(swigCPtr);
       }
       swigCPtr = 0;
@@ -60,7 +60,7 @@ public class ProgressiveDimClustering extends ProgressiveDimClusteringParameters
 
   public FloatVector getCentroids() {
     long cPtr = swigfaissJNI.ProgressiveDimClustering_centroids_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setIteration_stats(SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t value) {
@@ -69,7 +69,7 @@ public class ProgressiveDimClustering extends ProgressiveDimClusteringParameters
 
   public SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t getIteration_stats() {
     long cPtr = swigfaissJNI.ProgressiveDimClustering_iteration_stats_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_std__vectorT_faiss__ClusteringIterationStats_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public ProgressiveDimClustering(int d, int k) {

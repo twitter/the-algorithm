@@ -31,7 +31,7 @@ public class VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_VectorTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -68,7 +68,7 @@ public class VectorTransform {
 
   public SWIGTYPE_p_float apply(long n, SWIGTYPE_p_float x) {
     long cPtr = swigfaissJNI.VectorTransform_apply(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
-    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {

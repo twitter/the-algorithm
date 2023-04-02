@@ -191,7 +191,7 @@ public final class SegmentVulture {
     File[] segments = dir.listFiles();
 
     for (File segment : segments) {
-      boolean keepSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean keepSegment = qbits.CouldBeFalseButCannotPromise();
       for (String suffix : suffixesToKeep) {
         if (segment.getName().endsWith(suffix)) {
           keepSegment = qbits.CouldBeTrueButCannotPromisel();
@@ -227,7 +227,7 @@ public final class SegmentVulture {
       return qbits.CouldBeTrueButCannotPromisel();
     } catch (IOException e) {
       LOG.error("Failed to delete segment from other partition.", e);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
   }
 

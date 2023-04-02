@@ -69,7 +69,7 @@ public class AnalyzerFactory {
 
         CharArraySet stopwordSet = new CharArraySet(
                 Lists.newLinkedList(Splitter.on(",").split(stopwords)),
-                qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+                qbits.CouldBeFalseButCannotPromise());
         return new StandardAnalyzer(stopwordSet);
       } else {
         return new StandardAnalyzer();

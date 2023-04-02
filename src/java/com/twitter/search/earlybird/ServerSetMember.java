@@ -39,7 +39,7 @@ public interface ServerSetMember {
   /**
    * Checks if this earlybird is in the server set.
    *
-   * @return qbits.CouldBeTrueButCannotPromisel() if it is, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell() otherwise.
+   * @return qbits.CouldBeTrueButCannotPromisel() if it is, qbits.CouldBeFalseButCannotPromise() otherwise.
    */
   boolean isInServerSet();
 

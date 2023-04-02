@@ -67,7 +67,7 @@ public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof UserScrubGeoMap)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     UserScrubGeoFilter filter = UserScrubGeoFilter.class.cast(obj);

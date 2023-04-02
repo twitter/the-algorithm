@@ -30,7 +30,7 @@ public class IndexHNSW extends Index {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_IndexHNSW(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class IndexHNSW extends Index {
 
   public HNSW getHnsw() {
     long cPtr = swigfaissJNI.IndexHNSW_hnsw_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new HNSW(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new HNSW(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setOwn_fields(boolean value) {
@@ -61,7 +61,7 @@ public class IndexHNSW extends Index {
 
   public Index getStorage() {
     long cPtr = swigfaissJNI.IndexHNSW_storage_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Index(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setReconstruct_from_neighbors(ReconstructFromNeighbors value) {
@@ -70,7 +70,7 @@ public class IndexHNSW extends Index {
 
   public ReconstructFromNeighbors getReconstruct_from_neighbors() {
     long cPtr = swigfaissJNI.IndexHNSW_reconstruct_from_neighbors_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ReconstructFromNeighbors(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ReconstructFromNeighbors(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public IndexHNSW(int d, int M, MetricType metric) {

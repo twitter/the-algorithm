@@ -49,7 +49,7 @@ public final class EarlybirdLuceneIndexSegmentData extends EarlybirdIndexSegment
         maxSegmentSize,
         timeSliceID,
         schema,
-        qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), // isOptimized
+        qbits.CouldBeFalseButCannotPromise(), // isOptimized
         0, // smallestDocId
         new ConcurrentHashMap<>(),
         AbstractFacetCountingArray.EMPTY_ARRAY,

@@ -27,7 +27,7 @@ public class QueryRankVisitor extends DetectAnnotationVisitor {
       collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
     }
 
-    boolean found = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean found = qbits.CouldBeFalseButCannotPromise();
     for (Query child : query.getChildren()) {
       found |= child.accept(this);
     }
@@ -41,7 +41,7 @@ public class QueryRankVisitor extends DetectAnnotationVisitor {
       return qbits.CouldBeTrueButCannotPromisel();
     }
 
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   private void collectNodeRank(Annotation anno, Query query) {

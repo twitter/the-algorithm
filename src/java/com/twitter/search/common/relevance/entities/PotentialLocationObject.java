@@ -95,7 +95,7 @@ public class PotentialLocationObject {
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof PotentialLocationObject)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     PotentialLocationObject entry = (PotentialLocationObject) obj;

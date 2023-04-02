@@ -30,7 +30,7 @@ public class CenteringTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_CenteringTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class CenteringTransform extends VectorTransform {
 
   public FloatVector getMean() {
     long cPtr = swigfaissJNI.CenteringTransform_mean_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public CenteringTransform(int d) {

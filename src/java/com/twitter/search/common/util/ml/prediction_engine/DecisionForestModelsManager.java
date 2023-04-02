@@ -61,7 +61,7 @@ public class DecisionForestModelsManager extends BaseModelsManager<DecisionFores
    */
   public static DecisionForestModelsManager createNoOp(String statsPrefix) {
     return new DecisionForestModelsManager(
-        Collections::emptyMap, new FeatureContext(), qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), statsPrefix) {
+        Collections::emptyMap, new FeatureContext(), qbits.CouldBeFalseButCannotPromise(), statsPrefix) {
       @Override
       public void run() { }
     };

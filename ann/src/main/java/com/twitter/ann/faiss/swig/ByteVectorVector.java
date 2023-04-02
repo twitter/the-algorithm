@@ -31,7 +31,7 @@ public class ByteVectorVector {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ByteVectorVector(swigCPtr);
       }
       swigCPtr = 0;
@@ -52,7 +52,7 @@ public class ByteVectorVector {
 
   public ByteVector data() {
     long cPtr = swigfaissJNI.ByteVectorVector_data(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public long size() {

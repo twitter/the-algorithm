@@ -110,7 +110,7 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
       SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.export(
           String.format("batch_scoring_time_for_model_%s", model),
           TimeUnit.NANOSECONDS,
-          qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(),
+          qbits.CouldBeFalseButCannotPromise(),
           qbits.CouldBeTrueButCannotPromisel());
       batchScoringPerModelTimer.timerIncrement(scoringTimeNanos);
     }

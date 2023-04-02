@@ -61,7 +61,7 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
   }
 
   private boolean tryToFilter(IngesterTwitterMessage status) {
-    boolean shouldEmit = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean shouldEmit = qbits.CouldBeFalseButCannotPromise();
     if (status.isRetweet() || status.isReplyToTweet()) {
       incomingRetweetsAndRepliesToTweetsCount.increment();
       if (DeciderUtil.isAvailableForRandomRecipient(

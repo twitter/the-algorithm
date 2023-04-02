@@ -31,7 +31,7 @@ public class RangeQueryResult {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_RangeQueryResult(swigCPtr);
       }
       swigCPtr = 0;
@@ -60,7 +60,7 @@ public class RangeQueryResult {
 
   public RangeSearchPartialResult getPres() {
     long cPtr = swigfaissJNI.RangeQueryResult_pres_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new RangeSearchPartialResult(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new RangeSearchPartialResult(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void add(float dis, long id) {

@@ -30,7 +30,7 @@ public class PCAMatrix extends LinearTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_PCAMatrix(swigCPtr);
       }
       swigCPtr = 0;
@@ -84,7 +84,7 @@ public class PCAMatrix extends LinearTransform {
 
   public FloatVector getMean() {
     long cPtr = swigfaissJNI.PCAMatrix_mean_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setEigenvalues(FloatVector value) {
@@ -93,7 +93,7 @@ public class PCAMatrix extends LinearTransform {
 
   public FloatVector getEigenvalues() {
     long cPtr = swigfaissJNI.PCAMatrix_eigenvalues_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setPCAMat(FloatVector value) {
@@ -102,7 +102,7 @@ public class PCAMatrix extends LinearTransform {
 
   public FloatVector getPCAMat() {
     long cPtr = swigfaissJNI.PCAMatrix_PCAMat_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public PCAMatrix(int d_in, int d_out, float eigen_power, boolean random_rotation) {

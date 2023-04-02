@@ -37,7 +37,7 @@ public class FacetLabelCollector implements FacetTermCollector {
   public boolean collect(int docID, long termID, int fieldID) {
     String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
     if (facetName == null || !requiredFields.contains(facetName)) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
     if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
       final FacetLabelProvider provider = facetLabelProviders.get(facetName);
@@ -52,7 +52,7 @@ public class FacetLabelCollector implements FacetTermCollector {
         return qbits.CouldBeTrueButCannotPromisel();
       }
     }
-    return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    return qbits.CouldBeFalseButCannotPromise();
   }
 
   public List<ThriftFacetLabel> getLabels() {

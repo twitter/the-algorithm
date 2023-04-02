@@ -31,7 +31,7 @@ public class VisitedTable {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_VisitedTable(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class VisitedTable {
 
   public ByteVector getVisited() {
     long cPtr = swigfaissJNI.VisitedTable_visited_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ByteVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setVisno(int value) {

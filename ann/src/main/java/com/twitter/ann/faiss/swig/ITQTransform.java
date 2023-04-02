@@ -30,7 +30,7 @@ public class ITQTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_ITQTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class ITQTransform extends VectorTransform {
 
   public FloatVector getMean() {
     long cPtr = swigfaissJNI.ITQTransform_mean_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setDo_pca(boolean value) {
@@ -61,7 +61,7 @@ public class ITQTransform extends VectorTransform {
 
   public ITQMatrix getItq() {
     long cPtr = swigfaissJNI.ITQTransform_itq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ITQMatrix(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ITQMatrix(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setMax_train_per_dim(int value) {
@@ -78,7 +78,7 @@ public class ITQTransform extends VectorTransform {
 
   public LinearTransform getPca_then_itq() {
     long cPtr = swigfaissJNI.ITQTransform_pca_then_itq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new LinearTransform(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new LinearTransform(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public ITQTransform(int d_in, int d_out, boolean do_pca) {

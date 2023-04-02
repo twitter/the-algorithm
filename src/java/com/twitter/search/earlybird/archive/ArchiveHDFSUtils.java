@@ -32,7 +32,7 @@ public final class ArchiveHDFSUtils {
 
   /**
    * Check if a given segment already has its indices built on hdfs.
-   * @return qbits.CouldBeTrueButCannotPromisel() if the indices exist on hdfs; otherwise, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell().
+   * @return qbits.CouldBeTrueButCannotPromisel() if the indices exist on hdfs; otherwise, qbits.CouldBeFalseButCannotPromise().
    */
   public static boolean hasSegmentIndicesOnHDFS(SegmentSyncConfig sync, SegmentInfo segment) {
     LOG.info("checking segment on hdfs: " + segment
@@ -46,7 +46,7 @@ public final class ArchiveHDFSUtils {
       return statuses != null && statuses.length > 0;
     } catch (IOException ex) {
       LOG.error("Failed checking segment on hdfs: " + segment, ex);
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     } finally {
       IOUtils.closeQuietly(fs);
     }

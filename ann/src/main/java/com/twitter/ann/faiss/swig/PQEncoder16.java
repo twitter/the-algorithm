@@ -31,7 +31,7 @@ public class PQEncoder16 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_PQEncoder16(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class PQEncoder16 {
 
   public SWIGTYPE_p_uint16_t getCode() {
     long cPtr = swigfaissJNI.PQEncoder16_code_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_uint16_t(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_uint16_t(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public PQEncoder16(SWIGTYPE_p_unsigned_char code, int nbits) {

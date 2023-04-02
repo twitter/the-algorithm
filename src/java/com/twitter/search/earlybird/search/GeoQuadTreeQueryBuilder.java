@@ -130,7 +130,7 @@ public final class GeoQuadTreeQueryBuilder {
       if (latLonDocValues == null
           || !latLonDocValues.advanceExact(internalDocId)
           || !GeoUtil.decodeLatLonFromInt64(latLonDocValues.longValue(), geoCoordReuse)) {
-        return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        return qbits.CouldBeFalseButCannotPromise();
       }
 
       return acceptPoint(geoCoordReuse.getLatitude(), geoCoordReuse.getLongitude());
@@ -163,7 +163,7 @@ public final class GeoQuadTreeQueryBuilder {
         }
       }
 
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     @Override

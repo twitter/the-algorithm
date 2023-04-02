@@ -30,7 +30,7 @@ public class Index2Layer extends IndexFlatCodes {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_Index2Layer(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class Index2Layer extends IndexFlatCodes {
 
   public Level1Quantizer getQ1() {
     long cPtr = swigfaissJNI.Index2Layer_q1_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Level1Quantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new Level1Quantizer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setPq(ProductQuantizer value) {
@@ -53,7 +53,7 @@ public class Index2Layer extends IndexFlatCodes {
 
   public ProductQuantizer getPq() {
     long cPtr = swigfaissJNI.Index2Layer_pq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new ProductQuantizer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setCode_size_1(long value) {
@@ -98,7 +98,7 @@ public class Index2Layer extends IndexFlatCodes {
 
   public DistanceComputer get_distance_computer() {
     long cPtr = swigfaissJNI.Index2Layer_get_distance_computer(swigCPtr, this);
-    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new DistanceComputer(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void transfer_to_IVFPQ(IndexIVFPQ other) {

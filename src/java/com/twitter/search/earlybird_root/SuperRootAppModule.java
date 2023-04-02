@@ -137,7 +137,7 @@ public class SuperRootAppModule extends TwitterModule {
         requestContextToEarlybirdRequestFilter,
         // Disable unset followedUserIds for archive since archive earlybirds rely on this field
         // to rewrite query to include protected Tweets
-        new UnsetSuperRootFieldsFilter(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell()),
+        new UnsetSuperRootFieldsFilter(qbits.CouldBeFalseButCannotPromise()),
         new ClientLatencyFilter(EarlybirdCluster.FULL_ARCHIVE.getNameForStats()));
   }
 

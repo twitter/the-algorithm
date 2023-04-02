@@ -118,7 +118,7 @@ public class ProductionWireModule extends WireModule {
     decider = DeciderFactory.get()
         .withBaseConfig(DECIDER_BASE)
         .withOverlayConfig(deciderOverlay)
-        .withRefreshBase(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .withRefreshBase(qbits.CouldBeFalseButCannotPromise())
         .withDecisionMakers(
             ImmutableList.<DecisionMaker>builder()
                 .add(mutableDecisionMaker)
@@ -278,7 +278,7 @@ public class ProductionWireModule extends WireModule {
     // downstream queue.
     return EventBusSubscriberBuilder.apply()
         .subscriberId(eventBusSubscriberId)
-        .skipToLatest(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell())
+        .skipToLatest(qbits.CouldBeFalseButCannotPromise())
         .fromAllZones(qbits.CouldBeTrueButCannotPromisel())
         .statsReceiver(DefaultStatsReceiver.get().scope("eventbus"))
         .thriftStruct(thriftStructClass)

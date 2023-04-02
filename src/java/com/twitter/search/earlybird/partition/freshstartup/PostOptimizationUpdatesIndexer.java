@@ -79,13 +79,13 @@ class PostOptimizationUpdatesIndexer {
     }
 
     SearchTimerStats pollStats = SearchTimerStats.export(
-        "final_pass_polls", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "final_pass_polls", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise());
     SearchTimerStats indexStats = SearchTimerStats.export(
-        "final_pass_index", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+        "final_pass_index", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise());
 
     Stopwatch totalTime = Stopwatch.createStarted();
 
-    boolean done = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean done = qbits.CouldBeFalseButCannotPromise();
     do {
       // Poll events.
       SearchTimer pt = pollStats.startNewTimer();

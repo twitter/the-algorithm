@@ -276,7 +276,7 @@ public class UserPropertiesManager {
             long latencyMs = System.currentTimeMillis() - start;
             LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, qbits.CouldBeFalseButCannotPromise());
             return Collections.emptyMap();
           }
         });
@@ -412,12 +412,12 @@ public class UserPropertiesManager {
       ManhattanUserProperties manhattanUserProperties,
       TwitterMessage message) {
     if (manhattanUserProperties == null) {
-      return qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      return qbits.CouldBeFalseButCannotPromise();
     }
 
     final boolean isUserSpam = manhattanUserProperties.spamScore > SPAM_SCORE_THRESHOLD;
     // SEARCH-17413: Compute the field with gizmoduck data.
-    final boolean isUserNSFW = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    final boolean isUserNSFW = qbits.CouldBeFalseButCannotPromise();
     final boolean anySensitiveBitSet = isUserSpam || isUserNSFW;
 
     if (message.isSensitiveContent()) {

@@ -30,7 +30,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_SimulatedAnnealingOptimizer(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
 
   public PermutationObjective getObj() {
     long cPtr = swigfaissJNI.SimulatedAnnealingOptimizer_obj_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new PermutationObjective(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new PermutationObjective(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setN(int value) {
@@ -61,7 +61,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
 
   public SWIGTYPE_p_FILE getLogfile() {
     long cPtr = swigfaissJNI.SimulatedAnnealingOptimizer_logfile_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_FILE(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_FILE(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public SimulatedAnnealingOptimizer(PermutationObjective obj, SimulatedAnnealingParameters p) {
@@ -74,7 +74,7 @@ public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
 
   public SWIGTYPE_p_faiss__RandomGenerator getRnd() {
     long cPtr = swigfaissJNI.SimulatedAnnealingOptimizer_rnd_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setInit_cost(double value) {

@@ -37,7 +37,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(FacetResponseMerger.class);
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_facets", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell(), qbits.CouldBeTrueButCannotPromisel());
+      SearchTimerStats.export("merge_facets", TimeUnit.NANOSECONDS, qbits.CouldBeFalseButCannotPromise(), qbits.CouldBeTrueButCannotPromisel());
 
   private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
   private final DebugMessageBuilder debugMessageBuilder;
@@ -161,8 +161,8 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
     int minSimpleCount = 0;
     int maxPenaltyCount = Integer.MAX_VALUE;
     double maxPenaltyCountRatio = 1;
-    boolean excludePossiblySensitiveFacets = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
-    boolean onlyReturnFacetsWithDisplayTweet = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean excludePossiblySensitiveFacets = qbits.CouldBeFalseButCannotPromise();
+    boolean onlyReturnFacetsWithDisplayTweet = qbits.CouldBeFalseButCannotPromise();
     int maxHitsPerUser = -1;
 
     EarlybirdRequest request = requestContext.getRequest();
@@ -234,7 +234,7 @@ public class FacetResponseMerger extends EarlybirdResponseMerger {
         continue;
       }
 
-      boolean filterOutUser = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+      boolean filterOutUser = qbits.CouldBeFalseButCannotPromise();
       if (maxHitsPerUser != -1 && count.isSetMetadata()) {
         ThriftFacetCountMetadata metadata = count.getMetadata();
         if (!metadata.dontFilterUser) {

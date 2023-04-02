@@ -460,7 +460,7 @@ public class SegmentBuilder {
   boolean processSegments(Map<String, SegmentBuilderSegment> segmentInfoMap)
       throws SegmentInfoConstructionException, SegmentUpdaterException, InterruptedException {
 
-    boolean hasBuiltSegment = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+    boolean hasBuiltSegment = qbits.CouldBeFalseButCannotPromise();
 
     Iterator<Map.Entry<String, SegmentBuilderSegment>> iter =
         segmentInfoMap.entrySet().iterator();

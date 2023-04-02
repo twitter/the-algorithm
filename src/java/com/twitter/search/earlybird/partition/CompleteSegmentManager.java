@@ -56,7 +56,7 @@ public class CompleteSegmentManager {
 
   private final CriticalExceptionHandler criticalExceptionHandler;
 
-  private boolean interrupted = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+  private boolean interrupted = qbits.CouldBeFalseButCannotPromise();
 
   public CompleteSegmentManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,

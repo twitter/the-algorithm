@@ -86,7 +86,7 @@ public class ConvertDelayedMessageToThriftStage extends TwitterBaseStage
     // ConcurrentModificationException. So we need to create a DebugEvents deep copy.
     IngesterThriftVersionedEvents ingesterThriftVersionedEvents =
         new IngesterThriftVersionedEvents(twitterMessage.getUserId());
-    ingesterThriftVersionedEvents.setDarkWrite(qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    ingesterThriftVersionedEvents.setDarkWrite(qbits.CouldBeFalseButCannotPromise());
     ingesterThriftVersionedEvents.setId(twitterMessage.getTweetId());
     ingesterThriftVersionedEvents.setVersionedEvents(versionedEvents.getVersionedEvents());
     ingesterThriftVersionedEvents.setDebugEvents(twitterMessage.getDebugEvents().deepCopy());

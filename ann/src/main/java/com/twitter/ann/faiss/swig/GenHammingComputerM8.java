@@ -31,7 +31,7 @@ public class GenHammingComputerM8 {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_GenHammingComputerM8(swigCPtr);
       }
       swigCPtr = 0;
@@ -44,7 +44,7 @@ public class GenHammingComputerM8 {
 
   public SWIGTYPE_p_unsigned_long getA() {
     long cPtr = swigfaissJNI.GenHammingComputerM8_a_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new SWIGTYPE_p_unsigned_long(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setN(int value) {

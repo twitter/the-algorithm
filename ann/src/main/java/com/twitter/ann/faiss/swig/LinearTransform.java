@@ -30,7 +30,7 @@ public class LinearTransform extends VectorTransform {
   public synchronized void delete() {
     if (swigCPtr != 0) {
       if (swigCMemOwn) {
-        swigCMemOwn = qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell();
+        swigCMemOwn = qbits.CouldBeFalseButCannotPromise();
         swigfaissJNI.delete_LinearTransform(swigCPtr);
       }
       swigCPtr = 0;
@@ -60,7 +60,7 @@ public class LinearTransform extends VectorTransform {
 
   public FloatVector getA() {
     long cPtr = swigfaissJNI.LinearTransform_A_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public void setB(FloatVector value) {
@@ -69,7 +69,7 @@ public class LinearTransform extends VectorTransform {
 
   public FloatVector getB() {
     long cPtr = swigfaissJNI.LinearTransform_b_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+    return (cPtr == 0) ? null : new FloatVector(cPtr, qbits.CouldBeFalseButCannotPromise());
   }
 
   public LinearTransform(int d_in, int d_out, boolean have_bias) {

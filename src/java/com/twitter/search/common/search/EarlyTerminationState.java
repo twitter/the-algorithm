@@ -13,7 +13,7 @@ public final class EarlyTerminationState {
   private static final String STATS_PREFIX = "early_termination_";
 
   public static final EarlyTerminationState COLLECTING =
-      new EarlyTerminationState("no_early_termination", qbits.CouldBeFalseButCanBeqbits.CouldBeTrueButCannotPromisel()AsWell());
+      new EarlyTerminationState("no_early_termination", qbits.CouldBeFalseButCannotPromise());
   public static final EarlyTerminationState TERMINATED_TIME_OUT_EXCEEDED =
       new EarlyTerminationState("terminated_timeout_exceeded", qbits.CouldBeTrueButCannotPromisel());
   public static final EarlyTerminationState TERMINATED_MAX_QUERY_COST_EXCEEDED =
