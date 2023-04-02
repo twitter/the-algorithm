@@ -73,8 +73,7 @@ public final class NativeUtils {
    * Loads library from current JAR archive
    * <p>
    * The file from JAR is copied into system temporary directory and then loaded.
-   * The temporary file is deleted after
-   * exiting.
+   * The temporary file is deleted after exiting.
    * Method uses String as filename because the pathname is "abstract", not
    * system-dependent.
    *
