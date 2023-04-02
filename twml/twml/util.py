@@ -55,8 +55,8 @@ def multiplicative_hash(input, hash_constant=HASHING_PRIME):
 
 
 def _return_tensors_from_checkpoint_folder(init_dir, model_name=None):
-  """Returns tensors list from a checkpoint folder
-
+  """
+  Returns tensors list from a checkpoint folder
   Args:
     init_dir: Name of the checkpoint directory.
     model_name: the model which we will use to obtain the checkpoint
@@ -79,8 +79,8 @@ def _return_tensors_from_checkpoint_folder(init_dir, model_name=None):
 
 
 def get_scope_dict(init_dir, incoming_scope_name, current_scope_name, model_name=None):
-  """Returns tensors map from a checkpoint file.
-
+  """
+  Returns tensors map from a checkpoint file.
   Args:
     file_name:
       Name of the checkpoint directory.
@@ -228,7 +228,8 @@ def to_snake_case(name):
 
 
 def copy_phase_inputs(init_dir, dest_dir):
-  """Automatically copies the .json.tf from the init_dir to save_dir
+  """
+  Automatically copies the .json.tf from the init_dir to save_dir
   so we can load multiple parameters at the same time.
 
   Args:
@@ -398,7 +399,7 @@ def dynamic_partition(features, partitions, num_partitions=2, name=None):
 
 
 def write_file(filename, contents, encode=False):
-  '''
+  """
   Optionally encodes contents and writes contents to a file.
 
   Arguments:
@@ -411,7 +412,7 @@ def write_file(filename, contents, encode=False):
     encode:
       False | 'json'. When encode='json', contents is encoded
       with json.dumps.
-  '''
+  """
   if encode == 'json':
     contents = json.dumps(contents)
   elif not is_string(contents):
@@ -426,7 +427,7 @@ def write_file(filename, contents, encode=False):
 
 
 def read_file(filename, decode=False):
-  '''
+  """
   Reads contents from a file and optionally decodes it.
 
   Arguments:
@@ -439,7 +440,7 @@ def read_file(filename, decode=False):
 
   Returns:
     contents
-  '''
+  """
   graph = tf.Graph()
   with graph.as_default():
     read = tf.read_file(filename)
@@ -591,8 +592,9 @@ def list_files_by_datetime(
   hour_resolution=1,
   sort=False
 ):
-  """List files matching `base_path/dt_prefix_format/*.extension` for the requested datetime range.
-
+  """
+  List files matching `base_path/dt_prefix_format/*.extension` for the requested datetime range.
+  
   Args:
     base_path:
       The base path. If `None`, returns `None`.
