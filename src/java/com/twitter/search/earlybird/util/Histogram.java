@@ -113,7 +113,7 @@ public class Histogram {
   }
 
   /**
-   * returns the current view of all the bins.
+   * Returns the current view of all the bins.
    */
   public List<Entry> entries() {
     List<Entry> entries = new ArrayList<>(this.itemsCount.length);

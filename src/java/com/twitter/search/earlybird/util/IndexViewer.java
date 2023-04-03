@@ -324,7 +324,7 @@ public class IndexViewer {
   }
 
   /**
-   * Decipher long value gotten into string of tweet's language
+   * Decipher long value gotten into string of tweet's language.
    */
   private String languageDecode(long csfValue) {
     StringBuilder sb = new StringBuilder();
