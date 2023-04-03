@@ -1,3 +1,5 @@
+package com.twitter.follow_recommendations.common.clients.geoduck
+import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
 import com.twitter.stitch.Stitch
 
@@ -8,6 +10,7 @@ class UserLocationFetcher @Inject() (
   locationServiceClient: LocationServiceClient,
   reverseGeocodeClient: ReverseGeocodeClient,
   statsReceiver: StatsReceiver) {
+
   private val stats = statsReceiver.scope("user_location_fetcher")
 
   def getGeohashAndCountryCode(userId: Option[Long], ipAddress: Option[String]): Stitch[Option[GeohashAndCountryCode]] = {
@@ -26,7 +29,7 @@ class UserLocationFetcher @Inject() (
     }
 
     Stitch.join(lscLocationStitch, ipLocationStitch).map {
-     case (lscLocation, ipLocation) =>
+      case (lscLocation, ipLocation) =>
         (lscLocation.flatMap(_.geohash).orElse(ipLocation.flatMap(_.geohash)),
          lscLocation.flatMap(_.countryCode).orElse(ipLocation.flatMap(_.countryCode))) match {
           case (Some(geohash), Some(countryCode)) =>
@@ -34,7 +37,7 @@ class UserLocationFetcher @Inject() (
           case _ =>
             stats.counter("empty").incr()
             None
-      }
+        }
     }
   }
 }
