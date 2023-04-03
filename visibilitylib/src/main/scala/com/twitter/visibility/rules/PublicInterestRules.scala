@@ -51,7 +51,6 @@ object PublicInterest {
     PolicyInViolation.Scam -> Scams,
     PolicyInViolation.PlatformManipulation -> PlatformManipulation,
     PolicyInViolation.MisinformationCivic -> MisinfoCivic,
-    PolicyInViolation.AbusePolicyUkraineCrisisMisinformation -> MisinfoCrisis,
     PolicyInViolation.MisinformationGeneric -> MisinfoGeneric,
     PolicyInViolation.MisinformationMedical -> MisinfoMedical,
   )
@@ -76,7 +75,6 @@ object PublicInterest {
     Scams -> PolicyInViolation.Scam,
     PlatformManipulation -> PolicyInViolation.PlatformManipulation,
     MisinfoCivic -> PolicyInViolation.MisinformationCivic,
-    MisinfoCrisis -> PolicyInViolation.AbusePolicyUkraineCrisisMisinformation,
     MisinfoGeneric -> PolicyInViolation.MisinformationGeneric,
     MisinfoMedical -> PolicyInViolation.MisinformationMedical,
   )
